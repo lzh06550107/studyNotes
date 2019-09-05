@@ -1,0 +1,530 @@
+******
+命令行
+******
+
+ThinkPHP5.0 支持 ``Console`` 应用，通过命令行的方式执行一些 ``URL`` 访问不方便或者安全性较高的操作。
+
+我们可以在命令行下面，切换到应用根目录，然后执行 ``php think`` ，会出现下面的提示信息：
+
+.. code-block:: php
+
+    >php think
+    Think Console version 0.1
+
+    Usage:
+      command [options] [arguments]
+
+    Options:
+      -h, --help            Display this help message
+      -V, --version         Display this console version
+      -q, --quiet           Do not output any message
+          --ansi            Force ANSI output
+          --no-ansi         Disable ANSI output
+      -n, --no-interaction  Do not ask any interactive question
+      -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+    Available commands:
+      build              Build Application Dirs
+      clear              Clear runtime file
+      help               Displays help for a command
+      list               Lists commands
+     make
+      make:controller    Create a new resource controller class
+      make:model         Create a new model class
+     optimize
+      optimize:autoload  Optimizes PSR0 and PSR4 packages to be loaded with classmaps too, good for production.
+      optimize:config    Build config and common file cache.
+      optimize:route     Build route cache.
+
+``console`` 命令的执行格式一般为：
+
+.. code-block:: shell
+
+    >php think 指令 参数
+
+下面介绍下系统自带的几个命令，包括：
+
++-------------------+------------------------+
+| 指令              | 描述                   |
++===================+========================+
+| build             | 自动生成目录和文件     |
++-------------------+------------------------+
+| help              | 帮助                   |
++-------------------+------------------------+
+| list              | 指令列表               |
++-------------------+------------------------+
+| clear             | 清除缓存指令           |
++-------------------+------------------------+
+| make:controller   | 创建控制器文件         |
++-------------------+------------------------+
+| make:model        | 创建模型文件           |
++-------------------+------------------------+
+| optimize:autoload | 生成类库映射文件       |
++-------------------+------------------------+
+| optimize:config   | 生成配置缓存文件       |
++-------------------+------------------------+
+| optimize:route    | 生成路由缓存文件       |
++-------------------+------------------------+
+| optimize:schema   | 生成数据表字段缓存文件 |
++-------------------+------------------------+
+
+自动生成目录结构
+================
+ThinkPHP5.0 具备自动创建功能，可以用来自动生成需要的模块及目录结构和文件等，自动生成主要调用 ``\think\Build`` 类库。
+
+生成规则定义
+------------
+首先需要定义一个用于自动生成的规则定义文件，通常命名为 ``build.php`` 。
+
+默认的框架的根目录下面自带了一个 ``build.php`` 示例参考文件，内容如下：
+
+.. code-block:: php
+
+    return [
+        // 生成运行时目录
+        '__file__' => ['common.php'],
+
+        // 定义index模块的自动生成
+        'index'    => [
+            '__file__'   => ['common.php'],
+            '__dir__'    => ['behavior', 'controller', 'model', 'view'],
+            'controller' => ['Index', 'Test', 'UserType'],
+            'model'      => [],
+            'view'       => ['index/index'],
+        ],
+        // 。。。 其他更多的模块定义
+    ];
+
+可以给每个模块定义需要自动生成的文件和目录，以及 ``MVC`` 类。
+
+- ``__dir__`` 表示生成目录（支持多级目录）
+- ``__file__`` 表示生成文件（不定义默认会生成 ``config.php`` 文件）
+- ``controller`` 表示生成 ``controller`` 类
+- ``model`` 表示生成 ``model`` 类
+- ``view`` 表示生成 ``html`` 文件（支持子目录）
+
+自动生成以 ``APP_PATH`` 为起始目录， ``__dir__`` 和 ``__file__`` 表示需要自动创建目录和文件，其他的则表示为模块自动生成。
+
+模块的自动生成则以 ``APP_PATH.'模块名/'`` 为起始目录。
+
+并且会自动生成模块的默认的 ``Index`` 访问控制器文件用于显示框架的欢迎页面。
+
+我们还可以在 ``APP_PATH`` 目录下面自动生成其它的文件和目录，或者增加多个模块的自动生成，例如：
+
+.. code-block:: php
+
+    return [
+        '__file__'  => ['hello.php','test.php'],
+        // 定义index模块的自动生成
+        'index'   => [
+            '__file__'   => ['tags.php', 'user.php', 'hello.php'],
+            '__dir__'    => ['behavior', 'controller', 'model', 'view'],
+            'controller' => ['Index', 'Test', 'UserType'],
+            'model'      => [],
+            'view'       => ['index/index'],
+        ],
+        // 定义test模块的自动生成
+        'test'=>[
+            '__dir__'   =>  ['behavior','controller','model','widget'],
+            'controller'=>  ['Index','Test','UserType'],
+            'model'     =>  ['User','UserType'],
+            'view'      =>  ['index/index','index/test'],
+        ],
+     ];
+
+命令行自动生成
+--------------
+我们通过控制台来完成自动生成，切换到命令行，在应用的根目录输入下面命令：
+
+.. code-block:: shell
+
+    >php think build
+
+如果看到输出
+
+.. code-block:: shell
+
+    Successed
+
+则表示自动生成成功。
+
+默认会读取应用目录 ``application`` 下面的 ``build.php`` 作为自动生成的定义文件，如果你的定义文件位置不同，则需要使用 ``--config`` 参数指定如下：
+
+.. code-block:: shell
+
+    >php think build --config build.php
+
+表示读取根目录下的 ``build.php`` 文件。
+
+生成模块指令
+
+.. code-block:: shell
+
+    >php think build --module test
+
+表示自动生成 ``test`` 模块。
+
+添加自动生成代码
+----------------
+如果你不习惯命令行操作，也可以直接调用 ``\think\Build`` 类的方法进行自动生成，例如：
+
+.. code-block:: php
+
+    // 定义应用目录
+    define('APP_PATH', __DIR__ . '/../application/');
+    // 加载框架引导文件
+    require __DIR__ . '/../thinkphp/start.php';
+    // 读取自动生成定义文件
+    $build = include 'build.php';
+    // 运行自动生成
+    \think\Build::run($build);
+
+``run`` 方法第二个参数用于指定要生成的应用类库的命名空间，默认是 ``app`` ，第三个参数是设置是否需要使用类名称增加后缀。
+
+例如：
+
+.. code-block:: php
+
+    // 定义应用目录
+    define('APP_PATH', __DIR__ . '/../application/');
+    // 加载框架引导文件
+    require __DIR__ . '/../thinkphp/start.php';
+    // 读取自动生成定义文件
+    $build = include 'build.php';
+    // 运行自动生成
+    \think\Build::run($build,'application',true);
+
+可以不依赖自动生成文件，直接使用默认目录生成模块，例如：
+
+.. code-block:: php
+
+    // 定义应用目录
+    define('APP_PATH', __DIR__ . '/../application/');
+    // 加载框架引导文件
+    require __DIR__ . '/../thinkphp/start.php';
+    // 自动生成admin模块
+    \think\Build::module('admin');
+
+``module`` 方法第二个参数和第三个参数的用法和 ``run`` 方法一样。
+
+创建类库文件
+============
+快速生成控制器类
+----------------
+执行下面的指令可以生成 ``index`` 模块的 ``Blog`` 控制器类库文件
+
+.. code-block:: shell
+
+    >php think make:controller index/Blog
+
+生成的控制器类文件如下：
+
+.. code-block:: php
+
+    <?php
+
+    namespace app\index\controller;
+
+    use think\Controller;
+    use think\Request;
+
+    class Blog extends Controller
+    {
+        /**
+         * 显示资源列表
+         *
+         * @return \think\Response
+         */
+        public function index()
+        {
+            //
+        }
+
+        /**
+         * 显示创建资源表单页.
+         *
+         * @return \think\Response
+         */
+        public function create()
+        {
+            //
+        }
+
+        /**
+         * 保存新建的资源
+         *
+         * @param  \think\Request  $request
+         * @return \think\Response
+         */
+        public function save(Request $request)
+        {
+            //
+        }
+
+        /**
+         * 显示指定的资源
+         *
+         * @param  int  $id
+         * @return \think\Response
+         */
+        public function read($id)
+        {
+            //
+        }
+
+        /**
+         * 显示编辑资源表单页.
+         *
+         * @param  int  $id
+         * @return \think\Response
+         */
+        public function edit($id)
+        {
+            //
+        }
+
+        /**
+         * 保存更新的资源
+         *
+         * @param  \think\Request  $request
+         * @param  int  $id
+         * @return \think\Response
+         */
+        public function update(Request $request, $id)
+        {
+            //
+        }
+
+        /**
+         * 删除指定资源
+         *
+         * @param  int  $id
+         * @return \think\Response
+         */
+        public function delete($id)
+        {
+            //
+        }
+    }
+
+默认生成的控制器类继承 ``\think\Controller`` ，并且生成了资源操作方法，如果仅仅生成空的控制器则可以使用：
+
+.. code-block:: shell
+
+    >php think make:controller index\Blog --plain
+
+快速生成模型类
+--------------
+执行下面的指令可以生成 ``index`` 模块的 ``Blog`` 模型类库文件
+
+.. code-block:: shell
+
+    >php think make:model index/Blog
+
+生成的模型类文件如下：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Blog extends Model
+    {
+
+    }
+
+生成类库映射文件
+================
+生成类库映射文件optimize:autoload
+---------------------------------
+可以使用下面的指令生成类库映射文件，提高系统自动加载的性能。
+
+.. code-block:: shell
+
+    >php think optimize:autoload
+
+指令执行成功后，会在 ``runtime`` 目录下面生成 ``classmap.php`` 文件，生成的类库映射文件会扫描 系统目录( ``library`` ) 和应用目录( ``Application`` )的类库。
+
+生成路由缓存
+============
+生成路由缓存optimize:route
+--------------------------
+如果你的应用定义了比较多的路由规则，可以使用下面的指令生成路由缓存文件，提高系统的路由检测的性能。
+
+.. code-block:: shell
+
+    >php think optimize:route
+
+指令执行成功后，会在 ``runtime`` 目录下面生成 ``route.php`` 文件，生成的路由缓存文件仅仅支持在应用的路由配置文件中定义的路由（包括方法定义和配置定义）。
+
+清除缓存文件
+============
+清除缓存文件clear
+-----------------
+如果需要清除应用的缓存文件，可以使用下面的命令：
+
+.. code-block:: shell
+
+    php think clear
+
+不带任何参数调用 ``clear`` 命令的话，会清除 ``runtime`` 目录（包括模板缓存、日志文件及其子目录）下面的所有的文件，但会保留目录。
+
+如果需要清除某个指定目录下面的文件，可以使用：
+
+.. code-block:: shell
+
+    php think clear --path d:\www\tp5\runtime\log\
+
+生成配置缓存文件
+================
+生成配置缓存optimize:config
+---------------------------
+可以为应用或者模块生成配置缓存文件
+
+.. code-block:: shell
+
+    php think optimize:config
+
+默认生成应用的配置缓存文件，调用后会在 ``runtime`` 目录下面生成 ``init.php`` 文件，生成配置缓存文件后，应用目录下面的 ``config.php common.php`` 以及 ``tags.php`` 不会被加载，被 ``runtime/init.php`` 取代。
+
+如果需要生成某个模块的配置缓存，可以使用：
+
+.. code-block:: php
+
+    php think optimize:config index
+
+调用后会在 ``runtime/index`` 目录下面生成 ``init.php`` 文件，生成后， ``index`` 模块目录下面的 ``config.php common.php`` 以及 ``tags.php`` 不会被加载，被 ``runtime/index/init.php`` 取代。
+
+生成数据表字段缓存
+==================
+生成数据表字段缓存 ``optimize:schema``
+
+.. note:: 版本要求V5.0.1
+
+可以通过生成数据表字段信息缓存，提升数据库查询的性能，避免多余的查询。命令如下：
+
+.. code-block:: shell
+
+    php think optimize:schema
+
+会自动生成当前数据库配置文件中定义的数据表字段缓存，也可以指定数据库生成字段缓存（必须有用户权限），例如，下面指定生成 ``demo`` 数据库下面的所有数据表的字段缓存信息。
+
+.. code-block:: shell
+
+    php think optimize:schema --db demo
+
+执行后会自动在 ``runtime/schema`` 目录下面按照数据表生成字段缓存文件。
+
+如果你的应用使用了不同的数据库连接，可以根据模块来生成，如下：
+
+.. code-block:: shell
+
+    php think optimize:schema --module index
+
+会读取 ``index`` 模块的模型来生成数据表字段缓存。
+
+.. warning:: 没有继承 ``think\Model`` 类的模型和抽象类不会生成。
+
+更新数据表字段缓存也是同样的方式，每次执行都会重新生成缓存。如果需要单独更新某个数据表的缓存，可以使用：
+
+.. code-block:: shell
+
+    php think optimize:schema --table think_user
+
+支持指定数据库名称
+
+.. code-block:: shell
+
+    php think optimize:schema --table demo.think_user
+
+自定义命令行
+============
+创建自定义命令行
+----------------
+第一步，配置 ``command.php`` 文件，目录在 ``application/command.php``
+
+.. code-block:: php
+
+    <?php
+    return [
+        'app\home\command\Test',
+    ];
+
+第二步，建立命令类文件，新建 ``application/home/command/Test.php``
+
+.. code-block:: php
+
+    <?php
+    namespace app\home\command;
+
+    use think\console\Command;
+    use think\console\Input;
+    use think\console\Output;
+
+    class Test extends Command
+    {
+        protected function configure()
+        {
+            $this->setName('test')->setDescription('Here is the remark ');
+        }
+
+        protected function execute(Input $input, Output $output)
+        {
+            $output->writeln("TestCommand:");
+        }
+    }
+
+这个文件定义了一个叫 ``test`` 的命令，备注为 ``Here is the remark`` ，
+执行命令会输出 ``TestCommand`` 。
+
+第三步，测试-命令帮助-命令行下运行
+
+.. code-block:: shell
+
+    php think
+
+输出
+
+.. code-block:: shell
+
+    Think Console version 0.1
+
+    Usage:
+      command [options] [arguments]
+
+    Options:
+      -h, --help            Display this help message
+      -V, --version         Display this console version
+      -q, --quiet           Do not output any message
+          --ansi            Force ANSI output
+          --no-ansi         Disable ANSI output
+      -n, --no-interaction  Do not ask any interactive question
+      -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+    Available commands:
+      build              Build Application Dirs
+      clear              Clear runtime file
+      help               Displays help for a command
+      list               Lists commands
+      test               Here is the remark 
+     make
+      make:controller    Create a new resource controller class
+      make:model         Create a new model class
+     optimize
+      optimize:autoload  Optimizes PSR0 and PSR4 packages to be loaded with classmaps too, good for production.
+      optimize:config    Build config and common file cache.
+      optimize:route     Build route cache.
+      optimize:schema    Build database schema cache.
+
+第四步，运行test命令
+
+.. code-block:: shell
+
+    php think test
+
+输出
+
+.. code-block:: shell
+
+    TestCommand:

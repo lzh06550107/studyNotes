@@ -1,0 +1,624 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>9. 路由的匹配与参数绑定 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="10. 路由的中间件" href="Laravel的路由—路由中间件.html"/>
+        <link rel="prev" title="8. 路由的正则编译" href="Laravel的路由—路由的正则编译.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. 路由的匹配与参数绑定</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">9.1. 前言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">9.2. 路由的匹配</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#urivalidator-uri">9.2.1. UriValidator uri 验证</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methodvalidator">9.2.2. MethodValidator 验证</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#schemevalidator">9.2.3. SchemeValidator 验证</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hostvalidator">9.2.4. HostValidator 验证</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">9.3. 路由的参数绑定</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">9.3.1. 主域参数绑定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">9.3.2. 替换默认值</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">9.4. 匹配异常处理</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>9. 路由的匹配与参数绑定</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>9. 路由的匹配与参数绑定<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>9.1. 前言<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>上一篇文章我们说到路由的正则编译，正则编译的目的就是和请求的 <code class="docutils literal"><span class="pre">url</span></code> 来匹配，只有匹配上的路由才是我们真正想要的，此外也会通过正则匹配来获取路由的参数。</p>
+</div>
+<div class="section" id="id3">
+<h2>9.2. 路由的匹配<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>路由进行正则编译后，就要与请求 <code class="docutils literal"><span class="pre">request</span></code> 来进行正则匹配，并且进行一些验证，例如 <code class="docutils literal"><span class="pre">UriValidator</span></code> 、 <code class="docutils literal"><span class="pre">MethodValidator</span></code> 、 <code class="docutils literal"><span class="pre">SchemeValidator</span></code> 、 <code class="docutils literal"><span class="pre">HostValidator</span></code> 。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">Route</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">matches</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$includingMethod</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">compileRoute</span><span class="p">();</span> <span class="c1">// 路由的正则编译</span>
+
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getValidators</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$validator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$includingMethod</span> <span class="o">&amp;&amp;</span> <span class="nv">$validator</span> <span class="nx">instanceof</span> <span class="nx">MethodValidator</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$validator</span><span class="o">-&gt;</span><span class="na">matches</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="nv">$request</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getValidators</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="nv">$validators</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="nv">$validators</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="nv">$validators</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="k">new</span> <span class="nx">UriValidator</span><span class="p">,</span> <span class="k">new</span> <span class="nx">MethodValidator</span><span class="p">,</span>
+            <span class="k">new</span> <span class="nx">SchemeValidator</span><span class="p">,</span> <span class="k">new</span> <span class="nx">HostValidator</span><span class="p">,</span>
+        <span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="urivalidator-uri">
+<h3>9.2.1. UriValidator uri 验证<a class="headerlink" href="#urivalidator-uri" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">UriValidator</span></code> 验证主要是目的是查看路由正则与请求是否匹配：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">UriValidator</span> <span class="k">implements</span> <span class="nx">ValidatorInterface</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">matches</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">,</span> <span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$path</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span> <span class="o">?</span> <span class="s1">&#39;/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="nb">preg_match</span><span class="p">(</span><span class="nv">$route</span><span class="o">-&gt;</span><span class="na">getCompiled</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getRegex</span><span class="p">(),</span> <span class="nb">rawurldecode</span><span class="p">(</span><span class="nv">$path</span><span class="p">));</span> <span class="c1">// 这里解码了编码的url</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>值得注意的是，在匹配路径之前，程序使用了 <code class="docutils literal"><span class="pre">rawurldecode</span></code> 来对请求进行解码。</p>
+</div>
+<div class="section" id="methodvalidator">
+<h3>9.2.2. MethodValidator 验证<a class="headerlink" href="#methodvalidator" title="永久链接至标题">¶</a></h3>
+<p>请求方法验证：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">MethodValidator</span> <span class="k">implements</span> <span class="nx">ValidatorInterface</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">matches</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">,</span> <span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">in_array</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getMethod</span><span class="p">(),</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">methods</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="schemevalidator">
+<h3>9.2.3. SchemeValidator 验证<a class="headerlink" href="#schemevalidator" title="永久链接至标题">¶</a></h3>
+<p>路由 <code class="docutils literal"><span class="pre">scheme</span></code> 协议验证：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">SchemeValidator</span> <span class="k">implements</span> <span class="nx">ValidatorInterface</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">matches</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">,</span> <span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$route</span><span class="o">-&gt;</span><span class="na">httpOnly</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="o">!</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">secure</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$route</span><span class="o">-&gt;</span><span class="na">secure</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">secure</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">httpOnly</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nb">in_array</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">secure</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nb">in_array</span><span class="p">(</span><span class="s1">&#39;https&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hostvalidator">
+<h3>9.2.4. HostValidator 验证<a class="headerlink" href="#hostvalidator" title="永久链接至标题">¶</a></h3>
+<p>主域验证：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">HostValidator</span> <span class="k">implements</span> <span class="nx">ValidatorInterface</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">matches</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">,</span> <span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">is_null</span><span class="p">(</span><span class="nv">$route</span><span class="o">-&gt;</span><span class="na">getCompiled</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getHostRegex</span><span class="p">()))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nb">preg_match</span><span class="p">(</span><span class="nv">$route</span><span class="o">-&gt;</span><span class="na">getCompiled</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getHostRegex</span><span class="p">(),</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getHost</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>也就是说，如果路由中并不设置 <code class="docutils literal"><span class="pre">host</span></code> 属性，那么这个验证并不进行。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>9.3. 路由的参数绑定<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>一旦某个路由符合请求的 <code class="docutils literal"><span class="pre">uri</span></code> 四项认证，就将会被返回，接下来就要对路由的参数进行绑定与赋值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">RouteParameterBinder</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">bindPathParameters</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="nb">ltrim</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">decodedPath</span><span class="p">(),</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span>
+
+        <span class="nb">preg_match</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span><span class="o">-&gt;</span><span class="na">compiled</span><span class="o">-&gt;</span><span class="na">getRegex</span><span class="p">(),</span> <span class="nv">$path</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">matchToKeys</span><span class="p">(</span><span class="nb">array_slice</span><span class="p">(</span><span class="nv">$matches</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>例如， <code class="docutils literal"><span class="pre">{foo}/{baz?}.{ext?}</span></code> 进行正则编译后结果：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">#^/(?P&lt;foo&gt;[^/]++)(?:/(?P&lt;baz&gt;[^/\.]++)(?:\.(?P&lt;ext&gt;[^/]++))?)?$#s</span>
+</pre></div>
+</div>
+<p>其与 <code class="docutils literal"><span class="pre">request</span></code> 匹配后的结果为：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nv">$matches</span> <span class="o">=</span> array <span class="o">(</span>
+    <span class="nv">0</span>   <span class="o">=</span> <span class="s2">&quot;/foo/baz.ext&quot;</span>,
+    <span class="nv">1</span>   <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>,
+    <span class="nv">foo</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>,
+    <span class="nv">2</span>   <span class="o">=</span> <span class="s2">&quot;baz&quot;</span>,
+    <span class="nv">baz</span> <span class="o">=</span> <span class="s2">&quot;baz&quot;</span>,
+    <span class="nv">3</span>   <span class="o">=</span> <span class="s2">&quot;ext&quot;</span>,
+    <span class="nv">ext</span> <span class="o">=</span> <span class="s2">&quot;ext&quot;</span>,
+<span class="o">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">array_slice($matches,</span> <span class="pre">1)</span></code> 取出了 <code class="docutils literal"><span class="pre">$matches</span></code> 数组 <code class="docutils literal"><span class="pre">1</span></code> 之后的结果，然后调用了 <code class="docutils literal"><span class="pre">matchToKeys</span></code> 函数，</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">matchToKeys</span><span class="p">(</span><span class="k">array</span> <span class="nv">$matches</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">empty</span><span class="p">(</span><span class="nv">$parameterNames</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span><span class="o">-&gt;</span><span class="na">parameterNames</span><span class="p">()))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[];</span>
+    <span class="p">}</span>
+
+    <span class="nv">$parameters</span> <span class="o">=</span> <span class="nb">array_intersect_key</span><span class="p">(</span><span class="nv">$matches</span><span class="p">,</span> <span class="nb">array_flip</span><span class="p">(</span><span class="nv">$parameterNames</span><span class="p">));</span> <span class="c1">// 求交集</span>
+
+    <span class="k">return</span> <span class="nb">array_filter</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">is_string</span><span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>该函数中利用正则获取了路由的所有参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">parameterNames</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">parameterNames</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">parameterNames</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">parameterNames</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">compileParameterNames</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">compileParameterNames</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nb">preg_match_all</span><span class="p">(</span><span class="s1">&#39;/\{(.*?)\}/&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getDomain</span><span class="p">()</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nb">array_map</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$m</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">trim</span><span class="p">(</span><span class="nv">$m</span><span class="p">,</span> <span class="s1">&#39;?&#39;</span><span class="p">);</span>
+    <span class="p">},</span> <span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看出，获取路由参数的正则表达式采用了勉强模式，意图提取出所有的路由参数。否则，对于路由 <code class="docutils literal"><span class="pre">{foo}/{baz?}.{ext?}</span></code> ,贪婪型正则表达式 <code class="docutils literal"><span class="pre">/\{(.*)\}/</span></code> 将会匹配整个字符串，而不是各个参数分组。</p>
+<p>提取出的参数结果为：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nv">$matches</span> <span class="o">=</span> array <span class="o">(</span>
+    <span class="nv">0</span> <span class="o">=</span> array <span class="o">(</span>
+        <span class="nv">0</span> <span class="o">=</span> <span class="s2">&quot;{foo}&quot;</span>.
+        <span class="nv">1</span> <span class="o">=</span> <span class="s2">&quot;{baz?}&quot;</span>,
+        <span class="nv">2</span> <span class="o">=</span> <span class="s2">&quot;{ext?}&quot;</span>,
+    <span class="o">)</span>
+    <span class="nv">1</span> <span class="o">=</span> array <span class="o">(</span>
+        <span class="nv">0</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>.
+        <span class="nv">1</span> <span class="o">=</span> <span class="s2">&quot;baz?&quot;</span>,
+        <span class="nv">2</span> <span class="o">=</span> <span class="s2">&quot;ext?&quot;</span>,
+    <span class="o">)</span>
+<span class="o">)</span>
+</pre></div>
+</div>
+<p>得出的结果将会去除 <code class="docutils literal"><span class="pre">$matches[1]</span></code> ，并且将会删除结果中最后的 <code class="docutils literal"><span class="pre">?</span></code> 。</p>
+<p>之后，在 <code class="docutils literal"><span class="pre">matchToKeys</span></code> 函数中，</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$parameters</span> <span class="o">=</span> <span class="nb">array_intersect_key</span><span class="p">(</span><span class="nv">$matches</span><span class="p">,</span> <span class="nb">array_flip</span><span class="p">(</span><span class="nv">$parameterNames</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>获取了匹配结果与路由所有参数的交集：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$parameters</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+   <span class="nx">foo</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span>
+   <span class="nx">baz</span> <span class="o">=</span> <span class="s2">&quot;baz&quot;</span><span class="p">,</span>
+   <span class="nx">ext</span> <span class="o">=</span> <span class="s2">&quot;ext&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id5">
+<h3>9.3.1. 主域参数绑定<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">bindHostParameters</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nb">preg_match</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span><span class="o">-&gt;</span><span class="na">compiled</span><span class="o">-&gt;</span><span class="na">getHostRegex</span><span class="p">(),</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getHost</span><span class="p">(),</span> <span class="nv">$matches</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">matchToKeys</span><span class="p">(</span><span class="nb">array_slice</span><span class="p">(</span><span class="nv">$matches</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="nv">$parameters</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>步骤与路由参数绑定一致。</p>
+</div>
+<div class="section" id="id6">
+<h3>9.3.2. 替换默认值<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>进行参数绑定后，有一些可选参数并没有在 <code class="docutils literal"><span class="pre">request</span></code> 中匹配到，这时候就要用可选参数的默认值添加到变量 <code class="docutils literal"><span class="pre">parameters</span></code> 中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">replaceDefaults</span><span class="p">(</span><span class="k">array</span> <span class="nv">$parameters</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//如果匹配参数与路由默认值key相同，则使用默认值</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$parameters</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$parameters</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$value</span> <span class="o">??</span> <span class="nx">Arr</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span><span class="o">-&gt;</span><span class="na">defaults</span><span class="p">,</span> <span class="nv">$key</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// 把其它所有路由默认值添加到路由参数中</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span><span class="o">-&gt;</span><span class="na">defaults</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">[</span><span class="nv">$key</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="nv">$parameters</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$value</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$parameters</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>该数组传递给 <code class="docutils literal"><span class="pre">Route</span></code> 实例对象的 <code class="docutils literal"><span class="pre">parameters</span></code> 属性。</p>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>9.4. 匹配异常处理<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>如果 <code class="docutils literal"><span class="pre">url</span></code> 匹配失败，没有找到任何路由与请求相互匹配，就会切换 <code class="docutils literal"><span class="pre">method</span></code> 方法，以求任意路由来匹配：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">checkForAlternateVerbs</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$methods</span> <span class="o">=</span> <span class="nb">array_diff</span><span class="p">(</span><span class="nx">Router</span><span class="o">::</span><span class="nv">$verbs</span><span class="p">,</span> <span class="p">[</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getMethod</span><span class="p">()]);</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 在这里，我们将遍历除当前请求动词之外的所有动词，并检查是否有任何路由响应它们。</span>
+<span class="sd">     * 如果存在，我们将在响应字符串上使用正确的标头返回正确的错误响应。</span>
+<span class="sd">     */</span>
+    <span class="nv">$others</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$methods</span> <span class="k">as</span> <span class="nv">$method</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">is_null</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">matchAgainstRoutes</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$method</span><span class="p">),</span> <span class="nv">$request</span><span class="p">,</span> <span class="k">false</span><span class="p">)))</span> <span class="p">{</span>
+            <span class="nv">$others</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$method</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$others</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果使用其他方法匹配成功，就要判断当前方法是否是 options ，如果是则直接返回，否则报出异常：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getRouteForMethods</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$methods</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 它用于获取当前URL所支持的方法。若请求成功，则它会在HTTP头中包含一个名为“Allow”的头，值是所支持的方法，如“GET, POST”。</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;OPTIONS&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">Route</span><span class="p">(</span><span class="s1">&#39;OPTIONS&#39;</span><span class="p">,</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">(),</span> <span class="k">function</span> <span class="p">()</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$methods</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Allow&#39;</span> <span class="o">=&gt;</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="nv">$methods</span><span class="p">)]);</span>
+        <span class="p">}))</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span> <span class="c1">// 让指定路由执行该请求</span>
+    <span class="p">}</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">methodNotAllowed</span><span class="p">(</span><span class="nv">$methods</span><span class="p">);</span> <span class="c1">// 抛出异常</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的路由—路由中间件.html" class="btn btn-neutral float-right" title="10. 路由的中间件" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的路由—路由的正则编译.html" class="btn btn-neutral" title="8. 路由的正则编译" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

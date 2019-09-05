@@ -1,0 +1,578 @@
+
+#nginx 安装时编译参数
+		--prefix=/etc/nginx							//nginx 的主目录
+		--sbin-path=/usr/sbin/nginx					//nginx 执行命令
+		--modules-path=/usr/lib64/nginx/modules		//nginx 模块
+		--conf-path=/etc/nginx/nginx.conf			//nginx 配置文件
+		--error-log-path=/var/log/nginx/error.log 	//nginx 错误日志
+		--http-log-path=/var/log/nginx/access.log 	//nginx 访问日志
+		--pid-path=/var/run/nginx.pid 				//nginx pid文件记录nginx启动的pid
+		--lock-path=/var/run/nginx.lock 			//nginx 锁
+		
+		--http-client-body-temp-path=/var/cache/nginx/client_temp //temp 路径temp 文件都是临时文件
+		--http-proxy-temp-path=/var/cache/nginx/proxy_temp
+		--httpfastcgi-temp-path=/var/cache/nginx/fastcgi_temp
+		--http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp
+		--http-scgi-temp-path=/var/cache/nginx/scgi_temp            
+		--user=nginx 												//nginx 用户
+		--group=nginx 												//nginx 用户组
+		--with-cc-opt=parameters 									//通过c语言编译器编译时会有CFLAGS变量，里面会存入一些编译时优化的一些参数
+		--with-ld-opt=parameters									//和上面差不多
+		
+		
+
+
+		用什么样的方法传递用户的真实IP地址？
+	
+	
+		nginx :413 Request Entity Too Large
+		
+		用户上传文件限制 client_max_body_size;
+	
+		后端服务无响应
+		502 bad gateway
+		
+		后端服务执行超时
+		504 Gateway Time-out
+	
+#Nginx 性能优化
+		性能优化考虑的点
+		压测工具ab
+		系统与Nginx性能优化
+	
+		ab 接口压力测试工具
+			
+		yum y- install  httpd-tools;
+	
+	#使用方法
+		ab -n 2000 -c 2  http://127.0.0.1/
+		-n 总的请求次数
+		-c 并发数(每次请求的数量)
+		-k 是否开启长连接
+
+		
+		请求进度
+		Completed 2000 requests
+		Completed 4000 requests
+		Completed 6000 requests
+		Completed 8000 requests
+		Completed 10000 requests
+		Completed 12000 requests
+		Completed 14000 requests
+		Completed 16000 requests
+		Completed 18000 requests
+		Completed 20000 requests
+		Finished 20000 requests
+		
+		服务器
+		Server Software:        nginx
+		
+		请求的地址
+		Server Hostname:        192.168.0.106
+		请求的端口
+		Server Port:            80
+		压力测试的路径
+		Document Path:          /phpinfo.php
+		文件的大小
+		Document Length:        88646 bytes
+		
+		
+		并发级别
+		Concurrency Level:      200
+		
+		总共需要的时间
+		Time taken for tests:   18.735 seconds
+		
+		总的请求数量
+		Complete requests:      20000
+		失败的数量
+		Failed requests:        12645
+		(Connect: 0, Receive: 0, Length: 12645, Exceptions: 0)
+		Write errors:           0
+		Non-2xx responses:      11887
+		Total transferred:      724333254 bytes
+		HTML transferred:       721157412 bytes
+		
+		每秒有多少个请求（重要的数值）
+		Requests per second:    1067.51 [#/sec] (mean)
+		
+		一个请求需要用到的时间（客户端访问服务端）
+		Time per request:       187.352 [ms] (mean)
+		
+		一个请求需要用到的时间（服务端处理这个请求的时间）
+		Time per request:       0.937 [ms] (mean, across all concurrent requests)
+		
+		传输的速率
+		Transfer rate:          37755.58 [Kbytes/sec] received
+
+
+
+
+#文件句柄
+		linux\Unix 一切皆文件，文件句柄就是一个索引
+	
+#设置方式
+		系统全局性修改，用户局部性修改，进程局部性修改
+		
+		#设置文件句柄
+		vim /etc/security/limits.conf
+	
+			#*               soft    core            0
+			#*               hard    rss             10000
+			#@student        hard    nproc           20
+			#@faculty        soft    nproc           20
+			#@faculty        hard    nproc           50
+			#ftp             hard    nproc           0
+			#@student        -       maxlogins       4
+			
+			# End of file
+			
+			#*表示全局
+			# root 是用户  soft:是超过这个数字是不会受到系统的限制
+			# hard 如果超过这个数字时系统就要开始限制
+			root soft nproc  65535
+			root hard nproc  65535
+			*    soft nofile 65535
+			*    hard nofile 65535
+	
+	#Nginx 针对进程文件句柄的限制		
+		#文件描述符数量(针对进程文件句柄的限制)
+		worker_rlimit_nofile 51200;
+		
+	#CPU 的亲和
+
+		把进程通常不会在处理器之间频繁迁移进程迁移频率小，减少性能损耗.
+		
+		
+		
+		#启动进程，通常设置成和cpu的数量相等。相当于 cpu的核心数
+		worker_processes 8; 
+		
+		把每一个进程绑定到一个cpu核心上
+		#worker_cpu_affinity 0000000000000001 0000000000000010 0000000000000100 0000000000001000 0000000000010000 0000000000100000 0000000001000000 0000000010000000 	
+		
+		但是上面的配置是比较麻烦的所以nginx 1.9版本以后出来了 auto 配置这和上面是一样的效果
+		worker_cpu_affinity auto;
+		
+		
+		
+		
+	#统计CPU的数量
+		cat /proc/cpuinfo|grep "physical id" | sort|uniq|wc -l
+		
+	#统计每个CPU的核心
+		cat /proc/cpuinfo|grep "cpu cores" |uniq
+		
+	
+	#查看nginx使用的是哪个cpu
+		-eo :输出nginx这个进程
+		pid :nginx的pid
+		args :nginx的进程名
+		psr :是他使用的cpu是哪一个
+		ps -eo pid,args,psr |grep [n]ginx
+		
+		
+	#基于Nginx架构的安全篇
+		1 常见的恶意行为
+		2 常见的应用层攻击手段
+		3 Nginx 防攻击策略
+		4 场景:Nginx+LUA的安全waf防火墙
+			
+		1 常见的恶意行为
+			爬虫行为和恶意抓取,资源盗用
+			基础的防盗链功能-目的不让恶意用户能轻易的爬取网址对外数据
+			secure_link_module 对数据安全性的提高加密验证和失效性,适合如核心重要数据
+			access_module 对后台,部分用户服务的数据提供IP防控
+			
+		2 常用的攻击手段
+			后台密码撞库-通过猜测密码字典不断的对后台系统登录性尝试,获取后台登录密码
+			方法一 后台登录密码的复杂度
+			方法二 access_module-对后台提供IP防控
+			方法三 预警机制
+			
+			
+			文件上传漏洞-利用这些可以上传的接口将恶意代码植入到服务器中,再通过url区访问以执行代码
+			
+			文件上传漏洞
+			http://www.imooc.com/upload/1.jpg/1.php
+			Nginx 将1.jpg 作为php代码执行
+			
+			location ^~ /upload{
+				root /opt/app/images;
+				#如果文件上传的是以php结尾的就返回403;
+				if($request_filename ~*(.*)\.php);
+				return 403;
+			}
+			
+			SQL注入-利用未过滤/未审核用户输入的攻击方法,让应用运行本部应该运行的SQL代码
+			
+			
+		#nginx+LUA防火墙	
+			拦载Cookie类型攻击
+			拦载异常post请求
+			拦载cc攻击
+			拦载URL
+			拦载arg
+			
+		
+		#Nginx安装lua支持
+		
+			需要LuaJIT-2.0.4.tar.gz，ngx_devel_kit，lua-nginx-module
+
+			1.下载安装LuaJIT-2.0.4.tar.gz
+			wget -c http://luajit.org/download/LuaJIT-2.0.4.tar.gz
+			
+			tar xzvf LuaJIT-2.0.4.tar.gz
+			
+			cd LuaJIT-2.0.4
+			
+			make install PREFIX=/usr/local/luajit
+			
+			注意环境变量!
+			
+			export LUAJIT_LIB=/usr/local/luajit/lib
+			
+			export LUAJIT_INC=/usr/local/luajit/include/luajit-2.0
+			
+			2.下载解压ngx_devel_kit
+			wget https://github.com/simpl/ngx_devel_kit/archive/v0.3.0.tar.gz
+			tar -xzvf v0.3.0.tar.gz
+			
+			3.下载解压lua-nginx-module
+			wget https://github.com/openresty/lua-nginx-module/archive/v0.10.11.tar.gz
+			
+			tar -xzvf v0.10.11.tar.gz
+			
+			4.下载安装nginx-1.10.3.tar.gz
+			wget http://nginx.org/download/nginx-1.14.0.tar.gz
+			
+			tar -xzvf nginx-1.14.0.tar.gz
+			
+			cd nginx-1.14.0
+			
+			./configure --add-module=/opt/soft/ngx_devel_kit-0.3.0 --add-module=/opt/soft/lua-nginx-module-0.10.11
+		
+			注意ngx_devel_kit和lua-nginx-module以实际解压路径为准 
+			还有nginx和lua-nginx-module的版本最好是和我一样的版本，换其他版本的话可能会有部兼容
+		
+			make -j2
+
+			make install
+		
+			注：报错gcc需要安装，可以执行
+		
+			yum install -y gcc g++ gcc-c++
+			
+			依赖报错，可以执行
+
+			yum -y install zlib zlib-devel openssl openssl--devel pcre pcre-devel
+		
+		
+		5.验证
+			将nginx做成命令
+			
+			ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
+			
+			cd /usr/local/nginx/conf/
+			
+			vi nginx.conf
+			
+			lua指令方式 
+			在server 中添加一个localtion
+			
+			location /hello {
+			
+						default_type 'text/plain';
+			
+						content_by_lua 'ngx.say("hello, lua")';
+			
+					}
+			
+			lua文件方式 
+			在server 中添加一个localtion
+			
+			location /lua {
+			
+				default_type 'text/html';
+			
+				content_by_lua_file conf/lua/test.lua; #相对于nginx安装目录
+			
+			}
+			
+			test.lua文件内容 
+			ngx.say(“hello world”); 
+			启动nginx（已经做了软连接了，可以在任何目录启动） 
+			nginx 
+			注： 
+			报错nginx: error while loading shared libraries: libluajit-5.1.so.2: cannot open shared object file: No such file or directory 可以执行
+			
+			ln -s /usr/local/luajit/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2
+			
+		#安装好后下载 lua_waf 防火墙
+			
+			在github里有具体的安装步骤和配置方法
+			https://github.com/loveshell/ngx_lua_waf
+
+			 这一段应该放紫 http 端
+			
+			http{
+				...
+			
+			lua_package_path "/usr/local/nginx/conf/waf/?.lua";
+			lua_shared_dict limit 10m;
+			init_by_lua_file  /usr/local/nginx/conf/waf/init.lua; 
+			access_by_lua_file /usr/local/nginx/conf/waf/waf.lua;
+			
+				...
+			server{
+				....
+			}
+			}
+			
+			配置好后这个防火墙就可以用了，防火墙的过滤规则文件放在 wafconf/ 目录下。如果发现一些特殊符号没有被过滤可以在这些配置文件中添加规则
+			
+			config.lua 配置文件
+			
+			RulePath = "/usr/local/nginx/conf/waf/wafconf/"
+			attacklog = "on"
+			logdir = "/usr/local/nginx/logs/hack/"
+			UrlDeny="on"
+			Redirect="on"
+			CookieMatch="on"
+			postMatch="on"
+			whiteModule="on"
+			black_fileExt={"php","jsp"}
+			ipWhitelist={"127.0.0.1"}
+			ipBlocklist={"1.0.0.1"}
+			CCDeny="on"		#对访问频率做限制
+			CCrate="600/60" #每个ip每60秒访问600个 ，超过将限制访问 。（这个可以用ab来测试一些）
+
+				
+			检查 nginx 配置文件
+			nginx -tc /usr/local/nginx/conf/nginx.conf
+		
+		
+		
+	#https 服务	 讲解HTTPS协议原理，优势劣势
+	#（需要签名机构自签证书的生成）
+		生成密钥和ca证书
+		检查系统中有没有安装 openssl  
+		
+		nginx -V  查看 nginx 有没有安装 --with-http_ssl_module 模块 
+		第一步、生成key密钥
+		第二步、生成证书签名请求文件名(csr文件)
+		第三步、生成证书签名文件(CA文件)
+		
+		
+		-idea				对称加密的算法
+		-out jesonc.key     key文件
+		1024				加密的位数，位数越高精度越高
+		openssl genrsa -idea -out jesonc.key 1024;
+		
+		
+		-days 3650   		签名证书的过期时间
+		-in jesonc.csr		把csr请求文件加入进去
+		-signkey jesonc.key 和密钥文件打包起来
+		-out jesonc.crt		生成一个crt的签名文件
+		openssl x509 -req -days 3650 -in jesonc.csr -signkey jesonc.key -out jesonc.crt
+		
+		----------------------------------------------------------------------------------------------------------------------------------
+		[root@localhost nginx]# mkdir ssl_key;
+		[root@localhost nginx]# cd ssl_key;
+		[root@localhost nginx]# openssl genrsa -idea -out jesonc.key 1024;
+		Generating RSA private key, 1024 bit long modulus
+		.....................................++++++
+		..++++++
+		e is 65537 (0x10001)
+		Enter pass phrase for jesonc.key:					#这是要我们设置一个密码，此密码需要记住
+		Verifying - Enter pass phrase for jesonc.key:		#再次输入
+		[root@localhost ssl_key]# ll
+		total 0
+		-rw-r--r-- 1 root root 0 Jul  1 08:52 jesonc.key	#生成的证书
+		
+		[root@localhost ssl_key]# openssl req -new -key jesonc.key -out jesonc.csr   	#把这个key文件生成一个csr证书签名请求文件
+		Enter pass phrase for jesonc.key:												#把刚才的密码输入一遍
+		You are about to be asked to enter information that will be incorporated
+		into your certificate request.
+		What you are about to enter is what is called a Distinguished Name or a DN.
+		There are quite a few fields but you can leave some blank
+		For some fields there will be a default value,
+		If you enter '.', the field will be left blank.
+		-----
+		Country Name (2 letter code) [XX]:CN											#这部分需要按第三方公司给的资料填写的一些信息。在这里因为没有条件所以就只好自己想一个了
+		State or Province Name (full name) []:beijing
+		Locality Name (eg, city) [Default City]:beijing
+		Organization Name (eg, company) [Default Company Ltd]:CN
+		Organizational Unit Name (eg, section) []:imooc
+		Common Name (eg, your name or your server's hostname) []:jeson.t.imooc.io
+		Email Address []:jesonc@imooc.com
+		
+		Please enter the following 'extra' attributes
+		to be sent with your certificate request
+		A challenge password []:														#这个要填写的密码是将来如果csr需要更改的时候需要用到的密码，如果要求不是这么高的情况向可以为空
+		An optional company name []:imooc
+		[root@localhost ssl_key]# ll
+		total 8
+		-rw-r--r-- 1 root root 729 Jul  1 09:14 jesonc.csr								#证书签名请求文件(接下来我们需要把这两个文件打包发送给签名机构)
+		-rw-r--r-- 1 root root 959 Jul  1 09:07 jesonc.key								#但是这里我们是自签名所以我们可以基于它来建立一个自己的签名证书
+		[root@localhost ssl_key]# openssl x509 -req -days 3650 -in jesonc.csr -signkey jesonc.key -out jesonc.crt
+		Signature ok
+		subject=/C=CN/ST=beijing/L=beijing/O=CN/OU=imooc/CN=jeson.t.imooc.io/emailAddress=jesonc@imooc.com
+		Getting Private key
+		Enter pass phrase for jesonc.key:												#输入刚刚设置好的密钥文件
+		[root@localhost ssl_key]# ll
+		total 12
+		-rw-r--r-- 1 root root 944 Jul  1 09:34 jesonc.crt
+		-rw-r--r-- 1 root root 729 Jul  1 09:14 jesonc.csr
+		-rw-r--r-- 1 root root 959 Jul  1 09:07 jesonc.key
+
+		----------------------------------------------------------------------------------------------------------------------------------
+		
+	Nginx 的HTTPS语法配置
+		Syntax:ssl on | off;   #on 表示开启 默认是off
+		Default:ssl off;
+		Context:http,server
+		
+		Syntax:ssl_certificate file;
+		Default:--
+		Context:http,server
+		
+		Syntax:ssl_certificate_key file;
+		Default:--
+		Context:http,server
+		
+		
+
+		
+		
+		在nginx 虚拟机里面配置 https 
+		
+		server{
+		
+				listen 443; 	#https 默认监听的是443端口
+				server_name 192.168.0.106  binggg.io;
+				ssl on;			#打开https
+				ssl_certificate  /usr/local/nginx/ssl_key/jesonc.crt;	#证书签名文件请求的位置
+				ssl_certificate_key /etc/nginx/ssl_key/jesonc.key;		#密码文件
+				#ssl_certificate_key /usr/local/nginx/ssl_key/jesonc_nopass.key;
+				index index.html index.htm;
+				location /{
+						root /home/wwwroot;
+				}
+		}  
+		
+		配置好 nginx 配置文件后继续
+		
+		----------------------------------------------------------------------------------------------------------------------------------
+		
+		[root@localhost vhost]# nginx -s stop -c /usr/local/nginx/conf/nginx.conf		#关闭nginx
+		Enter PEM pass phrase:															#如果刚才的密码
+		[root@localhost vhost]# nginx  -c /usr/local/nginx/conf/nginx.conf
+		Enter PEM pass phrase:															#也需要密码		
+		[root@localhost vhost]# netstat -luntp|grep 443									#查看443是否被监听
+		tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN      20948/nginx: master 
+		[root@localhost vhost]# 
+		
+		----------------------------------------------------------------------------------------------------------------------------------
+	
+	#https 服务	 讲解HTTPS协议原理，优势劣势
+	#（配置苹果要求的证书）	
+		服务器所有的链接使用TLS1.2以上版本（openssl 1.0.2）
+		HTTPS证书必须使用SHA256以上哈希算法签名
+		HTTPS证书必须使用RSA2048位或ECC 256位以上公钥算法
+		使用前向加密技术
+		rsa:2048			设置2048位
+		-sha256				sha 设置256
+		-keyout				keyout 会同时生成一个jesonc.key 对应于上面单独生成的 jesonc.key 所以这次不需要输入任何密码
+		
+		openssl req -days 36500 -x509 -sha256 -nodes -newkey rsa:2048 -keyout jesonc.key -out jesonc_apple.crt
+		
+		想要单独生成一个文件省掉输入密码的方法（但最少还是要输入一次）
+		openssl rsa -in  ./jesonc.key  -out ./jesoncu_nopas.key
+		
+		因为刚才已经生成过 key 文件和  csr 文件所以现在不需要在生成一次(但需要把刚才的crt文件删除)
+	
+		----------------------------------------------------------------------------------------------------------------------------------
+	
+		[root@localhost vhost]# openssl req -days 36500 -x509 -sha256 -nodes -newkey rsa:2048 -keyout jesonc.key -out jesonc_apple.crt
+		t jesonc.key -out jesonc_apple.crt
+		Generating a 2048 bit RSA private key
+		......+++
+		................................................................+++
+		writing new private key to 'jesonc.key'
+		-----
+		You are about to be asked to enter information that will be incorporated
+		into your certificate request.
+		What you are about to enter is what is called a Distinguished Name or a DN.
+		There are quite a few fields but you can leave some blank
+		For some fields there will be a default value,
+		If you enter '.', the field will be left blank.
+		-----
+		Country Name (2 letter code) [XX]:CN											#因这是自谦所以可以随意一点自己想着来
+		State or Province Name (full name) []:beijing
+		Locality Name (eg, city) [Default City]:beijing
+		Organization Name (eg, company) [Default Company Ltd]:CN
+		Organizational Unit Name (eg, section) []:imooc
+		Common Name (eg, your name or your server's hostname) []:jeson.t.imooc.io
+		Email Address []:jesonc@imooc.com
+		
+		Please enter the following 'extra' attributes
+		to be sent with your certificate request
+		A challenge password []:														#这个要填写的密码是将来如果csr需要更改的时候需要用到的密码，如果要求不是这么高的情况向可以为空
+		An optional company name []:imooc
+		[root@localhost ssl_key]# ll
+		total 12
+		-rw-r--r-- 1 root root 1399 Jul  1 11:20 jesonc_apple.crt
+		-rw-r--r-- 1 root root 729 Jul  1 09:14 jesonc.csr		
+		-rw-r--r-- 1 root root 959 Jul  1 09:07 jesonc.key		
+		[root@localhost vhost]# nginx -tc /usr/local/nginx/conf/nginx.conf
+		nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok
+		nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful
+		[root@localhost vhost]# nginx -s reload -c /usr/local/nginx/conf/nginx.conf
+		[root@localhost vhost]# netstat -luntp|grep 443
+		tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN      20948/nginx: master 
+		[root@localhost vhost]# 
+
+	
+		----------------------------------------------------------------------------------------------------------------------------------
+	
+	#https 服务的优化
+		方法一、激活keepalive长链接
+		方法二、设置ssl session缓存
+
+	
+		在nginx 虚拟机里面配置 https 
+		
+		server{
+				keepalive_timeout 100;(优化)
+				listen 443; 	#https 默认监听的是443端口
+				server_name 192.168.0.106  binggg.io;
+				ssl on;			#打开https
+				ssl_session_cache shared:SSL:10m;  #设置共享缓存(优化)
+				ssl_session_timeout 10m;  		   #设置session过期(优化)
+				ssl_certificate  /usr/local/nginx/ssl_key/jesonc.crt;	#证书签名文件请求的位置
+				ssl_certificate_key /etc/nginx/ssl_key/jesonc.key;		#密码文件
+				#ssl_certificate_key /usr/local/nginx/ssl_key/jesonc_nopass.key;
+				index index.html index.htm;
+				location /{
+						root /home/wwwroot;
+				}
+		}  
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

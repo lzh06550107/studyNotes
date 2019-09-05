@@ -1,0 +1,102 @@
+********
+基本的密钥加密
+********
+秘密密钥加密术仅在通信的目标参与者拥有相同的密钥时使用。 这可能是共享密码（请参阅第8章）或 ``Diffie Hellman`` 密钥协议（请参阅第9章）的结果。
+
+在决定是否使用某个功能之前，请检查 `快速参考 <https://paragonie.com/blog/2017/06/libsodium-quick-reference-quick-comparison-similar-functions-and-which-one-use>`_ 页面，该页面说明每个功能的作用以及每个函数的使用位置。
+
+要查看旧的 ``API`` 文档， `请点击此处 <https://github.com/paragonie/pecl-libsodium-doc/blob/v1/chapters/04-secretkey-crypto.md>`_ 。
+
+秘密密钥认证和加密
+==================
+``Libsodium`` 使得秘密密钥加密变得轻而易举。不需要了解 `加密与认证 <https://paragonie.com/blog/2015/05/using-encryption-and-authentication-correctly>`_ 的细节，只需要知道两个函数。
+
+加密一个消息
+------------
+
+.. code-block:: php
+
+    <?php
+    string sodium_crypto_secretbox(string $plaintext, string $nonce, string $key)
+
+该操作：
+
+- 使用密钥和随机数加密消息以保密。
+- 计算认证标签。该标签用于确保消息在解密之前未被篡改。
+
+单个密钥既用于加密/签名，也用于验证/解密消息。出于这个原因，将密钥保密至关重要。
+
+使用相同的密钥加密，但使用两个不同的随机数的相同消息将产生两个完全不同的密文。
+
+随机数不必是保密的，但永远不应该在相同的密钥中重复使用。生成随机数的最简单方法是使用 ``random_bytes()`` 。
+
+.. code-block:: php
+
+    <?php
+    // Generating your encryption key
+    $key = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+
+    // Using your key to encrypt information
+    $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+    $ciphertext = sodium_crypto_secretbox('test', $nonce, $key);
+
+解密一个消息
+------------
+
+.. code-block:: php
+
+    <?php
+    string|bool sodium_crypto_secretbox_open(string $ciphertext, string $nonce, string $key)
+
+解密消息需要使用相同的随机数和用于加密的密钥。
+
+.. code-block:: php
+
+    <?php
+    $plaintext = sodium_crypto_secretbox_open($ciphertext, $nonce, $key);
+    if ($plaintext === false) {
+        throw new Exception("Bad ciphertext");
+    }
+
+秘密密钥身份认证
+================
+有时您不需要使用加密来隐藏消息的内容，但您仍然希望确保网络上没有人能够篡改它。例如，如果您想避开服务器端会话存储，而是使用 ``HTTP cookie`` 作为您的存储机制。首先，您需要一个长度为 ``SODIUM_CRYPTO_AUTH_KEYBYTES`` 的加密密钥。
+
+.. code-block:: php
+
+    <?php
+    $key = random_bytes(SODIUM_CRYPTO_AUTH_KEYBYTES);
+
+认证一个消息
+------------
+
+.. code-block:: php
+
+    <?php
+    string sodium_crypto_auth(string $message, string $key);
+
+这用给定的秘密 ``$key`` 计算给定 ``$message`` 的 `消息认证码 <https://paragonie.com/blog/2015/08/you-wouldnt-base64-a-password-cryptography-decoded>`_ (Message Authentication Code，MAC)。通常情况下，您希望在发送消息之前将 ``MAC`` 前置或后置到消息上。
+
+.. code-block:: php
+
+    <?php
+    $message = json_encode($some_array);
+    $mac = sodium_crypto_auth($message, $key);
+    $outbound = $mac . $message;
+
+验证消息的真实性
+----------------
+
+.. code-block:: php
+
+    <?php
+    bool sodium_crypto_auth_verify(string $mac, string $message, string $key)
+
+如果给定的 ``$mac`` 对于特定的 ``$message`` 和 ``$key`` 有效，则此函数返回 ``TRUE`` 。否则它返回 ``FALSE`` 。此操作是恒定时间和抵抗旁路通道的。
+
+额外信息
+========
+
+- `Libsodium 文档:秘密秘钥认证加密 <https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html>`_
+- `Libsodium 文档:秘密秘钥认证 <https://download.libsodium.org/doc/secret-key_cryptography/secret-key_authentication.html>`_
+

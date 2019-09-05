@@ -1,0 +1,1763 @@
+*****
+定制并发类
+*****
+
+介绍
+====
+Java 并发 API 提供许多接口和类来实现并发应用程序。它们提供底层（low-level）机制，如 ``Thread`` 类、 ``Runnable`` 或 ``Callable`` 接口、或 ``synchronized`` 关键字。同样也提供高级（high-level）机制，如 ``Executor`` 框架和 Java 7 发布的 ``Fork/Join`` 框架。尽管这样，你可能发现你自己开发一个程序时，没有一个 java 类能满足你的需求。
+
+在这种情况下，你也许需要基于 ``Java`` 提供的（API）实现自己定制的并发工具。基本上，你可以：
+
+- 实现一个接口提供那个接口定义的功能。比如： ``ThreadFactory`` 接口。
+- 覆盖一个类的一些方法来调整它的行为以满足你的需求。比如，覆盖 ``Thread`` 类的 ``run()`` 方法，默认情况下，它没有用并且应该被覆盖以提供一些功能。
+
+通过这个文章的指南，你将学习如何改变一些 ``Java`` 并发 ``API`` 类的行为，而不必从头开始设计一个并发框架。你可以使用这些指南作为初始点来实现你自己的定制。
+
+
+定制ThreadPoolExecutor 类
+=========================
+执行者框架（Executor framework）是一种机制，允许你将线程的创建与执行分离。它是基于 ``Executor`` 和 ``ExecutorService`` 接口及其实现这两个接口的 ``ThreadPoolExecutor`` 类。它有一个内部的线程池和提供允许你提交两种任务给线程池执行的方法。这些任务是：
+
+- ``Runnable`` 接口，实现没有返回结果的任务
+- ``Callable`` 接口，实现返回结果的任务
+
+在这两种情况下，你只有提交任务给执行者。这个执行者使用线程池中的线程或创建一个新的线程来执行这些任务。执行者同样决定任务被执行的时刻。
+
+在这个指南中，你将学习如何覆盖 ``ThreadPoolExecutor`` 类的一些方法，计算你在执行者中执行的任务的执行时间，并且将关于执行者完成它的执行的统计信息写入到控制台。
+
+.. code-block:: java
+
+	// 1.创建MyExecutor类，并指定它继承ThreadPoolExecutor类
+	public class MyExecutor extends ThreadPoolExecutor {
+
+		// 2.声明一个私有的、ConcurrentHashMap类型的属性，并参数化为String和Date类，名为startTimes
+		private ConcurrentHashMap<String, Date> startTimes;
+
+		// 3.实现这个类的构造器，使用super关键字调用父类的构造器，并初始化startTime属性
+		public MyExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
+				BlockingQueue<Runnable> workQueue) {
+			super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
+
+			startTimes = new ConcurrentHashMap<>();
+		}
+
+		// 4.覆盖shutdown()方法。将关于已执行的任务，正在运行的任务和待处理的任务信息写入到控制台。然后，使用super关键字调用父类的shutdown()方法
+		@Override
+		public void shutdown() {
+			System.out.printf("MyExecutor: Going to shutdown.\n");
+			System.out.printf("MyExecutor: Executed tasks: %d\n", getCompletedTaskCount());
+			System.out.printf("MyExecutor: Running tasks: %d\n", getActiveCount());
+			System.out.printf("MyExecutor: Pending tasks: %d\n\n", getQueue().size());
+
+			super.shutdown();
+		}
+
+		// 5.覆盖shutdownNow()方法。将关于已执行的任务，正在运行的任务和待处理的任务信息写入到控制台。然后，使用super关键字调用父类的shutdownNow()方法
+		@Override
+		public List<Runnable> shutdownNow() {
+			System.out.printf("MyExecutor: Going to shutdown.\n");
+			System.out.printf("MyExecutor: Executed tasks: %d\n", getCompletedTaskCount());
+			System.out.printf("MyExecutor: Running tasks: %d\n", getActiveCount());
+			System.out.printf("MyExecutor: Pending tasks: %d\n\n", getQueue().size());
+
+			return super.shutdownNow();
+		}
+
+		// 6.覆盖beforeExecute()方法。写入一条信息（将要执行任务的线程名和任务的哈希编码）到控制台。在HashMap中，使用这个任务的哈希编码作为key，存储开始日期
+		@Override
+		protected void beforeExecute(Thread t, Runnable r) {
+			System.out.printf("MyExecutor: A task is beginning: %s : %s\n", t.getName(), r.hashCode());
+			startTimes.put(String.valueOf(r.hashCode()), new Date());
+		}
+
+		// 7.覆盖afterExecute()方法。将任务的结果和计算任务的运行时间（将当前时间减去存储在HashMap中的任务的开始时间）的信息写入到控制台
+		@Override
+		protected void afterExecute(Runnable r, Throwable t) {
+			Future<?> result = (Future<?>) r;
+			try {
+				System.out.printf("*********************************\n");
+				System.out.printf("MyExecutor: A task is finishing.\n");
+				System.out.printf("MyExecutor: Result: %s\n", result.get());
+				Date startDate = startTimes.remove(String.valueOf(r.hashCode()));
+				Date finishDate = new Date();
+				long diff = finishDate.getTime() - startDate.getTime();
+				System.out.printf("MyExecutor: Duration: %d\n", diff);
+				System.out.printf("*********************************\n\n");
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	// 8.创建一个SleepTwoSecondsTask类，它实现参数化为String类的Callable接口。实现call()方法。令当前线程睡眠2秒，返回转换为String类型的当前时间
+	public class SleepTwoSecondsTask implements Callable<String> {
+
+		@Override
+		public String call() throws Exception {
+			TimeUnit.SECONDS.sleep(2);
+			return new Date().toString();
+		}
+	}
+
+	// 9.实现这个例子的主类，通过创建Main类，并实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 10.创建一个MyExecutor对象，名为myExecutor
+			MyExecutor myExecutor = new MyExecutor(2, 4, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<Runnable>());
+
+			// 11.创建一个参数化为String类的Future对象的数列，用于存储你将提交给执行者的任务的结果对象
+			List<Future<String>> results = new ArrayList<>();
+
+			// 12.提交10个Task对象
+			for (int i = 0; i < 10; i++) {
+				SleepTwoSecondsTask task = new SleepTwoSecondsTask();
+				Future<String> result = myExecutor.submit(task);
+				results.add(result);
+			}
+
+			// 13.使用get()方法，获取前5个任务的执行结果。将这些信息写入到控制台
+			for (int i = 0; i < 5; i++) {
+				try {
+					String result = results.get(i).get();
+					System.out.printf("Main: Result for Task %d : %s\n", i, result);
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+
+			// 14.使用shutdown()方法结束这个执行者的执行
+			myExecutor.shutdown();
+
+			// 15.使用get()方法，获取后5个任务的执行结果。将这些信息写入到控制台
+			for (int i = 5; i < 10; i++) {
+				try {
+					String result = results.get(i).get();
+					System.out.printf("Main: Result for Task %d : %s\n", i, result);
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+
+			try {
+				// 16.使用awaitTermination()方法等待这个执行者的完成
+				myExecutor.awaitTermination(1, TimeUnit.DAYS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 17.写入一条信息表明这个程序执行的结束
+			System.out.printf("Main: End of the program.\n");
+		}
+	}
+
+在这个指南中，我们已经通过继承 ``ThreadPoolExecutor`` 类和覆盖它的 4 个方法来实现我们自己定制的执行者。我们用 ``beforeExecute()`` 和 ``afterExecute()`` 方法来计算任务的执行时间。 ``beforeExecute()`` 方法是在任务执行之前被执行的。在这种情况下，我们使用 ``HashMap`` 来存储任务的开始（执行）时间。 ``afterExecute()`` 方法是在任务执行之后被执行的。你可以从 ``HashMap`` 中获取已完成任务的 ``startTime`` （开始执行时间），然后，计算实际时间和那个时间（ ``startTime`` ）的差异来获取任务的执行时间。你也覆盖了 ``shutdown()`` 和 ``shutdownNow()`` 方法，将关于在执行者中已执行的任务的统计信息写入到控制台：
+
+- 对于已执行的任务，使用 ``getCompletedTaskCount()`` 方法（获取）。
+- 对于正在运行的任务，使用 ``getActiveCount()`` 方法（获取）。
+
+对于待处理任务，使用执行者存储待处理任务的阻塞队列的 ``size()`` 方法（获取）。 ``SleepTwoSecondsTask`` 类，实现 ``Callable`` 接口，令它的执行线程睡眠 2 秒。 ``Main`` 类，使用它向你的执行者提交 10 个任务和演示其他类的特性。
+
+执行这个程序，你将看到这个程序如何显示正在运行的每个任务的时间跨度，和根据调用 ``shutdown()`` 方法统计执行者。
+
+
+实现一个优先级制的执行者类
+========================
+在 Java 并发 API 的第一个版本中，你必须创建和运行应用程序中的所有线程。在 Java 版本 5 中，随着执行者框架（ Executor framework ）的出现，对于并发任务的执行，一个新的机制被引进。
+
+使用执行者框架（ Executor framework ），你只要实现你的任务并把它们提交给执行者。这个执行者负责执行你的任务的线程的创建和执行。
+
+在内部，一个执行者使用一个阻塞队列来存储待处理任务。以任务到达执行者的顺序来存储。一个可能的替代就是使用一个优先级列队来存储新的任务。这样，如果一个高优先级的新任务到达执行者，它将比其他已经在等待一个线程来执行它们，且低优先级的任务先执行。
+
+在这个指南中，你将学习如何实现一个执行者，它将使用优先级队列来存储你提交执行的任务。
+
+.. code-block:: java
+
+	// 1.创建一个MyPriorityTask类，它实现Runnable接口和参数化为MyPriorityTask类的Comparable接口
+	class MyPriorityTask implements Runnable, Comparable<MyPriorityTask> {
+
+		// 2.声明一个私有的、int类型的属性priority
+		private int priority;
+		// 3.声明一个私有的、String类型的属性name
+		private String name;
+
+		// 4.实现这个类的构造器，并初始化它的属性
+		public MyPriorityTask(String name, int priority) {
+			this.name = name;
+			this.priority = priority;
+		}
+
+		// 5.实现一个方法来返回priority属性的值
+		public int getPriority() {
+			return priority;
+		}
+
+		// 6.实现声明在Comparable接口中的compareTo()方法。它接收一个MyPriorityTask对象作为参数，比较这两个对象（当前对象和参数对象）的优先级。让优先级高的任务先于优先级低的任务执行
+		@Override
+		public int compareTo(MyPriorityTask o) {
+			if (this.getPriority() < o.getPriority()) {
+				return 1;
+			}
+
+			if (this.getPriority() > o.getPriority()) {
+				return -1;
+			}
+			return 0;
+		}
+
+		// 7.实现run()方法。令当前线程睡眠2秒
+		@Override
+		public void run() {
+			System.out.printf("MyPriorityTask: %s Priority : %d\n", name, priority);
+			try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	// 8.实现这个例子的主类，通过创建Main类，并实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 9.创建一个ThreadPoolExecutor对象，名为executor。使用参数化为Runnable接口的PriorityBlockingQueue作为执行者用来存储待处理任务的队列
+			ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 2, 1, TimeUnit.SECONDS,
+					new PriorityBlockingQueue<Runnable>());
+
+			// 10.提交4个使用循环计数器作为优先级的任务给执行者。使用execute()方法提交这些任务给执行者
+			for (int i = 0; i < 4; i++) {
+				MyPriorityTask task = new MyPriorityTask("Task " + i, i);
+				executor.execute(task);
+			}
+
+			// 11.令当前线程睡眠1秒
+			try {
+				TimeUnit.SECONDS.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			// 12.提交4个额外的，使用循环计数器作为优先级的任务给执行者。使用execute()方法提交这些任务给执行者
+			for (int i = 4; i < 8; i++) {
+				MyPriorityTask task = new MyPriorityTask("Task " + i, i);
+				executor.execute(task);
+			}
+
+			// 13.使用shutdown()方法关闭这个执行者
+			executor.shutdown();
+
+			try {
+				// 14.使用awaitTermination()方法等待这个执行者的结束
+				executor.awaitTermination(1, TimeUnit.DAYS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 15.写入一条信息表明这个程序的结束
+			System.out.printf("Main: End of the program.\n");
+		}
+	}
+
+**规则是：当前和其他对象比较，如果compare方法返回负数，那么在队列里面的优先级就比较搞。即当插入元素时，PriorityBlockingQueue使用compareTo()方法来决定插入元素的位置。元素越大越靠后。**
+
+很容易将执行者转换成一个基于优先级的（执行者）。你只要传入一个参数化为 ``Runnable`` 接口的 ``PriorityBlockingQueue`` 对象作为参数。但是，使用执行者时，你应该知道存储在优先级列队中的所有对象必须实现 ``Comparable`` 接口。
+
+你已经实现了 ``MyPriorityTask`` 类，（作为一个任务）它实现了 ``Runnable`` 接口和 ``Comparable`` 接口，它被存储在优先级队列中。这个类有一个 ``Priority`` 属性，用来存储任务的优先级。如果一个任务的这个属性有更高的值，它将被更早的执行。 ``compareTo()`` 方法决定任务在优先级列队中的顺序。在 ``Main`` 类，你提交 8 个不同优先级的任务给执行者。你提交给执行者的第一个任务将第一个被执行。由于执行者闲置的，正在等待任务被执行，当第一个任务到达执行者时，执行者立即执行它们。你已经创建有 2 个执行线程的执行者，所以，前两个任务将第一个被执行。然后，剩下的任务将按它们的优先级来执行。
+
+你可以使用任何实现 ``BlockingQueue`` 接口（的队列）来配置执行者。 ``DelayQueue`` 是一个有趣的实现。这个类被用来存储延迟激活（delayed activation）的元素。它提供只返回活动对象的方法。你可以使用这个类来实现自己版本的 ``ScheduledThreadPoolExecutor`` 类。
+
+实现ThreadFactory接口来生成自定义线程
+===================================
+在面向对象编程的世界中，工厂模式（factory pattern）是一个被广泛使用的设计模式。它是一个创建模式，它的目的是开发一个类，这个类的使命是创建一个或多个类的对象。然后，当我们要创建一个类的一个对象时，我们使用这个工厂而不是使用 ``new`` 操作。
+
+使用这个工厂，我们集中对象的创建，获取容易改变创建对象的类的优势，或我们创建这些对象的方式，容易限制创建对象的有限资源。比如，我们只能有一个类型的 N 个对象，就很容易产生关于对象创建的统计数据。
+
+Java 提供 ``ThreadFactory`` 接口，用来实现一个 ``Thread`` 对象工厂。 Java 并发 API 的一些高级工具，如执行者框架（ Executor framework ）或 ``Fork/Join`` 框架（ Fork/Join framework ），使用线程工厂创建线程。
+
+在 Java 并发 API 中的其他工厂模式的例子是 ``Executors`` 类。它提供许多方法来创建不同类型的 ``Executor`` 对象。
+
+在这个指南中，你将继承 ``Thread`` 类，以添加新功能，并且你将实现一个线程工厂来创建这个新类的线程。
+
+.. code-block:: java
+
+	// 1.创建一个继承Thread类的MyThread类
+	public class MyThread extends Thread {
+
+		// 2.声明3个私有的、Date类型的属性：creationDate、startDate和finishDate
+		private Date creationDate;
+		private Date startDate;
+		private Date finishDate;
+
+		// 3.实现这个类的构造器。它接收名称和要执行的Runnable对象参数。存储线程的创建日期
+		public MyThread(Runnable target, String name) {
+			super(target, name);
+			setCreationDate();
+		}
+
+		// 4.实现run()方法。存储线程的开始时间，调用父类的run()方法，存储执行的结束时间
+		@Override
+		public void run() {
+			setStartDate();
+			super.run();
+			setFinishDate();
+		}
+
+		// 5.实现一个方法用来设置creationDate属性值
+		public void setCreationDate() {
+			creationDate = new Date();
+		}
+
+		// 6.实现一个方法用来设置startDate属性值
+		public void setStartDate() {
+			startDate = new Date();
+		}
+
+		// 7.实现一个方法用来设置finishDate属性值
+		public void setFinishDate() {
+			finishDate = new Date();
+		}
+
+		// 8.实现getExecutionTime()方法，用来计算线程的执行时间（结束日期与开始日期之差）
+		public long getExecutionTime() {
+			return finishDate.getTime() - startDate.getTime();
+		}
+
+		// 9.覆盖toString()方法，返回线程的创建日期和执行日期
+		@Override
+		public String toString() {
+			StringBuilder buffer = new StringBuilder();
+			buffer.append(getName());
+			buffer.append(": ");
+			buffer.append(" Creation Date: ");
+			buffer.append(creationDate);
+			buffer.append(" : Running time: ");
+			buffer.append(getExecutionTime());
+			buffer.append(" Milliseconds.");
+			return buffer.toString();
+		}
+	}
+
+	// 10.创建一个实现ThreadFactory接口的MyThreadFactory类
+	public class MyThreadFactory implements ThreadFactory {
+		// 11.声明一个私有的、int类型的属性counter
+		private int counter;
+		// 12.声明一个私有的、String类型的属性prefix
+		private String prefix;
+		// 13.实现这个类的构造器，初始化它的属性
+		public MyThreadFactory(String prefix) {
+			this.prefix = prefix;
+			counter = 1;
+		}
+
+		// 14.实现newThread()方法。创建一个MyThread对象并增加counter属性值
+		@Override
+		public Thread newThread(Runnable r) {
+			MyThread myThread = new MyThread(r, prefix + "-" + counter);
+			counter++;
+			return myThread;
+		}
+	}
+
+	// 15.创建一个实现Runnable接口的MyTask类。实现run()方法，令当前线程睡眠2秒
+	public class MyTask implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	// 16.实现这个例子的主类，通过创建Main类，并实现main()方法
+	public class Main {
+		public static void main(String[] args) throws InterruptedException {
+			// 17.创建一个MyThreadFactory对象
+			MyThreadFactory myFactory = new MyThreadFactory("MyThreadFactory");
+
+			// 18.创建一个Task对象
+			MyTask task = new MyTask();
+			// 19.使用这个工厂的newThread()方法，创建一个MyThread对象来执行任务
+			Thread thread = myFactory.newThread(task);
+			// 20.启动这个线程并等待它的结束
+			thread.start();
+			thread.join();
+			// 21.使用toString()方法，写入关于线程的信息
+			System.out.printf("Main: Thread information.\n");
+			System.out.printf("%s\n", thread);
+			System.out.printf("Main: End of the example.\n");
+		}
+	}
+
+在这个指南中，你已经通过继承 ``Thread`` 类来实现自定义的 ``MyThread`` 类。这个类有 3 个属性用来存储：创建日期、执行的开始日期和执行的结束日期。你已实现 getExecutionTime() 方法，使用开始日期和结束日期属性，返回线程已执行任务的时间。最后，你已覆盖 toString() 方法来产生关于线程的信息。
+
+一旦你有自己的线程类，你已实现一个工厂来创建这个实现了 ``ThreadFactory`` 接口的类的对象。如果你要使用你的工厂作为一个独立的对象，这个接口的使用并不是强制的，但是如果你想要用这个工厂使用 Java 并发 API 的其他类，你必须通过实现这个接口来构建你的工厂。 ``ThreadFactory`` 接口只有一个方法， ``newThread()`` 方法接收一个 ``Runnable`` 对象作为参数，并且返回一个用来执行 ``Runnable`` 对象的 ``Thread`` 对象。在你的例子中，你返回一个 ``MyThread`` 对象。
+
+检查这两个类，你已实现 ``MyTask`` 类，这个类实现了 ``Runnable`` 对象。这是将在由 ``MyThread`` 对象管理的线程中执行的任务。一个 ``MyTask`` 实例令它的执行线程睡眠2秒。
+
+在这个例子的主方法中，你已使用 ``MyThreadFactory`` 工厂创建一个 ``MyThread`` 对象，用来执行一个 ``Task`` 对象。执行这个程序，你将看到一条关于开始日期和线程执行的执行时间的信息。
+
+Java 并发 API 提供 ``Executors`` 类来产生线程执行者，通常是 ``ThreadPoolExecutor`` 类的对象。你也可以使用 ``defaultThreadFactory()`` 方法，让这个类来获取 ``ThreadFactory`` 接口最基本的实现。这个方法产生的工厂所产生的基本 ``Thread`` 对象都属性同一个 ``ThreadGroup`` 对象。
+
+你可以在你的程序中使用 ``ThreadFactory`` 接口用于任何目的，不一定要与执行者框架（ Executor framework ）有关。
+
+在执行者对象中使用我们的 ThreadFactory
+====================================
+在前面的指南中，实现 ``ThreadFactory`` 接口生成自定义线程，我们引进了工厂模式和提供如何实现一个实现 ``ThreadFactory`` 接口的线程的工厂例子。
+
+执行者框架（Executor framework）是一种机制，它允许你将线程的创建与执行分离。它是基于 ``Executor`` 、 ``ExecutorService`` 接口和实现这两个接口的 ``ThreadPoolExecutor`` 类。它有一个内部的线程池和提供一些方法，这些方法允许你提交两种任务给线程池执行。这两种任务是：
+
+- 实现 ``Runnable`` 接口的类，用来实现没有返回结果的任务
+- 实现 ``Callable`` 接口的类，用来实现有返回结果的任务
+
+在执行者框架（Executor framework）的内部，它提供一个 ``ThreadFactory`` 接口来创建线程，这是用来产生新的线程。在这个指南中，你将学习如何实现你自己的线程类，用一个工厂来创建这个类的线程，及如何在执行者中使用这个工厂，所以这个执行者将执行你的线程。
+
+.. code-block:: java
+
+	public class MyTask implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public class MyThread extends Thread {
+
+		private Date creationDate;
+
+		private Date startDate;
+
+		private Date finishDate;
+
+		public MyThread(Runnable target, String name) {
+			super(target, name);
+			setCreationDate();
+		}
+
+		@Override
+		public void run() {
+			setStartDate();
+			super.run();
+			setFinishDate();
+			System.out.printf("Thread: %s\n", toString());
+		}
+
+		public void setCreationDate() {
+			creationDate = new Date();
+		}
+
+		public void setStartDate() {
+			startDate = new Date();
+		}
+
+		public void setFinishDate() {
+			finishDate = new Date();
+		}
+
+		public long getExecutionTime() {
+			long ret;
+			ret = finishDate.getTime() - startDate.getTime();
+			return ret;
+		}
+
+		@Override
+		public String toString() {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(getName());
+			buffer.append(": ");
+			buffer.append(" Creation Date: ");
+			buffer.append(creationDate);
+			buffer.append(" : Running time: ");
+			buffer.append(getExecutionTime());
+			buffer.append(" Milliseconds.");
+			return buffer.toString();
+		}
+	}
+
+	public class MyThreadFactory implements ThreadFactory {
+
+		private int counter;
+		private String prefix;
+
+		public MyThreadFactory(String prefix) {
+			this.prefix = prefix;
+			counter = 1;
+		}
+
+		@Override
+		public Thread newThread(Runnable r) {
+			MyThread myThread = new MyThread(r, prefix + "-" + counter);
+			counter++;
+			return myThread;
+		}
+	}
+
+	// 2.实现这个例子的主类，通过创建Main类，并实现mian()方法
+	public class Main {
+		public static void main(String[] args) throws InterruptedException {
+			// 3.创建一个新的MyThreadFactory对象，名为threadFactory
+			MyThreadFactory threadFactory = new MyThreadFactory("MyThreadFactory");
+
+			//  4.使用Executors类的newCachedThreadPool()方法，创建一个新的Executor对象。传入前面创建的工厂对象作为参数。这个新的Executor对象将使用这个工厂创建必需的线程，所以它将执行MyThread线程
+			ExecutorService executor = Executors.newCachedThreadPool(threadFactory);
+			// 5.创建一个新的Task对象，并使用submit()方法将它提交给执行者
+			MyTask task = new MyTask();
+			executor.submit(task);
+			// 6.使用shutdown()方法关闭这个执行者
+			executor.shutdown();
+			// 7.使用awaitTermination()方法，等待执行者的结束
+			executor.awaitTermination(1, TimeUnit.DAYS);
+			// 8.写入一条信息表明程序的结束
+			System.out.printf("Main: End of the program.\n");
+		}
+	}
+
+在前面指南（实现 ``ThreadFactory`` 接口生成自定义线程）中的它是如何工作的部分中，你可以阅读到关于 ``MyThread`` 、 ``MyThreadFactory`` 和 ``MyTask`` 工作的详细解释。
+
+在这个例子的 ``main()`` 方法中，你已使用 ``Executors`` 类的 ``newCachedThreadPool()`` 方法创建一个 ``Executor`` 对象。你已传入之前创建的工厂对象作为参数，所以已创建的 ``Executor`` 对象将使用这个工厂来创建它所需的线程，并且它将执行 ``MyThread`` 类的线程。
+
+自定义在计划的线程池内运行的任务
+==============================
+计划的线程池是 ``Executor`` 框架的基本线程池的扩展，允许你定制一个计划来执行一段时间后需要被执行的任务。 它通过 ``ScheduledThreadPoolExecutor`` 类来实现，并允许运行以下这两种任务：
+
+- ``Delayed`` 任务：这种任务在一段时间后仅执行一次。
+- ``Periodic`` 任务：这种任务在延迟后执行，然后通常周期性运行
+
+``Delayed`` 任务可以执行 ``Callable`` 和 ``Runnable`` 对象，但是 ``periodic`` 任务只能执行 ``Runnable`` 对象。全部任务通过计划池执行的都必须实现 ``RunnableScheduledFuture`` 接口。在这个指南，你将学习如何实现你自己的 ``RunnableScheduledFuture`` 接口来执行延迟和周期性任务。
+
+.. code-block:: java
+
+	// 1.  创建一个类，名为 MyScheduledTask，使名为 V 的泛型类型参数化。它扩展 FutureTask 类并实现 RunnableScheduledFuture 接口
+	public class MyScheduledTask<V> extends FutureTask<V> implements RunnableScheduledFuture<V> {
+
+	    // 2.   声明一个私有 RunnableScheduledFuture 属性，名为 task
+	    private RunnableScheduledFuture<V> task;
+	    // 3.   声明一个私有 ScheduledThreadPoolExecutor，名为 executor
+	    private ScheduledThreadPoolExecutor executor;
+	    // 4.   声明一个私有long属性，名为 period
+	    private long period;
+	    // 5.   声明一个私有long属性，名为 startDate
+	    private long startDate;
+	    // 6.   实现类的构造函数。它接收任务：将要运行的 Runnable 对象，任务要返回的 result，将被用来创建 MyScheduledTask 对象的 RunnableScheduledFuture 任务，和要执行这个任务的 ScheduledThreadPoolExecutor 对象。 调用它的父类的构造函数并储存任务和执行者属性
+	    public MyScheduledTask(Runnable runnable, V result, RunnableScheduledFuture<V> task, ScheduledThreadPoolExecutor executor) {
+	        super(runnable, result);
+	        this.task = task;
+	        this.executor = executor;
+	    }
+
+	    // 7.    实现 getDelay() 方法。如果是周期性任务且 startDate 形象的值非0，计算并返回 startDate 属性与当前日期的相差值。否则，返回储存在 task 属性的原先任务的延迟值。不要忘记你要返回结果时，要传递 time unit 作为参数哦
+	    @Override
+	    public long getDelay(TimeUnit unit) {
+	       if (!isPeriodic()) {
+	           return task.getDelay(unit);
+	       } else {
+	           if (startDate == 0) {
+	               return task.getDelay(unit);
+	           } else {
+	               Date now = new Date();
+	               long delay = startDate - now.getTime();
+	               return unit.convert(delay, TimeUnit.MILLISECONDS);
+	           }
+	       }
+	    }
+
+	    // 8.  实现 compareTo() 方法。调用原先任务的 compareTo() 方法
+	    @Override
+	    public int compareTo(Delayed o) {
+	        return task.compareTo(o);
+	    }
+
+	    // 9.  实现 isPeriodic() 方法。调用原来任务的 isPeriodic() 方法
+	    @Override
+	    public boolean isPeriodic() {
+	        return task.isPeriodic();
+	    }
+
+	    // 10. 实现方法 run()。如果这是一个周期性任务，你要用下一个执行任务的开始日期更新它的 startDate 属性。用当前日期和时间间隔的和计算它。 然后，把再次把任务添加到 ScheduledThreadPoolExecutor 对象的 queue中
+	    @Override
+	    public void run() {
+	        if (isPeriodic() && (!executor.isShutdown())) {
+	            Date now = new Date();
+	            startDate = now.getTime() + period;
+	            executor.getQueue().add(this);
+	        }
+
+	        //11.打印当前日期的信息到操控台，调用 runAndReset() 方法运行任务，然后再打印另一条关于当前日期的信息到操控台。
+	        System.out.printf("Pre-MyScheduledTask: %s\n",new Date());
+	        System.out.printf("MyScheduledTask: Is Periodic:%s\n",isPeriodic());
+	        super.runAndReset();
+	        System.out.printf("Post-MyScheduledTask: %s\n",new Date());
+	    }
+
+	    // 12. 实现 setPeriod() 方法，来确立任务的周期时间
+	    public void setPeriod(long period) {
+	        this.period = period;
+	    }
+	}
+
+	//13. 创建一个类，名为 MyScheduledThreadPoolExecutor 来实现一个运行 MyScheduledTask 任务的 ScheduledThreadPoolExecutor 对象。特别扩展 ScheduledThreadPoolExecutor 类
+	public class MyScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor {
+
+	    //14. 实现类的构造函数，只要调用它的父类的构造函数。
+	    public MyScheduledThreadPoolExecutor(int corePoolSize) {
+	        super(corePoolSize);
+	    }
+
+	//15. 实现方法 decorateTask()。它接收将要被运行的 Runnable 对象和将运行 Runnable 对象的 RunnableScheduledFuture 任务作为参数。使用这些对象来构造来创建并返回 MyScheduledTask 任务。
+	    @Override
+	    protected <V> RunnableScheduledFuture<V> decorateTask(Runnable runnable, RunnableScheduledFuture<V> task) {
+	        MyScheduledTask<V> myTask=new MyScheduledTask<V>(runnable, null, task,this);
+	        return myTask;
+	    }
+
+	//16. 覆盖方法 scheduledAtFixedRate()。调用它的父类的方法，调用它的父类的方法，  method. Call the method of its parent class, convert the returned object into a MyScheduledTask object, and establish the period of that task using the setPeriod() method.
+	    @Override
+	    public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
+	        ScheduledFuture<?> task= super.scheduleAtFixedRate(command, initialDelay, period, unit);
+	        MyScheduledTask<?> myTask=(MyScheduledTask<?>)task;
+	        myTask.setPeriod(TimeUnit.MILLISECONDS.convert(period,unit));
+	        return task;
+	    }
+	}
+
+	//17.  创建一个类，名为 Task，实现 Runnable 接口
+	public class Task implements Runnable {
+	    //18. 实现方法 run() 。在任务开始时打印一条信息，再让当前线程进入休眠2秒。最后在任务结束时，再打印另一条信息
+	    @Override
+	    public void run() {
+	        System.out.printf("Task: Begin.\n");
+	        try {
+	            TimeUnit.SECONDS.sleep(2);
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        }
+	        System.out.printf("Task: End.\n");
+	    }
+	}
+
+	//19. 创建例子的主类通过创建一个类，名为 Main 并添加 main()方法
+	public class Main {
+	    public static void main(String[] args) throws InterruptedException {
+	        //20. 创建一个 MyScheduledThreadPoolExecutor 对象，名为 executor。使用2作为参数来在池中获得2个线程
+	        MyScheduledThreadPoolExecutor executor = new MyScheduledThreadPoolExecutor(2);
+	        //21. 创建 Task 对象，名为 task。把当前日期写入操控台
+	        Task task = new Task();
+	        System.out.printf("Main: %s\n", new Date());
+	        //22. 使用 schedule() 方法发送一个延迟任务给执行者。此任务在延迟一秒后运行
+	        executor.schedule(task, 1, TimeUnit.SECONDS);
+	        //23. 让主线程休眠3秒
+	        TimeUnit.SECONDS.sleep(3);
+	        //24. 创建另一个 Task 对象。再次在操控台打印当前日期
+	        task = new Task();
+	        System.out.printf("Main: %s\n", new Date());
+	        //25. 使用方法 scheduleAtFixedRate()发送一个周期性任务给执行者。此任务在延迟一秒后被运行，然后每3秒执行
+	        executor.scheduleAtFixedRate(task, 1, 3, TimeUnit.SECONDS);
+	        //26. 让主线程休眠10秒
+	        TimeUnit.SECONDS.sleep(10);
+	        //27. 使用 shutdown() 方法关闭执行者。使用 awaitTermination() 方法等待执行者的完结
+	        executor.shutdown();
+	        executor.awaitTermination(1, TimeUnit.DAYS);
+	        //28. 写信息到操控台表明任务结束
+	        System.out.printf("Main: End of the program.\n");
+	    }
+	}
+
+在这个指南，你实现了 ``MyScheduledTask`` 类实现在 ``ScheduledThreadPoolExecutor`` 执行者中执行的自定义任务。这个类扩展 ``FutureTask`` 类并实现了 ``RunnableScheduledFuture`` 接口。它实现 ``RunnableScheduledFuture`` 接口， 因为在计划的执行者中执行的全部任务都一定要实现 这个接口，并扩展了 ``FutureTask`` 类，因为这个类提供了能有效的实现在 ``RunnableScheduledFuture`` 接口声明的方法。 之前提到的全部接口和类都被参数化成任务要返回的数据类型。
+
+为了在计划的执行者中使用 ``MyScheduledTask`` 任务，要重写在 ``MyScheduledThreadPoolExecutor`` 类的 ``decorateTask()`` 方法。这个类扩展 ``ScheduledThreadPoolExecutor`` 执行者和它的方法提供一个把 ``ScheduledThreadPoolExecutor`` 执行者默认的计划任务转换成 ``MyScheduledTask`` 任务来实现的机制。所以，当你实现你的版本的计划任务时，你必须实现你的版本的计划的执行者。
+
+``decorateTask()`` 方法只是简单的创建了新的带有参数的 ``MyScheduledTask`` 对象：将要在任务中执行的 ``Runnable`` 对象; 将被任务返回结果对象，在这个例子，任务将不会返回结果，所以你要使用 ``null`` 值；原来执行 ``Runnable`` 对象的任务，新的对象将在池中代替这个任务；和
+将执行任务的执行者，在这个例子，你使用 ``this`` 关键词指向创建这个任务的执行者。
+
+``MyScheduledTask`` 类可以执行延迟和周期性任务。你已经实现了有全部必须的算法可以执行这2种任务的方法。他们是 ``getDelay()`` 和 ``run()`` 方法。
+
+``getDelay()`` 方法被计划的执行者调用来确认它是否需要运行任务。此方法对延迟任务和周期任务的响应是不同的。在之前提到的， ``MyScheduledClass`` 类的构造函数接收 原先的将要执行 ``Runnable`` 对象的 ``ScheduledRunnableFuture`` 对象， 并储存它作为类的属性来获取它的方法和它的数据。当我们要运行延迟任务时， ``getDelay()`` 方法返回原先任务的延迟，但是在周期任务的例子中， ``getDelay()`` 方法返回 ``startDate`` 属性值与当前时间的相差值。
+
+``run()`` 方法是用来执行任务的。周期性任务的一个特别之处是你必须把下一次任务的执行作为一个新的任务放入到执行者的 ``queue`` 中，如果你要再次运行任务的话。所以，如果你执行周期性任务，你确定 ``startDate`` 属性值通过把当前时间和任务的执行周期相加，然后把任务储存在执行者的 ``queue`` 中。 ``startDate`` 属性储存下一次任务将开始运行的时间。然后，使用 ``FutureTask`` 类提供的 ``runAndReset()`` 方法来运行任务。 在这个例子的延迟任务由于他们仅仅执行一次，就不用把他们放入执行者的 ``queue`` 中了。
+你必须要注意如果执行者已经关闭。在这个例子，你不不需要再次把周期性任务储存进执行者的 ``queue`` 。
+
+最后，你重写了在 ``MyScheduledThreadPoolExecutor`` 类的 ``scheduleAtFixedRate()`` 方法。我们之前提到的，对于周期任务，你要使用任务的周期来确定 ``startDate`` 属性值，但是你还没有初始这个周期呢。你必须重写此方法接收周期作为参数，然后传递给 ``MyScheduledTask`` 类这样它才能使用。
+
+有了 ``Task`` 类例子总是完成了，它实现 ``Runnable`` 接口，也是在计划的执行者中运行的任务。这个例子的主类创建了 ``MyScheduledThreadPoolExecutor`` 执行者，然后给他们发送了以下2个任务：
+
+- 一个延迟任务，在当前时间过一秒后运行
+- 一个周期任务，在当前时间过一秒后运行，接着每隔3秒运行
+
+``ScheduledThreadPoolExecutor`` 类提供了另一个版本的 ``decorateTask()`` 方法，它接收 ``Callable`` 对象作为参数来代替 ``Runnable`` 对象。
+
+实现ThreadFactory接口来生成自定义线程给Fork/Join框架
+==================================================
+``Fork/Join`` 框架是 Java7 中最有趣的特征之一。它是 ``Executor`` 和 ``ExecutorService`` 接口的一个实现，允许你执行 ``Callable`` 和 ``Runnable`` 任务而不用管理这些执行线程。
+
+这个执行者面向执行能被拆分成更小部分的任务。主要组件如下：
+
+- 一个特殊任务，实现 ``ForkJoinTask`` 类
+- 两种操作，将任务划分成子任务的 ``fork`` 操作和等待这些子任务结束的 ``join`` 操作
+- 一个算法，优化池中线程的使用的 work-stealing 算法。当一个任务正在等待它的子任务（结束）时，它的执行线程将执行其他任务（等待执行的任务）。
+
+``ForkJoinPool`` 类是 ``Fork/Join`` 的主要类。在它的内部实现，有如下两种元素：
+
+- 一个存储等待执行任务的列队。
+- 一个执行任务的线程池
+
+在这个指南中，你将学习如何实现一个在 ``ForkJoinPool`` 类中使用的自定义的工作者线程，及如何使用一个工厂来使用它。
+
+.. code-block:: java
+
+	// 1.创建一个继承ForkJoinWorkerThread类的MyWorkerThread类
+	public class MyWorkerThread extends ForkJoinWorkerThread {
+
+	    // 2.声明和创建一个参数化为Integer类的ThreadLocal属性，名为taskCounter
+	    private static ThreadLocal<Integer> taskCounter = new ThreadLocal<>();
+
+	    // 3.实现这个类的构造器
+	    protected MyWorkerThread(ForkJoinPool pool) {
+	        super(pool);
+	    }
+
+	    // 4.重写onStart()方法。调用父类的这个方法，写入一条信息到控制台。设置当前线程的taskCounter属性值为0
+	    @Override
+	    protected void onStart() {
+	        super.onStart();
+	        System.out.printf("MyWorkerThread %d: Initializing task counter.\n", getId());
+	        taskCounter.set(0);
+	    }
+
+	    // 5.重写onTermination()方法。写入当前线程的taskCounter属性值到控制台
+	    @Override
+	    protected void onTermination(Throwable exception) {
+	        System.out.printf("MyWorkerThread %d: %d\n", getId(), taskCounter.get());
+	        super.onTermination(exception);
+	    }
+
+	    // 6.实现addTask()方法。递增taskCounter属性值
+	    public void addTask() {
+	        int counter = taskCounter.get().intValue();
+	        counter++;
+	        taskCounter.set(counter);
+	    }
+	}
+
+	// 7.创建一个实现ForkJoinWorkerThreadFactory接口的MyWorkerThreadFactory类。实现newThread()方法，创建和返回一个MyWorkerThread对象
+	public class MyWorkerThreadFactory implements ForkJoinPool.ForkJoinWorkerThreadFactory {
+
+		@Override
+		public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+			return new MyWorkerThread(pool);
+		}
+	}
+
+	// 8.创建MyRecursiveTask类，它继承一个参数化为Integer类的RecursiveTask类
+	public class MyRecursiveTask extends RecursiveTask<Integer> {
+
+	    private static final long serialVersionUID = 1L;
+
+	    // 9.声明一个私有的、int类型的属性array
+	    private int array[];
+
+	    // 10.声明两个私有的、int类型的属性start和end
+	    private int start, end;
+
+	    /**
+	     * 11.实现这个类的构造器，初始化它的属性
+	     *
+	     * @param array
+	     *            Array to be summed
+	     * @param start
+	     *            Start position of the block of the array to be summed by this
+	     *            task
+	     * @param end
+	     *            End position of the block of the array to be summed by this
+	     *            task
+	     */
+	    public MyRecursiveTask(int array[], int start, int end) {
+	        this.array = array;
+	        this.start = start;
+	        this.end = end;
+	    }
+
+	    /**
+	     * 12.实现compute()方法，用来合计数组中在start和end位置之间的所有元素。首先，将执行这个任务的线程转换成一个MyWorkerThread对象，然后使用addTask()方法来增长这个线程的任务计数器
+	     *
+	     * Main method of the task. If the task has less than 100 elements to sum,
+	     * it calculates the sum of these elements directly. Else, it creates two
+	     * subtask to process the two halves of the block.
+	     *
+	     * It also calls the addTask() method of the thread that is executing the
+	     * task to updates its internal counter of tasks
+	     */
+	    @Override
+	    protected Integer compute() {
+	        Integer ret;
+	        MyWorkerThread thread = (MyWorkerThread) Thread.currentThread();
+	        thread.addTask();
+	        if (end - start > 100) {
+	            int mid = (start + end) / 2;
+	            MyRecursiveTask task1 = new MyRecursiveTask(array, start, mid);
+	            MyRecursiveTask task2 = new MyRecursiveTask(array, mid, end);
+	            invokeAll(task1, task2);
+	            ret = addResults(task1, task2);
+	        } else {
+	            int add = 0;
+	            for (int i = start; i < end; i++) {
+	                add += array[i];
+	            }
+	            ret = new Integer(add);
+	        }
+	        try {
+	            TimeUnit.MILLISECONDS.sleep(10);
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        }
+
+	        return ret;
+	    }
+
+	    /**
+	     * 13.实现addResults()方法。计算和返回两个任务（接收参数）的结果的总和
+	     *
+	     * Method that adds the results of the two subtasks create by this task
+	     *
+	     * @param task1
+	     *            First task
+	     * @param task2
+	     *            Second task
+	     * @return The sum of the results of the two tasks
+	     */
+	    private Integer addResults(MyRecursiveTask task1, MyRecursiveTask task2) {
+	        int value;
+	        try {
+	            value = task1.get().intValue() + task2.get().intValue();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	            value = 0;
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	            value = 0;
+	        }
+	        return new Integer(value);
+	    }
+	}
+
+	// 15.实现这个例子的主类，通过创建Main类，并实现main()方法
+	public class Main {
+
+	    public static void main(String[] args) throws Exception {
+
+	        // 16.创建一个名为factory的MyWorkerThreadFactory对象
+	        MyWorkerThreadFactory factory = new MyWorkerThreadFactory();
+
+	        // 17.创建一个名为pool的ForkJoinPool对象，将前面创建的factory对象作为参数传给它的构造器
+	        ForkJoinPool pool = new ForkJoinPool(4, factory, null, false);
+
+	        // 18.创建一个大小为100000的整数数组，将所有元素初始化为值1
+	        int array[] = new int[100000];
+	        for (int i = 0; i < array.length; i++) {
+	            array[i] = 1;
+	        }
+
+	        // 19.创建一个新的Task对象，用来合计数组中的所有元素
+	        MyRecursiveTask task = new MyRecursiveTask(array, 0, array.length);
+
+	        // 20.使用execute()方法，将这个任务提交给池
+	        pool.execute(task);
+
+	        // 21.使用join()方法，等待这个任务的结束
+	        task.join();
+
+	        // 22.使用shutdown()方法，关闭这个池
+	        pool.shutdown();
+
+	        // 23.使用awaitTermination()方法，等待这个执行者的结束
+	        pool.awaitTermination(1, TimeUnit.DAYS);
+
+	        // 24.使用get()方法，将任务的结束写入到控制台
+	        System.out.printf("Main: Result: %d\n", task.get());
+
+	        // 25.写入一条信息到控制台，表明程序的结束
+	        System.out.printf("Main: End of the program\n");
+	    }
+	}
+
+``Fork/Join`` 框架使用的线程叫工作者线程。 Java 包含继承 ``Thread`` 类的 ``ForkJoinWorkerThread`` 类和使用 ``Fork/Join`` 框架实现工作者线程。
+
+在这个指南中，你已实现了继承 ``ForkJoinWorkerThread`` 类的 ``MyWorkerThread`` 类，并重写这个类的两个方法。你的目标是实现每个工作者线程的任务计数器，以至于你可以知道每个工作者线程执行多少个任务。你已经通过一个 ``ThreadLocal`` 属性实现计数器。这样，每个线程都拥有它自己的计数器，对于来你说是透明的。
+
+你已重写 ``ForkJoinWorkerThread`` 类的 ``onStart()`` 方法来实现任务的计数器。当工作者线程开始它的执行时，这个方法将被调用。你也重写了 ``onTermination()`` 方法，将任务计数器的值写入到控制台。当工作者线程结束它的执行时，这个方法将被调用。你也在 ``MyWorkerThread`` 类中实现 ``addTask()`` 方法，用来增加每个线程的任务计数器。
+
+对于 ``ForkJoinPool`` 类，与 Java 并发 API 中的所有执行者一样，使用工厂来创建它。所以，如果你想在 ``ForkJoinPool`` 类中使用 ``MyWorkerThread`` 线程，你必须实现自己的线程工厂。对于 ``Fork/Join`` 框架，这个工厂必须实现 ``ForkJoinPool.ForkJoinWorkerThreadFactory`` 类。为此，你已实现 ``MyWorkerThreadFactory`` 类。这个类只有一个用来创建一个新的 ``MyWorkerThread`` 对象的方法。
+
+最后，你只要使用已创建的工厂来初始化 ``ForkJoinPool`` 类。你已在 ``Main`` 类中通过使用 ``ForkJoinPool`` 的构造器实现了。
+
+考虑一下，当一个线程正常结束或抛出一个 ``Exception`` 异常时，调用的 ``ForkJoinWorkerThread`` 提供的 ``onTermination()`` 方法。这个方法接收一个 ``Throwable`` 对象作为参数。如果这个参数值为 ``null`` 时，表明这个工作者线程正常结束。但是，如果这个参数的值不为 ``null`` ，表明这个线程抛出一个异常。你必须包含必要的代码来处理这种情况。
+
+在Fork/Join框架中定制运行任务
+============================
+执行者框架分开了任务的创建和运行。这样，你只要实现 ``Runnable`` 对象来使用 ``Executor`` 对象。你可以发送 ``Runnable`` 任务给执行者，然后它会创建，管理，并终结必要的线程来执行这些任务。
+
+Java 7 在 ``Fork/Join`` 框架中提供了特殊的执行者。这个框架是设计用来解决那些可以使用 ``divide`` 和 ``conquer`` 技术分成更小点的任务的问题。在一个任务内，你要检查你要解决的问题的大小，如果它比设定的大小还大，你就把问题分成2个或多个任务，再使用框架来执行这些任务。
+
+如果问题的大小比设定的大小要小，你可以在任务中直接解决问题，可选择返回结果。 ``Fork/Join`` 框架实现 ``work-stealing`` 算法来提高这类问题的整体表现。
+
+``Fork/Join`` 框架的主要类是 ``ForkJoinPool`` 类。它内部有以下2个元素：
+
+- 一个等待执行的任务 ``queue``
+- 一个执行任务的线程池
+
+默认情况，被 ``ForkJoinPool`` 类执行的任务是 ``ForkJoinTask`` 类的对象。你也可以发送 ``Runnable`` 和 ``Callable`` 对象给 ``ForkJoinPool`` 类，但是他们就不能获得所以 ``Fork/Join`` 框架的好处。通常情况，你将发送 ``ForkJoinTask`` 类的这 2 个子类中的一个给 ``ForkJoinPool`` 对象：
+
+- ``RecursiveAction`` : 如果你的任务没有返回结果
+- ``RecursiveTask`` : 如果你的任务返回结果
+
+在这个指南，你将学习如何为 ``Fork/Join`` 框架实现你自己的任务，实现一个任务扩展 ``ForkJoinTask`` 类。你将要实现的任务是计量运行时间并写入操控台，这样你可以控制它的进展（evolution）。你也可以实现你自己的 ``Fork/Join`` 任务来写日志信息，为了获得在这个任务中使用的资源，或者来 ``post-process`` 任务的结果。
+
+.. code-block:: java
+
+	// 1.   创建一个类，名为 MyWorkerTask，并特别扩展 ForkJoinTask 类参数化 Void type
+	public abstract class MyWorkerTask extends ForkJoinTask<Void> {
+
+	    private static final long serialVersionUID = 1L;
+
+	    //2.   声明一个私有 String 属性，名为 name，用来储存任务的名字
+	    private String name;
+
+	    //3.   实现类的构造函数，初始化它的属性
+	    public MyWorkerTask(String name) {
+	        this.name = name;
+	    }
+
+	    //4.   实现 getRawResult() 方法。这是 ForkJoinTask 类的抽象方法之一。由于任务不会返回任何结果，此方法返回的一定是null值。
+	    @Override
+	    public Void getRawResult() {
+	        return null;
+	    }
+
+	    //5.   实现 setRawResult() 方法。这是 ForkJoinTask 类的另一个抽象方法。由于任务不会返回任何结果，方法留白即可
+	    @Override
+	    protected void setRawResult(Void value) {
+
+	    }
+
+	    /**
+	     * 6.   实现 exec() 方法。这是任务的主要方法。在这个例子，把任务的算法委托给 compute() 方法。计算方法的运行时间并写入操控台
+	     *
+	     * Main method of the task. Is called by the Fork/Join pool. It calls the
+	     * compute() method that is an abstract method that have to be implemented
+	     * by the tasks that extend this class, calculating its execution time and
+	     * writing it in the console
+	     */
+	    @Override
+	    protected boolean exec() {
+	        Date startDate = new Date();
+	        compute();
+	        Date finishDate = new Date();
+	        long diff = finishDate.getTime() - startDate.getTime();
+	        System.out.printf("MyWorkerTask: %s : %d Milliseconds to complete.\n", name, diff);
+	        return true;
+	    }
+
+	    //7.    实现 getName() 方法来返回任务的名字
+	    public String getName() {
+	        return name;
+	    }
+
+	    /**
+	     * 8.   声明抽象方法 compute()。像我们之前提到的，此方法实现任务的算法，必须是由 MyWorkerTask 类的子类实现
+	     *
+	     * Main method of the child tasks. It has to be overridden in the child
+	     * classes and implement on it its main logic
+	     */
+	    protected abstract void compute();
+	}
+
+	//9.   创建一个类，名为 Task，延伸 MyWorkerTask 类
+	public class Task extends MyWorkerTask {
+
+	    private static final long serialVersionUID = 1L;
+
+	    //10. 声明一个私有 int 值 array，名为 array
+	    private int array[];
+	    /**
+	     * First element of the array that this task is going to increment
+	     */
+	    private int start;
+
+	    /**
+	     * Last element of the array that this task is going to increment
+	     */
+	    private int end;
+
+	    /**
+	     * Constructor of the class. It initializes its attributes
+	     * 11. 实现类的构造函数，初始化它的属性值
+	     *
+	     * @param name
+	     *            Name of the task
+	     * @param array
+	     *            Array of elements that is going to be incremented
+	     * @param start
+	     *            First element of the array to be incremented by this task
+	     * @param end
+	     *            Last element of the array to be incremented by this task
+	     */
+	    public Task(String name, int array[], int start, int end) {
+	        super(name);
+	        this.array = array;
+	        this.start = start;
+	        this.end = end;
+	    }
+
+	    /**
+	     * 12. 实现 compute() 方法。此方法通过 start 和 end 属性来决定增加array的元素块。如果元素块的元素超过100个，把它分成2部分，并创建2个Task对象来处理各个部分。再使用 invokeAll() 方法把这些任务发送给池
+	     *
+	     * Main method of the task. If the task has to increment less that 100
+	     * elements, it increments them directly. Else, it divides the operation in
+	     * two subtasks
+	     */
+	    @Override
+	    protected void compute() {
+	        if (end - start > 100) {
+	            int mid = (end + start) / 2;
+	            Task task1 = new Task(this.getName() + "1", array, start, mid);
+	            Task task2 = new Task(this.getName() + "2", array, mid, end);
+	            invokeAll(task1, task2);
+	            //13.如果元素块的元素少于100，使用for循环增加全部的元素
+	        } else {
+	            for (int i = start; i < end; i++) {
+	                array[i]++;
+	            }
+	            //14. 最后，让正在执行任务的线程进入休眠50毫秒
+	            try {
+	                Thread.sleep(50);
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+	}
+
+	//15. 创建例子的主类通过创建一个类，名为 Main 并添加 main()方法
+	public class Main {
+
+	    public static void main(String[] args) throws Exception {
+
+	        //16. 创建一个10，000元素的 int array
+	        int array[] = new int[10000];
+
+	        //17.  创建一个 ForkJoinPool 对象，名为 pool
+	        ForkJoinPool pool = new ForkJoinPool();
+
+	        //18. 创建一个 Task 对象来增加array的全部元素。构造函数的参数是：任务的名字 Task，array对象，和0 和10000来向这个任务表示要处整个array
+	        Task task = new Task("Task", array, 0, array.length);
+
+	        //19. 发送任务给池
+	        pool.invoke(task);
+
+	        //20. 使用 shutdown() 方法关闭池
+	        pool.shutdown();
+
+	        //21. 在操控台写个信息表明程序结束
+	        System.out.printf("Main: End of the program.\n");
+	    }
+	}
+
+在这个指南，你实现了扩展 ``ForkJoinTask`` 类的 ``MyWorkerTask`` 类。这是你的基本类，它可以在 ``ForkJoinPool`` 执行者中执行，并且可以获得这个执行者的所以好处，如 ``work-stealing`` 算法。这个类等同于 ``RecursiveAction`` 和 ``RecursiveTask`` 类。
+
+当你扩展 ``ForkJoinTask`` 类，你必须实现以下3个方法：
+
+- ``setRawResult()`` : 此方法是用来设立任务的结果。由于你的任务不返回任何结果，所以留白即可。
+- ``getRawResult()`` : 此方法是用来返回任务的结果。由于你的任务不返回任何结果，此方法会返回 ``null`` 值。
+- ``exec()`` : 此方法实现了任务的算法。在这个例子，你把算法委托给抽象方法 ``compute()`` (如 ``RecursiveAction`` 类和 ``RecursiveTask`` 类），且在 ``exec()`` 方法你计算了方法的运行时间，并写入到操控台。
+
+最后，在例子的主类，你创建了一个有 10，000 个元素的 ``array`` ，一个 ``ForkJoinPool`` 执行者，和一个处理整个 ``array`` 的 ``Task`` 对象。运行程序，你可以发现不同的任务运行后都在操控台写入他们的运行时间。
+
+
+实现一个自定义锁类
+=================
+锁是 Java 并发 API 提供的基本同步机制之一。它允许程序员保护代码的临界区，所以，在某个时刻只有一个线程能执行这个代码块。它提供以下两种操作：
+
+- ``lock()`` ：当你想要访问一个临界区时，调用这个方法。如果有其他线程正在运行这个临界区，其他线程将阻塞，直到它们被这个锁唤醒，从而获取这个临界区的访问。
+- ``unlock()`` ：你在临界区的尾部调用这个方法，允许其他线程访问这个临界区。
+
+在 Java 并发 API 中，锁是在 ``Lock`` 接口及其一些实现类中声明的，比如 ``ReentrantLock`` 类。
+
+在这个指南中，你将学习如何实现你自己的 ``Lock`` 对象，它将实现一个实现了 ``Lock`` 接口并可用来保护临界区的类。
+
+.. code-block:: java
+
+	// 1.创建一个继承AbstractQueuedSynchronizer类的MyQueuedSynchronizer类
+	public class MyAbstractQueuedSynchronizer extends AbstractQueuedSynchronizer {
+
+		private static final long serialVersionUID = 1L;
+
+		// 2.声明一个私有的、AtomicInteger类型的属性state
+		private AtomicInteger state;
+
+		// 3.实现这个类的构造器，并初始化它的属性
+		public MyAbstractQueuedSynchronizer() {
+			state = new AtomicInteger(0);
+		}
+
+		// 4.实现tryAcquire()方法。这个方法试图将变量state的值从0变成1。如果成功，它将返回true，否则，返回false
+		@Override
+		public boolean tryAcquire(int arg) {
+			return state.compareAndSet(0, 1);
+		}
+
+		// 5.实现tryRelease()方法。这个方法试图将变量sate的值从1变成0.如果成功，它将返回true，否则，返回false
+		@Override
+		public boolean tryRelease(int arg) {
+			return state.compareAndSet(1, 0);
+		}
+	}
+
+	// 6.创建一个MyLock类，并指定它实现Lock接口
+	public class MyLock implements Lock {
+		// 7.声明一个私有的、AbstractQueuedSynchronizer类型的属性sync
+		private AbstractQueuedSynchronizer sync;
+
+		// 8.实现这个类的构造器，并使用MyAbstractQueueSynchronizer对象来初始化它的sync属性
+		public MyLock() {
+			sync = new MyAbstractQueuedSynchronizer();
+		}
+
+		// 9.实现lock()方法。调用sync对象的acquire()方法
+		@Override
+		public void lock() {
+			sync.acquire(1);
+		}
+
+		// 10.实现lockInterruptibly()方法。调用sync对象的acquireInterruptibly()方法
+		@Override
+		public void lockInterruptibly() throws InterruptedException {
+			sync.acquireInterruptibly(1);
+		}
+
+		// 11.实现tryLock()方法。调用sync对象的tryAcquireNanos()方法
+		@Override
+		public boolean tryLock() {
+			try {
+				return sync.tryAcquireNanos(1, 1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+		// 12.实现其他版本的带有两个参数的tryLock()方法。一个long类型参数，名为time，一个TimeUnit类型参数，名为unit。调用sync对象的tryAcquireNanos()方法
+		@Override
+		public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+			return sync.tryAcquireNanos(1, TimeUnit.NANOSECONDS.convert(time, unit));
+		}
+
+		// 13.实现unlock()方法。调用sync对象的release()方法
+		@Override
+		public void unlock() {
+			sync.release(1);
+		}
+
+		// 14.实现newCondition()方法。创建一个新的sync对象的内部类ConditionObject
+		@Override
+		public Condition newCondition() {
+			return sync.new ConditionObject();
+		}
+	}
+
+	// 15.创建一个Task类，并指定它实现Runnable接口
+	public class Task implements Runnable {
+		// 16.声明一个私有的、MyLock类型的属性lock
+		private MyLock lock;
+		// 17.声明一个私有的、String类型的属性name
+		private String name;
+
+		// 18.实现这个类的构造器，并初始化它的属性
+		public Task(String name, MyLock lock) {
+			this.lock = lock;
+			this.name = name;
+		}
+
+		// 19.实现这个类的run()方法。获取锁，令线程睡眠2秒，然后，释放这个lock对象
+		@Override
+		public void run() {
+			lock.lock();
+			System.out.printf("Task: %s: Take the lock\n", name);
+			try {
+				TimeUnit.SECONDS.sleep(2);
+				System.out.printf("Task: %s: Free the lock\n", name);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				lock.unlock();
+			}
+		}
+	}
+
+	// 20.实现这个例子的主类，通过创建Main类，并实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 21.创建一个MyLock对象，名为lock
+			MyLock lock = new MyLock();
+
+			// 22.创建和执行10个Task任务
+			for (int i = 0; i < 10; i++) {
+				Task task = new Task("Task-" + i, lock);
+				Thread thread = new Thread(task);
+				thread.start();
+			}
+
+			// 23.使用tryLock()方法尝试获取锁。等待1秒，如果你没有获取锁，写入一条信息并重新尝试
+			boolean value;
+			do {
+				try {
+					value = lock.tryLock(1, TimeUnit.SECONDS);
+					if (!value) {
+						System.out.printf("Main: Trying to get the Lock\n");
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					value = false;
+				}
+			} while (!value);
+
+			// 24.写入一条信息表明你已获取锁，然后释放它
+			System.out.printf("Main: Got the lock\n");
+			lock.unlock();
+			// 25.写入一条信息表明程序的结束
+			System.out.printf("Main: End of the program\n");
+		}
+	}
+
+Java 并发 API 提供一个类，可以用来实现拥有锁和信号量特征的同步机制。它就是 ``AbstractQueuedSynchronizer`` ，正如其名，它是一个抽象类。它提供控制临界区的访问和管理正在阻塞等待访问临界区的线程队列的操作。这些操作是基于以下两个抽象方法：
+
+- ``tryAcquire()`` ：尝试访问临界区时，调用这个方法。如果线程调用这个方法可以访问临界区，那么这个方法返回 ``true`` ，否则，返回 ``false`` 。
+- ``tryRelease()`` ：尝试释放临界区的访问，调用这个方法。如果线程调用这个方法可以释放临界区的访问，那么这个方法返回 ``true`` ，否则，返回 ``false`` 。
+
+在这些方法中，你已实现可用来控制临界区访问的机制。在你的例子中，你已实现继承 ``AbstractQueuedSyncrhonizer`` 类的 ``MyQueuedSynchonizer`` 类，并使用 ``AtomicInteger`` 变量实现抽象方法来控制临界区的访问。如果锁是自由的，这个变量的值为 0 ，表明线程可以访问这个临界区。如果锁是阻塞的，这个变量的值为 1 ，表明线程不能访问这个临界区。
+
+你已使用 ``AtomicInteger`` 类提供的 ``compareAndSet()`` 方法，尝试将你指定的值作为第一个参数改变成你指定的值作为第二个参数。实现 ``tryAcquire()`` 方法，你尝试将原子变量的值从 0 变成 1 。同样地，你实现 ``tryRelease()`` 方法，尝试将原子变量的值从 1 变成 0 。
+
+你必须实现这个类，因为 ``AbstractQueuedSynchronizer`` 类的其他实现（比如，所使用的 ``ReentrantLock`` 类）是作为私有的内部类使用来实现的，所以你不能访问它。
+
+然后，你已实现 ``MyLock`` 类。这个类实现 ``Lock`` 接口，有一个 ``MyQueuedSynchronizer`` 对象属性。你已使用 ``MyQueuedSynchronizer`` 对象的方法，来实现 ``Lock`` 接口的所有方法。
+
+最后，你实现了 ``Task`` 类，它实现了 ``Runnable`` 接口，并使用一个 ``MyLock`` 对象来控制临界区的访问。这个临界区令线程睡眠 2 秒。主类创建一个 ``MyLock`` 对象，并运行 10 个 ``Task`` 对象来共享这把锁。主类也使用 ``tryLock()`` 方法来尝试获取锁的访问。
+
+当你执行这个例子，你可以看到只有一个线程可以访问这个临界区，并且当这个线程结束，其他线程可以继续访问这个临界区。
+
+你可以使用你自己的锁来写入关于它的使用的日志信息，控制锁定时间，或实现先进的同步机制来控制。比如，只能在特定的时间内，才能对资源访问。
+
+``AbstractQueuedSynchronizer`` 类提供两个方法可以用来控制锁的状态，它们就是 ``getState()`` 和 ``setState()`` 方法。这两个方法，接收和返回一个整数值作为锁的状态。你可以使用这两个方法而不是 ``AtomicInteger`` 属性来存储锁的状态。
+
+Java 并发 API 提供其他类来实现同步机制。它就是 ``AbstractQueuedLongSynchronizer`` 类，它与 ``AbstractQueuedSynchronizer`` 一样，除了使用一个 ``long`` 类型属性来存储线程的状态。
+
+实现一个基于优先级传输Queue
+=========================
+Java 7 API 提供几种与并发应用相关的数据类型。从这里面，我们想来重点介绍以下2种数据类型：
+
+- ``LinkedTransferQueue`` ：这个数据类型支持那些有生产者和消费者结构的程序。 在那些应用，你有一个或者多个数据生产者，一个或多个数据消费者和一个被生产者和消费者共享的数据类型。生产者把数据放入数据结构内，然后消费者从数据结构内提取数据。如果数据结构为空，消费者会被阻塞直到有数据可以消费。如果数据结构满了，生产者就会被阻塞直到有空位来放数据。
+- ``PriorityBlockingQueue`` ：在这个数据结构，元素是按照顺序储存的。元素们必须实现带有 ``compareTo()`` 方法的 ``Comparable`` 接口。当你在结构中插入数据时，它会与数据元素对比直到找到它的位置。
+
+``LinkedTransferQueue`` 的元素是按照抵达顺序储存的，所以越早到的越先被消耗。你有可能需要开发 ``producer/consumer`` 程序，它的消耗顺序是由优先级决定的而不是抵达时间。在这个指南，你将学习如何实现在 ``producer/consumer`` 问题中使用的数据结构，这些元素将被按照他们的优先级排序，级别高的会先被消耗。
+
+.. code-block:: java
+
+	//1. 创建一个类，名为 MyPriorityTransferQueue，扩展 PriorityBlockingQueue 类并实现 TransferQueue 接口
+	public class MyPriorityTransferQueue<E> extends PriorityBlockingQueue<E> implements TransferQueue<E> {
+
+		private static final long serialVersionUID = 1L;
+
+		//2. 声明一个私有 AtomicInteger 属性，名为 counter，用来储存正在等待元素的消费者的数量
+		private AtomicInteger counter;
+
+		//3. 阻塞队列来存储传输元素
+		private LinkedBlockingQueue<E> transfered;
+
+		//4. 声明一个私有 ReentrantLock 属性，名为 lock
+		private ReentrantLock lock;
+
+		//5. 实现类的构造函数，初始化它的属性值
+		public MyPriorityTransferQueue() {
+			counter = new AtomicInteger(0);
+			lock = new ReentrantLock();
+			transfered = new LinkedBlockingQueue<>();
+		}
+
+		/**
+		 * 6.   实现 tryTransfer() 方法。此方法尝试立刻发送元素给正在等待的消费者（如果可能）。如果没有任何消费者在等待，此方法返回 false 值
+		 *
+		 * This method tries to transfer an element to a consumer. If there is a
+		 * consumer waiting, we puts the element in the queue and return the true
+		 * value. Else, return the false value.
+		 */
+		@Override
+		public boolean tryTransfer(E e) {
+			lock.lock();
+			boolean value;
+			if (counter.get() == 0) {
+				value = false;
+			} else {
+				put(e);
+				value = true;
+			}
+			lock.unlock();
+			return value;
+		}
+
+		/**
+		 * 7.    实现 transfer() 方法。此方法尝试立刻发送元素给正在等待的消费者（如果可能）。如果没有任何消费者在等待，此方法把元素存入一个特殊queue，为了发送给第一个尝试获取一个元素的消费者并阻塞线程直到元素被消耗
+		 *
+		 * Transfer an element to the consumer. If there is a consumer waiting, puts
+		 * the element on the queue and return the true value. Else, puts the value
+		 * in the transfered queue and returns the false value. In this case, the
+		 * thread than makes the call will be blocked until a consumer takes the
+		 * transfered elements
+		 */
+		@Override
+		public void transfer(E e) throws InterruptedException {
+			lock.lock();
+			if (counter.get() != 0) {
+				put(e);
+				lock.unlock();
+			} else {
+				transfered.add(e);
+				lock.unlock();
+				synchronized (e) {
+					e.wait();
+				}
+			}
+		}
+
+		/**
+		 * 8.   实现 tryTransfer() 方法，它接收3个参数： 元素，和需要等待消费者的时间（如果没有消费者的话），和用来注明时间的单位。如果有消费者在等待，立刻发送元素。否则，转化时间到毫秒并使用 wait() 方法让线程进入休眠。当消费者取走元素时，如果线程在 wait() 方法里休眠，你将使用 notify() 方法唤醒它
+		 *
+		 * This method tries to transfer an element to a consumer waiting a maximum
+		 * period of time. If there is a consumer waiting, puts the element in the
+		 * queue. Else, puts the element in the queue of transfered elements and
+		 * wait the specified period of time until that time pass or the thread is
+		 * interrupted.
+		 */
+		@Override
+		public boolean tryTransfer(E e, long timeout, TimeUnit unit) throws InterruptedException {
+			lock.lock();
+			if (counter.get() != 0) {
+				put(e);
+				lock.unlock();
+				return true;
+			} else {
+				transfered.add(e);
+				long newTimeout = TimeUnit.MILLISECONDS.convert(timeout, unit);
+				lock.unlock();
+				e.wait(newTimeout);
+				lock.lock();
+				if (transfered.contains(e)) {
+					transfered.remove(e);
+					lock.unlock();
+					return false;
+				} else {
+					lock.unlock();
+					return true;
+				}
+			}
+		}
+
+		/**
+		 * 9.   实现 hasWaitingConsumer() 方法。使用 counter 属性值来计算此方法的返回值。如果counter 的值大于0，放回 true。不然，返回 false
+		 *
+		 * Method that returns if the queue has waiting consumers
+		 */
+		@Override
+		public boolean hasWaitingConsumer() {
+			return (counter.get() != 0);
+		}
+
+		/**
+		 * 10. 实现 getWaitingConsumerCount() 方法。返回counter 属性值
+		 *
+		 * Method that returns the number of waiting consumers
+		 */
+		@Override
+		public int getWaitingConsumerCount() {
+			return counter.get();
+		}
+
+		/**
+		 * 11.实现 take() 方法。此方法是当消费者需要元素时被消费者调用的。首先，获取之前定义的锁并增加在等待的消费者数量
+		 *
+		 * Method that returns the first element of the queue or is blocked if the
+		 * queue is empty. If there is transfered elements, takes the first
+		 * transfered element and wake up the thread that is waiting for the
+		 * transfer of that element. Else, takes the first element of the queue or
+		 * is blocked until there is one element in the queue.
+		 */
+		@Override
+		public E take() throws InterruptedException {
+			lock.lock();
+			counter.incrementAndGet();
+			//12.如果在 transferred queue 中无任何元素。释放锁并使用 take() 方法尝试从queue中获取元素，此方法将让线程进入睡眠直到有元素可以消耗
+			E value = transfered.poll();
+			if (value == null) {
+				lock.unlock();
+				value = super.take();
+				lock.lock();
+				//13. 否则，从transferred queue 中取走元素并唤醒正在等待要消耗元素的线程（如果有的话）
+			} else {
+				synchronized (value) {
+					value.notify();
+				}
+			}
+			//14. 最后，增加正在等待的消费者的数量并释放锁
+			counter.decrementAndGet();
+			lock.unlock();
+			return value;
+		}
+	}
+
+	// 15. 实现一个类，名为 Event，扩展 Comparable 接口，把 Event 类参数化
+	public class Event implements Comparable<Event> {
+
+	    //16. 声明一个私有 String 属性，名为 thread，用来储存创建事件的线程的名字
+	    private String thread;
+	    //17.  声明一个私有 int 属性，名为 priority，用来储存事件的优先级
+	    private int priority;
+
+	    /**
+	     * Constructor of the thread. It initializes its attributes
+	     *
+	     * @param thread
+	     *            Number of the thread that generates the event
+	     * @param priority
+	     *            Priority of the event
+	     */
+	    public Event(String thread, int priority) {
+	        this.thread = thread;
+	        this.priority = priority;
+	    }
+
+	    /**
+	     * Method that returns the number of the thread that generates the event
+	     * 实现一个方法，返回 thread 属性值
+	     * @return The number of the thread that generates the event
+	     */
+	    public String getThread() {
+	        return thread;
+	    }
+
+	    /**
+	     * Method that returns the priority of the event
+	     * 实现一个方法，返回 priority  属性值
+	     * @return The priority of the event
+	     */
+	    public int getPriority() {
+	        return priority;
+	    }
+
+	    /**
+	     * 实现 compareTo() 方法。此方法把当前事件与接收到的参数事件进行对比。返回 -1，如果当前事件的优先级的级别高于参数；返回 1，如果当前事件的优先级低于参数；如果相等，则返回 0。你将获得一个按优先级递减顺序排列的list。有高等级的事件就会被排到queue的最前面
+	     *
+	     * Method that compares two events and decide which has more priority
+	     */
+	    @Override
+	    public int compareTo(Event e) {
+	        if (this.priority > e.getPriority()) {
+	            return -1;
+	        } else if (this.priority < e.getPriority()) {
+	            return 1;
+	        } else {
+	            return 0;
+	        }
+	    }
+	}
+
+	public class Producer implements Runnable {
+
+	    /**
+	     * Buffer used to store the events
+	     */
+	    private MyPriorityTransferQueue<Event> buffer;
+
+	    /**
+	     * Constructor of the class. It initializes its parameters
+	     *
+	     * @param buffer
+	     *            Buffer to store the events
+	     */
+	    public Producer(MyPriorityTransferQueue<Event> buffer) {
+	        this.buffer = buffer;
+	    }
+
+	    /**
+	     * Main method of the producer. Store 100 events in the buffer with
+	     * incremental priority
+	     */
+	    @Override
+	    public void run() {
+	        for (int i = 0; i < 100; i++) {
+	            Event event = new Event(Thread.currentThread().getName(), i);
+	            buffer.put(event);
+	        }
+	    }
+	}
+
+	public class Consumer implements Runnable {
+
+	    /**
+	     * Buffer from which the consumer takes the events
+	     */
+	    private MyPriorityTransferQueue<Event> buffer;
+
+	    /**
+	     * Constructor of the class. Initializes its attributes
+	     *
+	     * @param buffer
+	     *            Buffer from which the consumer takes the events
+	     */
+	    public Consumer(MyPriorityTransferQueue<Event> buffer) {
+	        this.buffer = buffer;
+	    }
+
+	    /**
+	     * Main method of the consumer. It takes 1002 events from the buffer
+	     */
+	    @Override
+	    public void run() {
+	        for (int i = 0; i < 1002; i++) {
+	            try {
+	                Event value = buffer.take();
+	                System.out.printf("Consumer: %s: %d\n", value.getThread(), value.getPriority());
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+	}
+
+	//  创建例子的主类通过创建一个类，名为 Main 并添加 main()方法
+	public class Main {
+
+	    public static void main(String[] args) throws Exception {
+
+	        // 创建一个 MyPriorityTransferQueue 对象，名为 buffer
+	        MyPriorityTransferQueue<Event> buffer = new MyPriorityTransferQueue<>();
+
+	        // 创建一个 Producer 任务并运行 10 线程来执行任务
+	        Producer producer = new Producer(buffer);
+
+	        Thread producerThreads[] = new Thread[10];
+	        for (int i = 0; i < producerThreads.length; i++) {
+	            producerThreads[i] = new Thread(producer);
+	            producerThreads[i].start();
+	        }
+
+	        // 创建并运行一个 Consumer 任务
+	        Consumer consumer = new Consumer(buffer);
+	        Thread consumerThread = new Thread(consumer);
+	        consumerThread.start();
+
+	        // 写入当前的消费者数量
+	        System.out.printf("Main: Buffer: Consumer count: %d\n", buffer.getWaitingConsumerCount());
+
+	        // 使用 transfer() 方法传输一个事件给消费者
+	        Event myEvent = new Event("Core Event", 0);
+	        buffer.transfer(myEvent);
+	        System.out.printf("Main: My Event has ben transfered.\n");
+
+	        // 使用 join() 方法等待生产者的完结
+	        for (int i = 0; i < producerThreads.length; i++) {
+	            producerThreads[i].join();
+	        }
+
+	        // 让线程休眠1秒
+	        TimeUnit.SECONDS.sleep(1);
+
+	        // 写入当前的消费者数量
+	        System.out.printf("Main: Buffer: Consumer count: %d\n", buffer.getWaitingConsumerCount());
+
+	        // 使用 transfer() 方法传输另一个事件
+	        myEvent = new Event("Core Event 2", 0);
+	        buffer.transfer(myEvent);
+
+	        // 使用 join() 方法等待消费者完结
+	        consumerThread.join();
+
+	        // 写信息表明程序结束
+	        System.out.printf("Main: End of the program\n");
+	    }
+	}
+
+在这个指南，你已经实现了 ``MyPriorityTransferQueue`` 数据结构。这个数据类型是在 ``producer/consumer`` 问题中使用的，它的元素是按照优先级排列的。由于 Java 不支持多个继承，所以你首先要决定的是 ``MyPriorityTransferQueue`` 类的基类。你扩展了 ``PriorityBlockingQueue`` 类，来实现在结构中插入数据按照优先级排序。你也实现了 ``TransferQueue`` 接口，添加了与 ``producer/consumer`` 相关的3个方法。
+
+``MyPriortyTransferQueue`` 类有以下2个属性：
+
+1. ``AtomicInteger`` 属性，名为 ``counter`` : 此属性储存了正在等待从数据类型提取元素的消费者的数量。当一个消费者调用 ``take()`` 操作来从数据类型中提取元素时， ``counter`` 数增加。当消费者结束 ``take()`` 操作的执行时， ``counter`` 数再次增加。在 ``hasWaitingConsumer()`` 和 ``getWaitingConsumerCount()`` 方法的实现中使用到了 ``counter`` 。
+2. ``ReentrantLock`` 属性，名为 lock: 此属性是用来控制访问已实现的操作。只有一个线程可以用数据类型。最后一个， ``LinkedBlockingQueue`` list 用来储存传输的元素。
+
+在 ``MyPriorityTransferQueue`` 中，你实现了一些方法。全部方法都在 ``TransferQueue`` 接口中声明了和在 ``PriorityBlockingQueue`` 接口实现的 ``take()`` 方法。在之前已经描述了2个方法了。来看看剩下的方法的描述：
+
+1. tryTransfer(E e): 此方法尝试直接发送元素给消费者。如果有消费者在等待，此方法储存元素到 priority queue 中为了立刻提供给消费者，并返回 true 值。如果没有消费者在等待，方法返回 false 值。
+2. transfer(E e): 此方法直接发送元素给消费者。如果有消费者在等待，此方法储存元素到 priority queue 中为了立刻提供给消费者。
+
+否则，把元素储存到已传输的元素 list 并阻塞线程直到元素被消耗。当线程进入休眠时，你要释放锁，如果不的话，你就阻塞了 queue 。
+
+- ``tryTransfer(E e, long timeout, TimeUnit unit)`` : 此方法与 transfer() 方法相似，只是它的线程被阻塞的时间段是由参数决定的。当线程进入休眠时，你要释放锁，如果不的话，你就阻塞了queue。
+- ``take()`` : 此方法返回下一个要被消耗的元素。如果在 transferred 元素list中有元素，就从list中取走元素。否则，就从 priority queue 中取元素。
+
+一旦你实现了数据类型，你就实现了 ``Event`` 类。它就是在数据类型里储存的元素构成的类。 ``Event`` 类有 2 个属性用来储存生产者的 ID 和事件的优先级，并实现了 ``Comparable`` 接口，为了满足你的数据类型的需要。
+
+接着，你实现了 ``Producer`` 和 ``Consumer`` 类。在这个例子中，你有 10 个生产者和一个消费者，他们共享同一个 ``buffer`` 。每个生产者生成 100 个事件，他们的优先级是递增的， 所以有高优先级的事件在越后面才生成。
+
+例子的主类创建了一个 ``MyPriorityTransferQueue`` 对象， 10 个生产者，和一个消费者，然后使用 ``MyPriorityTransferQueue`` 的 ``transfer()`` 方法来传输2个事件到 ``buffer`` 。
+
+
+实现自定义的原子对象
+===================
+Java 版本 5 中引入原子变量，并提供对单个变量的原子操作。当一个线程在原子变量上执行操作时，这个类的实现包含一种机制用来检查这个操作在一个步骤内完成。基本上，这个操作是先获取变量的值，然后在本地变量中改变这个值，最后尝试将旧值变成这个新值。如果旧值仍然是相同的，它将改变成新值，否则，这个方法重新开始这个操作。（校对注：这段话描述了 ``CAS`` 的实现原理 ）
+
+在这个指南中，你将学习如何继承一个原子对象和如何实现遵从原子对象机制的两个操作，来保证所有的操作在一个步骤内完成。
+
+.. code-block:: java
+
+	// 1.创建ParkingCounter类，并指定它继承AtomicInteger类
+	public class ParkingCounter extends AtomicInteger {
+
+		private static final long serialVersionUID = 1L;
+		// 2.声明一个私有的、int类型的属性maxNumber，用来存储停车场允许停放汽车的最大数量
+		private int maxNumber;
+
+		// 3.实现这个类的构造器，并初始化它的属性
+		public ParkingCounter(int maxNumber) {
+			set(0);
+			this.maxNumber = maxNumber;
+		}
+
+		//4.实现carIn()方法。这个方法增加车的计数器，如果它小于设置的最大数。构建一个无限循环，并使用get()方法获取内部计数器的值
+		public boolean carIn() {
+			for (;;) {
+				int value = get();
+				// 5.如果计数器的值等于最maxNumber属性值，这个计数器不能再增加（停车场已满，其他车不能再进入）。这个方法返回false值
+				if (value == maxNumber) {
+					System.out.printf("ParkingCounter: The parking is full.\n");
+					return false;
+				} else {
+					// 6.否则，增加这个值，并compareAndSet()方法将旧值变成新值。如果这个方法返回false值，说明计数器没有增加，所以你必须重新开始这个循环。如果这个方法返回true值，它意味着改变操作成功，然后你返回了true值
+					int newValue = value + 1;
+					boolean changed = compareAndSet(value, newValue);
+					if (changed) {
+						System.out.printf("ParkingCounter: A car has entered.\n");
+						return true;
+					}
+				}
+			}
+		}
+
+		// 7.实现carOut()方法。这个方法减少车的计数器值，如果它大于0。构建一个无限循环，并使用get()方法获取内部的计数器的值
+		public boolean carOut() {
+			for (;;) {
+				int value = get();
+				if (value == 0) {
+					System.out.printf("ParkingCounter: The parking is empty.\n");
+					return false;
+				} else {
+					int newValue = value - 1;
+					boolean changed = compareAndSet(value, newValue);
+					if (changed) {
+						System.out.printf("ParkingCounter: A car has gone out.\n");
+						return true;
+					}
+				}
+			}
+		}
+	}
+
+	//8.创建一个实现Runnable接口的Sensor1类
+	public class Sensor1 implements Runnable {
+		//9.声明一个私有的、ParkingCounter类型的属性counter
+		private ParkingCounter counter;
+		//10.实现这个类的构造器，并初始化它的属性
+		public Sensor1(ParkingCounter counter) {
+			this.counter = counter;
+		}
+
+		//11.实现run()方法。调用几次carIn()和carOut()操作
+		@Override
+		public void run() {
+			counter.carIn();
+			counter.carIn();
+			counter.carIn();
+			counter.carIn();
+
+			counter.carOut();
+			counter.carOut();
+			counter.carOut();
+
+			counter.carIn();
+			counter.carIn();
+			counter.carIn();
+		}
+	}
+
+	// 12.创建一个实现了Runnable接口的Sensor2类
+	public class Sensor2 implements Runnable {
+		// 13.声明一个私有的、ParkingCounter类型的属性counter
+		private ParkingCounter counter;
+
+		// 14.实现这个类的构造器，并初始化它的属性
+		public Sensor2(ParkingCounter counter) {
+			this.counter = counter;
+		}
+
+		// 15.实现run()方法。调用几次carIn()和carOut()操作
+		@Override
+		public void run() {
+			counter.carIn();
+
+			counter.carOut();
+			counter.carOut();
+
+			counter.carIn();
+			counter.carIn();
+			counter.carIn();
+			counter.carIn();
+			counter.carIn();
+			counter.carIn();
+		}
+	}
+
+	// 16.实现这个例子的主类，通过实现Main()类，并实现main()方法
+	public class Main {
+		public static void main(String[] args) throws Exception {
+			// 17.创建一个ParkingCounter对象，名为counter
+			ParkingCounter counter = new ParkingCounter(5);
+
+			// 18.创建和启动一个Sensor1任务和一个Sensor2任务
+			Sensor1 sensor1 = new Sensor1(counter);
+			Sensor2 sensor2 = new Sensor2(counter);
+
+			Thread thread1 = new Thread(sensor1);
+			Thread thread2 = new Thread(sensor2);
+
+			thread1.start();
+			thread2.start();
+			// 19.等待这两个任务的结束
+			thread1.join();
+			thread2.join();
+			// 20.将计数器的实际值写入到控制台
+			System.out.printf("Main: Number of cars: %d\n", counter.get());
+			// 21.写入一条信息到控制台表明程序的结束
+			System.out.printf("Main: End of the program.\n");
+		}
+	}
+
+继承 ``AtomicInteger`` 类的 ``ParkingCounter`` 类有两个原子操作， ``carIn()`` 和 ``carOut()`` 。这个例子模拟一个系统来控制停车场内的汽车数。这个停车场可容纳的汽车数用 ``maxNumber`` 属性表示。
+
+``carIn()`` 操作将实际汽车数与停车场（可容纳的汽车数）的最大值进行比较。如果它们相等，这辆汽车不能进行停车场并返回 ``false`` 值。否则，它使用以下的原子操作结构：
+
+- 用一个本地变量获取原子对象的值。
+- 用一个不同的变量来存储新值。
+- 使用 ``compareAndSet()`` 方法尝试将旧值替换成新值。如果这个方法返回 ``true`` ，作为参数传入的旧值是这个变量的值，因此，它使值变化。随着 ``carIn()`` 方法返回 ``true`` 值，这个操作将以原子方式完成。如果 ``compareAndSet()`` 方法返回 ``false`` 值，作为参数传入的旧值不是这个变量的值（其他线程已修改它），所以这个操作不能以原子方式完成。这个操作将重新开始，直到它可以以原子方式完成。
+
+``carOut()`` 方法与 ``carIn()`` 方法类似。你已实现两个 ``Runnable`` 对象，使用 ``carIn()`` 和 ``carOut()`` 来模拟停车的活动。当你执行这个程序，你可以看出停车场没有克服汽车在停车场的最大值。
+

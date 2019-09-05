@@ -1,0 +1,184 @@
+**
+更新
+**
+
+和模型新增一样，更新操作同样也会经过修改器、自动完成以及模型事件等处理，并不等同于数据库的数据更新，而且更新方法和新增方法使用的是同一个方法，通常系统会自动判断需要新增还是更新数据。
+
+
+查找并更新
+==========
+
+在取出数据后，更改字段内容后使用 ``save`` 方法更新数据。 **这种方式是最佳的更新方式。**
+
+.. code-block:: php
+
+	$user = User::get(1);
+	$user->name     = 'thinkphp';
+	$user->email    = 'thinkphp@qq.com';
+	$user->save();
+
+.. note:: ``save`` 方法返回影响的记录数，并只有当 ``before_update`` 事件返回 ``false`` 的时候返回 ``false`` ，从 ``V5.1.6+`` 版本开始统一返回布尔值
+
+对于复杂的查询条件，也可以使用查询构造器来查询数据并更新
+
+.. code-block:: php
+
+	$user = User::where('status',1)
+		->where('name','liuchen')
+		->find();
+	$user->name     = 'thinkphp';
+	$user->email    = 'thinkphp@qq.com';
+	$user->save();
+
+``save`` 方法更新数据，只会更新变化的数据，对于没有变化的数据是不会进行重新更新的。如果你需要强制更新所有数据，可以使用下面的方法：
+
+.. code-block:: language
+
+	$user = User::get(1);
+	$user->name     = 'thinkphp';
+	$user->email    = 'thinkphp@qq.com';
+	$user->force()->save();
+
+这样无论你的修改后的数据是否和之前一样都会强制更新该字段的值。
+
+如果要执行 ``SQL`` 函数更新，那么在 ``V5.1.8+`` 版本可以使用下面的方法
+
+.. code-block:: php
+
+	$user = User::get(1);
+	$user->name     = 'thinkphp';
+	$user->email    = 'thinkphp@qq.com';
+	$user->score	=  Db::raw('score+1');
+	$user->save();
+
+如果只是字段的增加/减少，也可以直接用 ``inc/dec`` 方式
+
+.. code-block:: php
+
+	$user = User::get(1);
+	$user->name     = 'thinkphp';
+	$user->email    = 'thinkphp@qq.com';
+	$user->score	= ['inc', 1];
+	$user->save();
+
+
+直接更新数据
+===========
+也可以直接带更新条件来更新数据
+
+.. code-block:: php
+
+	$user = new User;
+	// save方法第二个参数为更新条件
+	$user->save([
+	    'name'  => 'thinkphp',
+	    'email' => 'thinkphp@qq.com'
+	],['id' => 1]);
+
+
+上面两种方式更新数据，如果需要过滤非数据表字段的数据，可以使用：
+
+.. code-block:: php
+
+	$user = new User;
+	// 过滤post数组中的非数据表字段数据
+	$user->allowField(true)->save($_POST,['id' => 1]);
+
+如果你通过外部提交赋值给模型，并且希望指定某些字段写入，可以使用：
+
+.. code-block:: php
+
+	$user = new User();
+	// post数组中只有name和email字段会写入
+	$user->allowField(['name','email'])->save($_POST, ['id' => 1]);
+
+最佳建议是在传入模型数据之前就进行过滤，例如：
+
+.. code-block:: php
+
+	$user = new User();
+	// post数组中只有name和email字段会写入
+	$data = Request::only(['name','email']);
+	$user->save($data, ['id' => 1]);
+
+
+
+批量更新数据
+============
+
+可以使用 ``saveAll`` 方法批量更新数据，只需要在批量更新的数据中包含主键即可，例如：
+
+.. code-block:: php
+
+	$user = new User;
+	$list = [
+	    ['id'=>1, 'name'=>'thinkphp', 'email'=>'thinkphp@qq.com'],
+	    ['id'=>2, 'name'=>'onethink', 'email'=>'onethink@qq.com']
+	];
+	$user->saveAll($list);
+
+批量更新方法返回的是一个数据集对象，即模型对象集合。
+
+.. note:: 批量更新仅能根据主键值进行更新，其它情况请自行处理。批量更新不会查询。
+
+
+静态方法
+=========
+
+模型支持调用数据库的方法直接更新数据，例如：
+
+.. code-block:: php
+
+	User::where('id', 1)
+	    ->update(['name' => 'thinkphp']);
+
+.. note:: 数据库的 ``update`` 方法返回影响的记录数
+
+或者使用模型的静态 ``update`` 方法更新：
+
+.. code-block:: php
+
+    User::update(['id' => 1, 'name' => 'thinkphp']);
+
+.. note:: 模型的 ``update`` 方法返回模型的对象实例
+
+.. note:: 上面两种写法的区别是第一种是使用的数据库的 ``update`` 方法，而第二种是使用的模型的 ``update`` 方法（ **可以支持模型的修改器、事件和自动完成** ）。
+
+自动识别
+========
+我们已经看到，模型的新增和更新方法都是 ``save`` 方法，系统有一套默认的规则来识别当前的数据需要更新还是新增。
+
+- 实例化模型后调用 ``save`` 方法表示新增；
+- 查询数据后调用 ``save`` 方法表示更新；
+- ``save`` 方法传入更新条件后表示更新；
+
+如果你的数据操作比较复杂，可以用 ``isUpdate`` 方法显式的指定当前调用 ``save`` 方法是新增操作还是更新操作。
+
+显式更新数据：
+
+.. code-block:: php
+
+	// 实例化模型
+	$user = new User;
+	// 显式指定更新数据操作
+	$user->isUpdate(true)
+	    ->save(['id' => 1, 'name' => 'thinkphp']);
+
+显式新增数据：
+
+.. code-block:: php
+
+	$user = User::get(1);
+	$user->name = 'thinkphp';
+	// 显式指定当前操作为新增操作
+	$user->isUpdate(false)->save();
+
+不要在一个模型实例里面做多次更新，会导致部分重复数据不再更新，正确的方式应该是先查询后更新或者使用模型类的 ``update`` 方法更新。
+
+.. note:: 如果你调用 ``save`` 方法进行多次数据写入的时候，需要注意，第二次 ``save`` 方法的时候必须使用 ``isUpdate(false)`` ，否则会视为更新数据。
+
+最佳实践
+========
+
+.. note:: 更新的最佳实践原则是：如果需要使用模型事件，那么就先查询后更新，如果不需要使用事件，直接使用静态的 ``Update`` 方法进行条件更新，如非必要，尽量不要使用批量更新。
+

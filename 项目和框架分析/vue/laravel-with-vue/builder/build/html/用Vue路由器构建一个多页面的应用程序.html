@@ -1,0 +1,566 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8. 用Vue路由器构建一个多页面的应用程序 &mdash; laravel整合vue 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel整合vue 1.0 文档" href="index.html"/>
+        <link rel="prev" title="7. 使用Vue组件来组合小部件" href="使用Vue组件来编写小部件.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel整合vue
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="本书概览.html">1. 本书概览</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hello Vue – An Introduction to Vue.js.html">2. Hello Vue – An Introduction to Vue.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vuebnb原型，你的第一个vue项目.html">3. Vuebnb原型，你的第一个vue项目</a></li>
+<li class="toctree-l1"><a class="reference internal" href="配置Laravel开发环境.html">4. 配置Laravel开发环境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Laravel构建Web服务.html">5. 使用Laravel构建Web服务</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Webpack整合Laravel和Vue.html">6. 使用Webpack整合Laravel和Vue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Vue组件来编写小部件.html">7. 使用Vue组件来组合小部件</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. 用Vue路由器构建一个多页面的应用程序</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">8.1. 单页面应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">8.2. 路由器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">8.3. Vue路由器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">8.3.1. 具体的组件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vuebnb">8.4. Vuebnb路由</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">8.5. 安装Vue路由器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">8.6. 创建路由</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app">8.7. App组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#home">8.8. Home页面</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">8.9. Home路由</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">8.9.1. 初始状态</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#listingsummary">8.10. ListingSummary组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">8.11. app内导航</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id15">8.11.1. 给模型增加一个路径</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">8.11.2. 路由导航卫士</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">8.11.3. 主页组件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#api">8.11.4. 主页API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#axios">8.11.5. Axios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mixins">8.11.6. Mixins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mixin">8.11.7. 将解决方案移至mixin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">8.11.8. 链接到列表页面</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id19">8.12. 滚动行为</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">8.13. 添加页脚</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id21">8.13.1. 路由对象</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22">8.13.2. 动态选择容器类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id23">8.14. 列出摘要图像滑块</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id24">8.14.1. 增加滑块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">8.14.2. 过渡</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">8.14.3. 轮播控制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27">8.14.4. 结束触发</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id28">8.15. 总结</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel整合vue</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>8. 用Vue路由器构建一个多页面的应用程序</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/用Vue路由器构建一个多页面的应用程序.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vue">
+<h1><a class="toc-backref" href="#id30">8. 用Vue路由器构建一个多页面的应用程序</a><a class="headerlink" href="#vue" title="永久链接至标题">¶</a></h1>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#vue" id="id30">用Vue路由器构建一个多页面的应用程序</a><ul>
+<li><a class="reference internal" href="#id2" id="id31">单页面应用</a></li>
+<li><a class="reference internal" href="#id3" id="id32">路由器</a></li>
+<li><a class="reference internal" href="#id4" id="id33">Vue路由器</a><ul>
+<li><a class="reference internal" href="#id5" id="id34">具体的组件</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vuebnb" id="id35">Vuebnb路由</a></li>
+<li><a class="reference internal" href="#id6" id="id36">安装Vue路由器</a></li>
+<li><a class="reference internal" href="#id7" id="id37">创建路由</a></li>
+<li><a class="reference internal" href="#app" id="id38">App组件</a></li>
+<li><a class="reference internal" href="#home" id="id39">Home页面</a></li>
+<li><a class="reference internal" href="#id8" id="id40">Home路由</a><ul>
+<li><a class="reference internal" href="#id9" id="id41">初始状态</a><ul>
+<li><a class="reference internal" href="#id10" id="id42">重构</a></li>
+<li><a class="reference internal" href="#id11" id="id43">主页初始状态</a></li>
+<li><a class="reference internal" href="#id12" id="id44">增加缩略图</a></li>
+<li><a class="reference internal" href="#id13" id="id45">在客户端接收</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#listingsummary" id="id46">ListingSummary组件</a></li>
+<li><a class="reference internal" href="#id14" id="id47">app内导航</a><ul>
+<li><a class="reference internal" href="#id15" id="id48">给模型增加一个路径</a></li>
+<li><a class="reference internal" href="#id16" id="id49">路由导航卫士</a><ul>
+<li><a class="reference internal" href="#next" id="id50">next</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id17" id="id51">主页组件</a></li>
+<li><a class="reference internal" href="#api" id="id52">主页API</a></li>
+<li><a class="reference internal" href="#axios" id="id53">Axios</a></li>
+<li><a class="reference internal" href="#mixins" id="id54">Mixins</a></li>
+<li><a class="reference internal" href="#mixin" id="id55">将解决方案移至mixin</a><ul>
+<li><a class="reference internal" href="#assigndata" id="id56">assignData</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id18" id="id57">链接到列表页面</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id19" id="id58">滚动行为</a></li>
+<li><a class="reference internal" href="#id20" id="id59">添加页脚</a><ul>
+<li><a class="reference internal" href="#id21" id="id60">路由对象</a></li>
+<li><a class="reference internal" href="#id22" id="id61">动态选择容器类</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id23" id="id62">列出摘要图像滑块</a><ul>
+<li><a class="reference internal" href="#id24" id="id63">增加滑块</a></li>
+<li><a class="reference internal" href="#id25" id="id64">过渡</a></li>
+<li><a class="reference internal" href="#id26" id="id65">轮播控制</a></li>
+<li><a class="reference internal" href="#id27" id="id66">结束触发</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id28" id="id67">总结</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>在上一章中，我们了解了 <code class="docutils literal"><span class="pre">Vue.js</span></code> 组件，并将 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 转换为基于组件的体系结构。 现在我们已经完成了这个工作，我们可以使用 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">Router</span></code> 轻松地将新页面添加到我们的应用程序中。</p>
+<p>在本章中，我们将为 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 创建一个主页，其中包括一个可点击缩略图库，展示全套模拟列表。</p>
+<p>本章涵盖的主题：</p>
+<ul class="simple">
+<li>解释什么是路由器库，以及它们为什么是单页应用程序的关键部分；</li>
+<li><code class="docutils literal"><span class="pre">Vue</span></code> 路由器及其主要特性概述；</li>
+<li><code class="docutils literal"><span class="pre">Vue</span> <span class="pre">Router</span></code> 的安装和基本配置；</li>
+<li>使用 <code class="docutils literal"><span class="pre">RouterLink</span></code> 和 <code class="docutils literal"><span class="pre">RouterView</span></code> 特殊组件来管理页面导航；</li>
+<li>在 <code class="docutils literal"><span class="pre">Vue</span></code> 中使用 <code class="docutils literal"><span class="pre">AJAX</span></code> 可以在不刷新页面的情况下从 <code class="docutils literal"><span class="pre">Web</span></code> 服务中检索数据；</li>
+<li>在加载新页面之前使用路由导航警卫来检索数据；</li>
+</ul>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id31">8.1. 单页面应用</a><a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>大多数网站都被分成多个网页，以便使他们所包含的信息更易于使用。传统上，这是通过服务器/客户端模型完成的，其中每个页面必须使用不同的 <code class="docutils literal"><span class="pre">URL</span></code> 从服务器加载。要导航到新页面，浏览器必须向该页面的 <code class="docutils literal"><span class="pre">URL</span></code> 发送请求。服务器将发回数据，浏览器可以卸载现有页面并加载新页面。对于普通的互联网连接，这个过程可能需要几秒钟的时间，在此期间用户必须等待新页面加载。</p>
+<p>通过使用强大的前端框架和 <code class="docutils literal"><span class="pre">AJAX</span></code> 工具，可以使用不同的模型：浏览器可以加载初始网页，但导航到新页面不需要浏览器卸载页面并加载新页面。相反，新页面所需的任何数据都可以使用 <code class="docutils literal"><span class="pre">AJAX</span></code> 异步加载。从用户的角度来看，这样一个网站看起来像其他网页一样，但从技术角度来看，这个网站实际上只有一个页面。因此，名称，单页面应用程序（SPA）。</p>
+<p>单页应用程序体系结构的优点是可以为用户创建更加无缝的体验。新页面的数据仍然需要检索，并且因此会对用户的流程造成一些小的中断，但是由于数据检索可以异步完成并且 <code class="docutils literal"><span class="pre">JavaScript</span></code> 可以继续运行，所以这种中断被最小化了。而且，由于 <code class="docutils literal"><span class="pre">SPA</span></code> 页面由于重新使用某些页面元素而通常需要较少的数据，因此页面加载更快。</p>
+<p><code class="docutils literal"><span class="pre">SPA</span></code> 体系结构的缺点是，由于增加了功能，它使得客户端应用程序变得笨重，因此用户必须在第一次加载页面时下载大型应用程序，否则加速页面更改的收益可能会被抵消。此外，处理路由会增加应用程序的复杂性，因为必须管理多个状态，必须处理 <code class="docutils literal"><span class="pre">URL</span></code> 以及必须在应用程序中重新创建大量浏览器默认功能。</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id32">8.2. 路由器</a><a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>如果您打算使用 <code class="docutils literal"><span class="pre">SPA</span></code> 架构，并且您的应用设计包含多个页面，则需要使用路由器。在这种情况下，路由器是一个库，它将通过 <code class="docutils literal"><span class="pre">JavaScript</span></code> 和各种本机 <code class="docutils literal"><span class="pre">API</span></code> 模拟浏览器导航，以便用户获得类似于传统多页应用的体验。 路由器通常会包含以下功能：</p>
+<ul class="simple">
+<li>处理页面内的导航操作</li>
+<li>将应用程序的部分与路由匹配</li>
+<li>管理地址栏</li>
+<li>管理浏览器历史记录</li>
+<li>管理滚动条行为</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id33">8.3. Vue路由器</a><a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>一些前端框架（如 <code class="docutils literal"><span class="pre">Angular</span></code> 或 <code class="docutils literal"><span class="pre">Ember</span></code> ）包括一个开箱即用的路由器库。 指导这些框架的理念是开发人员可以更好地为他们的 <code class="docutils literal"><span class="pre">SPA</span></code> 提供完整的集成解决方案。</p>
+<p>其他框架/库，如 <code class="docutils literal"><span class="pre">React</span></code> 和 <code class="docutils literal"><span class="pre">Vue.js</span></code> ，不包括路由器。 相反，你必须安装一个单独的库。</p>
+<p>在 <code class="docutils literal"><span class="pre">Vue.js</span></code> 的情况下，可以使用称为 <code class="docutils literal"><span class="pre">Vue</span></code> 路由器的官方路由器库。该库由 <code class="docutils literal"><span class="pre">Vue.js</span></code> 核心团队开发，因此针对 <code class="docutils literal"><span class="pre">Vue.js</span></code> 的使用进行了优化，充分利用了基本的 <code class="docutils literal"><span class="pre">Vue</span></code> 特性，如组件和反应性。</p>
+<p>使用 <code class="docutils literal"><span class="pre">Vue</span></code> 路由器，应用程序的不同页面由不同的组件表示。 当你设置 <code class="docutils literal"><span class="pre">Vue</span></code> 路由器时，你会通过配置告诉它哪个 <code class="docutils literal"><span class="pre">URL</span></code> 映射到哪个组件。 然后，当在应用程序中点击链接时， <code class="docutils literal"><span class="pre">Vue</span></code> 路由器将切换活动组件以匹配新的 <code class="docutils literal"><span class="pre">URL</span></code> ，例如：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">routes</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="nx">component</span><span class="o">:</span> <span class="nx">HomePage</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/about&#39;</span><span class="p">,</span> <span class="nx">component</span><span class="o">:</span> <span class="nx">AboutPage</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/contact&#39;</span><span class="p">,</span> <span class="nx">component</span><span class="o">:</span> <span class="nx">ContactPage</span> <span class="p">}</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p>由于在一般情况下渲染组件几乎是一个瞬间过程，因此使用 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">Router</span></code> 进行页面之间的转换也是如此。 但是，如果您的不同页面需要加载数据，则可以调用异步挂钩以使您有机会从服务器加载新数据。</p>
+<div class="section" id="id5">
+<h3><a class="toc-backref" href="#id34">8.3.1. 具体的组件</a><a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>当您安装 <code class="docutils literal"><span class="pre">Vue</span></code> 路由器时，将在您的应用中全局注册两个组件： <code class="docutils literal"><span class="pre">RouterLink</span></code> 和 <code class="docutils literal"><span class="pre">RouterView</span></code> 。</p>
+<p>通常使用 <code class="docutils literal"><span class="pre">RouterLink</span></code> 代替 <code class="docutils literal"><span class="pre">a</span></code> 标签，并让您的链路访问 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">Router</span></code> 的特殊功能。</p>
+<p>如上所述， <code class="docutils literal"><span class="pre">Vue</span></code> 路由器将切换指定的页面组件作为模仿浏览器导航的方式。 `` RouterView`` 是发生此组件切换的出口。 就像插槽一样，您可以将它放在主页面模板的某个位置。 例如：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">header</span><span class="p">&gt;&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">router-view</span><span class="p">&gt;</span>
+    // This is where different page components display
+  <span class="p">&lt;/</span><span class="nt">router-view</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">footer</span><span class="p">&gt;&lt;/</span><span class="nt">footer</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="vuebnb">
+<h2><a class="toc-backref" href="#id35">8.4. Vuebnb路由</a><a class="headerlink" href="#vuebnb" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Vuebnb</span></code> 从未成为单页应用程序的既定目标。 事实上， <code class="docutils literal"><span class="pre">Vuebnb</span></code> 将会偏离纯粹的 <code class="docutils literal"><span class="pre">SPA</span></code> 架构，我们将在本书后面看到。</p>
+<p>也就是说，整合 <code class="docutils literal"><span class="pre">Vue</span></code> 路由器对于用户在应用中导航的体验非常有益，因此我们将在本章中将其添加到 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 。</p>
+<p>当然，如果我们要添加路由器，我们将需要一些额外的页面！到目前为止，在该项目中，我们一直在研究 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的列表页面，但尚未开始在应用的首页上工作。因此，除了安装 <code class="docutils literal"><span class="pre">Vue</span></code> 路由器之外，我们还将开始 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 主页的工作，该主页会显示缩略图和指向我们所有模拟列表的链接：</p>
+<div class="figure" id="id29">
+<img alt="_images/7-1.png" src="_images/7-1.png" />
+<p class="caption"><span class="caption-text">图7.1 Vuebnb前端页面</span></p>
+</div>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id36">8.5. 安装Vue路由器</a><a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Vue</span> <span class="pre">Router</span></code> 是一个 <code class="docutils literal"><span class="pre">NPM</span></code> 软件包，可以在命令行上安装：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$  npm i --save-dev vue-router
+</pre></div>
+</div>
+<p>创建路由配置文件 <code class="docutils literal"><span class="pre">router.js</span></code></p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ touch resources/assets/js/router.js
+</pre></div>
+</div>
+<p>要将 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">Router</span></code> 添加到我们的项目中，我们必须导入该库，然后使用 <code class="docutils literal"><span class="pre">Vue.use</span></code>  API方法使 <code class="docutils literal"><span class="pre">Vue</span></code> 与 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">Router</span></code> 兼容。这将给 <code class="docutils literal"><span class="pre">Vue</span></code> 一个新的配置属性， <code class="docutils literal"><span class="pre">router</span></code> ，我们可以用它来连接一个新的路由器。</p>
+<p>然后我们用新的 <code class="docutils literal"><span class="pre">VueRouter()</span></code> 创建一个 <code class="docutils literal"><span class="pre">Vue</span></code> 路由器的实例。</p>
+<p>resources/assets/js/router.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">import</span> <span class="nx">Vue</span> <span class="nx">from</span> <span class="s1">&#39;vue&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">VueRouter</span> <span class="nx">from</span> <span class="s1">&#39;vue-router&#39;</span><span class="p">;</span>
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">VueRouter</span><span class="p">);</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="k">new</span> <span class="nx">VueRouter</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>通过从这个新文件中导出我们的路由器实例，我们已经将它创建为一个可以在 <code class="docutils literal"><span class="pre">app.js</span></code> 中导入的模块。 如果我们命名导入的模块为 <code class="docutils literal"><span class="pre">router</span></code> ，则可以使用对象解构来简洁地将其连接到我们的主配置对象。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">import</span> <span class="s2">&quot;core-js/fn/object/assign&quot;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">Vue</span> <span class="nx">from</span> <span class="s1">&#39;vue&#39;</span><span class="p">;</span>
+
+<span class="kr">import</span> <span class="nx">ListingPage</span> <span class="nx">from</span> <span class="s1">&#39;../components/ListingPage.vue&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">router</span> <span class="nx">from</span> <span class="s1">&#39;./router&#39;</span>
+
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+  <span class="nx">render</span><span class="o">:</span> <span class="nx">h</span> <span class="p">=&gt;</span> <span class="nx">h</span><span class="p">(</span><span class="nx">ListingPage</span><span class="p">),</span>
+  <span class="nx">router</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2><a class="toc-backref" href="#id37">8.6. 创建路由</a><a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Vue</span> <span class="pre">Router</span></code> 的最基本配置是提供一个 <code class="docutils literal"><span class="pre">routes</span></code> 数组，它将 <code class="docutils literal"><span class="pre">URL</span></code> 映射到相应的页面组件。该数组将包含具有至少两个属性的对象： <code class="docutils literal"><span class="pre">path</span></code> 和 <code class="docutils literal"><span class="pre">component</span></code> 。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">请注意，通过页面组件，我只是指用来在我们的应用中表示页面的任何组件。 它们是任何形式的常规组件。</p>
+</div>
+<p>现在，我们只会在我们的应用中使用两条路由，一条用于我们的主页，另一条用于我们的列表页面。 <code class="docutils literal"><span class="pre">HomePage</span></code> 组件尚不存在，因此我们将保留其路由注释，直到我们创建它。</p>
+<p>resources/assets/js/router.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">import</span> <span class="nx">ListingPage</span> <span class="nx">from</span> <span class="s1">&#39;../components/ListingPage.vue&#39;</span><span class="p">;</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="k">new</span> <span class="nx">VueRouter</span><span class="p">({</span>
+  <span class="nx">mode</span><span class="o">:</span> <span class="s1">&#39;history&#39;</span><span class="p">,</span>
+  <span class="nx">routes</span><span class="o">:</span> <span class="p">[</span>
+    <span class="c1">// { path: &#39;/&#39;, component: HomePage }, // doesn&#39;t exist yet!</span>
+    <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/listing/:listing&#39;</span><span class="p">,</span> <span class="nx">component</span><span class="o">:</span> <span class="nx">ListingPage</span> <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>您会注意到我们的 <code class="docutils literal"><span class="pre">ListingPage</span></code> 组件的路径包含一个动态细分 <code class="docutils literal"><span class="pre">:listing</span></code> ，以便此路由将匹配路径，包括 <code class="docutils literal"><span class="pre">/listing/1</span></code> ， <code class="docutils literal"><span class="pre">listing/2</span> <span class="pre">...</span> <span class="pre">listing/whatever</span></code> 。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">Vue</span></code> 路由器有两种模式：哈希模式和历史模式。 哈希模式使用 <code class="docutils literal"><span class="pre">URL</span></code> 哈希模拟完整的 <code class="docutils literal"><span class="pre">URL</span></code> ，以便在哈希更改时不会重新加载页面。 历史记录模式具有真实 <code class="docutils literal"><span class="pre">URL</span></code> ，并利用 <code class="docutils literal"><span class="pre">history.pushState</span></code> API更改 <code class="docutils literal"><span class="pre">URL</span></code> 而不会导致页面重新加载。 历史模式唯一的缺点是应用程序外部的 <code class="docutils literal"><span class="pre">URL</span></code> （例如 <code class="docutils literal"><span class="pre">/some/weird/path</span></code> ）不能由 <code class="docutils literal"><span class="pre">Vue</span></code> 处理，必须由服务器处理。 这对我们来说没有问题，所以我们将使用 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的历史记录模式。</p>
+</div>
+</div>
+<div class="section" id="app">
+<h2><a class="toc-backref" href="#id38">8.7. App组件</a><a class="headerlink" href="#app" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="home">
+<h2><a class="toc-backref" href="#id39">8.8. Home页面</a><a class="headerlink" href="#home" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="id8">
+<h2><a class="toc-backref" href="#id40">8.9. Home路由</a><a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id9">
+<h3><a class="toc-backref" href="#id41">8.9.1. 初始状态</a><a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id10">
+<h4><a class="toc-backref" href="#id42">8.9.1.1. 重构</a><a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+</div>
+<div class="section" id="id11">
+<h4><a class="toc-backref" href="#id43">8.9.1.2. 主页初始状态</a><a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+</div>
+<div class="section" id="id12">
+<h4><a class="toc-backref" href="#id44">8.9.1.3. 增加缩略图</a><a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
+</div>
+<div class="section" id="id13">
+<h4><a class="toc-backref" href="#id45">8.9.1.4. 在客户端接收</a><a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
+</div>
+</div>
+</div>
+<div class="section" id="listingsummary">
+<h2><a class="toc-backref" href="#id46">8.10. ListingSummary组件</a><a class="headerlink" href="#listingsummary" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="id14">
+<h2><a class="toc-backref" href="#id47">8.11. app内导航</a><a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id15">
+<h3><a class="toc-backref" href="#id48">8.11.1. 给模型增加一个路径</a><a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="id16">
+<h3><a class="toc-backref" href="#id49">8.11.2. 路由导航卫士</a><a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<div class="section" id="next">
+<h4><a class="toc-backref" href="#id50">8.11.2.1. next</a><a class="headerlink" href="#next" title="永久链接至标题">¶</a></h4>
+</div>
+</div>
+<div class="section" id="id17">
+<h3><a class="toc-backref" href="#id51">8.11.3. 主页组件</a><a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="api">
+<h3><a class="toc-backref" href="#id52">8.11.4. 主页API</a><a class="headerlink" href="#api" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="axios">
+<h3><a class="toc-backref" href="#id53">8.11.5. Axios</a><a class="headerlink" href="#axios" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="mixins">
+<h3><a class="toc-backref" href="#id54">8.11.6. Mixins</a><a class="headerlink" href="#mixins" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="mixin">
+<h3><a class="toc-backref" href="#id55">8.11.7. 将解决方案移至mixin</a><a class="headerlink" href="#mixin" title="永久链接至标题">¶</a></h3>
+<div class="section" id="assigndata">
+<h4><a class="toc-backref" href="#id56">8.11.7.1. assignData</a><a class="headerlink" href="#assigndata" title="永久链接至标题">¶</a></h4>
+</div>
+</div>
+<div class="section" id="id18">
+<h3><a class="toc-backref" href="#id57">8.11.8. 链接到列表页面</a><a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
+</div>
+</div>
+<div class="section" id="id19">
+<h2><a class="toc-backref" href="#id58">8.12. 滚动行为</a><a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="id20">
+<h2><a class="toc-backref" href="#id59">8.13. 添加页脚</a><a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id21">
+<h3><a class="toc-backref" href="#id60">8.13.1. 路由对象</a><a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="id22">
+<h3><a class="toc-backref" href="#id61">8.13.2. 动态选择容器类</a><a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h3>
+</div>
+</div>
+<div class="section" id="id23">
+<h2><a class="toc-backref" href="#id62">8.14. 列出摘要图像滑块</a><a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id24">
+<h3><a class="toc-backref" href="#id63">8.14.1. 增加滑块</a><a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="id25">
+<h3><a class="toc-backref" href="#id64">8.14.2. 过渡</a><a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="id26">
+<h3><a class="toc-backref" href="#id65">8.14.3. 轮播控制</a><a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="id27">
+<h3><a class="toc-backref" href="#id66">8.14.4. 结束触发</a><a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h3>
+</div>
+</div>
+<div class="section" id="id28">
+<h2><a class="toc-backref" href="#id67">8.15. 总结</a><a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="使用Vue组件来编写小部件.html" class="btn btn-neutral" title="7. 使用Vue组件来组合小部件" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

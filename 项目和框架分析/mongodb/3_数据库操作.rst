@@ -1,0 +1,96 @@
+**********
+数据库操作
+**********
+
+创建数据库
+==========
+语法
+----
+MongoDB 创建数据库的语法格式如下：
+
+.. code-block:: shell
+
+    use DATABASE_NAME
+
+如果数据库不存在，则创建数据库，否则切换到指定数据库。
+
+实例
+----
+以下实例我们创建了数据库 ``runoob`` :
+
+.. code-block:: shell
+
+    > use runoob
+    switched to db runoob
+    > db
+    runoob
+
+如果你想查看所有数据库，可以使用 ``show dbs`` 命令：
+
+.. code-block:: shell
+
+    > show dbs
+    admin   0.000GB
+    local   0.000GB
+
+可以看到，我们刚创建的数据库 ``runoob`` 并不在数据库的列表中， 要显示它，我们需要向 ``runoob`` 数据库插入一些数据。
+
+.. code-block:: shell
+
+    > db.runoob.insert({"name":"菜鸟教程"})
+    WriteResult({ "nInserted" : 1 })
+    > show dbs
+    local   0.078GB
+    runoob  0.078GB
+    test    0.078GB
+
+MongoDB 中默认的数据库为 ``test`` ，如果你没有创建新的数据库，集合将存放在 ``test`` 数据库中。
+
+.. note:: 在 MongoDB 中，集合只有在内容插入后才会创建! 就是说，创建集合(数据表)后要再插入一个文档(记录)，集合才会真正创建。
+
+删除数据库
+==========
+语法
+----
+``MongoDB`` 删除数据库的语法格式如下：
+
+.. code-block:: shell
+
+    db.dropDatabase()
+
+删除当前数据库，默认为 ``test`` ，你可以使用 ``db`` 命令查看当前数据库名。
+
+实例
+-----
+以下实例我们删除了数据库 ``runoob`` 。
+
+首先，查看所有数据库：
+
+.. code-block:: shell
+
+    > show dbs
+    local   0.078GB
+    runoob  0.078GB
+    test    0.078GB
+
+接下来我们切换到数据库 ``runoob`` ：
+
+.. code-block:: shell
+
+    > use runoob
+    switched to db runoob
+
+执行删除命令：
+
+.. code-block:: shell
+
+    > db.dropDatabase()
+    { "dropped" : "runoob", "ok" : 1 }
+
+最后，我们再通过 ``show dbs`` 命令数据库是否删除成功：
+
+.. code-block:: shell
+
+    > show dbs
+    local  0.078GB
+    test   0.078GB

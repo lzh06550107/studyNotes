@@ -1,0 +1,1 @@
+https://learnku.com/laravel/t/2915/how-to-use-the-macro-method-to-extend-the-function-of-the-base-class-of-laravel

@@ -1,0 +1,826 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>56. 数据库迁移 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="57. 数据库填充" href="Laravel的数据库填充.html"/>
+        <link rel="prev" title="55. 数据分页原理分析" href="Laravel的数据分页原理分析.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">56. 数据库迁移</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">56.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">56.2. 生成迁移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">56.3. 迁移结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">56.4. 运行迁移</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">56.4.1. 在生产环境强制执行迁移</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">56.4.2. 回滚迁移</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">56.4.3. 使用单个命令来一次执行回滚然后迁移</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">56.4.4. 删除所有表然后迁移</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">56.5. 数据表</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">56.5.1. 创建数据表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">56.5.2. 检查数据表 / 字段是否存在</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">56.5.3. 数据库连接 &amp; 表选项</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">56.5.4. 重命名 / 删除数据表</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">56.6. 字段</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id17">56.6.1. 创建字段</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">56.6.2. 字段修饰</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">56.6.3. 修改字段</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24">56.6.4. 删除字段</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id26">56.7. 索引</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id27">56.7.1. 创建索引</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mysql-mariadb">56.7.2. 索引长度 &amp; MySQL / MariaDB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28">56.7.3. 删除索引</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id29">56.8. 外键约束</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#on-delete">56.8.1. ON DELETE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#on-update">56.8.2. ON UPDATE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>56. 数据库迁移</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>56. 数据库迁移<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>56.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>迁移就像是数据库的版本控制, 允许团队简单轻松的编辑并共享应用的数据库表结构，迁移通常和 Laravel 的 数据库结构生成器配合使用，让你轻松地构建数据库结构。如果你曾经试过让同事手动在数据库结构中添加字段，那么数据库迁移可以让你不再需要做这样的事情。</p>
+<p>Laravel 的 <code class="docutils literal"><span class="pre">Schema</span></code> 门面 对所有 Laravel 支持的数据库系统提供了创建和操作数据表的相应支持。</p>
+</div>
+<div class="section" id="id3">
+<h2>56.2. 生成迁移<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">make:migration</span></code> 来创建迁移。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:migration create_users_table
+</pre></div>
+</div>
+<p>新的迁移位于 <code class="docutils literal"><span class="pre">database/migrations</span></code> 目录下。每个迁移文件名都包含时间戳，以便让 Laravel 确认迁移的顺序。</p>
+<p><code class="docutils literal"><span class="pre">--table</span></code> 和 <code class="docutils literal"><span class="pre">--create</span></code> 选项可用来指定数据表的名称，或是该迁移被执行时是否将创建的新数据表。这些选项需在预生成迁移文件时填入指定的数据表：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:migration create_users_table --create<span class="o">=</span>users
+
+php artisan make:migration add_votes_to_users_table --table<span class="o">=</span>users
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">--create</span></code> 参数用来指定该迁移文件需要创建表； <code class="docutils literal"><span class="pre">--table</span></code> 参数用来指定操作表的名称。</p>
+<p>如果你想要指定生成迁移指定一个自定义输出路径，则可以在运行 make:migration 命令时添加 <code class="docutils literal"><span class="pre">--path</span></code> 选项，给定的路径必须是相对于应用程序的基本路径。</p>
+</div>
+<div class="section" id="id4">
+<h2>56.3. 迁移结构<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>迁移类通常会包含2个方法： <code class="docutils literal"><span class="pre">up</span></code> 和 <code class="docutils literal"><span class="pre">down</span></code> 。 <code class="docutils literal"><span class="pre">up</span></code> 方法用于添加新的数据表， 字段或者索引到数据库， 而 <code class="docutils literal"><span class="pre">down</span></code> 方法就是 <code class="docutils literal"><span class="pre">up</span></code> 方法的反操作，和 <code class="docutils literal"><span class="pre">up</span></code> 里的操作相反。</p>
+<p>在这2个方法中都要用到 Laravel 的 <code class="docutils literal"><span class="pre">Schema</span></code> 构建器来创建和修改表，若要了解 Schema 生成器中的所有可用方法 ，可以查看它的文档。比如，创建 <code class="docutils literal"><span class="pre">flights</span></code> 表的简单示例:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Schema</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Schema\Blueprint</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Migrations\Migration</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">CreateFlightsTable</span> <span class="k">extends</span> <span class="nx">Migration</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 运行数据库迁移</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">up</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Schema</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;flights&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">increments</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">);</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;airline&#39;</span><span class="p">);</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">timestamps</span><span class="p">();</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 回滚数据库迁移</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">down</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Schema</span><span class="o">::</span><span class="na">drop</span><span class="p">(</span><span class="s1">&#39;flights&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>56.4. 运行迁移<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>使用 Artisan 命令 <code class="docutils literal"><span class="pre">migrate</span></code> 方法来运行所有未完成的迁移：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan migrate
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果正在使用 <code class="docutils literal"><span class="pre">Homestead</span></code> 虚拟机，你应该在你的虚拟机下运行这个命令。</p>
+</div>
+<div class="section" id="id6">
+<h3>56.4.1. 在生产环境强制执行迁移<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>一些迁移操作是具有破坏性的， 这意味着可能会导致数据丢失。 为了防止有人在生产环境中运行这些命令， 系统会在这些命令被运行之前与你进行确认。如果要强制忽略系统的提示运行命令， 则可以使用 <code class="docutils literal"><span class="pre">--force</span></code> 标记：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan migrate --force
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>56.4.2. 回滚迁移<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>若要回滚最后一次迁移， 可以使用 <code class="docutils literal"><span class="pre">rollback</span></code> 命令。 此命令将回滚最后一次“迁移”的操作，其中可能包含多个迁移文件：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan migrate:rollback
+</pre></div>
+</div>
+<p>你可以在 <code class="docutils literal"><span class="pre">rollback</span></code> 命令后面加上 <code class="docutils literal"><span class="pre">step</span></code> 参数，来限制回滚迁移的个数。 例如，以下命令将回滚最近五次迁移：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan migrate:rollback --step<span class="o">=</span><span class="m">5</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">migrate:reset</span></code> 命令可以回滚应用程序中的所有迁移：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan migrate:reset
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>56.4.3. 使用单个命令来一次执行回滚然后迁移<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">migrate:refresh</span></code> 命令不仅会回滚数据库的所有迁移还会接着运行 <code class="docutils literal"><span class="pre">migrate</span></code> 命令。 这个命令可以高效地重建整个数据库：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan migrate:refresh
+
+// 刷新数据库结构并执行数据填充
+php artisan migrate:refresh --seed
+</pre></div>
+</div>
+<p>使用 <code class="docutils literal"><span class="pre">refresh</span></code> 命令并提供 <code class="docutils literal"><span class="pre">step</span></code> 参数来回滚并再执行最后指定的迁移数。例如， 以下命令将回滚并重新执行最后五次迁移：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan migrate:refresh --step<span class="o">=</span><span class="m">5</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>56.4.4. 删除所有表然后迁移<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">migrate:fresh</span></code> 命令会从数据库中删除所有表，然后执行 <code class="docutils literal"><span class="pre">migrate</span></code> 命令:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan migrate:fresh
+
+php artisan migrate:fresh --seed
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id10">
+<h2>56.5. 数据表<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id11">
+<h3>56.5.1. 创建数据表<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>可以使用 <code class="docutils literal"><span class="pre">Schema</span></code> facade 的 <code class="docutils literal"><span class="pre">create</span></code> 方法来创建新的数据库表。 <code class="docutils literal"><span class="pre">create</span></code> 方法接受两个参数：第一个参数为数据表的名称，第二个参数是 <code class="docutils literal"><span class="pre">Closure</span></code> ，此闭包会接收一个用于定义新数据表的 <code class="docutils literal"><span class="pre">Blueprint</span></code> 对象：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">increments</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>当然，在创建数据表的时候，可以使用任何数据库结构生成器的 字段方法 来定义数据表的字段。</p>
+</div>
+<div class="section" id="id12">
+<h3>56.5.2. 检查数据表 / 字段是否存在<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>可以使用 <code class="docutils literal"><span class="pre">hasTable</span></code> 和 <code class="docutils literal"><span class="pre">hasColumn</span></code> 方法来检查数据表或字段是否存在：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">Schema</span><span class="o">::</span><span class="na">hasTable</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">Schema</span><span class="o">::</span><span class="na">hasColumn</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h3>56.5.3. 数据库连接 &amp; 表选项<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p>如果要对非默认连接的数据库连接执行结构操作，可以使用 <code class="docutils literal"><span class="pre">connection</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">connection</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">increments</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>你可以在数据库结构生成器上使用以下命令来定义表的选项：</p>
+<p>命令   描述
+$table-&gt;engine = 'InnoDB';   指定表存储引擎 (MySQL)。
+$table-&gt;charset = 'utf8';    指定数据表的默认字符集 (MySQL)。
+$table-&gt;collation = 'utf8_unicode_ci';   指定数据表默认的排序规则 (MySQL)。
+$table-&gt;temporary();     创建临时表 (不支持SQL Server)。</p>
+</div>
+<div class="section" id="id14">
+<h3>56.5.4. 重命名 / 删除数据表<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>若要重命名数据表，可以使用 <code class="docutils literal"><span class="pre">rename</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">rename</span><span class="p">(</span><span class="nv">$from</span><span class="p">,</span> <span class="nv">$to</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>删除数据表， 可使用 <code class="docutils literal"><span class="pre">drop</span></code> 或 <code class="docutils literal"><span class="pre">dropIfExists</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">drop</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">);</span>
+
+<span class="nx">Schema</span><span class="o">::</span><span class="na">dropIfExists</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id15">
+<h4>56.5.4.1. 重命名带外键的数据表<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h4>
+<p>在重命名表之前，你应该验证表上的任何外键约束在迁移文件中都有明确的名称，而不是让 Laravel 按照约定来设置一个名称。否则，外键的约束名称将引用旧表名。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id16">
+<h2>56.6. 字段<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id17">
+<h3>56.6.1. 创建字段<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">Schema</span></code> facade 的 <code class="docutils literal"><span class="pre">table</span></code> 方法可以更新现有的数据表。如同 <code class="docutils literal"><span class="pre">create</span></code> 方法一样， <code class="docutils literal"><span class="pre">table</span></code> 方法会接受两个参数：一个是数据表的名称，另一个则是接收可以用来向表中添加字段的 <code class="docutils literal"><span class="pre">Blueprint</span></code> 实例的闭包：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="id18">
+<h4>56.6.1.1. 可用的字段类型<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
+<p>数据库结构生成器包含构建表时可以指定的各种字段类型：</p>
+<p>方法   描述
+$table-&gt;bigIncrements('id');    递增 ID（主键），相当于「UNSIGNED BIG INTEGER」
+$table-&gt;bigInteger('votes');    相当于 BIGINT
+$table-&gt;binary('data'); 相当于 BLOB
+$table-&gt;boolean('confirmed');   相当于 BOOLEAN
+$table-&gt;char('name', 100);   相当于带有长度的 CHAR
+$table-&gt;date('created_at');   相当于 DATE
+$table-&gt;dateTime('created_at');   相当于 DATETIME
+$table-&gt;dateTimeTz('created_at');    相当于带时区 DATETIME
+$table-&gt;decimal('amount', 8, 2);     相当于带有精度与基数 DECIMAL
+$table-&gt;double('amount', 8, 2);   相当于带有精度与基数 DOUBLE
+$table-&gt;enum('level', ['easy', 'hard']);    相当于 ENUM
+$table-&gt;float('amount', 8, 2);   相当于带有精度与基数 FLOAT
+$table-&gt;geometry('positions');   相当于 GEOMETRY
+$table-&gt;geometryCollection('positions');    相当于 GEOMETRYCOLLECTION
+$table-&gt;increments('id');   递增的 ID (主键)，相当于「UNSIGNED INTEGER」
+$table-&gt;integer('votes');    相当于 INTEGER
+$table-&gt;ipAddress('visitor');   相当于 IP 地址
+$table-&gt;json('options');     相当于 JSON
+$table-&gt;jsonb('options');    相当于 JSONB
+$table-&gt;lineString('positions');    相当于 LINESTRING
+$table-&gt;longText('description');    相当于 LONGTEXT
+$table-&gt;macAddress('device');    相当于 MAC 地址
+$table-&gt;mediumIncrements('id');   递增 ID (主键) ，相当于「UNSIGNED MEDIUM INTEGER」
+$table-&gt;mediumInteger('votes');    相当于 MEDIUMINT
+$table-&gt;mediumText('description');   相当于 MEDIUMTEXT
+$table-&gt;morphs('taggable');   相当于加入递增的 <code class="docutils literal"><span class="pre">taggable_id</span></code> 与字符串 <code class="docutils literal"><span class="pre">taggable_type</span></code>
+$table-&gt;multiLineString('positions');   相当于 MULTILINESTRING
+$table-&gt;multiPoint('positions');    相当于 MULTIPOINT
+$table-&gt;multiPolygon('positions');   相当于 MULTIPOLYGON
+$table-&gt;nullableMorphs('taggable');   相当于可空版本的 morphs() 字段
+$table-&gt;nullableTimestamps();     相当于可空版本的 timestamps() 字段
+$table-&gt;point('position');    相当于 POINT
+$table-&gt;polygon('positions');    相当于 POLYGON
+$table-&gt;rememberToken();    相当于可空版本的 VARCHAR(100) 的 remember_token 字段
+$table-&gt;smallIncrements('id');   递增 ID (主键) ，相当于「UNSIGNED SMALL INTEGER」
+$table-&gt;smallInteger('votes');   相当于 SMALLINT
+$table-&gt;softDeletes();    相当于为软删除添加一个可空的 deleted_at 字段
+$table-&gt;softDeletesTz();     相当于为软删除添加一个可空的 带时区的 deleted_at 字段
+$table-&gt;string('name', 100);    相当于带长度的 VARCHAR
+$table-&gt;text('description');    相当于 TEXT
+$table-&gt;time('sunrise');    相当于 TIME
+$table-&gt;timeTz('sunrise');    相当于带时区的 TIME
+$table-&gt;timestamp('added_on');    相当于 TIMESTAMP
+$table-&gt;timestampTz('added_on');    相当于带时区的 TIMESTAMP
+$table-&gt;timestamps();   相当于可空的 created_at 和 updated_at TIMESTAMP
+$table-&gt;timestampsTz();   相当于可空且带时区的 created_at 和 updated_at TIMESTAMP
+$table-&gt;tinyIncrements('id');   相当于自动递增 UNSIGNED TINYINT
+$table-&gt;tinyInteger('votes');     相当于 TINYINT
+$table-&gt;unsignedBigInteger('votes');    相当于 Unsigned BIGINT
+$table-&gt;unsignedDecimal('amount', 8, 2);    相当于带有精度和基数的 UNSIGNED DECIMAL
+$table-&gt;unsignedInteger('votes');   相当于 Unsigned INT
+$table-&gt;unsignedMediumInteger('votes');   相当于 Unsigned MEDIUMINT
+$table-&gt;unsignedSmallInteger('votes');    相当于 Unsigned SMALLINT
+$table-&gt;unsignedTinyInteger('votes');    相当于 Unsigned TINYINT
+$table-&gt;uuid('id');   相当于 UUID
+$table-&gt;year('birth_year');   相当于 YEAR</p>
+</div>
+</div>
+<div class="section" id="id19">
+<h3>56.6.2. 字段修饰<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p>除了上述列出的字段类型之外， 还有几个可以在添加字段时使用的
+&quot;修饰符&quot; 。例如，如果要把字段设置为 &quot;可空&quot;，就使用 <code class="docutils literal"><span class="pre">nullable</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>以下是所有可用的字段修饰符的列表。此列表不包括 <strong>索引修饰符</strong> ：</p>
+<p>修饰器  描述
+-&gt;after('column')   将此字段放置在其它字段 &quot;之后&quot; (MySQL)
+-&gt;autoIncrement()   将 INTEGER 类型的字段设置为自动递增的主键
+-&gt;charset('utf8')    指定列的一个字符集 (MySQL)
+-&gt;collation('utf8_unicode_ci')   指定列的排序规则 (MySQL/SQL Server)
+-&gt;comment('my comment')   为字段增加注释 (MySQL)
+-&gt;default($value)   为字段指定 &quot;默认&quot; 值
+-&gt;first()    将此字段放置在数据表的 &quot;首位&quot; (MySQL)
+-&gt;nullable($value = true)    此字段允许写入 NULL 值（默认情况下）
+-&gt;storedAs($expression)   创建一个存储生成的字段 (MySQL)
+-&gt;unsigned()    设置 INTEGER 类型的字段为 UNSIGNED (MySQL)
+-&gt;useCurrent()    将 TIMESTAMP 类型的字段设置为使用 CURRENT_TIMESTAMP 作为默认值
+-&gt;virtualAs($expression)    创建一个虚拟生成的字段 (MySQL)</p>
+</div>
+<div class="section" id="id20">
+<h3>56.6.3. 修改字段<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id21">
+<h4>56.6.3.1. 先决条件<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h4>
+<p>在修改字段之前，请确保将 <code class="docutils literal"><span class="pre">doctrine/dbal</span></code> 依赖添加到 <code class="docutils literal"><span class="pre">composer.json</span></code> 文件中。 Doctrine <code class="docutils literal"><span class="pre">DBAL</span></code> 库用于确定字段的当前状态， 并创建对该字段进行指定调整所需的 <code class="docutils literal"><span class="pre">SQL</span></code> 查询：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>composer require doctrine/dbal
+</pre></div>
+</div>
+</div>
+<div class="section" id="id22">
+<h4>56.6.3.2. 更新字段属性<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">change</span></code> 方法可以将现有的字段类型修改为新的类型或修改属性。 比如，你可能想增加。字符串字段的长度，可以使用 <code class="docutils literal"><span class="pre">change</span></code> 方法把 <code class="docutils literal"><span class="pre">name</span></code> 字段的长度从 <code class="docutils literal"><span class="pre">25</span></code> 增加到 <code class="docutils literal"><span class="pre">50</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">change</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>我们应该将字段修改为可空：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">change</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">只有下面的字段类型能被 &quot;修改&quot;： <code class="docutils literal"><span class="pre">bigInteger</span></code> 、 <code class="docutils literal"><span class="pre">binary</span></code> 、 <code class="docutils literal"><span class="pre">boolean</span></code> 、 <code class="docutils literal"><span class="pre">date</span></code> 、 <code class="docutils literal"><span class="pre">dateTime</span></code> 、 <code class="docutils literal"><span class="pre">dateTimeTz</span></code> 、 <code class="docutils literal"><span class="pre">decimal</span></code> 、 <code class="docutils literal"><span class="pre">integer</span></code> 、 <code class="docutils literal"><span class="pre">json</span></code> 、 <code class="docutils literal"><span class="pre">longText</span></code> 、 <code class="docutils literal"><span class="pre">mediumText</span></code> 、 <code class="docutils literal"><span class="pre">smallInteger</span></code> 、 <code class="docutils literal"><span class="pre">string</span></code> 、 <code class="docutils literal"><span class="pre">text</span></code> 、 <code class="docutils literal"><span class="pre">time</span></code> 、 <code class="docutils literal"><span class="pre">unsignedBigInteger</span></code> 、 <code class="docutils literal"><span class="pre">unsignedInteger</span></code> 和 <code class="docutils literal"><span class="pre">unsignedSmallInteger</span></code> 。</p>
+</div>
+</div>
+<div class="section" id="id23">
+<h4>56.6.3.3. 重命名字段<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h4>
+<p>可以使用结构生成器上的 <code class="docutils literal"><span class="pre">renameColumn</span></code> 方法来重命名字段。在重命名字段前， 请确保你的 <code class="docutils literal"><span class="pre">composer.json</span></code> 文件内已经加入 <code class="docutils literal"><span class="pre">doctrine/dbal</span></code> 依赖：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">renameColumn</span><span class="p">(</span><span class="s1">&#39;from&#39;</span><span class="p">,</span> <span class="s1">&#39;to&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">当前不支持 <code class="docutils literal"><span class="pre">enum</span></code> 类型的字段重命名。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id24">
+<h3>56.6.4. 删除字段<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h3>
+<p>可以使用结构生成器上的 <code class="docutils literal"><span class="pre">dropColumn</span></code> 方法来删除字段。 在从 <code class="docutils literal"><span class="pre">SQLite</span></code> 数据库删除字段前，你需要在 <code class="docutils literal"><span class="pre">composer.json</span></code> 文件中加入 <code class="docutils literal"><span class="pre">doctrine/dbal</span></code> 依赖并在终端执行 <code class="docutils literal"><span class="pre">composer</span> <span class="pre">update</span></code> 来安装该依赖：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">dropColumn</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>你可以传递一个字段数组给 <code class="docutils literal"><span class="pre">dropColumn</span></code> 方法来删除多个字段：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">dropColumn</span><span class="p">([</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;avatar&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">]);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">不支持在使用 <code class="docutils literal"><span class="pre">SQLite</span></code> 数据库时在单个迁移中删除或修改多个字段。</p>
+</div>
+<div class="section" id="id25">
+<h4>56.6.4.1. 可用的命令别名<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h4>
+<p>Command   Description
+$table-&gt;dropRememberToken();    删除 remember_token字段。
+$table-&gt;dropSoftDeletes();    删除 deleted_at 字段。
+$table-&gt;dropSoftDeletesTz();    dropSoftDeletes() 方法的别名
+$table-&gt;dropTimestamps();     删除 created_at 和 updated_at 字段。
+$table-&gt;dropTimestampsTz();   dropTimestamps() 方法的别名。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id26">
+<h2>56.7. 索引<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id27">
+<h3>56.7.1. 创建索引<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h3>
+<p>结构生成器支持多种类型的索引。首先，先指定字段值唯一，即简单地在字段定义 之后链式调用 <code class="docutils literal"><span class="pre">unique</span></code> 方法来创建索引，例如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">unique</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>或者，你也可以在定义完字段之后创建索引。例如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$table</span><span class="o">-&gt;</span><span class="na">unique</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你甚至可以将数组传递给索引方法来创建一个复合（或合成）索引：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$table</span><span class="o">-&gt;</span><span class="na">index</span><span class="p">([</span><span class="s1">&#39;account_id&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>Laravel 会自动生成一个合理的索引名称，但你也可以传递第二个参数来自定义索引名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$table</span><span class="o">-&gt;</span><span class="na">unique</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;unique_email&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>可用的索引类型</p>
+<p>命令   描述
+$table-&gt;primary('id');   添加主键
+$table-&gt;primary(['id', 'parent_id']);   添加复合键
+$table-&gt;unique('email');    添加唯一索引
+$table-&gt;index('state');   添加普通索引
+$table-&gt;spatialIndex('location');   添加空间索引 ( SQLite 除外)</p>
+</div>
+<div class="section" id="mysql-mariadb">
+<h3>56.7.2. 索引长度 &amp; MySQL / MariaDB<a class="headerlink" href="#mysql-mariadb" title="永久链接至标题">¶</a></h3>
+<p>Laravel 默认使用 <code class="docutils literal"><span class="pre">utf8mb4</span></code> 字符，它支持在数据库中存储 <code class="docutils literal"><span class="pre">&quot;emojis&quot;</span></code> 。 如果你是在版本低于 5.7.7 的 MySQL release 或者版本低于 10.2.2 的 MariaDB release 上创建索引，那就需要你手动配置迁移生成的默认字符串长度。 即在 <code class="docutils literal"><span class="pre">AppServiceProvider</span></code> 中调用 <code class="docutils literal"><span class="pre">Schema::defaultStringLength</span></code> 方法来配置它 ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Schema</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 引导任何应用程序服务。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nx">Schema</span><span class="o">::</span><span class="na">defaultStringLength</span><span class="p">(</span><span class="mi">191</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>或者，你可以开启数据库的 <code class="docutils literal"><span class="pre">innodb_large_prefix</span></code> 选项。 至于如何正确开启，请自行查阅数据库文档。 <a class="reference external" href="https://blog.csdn.net/qsc0624/article/details/51335632">https://blog.csdn.net/qsc0624/article/details/51335632</a></p>
+<p><code class="docutils literal"><span class="pre">InnoDB</span></code> 单列索引长度不能超过 <code class="docutils literal"><span class="pre">767</span></code> bytes，联合索引还有一个限制是长度不能超过 <code class="docutils literal"><span class="pre">3072</span></code> 。</p>
+</div>
+<div class="section" id="id28">
+<h3>56.7.3. 删除索引<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h3>
+<p>若要移除索引， 则必须指定索引的名称。Laravel 默认会自动给索引分配合理的名称。其将数据表名称、索引的字段名称及索引类型简单地连接在了一起。举例如下：</p>
+<p>命令   描述
+$table-&gt;dropPrimary('users_id_primary');    从 &quot;users&quot; 表中删除主键。
+$table-&gt;dropUnique('users_email_unique');   从 &quot;users&quot; 表中删除唯一索引。
+$table-&gt;dropIndex('geo_state_index');   从 &quot;geo&quot; 表中删除基本索引
+$table-&gt;dropSpatialIndex('geo_location_spatialindex');   从 &quot;geo&quot; 表中删除空间索引 ( SQLite 除外).</p>
+<p>如果将字段数组传递给 <code class="docutils literal"><span class="pre">dropIndex</span></code> 方法，会删除根据表名、字段和键类型生成的索引名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;geo&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">dropIndex</span><span class="p">([</span><span class="s1">&#39;state&#39;</span><span class="p">]);</span> <span class="c1">// 删除索引 &#39;geo_state_index&#39;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id29">
+<h2>56.8. 外键约束<a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h2>
+<p>Laravel 还支持创建用于在数据库层中的强制引用完整性的外键约束。 例如，让我们在 <code class="docutils literal"><span class="pre">posts</span></code> 表上定义一个引用 <code class="docutils literal"><span class="pre">users</span></code> 表的 <code class="docutils literal"><span class="pre">id</span></code> 字段的 <code class="docutils literal"><span class="pre">user_id</span></code> 字段：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;posts&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">integer</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">unsigned</span><span class="p">();</span>
+
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">foreign</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">references</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>还可以为约束的 <code class="docutils literal"><span class="pre">on</span> <span class="pre">delete</span></code> 和 <code class="docutils literal"><span class="pre">on</span> <span class="pre">update</span></code> 属性指定所需的操作：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$table</span><span class="o">-&gt;</span><span class="na">foreign</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">)</span>
+      <span class="o">-&gt;</span><span class="na">references</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+      <span class="o">-&gt;</span><span class="na">onDelete</span><span class="p">(</span><span class="s1">&#39;cascade&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你可以使用 <code class="docutils literal"><span class="pre">dropForeign</span></code> 方法删除外键。外键约束采用的命名方式与索引相同。即，将数据表名称和约束的字段连接起来， 接着加上 <code class="docutils literal"><span class="pre">_foreign</span></code> 后缀：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$table</span><span class="o">-&gt;</span><span class="na">dropForeign</span><span class="p">(</span><span class="s1">&#39;posts_user_id_foreign&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>或者，你也可以传递一个字段数组，在删除的时候会按照约定自动转换为对应的外键名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$table</span><span class="o">-&gt;</span><span class="na">dropForeign</span><span class="p">([</span><span class="s1">&#39;user_id&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>你可以在迁移文件里使用以下方法来开启或关闭外键约束：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">enableForeignKeyConstraints</span><span class="p">();</span>
+
+<span class="nx">Schema</span><span class="o">::</span><span class="na">disableForeignKeyConstraints</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">On</span> <span class="pre">Delete</span></code> 和 <code class="docutils literal"><span class="pre">On</span> <span class="pre">Update</span></code> 都有 <code class="docutils literal"><span class="pre">Restrict</span></code> ， <code class="docutils literal"><span class="pre">No</span> <span class="pre">Action</span></code> ，  <code class="docutils literal"><span class="pre">Cascade</span></code> ， <code class="docutils literal"><span class="pre">Set</span> <span class="pre">Null</span></code> 属性。现在分别对他们的属性含义做个解释。</p>
+<div class="section" id="on-delete">
+<h3>56.8.1. ON DELETE<a class="headerlink" href="#on-delete" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>restrict(约束):当在父表（即外键的来源表）中删除对应记录时，首先检查该记录是否有对应外键，如果有则不允许删除。</li>
+<li>no action:意思同restrict.即如果存在从数据，不允许删除主数据。</li>
+<li>cascade(级联):当在父表（即外键的来源表）中删除对应记录时，首先检查该记录是否有对应外键，如果有则也删除外键在子表（即包含外键的表）中的记录。</li>
+<li>set null:当在父表（即外键的来源表）中删除对应记录时，首先检查该记录是否有对应外键，如果有则设置子表中该外键值为null（不过这就要求该外键允许取null）</li>
+</ul>
+</div>
+<div class="section" id="on-update">
+<h3>56.8.2. ON UPDATE<a class="headerlink" href="#on-update" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>restrict(约束):当在父表（即外键的来源表）中更新对应记录时，首先检查该记录是否有对应外键，如果有则不允许更新。</li>
+<li>no action:意思同restrict.</li>
+<li>cascade(级联):当在父表（即外键的来源表）中更新对应记录时，首先检查该记录是否有对应外键，如果有则也更新外键在子表（即包含外键的表）中的记录。</li>
+<li>set null:当在父表（即外键的来源表）中更新对应记录时，首先检查该记录是否有对应外键，如果有则设置子表中该外键值为null（不过这就要求该外键允许取null）。</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">NO</span> <span class="pre">ACTION</span></code> 和 <code class="docutils literal"><span class="pre">RESTRICT</span></code> 的区别：只有在及个别的情况下会导致区别，前者是在其他约束的动作之后执行，后者具有最高的优先权执行。如果两张表之间存在外键关系，则MySQL不能直接删除表(Drop Table)，而应该先删除外键，之后才可以删除。</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的数据库填充.html" class="btn btn-neutral float-right" title="57. 数据库填充" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的数据分页原理分析.html" class="btn btn-neutral" title="55. 数据分页原理分析" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

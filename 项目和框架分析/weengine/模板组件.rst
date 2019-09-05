@@ -1,0 +1,697 @@
+*******
+模板组件
+*******
+
+.. contents:: 目录
+   :depth: 4
+
+微擎框架的模板组件分别定义在 ``framework/function/tpl.func.php`` ``web/common/tpl.func.php`` 和 ``/app/common/tpl.func.php`` 文件中。但因为 ``framework/function/tpl.func.php`` 文件中定义如下代码
+
+.. code-block:: php
+
+	if (defined('IN_MOBILE')) {
+		load()->app('tpl');
+	} else {
+		load()->web('tpl');
+	}
+
+这段代码会根据访问前端还是后台来自动加载对应的模板文件。所以，你只需要加载 ``framework/function/tpl.func.php`` 文件。
+
+使用前请务必使用 ``load()->func('tpl');`` 加载模板组件函数。
+
+系统组件
+=======
+
+未分类
+-------
+tpl_form_field_date($name, $value = '', $withtime = false)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+以日历方式来选择日期或者日期时间。
+
+- $name ：表单字段名称
+- $value ：默认为当前日期时间
+- $withtime ：是否显示时间(时分),默认为不显示
+
+.. code-block:: html
+
+    {php echo tpl_form_field_date('endtime', $user['endtime']);}
+
+.. note:: 该公共函数直接引用了web端、app端下的 ``_tpl_form_field_date`` 函数，用法相同
+
+
+
+tpl_form_field_clock($name, $value = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+以时钟方式来选择时间。 时钟（时间）选择器，弹出一个虚拟的时钟，可以选择具体的时间
+
+- $name ：表单字段名称
+- $value ：默认为当前日期时间
+
+.. code-block:: html
+
+    {php echo tpl_form_field_clock('time', $value = $time);}
+
+tpl_form_field_daterange($name, $value = array(), $time = false)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+日期时间范围选择。
+
+- $name ：表单字段名称
+- $value ：关联数组array('start'=>XXX,'end'=>XXX)或者array('starttime'=>XXX,'endtime'=>XXX)，默认为当前时间
+- $time ：是否显示时间(时分)，默认为不显示
+
+.. code-block:: html
+
+    // start/end 的值为任何英文文本的日期或时间，第二个参数用来显示数据库返回的值
+    {php echo tpl_form_field_daterange('datelimit', array('start' => date('Y-m-d', $params['starttime']),'end' => date('Y-m-d', $params['endtime'])))}
+    // starttime/endtime 的值为 date('Y-m-d') 函数格式化的日期或时间
+    {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d', $starttime),'endtime'=>date('Y-m-d', $endtime)));}
+
+所以，使用 ``array('start'=>XXX,'end'=>XXX)`` 来传入日期时间参数更方便，它的值可以是可传入 ``strtotime`` 函数的任何参数；而使用 ``array('starttime'=>XXX,'endtime'=>XXX)`` 只能传入 ``date('Y-m-d')`` 或 ``date('Y-m-d H:i')`` 格式的日期时间。
+
+tpl_form_field_calendar($name, $values = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+日历控件，三级联动下拉框，分别是年、月、日。
+
+- $name ：表单字段名称
+- $value ：关联数组，array('year'=>'1987','month'=>'02','day'=>'10')
+
+.. code-block:: html
+
+    {php echo tpl_form_field_calendar('birth', $value);}
+
+tpl_form_field_district($name, $values = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+省市县(区)地区选择器。
+
+- $name ：表单字段名称
+- $value ：关联数组，值为 array('province'=>'广东省','city'=>'深圳市','district'=>'龙岗区')
+
+.. code-block:: html
+
+	{php echo tpl_form_field_district("addaddress", array('province' => $_GPC['record']['province'], 'city' => $_GPC['record']['city'], 'district' => $_GPC['record']['district']));}
+
+tpl_form_field_category_2level($name, $parents, $children, $parentid, $childid)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+二级分类选择器。
+
+- $name ：表单字段名称
+- $parents ：父分类
+- $children ：子分类
+- $parentid ：选择的父id
+- $childid ：选择的子id
+
+.. code-block:: html
+
+    {php echo tpl_form_field_category_2level('category', $parent, $children, $_GPC['category']['parentid'], $_GPC['category']['childid']);
+
+tpl_form_field_industry($name, $pvalue = '', $cvalue = '', $parentid = 'industry_1', $childid = 'industry_2')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+行业分类选择器。
+
+- $name ：表单字段名称
+- $parents ：父分类
+- $children ：子分类
+- $parentid ：选择的父id
+- $childid ：选择的子id
+
+tpl_form_field_coordinate($field, $value = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+地理位置选择器。
+
+- $field ：表单中input名称
+- $value ：表单中input值，为array('lat'=>XXX,'lng'=>XXX)
+
+.. code-block:: html
+
+	{php echo tpl_form_field_coordinate('baidumap', $settings['baidumap'])}
+
+tpl_fans_form($field, $value = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+系统预设表单。
+
+- $field ：表单中input名称
+
+  + 'avatar'：上传头像
+  + 'gender'：获取性别
+  + 'birth' ：获取生日
+  + 'reside'：获取地区
+  + 'education'：获取学历
+  + 'constellation'：获取星座
+  + 'zodiac'：获取生肖
+  + 'bloodtype'：获取血型
+  + ..... 还有好多，请看源码
+
+- $value ：表单input值
+
+.. code-block:: html
+
+	{php echo tpl_fans_form('nickname',$profile['nickname']);}
+
+	{php echo tpl_fans_form('birth',array('year' => $profile['birthyear'],'month' => $profile['birthmonth'],'day' => $profile['birthday']));}
+
+	{php echo tpl_fans_form('reside',array('province' => $profile['resideprovince'],'city' => $profile['residecity'],'district' => $profile['residedist']));}
+
+.. note:: 用法与app端下的 ``tpl_app_fans_form`` 函数类似，可作为参考。
+
+后台(web)组件
+============
+
+链接选择
+-------
+tpl_form_field_link($name, $value = '', $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+系统链接选择器。
+
+- $field ：表单中字段名称
+- $value ：表单中字段值
+- $options ：选择器样式配置信息
+
+.. code-block:: html
+
+    {php echo tpl_form_field_link('linkurl', $item['linkurl']);}
+
+tpl_form_module_link($name)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+模块（应用）链接选择器
+
+- $name ：表单input名称
+
+表情选择
+-------
+
+tpl_form_field_emoji($name, $value = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Emoji表情选择器。
+
+- $name ：表单中字段名称
+- $value ：表单中字段值
+
+颜色选择
+--------
+
+tpl_form_field_color($name, $value = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+拾色器 (获取 HTML 色彩代码)。
+
+- $name ：表单中字段名称
+- $value ：表单中字段值
+
+.. code-block:: html
+
+    {php echo tpl_form_field_color('style[fontcolor]', $styles['fontcolor']['content'])}
+
+图标选择
+--------
+
+tpl_form_field_icon($name, $value='')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+系统图标选择器。
+
+- $name ：表单中字段名称
+- $value ：表单中字段值
+
+文件上传
+--------
+
+tpl_form_field_image($name, $value = '', $default = '', $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+图片上传与选择控件。
+
+- $name 表单字段的名称，同一页面不能为空
+- $value 表单input值
+- $default 默认显示的缩略图
+- $options 图片上传配置信息
+
+  + $options['width'] = ''; // 缩略图宽度
+  + $options['height'] = ''; // 缩略图高度
+  + $options['global'] = '';// 是否显示 ``attachment/images/global`` 目录（公共目录）
+  + $options['extras'] = array('image'=> 缩略图img标签的自定义属性及属性值 ,'text'=> input 标签的自定义属性及属性值)
+  + $options['dest_dir'] = ''; // 图片上传目录
+  + $options['direct'] = ''
+  + $options['multiple'] = ''
+  + $options['thumb'] = '' // 是否生成缩略图
+  + $options['class_extra'] = '' // 控件容器的class类
+
+.. code-block:: html
+
+    {php echo tpl_form_field_image('thumb', $new['thumb'], '', array('dest_dir' => 'articles'));}
+
+    {php echo tpl_form_field_image('thumb', $reply['thumb'], '', array('width' => 400));}
+
+    {php echo tpl_form_field_image('icon', $settings['icon'], '', array('global' => true, 'extras' => array('image'=> ' width="32" ')));}
+
+图片上传原形函数
+"""""""""""""""
+util.image(val, callback, options);
+
+- val image 值
+- callback 上传图片完成后，执行的回调函数
+- options 上传选项
+
+.. code-block:: js
+
+  <script>
+      util.image('http://www.we7.cc/web/resource/images/gw-logo.png', function(){
+          ...
+          ...
+      },
+      {
+          auto : true,
+          fileNumLimit : 3,
+          fileSizeLimit : 3 * 1024 * 1024
+      });
+  </script>
+
+
+tpl_form_field_multi_image($name, $value = array(), $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+批量上传图片。
+
+- $name 表单字段的名称，同一页面不能为空
+- $value 附件路径信息
+- $options 图片上传配置信息。$options['dest_dir'] = 'we7_store'; //只能指定最多两级目录,如: "we7_store","we7_store/d1"
+
+.. code-block:: html
+
+    {php echo tpl_form_field_multi_image('slides', $settings['slides'], array('global' => true, 'thumb' => 0));}
+
+    <?php  echo tpl_form_field_multi_image('slides', $settings['slides'], array('global' => true, 'thumb' => 0));?>
+
+tpl_form_field_audio($name, $value = '', $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+音频选择与上传。
+
+- $name $name 表单input名称
+- $value 表单input值
+- $options 额外配置
+
+.. code-block:: html
+
+    {php echo tpl_form_field_audio('url[]', '', array('extras' => array('text' => 'ng-model="item.url"')));}
+
+音频、视频上传原形函数
+""""""""""""""""""""
+util.audio(val, callback, options);
+
+- val audio 值
+- callback 上传完成后，执行的回调函数
+- options 上传选项
+
+
+tpl_form_field_multi_audio($name, $value = array(), $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+批量上传音频。
+
+- $name $name 表单input名称
+- $value 表单input值
+- $options 额外配置
+
+
+tpl_form_field_video($name, $value = '', $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+视频选择与上传。
+
+- $name $name 表单input名称
+- $value 表单input值
+- $options 额外配置
+
+tpl_form_field_wechat_image($name, $value = '', $default = '', $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+微信图片上传与选择控件。
+
+- $name 表单字段的名称，同一页面不能为空
+- $value 表单input值
+- $default 默认显示的缩略图
+- $options 图片上传配置信息
+
+.. code-block:: html
+
+    {php echo tpl_form_field_wechat_image('mediaid', $replies['mediaid'], '');}
+
+    {php echo tpl_form_field_wechat_image('logo_url', $setting['logourl'], '', array('acid' => $acid, 'mode' => 'file_upload'));}
+
+微信图片上传原形函数
+"""""""""""""""""""
+util.wechat_image(val, callback, options);
+
+- val audio 值
+- callback 上传图片完成后，执行的回调函数
+- options 上传选项
+
+
+tpl_form_field_wechat_multi_image($name, $value = '', $default = '', $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+微信批量上传图片。
+
+- $name 表单字段的名称，同一页面不能为空
+- $value 表单input值
+- $default 默认显示的缩略图
+- $options 图片上传配置信息
+
+.. code-block:: html
+
+    {php echo tpl_form_field_wechat_multi_image('photo_list', $location['photo_list'], '', array('mode' => 'file_upload', 'acid' => $acid));}
+
+tpl_form_field_wechat_voice($name, $value = '', $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+微信语音选择与上传。
+
+- $name 表单字段的名称，同一页面不能为空
+- $value 表单input值
+- $options 语音上传配置信息
+
+.. code-block:: html
+
+    {php echo tpl_form_field_wechat_voice('mediaid', $replies['mediaid']);}
+
+微信音频、视频上传原形函数
+""""""""""""""""""""""""
+util.wechat_audio(val, callback, options);
+
+- val audio 值
+- callback 上传完成后，执行的回调函数
+- options 上传选项
+
+
+tpl_form_field_wechat_video($name, $value = '', $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+微信视频选择与上传。
+
+- $name 表单字段的名称，同一页面不能为空
+- $value 表单input值
+- $options 视频上传配置信息
+
+.. code-block:: html
+
+    {php echo tpl_form_field_wechat_video('mediaid', $replies['mediaid']);}
+
+联动下拉框
+---------
+tpl_form_field_location_category($name, $values = array(), $del = false)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+门店类目选择三级联动。
+
+- $name 表单字段的名称，同一页面不能为空
+- $value array('cate'=>'','sub'=>'','clas'=>'') 如
+
+  + $values['cate'] = '美食';
+  + $values['sub'] = '江浙菜';
+  + $values['clas'] = '上海菜';
+
+.. code-block:: html
+
+    {php echo we7_coupon_tpl_form_field_location_category('class',array('cate' => $item['category']['cate'], 'sub' => $item['category']['sub'], 'clas' =>$item['category']['clas']));}
+
+文本编辑器
+---------
+
+tpl_ueditor($id, $value = '', $options = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+百度富文本编辑器。系统中的富文本编辑器基于百度编辑器（UEditor），微擎扩展其上传图片组件及上传视频组件，还修复了若干bug。下面简单的说一下调用富文本编辑器的几种方法。
+
+- $id textarea 的 id 名称
+- $value 表单 textarea 值
+- $options 参数配置数组，键值说明如下： height 正整数，结尾不加px。编辑器的高度
+
+通过组件函数
+
+.. code-block:: html
+
+    {php echo tpl_ueditor('content', $item['content']);}
+
+通过JS来调用
+
+某些情况您可能不希望直接生成出来富文本编辑器，需要自己定义一些事件或是通过某些条件生成出来编辑器，您可以选择这样的方式来调用，以下给出实例：
+
+.. code-block:: js
+
+  //在Html页面上还需要调用一个组件函数，只不过是第一个参数传入空值，用于引用各种富文本编辑器的JS文件
+  {php echo tpl_ueditor('')}
+  <script type="text/javascript">
+  <!--
+      // ueditoroption 这个变量是微擎定义好的百度编辑器的初始化参数，直接使用即可
+      var editor = UE.getEditor('content', ueditoroption);
+      editor.addListener('contentChange', function() {
+          //此处增加了侦听编辑器内容变化的事件
+          //do something
+      });
+      editor.addListener('ready', function(){
+          //此处增加了侦听编辑器初始化的事件
+          //do something
+      });
+  //-->
+  </script>
+
+短信编辑
+--------
+tpl_edit_sms($name, $value, $uniacid, $url, $num)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+短信条数编辑器。
+
+- $name 表单字段的名称
+- $value 表单字段的值
+- $uniacid 统一帐号id
+- $url 短信提交服务商的URL
+- $num 最多可添加短信条数
+
+优惠券颜色
+----------
+tpl_coupon_colors($name, $value = 'Color082')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+微信卡券拾色器。
+
+- $name 表单字段的名称
+- $value 表单字段的值
+
+.. code-block:: html
+
+    {php echo tpl_coupon_colors('color', 'Color082');}
+
+前端(app)组件
+============
+前端基础
+--------
+
+前端UI
+^^^^^^
+微擎手机端的 UI 基于 Mui 框架，在此基本上我们做了一些适配微信的修改（参考 WeUI 的样式及配色）。封装了一些常用的组件类似日期、地区、头像、上传图片等等组件，基本满足日常的开发需求。本章节也重点介绍一下手机端的一些组件调用及参数说明。
+
+前端JS
+^^^^^^
+微擎前端 JS 大部分使用 Mui 的 JS 库，其 JS 是用原生 JS 书写而成。同时我们为了方便开发，也引入了 jquery.2.x 的库。我们将大量的组件封装至系统 util.js 中，直接引用到页面中无需要 require 加载。把一些组件例如地区、日期等等封装为 requrejs 组件，按需加载。
+
+如果无特殊需要，基于可以满足日常的开发需求。建议大家直接使用。
+
+如要使用该组件，请务必要包含系统公共的 ``header.html`` ，如果特殊情况，无法引用系统头部文件，请自行引入公共文件内的关键文件，常规引用方式为：
+
+.. code-block:: html
+
+    {template 'common/header'}
+
+
+参考资料
+^^^^^^^^
+
+- Mui文档：http://dev.dcloud.net.cn/mui/ui/
+- Mui示例：http://dcloud.io/hellomui/
+- WeUI项目：https://github.com/weui/weui
+
+未分类
+------
+tpl_app_fans_form($field, $value = '', $placeholder = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+系统预设表单控件。
+
+- $field ：表单中input名称
+
+  + 'avatar':上传头像
+  + 'gender':获取性别
+  + 'birth' :获取生日
+  + 'reside':获取地区
+  + 'education':获取学历
+  + 'constellation':获取星座
+  + 'zodiac':获取生肖
+  + 'bloodtype':获取血型
+  + ..... 还有好多，请看源码
+
+- $value ：表单input值
+- $placeholder ：表单提示语
+
+.. code-block:: html
+
+    {php echo tpl_app_fans_form('username', $address_data['username'], '收货人姓名');}
+
+日期选择
+
+.. code-block:: html
+
+  <div class="mui-input-row">
+      <label>出生日期</label>
+      {php echo tpl_app_fans_form('birth', array('year' => $profile['birthyear'], 'month' => $profile['birthmonth'], 'day' => $profile['birthday']), $mcFields['birthyear']['title']);}
+  </div>
+
+性别选择
+
+.. code-block:: html
+
+  <div class="form-group">
+      <label class="col-xs-12 col-sm-3 col-md-2 control-label">性别</label>
+      <div class="col-sm-9 col-xs-12">
+          {php echo tpl_fans_form('gender', $profile['gender']);}
+      </div>
+  </div>
+
+血型选择
+
+.. code-block:: html
+
+  <div class="form-group">
+      <label class="col-xs-12 col-sm-3 col-md-2 control-label">血型</label>
+      <div class="col-sm-9 col-xs-12">
+          {php echo tpl_fans_form('bloodtype', $profile['bloodtype']);}
+      </div>
+  </div>
+
+生肖选择
+
+.. code-block:: html
+
+  <div class="form-group">
+      <label class="col-xs-12 col-sm-3 col-md-2 control-label">生肖</label>
+      <div class="col-sm-9 col-xs-12">
+          {php echo tpl_fans_form('zodiac',$profile['zodiac']);}
+      </div>
+  </div>
+
+星座选择
+
+.. code-block:: html
+
+  <div class="form-group">
+      <label class="col-xs-12 col-sm-3 col-md-2 control-label">星座</label>
+      <div class="col-sm-9 col-xs-12">
+          {php echo tpl_fans_form('constellation',$profile['constellation']);}
+      </div>
+  </div>
+
+学历选择
+
+.. code-block:: html
+
+  <div class="form-group">
+      <label class="col-xs-12 col-sm-3 col-md-2 control-label">学历</label>
+      <div class="col-sm-9 col-xs-12">
+          {php echo tpl_fans_form('education',$profile['education']);}
+      </div>
+  </div>
+
+自定义选择
+
+自定义选项时只需要定义选择数据调用函数即可，数据可以在JS中定义，也可以在 ``PHP`` 中定义通过 ``json_encode`` 输出到模板中。
+
+.. code-block:: html
+
+  <div class="mui-input-row">
+      <label>自定义选项</label>
+      <input class="js-user-options" type="text" value="" readonly="" placeholder="请选择">
+  </div>
+  <script type="text/javascript">
+      $(".js-user-options").on("tap", function(){
+          var options = {data: [
+              {"text":"测试1","value":"1"},
+              {"text":"测试2","value":"2"}
+         ]};
+          var $this = $(this);
+          util.poppicker(options, function(selectItems){ //poppicker封装mui.datepicker函数
+              $this.val(selectItems[0].value);
+          });
+      });
+  </script>
+
+前端预设表单。
+
+tpl_app_form_field_calendar($name, $values = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+日期选择器，三级联动下拉框，分别是年、月、日。
+
+- $name 表单字段的名称
+- $value ：关联数组，array('year'=>'1987','month'=>'02','day'=>'10')
+
+.. code-block:: html
+
+    {php echo tpl_app_form_field_calendar('birth', $value);}
+
+tpl_app_form_field_district($name, $values = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+省市县(区)地区选择器。
+
+- $name 表单字段的名称
+- $value 表单字段的值，array('province' => '山西', 'city' => '太原', 'district' => '迎泽区')
+
+.. code-block:: html
+
+    {php echo tpl_app_form_field_district('address',array('province' => $address_data['province'],'city' => $address_data['city'],'district' => $address_data['district']));}
+
+tpl_app_form_field_avatar($name, $value = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+上传头像，此组件是支持裁剪头像。
+
+- $name 头像控件标识
+- $value 用户的头像图片地址
+
+.. code-block:: html
+
+    {php echo tpl_app_form_field_avatar('avatar', $profile['avatar']);}
+
+tpl_app_form_field_image($name, $value = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+上传图片，此组件是可同时上传多张，并支持预览。
+
+- $name 表单字段的名称
+- $value 用户的图片地址
+
+.. code-block:: html
+
+  <div class="mui-input-cell">
+      {php echo tpl_app_form_field_image('image', $image);}
+  </div>
+
+原形函数
+""""""""
+您可以通过自己调用此函数，实现自定义的上传图片
+
+.. code-block:: js
+
+    util.image(Element, CallBackFunction, Options);
+
+- Element Dom节点对象，或是JQ对象
+- CallBackFunction 上传图片完成后，执行的回调函数，接收一个参数 result
+- Options 上传选项
+
+  + crop 是否需要裁剪，默认为 false
+  + multiple 是否支持上传多张，默认为 false，开启crop时，此项只能为false
+  + preview 是否支持图像预览，默认为false
+  + aspectRatio 裁剪图片宽高比，默认为 1/1，格式最好为：w/h
+
+tpl_app_coupon_item($item)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+微信卡券列表。
+
+- $item ：卡券项
+
+.. code-block:: html
+
+	{loop $exchange_lists $item}
+		{php echo tpl_app_coupon_item($item);}
+	{/loop}
+
+tpl_form_field_image($name, $value)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+图片上传。
+
+- $name 表单字段的名称
+- $value 表单字段的值
+
+.. code-block:: html
+
+    {php echo tpl_form_field_image('thumb', $adv['thumb'])}

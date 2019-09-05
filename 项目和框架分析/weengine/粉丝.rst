@@ -1,0 +1,176 @@
+**
+粉丝
+**
+
+已关注的粉丝从微信接口获取昵称及头像数据
+=====================================
+已关注的粉丝，当公众号有获取信息权限的时候，可直接通过 ``$_W['fans']`` 来得到粉丝的数据。
+
+也可以手动通过 ``mc_fansinfo($openid)`` 函数来获取。
+
+注：此数据只是微信端的昵称，头像等。
+
+数据结构如下：
+
+
+.. code-block:: php
+
+	$_W['fans'] = array(
+		'fanid' => '33790' // 粉丝id
+		'acid' => '6'
+		'uniacid' => '6' // 公众号id
+		'uid' => '6944' // 用户id
+		'openid' => 'oTKzFjv2FQ7EetJGLbxuGY6m0KmY'
+		'groupid' => '0' // 用户组id
+		'salt' => 'FRj8Bffr'
+		'follow' => '1' // 是否关注
+		'followtime' => '1444465409' // 关注时间
+		'unfollowtime' => '0' // 取消关注
+		'tag' => array(
+			'subscribe' => '1' // 关注
+			'openid' => 'oTKzFjv2FQ7EetJGLbxuGY6m0KmY'
+			'nickname' => '微擎 ' //昵称
+			'sex' => '1' // 性别
+			'language' => 'zh_CN' // 语言
+			'city' => '北京'// 居住城市
+			'province' => '北京' // 省份
+			'country' => '中国' // 国家
+			'subscribe_time' => '1444465409' // 关注时间
+			'remark' => ''
+			'groupid' => '0'
+			'avatar' => 'http://wx.qlogo.cn/mmopen/GibvHudxmlJYsBJRlWbtSXADlpc0IatIuAjS2Fm9oF6tvIq1GfPMibhyRRcdJdR4ZA0x6CIx3030I37OuGEFf4kg/0'// 头像
+		)
+		'updatetime' => '1444465531' // 更新日期
+		'nickname' => '微擎' // 昵称
+		'unionid' => ''
+		'from_user' => 'oTKzFjv2FQ7EetJGLbxuGY6m0KmY' // 当前粉丝标识
+	)
+
+已关注的粉丝获取在微擎系统会员资料数据
+===================================
+除了可以获取粉丝在微信端的昵称等数据外，也可以获取到其在微擎系统中登记的额外的会员数据资料。
+
+通过 ``mc_fetch($uid)`` 函数来获取。此处的 ``$uid`` 可以是 ``$_W['fans'][uid]`` 也可以是 ``$_W['openid']`` 。
+
+会员资料数据如下：
+
+.. code-block:: php
+
+	array(
+		'uid' => '6944' // 用户id
+		'uniacid' => '6' // 公众号id
+		'mobile' => // 手机
+		'email' => 'ab75d41d9679b7742fe3c8a7c9577e2a@we7.cc' // email地址
+		'password' => 'c1e1d8b8c781f0df6866a495a849f9df' // 密码
+		'salt' => 'qefDD454'
+		'groupid' => '6' // 用户组id
+		'credit1' => '0.00' // 积分
+		'credit2' => '0.00' // 余额
+		'credit3' => '0.00' // 备用1
+		'credit4' => '0.00' // 备用2
+		'credit5' => '0.00' // 备用3
+		'createtime' => '1444465531' // 创建时间
+		'realname' => // 真实姓名
+		'nickname' => '微擎' // 昵称
+		'avatar' => 'http://wx.qlogo.cn/mmopen/GibvHudxmlJYsBJRlWbtSXADlpc0IatIuAjS2Fm9oF6tvIq1GfPMibhyRRcdJdR4ZA0x6CIx3030I37OuGEFf4kg/132' //头像
+		'qq' => //QQ号
+		'vip' => '0' // 会员
+		'gender' => '1' // 性别
+		'birthyear' => '0' // 出生年
+		'birthmonth' => '0' // 出生月
+		'birthday' => '0' // 出生日
+		'constellation' => // 星座
+		'zodiac' => '', //生肖
+		'telephone' => // 手机号
+		'idcard' => // 身份证号
+		'studentid' => // 学号
+		'grade' => // 学籍
+		'address' => //地址
+		'zipcode' => //邮政编码
+		'nationality' => '中国' // 现居国家
+		'resideprovince' => '北京'// 现居省分
+		'residecity' => '北京市' // 现居地市
+		'residedist' =>  // 居住地
+		'graduateschool' => // 毕业院校
+		'company' => // 公司信息
+		'education' => // 教育情况
+		'occupation' => // 职业
+		'position' => // 所在位置
+		'revenue' => // 收入情况
+		'affectivestatus' => // 身高
+		'lookingfor' => //
+		'bloodtype' => // 血型
+		'height' => // 身高
+		'weight' => // 体重
+		'alipay' => // 支付宝
+		'msn' => // msn
+		'taobao' => // 淘宝号
+		'site' => // 站点
+		'bio' =>
+		'interest' => // 个人兴趣
+	)
+
+未关注的粉丝从微信接口获取数据数据(借用)
+=====================================
+粉丝未关注公众号获取资料时，需要弹出确认授权的登录框，粉丝同意后公众号才可以获取到用户信息，此操作需要手动调动函数来完成。
+
+通过 ``mc_oauth_userinfo()`` 来获取粉丝信息，如下：
+
+.. code-block:: php
+
+	if (empty($_W['fans']['nickname'])) {
+		mc_oauth_userinfo();
+	}
+	print_r($_W['fans']);
+
+	$_W['fans'] = array(
+		'uid' => 0,
+		'openid' => 'oTKzFjv2FQ7EetJGLbxuGY6m0KmY',
+		'follow' => '0' // 是否关注
+		'tag' => array(
+			'subscribe' => '1' // 关注
+			'openid' => 'oTKzFjv2FQ7EetJGLbxuGY6m0KmY'
+			'nickname' => '微擎 ' //昵称
+			'sex' => '1' // 性别
+			'language' => 'zh_CN' // 语言
+			'city' => '北京'// 居住城市
+			'province' => '北京' // 省份
+			'country' => '中国' // 国家
+			'subscribe_time' => '1444465409' // 关注时间
+			'remark' => ''
+			'groupid' => '0'
+			'avatar' => 'http://wx.qlogo.cn/mmopen/GibvHudxmlJYsBJRlWbtSXADlpc0IatIuAjS2Fm9oF6tvIq1GfPMibhyRRcdJdR4ZA0x6CIx3030I37OuGEFf4kg/0'// 头像
+		)
+	)
+
+强制粉丝登记扩展信息方法（会员信息）
+================================
+在使用一些功能时，需要用户的一些额外信息，比如真实姓名，手机号等，才能使用，需要粉丝进行登记操作，使用 ``mc_require($uid, $fields)`` 来让用户登录信息。
+
+注： 无论粉丝是否关注公众号，都可以产生一条uid数据也是通过 ``$_W['fans']['uid']`` 来获取。
+
+如下：
+
+.. code-block:: shell
+
+	//注：第一个参数同样接受Openid或是Uid
+	//此方法会判断用户是否已经填写过资料，如果填写过了就会继续向下执行，如果未填写，会跳转到填写界面
+	mc_require($_W['fans']['uid'], array('realname', 'mobile'));
+
+更新已关注粉丝扩展信息方法（会员信息）
+==================================
+在模块功能开发中如果需要更新一些资料信息，比如真实姓名，手机号等，可以使用 ``mc_update()`` 函数来操作。
+
+
+
+
+
+
+
+
+
+
+
+
+
+

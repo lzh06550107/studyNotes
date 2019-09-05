@@ -1,0 +1,92 @@
+**
+示例
+**
+
+简单点播
+========
+点播一定要flv、mp4文件。录播可以是mp4/flv格式，flv文件不会索引，需要 http://yamdi.sourceforge.net/ 工具手动索引
+
+.. code-block:: shell
+
+	rtmp {
+	    server {
+	        listen 1935;
+	        application vod {
+	            play /var/flvs;
+	        }
+	    }
+	}
+
+
+简单直播
+========
+
+.. code-block:: shell
+
+	rtmp {
+	    server {
+	        listen 1935;
+	        application live {
+	            live on;
+	        }
+	    }
+	}
+
+转发直播服务
+===========
+
+.. code-block:: shell
+
+	rtmp {
+	 server{
+	     listen 1935;
+	     chunk_size 4096;
+
+	     application live {
+	           live on;
+	           record off;
+	           push rtmp://live.twitch.tv/app/[streamkeyfromtwitch];
+	           push rtmp://a.rtmp.youtube.com/live2/[streamkeyfromyoutube];
+	          }
+	    }
+	}
+
+重新转换远程流来支持HLS
+======================
+
+.. code-block:: shell
+
+	rtmp {
+	    server {
+	        listen 1935;
+	        application tv {
+	            live on;
+
+	            hls on;
+	            hls_path /tmp/tv2;
+	            hls_fragment 15s;
+
+	            pull rtmp://tv2.example.com:443/root/new name=tv2;
+	        }
+	    }
+	}
+
+	http {
+	    server {
+	        listen 80;
+	        location /tv2 {
+	            alias /tmp/tv2;
+	        }
+	    }
+	}
+
+通过RTMP流式传输X屏幕
+====================
+
+.. code-block:: shell
+
+	ffmpeg -f x11grab -follow_mouse centered -r 25 -s cif -i :0.0 -f flv rtmp://localhost/myapp/screen
+
+
+
+

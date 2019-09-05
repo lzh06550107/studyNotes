@@ -1,0 +1,709 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>38. 缓存 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="39. 集合" href="Laravel的集合Collection.html"/>
+        <link rel="prev" title="&lt;no title&gt;" href="Laravel的广播系统的Echo分析.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">38. 缓存</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">38.1. 配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">38.1.1. 驱动的前提条件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">38.2. 缓存的使用</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">38.2.1. 获取缓存实例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">38.2.2. 访问多个缓存存储</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">38.2.3. 从缓存中获取数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">38.2.4. 在缓存中存储数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">38.2.5. 删除缓存中的数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cache">38.2.6. Cache 辅助函数</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">38.3. 缓存标记</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id18">38.3.1. 写入被标记的缓存数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">38.3.2. 访问被标记的缓存数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">38.3.3. 移除被标记的缓存数据</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">38.4. 增加自定义的缓存驱动</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id22">38.4.1. 写驱动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23">38.4.2. 注册驱动</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id24">38.5. 事件</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>38. 缓存</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>38. 缓存<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>38.1. 配置<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Laravel 为各种后端缓存提供丰富而统一的 <code class="docutils literal"><span class="pre">API</span></code> ，而其配置信息位于 <code class="docutils literal"><span class="pre">config/cache.php</span></code> 文件中，你可以指定默认的缓存驱动程序。 Laravel 支持当前流行的后端缓存，例如 <code class="docutils literal"><span class="pre">Memcached</span></code> 和 <code class="docutils literal"><span class="pre">Redis</span></code> 。</p>
+<p>缓存配置文件还包含各种其他选项，这些选项都记录在文件中，因此请确保阅读这些选项。 默认情况下， Laravel 配置为使用 <code class="docutils literal"><span class="pre">file</span></code> 缓存驱动程序，它将序列化的缓存对象存储在文件系统中。对于较大的应用程序，建议您使用更强大的驱动程序，例如 <code class="docutils literal"><span class="pre">Memcached</span></code> 或 <code class="docutils literal"><span class="pre">Redis</span></code> 。 你甚至可以为同一个驱动程序配置多个缓存配置。</p>
+<div class="section" id="id3">
+<h3>38.1.1. 驱动的前提条件<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id4">
+<h4>38.1.1.1. 数据库<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
+<p>当使用 <code class="docutils literal"><span class="pre">database</span></code> 缓存驱动时，你需要配置一个表来存放缓存数据，下面是构建缓存数据表结构的 <code class="docutils literal"><span class="pre">Schema</span></code> 声明示例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">unique</span><span class="p">();</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">text</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">integer</span><span class="p">(</span><span class="s1">&#39;expiration&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">你也可以使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">php</span> <span class="pre">artisan</span> <span class="pre">cache:table</span></code> 来生成合适的迁移。</p>
+</div>
+</div>
+<div class="section" id="memcached">
+<h4>38.1.1.2. Memcached<a class="headerlink" href="#memcached" title="永久链接至标题">¶</a></h4>
+<p>使用 <code class="docutils literal"><span class="pre">Memcached</span></code> 驱动需要安装 <code class="docutils literal"><span class="pre">Memcached</span> <span class="pre">PECL</span></code> 扩展包 。你可以把所有 <code class="docutils literal"><span class="pre">Memcached</span></code> 服务器都列在 <code class="docutils literal"><span class="pre">config/cache.php</span></code> 配置文件中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;memcached&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="p">[</span>
+        <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="mi">11211</span><span class="p">,</span>
+        <span class="s1">&#39;weight&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span>
+    <span class="p">],</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<p>你可以将 <code class="docutils literal"><span class="pre">host</span></code> 选项设置为 UNIX 的 <code class="docutils literal"><span class="pre">socket</span></code> 路径。如果你这样配置了，记得 <code class="docutils literal"><span class="pre">port</span></code> 选项应该设置为 <code class="docutils literal"><span class="pre">0</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;memcached&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="p">[</span>
+        <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/var/run/memcached/memcached.sock&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;weight&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span>
+    <span class="p">],</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="redis">
+<h4>38.1.1.3. Redis<a class="headerlink" href="#redis" title="永久链接至标题">¶</a></h4>
+<p>在使用 Laravel 的 <code class="docutils literal"><span class="pre">Redis</span></code> 缓存之前，你需要通过 Composer 安装 <code class="docutils literal"><span class="pre">predis/predis</span></code> 扩展包 (~1.0) 或者使用 PECL 安装 <code class="docutils literal"><span class="pre">PhpRedis</span></code> PHP 拓展。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>38.2. 缓存的使用<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id6">
+<h3>38.2.1. 获取缓存实例<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Illuminate\Contracts\Cache\Factory</span></code> 和 <code class="docutils literal"><span class="pre">Illuminate\Contracts\Cache\Repository</span></code> 契约 提供了 Laravel 缓存服务的访问机制。 <code class="docutils literal"><span class="pre">Factory</span></code> 契约为你的应用程序定义了访问所有缓存驱动的机制。 <code class="docutils literal"><span class="pre">Repository</span></code> 契约通常是由 <code class="docutils literal"><span class="pre">cache</span></code> 配置文件指定的默认缓存驱动实现的。</p>
+<p>不过，你也可以使用 <code class="docutils literal"><span class="pre">Cache</span> <span class="pre">Facade</span></code> ，我们将在后续的文档中介绍。 <code class="docutils literal"><span class="pre">Cache</span> <span class="pre">Facade</span></code> 为 Laravel 缓存契约底层的实现提供了方便又简洁的方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Cache</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 显示应用程序的所有用户的列表。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$value</span> <span class="o">=</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>38.2.2. 访问多个缓存存储<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">Cache</span> <span class="pre">Facade</span></code> ，你可以通过 <code class="docutils literal"><span class="pre">store</span></code> 方法来访问各种缓存存储。 传入 <code class="docutils literal"><span class="pre">store</span></code> 方法的键应该对应 <code class="docutils literal"><span class="pre">cache</span></code> 配置信息文件中的 <code class="docutils literal"><span class="pre">stores</span></code> 配置数组中所列的存储之一：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">store</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+
+<span class="nx">Cache</span><span class="o">::</span><span class="na">store</span><span class="p">(</span><span class="s1">&#39;redis&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">put</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>38.2.3. 从缓存中获取数据<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Cache</span> <span class="pre">Facade</span></code> 中的 <code class="docutils literal"><span class="pre">get</span></code> 方法是用来从缓存中获取数据的方法。如果该数据不存在于缓存中，则该方法返回 <code class="docutils literal"><span class="pre">null</span></code> 。你也可以向 <code class="docutils literal"><span class="pre">get</span></code> 方法传递第二个参数，用来指定如果查找的数据不存在时，你希望返回的默认值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你甚至可以传递 <code class="docutils literal"><span class="pre">Closure</span></code> 作为默认值。如果指定的数据不存在于缓存中，将返回 <code class="docutils literal"><span class="pre">Closure</span></code> 的结果。传递闭包的方法可以允许你从数据库或其他外部服务中获取默认值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="o">...</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="id9">
+<h4>38.2.3.1. 确认项目是否存在<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">has</span></code> 方法可用于确定缓存中是否存在项目。如果值为 <code class="docutils literal"><span class="pre">null</span></code> 或 <code class="docutils literal"><span class="pre">false</span></code> ，则此方法将返回 <code class="docutils literal"><span class="pre">false</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">Cache</span><span class="o">::</span><span class="na">has</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h4>38.2.3.2. 递增与递减值<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">increment</span></code> 和 <code class="docutils literal"><span class="pre">decrement</span></code> 方法可以用来调整高速缓存中整数项的值。这两个方法都可以传入第二个可选参数，用来指示要递增或递减值的数量：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">increment</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">increment</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="nv">$amount</span><span class="p">);</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">decrement</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">decrement</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="nv">$amount</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h4>38.2.3.3. 获取并存储到缓存<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+<p>有时你可能想从缓存中找出一个数据，而当在请求的数据不存在时，程序能为你存储默认值。例如，你可能会想从缓存中取出所有用户，如果缓存中不存在用户数据时，就从数据库中将这些用户取出并放入缓存中。你可以使用 <code class="docutils literal"><span class="pre">Cache::remember</span></code> 方法来做到这一点：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">remember</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>如果缓存中不存在你想找的数据，则传递给 <code class="docutils literal"><span class="pre">remember</span></code> 方法的 <code class="docutils literal"><span class="pre">Closure</span></code> 将被执行，然后将其结果返回并放置在缓存中。</p>
+<p>你还可以使用 <code class="docutils literal"><span class="pre">rememberForever</span></code> 方法从缓存中查找数据或永久存储它：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">rememberForever</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h4>38.2.3.4. 获取并删除<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
+<p>如果你需要从缓存中获取到数据之后再删除它，你可以使用 <code class="docutils literal"><span class="pre">pull</span></code> 方法。和 <code class="docutils literal"><span class="pre">get</span></code> 方法一样，如果缓存中不存在该数据， 则返回 <code class="docutils literal"><span class="pre">null</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">pull</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id13">
+<h3>38.2.4. 在缓存中存储数据<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p>你可以使用 <code class="docutils literal"><span class="pre">Cache</span> <span class="pre">Facade</span></code> 的 <code class="docutils literal"><span class="pre">put</span></code> 方法来将数据存储到缓存中。当你在缓存中存放数据时，你需要使用第三个参数来设定缓存的过期时间：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">put</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>除了以整数形式传递过期的分钟数，还可以传递一个 <code class="docutils literal"><span class="pre">DateTime</span></code> 实例来表示该数据的过期时间：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$expiresAt</span> <span class="o">=</span> <span class="nx">now</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addMinutes</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="nx">Cache</span><span class="o">::</span><span class="na">put</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$expiresAt</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id14">
+<h4>38.2.4.1. 只存储没有的数据<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">add</span></code> 方法将不存在于缓存中的数据放入缓存中，如果存放成功返回 <code class="docutils literal"><span class="pre">true</span></code> ，否则返回 <code class="docutils literal"><span class="pre">false</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id15">
+<h4>38.2.4.2. 数据永久存储<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">forever</span></code> 方法可以用来将数据永久存入缓存中。因为这些缓存数据不会过期，所以必须通过 <code class="docutils literal"><span class="pre">forget</span></code> 方法从缓存中手动删除它们：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">forever</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">如果你使用 <code class="docutils literal"><span class="pre">Memcached</span></code> 驱动，那么当缓存数量达到其大小限制时，可能会删除「永久」存储的数据。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id16">
+<h3>38.2.5. 删除缓存中的数据<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<p>你可以使用 <code class="docutils literal"><span class="pre">forget</span></code> 方法从缓存中删除数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">forget</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你也可以使用 <code class="docutils literal"><span class="pre">flush</span></code> 方法清空所有缓存：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">Cache::flush();</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">清空缓存的方法并不会考虑缓存前缀，会将缓存中所有的内容删除。因此在清除与其它应用程序共享的缓存时请谨慎考虑。</p>
+</div>
+</div>
+<div class="section" id="cache">
+<h3>38.2.6. Cache 辅助函数<a class="headerlink" href="#cache" title="永久链接至标题">¶</a></h3>
+<p>除了可以使用 <code class="docutils literal"><span class="pre">Cache</span> <span class="pre">Facade</span></code> 或者 <code class="docutils literal"><span class="pre">Cache</span></code> 契约 之外，你也可以使用全局帮助函数 <code class="docutils literal"><span class="pre">cache</span></code> 来获取和保存缓存数据。当 <code class="docutils literal"><span class="pre">cache</span></code> 只接收一个字符串参数的时候，它将会返回给定键对应的值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">cache</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果你向函数提供了一组键值对和到期时间，它会在指定时间内在缓存中存储数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">cache</span><span class="p">([</span><span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="nv">$minutes</span><span class="p">);</span>
+
+<span class="nx">cache</span><span class="p">([</span><span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="nx">now</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">如果在测试中使用全局函数 <code class="docutils literal"><span class="pre">cache</span></code> ，可以使用 <code class="docutils literal"><span class="pre">Cache::shouldReceive</span></code> 方法，就像正在 测试 <code class="docutils literal"><span class="pre">Facade</span></code> 一样。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id17">
+<h2>38.3. 缓存标记<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">缓存标记并不支持使用 <code class="docutils literal"><span class="pre">file</span></code> 或 <code class="docutils literal"><span class="pre">database</span></code> 的缓存驱动。此外，当在「永久」存储的高速缓存中使用多个标记时，类似 <code class="docutils literal"><span class="pre">memcached</span></code> 这种驱动的性能会是最好的，它会自动清除旧的记录。</p>
+</div>
+<div class="section" id="id18">
+<h3>38.3.1. 写入被标记的缓存数据<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
+<p>所谓的缓存标记，就是对缓存的数据打上相关的标记，以便清空所有被分配指定标记的缓存值。你可以通过传入标记名称的有序数组来为缓存数据写入标记。例如，我们可以将值 <code class="docutils literal"><span class="pre">put</span></code> 进缓存的同时标记它：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">tags</span><span class="p">([</span><span class="s1">&#39;people&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">put</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="nv">$john</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">);</span>
+
+<span class="nx">Cache</span><span class="o">::</span><span class="na">tags</span><span class="p">([</span><span class="s1">&#39;people&#39;</span><span class="p">,</span> <span class="s1">&#39;authors&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">put</span><span class="p">(</span><span class="s1">&#39;Anne&#39;</span><span class="p">,</span> <span class="nv">$anne</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h3>38.3.2. 访问被标记的缓存数据<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p>若要获取一个被标记的缓存数据，请将相同的 <strong>有序</strong> 标记数组传递给 <code class="docutils literal"><span class="pre">tags</span></code> 方法，然后调用 <code class="docutils literal"><span class="pre">get</span></code> 方法来获取你要检索的键：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$john</span> <span class="o">=</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">tags</span><span class="p">([</span><span class="s1">&#39;people&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">);</span>
+
+<span class="nv">$anne</span> <span class="o">=</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">tags</span><span class="p">([</span><span class="s1">&#39;people&#39;</span><span class="p">,</span> <span class="s1">&#39;authors&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;Anne&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id20">
+<h3>38.3.3. 移除被标记的缓存数据<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<p>你可以清空有单个标记或是一组标记的所有缓存数据。例如，下面的语句会删除被标记为 <code class="docutils literal"><span class="pre">people</span></code> 、 <code class="docutils literal"><span class="pre">authors</span></code> 或两者都有的缓存。所以， <code class="docutils literal"><span class="pre">Anne</span></code> 与 <code class="docutils literal"><span class="pre">John</span></code> 都会从缓存被删除：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">tags</span><span class="p">([</span><span class="s1">&#39;people&#39;</span><span class="p">,</span> <span class="s1">&#39;authors&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">flush</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>相比之下，下面的语句只会删除被标记为 <code class="docutils literal"><span class="pre">authors</span></code> 的缓存，所以 <code class="docutils literal"><span class="pre">Anne</span></code> 会被移除，但 <code class="docutils literal"><span class="pre">John</span></code> 不会：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">tags</span><span class="p">(</span><span class="s1">&#39;authors&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">flush</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id21">
+<h2>38.4. 增加自定义的缓存驱动<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id22">
+<h3>38.4.1. 写驱动<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h3>
+<p>要创建自定义的缓存驱动程序，首先需要实现 <code class="docutils literal"><span class="pre">Illuminate\Contracts\Cache\Store</span></code> 契约 。因此， <code class="docutils literal"><span class="pre">MongoDB</span></code> 的缓存实现看起来会像这样：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Extensions</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Cache\Store</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">MongoStore</span> <span class="k">implements</span> <span class="nx">Store</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">get</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">many</span><span class="p">(</span><span class="k">array</span> <span class="nv">$keys</span><span class="p">);</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">put</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">putMany</span><span class="p">(</span><span class="k">array</span> <span class="nv">$values</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">);</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">increment</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">decrement</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">forever</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">forget</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">flush</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">getPrefix</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们只需要使用 <code class="docutils literal"><span class="pre">MongoDB</span></code> 的连接来实现这些方法。关于如何实现这些方法的示例，可以参阅框架源代码中的 <code class="docutils literal"><span class="pre">Illuminate\Cache\MemcachedStore</span></code> 。一旦我们完成方法的实现，可以像下面这样完成自定义驱动的注册了。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cache</span><span class="o">::</span><span class="na">extend</span><span class="p">(</span><span class="s1">&#39;mongo&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$app</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">repository</span><span class="p">(</span><span class="k">new</span> <span class="nx">MongoStore</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">如果你想自定义的缓存驱动代码的放置，你可以在 <code class="docutils literal"><span class="pre">app</span></code> 目录下创建一个 <code class="docutils literal"><span class="pre">Extensions</span></code> 命名空间。 Laravel 没有硬性规定应用程序的结构，你可以根据自己的喜好自由组织你的应用程序。</p>
+</div>
+</div>
+<div class="section" id="id23">
+<h3>38.4.2. 注册驱动<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h3>
+<p>要使用 Laravel 来注册自定义的缓存驱动，就要在 <code class="docutils literal"><span class="pre">Cache</span> <span class="pre">Facade</span></code> 上使用 <code class="docutils literal"><span class="pre">extend</span></code> 方法。对 <code class="docutils literal"><span class="pre">Cache::extend</span></code> 的调用可以在最新的 Laravel 应用程序中附带的 <code class="docutils literal"><span class="pre">App\Providers\AppServiceProvider</span></code> 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法中完成，或者你可以创建自己的服务提供器来放置这些扩展，只是不要忘记在 <code class="docutils literal"><span class="pre">config/app.php</span></code> 中的 <code class="docutils literal"><span class="pre">providers</span></code> 数组中注册提供器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Extensions\MongoStore</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Cache</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\ServiceProvider</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">CacheServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 执行服务的注册后引导。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Cache</span><span class="o">::</span><span class="na">extend</span><span class="p">(</span><span class="s1">&#39;mongo&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$app</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Cache</span><span class="o">::</span><span class="na">repository</span><span class="p">(</span><span class="k">new</span> <span class="nx">MongoStore</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 在容器中注册绑定。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>传递给 <code class="docutils literal"><span class="pre">extend</span></code> 方法的第一个参数是驱动程序的名称。这将与 <code class="docutils literal"><span class="pre">config/cache.php</span></code> 配置文件的 <code class="docutils literal"><span class="pre">driver</span></code> 选项相对应。第二个参数是应该返回 <code class="docutils literal"><span class="pre">Illuminate\Cache\Repository</span></code> 实例的闭包。这个闭包将传递一个 服务容器 的 <code class="docutils literal"><span class="pre">$app</span></code> 实例。</p>
+<p>你的自定义的扩展注册后，需要将 <code class="docutils literal"><span class="pre">config/cache.php</span></code> 配置文件中的 <code class="docutils literal"><span class="pre">driver</span></code> 选项更新为你的扩展名。</p>
+</div>
+</div>
+<div class="section" id="id24">
+<h2>38.5. 事件<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h2>
+<p>你可以监听缓存触发的 事件 来对每个缓存的操作执行代码。为此，你应该要将这些事件监听器放在 <code class="docutils literal"><span class="pre">EventServiceProvider</span></code> 中:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 应用程序的事件侦听器映射。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var array</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="nv">$listen</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Illuminate\Cache\Events\CacheHit&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;App\Listeners\LogCacheHit&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+
+    <span class="s1">&#39;Illuminate\Cache\Events\CacheMissed&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;App\Listeners\LogCacheMissed&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+
+    <span class="s1">&#39;Illuminate\Cache\Events\KeyForgotten&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;App\Listeners\LogKeyForgotten&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+
+    <span class="s1">&#39;Illuminate\Cache\Events\KeyWritten&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;App\Listeners\LogKeyWritten&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的集合Collection.html" class="btn btn-neutral float-right" title="39. 集合" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的广播系统的Echo分析.html" class="btn btn-neutral" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

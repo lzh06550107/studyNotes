@@ -1,0 +1,537 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>62. Eloquent修改器 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="63. 验证规则" href="Laravel的验证规则.html"/>
+        <link rel="prev" title="61. Eloquent关联" href="Laravel的数据库—Eloquent关联.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">62. Eloquent修改器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">62.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">62.2. 访问器 &amp; 修改器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">62.2.1. 定义一个访问器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">62.2.2. 定义一个修改器</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">62.3. 日期转换器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">62.3.1. 日期格式</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">62.4. 属性类型转换</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#json">62.4.1. 数组 &amp; JSON 转换</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>62. Eloquent修改器</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="eloquent">
+<h1>62. Eloquent修改器<a class="headerlink" href="#eloquent" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>62.1. 简介<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>当你在 Eloquent 模型实例中获取或设置某些属性值的时候，访问器和修改器允许你对 Eloquent 属性值进行格式化。例如，你可能想要使用 Laravel 加密器 来加密一个即将被保存在数据库中的值，而从 Eloquent 模型访问该属性时自动解密其值。</p>
+<p>除了自定义访问器和修改器之外，Eloquent 也会自动将日期字段类型转换成 <code class="docutils literal"><span class="pre">Carbon</span></code> 实例或将 文本字段类型转换成 <code class="docutils literal"><span class="pre">JSON</span></code> 。</p>
+</div>
+<div class="section" id="id2">
+<h2>62.2. 访问器 &amp; 修改器<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id3">
+<h3>62.2.1. 定义一个访问器<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>若要定义一个访问器，则须在你的模型上创建一个 <code class="docutils literal"><span class="pre">getFooAttribute</span></code> 方法。要访问的 <code class="docutils literal"><span class="pre">Foo</span></code> 字段需使用「驼峰式」来命名。在这个例子中，我们将为 <code class="docutils literal"><span class="pre">first_name</span></code> 属性定义一个访问器。当 Eloquent 尝试获取 <code class="docutils literal"><span class="pre">first_name</span></code> 的值时，将会自动调用此访问器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获取用户的名字。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  string  $value</span>
+<span class="sd">     * @return string</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">getFirstNameAttribute</span><span class="p">(</span><span class="nv">$value</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">ucfirst</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如你所见，字段的原始值被传递到访问器中，允许你对它进行处理并返回结果。如果想获取被修改后的值，你可以在模型实例上访问 <code class="docutils literal"><span class="pre">first_name</span></code> 属性：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$firstName</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">first_name</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>当然，你也可以通过已有的属性，使用访问器返回新的计算值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取用户姓名。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return string</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getFullNameAttribute</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">first_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">last_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>62.2.2. 定义一个修改器<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>若要定义一个修改器，则须在模型上定义一个 <code class="docutils literal"><span class="pre">setFooAttribute</span></code> 方法。要访问的 <code class="docutils literal"><span class="pre">Foo</span></code> 字段需使用「驼峰式」命名。让我们再来定义一个 <code class="docutils literal"><span class="pre">first_name</span></code> 属性的修改器。当我们尝试在模型上设置 <code class="docutils literal"><span class="pre">first_name</span></code> 的值时，该修改器将被自动调用：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 设定用户的名字。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  string  $value</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">setFirstNameAttribute</span><span class="p">(</span><span class="nv">$value</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="p">[</span><span class="s1">&#39;first_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>修改器会获取属性已经被设置的值，允许你操作该值并将其设置到 Eloquent 模型内部的 <code class="docutils literal"><span class="pre">$attributes</span></code> 属性上。举个例子，如果我们尝试将 <code class="docutils literal"><span class="pre">first_name</span></code> 属性的值设置成 <code class="docutils literal"><span class="pre">Sally</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">first_name</span> <span class="o">=</span> <span class="s1">&#39;Sally&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>在这个例子中， <code class="docutils literal"><span class="pre">setFirstNameAttribute</span></code> 方法在调用的时候会接收 <code class="docutils literal"><span class="pre">Sally</span></code> 这个值作为参数。接着修改器会应用 <code class="docutils literal"><span class="pre">strtolower</span></code> 函数并将处理结果的值设置到内部的 <code class="docutils literal"><span class="pre">$attributes</span></code> 数组。</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>62.3. 日期转换器<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>默认情况下，Eloquent 会把 <code class="docutils literal"><span class="pre">created_at</span></code> 和 <code class="docutils literal"><span class="pre">updated_at</span></code> 字段转换成 <code class="docutils literal"><span class="pre">Carbon</span></code> 实例， 它继承了 PHP 原生的 <code class="docutils literal"><span class="pre">DateTime</span></code> 类，并提供了各种有用的方法。你可以通过重写模型的 <code class="docutils literal"><span class="pre">$dates</span></code> 属性，自行定义哪些日期类型字段会被自动转换，或者完全禁止所有日期类型字段的转换：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 应被转换为日期的属性。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$dates</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;created_at&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;updated_at&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;deleted_at&#39;</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当某个字段被认为是日期格式时，你或许想将其数值设置成一个 <code class="docutils literal"><span class="pre">UNIX</span></code> 时间戳、日期字符串（ <code class="docutils literal"><span class="pre">Y-m-d</span></code> ）、日期时间（ <code class="docutils literal"><span class="pre">date-time</span></code> ）字符串，当然还有 <code class="docutils literal"><span class="pre">DateTime</span></code> 或 <code class="docutils literal"><span class="pre">Carbon</span></code> 实例，并且让日期值自动正确地保存到你的数据库中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">deleted_at</span> <span class="o">=</span> <span class="nx">now</span><span class="p">();</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>就如上面所说的，当获取到的属性包含在 <code class="docutils literal"><span class="pre">$dates</span></code> 属性中时，都将会自动转换成 <code class="docutils literal"><span class="pre">Carbon</span></code> 实例，允许你在属性上使用任意的 <code class="docutils literal"><span class="pre">Carbon</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">deleted_at</span><span class="o">-&gt;</span><span class="na">getTimestamp</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="section" id="id6">
+<h3>62.3.1. 日期格式<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>默认情况下，时间戳将会以 <code class="docutils literal"><span class="pre">Y-m-d</span> <span class="pre">H:i:s</span></code> 的形式格式化。如果你想要自定义时间戳格式，可在模型中设置 <code class="docutils literal"><span class="pre">$dateFormat</span></code> 属性。该属性决定了日期属性应以何种格式被保存到数据库中，以及当模型被序列化成数组 或 <code class="docutils literal"><span class="pre">JSON</span></code> 时的格式：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Flight</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 模型中日期字段的保存格式。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var string</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$dateFormat</span> <span class="o">=</span> <span class="s1">&#39;U&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>62.4. 属性类型转换<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>模型中的 <code class="docutils literal"><span class="pre">$casts</span></code> 属性提供了一个便利的方法来将属性转换为常见的数据类型。 <code class="docutils literal"><span class="pre">$casts</span></code> 属性应是一个数组，且数组的键是那些需要被转换的属性名称，值则是你希望转换的数据类型。支持转换的数据类型有： <code class="docutils literal"><span class="pre">integer</span></code> ， <code class="docutils literal"><span class="pre">real</span></code> ， <code class="docutils literal"><span class="pre">float</span></code> ， <code class="docutils literal"><span class="pre">double</span></code> ， <code class="docutils literal"><span class="pre">string</span></code> ， <code class="docutils literal"><span class="pre">boolean</span></code> ， <code class="docutils literal"><span class="pre">object</span></code> ， <code class="docutils literal"><span class="pre">array</span></code> ， <code class="docutils literal"><span class="pre">collection</span></code> ， <code class="docutils literal"><span class="pre">date</span></code> ， <code class="docutils literal"><span class="pre">datetime</span></code> 和 <code class="docutils literal"><span class="pre">timestamp</span></code> 。</p>
+<p>例如，让我们把以整数 ( 0 或 1 ) 形式存储在数据库中的 <code class="docutils literal"><span class="pre">is_admin</span></code> 属性转换成布尔值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 应该被转换成原生类型的属性。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$casts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;is_admin&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;boolean&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在当你访问 <code class="docutils literal"><span class="pre">is_admin</span></code> 属性时，虽然保存在数据库里的的值是一个整数类型，但返回值总是会被转换成布尔值类型：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">is_admin</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="json">
+<h3>62.4.1. 数组 &amp; JSON 转换<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h3>
+<p>如果一个字段是以被序列化的 <code class="docutils literal"><span class="pre">JSON</span></code> 来存储在数据库中， <code class="docutils literal"><span class="pre">array</span></code> 类型转换将会非常有用。例如，当你访问的字段在数据库里是一个包含了被序列化的 <code class="docutils literal"><span class="pre">JSON</span></code> 的 <code class="docutils literal"><span class="pre">JSON</span></code> 或 <code class="docutils literal"><span class="pre">TEXT</span></code> 字段类型，而且在 Eloquent 模型上你对该字段添加了 <code class="docutils literal"><span class="pre">array</span></code> 类型转换，那么它将会自动反序列化成一个 PHP 数组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 应该被转换成原生类型的属性。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$casts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;options&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;array&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦类型转换被定义，你访问 <code class="docutils literal"><span class="pre">options</span></code> 属性时获取的值会自动从 <code class="docutils literal"><span class="pre">JSON</span></code> 类型反序列化成一个 PHP 数组。当你设置 <code class="docutils literal"><span class="pre">options</span></code> 属性的值时，接收到的数组也会被自动序列化成 <code class="docutils literal"><span class="pre">JSON</span></code> 以便保存：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$options</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">;</span>
+
+<span class="nv">$options</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">;</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">options</span> <span class="o">=</span> <span class="nv">$options</span><span class="p">;</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的验证规则.html" class="btn btn-neutral float-right" title="63. 验证规则" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的数据库—Eloquent关联.html" class="btn btn-neutral" title="61. Eloquent关联" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

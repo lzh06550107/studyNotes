@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>微擎模块.rst—I:\notepad\项目和框架分析\weengine</title>
+    <style type="text/css">
+    html{font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%}body{margin: 0}article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display: block}audio,canvas,progress,video{display: inline-block;vertical-align: baseline}audio:not([controls]){display: none;height: 0}[hidden],template{display: none}a{background: transparent}a:active,a:hover{outline: 0}abbr[title]{border-bottom: 1px dotted}b,strong{font-weight: bold}dfn{font-style: italic}h1{font-size: 2em;margin: 0.67em 0}mark{background: #ff0;color: #000}small{font-size: 80%}sub,sup{font-size: 75%;line-height: 0;position: relative;vertical-align: baseline}sup{top: -0.5em}sub{bottom: -0.25em}img{border: 0}svg:not(:root){overflow: hidden}figure{margin: 1em 40px}hr{box-sizing: content-box;height: 0}pre{overflow: auto}code,kbd,pre,samp{font-family: monospace, monospace;font-size: 1em}button,input,optgroup,select,textarea{color: inherit;font: inherit;margin: 0}button{overflow: visible}button,select{text-transform: none}button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance: button;cursor: pointer}button[disabled],html input[disabled]{cursor: default}button::-moz-focus-inner,input::-moz-focus-inner{border: 0;padding: 0}input{line-height: normal}input[type="checkbox"],input[type="radio"]{box-sizing: border-box;padding: 0}input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{height: auto}input[type="search"]{-webkit-appearance: textfield;box-sizing: content-box}input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance: none}fieldset{border: 1px solid #c0c0c0;margin: 0 2px;padding: 0.35em 0.625em 0.75em}legend{border: 0;padding: 0}textarea{overflow: auto}optgroup{font-weight: bold}table{border-collapse: collapse;border-spacing: 0}td,th{padding: 0}*{box-sizing: border-box}input,select,textarea,button{font: 13px/1.4 Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"}body{min-width: 1020px;font: 13px/1.4 Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";color: #333;background-color: #fff}a{color: #4183c4;text-decoration: none}a:hover,a:active{text-decoration: underline}hr,.rule{height: 0;margin: 15px 0;overflow: hidden;background: transparent;border: 0;border-bottom: 1px solid #ddd}hr:before,.rule:before{display: table;content: ""}hr:after,.rule:after{display: table;clear: both;content: ""}h1,h2,h3,h4,h5,h6{margin-top: 15px;margin-bottom: 15px;line-height: 1.1}h1{font-size: 30px}h2{font-size: 21px}h3{font-size: 16px}h4{font-size: 14px}h5{font-size: 12px}h6{font-size: 11px}small{font-size: 90%}blockquote{margin: 0}.lead{margin-bottom: 30px;font-size: 20px;font-weight: 300;color: #555}.text-muted{color: #999}.text-danger{color: #bd2c00}.text-emphasized{font-weight: bold;color: #333}ul,ol{padding: 0;margin-top: 0;margin-bottom: 0}ol ol,ul ol{list-style-type: lower-roman}ul ul ol,ul ol ol,ol ul ol,ol ol ol{list-style-type: lower-alpha}dd{margin-left: 0}tt,code{font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;font-size: 12px}pre{margin-top: 0;margin-bottom: 0;font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace}#realtime .status{overflow: visible;position: absolute;top: -5px;left: 0;background: url("/public/images/github-status.png");width: 26px;height: 26px;display: block;margin: 0 5px 0 0}#realtime .up{background-position: 0 0}#realtime .problem{background-position: 0 -53px}#realtime .down{background-position: 0 -26px}.container{max-width: 920px;margin: 0 auto 20px auto}#header{background: #FAFAFA;background: -moz-linear-gradient(#FAFAFA, #EAEAEA);background: -webkit-linear-gradient(#FAFAFA, #EAEAEA);-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#eaeaea')";border-bottom: 1px solid #CACACA;box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4),0 0 10px rgba(0, 0, 0, 0.1)}#markup{padding: 3px}#markup article{padding-top: 30px}.markdown-body{overflow: hidden;font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;font-size: 16px;line-height: 1.6;word-wrap: break-word}.markdown-body>*:first-child{margin-top: 0 !important}.markdown-body>*:last-child{margin-bottom: 0 !important}.markdown-body .absent{color: #c00}.markdown-body .anchor{position: absolute;top: 0;left: 0;display: block;padding-right: 6px;padding-left: 30px;margin-left: -30px}.markdown-body .anchor:focus{outline: none}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{position: relative;margin-top: 1em;margin-bottom: 16px;font-weight: bold;line-height: 1.4}.markdown-body h1 .octicon-link,.markdown-body h2 .octicon-link,.markdown-body h3 .octicon-link,.markdown-body h4 .octicon-link,.markdown-body h5 .octicon-link,.markdown-body h6 .octicon-link{display: none;color: #000;vertical-align: middle}.markdown-body h1:hover .anchor,.markdown-body h2:hover .anchor,.markdown-body h3:hover .anchor,.markdown-body h4:hover .anchor,.markdown-body h5:hover .anchor,.markdown-body h6:hover .anchor{padding-left: 8px;margin-left: -30px;text-decoration: none}.markdown-body h1:hover .anchor .octicon-link,.markdown-body h2:hover .anchor .octicon-link,.markdown-body h3:hover .anchor .octicon-link,.markdown-body h4:hover .anchor .octicon-link,.markdown-body h5:hover .anchor .octicon-link,.markdown-body h6:hover .anchor .octicon-link{display: inline-block}.markdown-body h1 tt,.markdown-body h1 code,.markdown-body h2 tt,.markdown-body h2 code,.markdown-body h3 tt,.markdown-body h3 code,.markdown-body h4 tt,.markdown-body h4 code,.markdown-body h5 tt,.markdown-body h5 code,.markdown-body h6 tt,.markdown-body h6 code{font-size: inherit}.markdown-body h1{padding-bottom: 0.3em;font-size: 2.25em;line-height: 1.2;border-bottom: 1px solid #eee}.markdown-body h1 .anchor{line-height: 1}.markdown-body h2{padding-bottom: 0.3em;font-size: 1.75em;line-height: 1.225;border-bottom: 1px solid #eee}.markdown-body h2 .anchor{line-height: 1}.markdown-body h3{font-size: 1.5em;line-height: 1.43}.markdown-body h3 .anchor{line-height: 1.2}.markdown-body h4{font-size: 1.25em}.markdown-body h4 .anchor{line-height: 1.2}.markdown-body h5{font-size: 1em}.markdown-body h5 .anchor{line-height: 1.1}.markdown-body h6{font-size: 1em;color: #777}.markdown-body h6 .anchor{line-height: 1.1}.markdown-body p,.markdown-body blockquote,.markdown-body ul,.markdown-body ol,.markdown-body dl,.markdown-body table,.markdown-body pre{margin-top: 0;margin-bottom: 16px}.markdown-body hr{height: 4px;padding: 0;margin: 16px 0;background-color: #e7e7e7;border: 0 none}.markdown-body ul,.markdown-body ol{padding-left: 2em}.markdown-body ul.no-list,.markdown-body ol.no-list{padding: 0;list-style-type: none}.markdown-body ul ul,.markdown-body ul ol,.markdown-body ol ol,.markdown-body ol ul{margin-top: 0;margin-bottom: 0}.markdown-body li>p{margin-top: 16px}.markdown-body dl{padding: 0}.markdown-body dl dt{padding: 0;margin-top: 16px;font-size: 1em;font-style: italic;font-weight: bold}.markdown-body dl dd{padding: 0 16px;margin-bottom: 16px}.markdown-body blockquote{padding: 0 15px;color: #777;border-left: 4px solid #ddd}.markdown-body blockquote>:first-child{margin-top: 0}.markdown-body blockquote>:last-child{margin-bottom: 0}.markdown-body table{display: block;width: 100%;overflow: auto;word-break: normal;word-break: keep-all}.markdown-body table th{font-weight: bold}.markdown-body table th,.markdown-body table td{padding: 6px 13px;border: 1px solid #ddd}.markdown-body table tr{background-color: #fff;border-top: 1px solid #ccc}.markdown-body table tr:nth-child(2n){background-color: #f8f8f8}.markdown-body img{max-width: 100%;box-sizing: border-box}.markdown-body span.frame{display: block;overflow: hidden}.markdown-body span.frame>span{display: block;float: left;width: auto;padding: 7px;margin: 13px 0 0;overflow: hidden;border: 1px solid #ddd}.markdown-body span.frame span img{display: block;float: left}.markdown-body span.frame span span{display: block;padding: 5px 0 0;clear: both;color: #333}.markdown-body span.align-center{display: block;overflow: hidden;clear: both}.markdown-body span.align-center>span{display: block;margin: 13px auto 0;overflow: hidden;text-align: center}.markdown-body span.align-center span img{margin: 0 auto;text-align: center}.markdown-body span.align-right{display: block;overflow: hidden;clear: both}.markdown-body span.align-right>span{display: block;margin: 13px 0 0;overflow: hidden;text-align: right}.markdown-body span.align-right span img{margin: 0;text-align: right}.markdown-body span.float-left{display: block;float: left;margin-right: 13px;overflow: hidden}.markdown-body span.float-left span{margin: 13px 0 0}.markdown-body span.float-right{display: block;float: right;margin-left: 13px;overflow: hidden}.markdown-body span.float-right>span{display: block;margin: 13px auto 0;overflow: hidden;text-align: right}.markdown-body code,.markdown-body tt{padding: 0;padding-top: 0.2em;padding-bottom: 0.2em;margin: 0;font-size: 85%;background-color: rgba(0,0,0,0.04);border-radius: 3px}.markdown-body code:before,.markdown-body code:after,.markdown-body tt:before,.markdown-body tt:after{letter-spacing: -0.2em;content: "\00a0"}.markdown-body code br,.markdown-body tt br{display: none}.markdown-body del code{text-decoration: inherit}.markdown-body pre>code{padding: 0;margin: 0;font-size: 100%;word-break: normal;white-space: pre;background: transparent;border: 0}.markdown-body .highlight{margin-bottom: 16px}.markdown-body .highlight pre,.markdown-body pre{padding: 16px;overflow: auto;font-size: 85%;line-height: 1.45;background-color: #f7f7f7;border-radius: 3px}.markdown-body .highlight pre{margin-bottom: 0;word-break: normal}.markdown-body pre{word-wrap: normal}.markdown-body pre code,.markdown-body pre tt{display: inline;max-width: initial;padding: 0;margin: 0;overflow: initial;line-height: inherit;word-wrap: normal;background-color: transparent;border: 0}.markdown-body pre code:before,.markdown-body pre code:after,.markdown-body pre tt:before,.markdown-body pre tt:after{content: normal}.markdown-body kbd{display: inline-block;padding: 3px 5px;font-size: 11px;line-height: 10px;color: #555;vertical-align: middle;background-color: #fcfcfc;border: solid 1px #ccc;border-bottom-color: #bbb;border-radius: 3px;box-shadow: inset 0 -1px 0 #bbb}.codehilite{background: #ffffff}.codehilite .c{color: #999988;font-style: italic}.codehilite .err{color: #a61717;background-color: #e3d2d2}.codehilite .k{color: #000000;font-weight: bold}.codehilite .o{color: #000000;font-weight: bold}.codehilite .cm{color: #999988;font-style: italic}.codehilite .cp{color: #999999;font-weight: bold}.codehilite .c1{color: #999988;font-style: italic}.codehilite .cs{color: #999999;font-weight: bold;font-style: italic}.codehilite .gd{color: #000000;background-color: #ffdddd}.codehilite .gd .x{color: #000000;background-color: #ffaaaa}.codehilite .ge{color: #000000;font-style: italic}.codehilite .gr{color: #aa0000}.codehilite .gh{color: #999999}.codehilite .gi{color: #000000;background-color: #ddffdd}.codehilite .gi .x{color: #000000;background-color: #aaffaa}.codehilite .go{color: #888888}.codehilite .gp{color: #555555}.codehilite .gs{font-weight: bold}.codehilite .gu{color: #aaaaaa}.codehilite .gt{color: #aa0000}.codehilite .kc{color: #000000;font-weight: bold}.codehilite .kd{color: #000000;font-weight: bold}.codehilite .kp{color: #000000;font-weight: bold}.codehilite .kr{color: #000000;font-weight: bold}.codehilite .kt{color: #445588;font-weight: bold}.codehilite .m{color: #009999}.codehilite .s{color: #d14}.codehilite .na{color: #008080}.codehilite .nb{color: #0086B3}.codehilite .nc{color: #445588;font-weight: bold}.codehilite .no{color: #008080}.codehilite .ni{color: #800080}.codehilite .ne{color: #990000;font-weight: bold}.codehilite .nf{color: #990000;font-weight: bold}.codehilite .nn{color: #555555}.codehilite .nt{color: #000080}.codehilite .nv{color: #008080}.codehilite .ow{color: #000000;font-weight: bold}.codehilite .w{color: #bbbbbb}.codehilite .mf{color: #009999}.codehilite .mh{color: #009999}.codehilite .mi{color: #009999}.codehilite .mo{color: #009999}.codehilite .sb{color: #d14}.codehilite .sc{color: #d14}.codehilite .sd{color: #d14}.codehilite .s2{color: #d14}.codehilite .se{color: #d14}.codehilite .sh{color: #d14}.codehilite .si{color: #d14}.codehilite .sx{color: #d14}.codehilite .sr{color: #009926}.codehilite .s1{color: #d14}.codehilite .ss{color: #990073}.codehilite .bp{color: #999999}.codehilite .vc{color: #008080}.codehilite .vg{color: #008080}.codehilite .vi{color: #008080}.codehilite .il{color: #009999}
+    </style>
+    <style type="text/css">
+      .markdown-body hr{background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC")}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="markup">
+        <article id="content" class="markdown-body">
+          <div class="document">
+<div class="section" id="id1">
+<h1><a class="toc-backref" href="#id45">微擎模块</a></h1>
+<div class="contents topic" id="id2">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id45">微擎模块</a><ul>
+<li><a class="reference internal" href="#id3" id="id46">设计模块</a><ul>
+<li><a class="reference internal" href="#id4" id="id47">什么是设计模块</a></li>
+<li><a class="reference internal" href="#id5" id="id48">微擎模块设计助手</a><ul>
+<li><a class="reference internal" href="#id6" id="id49">模块基本信息</a></li>
+<li><a class="reference internal" href="#id7" id="id50">模块全局配置项</a></li>
+<li><a class="reference internal" href="#id8" id="id51">订阅的消息类型</a></li>
+<li><a class="reference internal" href="#id9" id="id52">处理的消息类型</a></li>
+<li><a class="reference internal" href="#id10" id="id53">是否要嵌入规</a></li>
+<li><a class="reference internal" href="#id11" id="id54">规则列表</a></li>
+<li><a class="reference internal" href="#id12" id="id55">是否支持使用优惠券</a></li>
+<li><a class="reference internal" href="#id13" id="id56">微站功能封面</a></li>
+<li><a class="reference internal" href="#id14" id="id57">管理中心导航菜单</a></li>
+<li><a class="reference internal" href="#id15" id="id58">权限标识</a></li>
+<li><a class="reference internal" href="#id16" id="id59">微站首页导航图标、微站个人中心导航、微站快捷功能导航</a></li>
+<li><a class="reference internal" href="#id17" id="id60">独立功能</a></li>
+<li><a class="reference internal" href="#id18" id="id61">模块安装脚本、模块卸载脚本、模块升级脚本</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#manifest-xml" id="id62">manifest.xml</a><ul>
+<li><a class="reference internal" href="#manifest-xmlns" id="id63">manifest - xmlns （新增）</a></li>
+<li><a class="reference internal" href="#manifest-versioncode" id="id64">manifest - versionCode</a></li>
+<li><a class="reference internal" href="#manifest-application" id="id65">manifest - application</a></li>
+<li><a class="reference internal" href="#manifest-platform" id="id66">manifest - platform</a></li>
+<li><a class="reference internal" href="#manifest-bindings" id="id67">manifest - bindings （新增）</a></li>
+<li><a class="reference internal" href="#manifest-install" id="id68">manifest - install</a></li>
+<li><a class="reference internal" href="#manifest-uninstall" id="id69">manifest - uninstall</a></li>
+<li><a class="reference internal" href="#manifest-upgrade" id="id70">manifest - upgrade</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id22" id="id71">目录结构</a><ul>
+<li><a class="reference internal" href="#id23" id="id72">基础包</a></li>
+<li><a class="reference internal" href="#wxapp" id="id73">wxapp</a></li>
+<li><a class="reference internal" href="#id24" id="id74">应用类型支持判定</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id25" id="id75">功能文件</a><ul>
+<li><a class="reference internal" href="#module-php" id="id76">module.php</a><ul>
+<li><a class="reference internal" href="#id26" id="id77">功能介绍</a></li>
+<li><a class="reference internal" href="#id27" id="id78">规范及约定</a></li>
+<li><a class="reference internal" href="#id28" id="id79">实现演示</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#site-php" id="id80">site.php</a><ul>
+<li><a class="reference internal" href="#id29" id="id81">功能介绍</a></li>
+<li><a class="reference internal" href="#id32" id="id82">具体功能实现</a></li>
+<li><a class="reference internal" href="#id35" id="id83">用户身份验证</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#receiver-php" id="id84">receiver.php</a><ul>
+<li><a class="reference internal" href="#id36" id="id85">功能介绍</a></li>
+<li><a class="reference internal" href="#id37" id="id86">具体功能实现</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#processor-php" id="id87">processor.php</a><ul>
+<li><a class="reference internal" href="#id38" id="id88">功能介绍</a></li>
+<li><a class="reference internal" href="#id39" id="id89">具体功能实现</a></li>
+<li><a class="reference internal" href="#id40" id="id90">该类一些属性的介绍</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hook-php" id="id91">hook.php</a><ul>
+<li><a class="reference internal" href="#id43" id="id92">模块嵌入点</a></li>
+<li><a class="reference internal" href="#id44" id="id93">定义模块嵌入点</a></li>
+<li><a class="reference internal" href="#hook" id="id94">调用Hook</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id46">设计模块</a></h2>
+<div class="section" id="id4">
+<h3><a class="toc-backref" href="#id47">什么是设计模块</a></h3>
+<p>当需要扩展微擎系统功能时，微擎提供一套扩展机制称之为“微擎模块”，每一个模块就是一个独立的功能，通过微擎系统创建、安装、更新及卸载。</p>
+<p>以下讲解怎么在微擎系统中设计创建一个模块。</p>
+</div>
+<div class="section" id="id5">
+<h3><a class="toc-backref" href="#id48">微擎模块设计助手</a></h3>
+<p>可以通过 系统-&gt;模块-&gt;设计新模块 进入。</p>
+<p>设计新模块配置说明：</p>
+<div class="section" id="id6">
+<h4><a class="toc-backref" href="#id49">模块基本信息</a></h4>
+<ul class="simple">
+<li><tt class="docutils literal">模块名称</tt> ：用于在系统中给用户显示出模块的名字</li>
+<li><tt class="docutils literal">模块标识</tt> ：对应模块文件夹的名称。只能为英文，数字，下划线，为了减少模块标识的重复和冲突，系统规定模块必须有前缀，例如： <tt class="docutils literal">we7_demo</tt></li>
+<li><tt class="docutils literal">版本号</tt> ：用于标识模块版本，主要是用作于模块升级更新使用</li>
+<li><tt class="docutils literal">模块类型</tt> ：模块的类型, 用于分类展示和查找你的模块</li>
+<li><tt class="docutils literal">模块简述</tt> ：模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</li>
+<li><tt class="docutils literal">模块介绍</tt> ：模块详细描述, 详细介绍模块的功能和使用方法</li>
+<li><tt class="docutils literal">作者</tt> ：模块的作者</li>
+<li><tt class="docutils literal">发布页</tt> ：模块的发布页, 用于发布模块更新信息的页面, 推荐使用微擎模块版块</li>
+</ul>
+</div>
+<div class="section" id="id7">
+<h4><a class="toc-backref" href="#id50">模块全局配置项</a></h4>
+<p>此模块是否存在全局的配置参数, 此参数是针对公众账号独立保存的。当勾选此项时，模块安装后系统会生成一个 <tt class="docutils literal">模块配置</tt> 的菜单，用于保存一些模块内部使用的配置项。</p>
+<p>开发者必须要完善 <tt class="docutils literal">module.php</tt> 类文件中的 <tt class="docutils literal">public function <span class="pre">settingsDisplay($settings){}</span></tt> 成员方法。</p>
+</div>
+<div class="section" id="id8">
+<h4><a class="toc-backref" href="#id51">订阅的消息类型</a></h4>
+<p>当勾选此项下的事件类型后，系统会在接收到相关类型的事件后，转发消息到模块中。模块接到消息后可以处理数据，但无法返回结果（系统不接收）。</p>
+<p>注意: 订阅的消息信息是只读的, 只能用作分析统计, 不能更改, 也不能改变微擎处理主流程</p>
+<p>开发者必须要完善 <tt class="docutils literal">receiver.php</tt> 类文件中的 <tt class="docutils literal">public function <span class="pre">receive(){}</span></tt> 成员方法。</p>
+<p>清单配置：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;subscribes&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;image&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;voice&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;video&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;shortvideo&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;location&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;link&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;subscribe&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;unsubscribe&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;qr&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;trace&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;click&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;view&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;merchant_order&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_get_card&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_del_card&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_consume_card&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/subscribes&gt;</span>
+</pre>
+<ul class="simple">
+<li>文本消息(重要)</li>
+<li>图片消息</li>
+<li>语音消息</li>
+<li>视频消息</li>
+<li>小视频消息</li>
+<li>位置消息</li>
+<li>链接消息</li>
+<li>粉丝开始关注</li>
+<li>粉丝取消关注</li>
+<li>扫描二维码</li>
+<li>追踪地理位置</li>
+<li>点击菜单(模拟关键字)</li>
+<li>点击菜单(链接)</li>
+<li>微小店消息</li>
+</ul>
+</div>
+<div class="section" id="id9">
+<h4><a class="toc-backref" href="#id52">处理的消息类型</a></h4>
+<p>当勾选此项下的事件类型后，模块有权限可以直接接管选中的事件。比如，用户向公众号发送了一图片，触发了图片事件，系统接到此事件后，会直接转到至模块中处理，并返回结果。</p>
+<p>注意: 关键字路由只能针对文本消息有效, 文本消息最为重要. 其他类型的消息并不能被直接理解, 多数情况需要使用文本消息来进行语境分析, 再处理其他相关消息类型。</p>
+<p>注意: 上下文锁定的模块不受此限制, 上下文锁定期间, 任何类型的消息都会路由至锁定模块。</p>
+<p>开发者必须要完善 <tt class="docutils literal">processor.php</tt> 类文件中的 <tt class="docutils literal">public function <span class="pre">respond(){}</span></tt> 方法。</p>
+<p>清单配置：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;handles&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;image&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;voice&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;video&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;shortvideo&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;location&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;link&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;subscribe&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;qr&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;trace&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;click&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;merchant_order&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_get_card&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_del_card&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_consume_card&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/handles&gt;</span>
+</pre>
+</div>
+<div class="section" id="id10">
+<h4><a class="toc-backref" href="#id53">是否要嵌入规</a></h4>
+<p>定义此模块是否需要回复规则触发。当勾选此项后，模块安装后系统会自动添加 <tt class="docutils literal">回复规则列表</tt> 菜单，用户可以设置关键字触发到模块中。故而模块可以在自己的功能内，嵌入一个关键字规则回复功能，自行处理关键字触发后的回复内容。</p>
+<p>开发者必须要完善 <tt class="docutils literal">processor.php</tt> 类文件中的 <tt class="docutils literal">public function <span class="pre">respond(){}</span></tt> 方法。</p>
+<p>注意: 如果需要嵌入规则, 那么此模块必须能够处理文本类型消息 (需要定义Processor)</p>
+<p>清单配置：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;rule</span> <span class="na">embed=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</pre>
+</div>
+<div class="section" id="id11">
+<h4><a class="toc-backref" href="#id54">规则列表</a></h4>
+<p>当模块开启嵌入规则后，开发者可以扩展 <tt class="docutils literal">回复规则列表</tt> 中的功能菜单。</p>
+<p>规则列表是定义可重复使用或者可创建多次的活动的功能入口(管理后台 <tt class="docutils literal">WEB</tt> 操作)，每个活动对应一条规则。一般呈现为图文消息，点击后进入定义好的某次活动中。</p>
+<p>开发者需要完善 <tt class="docutils literal">site.php</tt> 类文件中的 <tt class="docutils literal">public function <span class="pre">doWeb{入口标识}(){}</span></tt> 相关方法。</p>
+<p>清单配置：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;rule&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;规则&quot;</span> <span class="na">do=</span><span class="s">&quot;rule&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;规则2&quot;</span> <span class="na">do=</span><span class="s">&quot;rule2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/rule&gt;</span>
+</pre>
+<ul class="simple">
+<li>title ：是规则名称；</li>
+<li>do ：入口标识；该标识的方法用来呈现规则列表？？</li>
+<li>state：操作附加数据；</li>
+<li>direct ：是否无需登陆直接展示；</li>
+</ul>
+</div>
+<div class="section" id="id12">
+<h4><a class="toc-backref" href="#id55">是否支持使用优惠券</a></h4>
+<p>当勾选此项后，用户在创建（代金券和折扣券）时,模块将出现在适用模块列表中。当添加后，模块需要完成导粉丝领取该优惠券。领取后，粉丝在该模块需要支付金钱时,可选择使用该优惠券来减免金额。</p>
+<p>清单配置：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;card</span> <span class="na">embed=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</pre>
+</div>
+<div class="section" id="id13">
+<h4><a class="toc-backref" href="#id56">微站功能封面</a></h4>
+<p>设置此项后，安装模块后系统会按照设置的项的标题生成出若干个设置入口菜单，管理员进入设置关键字后，粉丝可以直接通过关键字触发到该链接中。</p>
+<p>功能封面是定义公众号里一个独立功能的入口(手机端操作)，每个活动对应一条规则。一般呈现为图文消息，点击后进入公众号系统中对应的功能。</p>
+<p>例如：操作名称为首页，标识为 <tt class="docutils literal">index</tt> ，设置关键字为 <tt class="docutils literal">进入首页</tt> ，触发后系统回复图文信息，粉丝点击进入 <tt class="docutils literal">site.php</tt> 类文件中的 <tt class="docutils literal">public function <span class="pre">doMobileIndex(){}</span></tt> 方法中。</p>
+<p>清单配置：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;cover&gt;</span>
+        <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;功能封面&quot;</span> <span class="na">do=</span><span class="s">&quot;cover&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;功能封面2&quot;</span> <span class="na">do=</span><span class="s">&quot;cover2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/cover&gt;</span>
+</pre>
+<ul class="simple">
+<li>title：操作名称就是应用入口菜单返回的内容中显示的封面链接入口列表；</li>
+<li>do：入口标识就是实现的函数需要在 <tt class="docutils literal">site.php</tt> 中 <tt class="docutils literal">WeSite</tt> 类中定义；</li>
+<li>state：附加数据是指进入链接后面附加一些 <tt class="docutils literal">GET</tt> 参数，例如： <tt class="docutils literal">&amp;user=1&amp;post=2</tt> ；</li>
+<li>direct：是否需要登录访问，指进入时不做登录验证，可随意访问。</li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h4><a class="toc-backref" href="#id57">管理中心导航菜单</a></h4>
+<p><tt class="docutils literal">web</tt> 端，即后端管理菜单。注册应用的后台管理菜单，进入应用后，会显示到左侧 <strong>业务菜单</strong> 中，程序中需要在 <tt class="docutils literal">site.php</tt> 中实现。</p>
+<p>开发者需要完善 <tt class="docutils literal">site.php</tt> 类文件中的 <tt class="docutils literal">public function <span class="pre">doWeb{入口标识}(){}</span></tt> 相关方法。</p>
+<p>清单配置：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;menu&gt;</span>
+        <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;管理中心&quot;</span> <span class="na">do=</span><span class="s">&quot;menu&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;管理中心2&quot;</span> <span class="na">do=</span><span class="s">&quot;menu2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/menu&gt;</span>
+</pre>
+<ul class="simple">
+<li>title：操作名称就是将来显示到左侧的菜单名称；</li>
+<li>do：入口标识就是实现的函数需要在 <tt class="docutils literal">site.php</tt> 中 <tt class="docutils literal">WeSite</tt> 类中定义；</li>
+<li>state：附加数据是指进入链接后面附加一些 <tt class="docutils literal">GET</tt> 参数，例如： <tt class="docutils literal">&amp;user=1&amp;post=2</tt> ；</li>
+<li>direct：是否需要登录访问，指进入时不做登录验证，可随意访问。</li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h4><a class="toc-backref" href="#id58">权限标识</a></h4>
+<p>微擎支持模块内部的权限判断，此处添加权限标识后，管理人员才可以在后台分派相应的权限给操作人员。</p>
+<p>权限标识由：模块名称和标识组成。例如,添加门店： <tt class="docutils literal">we7_demo_store_add</tt> 。标识格式：模块名称_标识。例如，模块名称为： <tt class="docutils literal">we7_demo</tt> ，标识为： <tt class="docutils literal">store_add</tt> ,则对应标识为： <tt class="docutils literal">we7_demo_store_add</tt> 。</p>
+<p>模块内部可以通过 ** permission_check_account_user_module($action = '', $module_name = '')** 来判断操作员是否具有模块某个业务功能菜单的权限。</p>
+<p>清单配置：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;permissions&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;title1&quot;</span> <span class="na">do=</span><span class="s">&quot;permission1&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;title2&quot;</span> <span class="na">do=</span><span class="s">&quot;permission2&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/permissions&gt;</span>
+</pre>
+<ul class="simple">
+<li>title：权限标识名称；</li>
+<li>do：权限标识；</li>
+</ul>
+</div>
+<div class="section" id="id16">
+<h4><a class="toc-backref" href="#id59">微站首页导航图标、微站个人中心导航、微站快捷功能导航</a></h4>
+<p><tt class="docutils literal">app</tt> 端，即前端访问菜单。设置此项后，管理员在添加相应的导航时，可以从此设置项中选取模块中的链接。</p>
+<ul class="simple">
+<li>首页导航图标：在微站的的首页上显示相关功能的链接入口(手机端操作)，一般用于通用功能的展示；</li>
+<li>个人中心导航：在微站的个人中心上显示相关功能的链接入口(手机端操作)，一般用于个人信息，或针对个人的数据的展示；</li>
+<li>快捷功能导航：在微站的快捷菜单上展示相关功能的链接入口(手机端操作)，仅在支持快捷菜单的公众号模板上有效；</li>
+</ul>
+<p>上面的功能定义于 <tt class="docutils literal">WeSite</tt> 类的实现中。</p>
+<p>清单配置：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;home&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;首页导航&quot;</span> <span class="na">do=</span><span class="s">&quot;home&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;首页导航2&quot;</span> <span class="na">do=</span><span class="s">&quot;home2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/home&gt;</span>
+<span class="nt">&lt;profile&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;个人中心导航&quot;</span> <span class="na">do=</span><span class="s">&quot;profile&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;个人中心导航2&quot;</span> <span class="na">do=</span><span class="s">&quot;profile2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/profile&gt;</span>
+<span class="nt">&lt;shortcut&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;快捷功能&quot;</span> <span class="na">do=</span><span class="s">&quot;shortcut&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;快捷功能2&quot;</span> <span class="na">do=</span><span class="s">&quot;shortcut2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/shortcut&gt;</span>
+</pre>
+</div>
+<div class="section" id="id17">
+<h4><a class="toc-backref" href="#id60">独立功能</a></h4>
+<p>需要特殊定义的操作，一般用于将指定的操作指定为( <tt class="docutils literal">direct</tt> )，如果一个操作没有具体位置绑定，但是需要定义为(direct:直接访问)，可以使用这个嵌入点。</p>
+<p>上面的功能定义于 <tt class="docutils literal">WeSite</tt> 类的实现中。</p>
+<p>清单配置：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;function&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;独立功能&quot;</span> <span class="na">do=</span><span class="s">&quot;func&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;独立功能2&quot;</span> <span class="na">do=</span><span class="s">&quot;func2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/function&gt;</span>
+</pre>
+</div>
+<div class="section" id="id18">
+<h4><a class="toc-backref" href="#id61">模块安装脚本、模块卸载脚本、模块升级脚本</a></h4>
+<p>微擎在安装或卸载模块时会根据 <tt class="docutils literal">manifest.xml</tt> 生成（或删除）数据库中相应记录，并执行 <tt class="docutils literal">manifest.xml</tt> 里指定的脚本。</p>
+<p>模块发布后，开发者如果想在用户安装、更新、卸载应用时，安装一些数据表，变更一些数据表或是执行一些脚本，可以通过在 <tt class="docutils literal">manifest.xml</tt> 中进行设置。</p>
+<div class="section" id="id19">
+<h5>安装应用</h5>
+<p>模块安装时执行的脚本。</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;install&gt;</span><span class="cp">&lt;![CDATA[SQL语句或是php文件名]]&gt;</span><span class="nt">&lt;/install&gt;</span>
+</pre>
+</div>
+<div class="section" id="id20">
+<h5>更新应用</h5>
+<p>模块更新时执行的脚本。</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;upgrade&gt;</span><span class="cp">&lt;![CDATA[SQL语句或是php文件名]]&gt;</span><span class="nt">&lt;/upgrade&gt;</span>
+</pre>
+</div>
+<div class="section" id="id21">
+<h5>卸载应用</h5>
+<p>模块卸载时执行的脚本。</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;uninstall&gt;</span><span class="cp">&lt;![CDATA[SQL语句或是php文件名]]&gt;</span><span class="nt">&lt;/uninstall&gt;</span>
+</pre>
+<p>如果是简单的 <tt class="docutils literal">SQL</tt> 语句，创建表、删除表、更新数据，可以直接将 <tt class="docutils literal">SQL</tt> 语句写入节点中，如果还需要 <tt class="docutils literal">PHP</tt> 配合运行一些程序此处可以写文件名，系统会自动加载对应的文件运行(文件要放置到模块的根目录下)，例如：</p>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;upgrade&gt;</span><span class="cp">&lt;![CDATA[upgrade.php]]&gt;</span><span class="nt">&lt;/upgrade&gt;</span>
+</pre>
+<p><tt class="docutils literal">upgrade.php</tt> 需要放置在清单文件同级目录中。</p>
+<p>上面设置更新模块时执行 <tt class="docutils literal">upgrade.php</tt> 文件，需要注意的是，每次模块更新时均会执行该文件，需要保证升级文件是可以多次执行不会出错。如果有一些新建表或是删除表的操作，最好先判断表是否存在。</p>
+<pre class="codehilite" lang="php">
+<span class="x">if (pdo_fieldexists('storex_room', 'hotelid')) {
+    pdo_query(&quot;ALTER TABLE &quot; . tablename('storex_room') . &quot; CHANGE `hotelid` `store_base_id` INT(11) NULL DEFAULT '0';&quot;);
+}
+if (!pdo_fieldexists('storex_room', 'is_house')) {
+    pdo_query(&quot;ALTER TABLE &quot; . tablename('storex_room') . &quot; ADD `is_house` INT(11) NOT NULL DEFAULT '1' COMMENT '是否是房型 1 是，2不是 ';&quot;);
+}</span>
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="manifest-xml">
+<h3><a class="toc-backref" href="#id62">manifest.xml</a></h3>
+<pre class="codehilite" lang="xml">
+<span class="nt">&lt;html</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span> <span class="na">encoding=</span><span class="s">&quot;utf-8&quot;</span><span class="err">?</span><span class="nt">&gt;</span> 此行 version 只能是 &quot;1.0&quot;
+<span class="nt">&lt;manifest</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.we7.cc&quot;</span> <span class="na">versionCode=</span><span class="s">&quot;0.6&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;application</span> <span class="na">setting=</span><span class="s">&quot;true&quot;</span> <span class="na">cloud_setting=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;name&gt;</span><span class="cp">&lt;![CDATA[微商城]]&gt;</span><span class="nt">&lt;/name&gt;</span>                         发布过后，应用名称不允许修改
+        <span class="nt">&lt;identifie&gt;</span><span class="cp">&lt;![CDATA[ewei_shopping]]&gt;</span><span class="nt">&lt;/identifie&gt;</span>        发布过后，应用标识不允许修改
+        <span class="nt">&lt;version&gt;</span><span class="cp">&lt;![CDATA[6.9.9]]&gt;</span><span class="nt">&lt;/version&gt;</span>                    云商城版本比较函数 version_compare($v1, $v2)
+        <span class="nt">&lt;type&gt;</span><span class="cp">&lt;![CDATA[business]]&gt;</span><span class="nt">&lt;/type&gt;</span>                       类型请到云商城设计模块中查阅，错误将无法发布成功
+        <span class="nt">&lt;ability&gt;</span><span class="cp">&lt;![CDATA[微商城]]&gt;</span><span class="nt">&lt;/ability&gt;</span>
+        <span class="nt">&lt;description&gt;</span><span class="cp">&lt;![CDATA[微商城]]&gt;</span><span class="nt">&lt;/description&gt;</span>
+        <span class="nt">&lt;author&gt;</span><span class="cp">&lt;![CDATA[WeEngine Team &amp; ewei]]&gt;</span><span class="nt">&lt;/author&gt;</span>
+        <span class="nt">&lt;url&gt;</span><span class="cp">&lt;![CDATA[url]]&gt;</span><span class="nt">&lt;/url&gt;</span>
+    <span class="nt">&lt;/application&gt;</span>
+    <span class="nt">&lt;platform&gt;</span>
+        <span class="nt">&lt;subscribes&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;image&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;voice&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;video&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;shortvideo&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;location&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;link&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;subscribe&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;unsubscribe&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;qr&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;trace&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;click&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;view&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;merchant_order&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_get_card&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_del_card&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_consume_card&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/subscribes&gt;</span>
+        <span class="nt">&lt;handles&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;image&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;voice&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;video&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;shortvideo&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;location&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;link&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;subscribe&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;qr&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;trace&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;click&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;merchant_order&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_get_card&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_del_card&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;message</span> <span class="na">type=</span><span class="s">&quot;user_consume_card&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/handles&gt;</span>
+        <span class="nt">&lt;supports&gt;</span>                              (在线安装或更新时会重新计算所有已购买的支持类型)
+            <span class="nt">&lt;item</span> <span class="na">type=</span><span class="s">&quot;plugin&quot;</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;item</span> <span class="na">type=</span><span class="s">&quot;app&quot;</span> <span class="nt">/&gt;</span>                 (发布公众号必须填写)
+            <span class="nt">&lt;item</span> <span class="na">type=</span><span class="s">&quot;wxapp&quot;</span> <span class="nt">/&gt;</span>               (发布小程序必须填写)
+            <span class="nt">&lt;item</span> <span class="na">type=</span><span class="s">&quot;system_welcome&quot;</span> <span class="nt">/&gt;</span>      (发布微擎首页必须填写)
+            <span class="nt">&lt;item</span> <span class="na">type=</span><span class="s">&quot;webapp&quot;</span> <span class="nt">/&gt;</span>              (发布 PC 版必须填写)
+            <span class="nt">&lt;item</span> <span class="na">type=</span><span class="s">&quot;android&quot;</span> <span class="nt">/&gt;</span>             (发布 APP[安卓]必须填写)
+            <span class="nt">&lt;item</span> <span class="na">type=</span><span class="s">&quot;ios&quot;</span> <span class="nt">/&gt;</span>                 (发布 APP[苹果]必须填写)
+        <span class="nt">&lt;/supports&gt;</span>
+        <span class="nt">&lt;plugin-main</span> <span class="na">name=</span><span class="s">&quot;wx_nstore&quot;</span> <span class="nt">/&gt;</span>        (在线安装或更新时会重新计算所有已购主应用)
+        <span class="nt">&lt;plugins&gt;</span>                               (在线安装或更新时会重新计算所有已购插件)
+            <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">&quot;ewei_hotel&quot;</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">&quot;ewei_hotel2&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/plugins&gt;</span>
+        <span class="nt">&lt;rule</span> <span class="na">embed=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;card</span> <span class="na">embed=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;oauth</span> <span class="na">type=</span><span class="s">&quot;userinfo&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/platform&gt;</span>
+    <span class="nt">&lt;bindings&gt;</span>
+        <span class="nt">&lt;cover&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;功能封面&quot;</span> <span class="na">do=</span><span class="s">&quot;cover&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;功能封面2&quot;</span> <span class="na">do=</span><span class="s">&quot;cover2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/cover&gt;</span>
+        <span class="nt">&lt;rule&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;规则&quot;</span> <span class="na">do=</span><span class="s">&quot;rule&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;规则2&quot;</span> <span class="na">do=</span><span class="s">&quot;rule2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/rule&gt;</span>
+        <span class="nt">&lt;menu&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;管理中心&quot;</span> <span class="na">do=</span><span class="s">&quot;menu&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;管理中心2&quot;</span> <span class="na">do=</span><span class="s">&quot;menu2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/menu&gt;</span>
+        <span class="nt">&lt;home&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;首页导航&quot;</span> <span class="na">do=</span><span class="s">&quot;home&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;首页导航2&quot;</span> <span class="na">do=</span><span class="s">&quot;home2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/home&gt;</span>
+        <span class="nt">&lt;profile&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;个人中心导航&quot;</span> <span class="na">do=</span><span class="s">&quot;profile&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;个人中心导航2&quot;</span> <span class="na">do=</span><span class="s">&quot;profile2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/profile&gt;</span>
+        <span class="nt">&lt;shortcut&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;快捷功能&quot;</span> <span class="na">do=</span><span class="s">&quot;shortcut&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;快捷功能2&quot;</span> <span class="na">do=</span><span class="s">&quot;shortcut2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/shortcut&gt;</span>
+        <span class="nt">&lt;function&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;独立功能&quot;</span> <span class="na">do=</span><span class="s">&quot;func&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;独立功能2&quot;</span> <span class="na">do=</span><span class="s">&quot;func2&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/function&gt;</span>
+        <span class="nt">&lt;page&gt;</span>    发布小程序必须有此项设置
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;首页&quot;</span> <span class="na">do=</span><span class="s">&quot;/we7_gs/pages/index/index&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;主页&quot;</span> <span class="na">do=</span><span class="s">&quot;/we7_gs/pages/index/main&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/page&gt;</span>
+        <span class="nt">&lt;system_welcome&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;systemwelcome&quot;</span> <span class="na">do=</span><span class="s">&quot;systemwelcome&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/system_welcome&gt;</span>
+        <span class="nt">&lt;webapp&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;webapp&quot;</span> <span class="na">do=</span><span class="s">&quot;webapp&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/webapp&gt;</span>
+        <span class="nt">&lt;phoneapp&gt;</span>
+            <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;phoneapp&quot;</span> <span class="na">do=</span><span class="s">&quot;phoneapp&quot;</span> <span class="na">state=</span><span class="s">&quot;&quot;</span> <span class="na">direct=</span><span class="s">&quot;false&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/phoneapp&gt;</span>
+    <span class="nt">&lt;/bindings&gt;</span>
+    <span class="nt">&lt;permissions&gt;</span>
+        <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;title1&quot;</span> <span class="na">do=</span><span class="s">&quot;permission1&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;entry</span> <span class="na">title=</span><span class="s">&quot;title2&quot;</span> <span class="na">do=</span><span class="s">&quot;permission2&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/permissions&gt;</span>
+    <span class="nt">&lt;install&gt;</span><span class="cp">&lt;![CDATA[install.php]]&gt;</span><span class="nt">&lt;/install&gt;</span>
+    <span class="nt">&lt;uninstall&gt;</span><span class="cp">&lt;![CDATA[uninstall.php]]&gt;</span><span class="nt">&lt;/uninstall&gt;</span>
+    <span class="nt">&lt;upgrade&gt;</span><span class="cp">&lt;![CDATA[upgrade.php]]&gt;</span><span class="nt">&lt;/upgrade&gt;</span>
+<span class="nt">&lt;/manifest&gt;</span>
+</pre>
+<div class="section" id="manifest-xmlns">
+<h4><a class="toc-backref" href="#id63">manifest - xmlns （新增）</a></h4>
+<p>用来为此模块 <tt class="docutils literal">XML</tt> 的命令空间，此处必须填写 <tt class="docutils literal"><span class="pre">http://www.we7.cc</span></tt> 。</p>
+</div>
+<div class="section" id="manifest-versioncode">
+<h4><a class="toc-backref" href="#id64">manifest - versionCode</a></h4>
+<p>用来说明当前模块适用于哪个版本的微擎， 用来保证模块的兼容性。多个支持的版本请使用逗号隔开。</p>
+</div>
+<div class="section" id="manifest-application">
+<h4><a class="toc-backref" href="#id65">manifest - application</a></h4>
+<p>用来定义模块的基本设置属性。</p>
+<div class="section" id="manifest-application-setting">
+<h5>manifest - application - setting</h5>
+<p>用来说明此模块是否有针对模块的设置项，设置项可以保存此模块需要的配置参数(此参数针对不同的公众号分别保存)。</p>
+</div>
+<div class="section" id="manifest-application-name">
+<h5>manifest - application - name</h5>
+<p>模块的名称。</p>
+</div>
+<div class="section" id="manifest-application-identifie">
+<h5>manifest - application - identifie</h5>
+<p>模块标识符，应对应模块文件夹的名称，微擎系统按照此标识符查找模块定义。</p>
+</div>
+<div class="section" id="manifest-application-version">
+<h5>manifest - application - version</h5>
+<p>模块当前版本，此版本用于模块的版本更新。</p>
+</div>
+<div class="section" id="manifest-application-type">
+<h5>manifest - application - type （新增）</h5>
+<p>模块的类型，方便在左侧菜单中归类与显示，目前分为 <tt class="docutils literal">business</tt> (主要业务)， <tt class="docutils literal">customer</tt> (客户关系)， <tt class="docutils literal">activity</tt> (营销及活动)， <tt class="docutils literal">services</tt> (常用服务及工具)， <tt class="docutils literal">other</tt> (其他)。</p>
+</div>
+<div class="section" id="manifest-application-ability">
+<h5>manifest - application - ability</h5>
+<p>模块功能描述，使用简单的语言描述模块的作用，来吸引用户。</p>
+</div>
+<div class="section" id="manifest-application-description">
+<h5>manifest - application - description</h5>
+<p>模块详细描述，详细介绍模块的功能和使用方法。</p>
+</div>
+<div class="section" id="manifest-application-author">
+<h5>manifest - application - author</h5>
+<p>模块的作者，留下你的大名吧。</p>
+</div>
+<div class="section" id="manifest-application-url">
+<h5>manifest - application - url</h5>
+<p>模块的发布页, 可以通过这个 <tt class="docutils literal">url</tt> 来访问你的模块最新情况。</p>
+</div>
+</div>
+<div class="section" id="manifest-platform">
+<h4><a class="toc-backref" href="#id66">manifest - platform</a></h4>
+<p>用来定义模块用以处理公众平台消息的设置项。</p>
+<div class="section" id="manifest-platform-subscribes">
+<h5>manifest - platform - subscribes</h5>
+<p>消息订阅器定义(消息订阅器提供了一种处理公众平台消息的方式, 可以接受到指定类型的消息, 来进行分析和统计, 不能用以处理消息返回结果。这种处理是并行的，同一个消息会被每一个订阅它的模块接收到)。</p>
+<div class="section" id="manifest-platform-subscribes-message">
+<h6>manifest - platform - subscribes - message</h6>
+<p>定义需要被订阅器订阅的消息类型，这里的消息被 <tt class="docutils literal">WeModuleReceiver</tt> 处理。</p>
+</div>
+</div>
+<div class="section" id="manifest-platform-handles">
+<h5>manifest - platform - handles</h5>
+<p>消息处理器定义(消息处理器用于接收公众平台的消息，并返回相应的处理结果。这种处理是互斥的，同一个消息只能从一个模块返回处理结果)。</p>
+<div class="section" id="manifest-platform-handles-message">
+<h6>manifest - platform - handles - message</h6>
+<p>定义需要被处理器处理的消息类型, 这里的消息被 <tt class="docutils literal">WeModuleProcessor</tt> 处理。</p>
+</div>
+</div>
+<div class="section" id="manifest-platform-rule">
+<h5>manifest - platform - rule （变更）</h5>
+<p>定义此模块是否需要规则触发。</p>
+<div class="section" id="manifest-platform-rule-embed">
+<h6>manifest - platform - rule - embed</h6>
+<p>当前模块进行消息处理时需要定义规则, 是否使用规则路由。(使用规则路由必须要能处理 <tt class="docutils literal">text</tt> 类型消息， <tt class="docutils literal">handles</tt> 节点中必须包含 )。</p>
+</div>
+</div>
+</div>
+<div class="section" id="manifest-bindings">
+<h4><a class="toc-backref" href="#id67">manifest - bindings （新增）</a></h4>
+<p>定义此模块的封面，管理菜单，微站菜单及规则扩展菜单。</p>
+<div class="section" id="manifest-bindings-cover">
+<h5>manifest - bindings - cover</h5>
+<p>定义模块的封面入口，封面入口为单条图文信息即是模块需要对用户开放的入口地址。</p>
+<div class="section" id="manifest-bindings-cover-call">
+<h6>manifest - bindings - cover - call</h6>
+<p>定义模块动态扩展菜单项, 此值对应 <tt class="docutils literal">WeModuleSite</tt> 类中的方法，返回的值结构与 <tt class="docutils literal">entry</tt> 相同, 将成为此节点的菜单项。</p>
+</div>
+<div class="section" id="manifest-bindings-cover-entry">
+<h6>manifest - bindings - cover - entry</h6>
+<p>模块绑定菜单的定义结构。需要定义 <tt class="docutils literal">title</tt> - 操作的名称， <tt class="docutils literal">do</tt> - 模块操作入口， <tt class="docutils literal">state</tt> - 附加的用户参数(定义于 <tt class="docutils literal">WeModuleSite</tt> )。</p>
+</div>
+</div>
+<div class="section" id="manifest-bindings-rule">
+<h5>manifest - bindings - rule</h5>
+<p>定义规则的附加操作，每个 <tt class="docutils literal">entry</tt> 代表一个附加操作。？？</p>
+</div>
+<div class="section" id="manifest-bindings-menu">
+<h5>manifest - bindings - menu</h5>
+<p>定义模块在左侧本模块菜单下拉列表中的附加菜单操作，每一个 <tt class="docutils literal">entry</tt> 代表一个菜单操作。</p>
+</div>
+<div class="section" id="manifest-bindings-home">
+<h5>manifest - bindings - home</h5>
+<p>定义模块在微站首页的扩展菜单项，每一个 <tt class="docutils literal">entry</tt> 代表一个微站首页菜单项。</p>
+</div>
+<div class="section" id="manifest-bindings-profile">
+<h5>manifest - bindings - profile</h5>
+<p>定义模块在微站个人中心的扩展菜单项，每一个 <tt class="docutils literal">entry</tt> 代表一个微站个人中心菜单项。</p>
+</div>
+<div class="section" id="manifest-bindings-shortcut">
+<h5>manifest - bindings - shortcut</h5>
+<p>定义模块在微站快捷菜单的扩展菜单项，每一个 <tt class="docutils literal">entry</tt> 代表一个微站快捷菜单项。</p>
+</div>
+</div>
+<div class="section" id="manifest-install">
+<h4><a class="toc-backref" href="#id68">manifest - install</a></h4>
+<p>安装执行脚本, 这里支持两种形式:  <tt class="docutils literal">php</tt> 脚本和 <tt class="docutils literal">sql</tt> 语句。如果安装时只需要写入数据库相关内容, 可以在此直接定义 <tt class="docutils literal">sql</tt> 语句。也可以使用 <tt class="docutils literal">php</tt> 文件，例如: <tt class="docutils literal">install.php</tt> 代表执行模块定义目录下的 <tt class="docutils literal">install.php</tt> 。</p>
+</div>
+<div class="section" id="manifest-uninstall">
+<h4><a class="toc-backref" href="#id69">manifest - uninstall</a></h4>
+<p>卸载执行脚本, 参上</p>
+</div>
+<div class="section" id="manifest-upgrade">
+<h4><a class="toc-backref" href="#id70">manifest - upgrade</a></h4>
+<p>升级执行脚本, 参上</p>
+</div>
+</div>
+</div>
+<div class="section" id="id22">
+<h2><a class="toc-backref" href="#id71">目录结构</a></h2>
+<p>所有开发者模块均置于 <tt class="docutils literal">addons</tt> 目录下。</p>
+<div class="section" id="id23">
+<h3><a class="toc-backref" href="#id72">基础包</a></h3>
+<pre class="codehilite" lang="shell">
+pro
+├─ addons  ………………………………………… 【模块安装目录】 <span class="o">(</span>意为附加组件<span class="o">)</span>
+│  ├─ business  …………………………………… 模块的标识  <span class="o">(</span>示例<span class="o">)</span>
+│  │  ├─ images                             建议 css 文件也放此目录.
+│  │  ├─ template                           模板目录
+│  │  │  ├─ mobile                          移动前端模板目录
+│  │  │  │  └─ mobile.html                  移动前端模板文件
+│  │  │  ├─ webapp                          PC 前端模板目录
+│  │  │  │  └─ pc.html                      PC 前端模板文件
+│  │  │  ├─ system_welcome                  微擎后台首页模板目录
+│  │  │  │  └─ index.html                   微擎后台首页模板文件
+│  │  │  ├─ phoneapp                        APP 端<span class="o">(</span>如安卓，IOS<span class="o">)</span>模板目录
+│  │  │  │  └─ app.html                     APP 端模板文件
+│  │  │  └─ web.html                        模块后端模板文件<span class="o">(</span>模块后端模板文件放置的目录<span class="o">)</span>
+│  │  │  └─ setting.html                    模块后端全局配置模板文件
+│  │  ├─ inc                                引用的 php 文件目录
+│  │  │  ├─ mobile                          前端脚本目录
+│  │  │  │  ├─ xxx.inc.php                  微站入口
+│  │  │  │  └─ ...                          .
+│  │  │  └─ web                             后端脚本目录
+│  │  │      ├─ xxx.inc.php                 微站管理入口
+│  │  │      └─ ...                         .
+│  │  ├─ icon.jpg                           模块图标
+│  │  ├─ preview.jpg                        模块预览
+│  │  ├─ manifest.xml                       模块安装清单
+│  │  ├─ module.php                         模块设置脚本
+│  │  ├─ processor.php                      消息处理脚本
+│  │  ├─ receiver.php                       消息订阅脚本
+│  │  ├─ site.php                           微站页面脚本<span class="o">(</span>包括前端访问和后端访问方法<span class="o">)</span>
+│  │  ├─ wxapp.php                          微信小程序应用脚本<span class="o">(</span>微信小程序与该脚本中定义方法交互<span class="o">)</span>
+│  │  ├─ webapp.php                         PC应用脚本<span class="o">(</span>PC端浏览器与该脚本中定义方法交互<span class="o">)</span>
+│  │  ├─ systemWelcome.php                  微擎后端首页
+│  │  ├─ phoneapp.php                       APP应用脚本<span class="o">(</span>android或ios，App端与该脚本中定义方法交互<span class="o">)</span>
+│  │  ├─ hook.php                           钩子文件脚本，定义被其它模块调用的接口
+│  │  └─ install.php                        安装文件脚本
+│  └─ ...
+</pre>
+<p>说明：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="7%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">文件或文件夹</th>
+<th class="head">说明</th>
+<th class="head">&nbsp;</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>template</td>
+<td>【必有】</td>
+<td>模块模板文件目录 ，其中包含 <tt class="docutils literal">mobile</tt> 子目录存放 <tt class="docutils literal">app</tt> 端的 <tt class="docutils literal">html</tt> 文件， <tt class="docutils literal">web</tt> 端的 <tt class="docutils literal">html</tt> 文件位于当前目录</td>
+</tr>
+<tr><td>manifest.xml</td>
+<td>【必有】</td>
+<td>模块安装、卸载和升级信息，通过 <tt class="docutils literal">微擎模块设计器</tt> 生成</td>
+</tr>
+<tr><td>module.php</td>
+<td>【必有】</td>
+<td>模块参数配置或规则配置</td>
+</tr>
+<tr><td>processor.php</td>
+<td>【必有】</td>
+<td>模块消息处理器，当开启关键字回复时，粉丝触发关键字系统路由至此文件中进行结果输出</td>
+</tr>
+<tr><td>receiver.php</td>
+<td>【必有】</td>
+<td>模块消息订阅器 ，当模块订阅了事件消息时，有消息到达时系统将会执行该文件中的 <tt class="docutils literal">receiver</tt> 方法</td>
+</tr>
+<tr><td>site.php</td>
+<td>【必有】</td>
+<td>模块的微站功能，所有 <tt class="docutils literal">app</tt> 端的页面皆在此类文件中，分为 <tt class="docutils literal">doMoilbeXXX()</tt> , <tt class="docutils literal">doWebXXX()</tt> 方法，分别用于 <tt class="docutils literal">app</tt> 端和后台端</td>
+</tr>
+<tr><td>icon.jpg</td>
+<td>【必有】</td>
+<td>模块的图标</td>
+</tr>
+<tr><td>preview.jpg</td>
+<td>【必有】</td>
+<td>模块的封面</td>
+</tr>
+<tr><td>install.php</td>
+<td>不是必须</td>
+<td>安装文件</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="wxapp">
+<h3><a class="toc-backref" href="#id73">wxapp</a></h3>
+<p><a class="reference external" href="http://s.we7.cc/index.php?c=wiki&amp;do=view&amp;id=1&amp;list=1613">http://s.we7.cc/index.php?c=wiki&amp;do=view&amp;id=1&amp;list=1613</a></p>
+</div>
+<div class="section" id="id24">
+<h3><a class="toc-backref" href="#id74">应用类型支持判定</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="32%" />
+<col width="20%" />
+<col width="37%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">类型支持</th>
+<th class="head">manifest.xml</th>
+<th class="head"><tt class="docutils literal">*.php</tt></th>
+<th class="head">上传文件</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>公众号</td>
+<td>&lt;item type=&quot;app&quot; /&gt;</td>
+<td>mobile.php（可选）</td>
+<td><tt class="docutils literal">*.zip（基础包）</tt></td>
+</tr>
+<tr><td>PC版</td>
+<td>&lt;item type=&quot;webapp&quot; /&gt;</td>
+<td>webapp.php</td>
+<td><tt class="docutils literal">*.zip（基础包）</tt></td>
+</tr>
+<tr><td>微擎首页</td>
+<td>&lt;item type=&quot;system_welcome&quot;/&gt;</td>
+<td>systemWelcome.php</td>
+<td><tt class="docutils literal">*.zip（基础包）</tt></td>
+</tr>
+<tr><td>小程序</td>
+<td>&lt;item type=&quot;wxapp&quot; /&gt;</td>
+<td>wxapp.php</td>
+<td><tt class="docutils literal">*.zip（基础包 + 小程序包）</tt></td>
+</tr>
+<tr><td>APP(安卓)</td>
+<td>&lt;item type=&quot;android&quot; /&gt;</td>
+<td>phoneapp.php</td>
+<td><tt class="docutils literal">*.apk（基础包 + 安卓安装文件）</tt></td>
+</tr>
+<tr><td>APP(苹果)</td>
+<td>&lt;item type=&quot;ios&quot; /&gt;</td>
+<td>phoneapp.php</td>
+<td><tt class="docutils literal">*.ipa（基础包 + 苹果安装文件）</tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="id25">
+<h2><a class="toc-backref" href="#id75">功能文件</a></h2>
+<div class="section" id="module-php">
+<h3><a class="toc-backref" href="#id76">module.php</a></h3>
+<div class="section" id="id26">
+<h4><a class="toc-backref" href="#id77">功能介绍</a></h4>
+<ul class="simple">
+<li>此文件功能主要嵌入系统的 <tt class="docutils literal">自动回复</tt> -&gt; <tt class="docutils literal">关键字回复</tt> 中，微擎系统中。当设置模块时勾选 <tt class="docutils literal">是否要嵌入规则</tt> 时，才可以嵌入规则；</li>
+<li>实现应用的全局配置功能；</li>
+</ul>
+<p>关于关键字回复，系统只支持最基本的 文字、图文、语音、视频等基本元素，而且这些回复需要操作员详细的设置每一项，标题、内容、链接。</p>
+<p>但是对于模块来说，需要对于这些基本的回复进行“二次封装”，生成出来标题、内容、链接这些元素。所以模块对系统自动回复扩展或是封装就需要通过 <tt class="docutils literal">module.php</tt> 这个文件来嵌入。</p>
+<p><tt class="docutils literal">module.php</tt> 应用于添加 <tt class="docutils literal">回复规则列表</tt> 功能，完成了对规则的增，删，改，查功能和模块参数设置的功能，设计模块时需要勾选 <tt class="docutils literal">是否嵌入规则</tt> 。</p>
+<p>在微擎老版本当中，模块开启 <strong>存在全局参数配置</strong> 时，会在此文件中的 <tt class="docutils literal">settingsDisplay</tt> 方法来实现，由于新版微擎引入了 <strong>云参数配置</strong> 的功能，此函数已经不需要开发者来手动实现了，系统会自动调用云 <tt class="docutils literal">API</tt> 来完善功能。</p>
+</div>
+<div class="section" id="id27">
+<h4><a class="toc-backref" href="#id78">规范及约定</a></h4>
+<ul class="simple">
+<li><tt class="docutils literal">Rcdonkey_signuptest</tt> 为模块标识，类名的定义遵循 <tt class="docutils literal">模块标识+Module</tt> 规则；</li>
+<li>此类必须继承 <tt class="docutils literal">WeModule</tt> 类；</li>
+</ul>
+</div>
+<div class="section" id="id28">
+<h4><a class="toc-backref" href="#id79">实现演示</a></h4>
+<pre class="codehilite" lang="php">
+<span class="x">/**
+ * 接龙报名模块定义
+ *
+ * &#64;author lzh
+ * &#64;url
+ */
+defined('IN_IA') or exit('Access Denied');
+class Rcdonkey_signuptestModule extends WeModule {
+    public function welcomeDisplay($menus = array()) {
+        //这里来展示DIY管理界面，用于进入模块后自定义显示页面
+        include $this-&gt;template('welcome');
+    }
+    public function fieldsFormDisplay($rid = 0) {
+        //要嵌入规则编辑页的自定义内容，这里 $rid 为对应的规则编号，新增时为 0
+        //显示新增或是编辑规则页面
+        include $this-&gt;template('rule');
+    }
+    public function fieldsFormValidate($rid = 0) {
+        //规则编辑保存时，要进行的数据验证，返回空串表示验证无误，返回其他字符串将呈现为错误提示。这里 $rid 为对应的规则编号，新增时为 0
+        return '';
+    }
+    public function fieldsFormSubmit($rid) {
+        //规则验证无误保存入库时执行，这里应该进行自定义字段的保存。这里 $rid 为对应的规则编号
+    }
+    public function ruleDeleted($rid) {
+        //删除规则时调用，这里 $rid 为对应的规则编号
+    }
+    // 新版本调用云函数设置全局配置
+    public function settingsDisplay($settings) {
+        global $_W, $_GPC;
+        load()-&gt;classs('cloudapi');
+        $api = new CloudApi(true);
+        $iframe = $api-&gt;url('debug', 'settingsDisplay', array(
+            'referer' =&gt; urlencode($_W['siteurl']),
+            'version' =&gt; $this-&gt;module['version'],
+            'v' =&gt; random(3),
+        ), 'html');
+        if (is_error($iframe)) {
+            message($iframe['message'], '', 'error');
+        }
+        if($_W['ispost']) {
+            $setting = $_GPC['setting'];
+            $setting = $api-&gt;post('debug', 'saveSettings', array('setting' =&gt; $setting, 'version' =&gt; $this-&gt;module['version'], 'v' =&gt; random(3),), 'json');
+            if (is_error($setting)) {
+            }
+            $this-&gt;saveSettings($setting);
+        }
+        include $this-&gt;template('setting');
+    }
+    // 旧版本设置全局配置
+        public function settingsDisplay($settings) {
+                global $_W, $_GPC;
+                //点击模块设置时将调用此方法呈现模块设置页面，$settings 为模块设置参数, 结构为数组。这个参数系统针对不同公众账号独立保存。
+                //在此呈现页面中自行处理post请求并保存设置参数（通过使用$this-&gt;saveSettings()来实现）
+                if(checksubmit('submit')) {
+                        //字段验证, 并获得正确的数据$dat
+                        $dat['option1'] = $_GPC['option1'];
+                        $this-&gt;saveSettings($dat);
+                        message('配置参数更新成功！', referer(), 'success');
+                }
+                //这里来展示设置项表单
+                include $this-&gt;template('settings');
+        }
+}</span>
+</pre>
+<p>另一个参考例子 <a class="reference external" href="https://www.kancloud.cn/donknap/we7/135269">https://www.kancloud.cn/donknap/we7/135269</a> 。</p>
+</div>
+</div>
+<div class="section" id="site-php">
+<h3><a class="toc-backref" href="#id80">site.php</a></h3>
+<p>它是定义各类模块后台功能的文件。</p>
+<div class="section" id="id29">
+<h4><a class="toc-backref" href="#id81">功能介绍</a></h4>
+<div class="section" id="id30">
+<h5>定义模块后端功能</h5>
+<p>以 <tt class="docutils literal">doWeb+入口标识</tt> 为方法名，设计模块时，需要先在 <strong>管理中心菜单</strong> 中注册。当然，如果一些 <tt class="docutils literal">ajax</tt> 地址或是你不想显示在左侧菜单上，也可以不在设计模块时注册这些菜单，只要按照访问路由方法，一样是可以调用到。可以查看 <a class="reference external" href="http://">URL路由的相关说明及函数</a> 。</p>
+<p><strong>注意：各个类型模块(如，webapp，wxapp，phoneapp)后端都是使用该文件的这样格式的方法来定义的。</strong></p>
+<p>后端分为移动端和PC端后台。移动端后台函数定义在 <tt class="docutils literal">mobile.php</tt> 文件中；而PC端后台函数定义在 <tt class="docutils literal">site.php</tt> 文件中。</p>
+</div>
+<div class="section" id="id31">
+<h5>定义模块前端页面</h5>
+<p>以 <tt class="docutils literal">doMobile+入口标识</tt> 为方法名，供手机端接口或是页面使用。此方法不一定要在设计模块时注册，只要按照访问路由方法，一样是可以调用到。只是如果此页面是不验证登录的，需要在设计模块时，设置此标识 <strong>无需要登录访问</strong> 。</p>
+</div>
+</div>
+<div class="section" id="id32">
+<h4><a class="toc-backref" href="#id82">具体功能实现</a></h4>
+<p>此例中，将实现一个查看所有活动列表的功能。代码如下：
+开发应用使用了命名空间，具体可以查看 <a class="reference external" href="http://">命名空间</a></p>
+<p>文件中有三个方法，别表是活动列表，删除活动，编辑活动，其中只有 <strong>活动列表</strong> ，在设计模块的时候注册了，因为这个菜单要显示到模块左侧，其它菜单是由自己在HTML页面中加入的，所以可以不事先注册。</p>
+<p>调用 <tt class="docutils literal">site.php</tt> 中的其它方法，可以在前端页面中调用，可使用下面的方法，具体可以查看 <a class="reference external" href="http://">生成模块内链接地址</a></p>
+<pre class="codehilite" lang="html">
+<span class="nt">&lt;td&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;link-group&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;{php echo $this-&gt;createWebUrl('editActivity', array('id' =&gt; $activity['id']))}&quot;</span><span class="nt">&gt;</span>编辑<span class="nt">&lt;/a&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;{php echo $this-&gt;createWebUrl('deleteActivity', array('id' =&gt; $activity['id']))}&quot;</span> <span class="na">onclick=</span><span class="s">&quot;return confirm('是否确认删除？');&quot;</span> <span class="na">class=</span><span class="s">&quot;del&quot;</span><span class="nt">&gt;</span>删除<span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/td&gt;</span>
+</pre>
+<p>完整的代码示例如下：</p>
+<pre class="codehilite" lang="php">
+<span class="x">namespace rcdonkey;
+/**
+ * 接龙报名模块微站定义
+ *
+ * &#64;author lzh
+ * &#64;url
+ */
+defined('IN_IA') or exit('Access Denied');
+class Rcdonkey_signupModuleSite extends \WeModuleSite {
+    public function doWebActivity() {
+        global $_W, $_GPC;
+        $pageindex = max(1, intval($_GPC['page']));
+        $pagesize = 15;
+        $status = array(
+            '1' =&gt; '进行中',
+            '2' =&gt; '进行中',
+            '3' =&gt; '已结束',
+        );
+        $activity_list = pdo_getslice('rcdonkey_activity', array(), array($pageindex, $pagesize), $total, array(), 'id', 'id desc');
+        if (!empty($activity_list)) {
+            foreach ($activity_list as &amp;$activity) {
+                $activity['createtime'] = date('Y-m-d H:i', $activity['createtime']);
+                $activity['join_deadline'] = date('Y-m-d', $activity['join_deadline']);
+                $activity['code'] = tomedia($activity['code']);
+            }
+            unset($activity);
+        }
+        $pager = pagination($total, $pageindex, $pagesize);
+        include $this-&gt;template('activity-list');
+    }
+    public function doWebDeleteActivity() {
+        global $_GPC;
+        $id = intval($_GPC['id']);
+        $activity = pdo_get('rcdonkey_activity', array('id' =&gt; $id));
+        if (empty($activity)) {
+            message('删除的活动不存在或是已经被删除');
+        }
+        if (pdo_delete('rcdonkey_activity', array('id' =&gt; $id))) {
+            message('活动删除成功', referer(), 'success');
+        } else {
+            message('活动删除失败，请重试');
+        }
+    }
+    public function doWebEditActivity() {
+        global $_GPC;
+        $id = intval($_GPC['id']);
+        $activity = pdo_get('rcdonkey_activity', array('id' =&gt; $id));
+        if (empty($activity)) {
+            message('删除的活动不存在或是已经被删除');
+        }
+        if (checksubmit('submit')) {
+            if (empty($_GPC['title']) || empty($_GPC['join_deadline'])) {
+                message('请输入活动的标题和截止日期');
+            }
+            $data = array(
+                'title' =&gt; $_GPC['title'],
+                'description' =&gt; $_GPC['description'],
+                'join_total' =&gt; intval($_GPC['join_total']),
+                'join_deadline' =&gt; strtotime($_GPC['join_deadline']),
+                'status' =&gt; intval($_GPC['status']),
+            );
+            pdo_update('rcdonkey_activity', $data, array('id' =&gt; $id));
+            message('更新成功', referer(), 'success');
+        }
+        include $this-&gt;template('activity-detail');
+    }
+}</span>
+</pre>
+<p>可以将 <tt class="docutils literal">site.php</tt> 中大量定义的入口方法分离单独的文件中 (文件名称为小写单词, 如: <tt class="docutils literal">sendmessage.inc.php</tt> )</p>
+<ul class="simple">
+<li><tt class="docutils literal">doWebXxx</tt> 分离到 <tt class="docutils literal">wxwall/inc/web/xxx.inc.php</tt> ；</li>
+<li><tt class="docutils literal">doMobileXxx</tt> 分离到 <tt class="docutils literal">wxwall/inc/mobile/xxx.inc.php</tt> ；</li>
+</ul>
+</div>
+<div class="section" id="id35">
+<h4><a class="toc-backref" href="#id83">用户身份验证</a></h4>
+<p>在需要粉丝用户或操作员身份验证时，调用以下方法。</p>
+<ul class="simple">
+<li>Web端 <tt class="docutils literal">checklogin()</tt> ：在 <tt class="docutils literal">Web</tt> 端，操作用户登录方可执行的页面功能，在入口须调用 <tt class="docutils literal">checklogin()</tt> ，验证失败，操作用户须登录，方可向下执行。</li>
+<li>App端 <tt class="docutils literal">checkauth()</tt> ：在 <tt class="docutils literal">App</tt> 端，粉丝用户登录方可操作的页面功能。</li>
+</ul>
+</div>
+</div>
+<div class="section" id="receiver-php">
+<h3><a class="toc-backref" href="#id84">receiver.php</a></h3>
+<div class="section" id="id36">
+<h4><a class="toc-backref" href="#id85">功能介绍</a></h4>
+</div>
+<div class="section" id="id37">
+<h4><a class="toc-backref" href="#id86">具体功能实现</a></h4>
+<p>以下示例为用户模拟图片消息，  <tt class="docutils literal">PicTran</tt> 默认订阅图片消息。</p>
+<pre class="codehilite" lang="php">
+<span class="x">defined('IN_IA') or exit('Access Denied');
+
+class PicTranModuleReceiver extends WeModuleReceiver {
+        public function receive() {
+                $type = $this-&gt;message['type'];
+                //这里定义此模块进行消息订阅时的, 消息到达以后的具体处理过程, 请查看微擎文档来编写你的代码
+
+                $c = '';
+                foreach ($this-&gt;message as $key =&gt; $value) {
+                        $c .= &quot;$key : $value \r\n&quot;;
+                }
+
+                file_put_contents('e:\\receive.txt', $c);
+        }
+}</span>
+</pre>
+<p>当收到一个图片消息时将会执行消息订阅, 文件输出结果为:</p>
+<pre class="codehilite" lang="shell">
+from : fromUser
+to : toUser
+<span class="nb">time</span> : 1413941559
+<span class="nb">type</span> : image
+event :
+tousername : toUser
+fromusername : fromUser
+createtime : 1413941559
+msgtype : image
+picurl : http://www.baidu.com/img/bdlogo.gif
+msgid : 1234567890123456
+url : http://www.baidu.com/img/bdlogo.gif
+</pre>
+</div>
+</div>
+<div class="section" id="processor-php">
+<h3><a class="toc-backref" href="#id87">processor.php</a></h3>
+<div class="section" id="id38">
+<h4><a class="toc-backref" href="#id88">功能介绍</a></h4>
+<p>应用于当此模块设置过 <tt class="docutils literal">回复规则列表</tt> ，用户发送关键字后，触发到模块中向用户回复信息的函数。</p>
+<p><tt class="docutils literal">processor.php</tt> 具体定义如下：</p>
+<ul class="simple">
+<li><tt class="docutils literal">we7_demo</tt> 为模块标识，类名的定义遵循 <tt class="docutils literal">模块标识ModuleProcessor</tt> 规则；</li>
+<li>此类必须继承 <tt class="docutils literal">WeModuleProcessor</tt> 类；</li>
+</ul>
+</div>
+<div class="section" id="id39">
+<h4><a class="toc-backref" href="#id89">具体功能实现</a></h4>
+<pre class="codehilite" lang="php">
+<span class="x">/**
+ * 官方示例模块处理程序
+ *
+ * &#64;author 微擎团队
+ * &#64;url http://bbs.we7.cc/
+ */
+defined('IN_IA') or exit('Access Denied');
+
+class We7_demoModuleProcessor extends WeModuleProcessor {
+        public function respond() {
+                //$this-&gt;message变量包含了用户信息和关键字信息
+                $content = $this-&gt;message['content'];
+                //这里定义此模块进行消息处理时的具体过程, 请查看微擎文档来编写你的代码
+                //回复用户一句话
+                return $this-&gt;respText('您触发了we7_demo模块');
+        }
+}</span>
+</pre>
+</div>
+<div class="section" id="id40">
+<h4><a class="toc-backref" href="#id90">该类一些属性的介绍</a></h4>
+<div class="section" id="this-message">
+<h5>$this-&gt;message</h5>
+<p>粉丝发送的消息结构</p>
+<pre class="codehilite" lang="php">
+<span class="x">$this-&gt;message = array(
+        'from' =&gt; 'fromUser',  //来源openid
+        'to' =&gt; 'toUser', //公众号标识
+        'time' =&gt; '1448694116',
+        'type' =&gt; 'text', //消息类型
+        'event' =&gt; '',
+        'tousername' =&gt; 'toUser', //同from
+        'fromusername' =&gt; 'fromUser', //同to
+        'createtime' =&gt; '1448694116',
+        'msgtype' =&gt; 'text',
+        'content' =&gt; '官方示例', //关键字
+        'msgid' =&gt; '1234567890123456',
+        'redirection' =&gt; '',  //是否有消息重定向，例如扫描二维码后触发某一个关键字，这样的消息就属于重定向消息
+        'source' =&gt; '', //重定向消息原消息类型
+);</span>
+</pre>
+</div>
+<div class="section" id="this-module-config">
+<h5>$this-&gt;module['config']</h5>
+<p>设计模块时勾选“模块全局配置项”后，用户配置的选项通过此变量获取。</p>
+</div>
+<div class="section" id="id41">
+<h5>生成访问site.php方法的链接</h5>
+<p><tt class="docutils literal">processor.php</tt> 文件中，回复用户图文信息时，可以设置跳转链接到 <tt class="docutils literal">site.php</tt> 文件中的 <tt class="docutils literal">doMobileIndex()</tt> 函数，可以使用 <tt class="docutils literal"><span class="pre">$this-&gt;createMobileUrl('index');</span></tt> 生成访问 <tt class="docutils literal">URL</tt>
+访问 <tt class="docutils literal">doWebIndex()</tt> 函数时，可以使用 <tt class="docutils literal"><span class="pre">$this-&gt;createWebUrl('index');</span></tt> 来生成。</p>
+</div>
+<div class="section" id="id42">
+<h5>构造回复消息的相关函数</h5>
+<ul class="simple">
+<li>$this-&gt;respText(); 回复一段文本文字</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$this-&gt;respText('您触发了we7_demo模块');</span>
+</pre>
+<ul class="simple">
+<li>$this-&gt;respNews(array $news); 回复一个图文消息</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$this-&gt;respNews(array(
+        'Title' =&gt; '单图文的标题',
+        'Description' =&gt; '单图文的描述',
+        'PicUrl' =&gt; tomedia('封面图片地址'),
+        'Url' =&gt; $this-&gt;createMobileUrl('introduce', array('id' =&gt; $rid)), //创建一个带openid信息的访问模块introduce方法的地址，这里也可以直接写http://we7.cc
+));</span>
+</pre>
+<ul class="simple">
+<li>$this-&gt;respMusic(array $music); 回复一个音乐消息</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$this-&gt;respMusic(array(
+        'Title' =&gt; '音乐回复标题',
+        'Description' =&gt; '音乐回复描述',
+        'MusicUrl' =&gt; tomedia('音乐链接'),
+        'HQMusicUrl' =&gt; '高清音乐链接，可不填',
+));</span>
+</pre>
+<ul class="simple">
+<li>$this-&gt;respVideo(array $video); 回复一个视频消息，视频需要上传到微信的素材中。</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$this-&gt;respVideo(array(
+        'MediaId' =&gt; '素材的Id',
+        'Title' =&gt; '视频标题',
+        'Description' =&gt; '视频的描述'
+));</span>
+</pre>
+<ul class="simple">
+<li>$this-&gt;respVoice($mid); 回复一个语音消息，语音需要上传到微信的素材中。见：上传素材</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$this-&gt;respVoice('素材id');</span>
+</pre>
+<ul class="simple">
+<li>$this-&gt;respImage($mid); 回复一个图片消息，图片需要上传到微信的素材中。见：上传素材</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$this-&gt;respImage('素材id');</span>
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="hook-php">
+<h3><a class="toc-backref" href="#id91">hook.php</a></h3>
+<div class="section" id="id43">
+<h4><a class="toc-backref" href="#id92">模块嵌入点</a></h4>
+<p>模块嵌入点是为了解决模块之间或是插件与主模块之间的功能调用、功能占位等问题。</p>
+<p>举个例子，主模块功能是商城功能，包含一个插件功能是支付功能。主模块在遇到支付功能按钮时，可以以钩子的形式来处理，先占位，系统会判断用户是否已经安装支付插件，如果有则显示出来支付功能按钮，如果没有则什么也不显示。</p>
+</div>
+<div class="section" id="id44">
+<h4><a class="toc-backref" href="#id93">定义模块嵌入点</a></h4>
+<ul class="simple">
+<li>模块嵌入点需要在模块目录下定义 <tt class="docutils literal">hook.php</tt> ；</li>
+<li><tt class="docutils literal">We7_testhookModuleHook</tt> 为模块标识，类名的定义遵循 <tt class="docutils literal">模块标识+ModuleHook</tt> 规则；</li>
+<li>此类必须继承 <tt class="docutils literal">WeModuleHook</tt> 类；</li>
+<li><tt class="docutils literal">web</tt> 端的嵌入点以 <tt class="docutils literal">hookWeb + Hook名称</tt> 来定义；</li>
+<li><tt class="docutils literal">app</tt> 端的嵌入点以 <tt class="docutils literal">hookMobile + Hook名称</tt> 来定义；</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">class We7_testhookModuleHook extends WeModuleHook {
+    // web端的嵌入点
+    public function hookMobileTest() {
+        // 将调用 teamplate/mobile/testhook.html
+        include $this-&gt;template('testhook');
+    }
+    // app端的嵌入点
+    public function hookWebTest() {
+        // 将调用 teamplate/testhook.html
+        include $this-&gt;template('testhook');
+    }
+}</span>
+</pre>
+</div>
+<div class="section" id="hook">
+<h4><a class="toc-backref" href="#id94">调用Hook</a></h4>
+<p>在当前模块通过下面的模板组件可以调用其它模块的功能，用来进行模块间交互。 在使用该模板组件之前，你必须在其它模块中创建 <tt class="docutils literal">hook.php</tt> 文件，并在启动定义 <tt class="docutils literal">hookXXX</tt> 方法。</p>
+<ul class="simple">
+<li>调用 <tt class="docutils literal">Hook</tt> 时， <tt class="docutils literal">web</tt> 端与 <tt class="docutils literal">app</tt> 端会分别调用各自的 <tt class="docutils literal">Hook</tt> ；</li>
+<li>系统会自动检测是否存在该 <tt class="docutils literal">Hook</tt> 后进行调用数据；</li>
+<li>此标签会自动被替换定义嵌入点的内容；</li>
+</ul>
+<pre class="codehilite" lang="html">
+{hook func=&quot;test&quot; module=&quot;we7_testhook&quot; pagesize=&quot;15&quot;}{/hook}
+</pre>
+<p>此标签除了 <tt class="docutils literal">func</tt> 和 <tt class="docutils literal">module</tt> 是必填的参数外，其余参数可由开发者自定义，会原样传入到嵌入点的函数中。它通过 <tt class="docutils literal"><span class="pre">params['参数名称']</span></tt> 来访问。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+    </div>
+  </body>
+</html>

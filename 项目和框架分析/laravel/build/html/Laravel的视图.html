@@ -1,0 +1,607 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>18. 视图 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="19. URL" href="Laravel的生成URL.html"/>
+        <link rel="prev" title="17. 响应" href="Laravel的响应.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">18. 视图</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">18.1. 创建视图</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">18.1.1. 判断视图文件是否存在</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">18.1.2. 创建第一个可用视图??</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">18.2. 向视图传递数据</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">18.2.1. 与所有视图共享数据</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">18.3. 视图构造器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">18.4. 视图合成器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">18.4.1. 将视图合成器添加到多个视图</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">18.5. 注册一个视图文件命名空间</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>18. 视图</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>18. 视图<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>18.1. 创建视图<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果你想找到有关如何编写 Blade 模板的更多信息？查看完整的 <a class="reference external" href="https://laravel-china.org/docs/laravel/5.6/blade">Blade 文档</a> 。</p>
+</div>
+<p>视图包含应用程序的 <code class="docutils literal"><span class="pre">HTML</span></code> ，并且将控制器/应用程序逻辑与演示逻辑分开。视图文件存放于 <code class="docutils literal"><span class="pre">resources/views</span></code> 目录下。一个简单的视图如下所示：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;!--</span> <span class="nx">此视图文件位置：resources</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span><span class="nx">greeting</span><span class="o">.</span><span class="nx">blade</span><span class="o">.</span><span class="nx">php</span> <span class="o">--&gt;</span>
+
+<span class="o">&lt;</span><span class="nx">html</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">body</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Hello</span><span class="p">,</span> <span class="p">{{</span> <span class="nv">$name</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">h1</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="nx">body</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">html</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>该视图文件位于 <code class="docutils literal"><span class="pre">resources/views/greeting.blade.php</span></code> ，使用全局辅助函数 <code class="docutils literal"><span class="pre">view</span></code> 来返回：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;greeting&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;James&#39;</span><span class="p">]);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>如你所见， <code class="docutils literal"><span class="pre">view</span></code> 函数中，传入的第一个参数对应着 <code class="docutils literal"><span class="pre">resources/views</span></code> 目录中视图文件的名称，第二个参数是可在视图文件中使用数组。在示例中，我们传递 <code class="docutils literal"><span class="pre">name</span></code> 变量，该变量可以使用 <code class="docutils literal"><span class="pre">Blade</span></code> 模板语言 在视图中显示。</p>
+<p>当然，视图文件也可以嵌套在 <code class="docutils literal"><span class="pre">resources/views</span></code> 目录的子目录中。「点」符号可以用来引用嵌套视图。例如，如果你的视图存储在 <code class="docutils literal"><span class="pre">resources/views/admin/profile.blade.php</span></code> ，则可以这样引用它：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;admin.profile&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h3>18.1.1. 判断视图文件是否存在<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>如果需要判断视图文件是否存在，可以使用 <code class="docutils literal"><span class="pre">View</span> <span class="pre">Facade</span></code> 上的 <code class="docutils literal"><span class="pre">exists</span></code> 方法。如果视图文件存在，该方法会返回 <code class="docutils literal"><span class="pre">true</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\View</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">View</span><span class="o">::</span><span class="na">exists</span><span class="p">(</span><span class="s1">&#39;emails.customer&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>18.1.2. 创建第一个可用视图??<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">first</span></code> 方法，你可以创建存在于给定数组视图中的第一个视图。 如果你的应用程序或开发的第三方包允许定制或覆盖视图，这非常有用：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">view</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">([</span><span class="s1">&#39;custom.admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">],</span> <span class="nv">$data</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>当然，你也可以通过 <code class="docutils literal"><span class="pre">View</span> <span class="pre">facade</span></code> 调用这个方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\View</span><span class="p">;</span>
+
+<span class="k">return</span> <span class="nx">View</span><span class="o">::</span><span class="na">first</span><span class="p">([</span><span class="s1">&#39;custom.admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">],</span> <span class="nv">$data</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>18.2. 向视图传递数据<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>如上述例子所示，你可以使用数组将数据传递到视图：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;greetings&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Victoria&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>当用这种方式传递数据时，作为第二个参数的数据必须是键值对数组。在视图文件中，你可以通过对应的键获取相应的值，例如 <code class="docutils literal"><span class="pre">&lt;?php</span> <span class="pre">echo</span> <span class="pre">$key;</span> <span class="pre">?&gt;</span></code> 。作为将完整数据传递给辅助函数 <code class="docutils literal"><span class="pre">view</span></code> 的替代方法，你可以使用 <code class="docutils literal"><span class="pre">with</span></code> 方法将单个数据片段添加到视图：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;greeting&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;Victoria&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id6">
+<h3>18.2.1. 与所有视图共享数据<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>如果需要共享一段数据给应用程序的所有视图，你可以在服务提供器的 <code class="docutils literal"><span class="pre">boot</span></code> 方法中调用视图 <code class="docutils literal"><span class="pre">Facade</span></code> 的 <code class="docutils literal"><span class="pre">share</span></code> 方法。例如，可以将它们添加到 <code class="docutils literal"><span class="pre">AppServiceProvider</span></code> 或者为它们生成一个单独的服务提供器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\View</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">AppServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 引导任何应用程序服务。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">View</span><span class="o">::</span><span class="na">share</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 注册服务提供商。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>18.3. 视图构造器<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>视图 构造器 和视图合成器非常相似。唯一不同之处在于： <strong>视图构造器在视图实例化之后立即执行，而视图合成器在视图即将渲染时执行。</strong> 使用 <code class="docutils literal"><span class="pre">creator</span></code> 方法注册视图构造器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">View</span><span class="o">::</span><span class="na">creator</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="s1">&#39;App\Http\ViewCreators\ProfileCreator&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">在视图对象实例化后立即调用视图构造器，然后，在视图渲染之前执行视图合成器。</p>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>18.4. 视图合成器<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<p>视图合成器是在渲染视图时调用的回调或者类方法。如果你每次渲染视图时都要绑定视图的数据，视图合成器可以帮你将这些逻辑整理到特定的位置。</p>
+<p>在下面这个例子中，我们会在一个 服务提供商 中注册视图合成器，使用 View Facade 来访问底层的 <code class="docutils literal"><span class="pre">Illuminate\Contracts\View\Factory</span></code> 契约实现。默认情况下，Laravel 没有存放视图合成器的目录，你需要根据需求来重新建立目录，例如： <code class="docutils literal"><span class="pre">App\Http\ViewComposers</span></code> 。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\View</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\ServiceProvider</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ComposerServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 在容器中注册绑定。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// 使用基于类的 composer...</span>
+        <span class="nx">View</span><span class="o">::</span><span class="na">composer</span><span class="p">(</span>
+            <span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="s1">&#39;App\Http\ViewComposers\ProfileComposer&#39;</span>
+        <span class="p">);</span>
+
+        <span class="c1">// 使用基于闭包的 composers...</span>
+        <span class="nx">View</span><span class="o">::</span><span class="na">composer</span><span class="p">(</span><span class="s1">&#39;dashboard&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$view</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">//</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 注册服务器提供者。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">注意，如果你创建了新的一个服务提供器来存放你注册视图合成器的代码，那么你需要将这个服务提供器添加到配置文件 <code class="docutils literal"><span class="pre">config/app.php</span></code> 的 <code class="docutils literal"><span class="pre">providers</span></code> 数组中。</p>
+</div>
+<p>到此我们已经注册了视图合成器，每次渲染 <code class="docutils literal"><span class="pre">profile</span></code> 视图时都会执行 <code class="docutils literal"><span class="pre">ProfileComposer&#64;compose</span></code> 方法。那么下面我们来定义视图合成器的这个类吧：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\View</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\ServiceProvider</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ComposerServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 在容器中注册绑定。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// 使用基于类的 composer...</span>
+        <span class="nx">View</span><span class="o">::</span><span class="na">composer</span><span class="p">(</span>
+            <span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="s1">&#39;App\Http\ViewComposers\ProfileComposer&#39;</span>
+        <span class="p">);</span>
+
+        <span class="c1">// 使用基于闭包的 composers...</span>
+        <span class="nx">View</span><span class="o">::</span><span class="na">composer</span><span class="p">(</span><span class="s1">&#39;dashboard&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$view</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">//</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 注册服务器提供者。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">注意，如果你创建了新的一个服务提供器来存放你注册视图合成器的代码，那么你需要将这个服务提供器添加到配置文件 <code class="docutils literal"><span class="pre">config/app.php</span></code> 的 <code class="docutils literal"><span class="pre">providers</span></code> 数组中。</p>
+</div>
+<p>到此我们已经注册了视图合成器，每次合成器渲染 <code class="docutils literal"><span class="pre">profile</span></code> 视图时都会执行 <code class="docutils literal"><span class="pre">ProfileComposer&#64;compose</span></code> 方法。那么下面我们来定义视图合成器的这个类吧：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\ViewComposers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\View\View</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Repositories\UserRepository</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ProfileComposer</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 用户 repository 实现。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var UserRepository</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$users</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 创建一个新的 profile composer。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  UserRepository  $users</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">UserRepository</span> <span class="nv">$users</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// 依赖关系由服务容器自动解析...</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">users</span> <span class="o">=</span> <span class="nv">$users</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 将数据绑定到视图。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  View  $view</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">compose</span><span class="p">(</span><span class="nx">View</span> <span class="nv">$view</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$view</span><span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">users</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>视图合成器的 <code class="docutils literal"><span class="pre">compose</span></code> 方法会在视图渲染之前被调用，并传入一个 <code class="docutils literal"><span class="pre">Illuminate\View\View</span></code> 实例。你可以使用 <code class="docutils literal"><span class="pre">with</span></code> 方法将数据绑定到视图。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">所有的视图合成器都会通过 服务容器, 进行解析，所以你可以在视图合成器的构造函数中类型提示需要注入的依赖项。</p>
+</div>
+<div class="section" id="id9">
+<h3>18.4.1. 将视图合成器添加到多个视图<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>通过将一组视图作为第一个参数传入 <code class="docutils literal"><span class="pre">composer</span></code> 方法，将一个视图合成器添加到多个视图：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">View</span><span class="o">::</span><span class="na">composer</span><span class="p">(</span>
+    <span class="p">[</span><span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="s1">&#39;dashboard&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;App\Http\ViewComposers\MyViewComposer&#39;</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">composer</span></code> 方法同时也接受通配符 <code class="docutils literal"><span class="pre">*</span></code> ，表示将一个视图合成器添加到所有视图：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">View</span><span class="o">::</span><span class="na">composer</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$view</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id10">
+<h2>18.5. 注册一个视图文件命名空间<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
+<p>在扩展包中可以使用如下代码来注册一个视图文件命名空间：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loadViewsFrom</span><span class="p">(</span><span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../resources/views&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>当注册完成之后，就可以使用 <code class="docutils literal"><span class="pre">view(&quot;admin::index&quot;);</span></code> 形式来访问该路径下的视图文件。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的生成URL.html" class="btn btn-neutral float-right" title="19. URL" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的响应.html" class="btn btn-neutral" title="17. 响应" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

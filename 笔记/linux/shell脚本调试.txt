@@ -1,0 +1,1010 @@
+#企业实战题6：请用至少两种方法实现：
+#写一个脚本解决DOS攻击产生的案例
+#提示：根据web日志或者网络链接数，监控当某个IP并发链接数或者短时内PV达到100
+#即调用防火墙命令封掉对应的IP，监控率每隔3分钟
+#防火墙命令为：iptables-A INPUT -s 10.0.1.10 -j DROP。
+#
+#思路：
+#1.分析日志，提取IP和PV
+#while语句
+#调用防火墙命令
+
+
+#先来Web日志：
+
+	#!/bin/sh
+	
+	while true  #循环检查 
+	
+	
+	#读取 access_2010-12-8.log 日志文件
+	#{S[$1]++} 统计每行的第一列最后一个出现的次数，至少一次，放入数组S中
+	#sort -rn  对数组排序 -rn 依照大小排序以反方向的顺序排序
+	#head (head) 用来显示档案的开头至标准输出中
+	#END{for(k in S) print S[k],k} 是当以上命令都运行完了之后在运行循环输出S数组内容
+	#导入出到 /tmp/ip.log 文件
+	
+	awk '{S[$1]++}END{for(k in S) print S[k],k}' access_2010-12-8.log|sort -rn|head >/tmp/ip.log
+	
+		
+	#[root@oldboy scripts]# awk '{S[$1]++}END{for(k in S) print S[k],k}' access_2010-12-8.log|sort -rn|head
+	#4 118.242.18.177
+	#3 123.6.8.223
+	#3 114.250.252.127
+	#2 123.244.104.42
+	#2 121.204.108.160
+	#1 59.53.166.165
+	#1 58.45.107.189
+	#1 42.95.73.152
+	#1 42.196.246.180
+	#1 36.46.160.100	
+		
+		
+	while read line 
+	do
+		pv=$(echo $line|awk '{print $1}')  #截取第一列每个IP的访问量PV
+		ip=$(echo $line|awk '{print $2}')  #截取第二列IP地址
+		#如果$pv 大于100
+		#-a 与
+		#grep -w 用于字符串精确匹配到 ip从 /tmp/drop_($date +%F).ip 这个文件里 
+		#wc -l 统计行数小于1
+		if [ $pv -gt 100 -a `grep -w "$ip" /tmp/drop_($date +%F).ip | wc -l` -lt 1 ] #如果pv大于100并且，drop_($date +%F).ip 文件中没有被封的记录则
+		then
+		iptables -A INPUT -s $ip -j DROP  && \   #封掉ip
+		echo -e "$ip\t `date +%F`" >>/tmp/drop_$(date +%F).ip #把ip追加到drop_$(date +%F).ip 文件中（黑名单）
+		fi
+	done</tmp/ip.log
+	
+	sleep 180  #每隔180秒检查一次
+	
+	done 
+		
+		
+■ 批量添加用户
+		
+		
+	#!/bin/sh
+	. /etc/init.d/functions
+	[ $UID -ne 0 ] &&{
+	echo "only allow root to exec this cmd."
+	exit 1
+	}
+	
+	for n in `seq -w 10`
+	do
+	pass="`echo $RANDOM|md5sum|cut -c 2-9`"
+	useradd oldboy$n &>/dev/null && \
+	echo $pass|passwd  --stdin oldboy$n &>/dev/null
+	if [ $? -eq 0 ];then
+		action "useradd oldboy$n" /bin/true
+	else
+		action "useradd oldboy$n" /bin/false
+	fi
+	if [ -d /root ]
+	echo -e "oldboy$n\t$pass" >>/root/user.txt
+	else #如果不存在/tmp/dbbak目录
+	mkdir /root
+	echo -e "oldboy$n\t$pass" >>/root/user.txt
+	fi
+	done
+	
+	
+方法二、
+	#!/bin/sh
+	[ -f /etc/init.d/functions ]&& source /etc/init.d/functions
+	[ $UID -ne 0 ]&&{ 			#判断是不是root用户
+		echo "Ples sudo su -root"
+		exit 1
+	}
+	for user in xu{01....10}	#循环10次
+	do 
+		word=$(grep "\b$user\b" /etc/passwd|wc -l)  #精确匹配，看是否有这个用户
+		if [ $word -eq 1 ];then #有则不添加
+			action "Useradd $user already exists" /bin/false 
+			continue	#跳出本次循环，到下一个循环
+		fi 
+		pass=$(echo $RANDOM|md5sum|cut -c 1-8)  #生成随机密码
+		useradd $user && \						#添加用户
+		echo "$pass"|passwd --stdin $user &>/dev/null 	#添加密码
+		RETVAL=$?								#上次命令的是否正确执行
+		if [ $RETVAL -eq 0 ];then				#正确则
+			action "Useradd $user IS OK" /bin/true  #输出正确提示信息
+		fi 
+		echo -e "$user\t$pass" >> /tmp/user.txt		#把用户名密码导入到文件
+	done
+方法三、
+		#!/bin/sh
+		for user in gongli{01..10}
+		do 
+		word=$(grep "\b$user\b" /etc/passwd|wc -l)
+		if [ $word -eq 1 ];then 
+			action "Useradd $user already exists" /bin/false
+			continue
+		fi 
+		pass=$(echo $RANDOM|md5sum|cut -C 1-8)
+		USERADD $user &&\
+		echo "$user:$pass">>/tmp/userlist.log
+	done
+	chpasswd </tmp/userlist.log
+	
+■ 批量修改文件名
+
+	cd /oldboy
+	for file in `ls`
+	do
+		#-F [-.] 以-为分割符以.为分割符
+	mv $file `echo $file|awk -F [-.] '{print "linux-"$2".HTML"}'`
+	done
+			
+			
+			
+	方法二
+	
+	#!/bin/sh
+	cd /oldboy
+	for n in `seq 10`
+	do
+		mv oldboy-${n}.html linux-${n}.HTML
+	done
+			
+			
+	方法三
+	
+		rename ".HTML"  ".html" * #把.HTML改为*批量改成.html; *表示批量
+		
+		
+		
+		
+
+
+■ 循环选出小于6个字符的单词		
+		
+	#!/bin/sh
+	for word in I am gggggg teacher welcome to oldboy training class.
+	do
+			if [ ${#word} -le 6 ];then
+					echo -n "$word "
+			fi
+	done
+	echo 		
+	
+			
+	方法二
+			
+	#!/bin/sh
+	array=(I am gggggg teacher welcome to oldboy training class.)
+	for word in ${array[*]}
+	do
+			if [ ${#word} -le 6 ];then
+					echo -n "$word "
+			fi
+	done
+	echo		
+			
+			
+	方法三
+			
+	#!/bin/sh
+	array=(I am gggggg teacher welcome to oldboy training class.)
+	for ((i=0;i<${#array[*]};i++))
+	do
+			if [ ${#array[$i]} -le 6 ];then
+					echo -n "${array[$i]} "
+			fi
+	done
+	echo		
+			
+	方法四
+	#!/bin/sh
+	
+	#tr ' ' '\n' 空格替换成回车
+	#awk '{if(length($1)<=6) print $1} 选择第一列如果有大于6的字符则打印
+	# tr '\n' ' ' 回车替换成空格
+	echo 'I am oldboy teacher welcome to oldboy training class.'| tr ' ' '\n'|awk '{if(length($1)<=6) print $1}'| tr '\n' ' '
+
+
+■ 检查网址是否有效
+
+※ 多地址
+	方法一、
+	#!/bin/sh
+	[ -f /etc/init.d/functions ] && source /etc/init.d/functions 
+	#define array url list
+	array=(
+	http://www.etiantian.org
+	http://www.taobao.com
+	http://oldboy.blog.51cto.com
+	http://10.0.0.7
+	)
+	
+	#check_url
+	
+	wait(){
+	for((i=0;i<=3;i++))
+	do
+		echo -n "wait 3s"
+		echo -n ". "
+		sleep 1
+	done
+	echo 
+	}
+	
+	check_url(){
+		wget -T 5 -t 2 --spider $1 &>/dev/null 
+		RETVAL=$?
+		if [ $RETVAL -eq 0 ];then 
+			action "check $1" /bin/true 
+		else
+			action "check $1" /bin/false 
+		fi
+		return $RETVAL
+	}
+	
+	main(){
+		wait 
+		for((i=0;i<${#array[@]};i++))
+		do
+			check_url ${array[i]}
+		done 
+	}
+	
+	main $*
+方法二、
+	#!/bin/bash
+	[ -f /etc/init.d/functions ]&& . /etc/init.d/functions
+	array=(
+	https://www.oldboyedu.com
+	http://www.taobao.com
+	http://blog.51cto.com/oldboy
+	http://10.0.0.7
+	)
+	
+	curl_ip(){
+		wget -T 5 -t 2 --spider $1 &>/dev/null 	#--spider不下载的主要作用是测试链接是否有效;t 2 重试2次；0 表示无限；-T隔5秒式一次
+		return $?		#返回wget命令的执行状态
+	}
+	
+	main(){
+		for n in ${array[*]}
+		do 
+			curl_ip $n
+			if [ $? -eq 0 ]; then 
+				action "curl $n" /bin/true
+			else 
+				action "curl $n" /bin/false
+			fi 
+		done
+	}
+	main
+
+方法三、
+#!/bin/bash
+[ -f /etc/init.d/functions ] && . /etc/init.d/functions
+
+array=(
+https://www.oldboyedu.com
+http://www.taobao.com
+http://blog.51cto.com/oldboy
+http://10.0.0.7
+)	
+
+curl_ip(){
+	#-s静默，不显示进度
+	# -o： 指定输出文件名称
+	#--retry 2 指定重试2次；
+	#--connect-timeout 5 五秒超时
+	#-w '%{http_code}' 返回http状态码
+	#egrep "200|302" 取出http200或302的状态
+	#wc -l 查询是否取出状态取出为1没取出为0
+	CURL=$(curl -o /dev/null -s --retry 2 --connect-timeout 5 -w '%{http_code}' $1|egrep "200|302"|wc -l) 
+	return $CURL #返回结果
+}
+
+main(){
+	for n in ${array[*]}
+	do 
+		curl_ip $n 
+		if [ $? -eq 1 ];then #上图命令正确执行
+			action "curl $n" /bin/true  #打印出正确
+		else  
+			action "curl $n" /bin/false
+			sleep 3	#隔3秒
+					CURL=$(curl_ip $n|egrep "200|302"|wc -l) #在式一次
+					if [ $CURL -eq 1 ];then 
+						action "Retry curl $n again" /bin/true
+					else
+						action "Retry curl $n again" /bin/false 
+					fi 
+		fi 
+	done
+}
+main
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+※ 单个地址
+
+	#!/bin/sh
+	[ -f /etc/init.d/functions ] && source /etc/init.d/functions #检查是否有functions文件有则加载
+	#define array url list
+	
+		
+	#check_url
+	wait(){
+	echo -n "wait 3s"
+	for((i=0;i<=3;i++))
+	do
+		echo -n ". "
+		sleep 1
+	done
+	echo 
+	}
+	
+	check_url(){
+		wget -T 5 -t 2 --spider $1 &>/dev/null 
+		RETVAL=$?
+		if [ $RETVAL -eq 0 ];then 
+			action "check $1" /bin/true 
+		else
+			action "check $1" /bin/false 
+		fi
+		return $RETVAL
+	}
+	
+	main(){
+		wait 
+			check_url $1
+	}
+		
+		main $*
+	
+
+	
+	
+	
+
+■ MySQL 分库备份脚本
+
+	#!/bin/sh
+	BAKPATH=/server/backup
+	MYUSER=root
+	MYPASS=123456
+	SOCKET=/data/3306/mysql.sock #实例启动文件
+	MYCMD="mysql -u$MYUSER -p$MYPASS -S $SOCKET"
+	MYDUMP="mysqldump -u$MYUSER -p$MYPASS -S $SOCKET -x -B -F -R"
+	[ ! -d $BAKPATH ] && mkdir -p $BAKPATH #检查是否有backup文件夹如果没有创建
+	DBLIST=`$MYCMD -e "show databases;"|sed 1d|egrep -v "_schema|mysql"`  #显示数据库并赋值给变量
+	for dbname in `$DBLIST`  #循环数据库
+	do
+	$MYDUMP $dbname|gzip >/server/backup/${dbname}_$(date +%F).sql.gz  #对数据库备份并打包
+	done 
+
+■ MySQL 分表备份脚本
+	#!/bin/sh
+	BAKPATH=/server/backup
+	MYUSER=root
+	MYPASS=123456
+	SOCKET=/data/3306/mysql.sock
+	MYCMD="mysql -u$MYUSER -p$MYPASS -S $SOCKET"
+	MYDUMP="mysqldump -u$MYUSER -p$MYPASS -S $SOCKET -x -F -R"
+	[ ! -d $BAKPATH ] && mkdir -p $BAKPATH 
+	DBLIST=`$MYCMD -e "show databases;"|sed 1d|egrep -v "_schema|mysql"`  #搜索出所有的库名
+	for dbname in $DBLIST 
+	do 
+		TLIST=`$MYCMD -e "show tables from $dbname;"|sed 1d`  #搜索所有的表名赋给变量TLIST
+		for tname in $TLIST  #循环表明
+		do
+			mkdir -p $BAKPATH/$dbname      #创建数据库文件夹
+			$MYDUMP $dbname $tname|gzip > /server/backup/$dbname/${tname}_$(date +%F).sql.gz  #导出数据库表
+		done 
+	done
+		
+■ MYSQL启动脚本		
+		
+	#!/bin/sh
+	#init
+	port=3306
+	mysql_user="root"
+	mysql_pwd="123456"
+	CmdPath="/usr/local/mysql/bin"
+	mysql_sock="/data/${port}/mysql.sock"
+	
+	#startup function
+	
+	function_start_mysql(){
+		if [ ! -e "$mysql_sock" ];then
+		printf "Starting MySQL....\n"
+		/bin/sh ${CmdPath}/mysqld_safe --defaults-file=/data/${port}/my.cnf 2>&1 >/dev/null &
+		else
+		printf "MySQL is running....\n"
+		exit
+		fi
+	}
+	
+	#stop function
+	
+	function_stop_mysql(){
+		if [ ! -e "$mysql_sock" ];then
+			printf "MySQL is stopped...\n"
+			exit 
+		else 
+			printf "Stoping MySQL...\n"
+			${CmdPath}/mysqladmin -u ${mysql_user} -p${mysql_pwd} -S /data/${port}/mysql.sock shutdown 
+			fi
+	}
+	
+	#restart function 
+	function_restart_mysql(){
+		printf "Restarting MySQL...\n";
+		function_stop_mysql
+		sleep 2
+		function_start_mysql
+	}
+	
+	case $1 in
+	start)
+		function_start_mysql
+	;;
+	stop)
+		function_stop_mysql
+	;;
+	restart)
+		function_restart_mysql
+	;;
+	*)
+		printf "Usage; /data/${port}/mysql {start|stop|restart}\n"
+	esac
+
+	
+		
+■ 监控MySQL主从复制故障
+
+	#!/bin/sh
+	BAKPATH=/server/backup
+	MYUSER=root
+	MYPASS=123456
+	SOCKET=/data/3307/mysql.sock
+	MYCMD="mysql -u$MYUSER -p$MYPASS -S $SOCKET"  #登录mysql
+	errno=(1158 1159 1008 1007 1062) #错误提示码
+	status=($($MYCMD -e "show slave status\G"|egrep "Seconds_Behind|_Running|Last_SQL_errno"|awk '{print $NF}')) #登录mysql ；show slave status然后检查mysql 从库状态然后用egrep截取关键字 Seconds_Behind和_Running在用awk $NF取出最后一列的内容，然后赋给变量status
+	if [ "${status[0]}" = "Yes" -a "${status[1]}" ="Yes" -a "${status[2]}" ="0" ];then #如果变量status[0]与status[1]是Yes与status[2]是0表示数据库状态良好
+		echo "mysql slave is ok"										#主从复制状态良好
+	else 
+	
+		for ((i=0;i<${#errno[*]};i++))  #循环错误提示码
+		do
+			if [ "${errno[i]}" == "${status[3]}" ];then #如果数据库错误码等于 errno 数组里的错误码则
+				$MYCMD -e "stop slave;"		#关闭数据库
+				$MYCMD -e "set global sql_slave_skip_counter=1" #设置跳过slave上的1个错误
+				$MYCMD -e "start slave;"#启动mysql
+			fi 
+		done 
+		
+		sleep 2 
+		status=($($MYCMD -e "show slave status\G"|egrep "Seconds_Behind|_Running|Last_SQL_errno"|awk '{print $NF}'))
+			if [ "${status[0]}" = "Yes" -a "${status[1]}" = "Yes" -a "{status[2]}" = "0" ];then 
+				exit
+			fi
+				echo "mysql slave is fail `date +%F\ %T`" >/tmp/a.log			#主从复制状态差
+				mail -s "mysql slave is fail `date +%F\ %T`" 490@qq.com </tmp/a.log  #给管理发邮件
+	fi
+	
+
+■ 监控MySQL主从复制故障，优化使代码可读性更强
+
+
+	#!/bin/sh
+	BAKPATH=/server/backup
+	MYUSER=root
+	MYPASS=123456
+	SOCKET=/data/3307/mysql.sock
+	MYCMD="mysql -$MYUSER -p$MYPASS -S $SOCKET"
+	errno=(1158 1159 1008 1007 1062) #错误码
+	
+	#登录mysql ；show slave status然后检查mysql 从库状态然后用egrep截取关键字 Seconds_Behind和_Running在用awk $NF取出最后一列的内容，然后赋给变量status
+	status=($($MYCMD -e "show slave status\G"|egrep "Seconds_Behind|_Running|Last_SQL_Errno"|awk '{print $NF}'))
+	
+	check_status(){
+		if [ "${status[0]}" = "Yes" -a "${status[1]}" = "Yes" -a "${status[2]}" = "0" ];then 
+			echo "mysql slave is ok"
+			sta=0
+			return $sta
+		else
+			sta=1
+			return $sta
+		fi
+	}		
+	
+	check_errno(){
+		if [ $? -eq 1 ];then 
+			for ((i=0;i<${#errno[*]};i++))
+			do
+				if [ "${errno[i]}" == "${status[3]}" ];then
+					$MYCMD -e "stop slave"
+					$MYCMD -e "set global sql_slave_skip_counter=1"
+					$MYCMD -e "start slave;"
+				fi 
+			done 
+		fi 
+	}		
+	
+	check_again(){
+		status=($($MYCMD -e "show slave status\G"|egrep "Seconds_Behind|_Running|Last_SQL_Errno"|awk '{print $NF}'))
+		check_status &>/dev/null 
+		if [ $? -eq 1 ];then #
+			echo "mysql slave is fail `date %F\ %T`" > /tmp/a.log 
+			mail -S "mysql slave is fail `date +%F\ %T`" 409@qq.com < /tmp/a.log 
+		fi
+	}
+			
+			
+	main(){
+	while true 
+	do 
+		check_errno 
+		check_again
+		sleep 30
+	done 
+	}	
+			
+	main
+	
+
+
+■ 分库分表备份
+
+	#!/bin/sh
+	USER=root
+	PASSWD=123456
+	SOCKET=/data/3306/mysql.sock
+	LOGIN="mysql -u$USER -p$PASSWD -S $SOCKET"		#登录mysql 
+	DUMP="mysqldump -u$USER -p$PASSWD -S $SOCKET"    #导出数据命令
+	DATABASE=$($LOGIN -e "show databases;"|egrep -v "*chema|mysql"|sed '1d') #egrep -v "*chema|mysql"过滤掉不需要备份的库；sed '1d因为还有第一个database所以把第一行也过滤掉
+	for database in $DATABASE #循环每个库
+	do 
+		TABLE=$($LOGIN -e "use $database;show tables;"|sed '1d' ) #执行use 第$database数据库
+		for table in $TABLE
+		do 
+			[ ! -d /server/backup/$database ] && mkdir /server/backup/$database -p	#如果没有文件夹/server/backup/$database 泽创建
+			$DUMP $database $table |gzip >/server/backup/$database/${database}_${table}_$(date +%F).sql.gz  #开始执行备份并打包成gz文件
+		done 
+	done
+		
+		
+■ 写一个脚本，实现判断10.0.0.0/24 网络里，当前在线用户的IP有那些
+
+答：检测在线的IP有很多的方法，其中有ping,telnet,nmap,还有nc等方法，不过主要分为两类，如下：
+		※ ping IP
+		※ 扫描端口
+实现方法：
+	1、用for循环ping IP
+	[root@bogon ~]# ping  -W 2 -c 2  www.baidu.com #只ping 两次最多等两秒
+	
+	※ 用 ping IP
+	
+	#!/bin/sh		
+	source /etc/init.d/functions
+	CMD="ping -W 2 -c 2"
+	Ip="10.0.0."
+	for n in $(seq 254)
+	do 
+		{
+		$CMD $Ip$n &>/dev/null
+		if [ $? -eq 0 ];then 
+			action "$Ip$n is ok" /bin/true 
+		fi 
+		}&
+	done
+		
+	
+	※ 用扫描端口
+
+	
+	#!/bin/sh
+	CMD="nmap -sP"
+	Ip="192.168.0.104/24" #/24是24位子网掩码
+	CMD2="nmap -sS"
+	
+	#扫描端口方法一
+	funSecond(){
+		$CMD $Ip |awk '/Nmap scan report for/ {print $NF}'
+	}
+		
+	#扫描端口方法二
+	
+	funSecond(){
+		#以空格为分割符以()为分割符
+		$CMD2 $Ip |grep "Nmap scan report for"|awk -F "[ ()]+" '{print $6}'
+	}	
+	funSecond
+		
+
+
+■ 抓阄
+	好消息，老男孩培训学生外出企业项目实战机会（第6次）来了（本月中旬），但是，名额有限，队员限3人（班长带队）。
+	因此需要选学生，因此需要一个抓阄的程序：
+	1、执行脚本后，想去的通信输入英文名字全拼，产生随机数01-99之间的数字，数字越大就去参加项目
+	实战前面已经抓到的数字，下次不能在出现相同的数字。
+	2、第一个输入名字后，屏幕输出信息，并将名字和数字记录到文件里，程序不能退出继续等待别的学生输入。
+
+	#!/bin/bash
+
+	>/tmp/a.log #创建a.log
+	while true
+	do
+		while true
+		do
+			random=`echo $((RANDOM%99))`  #随机数字
+			if [ `grep -w $random /tmp/a.log|wc -l` -eq 1 ]	#如果随机数字出现在a.log文件中
+			then
+				random=`echo $((RANDOM%99))`	#在随机一次
+			else
+				break
+			fi
+		done
+		read -p "请输入姓名全拼：" name  #输入名字
+		if [ "$name"  == "exit" ]	#如果输入exit
+		then
+			echo "抓阄结束,结果如下" #退出输入
+			break
+		else
+			# -e 处理特殊字符
+			#tee命令用于读取标准输入的数据，并将其内容输出成文件
+			#-a或--append 　附加到既有文件的后面，而非覆盖它．
+			echo -e "$random\t$name"|tee -a /tmp/a.log
+		fi
+	done
+	#-k1  文件中的第1列进行排序
+	#-n   依照数值的大小排序。
+	#-r   以相反的顺序来排序。
+	#head 将文件的前3行输出到标准输出
+	sort -rn -k1 /tmp/a.log|head -3 #sort -rn -k1 /tmp/a.log|对a.log文件的第一列进行逆向排序
+
+
+■ 暴力破解RANDOM
+
+#!/bin/sh
+char="21029299|00205d1c|a3da1677|1f6d12dd|890684b"
+Path=/root/md5.txt
+Num=0
+funGetMd5(){
+	#-f：为常规文件，则为真
+	[ -f $Path ]||touch $Path	#如果文件md5.tx不存在就创建
+	rowNum=$(wc -l < $Path)     #wc -l < $Path 统计文件行数
+	if [ $rowNum -ne 32768 ];then #如果$rowNum 不等于32768
+		> $Path #创建md5.txt
+		for((Num=0;Num<=32767;Num++)) #循环32767次
+		do 
+			{
+			Stat=$(echo $Num|md5sum|cut -c 1-8) #生成随机字符串然后截取前8位
+			echo "$Stat $Num" >> $Path			#把数字和生成的md5追加到md5.txt文件
+				
+			}&
+		done 
+	else 
+			return 0
+	fi
+}
+
+funFindMd5(){
+	#word=$(echo "${array[@]}"| sed -r 's# |\n#|#g')
+	egrep  "$char" $Path 
+}
+
+funGetMd5
+funFindMd5
+
+
+
+方法二、
+	#!/bin/sh
+	array=(21029299 00205d1c a3da1677 1f6d12dd 890684b)
+	for n in {0..32767} #从零循环到32767
+	do  
+		re =`echo $n|md5sum|cut -c 1-8`  #md5加密第$n个数字然后截取前8位
+		for ((i=0;i<${#array[*];i++}))   #循环array数组所有的值
+		do 
+			if [ "${array[i]}"=="$re" ];then   #如果array数组的第i个值等于当前加密过的re变量值
+				echo -e "$n\t $re" >> /oldboy/re.txt #追加到re.txt文件
+				echo -e "$n\t $re" >> /oldboy/re.txt
+			fi
+		done
+	done
+
+
+
+■ 单词及字母去重排序案例
+
+
+用Shell处理以下内容
+The months of learning in Old Boy education are the few months that I think the time efficient is the most.I had also studied at other training institutions before, but I was hard to understand what the tutor said and hard to follow. It was just too much to learn with no outline.
+
+要求：
+
+1、按单词出现频率降序排序。
+
+2、按字母出现频率降序排序。
+
+
+
+▣1、按单词出现频率降序排序。
+	※方法1：传统老法
+	
+	第一步：去特殊字符
+	[root@bogon ~]# sed 's#[,\.]##g' <log.txt          #  s#[,\.]##g 把,和.替换为空
+	The months of learning in Old Boy education are the few months that I think the time efficient is the mostI had also studied at other training institutions before but I was hard to understand what the tutor said and hard to follow It was just too much to learn with no outline
+	
+	第二步：空格替换回车，将单词竖向排列，去重计数，然后出最终结果
+	#tr " " "\n" ：把空格替换为换行符
+	#sort|uniq -c ：排序然后显示输出中，在每行行首加上本行在文件中出现的次数
+	#sort -rn :-n：依照数值的大小排序；-r：以相反的顺序来排序；
+	#head 将文件的前5行输出到标准输出
+	[root@bogon ~]# sed 's#[,\.]##g' <log.txt|tr " " "\n"|sort|uniq -c|sort -rn|head -5			#
+		4 the
+		3 to
+		2 was
+		2 months
+		2 I
+	
+	※方法2：awk数组，思想同方法1
+	
+	[root@bogon ~]# tr " ," "\n" <log.txt|awk '{S[$1]++}END{for(k in S) print S[k],k}'|sort -rn|head -5
+	4 the
+	3 to
+	3 
+	2 was
+	2 months
+	
+	※方法3：方法直接用awk数组横向处理，而不是将单词竖向排列再处理
+	#以空格以,为分割符以.为分割符
+	[root@bogon ~]# awk -F "[ ,.]+" '{for(i=1;i<NF;i++)S[$i]++}END{for(k in S) print S[k],k}' log.txt |sort -rn|head -5
+	4 the
+	3 to
+	3 I
+	2 was
+	2 months
+	
+	
+	
+	
+▣2、按字母出现频率降序排序
+
+	※方法1：去空格特殊字符后，然后利用grep的-o将字符竖向排列后处理。
+	[root@bogon ~]# sed 's#[,. ]##g' log.txt|grep -o "."|sort|uniq -c|sort -rn|head -5
+	33 t
+	20 o
+	19 e
+	18 n
+	17 i
+	
+	
+	※方法2：awk数组法
+	
+	[root@bogon ~]# sed 's#[,. ]##g' log.txt|grep -o "."|awk '{S[$1]++}END{for(k in S) print S[k],k}'|sort -rn|head -5
+	33 t
+	20 o
+	19 e
+	18 n
+	17 i
+	
+	方法3：依然是直接用awk数组横向处理，而不是将字符竖向排列再处理
+	
+	[root@bogon ~]#  sed 's#[,. ]##g' log.txt|awk -F "" '{for(i=1;i<NF;i++)S[$i]++}END{for(k in S) print S[k],k}'|sort -rn|head -5
+	33 t
+	20 o
+	18 n
+	18 e
+	17 i
+	
+■ 面试及实战考试题：监控web站点目录（/var/html/www）下所有文件是否被恶意篡改（文件内容被改了），如果有就打印改动的文件名（发邮件），定时任务每3分钟执行一次(10分钟时间完成)
+
+[root@bogon test]# find /root/test/ -type f | xargs md5sum >/root/md5_2016_01_07.log   #给文件夹test加密
+[root@bogon test]# md5sum -c /root/md5_2016_01_07.log #查看加密后的文件夹
+/root/test/file1: OK
+/root/test/file2: OK
+/root/test/file3: OK
+/root/test/file4: OK
+/root/test/file5: OK
+/root/test/file6: OK
+/root/test/file7: OK
+/root/test/file8: OK
+/root/test/file9: OK
+/root/test/file10: OK
+[root@bogon test]# echo "ggggggggg" >/root/test/file1  	#修改某个文件
+[root@bogon test]# md5sum -c /root/md5_2016_01_07.log 	#查看加密后的文件夹
+/root/test/file1: FAILED								#被修改过后的文件为 FAILED
+/root/test/file2: OK
+/root/test/file3: OK
+/root/test/file4: OK
+/root/test/file5: OK
+/root/test/file6: OK
+/root/test/file7: OK
+/root/test/file8: OK
+/root/test/file9: OK
+/root/test/file10: OK
+
+
+写成脚本案例
+
+#!/bin/bash
+path=/var/html/www
+[ -d /test/md5 ] || mkdir /test/md5 -p #如果文件夹不存在则创建
+md5_log=/test/md5/md5_$(date +%F).log
+num_log=/test/md5/num_$(date +%F).log
+num=$(cat $num_log|wc -l) #读取文件内容，计算num_log路径下的文件的内容行数
+while true 
+do
+	log=/test/md5/check.log 	#check.log文件路径
+	[! -f $log ] && touch $log  #如果不存在则创建
+	#grep FAILED #查找输出结果中是否存在 FAILED然后输出个数
+	#wc -l  	 #输出个数
+	md5_count=$(md5sum -c $md5_log 2>/dev/null |grep FAILED|wc -l) 	#判断内容是否被篡改
+	num_count=$(find $path -type f | wc -l)							#查找文件夹/var/html/www下面有多少个文件
+	find $path -type f >/test/md5/nes.log							#把www 文件夹下的所有文件，文件名都导入到 nes.log 文件中
+		if [ $md5_count -ne 0 ] || [ $num_count -ne $num ];then 	#如果 $md5_count 的结果不等于0或者$num_count的结果不等于$num
+			echo "$(md5sum -c $md5_log 2>/dev/null|grep FAILED)" > $log  #把被篡改的文件名导入到/test/md5/check.log文件中
+			
+			#diff命令用于比较文件的差异。
+			diff $num_log /test/md5/new.log >>$log 	#将两个文件对比出来的结果追加到	check.log 文件中			
+			mail -s "web site is misrepresented in $(date +%F\ %T)" 15608048740@163.com <$log #发送邮件
+		fi
+		sleep 20
+done
+
+
+
+
+
+■ shell 脚本写一键安装LAMP
+
+※这里只给大概的思路没有实际测试过
+
+#!/bin/sh
+#no.1 menu
+
+echo "1.[install lamp]"
+echo "2.[install lnmp]"
+echo "3.[exit]"
+
+# no.2
+
+read -t 20 -"pls input the num you want:" num
+# no.3
+[ "$num" = 1 -o "$num" = 2 -o "$num" = 3 ]||[
+	echo "input error"
+	exit 1
+]
+
+[ "$num"-eq 1 ] && [
+	[ -f /server/scripts/lamp.sh ]||[
+		echo " /server/scripts/lamp.sh is not sreate"
+		exit 1
+	]
+	[ -x /server/scripts/lamp.sh ] || [
+		echo "/server/scripts/lamp.sh is no executable"
+		exit 1
+	]
+	echo "startinstalling lamp."
+	/server/scripts/lamp.sh
+	echo "lamp is installed"
+	exit 0
+	
+]
+
+[ "$num" -eq 2 ]&& [
+	[ -f /server/scripts/lnmp.sh ]|| [
+		echo "/server/scripts/lnmp.sh is not create"
+		exit 1
+	]
+	[ -x /server/scripts/lnmp.sh ] ||[
+		echo "/server/scripts/lnmp.sh is no executable"
+		exit 1
+	]
+	echo "startinstalling lnmp."
+	/server/scripts/lnmp.sh
+	echo "lnmp is installed"
+	exit 0
+]
+
+
+[ "$num" -eq 3 ] && [
+
+	echo "bye!"
+	exit
+]
+
+
+■ 处理以下文件内容，将域名取出并根据域名进行计数排序处理：
+（百度和sohu面试题）
+#us 是文件名
+[root@bogon ~]# vim us
+http://www.etiantian.org/index.html
+http://www.etiantian.org/1.html
+http://post.etiantian.org/index.html
+http://mp3.etiantian.org/index.html
+http://www.etiantian.org/3.html
+http://post.etiantian.org/2.html
+
+
+解答：
+分析：此类问题是运维工作中最常见的问题。可以演变成分析日志，查看TCP各个状态链接数，查看IP链接数排名等等。
+
+#-F 以 / 为分割符 
+#{print $3} 输出第三列
+#us 文件名
+#sort 排序
+[root@bogon ~]# awk -F / '{print $3}' us|sort
+mp3.etiantian.org
+post.etiantian.org
+post.etiantian.org
+www.etiantian.org
+www.etiantian.org
+www.etiantian.org
+[root@bogon ~]# awk -F / '{print $3}' us|sort|uniq -c
+1 mp3.etiantian.org
+2 post.etiantian.org
+3 www.etiantian.org
+
+答案一、
+#uniq -c 对相邻的相同行内容去重 -c统计
+#sort -r 排序然后倒序
+[root@bogon ~]# awk -F / '{print $3}' us|sort|uniq -c|sort -r
+3 www.etiantian.org
+2 post.etiantian.org
+1 mp3.etiantian.org
+
+答案二、
+#-d /  以 / 为分割符
+#-f3 取第三列
+#sort 排序 -r 倒序
+#uniq 去重 -c 统计重复了几个
+[root@bogon ~]# cut -d / -f3 us|sort -r|uniq -c
+3 www.etiantian.org
+2 post.etiantian.org
+1 mp3.etiantian.org
+
+分析图片服务日志，把日志（每个图片访问次数*图片大小的总和）排行，取top10,也就是计算每个url的总访问大小[附加题：加分题]
+
+
+■ 轻松应对IDC机房带宽突然暴涨问题
+
+http://blog.51cto.com/oldboy/909696
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		

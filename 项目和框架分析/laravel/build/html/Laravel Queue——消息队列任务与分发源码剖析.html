@@ -1,0 +1,934 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>50. 消息队列任务与分发源码剖析 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="51. 任务调度" href="Laravel的任务调度.html"/>
+        <link rel="prev" title="49. 通知" href="Laravel的消息通知.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">50. 消息队列任务与分发源码剖析</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">50.1. 背景知识</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#redis">50.1.1. redis 队列的数据结构</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#laravel">50.2. laravel 队列服务的任务调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">50.3. laravel 队列服务的总体流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">50.4. laravel 队列服务的注册与启动</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#registermanager">50.4.1. registerManager 注册门面</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#registerconnection">50.4.2. registerConnection 底层队列连接服务</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#registerworker">50.4.3. registerWorker 消费者服务注册</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#registerlistener">50.4.4. registerListener消费者服务注册</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">50.4.5. 任务执行失败后服务注册</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#laravel-bus">50.5. laravel Bus 服务注册与启动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">50.6. 队列监听部分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">50.7. 创建任务</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#queue">50.7.1. queue 设置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">50.7.2. 任务类的创建</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">50.7.3. 任务事件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>50. 消息队列任务与分发源码剖析</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>50. 消息队列任务与分发源码剖析<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<p>在实际的项目开发中，我们经常会遇到需要轻量级队列的情形，例如发短信、发邮件等，这些任务不足以使用 <code class="docutils literal"><span class="pre">kafka</span></code> 、 <code class="docutils literal"><span class="pre">RabbitMQ</span></code> 等重量级的消息队列，但是又的确需要异步、重试、并发控制等功能。通常来说，我们经常会使用 <code class="docutils literal"><span class="pre">Redis</span></code> 、 <code class="docutils literal"><span class="pre">Beanstalk</span></code> 、 <code class="docutils literal"><span class="pre">Amazon</span> <span class="pre">SQS</span></code> 来实现相关功能， <code class="docutils literal"><span class="pre">laravel</span></code> 为此对不同的后台队列服务提供统一的 <code class="docutils literal"><span class="pre">API</span></code> ，本文将会介绍应用最为广泛的 <code class="docutils literal"><span class="pre">redis</span></code> 队列。</p>
+<div class="section" id="id2">
+<h2>50.1. 背景知识<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>在讲解 <code class="docutils literal"><span class="pre">laravel</span></code> 的队列服务之前，我们要先说说基于 <code class="docutils literal"><span class="pre">redis</span></code> 的队列服务。首先， <code class="docutils literal"><span class="pre">redis</span></code> 设计用来做缓存的，但是由于它自身的某种特性使得它可以用来做消息队列。</p>
+<div class="section" id="redis">
+<h3>50.1.1. redis 队列的数据结构<a class="headerlink" href="#redis" title="永久链接至标题">¶</a></h3>
+<div class="section" id="list">
+<h4>50.1.1.1. List链表<a class="headerlink" href="#list" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">redis</span></code> 做消息队列的特性例如 <code class="docutils literal"><span class="pre">FIFO</span></code> （先入先出）很容易实现，只需要一个 <code class="docutils literal"><span class="pre">list</span></code> 对象从头取数据，从尾部塞数据即可。</p>
+<p>相关的命令：（1）左侧入右侧出： <code class="docutils literal"><span class="pre">lpush/rpop</span></code> ；（2）右侧入左侧出： <code class="docutils literal"><span class="pre">rpush/lpop</span></code> 。</p>
+<p>这个简单的消息队列很容易实现。</p>
+</div>
+<div class="section" id="zset">
+<h4>50.1.1.2. Zset 有序集合<a class="headerlink" href="#zset" title="永久链接至标题">¶</a></h4>
+<p>有些任务场景，并不需要任务立刻执行，而是需要延迟执行；有些任务很重要，需要在任务失败的时候重新尝试。这些功能仅仅依靠 <code class="docutils literal"><span class="pre">list</span></code> 是无法完成的。这个时候，就需要 <code class="docutils literal"><span class="pre">redis</span></code> 的有序集合。</p>
+<p><code class="docutils literal"><span class="pre">Redis</span></code> 有序集合和 <code class="docutils literal"><span class="pre">Redis</span></code> 集合类似，是不包含相同字符串的合集。它们的差别是，每个有序集合的成员都关联着一个评分 <code class="docutils literal"><span class="pre">score</span></code> ，这个评分用于把有序集合中的成员按最低分到最高分排列。</p>
+<p>单看有序集合和延迟任务并无关系，但是可以将有序集合的评分 <code class="docutils literal"><span class="pre">score</span></code> 设置为延时任务开启的时间，之后轮询这个有序集合，将到期的任务拿出来进行处理，这样就实现了延迟任务的功能。</p>
+<p>对于重要的需要重试的任务，在任务执行之前，会将该任务放入有序集合中，设置任务最长的执行时间。若任务顺利执行完毕，该任务会在有序集合中删除。如果任务没有在规定时间内完成，那么该有序集合的任务将会被重新放入队列中。</p>
+<p>相关命令：</p>
+<ol class="arabic simple">
+<li><code class="docutils literal"><span class="pre">ZADD</span></code> 添加一个或多个成员到有序集合，或者如果它已经存在更新其分数。</li>
+<li><code class="docutils literal"><span class="pre">ZRANGEBYSCORE</span></code> 按分数返回一个成员范围的有序集合。</li>
+<li><code class="docutils literal"><span class="pre">ZREMRANGEBYRANK</span></code> 在给定的索引之内删除所有成员的有序集合。</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="section" id="laravel">
+<h2>50.2. laravel 队列服务的任务调度<a class="headerlink" href="#laravel" title="永久链接至标题">¶</a></h2>
+<p>队列服务的任务调度过程如下：</p>
+<img alt="_images/queue.png" src="_images/queue.png" />
+<p>laravel这边的延迟队列使用了三个队列。</p>
+<ul class="simple">
+<li>queue:default:delayed // 存储延迟任务</li>
+<li>queue:default // 存储“生”任务，就是未处理任务</li>
+<li>queue:default:reserved // 存储待处理任务</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Redis操作提示：</p>
+<ul class="last simple">
+<li>连接命令： <code class="docutils literal"><span class="pre">redis-cli</span> <span class="pre">-h</span> <span class="pre">{host}</span> <span class="pre">-p</span> <span class="pre">{port}</span> <span class="pre">-a</span> <span class="pre">{password}</span></code> 方式连接，然后所有的操作都是在交互的方式实现；</li>
+<li>清空所有数据：<ul>
+<li>删除当前数据库中的所有Key： <code class="docutils literal"><span class="pre">flushdb</span></code></li>
+<li>删除所有数据库中的key： <code class="docutils literal"><span class="pre">flushall</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>laravel 的队列服务由两个进程控制，一个是生产者，一个是消费者。这两个进程操纵了 <code class="docutils literal"><span class="pre">redis</span></code> 三个队列，其中一个 <code class="docutils literal"><span class="pre">List</span></code> ，负责即时任务，两个 <code class="docutils literal"><span class="pre">Zset</span></code> ，负责延时任务与待处理任务。</p>
+<p>生产者负责向 <code class="docutils literal"><span class="pre">redis</span></code> 推送任务，如果是即时任务，默认就会向 <code class="docutils literal"><span class="pre">queue:default</span></code> 推送；如果是延时任务，就会向 <code class="docutils literal"><span class="pre">queue:default:delayed</span></code> 推送。</p>
+<p>消费者轮询两个队列( <code class="docutils literal"><span class="pre">reserved</span></code> 和 <code class="docutils literal"><span class="pre">delayed</span></code> 队列，把到期的任务从这些队列中添加到默认队列)，然后从默认队列中取出任务，先把任务放入 <code class="docutils literal"><span class="pre">queue:default:reserved</span></code> 中，再执行相关任务。如果任务执行成功，就会删除 <code class="docutils literal"><span class="pre">queue:default:reserved</span></code> 中的任务，<strong>否则会被重新放入 ``queue:default:delayed`` 队列中</strong> （有问题，应该是让任务隔断时间再次尝试，还是呆在当前队列中）。</p>
+</div>
+<div class="section" id="id3">
+<h2>50.3. laravel 队列服务的总体流程<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="id4">
+<h2>50.4. laravel 队列服务的注册与启动<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>laravel 队列服务需要注册的服务比较多：(该服务属于延迟加载服务)</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Queue\QueueServiceProvider</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerManager</span><span class="p">();</span>  <span class="c1">// 注册队列管理器到app容器中，当实例化时，会注册所有定义的连接器到管理器中</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerConnection</span><span class="p">();</span> <span class="c1">// 使用默认连接配置建立连接，即初始化连接实例</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerWorker</span><span class="p">();</span> <span class="c1">// 注册消费者类，用来执行队列中的任务</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerListener</span><span class="p">();</span> <span class="c1">// 注册</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerFailedJobServices</span><span class="p">();</span> <span class="c1">// 注册任务执行失败后任务服务</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="registermanager">
+<h3>50.4.1. registerManager 注册门面<a class="headerlink" href="#registermanager" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">registerManager</span></code> 负责注册队列服务的门面类：</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Queue\QueueServiceProvider</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">registerManager</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">singleton</span><span class="p">(</span><span class="s1">&#39;queue&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$app</span><span class="p">)</span> <span class="p">{</span>
+        <span class="sd">/**</span>
+<span class="sd">         * 一旦我们有了队列管理器的实例，我们将为队列连接器注册各种解析器。</span>
+<span class="sd">         * 这些连接器负责创建接受队列配置和实例化队列的类。返回QueueManager实例对象</span>
+<span class="sd">         */</span>
+        <span class="k">return</span> <span class="nx">tap</span><span class="p">(</span><span class="k">new</span> <span class="nx">QueueManager</span><span class="p">(</span><span class="nv">$app</span><span class="p">),</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$manager</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerConnectors</span><span class="p">(</span><span class="nv">$manager</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">registerConnectors</span><span class="p">(</span><span class="nv">$manager</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">foreach</span> <span class="p">([</span><span class="s1">&#39;Null&#39;</span><span class="p">,</span> <span class="s1">&#39;Sync&#39;</span><span class="p">,</span> <span class="s1">&#39;Database&#39;</span><span class="p">,</span> <span class="s1">&#39;Redis&#39;</span><span class="p">,</span> <span class="s1">&#39;Beanstalkd&#39;</span><span class="p">,</span> <span class="s1">&#39;Sqs&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$connector</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="p">{</span><span class="s2">&quot;register</span><span class="si">{</span><span class="nv">$connector</span><span class="si">}</span><span class="s2">Connector&quot;</span><span class="p">}(</span><span class="nv">$manager</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">registerRedisConnector</span><span class="p">(</span><span class="nv">$manager</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$manager</span><span class="o">-&gt;</span><span class="na">addConnector</span><span class="p">(</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">RedisConnector</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="s1">&#39;redis&#39;</span><span class="p">]);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">QueueManager</span></code> 是队列服务的总门面，提供一切与队列相关的操作接口。 <code class="docutils literal"><span class="pre">QueueManager</span></code> 中有一个成员变量 <code class="docutils literal"><span class="pre">$connectors</span></code> ，该成员变量中存储着所有 laravel 支持的底层队列服务： <code class="docutils literal"><span class="pre">Database</span></code> ，  <code class="docutils literal"><span class="pre">Redis</span></code> ，  <code class="docutils literal"><span class="pre">Beanstalkd</span></code> ，  <code class="docutils literal"><span class="pre">Sqs</span></code> 。</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Queue\QueueManager</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">QueueManager</span> <span class="k">implements</span> <span class="nx">FactoryContract</span><span class="p">,</span> <span class="nx">MonitorContract</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">addConnector</span><span class="p">(</span><span class="nv">$driver</span><span class="p">,</span> <span class="nx">Closure</span> <span class="nv">$resolver</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connectors</span><span class="p">[</span><span class="nv">$driver</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$resolver</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>成员变量 <code class="docutils literal"><span class="pre">$connectors</span></code> 会被存储各种驱动的 <code class="docutils literal"><span class="pre">connector</span></code> ，例如 <code class="docutils literal"><span class="pre">RedisConnector</span></code> 、 <code class="docutils literal"><span class="pre">SqsConnector</span></code> 、 <code class="docutils literal"><span class="pre">DatabaseConnector</span></code> 、 <code class="docutils literal"><span class="pre">BeanstalkdConnector</span></code> 。</p>
+</div>
+<div class="section" id="registerconnection">
+<h3>50.4.2. registerConnection 底层队列连接服务<a class="headerlink" href="#registerconnection" title="永久链接至标题">¶</a></h3>
+<p>接下来，就要连接实现队列的底层服务了，例如 <code class="docutils literal"><span class="pre">redis</span></code> ：</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Queue\QueueServiceProvider</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">//调用队列管理器中的 connection() 方法来初始化默认连接实例，如 RedisQueue 实例对象</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">registerConnection</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">singleton</span><span class="p">(</span><span class="s1">&#39;queue.connection&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$app</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$app</span><span class="p">[</span><span class="s1">&#39;queue&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">connection</span><span class="p">();</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Queue\QueueManager</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">connection</span><span class="p">(</span><span class="nv">$name</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$name</span> <span class="o">=</span> <span class="nv">$name</span> <span class="o">?:</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getDefaultDriver</span><span class="p">();</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 如果连接尚未解析，我们现在将解析它，因为所有连接在实际需要时才解析，因此我们开始不会对各个队列端点进行任何不必要的连接。</span>
+<span class="sd">     */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connections</span><span class="p">[</span><span class="nv">$name</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connections</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">resolve</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connections</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">setContainer</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connections</span><span class="p">[</span><span class="nv">$name</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getDefaultDriver</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;queue.default&#39;</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">resolve</span><span class="p">(</span><span class="nv">$name</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$config</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getConfig</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getConnector</span><span class="p">(</span><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;driver&#39;</span><span class="p">])</span> <span class="c1">// 返回RedisConnector实例对象</span>
+    <span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="nv">$config</span><span class="p">)</span>  <span class="c1">// 返回RedisQueue实例对象</span>
+    <span class="o">-&gt;</span><span class="na">setConnectionName</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span> <span class="c1">// 返回RedisQueue实例对象</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">connection</span></code> 函数首先会获取 连接 名，没有 连接 名就会从 <code class="docutils literal"><span class="pre">config</span></code> 中获取默认的连接。</p>
+<p><code class="docutils literal"><span class="pre">resolve</span></code> 函数利用相应的底层驱动 <code class="docutils literal"><span class="pre">connector</span></code> 进行连接操作，也就是 <code class="docutils literal"><span class="pre">connect</span></code> 函数，该函数会返回 <code class="docutils literal"><span class="pre">RedisQueue</span></code> ：</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Queue\Connectors\RedisConnector</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">RedisConnector</span> <span class="k">implements</span> <span class="nx">ConnectorInterface</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">connect</span><span class="p">(</span><span class="k">array</span> <span class="nv">$config</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">RedisQueue</span><span class="p">(</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redis</span><span class="p">,</span> <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;queue&#39;</span><span class="p">],</span>
+            <span class="nx">Arr</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="nv">$config</span><span class="p">,</span> <span class="s1">&#39;connection&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connection</span><span class="p">),</span>
+            <span class="nx">Arr</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="nv">$config</span><span class="p">,</span> <span class="s1">&#39;retry_after&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="registerworker">
+<h3>50.4.3. registerWorker 消费者服务注册<a class="headerlink" href="#registerworker" title="永久链接至标题">¶</a></h3>
+<p>消费者的注册服务会返回 <code class="docutils literal"><span class="pre">Illuminate\Queue\Worker</span></code> 类：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">registerWorker</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">singleton</span><span class="p">(</span><span class="s1">&#39;queue.worker&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Worker</span><span class="p">(</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="s1">&#39;queue&#39;</span><span class="p">],</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="s1">&#39;events&#39;</span><span class="p">],</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="nx">ExceptionHandler</span><span class="o">::</span><span class="na">class</span><span class="p">]</span>
+        <span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="registerlistener">
+<h3>50.4.4. registerListener消费者服务注册<a class="headerlink" href="#registerlistener" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="id5">
+<h3>50.4.5. 任务执行失败后服务注册<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+</div>
+</div>
+<div class="section" id="laravel-bus">
+<h2>50.5. laravel Bus 服务注册与启动<a class="headerlink" href="#laravel-bus" title="永久链接至标题">¶</a></h2>
+<p>定义好自己想要的队列类之后，还需要将队列任务推送给底层驱动后台，例如 <code class="docutils literal"><span class="pre">redis</span></code> ，一般会使用 <code class="docutils literal"><span class="pre">dispatch</span></code> 函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Job</span><span class="o">::</span><span class="na">dispatch</span><span class="p">();</span> <span class="c1">// 这里的Job表示任务类类型如，ProcessPodcast.dispatch();</span>
+
+<span class="c1">// 或者</span>
+<span class="nv">$job</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nx">ProcessPodcast</span><span class="p">(</span><span class="nv">$pocast</span><span class="p">));</span>
+
+<span class="nx">dispatch</span><span class="p">(</span><span class="nv">$job</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">dispatch</span></code> 函数就是 <code class="docutils literal"><span class="pre">Bus</span></code> 服务，专门用于分发队列任务。</p>
+<p><code class="docutils literal"><span class="pre">dispatch</span></code> 函数首先就是调用 <code class="docutils literal"><span class="pre">return</span> <span class="pre">app(Dispatcher::class)-&gt;dispatch($job);</span></code></p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Bus\BusServiceProvider</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">class BusServiceProvider extends ServiceProvider</span>
+<span class="x">{</span>
+<span class="x">    public function register()</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;app-&gt;singleton(Dispatcher::class, function ($app) {</span>
+<span class="x">            return new Dispatcher($app, function ($connection = null) use ($app) {</span>
+<span class="x">                return $app[QueueFactoryContract::class]-&gt;connection($connection); // 返回指定名称的Queue实例对象，如RedisQueue对象</span>
+<span class="x">            });</span>
+<span class="x">        });</span>
+
+<span class="x">        $this-&gt;app-&gt;alias(</span>
+<span class="x">            Dispatcher::class, DispatcherContract::class</span>
+<span class="x">        );</span>
+
+<span class="x">        $this-&gt;app-&gt;alias(</span>
+<span class="x">            Dispatcher::class, QueueingDispatcherContract::class</span>
+<span class="x">        );</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+</div>
+<p>所以最后是实例化了 <code class="docutils literal"><span class="pre">Illuminate\Bus\Dispatcher</span></code></p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Bus\Dispatcher</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">dispatch</span><span class="p">(</span><span class="nv">$command</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 如果实现ShouldQueue接口，则分发任务到队列中(异步任务)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">queueResolver</span> <span class="o">&amp;&amp;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">commandShouldBeQueued</span><span class="p">(</span><span class="nv">$command</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatchToQueue</span><span class="p">(</span><span class="nv">$command</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// 否则直接调用任务(同步任务)</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatchNow</span><span class="p">(</span><span class="nv">$command</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">dispatchToQueue</span><span class="p">(</span><span class="nv">$command</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$connection</span> <span class="o">=</span> <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">connection</span> <span class="o">??</span> <span class="k">null</span><span class="p">;</span>
+    <span class="c1">// queueResolver是封装调用QueueManager对象connection()方法的闭包，返回Queue实例对象，如RedisQueue对象</span>
+    <span class="nv">$queue</span> <span class="o">=</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">queueResolver</span><span class="p">,</span> <span class="nv">$connection</span><span class="p">);</span> <span class="c1">// 指定连接名称(如redis)来使用那个连接，不指定使用默认驱动</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$queue</span> <span class="nx">instanceof</span> <span class="nx">Queue</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">RuntimeException</span><span class="p">(</span><span class="s1">&#39;Queue resolver did not return a Queue implementation.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">method_exists</span><span class="p">(</span><span class="nv">$command</span><span class="p">,</span> <span class="s1">&#39;queue&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">queue</span><span class="p">(</span><span class="nv">$queue</span><span class="p">,</span> <span class="nv">$command</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pushCommandToQueue</span><span class="p">(</span><span class="nv">$queue</span><span class="p">,</span> <span class="nv">$command</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">pushCommandToQueue</span><span class="p">(</span><span class="nv">$queue</span><span class="p">,</span> <span class="nv">$command</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">queue</span><span class="p">,</span> <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">delay</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// 发送到指定队列的延时命令</span>
+        <span class="k">return</span> <span class="nv">$queue</span><span class="o">-&gt;</span><span class="na">laterOn</span><span class="p">(</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">queue</span><span class="p">,</span> <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">delay</span><span class="p">,</span> <span class="nv">$command</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">queue</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// 发送到指定队列的命令</span>
+        <span class="k">return</span> <span class="nv">$queue</span><span class="o">-&gt;</span><span class="na">pushOn</span><span class="p">(</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">queue</span><span class="p">,</span> <span class="nv">$command</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">delay</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// 发送到默认队列的延时命令</span>
+        <span class="k">return</span> <span class="nv">$queue</span><span class="o">-&gt;</span><span class="na">later</span><span class="p">(</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">delay</span><span class="p">,</span> <span class="nv">$command</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$queue</span><span class="o">-&gt;</span><span class="na">push</span><span class="p">(</span><span class="nv">$command</span><span class="p">);</span> <span class="c1">// 发送到默认队列的命令</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这里的 <code class="docutils literal"><span class="pre">queue</span></code> 就是队列的范畴了，假设我们用的队列是 <code class="docutils literal"><span class="pre">redis</span></code> 。最终这里落入的是 <code class="docutils literal"><span class="pre">Illuminate/Queue/RedisQueue.php</span></code> 文件的 <code class="docutils literal"><span class="pre">RedisQueue</span></code> 对象中。</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Queue\RedisQueue</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">RedisQueue</span> <span class="k">extends</span> <span class="nx">Queue</span> <span class="k">implements</span> <span class="nx">QueueContract</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">push</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$queue</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pushRaw</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createPayload</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span><span class="p">),</span> <span class="nv">$queue</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">pushOn</span><span class="p">(</span><span class="nv">$queue</span><span class="p">,</span> <span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">push</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span><span class="p">,</span> <span class="nv">$queue</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">later</span><span class="p">(</span><span class="nv">$delay</span><span class="p">,</span> <span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$queue</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">laterRaw</span><span class="p">(</span><span class="nv">$delay</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createPayload</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span><span class="p">),</span> <span class="nv">$queue</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">laterOn</span><span class="p">(</span><span class="nv">$queue</span><span class="p">,</span> <span class="nv">$delay</span><span class="p">,</span> <span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">later</span><span class="p">(</span><span class="nv">$delay</span><span class="p">,</span> <span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span><span class="p">,</span> <span class="nv">$queue</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们先看 <code class="docutils literal"><span class="pre">push</span></code> ， <code class="docutils literal"><span class="pre">push</span></code> 函数调用 <code class="docutils literal"><span class="pre">pushRaw</span></code> ，在调用之前，要把任务类进行序列化，并且以特定的格式进行 <code class="docutils literal"><span class="pre">json</span></code> 序列化：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">createPayload</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$queue</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$payload</span> <span class="o">=</span> <span class="nb">json_encode</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createPayloadArray</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span><span class="p">,</span> <span class="nv">$queue</span><span class="p">));</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">JSON_ERROR_NONE</span> <span class="o">!==</span> <span class="nb">json_last_error</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">InvalidPayloadException</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$payload</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">createPayloadArray</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$queue</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nb">is_object</span><span class="p">(</span><span class="nv">$job</span><span class="p">)</span>
+                <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createObjectPayload</span><span class="p">(</span><span class="nv">$job</span><span class="p">)</span>
+                <span class="o">:</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createStringPayload</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">createObjectPayload</span><span class="p">(</span><span class="nv">$job</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s1">&#39;job&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Illuminate\Queue\CallQueuedHandler@call&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;maxTries&#39;</span> <span class="o">=&gt;</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$job</span><span class="o">-&gt;</span><span class="na">tries</span><span class="p">)</span> <span class="o">?</span> <span class="nv">$job</span><span class="o">-&gt;</span><span class="na">tries</span> <span class="o">:</span> <span class="k">null</span><span class="p">,</span>
+        <span class="s1">&#39;timeout&#39;</span> <span class="o">=&gt;</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$job</span><span class="o">-&gt;</span><span class="na">timeout</span><span class="p">)</span> <span class="o">?</span> <span class="nv">$job</span><span class="o">-&gt;</span><span class="na">timeout</span> <span class="o">:</span> <span class="k">null</span><span class="p">,</span>
+        <span class="s1">&#39;data&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;commandName&#39;</span> <span class="o">=&gt;</span> <span class="nb">get_class</span><span class="p">(</span><span class="nv">$job</span><span class="p">),</span>
+            <span class="s1">&#39;command&#39;</span> <span class="o">=&gt;</span> <span class="nb">serialize</span><span class="p">(</span><span class="k">clone</span> <span class="nv">$job</span><span class="p">),</span>
+        <span class="p">],</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">createStringPayload</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$data</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;job&#39;</span> <span class="o">=&gt;</span> <span class="nv">$job</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span> <span class="o">=&gt;</span> <span class="nv">$data</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>格式化数据之后，就会将 <code class="docutils literal"><span class="pre">json</span></code> 推送到 <code class="docutils literal"><span class="pre">redis</span></code> 队列中，对于非延时的任务，直接调用 <code class="docutils literal"><span class="pre">rpush</span></code> 即可：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">pushRaw</span><span class="p">(</span><span class="nv">$payload</span><span class="p">,</span> <span class="nv">$queue</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span> <span class="o">=</span> <span class="p">[])</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getConnection</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">rpush</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getQueue</span><span class="p">(</span><span class="nv">$queue</span><span class="p">),</span> <span class="nv">$payload</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">Arr</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="nb">json_decode</span><span class="p">(</span><span class="nv">$payload</span><span class="p">,</span> <span class="k">true</span><span class="p">),</span> <span class="s1">&#39;id&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>对于延时的任务，会调用 <code class="docutils literal"><span class="pre">laterRaw</span></code> ，调用 <code class="docutils literal"><span class="pre">redis</span></code> 的有序集合 <code class="docutils literal"><span class="pre">zadd</span></code> 函数:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">laterRaw</span><span class="p">(</span><span class="nv">$delay</span><span class="p">,</span> <span class="nv">$payload</span><span class="p">,</span> <span class="nv">$queue</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getConnection</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">zadd</span><span class="p">(</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getQueue</span><span class="p">(</span><span class="nv">$queue</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;:delayed&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">availableAt</span><span class="p">(</span><span class="nv">$delay</span><span class="p">),</span> <span class="nv">$payload</span>
+    <span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">Arr</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="nb">json_decode</span><span class="p">(</span><span class="nv">$payload</span><span class="p">,</span> <span class="k">true</span><span class="p">),</span> <span class="s1">&#39;id&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">availableAt</span><span class="p">(</span><span class="nv">$delay</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$delay</span> <span class="nx">instanceof</span> <span class="nx">DateTimeInterface</span>
+                        <span class="o">?</span> <span class="nv">$delay</span><span class="o">-&gt;</span><span class="na">getTimestamp</span><span class="p">()</span>
+                        <span class="o">:</span> <span class="nx">Carbon</span><span class="o">::</span><span class="na">now</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addSeconds</span><span class="p">(</span><span class="nv">$delay</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">getTimestamp</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这样，相关任务就会被分发到 <code class="docutils literal"><span class="pre">redis</span></code> 对应的队列中去。</p>
+</div>
+<div class="section" id="id6">
+<h2>50.6. 队列监听部分<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>队列监听命令来自于： <code class="docutils literal"><span class="pre">php</span> <span class="pre">artisan</span> <span class="pre">queue:work</span></code></p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Queue\Console\WorkCommand</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">Worker</span> <span class="nv">$worker</span><span class="p">)</span> <span class="c1">// 需要注入Worker类对象</span>
+<span class="p">{</span>
+    <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">();</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">worker</span> <span class="o">=</span> <span class="nv">$worker</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">downForMaintenance</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">option</span><span class="p">(</span><span class="s1">&#39;once&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">worker</span><span class="o">-&gt;</span><span class="na">sleep</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">option</span><span class="p">(</span><span class="s1">&#39;sleep&#39;</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 我们将监听已处理和失败的事件，以便我们可以在处理作业时将信息写入控制台，</span>
+<span class="sd">     * 这样开发人员就可以通过队列查看哪些作业正在进行，并了解其进度。</span>
+<span class="sd">     */</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listenForEvents</span><span class="p">();</span>
+
+    <span class="nv">$connection</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">argument</span><span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">)</span>
+        <span class="o">?:</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">laravel</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;queue.default&#39;</span><span class="p">];</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 我们需要获得在应用程序的队列配置文件中设置的连接的正确队列。</span>
+<span class="sd">     * 我们将根据为当前正在执行的队列操作运行的连接来提取它。</span>
+<span class="sd">     */</span>
+    <span class="nv">$queue</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getQueue</span><span class="p">(</span><span class="nv">$connection</span><span class="p">);</span> <span class="c1">// 获取连接操作的队列</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runWorker</span><span class="p">(</span>
+        <span class="nv">$connection</span><span class="p">,</span> <span class="nv">$queue</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">runWorker</span><span class="p">(</span><span class="nv">$connection</span><span class="p">,</span> <span class="nv">$queue</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">worker</span><span class="o">-&gt;</span><span class="na">setCache</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">laravel</span><span class="p">[</span><span class="s1">&#39;cache&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">driver</span><span class="p">());</span> <span class="c1">// 配置缓存</span>
+    <span class="c1">// 根据命令选项来调用Worker对象中对应的方法</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">worker</span><span class="o">-&gt;</span><span class="p">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">option</span><span class="p">(</span><span class="s1">&#39;once&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;runNextJob&#39;</span> <span class="o">:</span> <span class="s1">&#39;daemon&#39;</span><span class="p">}(</span>
+        <span class="nv">$connection</span><span class="p">,</span> <span class="nv">$queue</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">gatherWorkerOptions</span><span class="p">()</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Queue\Worker</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">daemon</span><span class="p">(</span><span class="nv">$connectionName</span><span class="p">,</span> <span class="nv">$queue</span><span class="p">,</span> <span class="nx">WorkerOptions</span> <span class="nv">$options</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listenForSignals</span><span class="p">();</span> <span class="c1">// 监听信号来回调对应函数</span>
+
+    <span class="nv">$lastRestart</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getTimestampOfLastQueueRestart</span><span class="p">();</span> <span class="c1">//</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="k">true</span><span class="p">)</span> <span class="p">{</span>
+        <span class="sd">/**</span>
+<span class="sd">         * 在保存任何任务之前，我们将确保此队列不会暂停，</span>
+<span class="sd">         * 如果是，我们将暂停此工作进程一段时间，并确保我们不需要完全终止此工作进程。</span>
+<span class="sd">         */</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">daemonShouldRun</span><span class="p">(</span><span class="nv">$options</span><span class="p">,</span> <span class="nv">$connectionName</span><span class="p">,</span> <span class="nv">$queue</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pauseWorker</span><span class="p">(</span><span class="nv">$options</span><span class="p">,</span> <span class="nv">$lastRestart</span><span class="p">);</span> <span class="c1">// 是否暂停和停止进程</span>
+
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="sd">/**</span>
+<span class="sd">         * 首先，我们将尝试从队列中取出下一个作业。</span>
+<span class="sd">         * 我们还将注册超时处理程序并重置此作业的警报，以便它不会永远陷入冻结状态。</span>
+<span class="sd">         * 然后，我们可以开始执行这个任务。</span>
+<span class="sd">         */</span>
+        <span class="nv">$job</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getNextJob</span><span class="p">(</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">manager</span><span class="o">-&gt;</span><span class="na">connection</span><span class="p">(</span><span class="nv">$connectionName</span><span class="p">),</span> <span class="nv">$queue</span>
+        <span class="p">);</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerTimeoutHandler</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+
+        <span class="sd">/**</span>
+<span class="sd">         * 如果守护程序应该运行（不在维护模式等），那么我们可以运行此作业以进行处理。 否</span>
+<span class="sd">         * 则，我们将需要让Workder进程睡眠，以便在处理之前不再处理任何工作。</span>
+<span class="sd">         */</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$job</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runJob</span><span class="p">(</span><span class="nv">$job</span><span class="p">,</span> <span class="nv">$connectionName</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sleep</span><span class="p">(</span><span class="nv">$options</span><span class="o">-&gt;</span><span class="na">sleep</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Finally, we will check to see if we have exceeded our memory limits or if</span>
+        <span class="c1">// the queue should restart based on other indications. If so, we&#39;ll stop</span>
+        <span class="c1">// this worker and let whatever is &quot;monitoring&quot; it restart the process.</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">stopIfNecessary</span><span class="p">(</span><span class="nv">$options</span><span class="p">,</span> <span class="nv">$lastRestart</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>50.7. 创建任务<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<div class="section" id="queue">
+<h3>50.7.1. queue 设置<a class="headerlink" href="#queue" title="永久链接至标题">¶</a></h3>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;redis&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;driver&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;redis&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;connection&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;queue&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;retry_after&#39;</span> <span class="o">=&gt;</span> <span class="mi">90</span><span class="p">,</span>
+    <span class="p">],</span>
+</pre></div>
+</div>
+<p>一般来说，默认的 <code class="docutils literal"><span class="pre">redis</span></code> 配置如上， <code class="docutils literal"><span class="pre">connection</span></code> 是 <code class="docutils literal"><span class="pre">database</span></code> 配置中 <code class="docutils literal"><span class="pre">redis</span></code> 的连接名称； <code class="docutils literal"><span class="pre">queue</span></code> 是 <code class="docutils literal"><span class="pre">redis</span></code> 中的队列名称，值得注意的是，如果使用的是 <code class="docutils literal"><span class="pre">redis</span></code> 集群的话，这个需要使用 <code class="docutils literal"><span class="pre">key</span> <span class="pre">hash</span> <span class="pre">tag</span></code> ，也就是 <code class="docutils literal"><span class="pre">{default}</span></code> 。当任务运行超过 <code class="docutils literal"><span class="pre">retry_after</span></code> 这个时间后，该任务会被重新放入队列当中。</p>
+</div>
+<div class="section" id="id8">
+<h3>50.7.2. 任务类的创建<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>任务类的结构很简单，一般来说只会包含一个让队列用来调用此任务的 <code class="docutils literal"><span class="pre">handle</span></code> 方法。</li>
+<li>如果想要使得任务被推送到队列中，而不是同步执行，那么需要实现 <code class="docutils literal"><span class="pre">Illuminate\Contracts\Queue\ShouldQueue</span></code> 接口。</li>
+<li>如果想要让任务推送到特定的连接中，例如 <code class="docutils literal"><span class="pre">redis</span></code> 或者 <code class="docutils literal"><span class="pre">sqs</span></code> ，那么需要设置 <code class="docutils literal"><span class="pre">conneciton</span></code> 变量。</li>
+<li>如果想要让任务推送到特定的队列中去，可以设置 <code class="docutils literal"><span class="pre">queue</span></code> 变量。</li>
+<li>如果想要让任务延迟推送，那么需要设置 <code class="docutils literal"><span class="pre">delay</span></code> 变量。</li>
+<li>如果想要设置任务至多重试的次数，可以使用 <code class="docutils literal"><span class="pre">tries</span></code> 变量；</li>
+<li>如果想要设置任务可以运行的最大秒数，那么可以使用 <code class="docutils literal"><span class="pre">timeout</span></code> 参数。</li>
+<li>如果想要手动访问队列，可以使用 trait :  <code class="docutils literal"><span class="pre">Illuminate\Queue\InteractsWithQueue</span></code> 。</li>
+<li>如果队列监听器任务执行次数超过在工作队列中定义的最大尝试次数，监听器的 <code class="docutils literal"><span class="pre">failed</span></code> 方法将会被自动调用。  <code class="docutils literal"><span class="pre">failed</span></code> 方法接受事件实例和失败的异常作为参数：</li>
+</ul>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">ProcessPodcast</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Dispatchable</span><span class="p">,</span> <span class="nx">InteractsWithQueue</span><span class="p">,</span> <span class="nx">Queueable</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="k">protected</span> <span class="nv">$podcast</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$connection</span> <span class="o">=</span> <span class="s1">&#39;redis&#39;</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$queue</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$delay</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$tries</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$timeout</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">Podcast</span> <span class="nv">$podcast</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">podcast</span> <span class="o">=</span> <span class="nv">$podcast</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">AudioProcessor</span> <span class="nv">$processor</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// Process uploaded podcast...</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">release</span><span class="p">(</span><span class="mi">30</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">failed</span><span class="p">(</span><span class="nx">OrderShipped</span> <span class="nv">$event</span><span class="p">,</span> <span class="nv">$exception</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>50.7.3. 任务事件<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">AppServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//任务运行前</span>
+        <span class="nx">Queue</span><span class="o">::</span><span class="na">before</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nx">JobProcessing</span> <span class="nv">$event</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// $event-&gt;connectionName</span>
+            <span class="c1">// $event-&gt;job</span>
+            <span class="c1">// $event-&gt;job-&gt;payload()</span>
+        <span class="p">});</span>
+
+        <span class="c1">//任务运行后</span>
+        <span class="nx">Queue</span><span class="o">::</span><span class="na">after</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nx">JobProcessed</span> <span class="nv">$event</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// $event-&gt;connectionName</span>
+            <span class="c1">// $event-&gt;job</span>
+            <span class="c1">// $event-&gt;job-&gt;payload()</span>
+        <span class="p">});</span>
+
+        <span class="c1">//任务循环前</span>
+        <span class="nx">Queue</span><span class="o">::</span><span class="na">looping</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="k">while</span> <span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">transactionLevel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">DB</span><span class="o">::</span><span class="na">rollBack</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+
+        <span class="c1">//任务失败后</span>
+         <span class="nx">Queue</span><span class="o">::</span><span class="na">failing</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nx">JobFailed</span> <span class="nv">$event</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// $event-&gt;connectionName</span>
+            <span class="c1">// $event-&gt;job</span>
+            <span class="c1">// $event-&gt;exception</span>
+        <span class="p">});</span>
+
+        <span class="c1">//异常发生后</span>
+        <span class="nx">Queue</span><span class="o">::</span><span class="na">exceptionOccurred</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nx">JobFailed</span> <span class="nv">$event</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// $event-&gt;connectionName</span>
+            <span class="c1">// $event-&gt;job</span>
+            <span class="c1">// $event-&gt;exception</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://laravel-china.org/articles/7037/laravel-queue-analysis-of-message-queue-tasks-and-distribution-source-code">https://laravel-china.org/articles/7037/laravel-queue-analysis-of-message-queue-tasks-and-distribution-source-code</a></p>
+<p><a class="reference external" href="https://laravel-china.org/articles/4169/analysis-of-laravel-message-queue">https://laravel-china.org/articles/4169/analysis-of-laravel-message-queue</a></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的任务调度.html" class="btn btn-neutral float-right" title="51. 任务调度" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的消息通知.html" class="btn btn-neutral" title="49. 通知" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+****
+闭包支持
+****
+
+闭包定义
+========
+我们可以使用闭包的方式定义一些特殊需求的路由，而不需要执行控制器的操作方法了，例如：
+
+.. code-block:: php
+
+	Route::get('hello', function () {
+	    return 'hello,world!';
+	});
+
+参数传递
+--------
+闭包定义的时候支持参数传递，例如：
+
+.. code-block:: php
+
+	Route::get('hello/:name', function ($name) {
+	    return 'Hello,' . $name;
+	});
+
+规则路由中定义的动态变量的名称 就是闭包函数中的参数名称，不分次序。
+
+因此，如果我们访问的 ``URL`` 地址是：
+
+.. code-block:: shell
+
+    http://serverName/hello/thinkphp
+
+则浏览器输出的结果是：
+
+.. code-block:: shell
+
+    Hello,thinkphp
+
+
+依赖注入
+========
+可以在闭包中使用依赖注入，例如：
+
+.. code-block:: php
+
+	Route::rule('hello/:name', function (Request $request, $name) {
+	    $method = $request->method();
+	    return '[' . $method . '] Hello,' . $name;
+	});
+
+
+指定响应对象
+===========
+更多的情况是在路由闭包中指定响应对象输出，例如：
+
+.. code-block:: php
+
+	Route::get('hello/:name', function (Response $response, $name) {
+	    return $response
+	        ->data('Hello,' . $name)
+	        ->code(200)
+	        ->contentType('text/plain');
+	});
+
+这种情况可以直接写成
+
+.. code-block:: php
+
+	Route::get('hello/:name', response()
+        ->data('Hello,' . $name)
+        ->code(200)
+        ->contentType('text/plain'));
+
+更多的情况是直接对资源文件的请求设置404访问
+
+.. code-block:: php
+
+	// 对于不存在的static目录下的资源文件设置404访问
+	Route::get('static', response()->code(404));

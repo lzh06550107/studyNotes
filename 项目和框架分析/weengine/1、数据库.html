@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>数据库.rst—I:\notepad\项目和框架分析\weengine</title>
+    <style type="text/css">
+    html{font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%}body{margin: 0}article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display: block}audio,canvas,progress,video{display: inline-block;vertical-align: baseline}audio:not([controls]){display: none;height: 0}[hidden],template{display: none}a{background: transparent}a:active,a:hover{outline: 0}abbr[title]{border-bottom: 1px dotted}b,strong{font-weight: bold}dfn{font-style: italic}h1{font-size: 2em;margin: 0.67em 0}mark{background: #ff0;color: #000}small{font-size: 80%}sub,sup{font-size: 75%;line-height: 0;position: relative;vertical-align: baseline}sup{top: -0.5em}sub{bottom: -0.25em}img{border: 0}svg:not(:root){overflow: hidden}figure{margin: 1em 40px}hr{box-sizing: content-box;height: 0}pre{overflow: auto}code,kbd,pre,samp{font-family: monospace, monospace;font-size: 1em}button,input,optgroup,select,textarea{color: inherit;font: inherit;margin: 0}button{overflow: visible}button,select{text-transform: none}button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance: button;cursor: pointer}button[disabled],html input[disabled]{cursor: default}button::-moz-focus-inner,input::-moz-focus-inner{border: 0;padding: 0}input{line-height: normal}input[type="checkbox"],input[type="radio"]{box-sizing: border-box;padding: 0}input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{height: auto}input[type="search"]{-webkit-appearance: textfield;box-sizing: content-box}input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance: none}fieldset{border: 1px solid #c0c0c0;margin: 0 2px;padding: 0.35em 0.625em 0.75em}legend{border: 0;padding: 0}textarea{overflow: auto}optgroup{font-weight: bold}table{border-collapse: collapse;border-spacing: 0}td,th{padding: 0}*{box-sizing: border-box}input,select,textarea,button{font: 13px/1.4 Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"}body{min-width: 1020px;font: 13px/1.4 Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";color: #333;background-color: #fff}a{color: #4183c4;text-decoration: none}a:hover,a:active{text-decoration: underline}hr,.rule{height: 0;margin: 15px 0;overflow: hidden;background: transparent;border: 0;border-bottom: 1px solid #ddd}hr:before,.rule:before{display: table;content: ""}hr:after,.rule:after{display: table;clear: both;content: ""}h1,h2,h3,h4,h5,h6{margin-top: 15px;margin-bottom: 15px;line-height: 1.1}h1{font-size: 30px}h2{font-size: 21px}h3{font-size: 16px}h4{font-size: 14px}h5{font-size: 12px}h6{font-size: 11px}small{font-size: 90%}blockquote{margin: 0}.lead{margin-bottom: 30px;font-size: 20px;font-weight: 300;color: #555}.text-muted{color: #999}.text-danger{color: #bd2c00}.text-emphasized{font-weight: bold;color: #333}ul,ol{padding: 0;margin-top: 0;margin-bottom: 0}ol ol,ul ol{list-style-type: lower-roman}ul ul ol,ul ol ol,ol ul ol,ol ol ol{list-style-type: lower-alpha}dd{margin-left: 0}tt,code{font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;font-size: 12px}pre{margin-top: 0;margin-bottom: 0;font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace}#realtime .status{overflow: visible;position: absolute;top: -5px;left: 0;background: url("/public/images/github-status.png");width: 26px;height: 26px;display: block;margin: 0 5px 0 0}#realtime .up{background-position: 0 0}#realtime .problem{background-position: 0 -53px}#realtime .down{background-position: 0 -26px}.container{max-width: 920px;margin: 0 auto 20px auto}#header{background: #FAFAFA;background: -moz-linear-gradient(#FAFAFA, #EAEAEA);background: -webkit-linear-gradient(#FAFAFA, #EAEAEA);-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#eaeaea')";border-bottom: 1px solid #CACACA;box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4),0 0 10px rgba(0, 0, 0, 0.1)}#markup{padding: 3px}#markup article{padding-top: 30px}.markdown-body{overflow: hidden;font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;font-size: 16px;line-height: 1.6;word-wrap: break-word}.markdown-body>*:first-child{margin-top: 0 !important}.markdown-body>*:last-child{margin-bottom: 0 !important}.markdown-body .absent{color: #c00}.markdown-body .anchor{position: absolute;top: 0;left: 0;display: block;padding-right: 6px;padding-left: 30px;margin-left: -30px}.markdown-body .anchor:focus{outline: none}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{position: relative;margin-top: 1em;margin-bottom: 16px;font-weight: bold;line-height: 1.4}.markdown-body h1 .octicon-link,.markdown-body h2 .octicon-link,.markdown-body h3 .octicon-link,.markdown-body h4 .octicon-link,.markdown-body h5 .octicon-link,.markdown-body h6 .octicon-link{display: none;color: #000;vertical-align: middle}.markdown-body h1:hover .anchor,.markdown-body h2:hover .anchor,.markdown-body h3:hover .anchor,.markdown-body h4:hover .anchor,.markdown-body h5:hover .anchor,.markdown-body h6:hover .anchor{padding-left: 8px;margin-left: -30px;text-decoration: none}.markdown-body h1:hover .anchor .octicon-link,.markdown-body h2:hover .anchor .octicon-link,.markdown-body h3:hover .anchor .octicon-link,.markdown-body h4:hover .anchor .octicon-link,.markdown-body h5:hover .anchor .octicon-link,.markdown-body h6:hover .anchor .octicon-link{display: inline-block}.markdown-body h1 tt,.markdown-body h1 code,.markdown-body h2 tt,.markdown-body h2 code,.markdown-body h3 tt,.markdown-body h3 code,.markdown-body h4 tt,.markdown-body h4 code,.markdown-body h5 tt,.markdown-body h5 code,.markdown-body h6 tt,.markdown-body h6 code{font-size: inherit}.markdown-body h1{padding-bottom: 0.3em;font-size: 2.25em;line-height: 1.2;border-bottom: 1px solid #eee}.markdown-body h1 .anchor{line-height: 1}.markdown-body h2{padding-bottom: 0.3em;font-size: 1.75em;line-height: 1.225;border-bottom: 1px solid #eee}.markdown-body h2 .anchor{line-height: 1}.markdown-body h3{font-size: 1.5em;line-height: 1.43}.markdown-body h3 .anchor{line-height: 1.2}.markdown-body h4{font-size: 1.25em}.markdown-body h4 .anchor{line-height: 1.2}.markdown-body h5{font-size: 1em}.markdown-body h5 .anchor{line-height: 1.1}.markdown-body h6{font-size: 1em;color: #777}.markdown-body h6 .anchor{line-height: 1.1}.markdown-body p,.markdown-body blockquote,.markdown-body ul,.markdown-body ol,.markdown-body dl,.markdown-body table,.markdown-body pre{margin-top: 0;margin-bottom: 16px}.markdown-body hr{height: 4px;padding: 0;margin: 16px 0;background-color: #e7e7e7;border: 0 none}.markdown-body ul,.markdown-body ol{padding-left: 2em}.markdown-body ul.no-list,.markdown-body ol.no-list{padding: 0;list-style-type: none}.markdown-body ul ul,.markdown-body ul ol,.markdown-body ol ol,.markdown-body ol ul{margin-top: 0;margin-bottom: 0}.markdown-body li>p{margin-top: 16px}.markdown-body dl{padding: 0}.markdown-body dl dt{padding: 0;margin-top: 16px;font-size: 1em;font-style: italic;font-weight: bold}.markdown-body dl dd{padding: 0 16px;margin-bottom: 16px}.markdown-body blockquote{padding: 0 15px;color: #777;border-left: 4px solid #ddd}.markdown-body blockquote>:first-child{margin-top: 0}.markdown-body blockquote>:last-child{margin-bottom: 0}.markdown-body table{display: block;width: 100%;overflow: auto;word-break: normal;word-break: keep-all}.markdown-body table th{font-weight: bold}.markdown-body table th,.markdown-body table td{padding: 6px 13px;border: 1px solid #ddd}.markdown-body table tr{background-color: #fff;border-top: 1px solid #ccc}.markdown-body table tr:nth-child(2n){background-color: #f8f8f8}.markdown-body img{max-width: 100%;box-sizing: border-box}.markdown-body span.frame{display: block;overflow: hidden}.markdown-body span.frame>span{display: block;float: left;width: auto;padding: 7px;margin: 13px 0 0;overflow: hidden;border: 1px solid #ddd}.markdown-body span.frame span img{display: block;float: left}.markdown-body span.frame span span{display: block;padding: 5px 0 0;clear: both;color: #333}.markdown-body span.align-center{display: block;overflow: hidden;clear: both}.markdown-body span.align-center>span{display: block;margin: 13px auto 0;overflow: hidden;text-align: center}.markdown-body span.align-center span img{margin: 0 auto;text-align: center}.markdown-body span.align-right{display: block;overflow: hidden;clear: both}.markdown-body span.align-right>span{display: block;margin: 13px 0 0;overflow: hidden;text-align: right}.markdown-body span.align-right span img{margin: 0;text-align: right}.markdown-body span.float-left{display: block;float: left;margin-right: 13px;overflow: hidden}.markdown-body span.float-left span{margin: 13px 0 0}.markdown-body span.float-right{display: block;float: right;margin-left: 13px;overflow: hidden}.markdown-body span.float-right>span{display: block;margin: 13px auto 0;overflow: hidden;text-align: right}.markdown-body code,.markdown-body tt{padding: 0;padding-top: 0.2em;padding-bottom: 0.2em;margin: 0;font-size: 85%;background-color: rgba(0,0,0,0.04);border-radius: 3px}.markdown-body code:before,.markdown-body code:after,.markdown-body tt:before,.markdown-body tt:after{letter-spacing: -0.2em;content: "\00a0"}.markdown-body code br,.markdown-body tt br{display: none}.markdown-body del code{text-decoration: inherit}.markdown-body pre>code{padding: 0;margin: 0;font-size: 100%;word-break: normal;white-space: pre;background: transparent;border: 0}.markdown-body .highlight{margin-bottom: 16px}.markdown-body .highlight pre,.markdown-body pre{padding: 16px;overflow: auto;font-size: 85%;line-height: 1.45;background-color: #f7f7f7;border-radius: 3px}.markdown-body .highlight pre{margin-bottom: 0;word-break: normal}.markdown-body pre{word-wrap: normal}.markdown-body pre code,.markdown-body pre tt{display: inline;max-width: initial;padding: 0;margin: 0;overflow: initial;line-height: inherit;word-wrap: normal;background-color: transparent;border: 0}.markdown-body pre code:before,.markdown-body pre code:after,.markdown-body pre tt:before,.markdown-body pre tt:after{content: normal}.markdown-body kbd{display: inline-block;padding: 3px 5px;font-size: 11px;line-height: 10px;color: #555;vertical-align: middle;background-color: #fcfcfc;border: solid 1px #ccc;border-bottom-color: #bbb;border-radius: 3px;box-shadow: inset 0 -1px 0 #bbb}.codehilite{background: #ffffff}.codehilite .c{color: #999988;font-style: italic}.codehilite .err{color: #a61717;background-color: #e3d2d2}.codehilite .k{color: #000000;font-weight: bold}.codehilite .o{color: #000000;font-weight: bold}.codehilite .cm{color: #999988;font-style: italic}.codehilite .cp{color: #999999;font-weight: bold}.codehilite .c1{color: #999988;font-style: italic}.codehilite .cs{color: #999999;font-weight: bold;font-style: italic}.codehilite .gd{color: #000000;background-color: #ffdddd}.codehilite .gd .x{color: #000000;background-color: #ffaaaa}.codehilite .ge{color: #000000;font-style: italic}.codehilite .gr{color: #aa0000}.codehilite .gh{color: #999999}.codehilite .gi{color: #000000;background-color: #ddffdd}.codehilite .gi .x{color: #000000;background-color: #aaffaa}.codehilite .go{color: #888888}.codehilite .gp{color: #555555}.codehilite .gs{font-weight: bold}.codehilite .gu{color: #aaaaaa}.codehilite .gt{color: #aa0000}.codehilite .kc{color: #000000;font-weight: bold}.codehilite .kd{color: #000000;font-weight: bold}.codehilite .kp{color: #000000;font-weight: bold}.codehilite .kr{color: #000000;font-weight: bold}.codehilite .kt{color: #445588;font-weight: bold}.codehilite .m{color: #009999}.codehilite .s{color: #d14}.codehilite .na{color: #008080}.codehilite .nb{color: #0086B3}.codehilite .nc{color: #445588;font-weight: bold}.codehilite .no{color: #008080}.codehilite .ni{color: #800080}.codehilite .ne{color: #990000;font-weight: bold}.codehilite .nf{color: #990000;font-weight: bold}.codehilite .nn{color: #555555}.codehilite .nt{color: #000080}.codehilite .nv{color: #008080}.codehilite .ow{color: #000000;font-weight: bold}.codehilite .w{color: #bbbbbb}.codehilite .mf{color: #009999}.codehilite .mh{color: #009999}.codehilite .mi{color: #009999}.codehilite .mo{color: #009999}.codehilite .sb{color: #d14}.codehilite .sc{color: #d14}.codehilite .sd{color: #d14}.codehilite .s2{color: #d14}.codehilite .se{color: #d14}.codehilite .sh{color: #d14}.codehilite .si{color: #d14}.codehilite .sx{color: #d14}.codehilite .sr{color: #009926}.codehilite .s1{color: #d14}.codehilite .ss{color: #990073}.codehilite .bp{color: #999999}.codehilite .vc{color: #008080}.codehilite .vg{color: #008080}.codehilite .vi{color: #008080}.codehilite .il{color: #009999}
+    </style>
+    <style type="text/css">
+      .markdown-body hr{background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC")}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="markup">
+        <article id="content" class="markdown-body">
+          <div class="document">
+<div class="section" id="id1">
+<h1><a class="toc-backref" href="#id13">数据库</a></h1>
+<div class="contents topic" id="id2">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id13">数据库</a><ul>
+<li><a class="reference internal" href="#id3" id="id14">数据库配置</a></li>
+<li><a class="reference internal" href="#id4" id="id15">数据库链接</a><ul>
+<li><a class="reference internal" href="#id5" id="id16">连接其它主从数据库</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6" id="id17">数据库操作</a><ul>
+<li><a class="reference internal" href="#pdo" id="id18">封装PDO接口操作方式</a><ul>
+<li><a class="reference internal" href="#id7" id="id19">插入操作</a></li>
+<li><a class="reference internal" href="#id8" id="id20">更新操作</a></li>
+<li><a class="reference internal" href="#id9" id="id21">查询操作</a></li>
+<li><a class="reference internal" href="#id10" id="id22">删除操作</a></li>
+<li><a class="reference internal" href="#id11" id="id23">其它操作</a></li>
+<li><a class="reference internal" href="#id12" id="id24">事物操作</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sql" id="id25">sql构建器操作方式</a><ul>
+<li><a class="reference internal" href="#query-from-tablename-alias" id="id26">Query from($tablename, $alias = '')</a></li>
+<li><a class="reference internal" href="#query-select-field1-field2" id="id27">Query select($field1, $field2, ...)</a></li>
+<li><a class="reference internal" href="#query-where-array-string-condition-parameters-array" id="id28">Query where(array | string $condition, $parameters = array())</a></li>
+<li><a class="reference internal" href="#query-whereor-string-array-condition-parameters-array" id="id29">Query whereor(string | array $condition, $parameters = array())</a></li>
+<li><a class="reference internal" href="#query-having-string-array-condition-parameters-array" id="id30">Query having(string | array $condition, $parameters = array())</a></li>
+<li><a class="reference internal" href="#query-groupby-field" id="id31">Query groupby($field)</a></li>
+<li><a class="reference internal" href="#query-orderby-field-direction-asc" id="id32">Query orderby($field, $direction = 'ASC')</a></li>
+<li><a class="reference internal" href="#query-leftjoin-tablename-alias" id="id33">Query leftjoin($tablename, $alias = '')</a></li>
+<li><a class="reference internal" href="#query-innerjoin-tablename-alias" id="id34">Query innerjoin($tablename, $alias = '')</a></li>
+<li><a class="reference internal" href="#query-on-condition-parameters-array" id="id35">Query on($condition, $parameters = array())</a></li>
+<li><a class="reference internal" href="#query-limit-start-size" id="id36">Query limit(start, size)</a></li>
+<li><a class="reference internal" href="#query-page-pageindex-pagesize" id="id37">Query page(pageindex, pagesize)</a></li>
+<li><a class="reference internal" href="#array-get" id="id38">array get()</a></li>
+<li><a class="reference internal" href="#array-getall-keyfield" id="id39">array getall($keyfield = '')</a></li>
+<li><a class="reference internal" href="#mixed-getcolumn-field" id="id40">Mixed getcolumn($field = '')</a></li>
+<li><a class="reference internal" href="#int-count" id="id41">int count()</a></li>
+<li><a class="reference internal" href="#boolean-exists" id="id42">boolean exists()</a></li>
+<li><a class="reference internal" href="#int-getlastquerytotal" id="id43">int getLastQueryTotal()</a></li>
+<li><a class="reference internal" href="#array-getlastquery" id="id44">array getLastQuery()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id14">数据库配置</a></h2>
+<p>微擎系统支持数据库的主从配置（一主多从），只需要进行简单的配置即可。</p>
+<p>配置主从支持在系统 &quot;data/config.php&quot; 文件中，具体配置如下：</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">部分用户没有 <tt class="docutils literal">master</tt> 项， <tt class="docutils literal"><span class="pre">$config['db']['host']</span></tt> 等同于 <tt class="docutils literal"><span class="pre">$config['db']['master']['host']</span></tt></p>
+</div>
+<pre class="codehilite" lang="php">
+<span class="x">//主库配置
+$config['db']['master']['host'] = '192.168.1.2';
+$config['db']['master']['username'] = 'root';
+$config['db']['master']['password'] = '123456';
+$config['db']['master']['port'] = '3306';
+$config['db']['master']['database'] = 'we7_pro';
+$config['db']['master']['charset'] = 'utf8';
+$config['db']['master']['pconnect'] = 0;
+$config['db']['master']['tablepre'] = 'ims_';
+
+//从库配置
+$config['db']['slave_status'] = false; //是否开启主从配置
+$config['db']['slave']['1']['host'] = '192.168.1.3';        //从库配置要与主库相同??有这个必要
+$config['db']['slave']['1']['username'] = 'root';
+$config['db']['slave']['1']['password'] = '123456';
+$config['db']['slave']['1']['port'] = '3306';
+$config['db']['slave']['1']['database'] = 'we7_pro';
+$config['db']['slave']['1']['charset'] = 'utf8';
+$config['db']['slave']['1']['pconnect'] = 0;
+$config['db']['slave']['1']['tablepre'] = 'ims_';
+$config['db']['slave']['1']['weight'] = 0;                  //从库的权重值，默认0即可
+
+//不进行主从分离的表
+$config['db']['common']['slave_except_table'] = array(
+        'core_sessions',
+);</span>
+</pre>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id15">数据库链接</a></h2>
+<p>操作微擎系统数据库使用系统封装好的 <tt class="docutils literal">pdo_xxx</tt> 相关函数，如果您想同时连接操作其它数据库可以使用以下方法，例如：</p>
+<pre class="codehilite" lang="php">
+<span class="x">$discuz_database = array(
+        'host' =&gt; '192.168.1.2', //数据库IP或是域名
+        'username' =&gt; 'root', // 数据库连接用户名
+        'password' =&gt; '123456', // 数据库连接密码
+        'database' =&gt; 'discuz', // 数据库名
+        'port' =&gt; 3306, // 数据库连接端口
+        'tablepre' =&gt; 'pre_', // 表前缀，如果没有前缀留空即可
+        'charset' =&gt; 'utf8', // 数据库默认编码
+        'pconnect' =&gt; 0, // 是否使用长连接
+);
+$discuz_db = new DB($discuz_database);
+//查询uid为1的会员信息
+$member = $discuz_db-&gt;get('common_member', array('uid' =&gt; 1));
+//更新uid为1的会员信息
+$discuz_db-&gt;update('common_member', array('username' =&gt; 'admin888'), array('uid' =&gt; 1));
+//其它使用方法与pdo_xxx相关函数相同</span>
+</pre>
+<div class="section" id="id5">
+<h3><a class="toc-backref" href="#id16">连接其它主从数据库</a></h3>
+<p>如果要连接的数据库有主从分离，则构造连接 <tt class="docutils literal">config</tt> 的时候，参考系统数据库连接配置即可，例如：</p>
+<pre class="codehilite" lang="php">
+<span class="x">$discuz_database['master']['host'] = '192.168.1.12';
+$discuz_database['master']['username'] = 'root';
+$discuz_database['master']['password'] = '123456';
+$discuz_database['master']['port'] = '3306';
+$discuz_database['master']['database'] = 'discuz';
+$discuz_database['master']['charset'] = 'utf8';
+$discuz_database['master']['pconnect'] = 0;
+$discuz_database['master']['tablepre'] = 'pre_';
+
+$discuz_database['slave_status'] = true;
+$discuz_database['slave']['1']['host'] = '192.168.1.11';
+$discuz_database['slave']['1']['username'] = 'root';
+$discuz_database['slave']['1']['password'] = '123456';
+$discuz_database['slave']['1']['port'] = '3306';
+$discuz_database['slave']['1']['database'] = 'discuz';
+$discuz_database['slave']['1']['charset'] = 'utf8';
+$discuz_database['slave']['1']['pconnect'] = 0;
+$discuz_database['slave']['1']['tablepre'] = 'pre_';
+$discuz_database['slave']['1']['weight'] = 0;</span>
+</pre>
+</div>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id17">数据库操作</a></h2>
+<p>微擎系统中存在两种操作数据库的方式：</p>
+<ul class="simple">
+<li>通过封装 <tt class="docutils literal">PDO</tt> 接口来提供原始 <tt class="docutils literal">sql</tt> 语句方式；</li>
+<li>通过 <tt class="docutils literal">sql</tt> 构建工具来生成 <tt class="docutils literal">sql</tt> 语句方式；</li>
+</ul>
+<p><tt class="docutils literal">sql</tt> 构建器本质上时调用底层封装的 <tt class="docutils literal">PDO</tt> 接口函数来实现的。</p>
+<div class="section" id="pdo">
+<h3><a class="toc-backref" href="#id18">封装PDO接口操作方式</a></h3>
+<p>这种方式需要用户手动拼装sql语句。</p>
+<p>微擎系统数据库操作使用 <tt class="docutils literal">PDO</tt> 兼容方式，以参数绑定的形式进行查询操作。
+系统已对 <tt class="docutils literal">PDO</tt> 兼容性进行检测及封装。下面具体说明一下数据库的几种基本操作方法。</p>
+<p>微擎系统通过 <tt class="docutils literal">db.class.php</tt> 文件中 <tt class="docutils literal">DB</tt> 类提供对 <tt class="docutils literal">PDO</tt> 接口最底层的封装，而 <tt class="docutils literal">slave.db.class.php</tt> 文件中的 <tt class="docutils literal">SlaveDb</tt> 类继承了 <tt class="docutils literal">DB</tt> 类提供额外的主从分离的操作。 <tt class="docutils literal">pdo.func.php</tt> 文件中的函数是对 <tt class="docutils literal">DB</tt> 或 <tt class="docutils literal">SlaveDB</tt> 类中方法的封装。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$discuz_database = array(
+    'host' =&gt; '127.0.0.1', //数据库IP或是域名
+    'username' =&gt; 'root', // 数据库连接用户名
+    'password' =&gt; 'root', // 数据库连接密码
+    'database' =&gt; 'we7', // 数据库名
+    'port' =&gt; 3306, // 数据库连接端口
+    'tablepre' =&gt; 'ims_', // 表前缀，如果没有前缀留空即可
+    'charset' =&gt; 'utf8', // 数据库默认编码
+    'pconnect' =&gt; 0, // 是否使用长连接
+);
+
+$pdo_demo = new DB($discuz_database);</span>
+</pre>
+<p>DB 类提供如下方法：</p>
+<p>为了在微擎提供单实例 <tt class="docutils literal">DB/SlaveDB</tt> 类。 在 <tt class="docutils literal">pdo.fun.php</tt> 文件中提供了全局函数 <tt class="docutils literal">pdo()</tt> 总是返回已经初始化的同一个 <tt class="docutils literal">DB/SlaveDB</tt> 实例。所以如下的方法调用是等价的。</p>
+<p>查询条件 <tt class="docutils literal">$params</tt> 参数可以使用 <tt class="docutils literal">&gt;</tt> , <tt class="docutils literal">&lt;</tt> , <tt class="docutils literal">&lt;&gt;</tt> , <tt class="docutils literal">!=</tt> , <tt class="docutils literal">&gt;=</tt> , <tt class="docutils literal">&lt;=</tt> , <tt class="docutils literal">LIKE</tt> , <tt class="docutils literal">like</tt> 操作符。</p>
+<ul class="simple">
+<li>如果不带操作符，则默认使用为 <tt class="docutils literal">=</tt> 操作符；</li>
+<li>如果不带操作符且值为数组，则默认使用 <tt class="docutils literal">IN</tt> 操作符；</li>
+<li>如果不带操作符且值为NULL，则默认使用 <tt class="docutils literal">IS</tt> 操作符；</li>
+<li>字段名与操作符组成条件数组的键名，字段名与操作符中间间隔一个空格；</li>
+</ul>
+<div class="section" id="id7">
+<h4><a class="toc-backref" href="#id19">插入操作</a></h4>
+<div class="section" id="pdo-insert-insert-table-data-array-replace-false">
+<h5>pdo_insert/insert($table, $data = array(), $replace = FALSE)</h5>
+<p>对指定数据表插入一条新记录。</p>
+<ul class="simple">
+<li>$table ：表名称，不带前缀</li>
+<li>$data ：插入数据，只能是一维关联数组</li>
+<li>$replace ：是否执行 REPLACE INTO</li>
+</ul>
+<p><tt class="docutils literal">replace into</tt> 首先尝试插入数据到表中， 1. 如果发现表中已经有此行数据（根据主键或者唯一索引判断）则先删除此行数据，然后插入新的数据。 2. 否则，直接插入新数据。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$pdo_demo-&gt;insert('demo',['username'=&gt;'lzh', 'password'=&gt;'测试','nickname'=&gt;'昵称'],true);
+
+// 不支持批量插入
+    $pdo_demo-&gt;insert('demo', [
+        [
+            'username'=&gt;'lzh1','password'=&gt;'测试1','nickname'=&gt;'昵称1'
+        ],
+        [
+            'username'=&gt;'lzh2','password'=&gt;'测试2','nickname'=&gt;'昵称2'
+        ]
+    ]);
+
+    //添加一条用户记录，并判断是否成功
+    $user_data = array(
+            'username' =&gt; 'mizhou1',
+            'status' =&gt; '1',
+    );
+    $result = pdo_insert('users', $user_data);
+    if (!empty($result)) {
+            $uid = pdo_insertid();
+            message('添加用户成功，UID为' . $uid);
+    }</span>
+</pre>
+</div>
+</div>
+<div class="section" id="id8">
+<h4><a class="toc-backref" href="#id20">更新操作</a></h4>
+<div class="section" id="pdo-update-update-table-data-array-params-array-glue-and">
+<h5>pdo_update/update($table, $data = array(), $params = array(), $glue = 'AND')</h5>
+<p>更新指定的数据表的记录。</p>
+<ul class="simple">
+<li>$table ：表名称，不带前缀</li>
+<li>$data ：更新数据数组，只能是一维数组，操作符可以是 <tt class="docutils literal">+=</tt> 或者 <tt class="docutils literal"><span class="pre">-=</span></tt> 表示当前字段增减操作</li>
+<li>$params ：更新条件，只能是一维数组，字段的值可以是一维数组</li>
+<li>$glue ：条件组合方式，如 <tt class="docutils literal">AND</tt> 或者 <tt class="docutils literal">OR</tt></li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$pdo_demo-&gt;update('demo',['password'=&gt;'newpassword', 'nickname'=&gt;'newnickname'],['username'=&gt;'lzh','id'=&gt;'8']);
+
+//增加一次用户的错误登录次数，两次变为2即可
+    pdo_update('users_failed_login', array('count +=' =&gt; 1), array('username' =&gt; 'mizhou'));
+
+    //更uid等于2的用户的用户名
+    $user_data = array(
+            'username' =&gt; 'mizhou2',
+    );
+    $result = pdo_update('users', $user_data, array('id' =&gt; 2));
+    if (!empty($result)) {
+            message('更新成功');
+    }</span>
+</pre>
+</div>
+</div>
+<div class="section" id="id9">
+<h4><a class="toc-backref" href="#id21">查询操作</a></h4>
+<div class="section" id="pdo-query-query-sql-params-array">
+<h5>pdo_query/query($sql, $params = array())</h5>
+<p>当更新，插入，删除无法满足时，可以直接构造SQL语句进行操作。执行一条 <tt class="docutils literal">sql</tt> 语句，可以是任何 <tt class="docutils literal">sql</tt> 语句，但通常用来执行非查询，插入、更新和删除的语句，因为查询可以使用 <tt class="docutils literal">fetch()</tt> 或者 <tt class="docutils literal">get()</tt> 函数，插入使用 <tt class="docutils literal">insert()</tt> 函数，更新使用 <tt class="docutils literal">update()</tt> 函数，删除使用 <tt class="docutils literal">delete()</tt> 函数。</p>
+<pre class="codehilite" lang="php">
+<span class="x">//更uid等于2的用户的用户名
+$result = pdo_query(&quot;UPDATE &quot;.tablename('users').&quot; SET username = :username, age = :age WHERE uid = :uid&quot;, array(':username' =&gt; 'mizhou2', ':age' =&gt; 18, ':uid' =&gt; 2));
+
+//删除用户名为mizhou2的记录
+$result = pdo_query(&quot;DELETE FROM &quot;.tablename('users').&quot; WHERE uid = :uid&quot;, array(':uid' =&gt; 2));
+if (!empty($result)) {
+        message('删除成功');
+}</span>
+</pre>
+</div>
+<div class="section" id="pdo-count-count-tablename-params-array-cachetime-30">
+<h5>pdo_count/count($tablename, $params = array(), $cachetime = 30)</h5>
+<p>返回满足条件的记录数。</p>
+<ul class="simple">
+<li>$tablename ：表名称</li>
+<li>$params ：查询条件，只能是一维数组，字段的值可以是一维数组</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$pdo_demo-&gt;count('demo', ['id &gt;='=&gt; '1']);</span>
+</pre>
+</div>
+<div class="section" id="pdo-fetch-fetch-sql-params-array">
+<h5>pdo_fetch/fetch($sql, $params = array())</h5>
+<p>查询满足条件的一条记录。返回按列名为索引的关联数组。</p>
+<ul class="simple">
+<li>$sql ：带有命名参数的sql语句</li>
+<li>$params ：为SQL语句中的参数绑定传值，防止SQL注入。需要注意的是使用参数绑定时，SQL语中等号后不需要使用引号，传入的值必须与绑定的名称一致</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">    // 只返回满足条件的一条记录
+$pdo_demo-&gt;fetch('select * from ims_demo where id &gt;=:id', [':id'=&gt;'1']);
+
+// :uid 是参数的一个占位符，没有使用引号，传入的第二个参数中要与SQL中的占位名称相同
+    $user = pdo_fetch(&quot;SELECT username, uid FROM &quot;.tablename('users').&quot; WHERE uid = :uid LIMIT 1&quot;, array(':uid' =&gt; 1));
+
+    // LIKE 占位的使用方法
+    $user = pdo_fetch(&quot;SELECT * FROM &quot;.tablename('users').&quot; WHERE username LIKE :username&quot;, array(':username' =&gt; '%mizhou%'));</span>
+</pre>
+</div>
+<div class="section" id="pdo-get-get-tablename-params-array-fields-array-orderby-array">
+<h5>pdo_get/get($tablename, $params = array(), $fields = array(), $orderby = array())</h5>
+<p>查询满足条件的一条记录。返回按列名为索引的关联数组。该函数是对 <tt class="docutils literal">fetch()</tt> 函数的封装。它会自动拼装 <tt class="docutils literal">sql</tt> 语句。</p>
+<ul class="simple">
+<li>$tablename ：表名称，不带前缀</li>
+<li>$params ：查询条件，只能是一维数组，字段的值可以是一维数组。条件是按照 AND 连接，支持大于，小于等范围查询</li>
+<li>$fields ：选择的字段，可传入空数组选择所有字段，或者['username','nickname']或者单个字符串'username'</li>
+<li>$orderby ：排序字段，可传入字符串('id asc,username desc')或者数组(['id asc','username desc'])</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$pdo_demo-&gt;get('demo', ['id &gt;='=&gt; 1],['username','nickname'],'id asc');
+
+//生成的SQL等同于：SELECT username, uid FROM ims_users WHERE uid = '1' LIMIT 1
+    $user = pdo_get('users', array('uid' =&gt; 1), array('username', 'uid'));
+
+    //生成的SQL等同于：SELECT username FROM ims_users WHERE username = 'mizhou' AND status = '1' LIMIT 1
+    $user = pdo_get('users', array('username' =&gt; 'mizhou', 'status' =&gt; 1), array('username'));</span>
+</pre>
+</div>
+<div class="section" id="pdo-fetchall-fetchall-sql-params-array-keyfield">
+<h5>pdo_fetchall/fetchall($sql, $params = array(), $keyfield = '')</h5>
+<p>查询满足条件的多条记录。返回按列名为索引的关联数组。</p>
+<ul class="simple">
+<li>$sql ：带有命名参数的sql语句</li>
+<li>$params ：为SQL语句中的参数绑定传值，防止SQL注入。需要注意的是使用参数绑定时，SQL语中等号后不需要使用引号，传入的值必须与绑定的名称一致</li>
+<li>$keyfield ：索引字段</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">// 只返回满足条件的多条记录
+$pdo_demo-&gt;fetchall('select * from ims_demo where id &gt;=:id', [':id'=&gt;'1']);
+
+// 需要注意的是，返回的数组的键值为用户的uid
+    pdo_fetchall(&quot;SELECT username, uid FROM &quot;.tablename('users'), array(), 'uid');</span>
+</pre>
+</div>
+<div class="section" id="pdo-getall-getall-tablename-params-array-fields-array-keyfield-orderby-array-limit-array">
+<h5>pdo_getall/getall($tablename, $params = array(), $fields = array(), $keyfield = '', $orderby = array(), $limit = array())</h5>
+<p>查询满足条件的多条记录。返回按列名为索引的关联数组。该函数是对 <tt class="docutils literal">fetchall()</tt> 函数的封装。它会自动拼装 <tt class="docutils literal">sql</tt> 语句。</p>
+<ul class="simple">
+<li>$tablename ：表名称，不带前缀</li>
+<li>$params ：查询条件，只能是一维数组，字段的值可以是一维数组，条件是按照AND 连接，支持大于，小于等范围查询</li>
+<li>$fields ：选择的字段，可传入空数组选择所有字段，或者['username','nickname']或者单个字符串'username'</li>
+<li>$keyfield ：索引字段，可以为空，则使用默认索引</li>
+<li>$orderby ：排序字段，可传入字符串('id asc,username desc')或者数组(['id asc','username desc'])</li>
+<li>$limit ：限制记录，可以传入字符串(limit 1,5或者1,5)或者数组([10]表示前10行记录或者[,5]或者[1,5])，注意只有[1,5]表示第一页，每页5个记录。</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$pdo_demo-&gt;getall('demo',['id &gt;='=&gt;'1'], ['username','nickname'], 'username', 'id asc','limit 1,10'); //第二条记录开始的后10条记录
+$pdo_demo-&gt;getall('demo',['id &gt;='=&gt;'1'], ['username','nickname'], 'username', 'id asc','1,10'); // 同上
+$pdo_demo-&gt;getall('demo',['id &gt;='=&gt;'1'], ['username','nickname'], 'username', 'id asc',[10]); // 前10条记录
+$pdo_demo-&gt;getall('demo',['id &gt;='=&gt;'1'], ['username','nickname'], 'username', 'id asc',[,10]); // 同上
+$pdo_demo-&gt;getall('demo',['id &gt;='=&gt;'1'], ['username','nickname'], 'username', 'id asc',[1,10]); // 第一页的10条记录</span>
+</pre>
+</div>
+<div class="section" id="pdo-fetchcolumn-fetchcolumn-sql-params-array-column-0">
+<h5>pdo_fetchcolumn/fetchcolumn($sql, $params = array(), $column = 0)</h5>
+<p>查询满足条件的第一条记录第N列的值。</p>
+<ul class="simple">
+<li>$sql ：带有命名参数的sql语句</li>
+<li>$params ：为SQL语句中的参数绑定传值，防止SQL注入。需要注意的是使用参数绑定时，SQL语中等号后不需要使用引号，传入的值必须与绑定的名称一致</li>
+<li>$column ：列索引，默认第一列</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$pdo_demo-&gt;fetchcolumn('select * from ims_demo where id &gt;=:id', [':id'=&gt;'1'], 1);
+
+// 获取用户的总数，返回的值是一个数字
+$user_total = pdo_fetchcolumn(&quot;SELECT COUNT(*) FROM &quot;.tablename('users'));</span>
+</pre>
+</div>
+<div class="section" id="pdo-getcolumn-getcolumn-tablename-params-array-field">
+<h5>pdo_getcolumn/getcolumn($tablename, $params = array(), $field = '')</h5>
+<p>查询满足条件的第一条记录某列的值。</p>
+<ul class="simple">
+<li>$tablename ：表名称，不带前缀</li>
+<li>$params ：查询条件，只能是一维数组，字段的值可以是一维数组。条件是按照AND 连接，支持大于，小于等范围查询</li>
+<li>$field ：字段名称，单个字符串'username'</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$pdo_demo-&gt;getcolumn('demo', ['id &gt;='=&gt; '1'], 'username');
+
+//根据uid获取用户的用户名
+    //生成的SQL等同于：SELECT username FROM ims_users WHERE uid = '1'
+    $username = pdo_getcolumn('users', array('uid' =&gt; 1), 'username');</span>
+</pre>
+</div>
+<div class="section" id="pdo-getslice-getslice-tablename-params-array-limit-array-total-null-fields-array-keyfield-orderby-array">
+<h5>pdo_getslice/getslice($tablename, $params = array(), $limit = array(), &amp;$total = null, $fields = array(), $keyfield = '', $orderby = array())</h5>
+<p>查询满足条件的指定页记录并返回满足条件的总记录数。</p>
+<ul class="simple">
+<li>$tablename ：表名称，不带前缀</li>
+<li>$params ：查询条件，只能是一维数组，字段的值可以是一维数组。条件是按照AND 连接，支持大于，小于等范围查询</li>
+<li>$limit ：限制记录，可以传入字符串(limit 1,5或者1,5)或者数组([10]表示前10行记录或者[,5]或者[1,5])，注意只有[1,5]表示第一页，每页5个记录。</li>
+<li>$total ：满足条件的总记录数</li>
+<li>$fields ：选择的字段，可传入空数组选择所有字段，或者['username','nickname']或者单个字符串'username'</li>
+<li>$keyfield ：索引字段</li>
+<li>$orderby ：排序字段，可传入字符串('id asc,username desc')或者数组(['id asc','username desc'])</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$pdo_demo-&gt;getslice('demo', ['id &gt;='=&gt; '1'], [1,5], $total, ['username','nickname'],'id', 'id asc,username desc');</span>
+</pre>
+</div>
+<div class="section" id="pdo-insertid-insertid">
+<h5>pdo_insertid/insertid()</h5>
+<p>返回上一条插入语句的主键值。</p>
+</div>
+</div>
+<div class="section" id="id10">
+<h4><a class="toc-backref" href="#id22">删除操作</a></h4>
+<div class="section" id="pdo-delete-delete-table-params-array-glue-and">
+<h5>pdo_delete/delete($table, $params = array(), $glue = 'AND')</h5>
+<p>删除记录。</p>
+<ul class="simple">
+<li>$table ：表名称，不带前缀</li>
+<li>$params ：更新条件，只能是一维数组，字段的值可以是一维数组。条件按照AND 连接，支持大于，小于等范围查询</li>
+<li>$glue ：条件组合方式，如 <tt class="docutils literal">AND</tt> 或者 <tt class="docutils literal">OR</tt></li>
+</ul>
+<p>查询条件可以使用 <tt class="docutils literal">&gt;</tt> ,  <tt class="docutils literal">&lt;</tt> ,  <tt class="docutils literal">&lt;&gt;</tt> ,  <tt class="docutils literal">!=</tt> ,  <tt class="docutils literal">&gt;=</tt> ,  <tt class="docutils literal">&lt;=</tt> ,  <tt class="docutils literal">LIKE</tt> ,  <tt class="docutils literal">like</tt>  操作符，当不使用操作符时，默认为 <tt class="docutils literal">=</tt> 。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$pdo_demo-&gt;delete('demo', ['id &gt;' =&gt; '1']);
+
+    //删除用户名为mizhou2的记录
+    $result = pdo_delete('users', array('username' =&gt; 'mizhou2'));
+    if (!empty($result)) {
+            message('删除成功');
+    }</span>
+</pre>
+</div>
+</div>
+<div class="section" id="id11">
+<h4><a class="toc-backref" href="#id23">其它操作</a></h4>
+<div class="section" id="tablename-table">
+<h5>tablename($table)</h5>
+<p>返回完整数据表名(加前缀)(返回是主库的数据表前缀+表明)，一般 <tt class="docutils literal">getXX()</tt> 函数都内部调用该函数啦。</p>
+<ul class="simple">
+<li>$table ：没加前缀的表名称</li>
+</ul>
+</div>
+<div class="section" id="pdo-tableexists-tableexists-table">
+<h5>pdo_tableexists/tableexists($table)</h5>
+<p>判断某个数据表是否存在。</p>
+<ul class="simple">
+<li>$table ：没加前缀的表名称</li>
+</ul>
+</div>
+<div class="section" id="pdo-exists-exists-tablename-params-array">
+<h5>pdo_exists/exists($tablename, $params = array())</h5>
+<p>检查数据库中是否存在某个表。</p>
+<ul class="simple">
+<li>$tablename ：表名称</li>
+<li>$params ：查询条件，只能是一维数组，字段的值可以是一维数组</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">if (!pdo_tableexists('site_slide')) {
+    echo '表不存在';
+}</span>
+</pre>
+</div>
+<div class="section" id="pdo-fieldexists-fieldexists-tablename-fieldname">
+<h5>pdo_fieldexists/fieldexists($tablename, $fieldname)</h5>
+<p>查询字段是否存在。成功返回 <tt class="docutils literal">TRUE</tt> ，失败返回 <tt class="docutils literal">FALSE</tt> 。</p>
+<ul class="simple">
+<li>$tablename ：参数指定要检查的表名称</li>
+<li>$fieldname ：参数指定要检查是否存在的字段名</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">//如果shopping_goods表中不存在credit字段，则新增credit字段
+if(!pdo_fieldexists('shopping_goods', 'credit')) {
+        pdo_query(&quot;ALTER TABLE &quot;.tablename('shopping_goods').&quot; ADD `credit` int(11) NOT NULL DEFAULT '0';&quot;);
+}</span>
+</pre>
+</div>
+<div class="section" id="pdo-fieldmatch-fieldmatch-tablename-fieldname-datatype-length">
+<h5>pdo_fieldmatch/fieldmatch($tablename, $fieldname, $datatype = '', $length = '')</h5>
+<p>查询字段类型是否匹配。成功返回 <tt class="docutils literal">TRUE</tt> ，失败返回 <tt class="docutils literal">FALSE</tt> ，字段存在，但类型错误返回 <tt class="docutils literal"><span class="pre">-1</span></tt> 。</p>
+<ul class="simple">
+<li>$tablename ：表名称</li>
+<li>$fieldname ：字段名称</li>
+<li>$datatype ：字段数据类型</li>
+<li>$length ：字段数据长度</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">pdo_fieldmatch('users', 'id', 'varchar'); // 类型不符合，返回 false
+
+pdo_fieldmatch('users', 'id', 'int'); // 类型符合，返回 true
+
+pdo_fieldmatch('users', 'id', 'int', 5); // 长度不符合，返回 -1</span>
+</pre>
+</div>
+<div class="section" id="pdo-indexexists-indexexists-tablename-indexname">
+<h5>pdo_indexexists/indexexists($tablename, $indexname)</h5>
+<p>查询索引是否存在。成功返回 <tt class="docutils literal">TRUE</tt> ，失败返回 <tt class="docutils literal">FALSE</tt> 。</p>
+<ul class="simple">
+<li>$tablename ：表名称</li>
+<li>$indexname ：索引名称</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">//如果site_slide表中不存在multiid索引，则新增multiid索引
+if (!pdo_indexexists('site_slide', 'multiid')) {
+        pdo_query(&quot;ALTER TABLE &quot;.tablename('site_slide').&quot; ADD INDEX `multiid` (`multiid`);&quot;);
+}</span>
+</pre>
+</div>
+<div class="section" id="pdo-run-run-sql-stuff-ims">
+<h5>pdo_run/run($sql, $stuff = '<a href="#id45"><span class="problematic" id="id46">ims_</span></a>')</h5>
+<p>批量执行 <tt class="docutils literal">SQL</tt> 语句。与 <tt class="docutils literal">pdo_query</tt> 不同的是， <tt class="docutils literal">pdo_run</tt> 是可以一次执行多条 <tt class="docutils literal">SQL</tt> 语句，每条 <tt class="docutils literal">SQL</tt> 必须以 <tt class="docutils literal">;</tt> 分隔。</p>
+<ul class="simple">
+<li>$sql ：sql文件中的内容</li>
+<li>$stuff ：要被当前表前缀替换的sql文件中老的表前缀</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$sql = &lt;&lt;&lt;EOF
+CREATE TABLE IF NOT EXISTS `ims_multisearch` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_multisearch_fields` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `reid` int(10) unsigned NOT NULL,
+  `type` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `title` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_reid` (`reid`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+EOF;
+
+pdo_run($sql);</span>
+</pre>
+</div>
+<div class="section" id="pdo-debug-debug-output-true-append-array">
+<h5>pdo_debug/debug($output = true, $append = array())</h5>
+<p>记录数据库sql执行栈，如果 <tt class="docutils literal">$output</tt> 为 <tt class="docutils literal">false</tt> ，且加入的执行结果存在错误，则输出错误sql信息和调用栈。如果 <tt class="docutils literal">$output</tt> 为 <tt class="docutils literal">true</tt> 且不传入第二个参数，即直接调用 <tt class="docutils literal">pdo_debug()</tt> ，则立即打印到目前为止脚本执行的所有sql语句信息，按脚本数据库查询调用顺序输出。</p>
+<p>调试方法：直接在指定位置调用 <tt class="docutils literal"><span class="pre">die(pdo_debug())</span></tt> 即可。然后再到浏览器页面查看，最后一条sql记录是最近被执行的。</p>
+<pre class="codehilite" lang="shell">
+die<span class="o">(</span>pdo_debug<span class="o">())</span><span class="p">;</span>
+
+//调用该函数结果如下
+Array
+<span class="o">(</span>
+// 最先被执行的sql语句
+<span class="o">[</span>0<span class="o">]</span> <span class="o">=</span>&gt; Array
+        <span class="o">(</span>
+                <span class="o">[</span>sql<span class="o">]</span> <span class="o">=</span>&gt; SET NAMES <span class="s1">'utf8'</span><span class="p">;</span>
+                <span class="o">[</span>error<span class="o">]</span> <span class="o">=</span>&gt; Array
+                        <span class="o">(</span>
+                                <span class="o">[</span>0<span class="o">]</span> <span class="o">=</span>&gt; 00000
+                                <span class="o">[</span>1<span class="o">]</span> <span class="o">=</span>&gt;
+                                <span class="o">[</span>2<span class="o">]</span> <span class="o">=</span>&gt;
+                        <span class="o">)</span>
+        <span class="o">)</span>
+
+....
+
+// 最后一个被执行的sql语句
+<span class="o">[</span>10<span class="o">]</span> <span class="o">=</span>&gt; Array
+        <span class="o">(</span>
+                <span class="o">[</span>sql<span class="o">]</span> <span class="o">=</span>&gt; SELECT <span class="sb">`</span>value<span class="sb">`</span> FROM <span class="sb">`</span>ims_core_cache<span class="sb">`</span> WHERE <span class="sb">`</span>key<span class="sb">`</span><span class="o">=</span>:key
+                <span class="o">[</span>params<span class="o">]</span> <span class="o">=</span>&gt; Array
+                        <span class="o">(</span>
+                                <span class="o">[</span>:key<span class="o">]</span> <span class="o">=</span>&gt; setting
+                        <span class="o">)</span>
+                <span class="o">[</span>error<span class="o">]</span> <span class="o">=</span>&gt; Array
+                        <span class="o">(</span>
+                                <span class="o">[</span>0<span class="o">]</span> <span class="o">=</span>&gt; 00000
+                                <span class="o">[</span>1<span class="o">]</span> <span class="o">=</span>&gt;
+                                <span class="o">[</span>2<span class="o">]</span> <span class="o">=</span>&gt;
+                        <span class="o">)</span>
+        <span class="o">)</span>
+<span class="o">)</span>
+</pre>
+</div>
+</div>
+<div class="section" id="id12">
+<h4><a class="toc-backref" href="#id24">事物操作</a></h4>
+<div class="section" id="pdo-begin-begin">
+<h5>pdo_begin/begin()</h5>
+<p>启动一个事务，关闭自动提交。</p>
+</div>
+<div class="section" id="pdo-commit-commit">
+<h5>pdo_commit/commit()</h5>
+<p>提交一个事务，恢复自动提交。</p>
+</div>
+<div class="section" id="pdo-rollback-rollback">
+<h5>pdo_rollback/rollback()</h5>
+<p>回滚一个事务，恢复自动提交。</p>
+</div>
+<div class="section" id="pdo-fetchallfields">
+<h5>pdo_fetchallfields</h5>
+<p>获取指定表的所有字段。</p>
+</div>
+</div>
+</div>
+<div class="section" id="sql">
+<h3><a class="toc-backref" href="#id25">sql构建器操作方式</a></h3>
+<p>自微擎 v1.5.7 版本以后，增加链式查询类，提供面向对象方式查询数据，链式查询只支持一些常用简单的查询过于复杂的业务需求还是建议直接使用SQL语句。</p>
+<p>这种方式链式调用指定表的方法来自动拼装 <tt class="docutils literal">sql</tt> 语句。 它由 <tt class="docutils literal">query.class.php</tt> 文件的 <tt class="docutils literal">Query</tt> 类提供。</p>
+<p>查询用户表中的前十条男性的用户数据，代码如下：</p>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users')-&gt;where('sex', '1')-&gt;orderby('id', 'desc')-&gt;limit(10)-&gt;getall();</span>
+</pre>
+<p>上方代码中， <tt class="docutils literal">from</tt> ， <tt class="docutils literal">where</tt> ， <tt class="docutils literal">orderby</tt> ， <tt class="docutils literal">limit</tt> 就是被称之为链示调用，除了一开始必须要先指定 <tt class="docutils literal">from()</tt> 哪个表和最后需要获取数据时调用 <tt class="docutils literal">get()</tt> ， <tt class="docutils literal">getall()</tt> 时，其它函数书写并不区分先后顺序。</p>
+<p>但是这里并不推荐直接实例化 <tt class="docutils literal">Query</tt> 对象进行数据查询，对于程序员来说以下的代码和上面在“语义”上并没有什么太大的区别，链示查询只是简化和方便了 SQL 语句的书写。上面代码等价于如下语句：</p>
+<p>所以我们推荐将 <tt class="docutils literal">Query</tt> 类结合 <tt class="docutils literal">Table</tt> 类来一起使用，比如以上的查询可以改造为。</p>
+<pre class="codehilite" lang="php">
+<span class="x">class UsersTable extends We7Table {
+    public function searchNewUserList() {
+        return $this-&gt;query-&gt;from('users')-&gt;getall();
+    }
+    public function searchWithSexIsBoy() {
+        $this-&gt;where('sex', '1');
+        return $this;
+    }
+    public function searchCount($limit) {
+        $this-&gt;limit($limit);
+        return $this;
+    }
+}
+$usertable = new UsersTable();
+$usertable-&gt;searchWithSexIsBoy();
+$usertable-&gt;searchCount(10);
+$list = $usertable-&gt;searchNewUserlist();</span>
+</pre>
+<p>以上的代码，很明显的能明白查询者的意图，而且很灵活的进行修改，比如业务改变了要查询最新的 20 名同学，只需要</p>
+<pre class="codehilite" lang="php">
+<span class="x">$usertable-&gt;searchCount(20);</span>
+</pre>
+<p>即可。</p>
+<p>在微擎中，所有的 <tt class="docutils literal">Query</tt> 对象皆是以 <tt class="docutils literal">Table</tt> 对象的属性形式存在，而 <tt class="docutils literal">Table</tt> 对象存放于 <tt class="docutils literal">Framework/table</tt> 目录中，通过以下方式调用：</p>
+<pre class="codehilite" lang="php">
+<span class="x">$users_table = table('users');
+$users_table-&gt;searchWithFounder(ACCOUNT_MANAGE_GROUP_VICE_FOUNDER);
+$users_table-&gt;searchWithPage($pindex, $psize);
+$users = $users_table-&gt;searchUsersList();</span>
+</pre>
+<div class="section" id="query-from-tablename-alias">
+<h4><a class="toc-backref" href="#id26">Query from($tablename, $alias = '')</a></h4>
+<p>指定要查询的表名。</p>
+<ul class="simple">
+<li>$tablename ：参数指定要查询的数据表名，此处传入的表名不要使用 <tt class="docutils literal">tablename()</tt> 函数</li>
+<li>$alias ：表别名，方便以构造条件语句和关联时使用</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">//如果指定别名，后续可以通过 别名.字段名 的形式来使用
+$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;select('u.username')-&gt;get();</span>
+</pre>
+</div>
+<div class="section" id="query-select-field1-field2">
+<h4><a class="toc-backref" href="#id27">Query select($field1, $field2, ...)</a></h4>
+<p>指定要查询的字段列表，相当于 <tt class="docutils literal">SELECT *</tt> , <tt class="docutils literal">SELECT name, username</tt> 。</p>
+<ul class="simple">
+<li>$field ：指定要查询的字段名，可以是多个参数也可以是一个数组</li>
+</ul>
+<p>如果不调用本函数或者调用时不传入参数，则表示选择所有字段，相等于 <tt class="docutils literal">SELECT *</tt> 。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;select('uid', 'username')-&gt;get();
+
+//也可以传入数组
+$row = $query-&gt;from('users', 'u')-&gt;select(array('uid', 'username'))-&gt;get();</span>
+</pre>
+</div>
+<div class="section" id="query-where-array-string-condition-parameters-array">
+<h4><a class="toc-backref" href="#id28">Query where(array | string $condition, $parameters = array())</a></h4>
+<p>指定查询条件，如果有多个条件可以连接多个 <tt class="docutils literal">where</tt> 函数或是指定 <tt class="docutils literal">$condition</tt> 为一个数组， 所有的查询条件将以 <tt class="docutils literal">AND</tt> 连接。</p>
+<ul class="simple">
+<li>$condition ：指定要查询的条件字段，也支持 范围条件操作， <tt class="docutils literal">&gt;</tt> ， <tt class="docutils literal">&lt;</tt> ， <tt class="docutils literal">&lt;&gt;</tt> ， <tt class="docutils literal">!=</tt> ， <tt class="docutils literal">&gt;=</tt> ， <tt class="docutils literal">&lt;=</tt> ， <tt class="docutils literal">LIKE</tt> ， <tt class="docutils literal">like</tt></li>
+<li>$parameters ：指定查询条件的值</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">//users表指定了别名，后续的字段如果需要可以写上别名前缀
+$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;where('u.sex', '1')-&gt;where('uid &gt;=', '2')-&gt;get();
+
+//也可将条件写到一起
+$row = $query-&gt;from('users', 'u')-&gt;where(array('u.sex' =&gt; 1, 'uid &gt;=' =&gt; 2))-&gt;get();</span>
+</pre>
+</div>
+<div class="section" id="query-whereor-string-array-condition-parameters-array">
+<h4><a class="toc-backref" href="#id29">Query whereor(string | array $condition, $parameters = array())</a></h4>
+<p>与 <tt class="docutils literal">where</tt> 一样使用，不同的是本函数是以 <tt class="docutils literal">OR</tt> 来连接。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;where('sex', '1')-&gt;whereor('uid', 2)-&gt;get();
+
+//生成SQL如下
+SELECT * FROM users AS U WHERE sex = '1' OR uid = '2' LIMIT 1</span>
+</pre>
+</div>
+<div class="section" id="query-having-string-array-condition-parameters-array">
+<h4><a class="toc-backref" href="#id30">Query having(string | array $condition, $parameters = array())</a></h4>
+<p>指定要查询的条件，与 <tt class="docutils literal">where</tt> 参数及使用方法一样，不同的 <tt class="docutils literal">having</tt> 在聚合函数之后执行，一般要与 <tt class="docutils literal">groupby</tt> 一起使用。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;having('count(*) &gt;', 2)-&gt;groupby('age')-&gt;getall();</span>
+</pre>
+</div>
+<div class="section" id="query-groupby-field">
+<h4><a class="toc-backref" href="#id31">Query groupby($field)</a></h4>
+<p>指定要分组的字段。</p>
+<ul class="simple">
+<li>$field ：要分组查询的字段名</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;groupby('u.sex')-&gt;get();</span>
+</pre>
+</div>
+<div class="section" id="query-orderby-field-direction-asc">
+<h4><a class="toc-backref" href="#id32">Query orderby($field, $direction = 'ASC')</a></h4>
+<p>指定查询结果排序字段和方式。</p>
+<ul class="simple">
+<li>$field ：要排序的字段名</li>
+<li>$direction ：排序方式，可以为 ASC 或是 DESC</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;orderby('u.uid', 'DESC')-&gt;get();</span>
+</pre>
+</div>
+<div class="section" id="query-leftjoin-tablename-alias">
+<h4><a class="toc-backref" href="#id33">Query leftjoin($tablename, $alias = '')</a></h4>
+<p>指定要左关联的表，当需要 <tt class="docutils literal">rightjoin</tt> 时，请调换一下顺序书写即可。</p>
+<ul class="simple">
+<li>$tablename ：参数指定要查询的数据表名，此处传入的表名不要使用 <tt class="docutils literal">tablename()</tt> 函数</li>
+<li>$alias ：表别名，方便以构造条件语句和关联时使用</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;leftjoin('users_profile', 'b')-&gt;on('u.id', 'b.uid')-&gt;where('u.id', '525')-&gt;get();
+
+//如果关联条件有多个时，请使用数组形式
+on(array('u.id' =&gt; 'b.uid', 'u.username' =&gt; 'b.username'))</span>
+</pre>
+</div>
+<div class="section" id="query-innerjoin-tablename-alias">
+<h4><a class="toc-backref" href="#id34">Query innerjoin($tablename, $alias = '')</a></h4>
+<p>内连接， <tt class="docutils literal">select * from TableA JOIN TableB on TableA.id=TableB.id</tt> 等价于 <tt class="docutils literal">select * from TableA,TableB where TableA.id=TableB.id</tt> 。</p>
+<p>使用方法和上面的 <tt class="docutils literal">leftjoin</tt> 方法一样。</p>
+</div>
+<div class="section" id="query-on-condition-parameters-array">
+<h4><a class="toc-backref" href="#id35">Query on($condition, $parameters = array())</a></h4>
+<p>指定关联查询中的关联条件。</p>
+<p>参数与 <tt class="docutils literal">where</tt> 函数一样，多个关联条件可以使用数组形式，一个关联查询只可出现一个 <tt class="docutils literal">on</tt> 语句。</p>
+</div>
+<div class="section" id="query-limit-start-size">
+<h4><a class="toc-backref" href="#id36">Query limit(start, size)</a></h4>
+<p>指定要查询从第几行起的多少行，与 <tt class="docutils literal">SQL</tt> 语句中的 <tt class="docutils literal">Limit</tt> 意思一样。</p>
+<ul class="simple">
+<li>$start ：查询从第几行起</li>
+<li>$size ：查询多少行</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;limit(1, 10)-&gt;getall();</span>
+</pre>
+</div>
+<div class="section" id="query-page-pageindex-pagesize">
+<h4><a class="toc-backref" href="#id37">Query page(pageindex, pagesize)</a></h4>
+<p>根据分页获取数据，转换成 <tt class="docutils literal">limit</tt> 语句为 <tt class="docutils literal">LIMIT (pageindex - 1) * pagesize, pagesize</tt> 。</p>
+<ul class="simple">
+<li>$pageindex ：当前页码</li>
+<li>$pagesize ：一页多少条数据</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;page(1, 10)-&gt;getall();</span>
+</pre>
+</div>
+<div class="section" id="array-get">
+<h4><a class="toc-backref" href="#id38">array get()</a></h4>
+<p>获取满足条件的一条记录。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;get();</span>
+</pre>
+</div>
+<div class="section" id="array-getall-keyfield">
+<h4><a class="toc-backref" href="#id39">array getall($keyfield = '')</a></h4>
+<p>获取满足条件的所有记录。</p>
+<ul class="simple">
+<li>$keyfield ：获取记录集数组指定为键值的字段，默认是自然排序</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;limit(1, 10)-&gt;getall('uid');</span>
+</pre>
+</div>
+<div class="section" id="mixed-getcolumn-field">
+<h4><a class="toc-backref" href="#id40">Mixed getcolumn($field = '')</a></h4>
+<p>获取一条记录中指定字段的值。</p>
+<ul class="simple">
+<li>$field ：具体获取哪个字段的值</li>
+</ul>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;getcolumn('username');</span>
+</pre>
+</div>
+<div class="section" id="int-count">
+<h4><a class="toc-backref" href="#id41">int count()</a></h4>
+<p>只获取结果集的数量有多少。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;count();</span>
+</pre>
+</div>
+<div class="section" id="boolean-exists">
+<h4><a class="toc-backref" href="#id42">boolean exists()</a></h4>
+<p>获取满足某个条件的数据是否存在。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$is_found = $query-&gt;from('users', 'u')-&gt;where('uid', 10)-&gt;exists();</span>
+</pre>
+</div>
+<div class="section" id="int-getlastquerytotal">
+<h4><a class="toc-backref" href="#id43">int getLastQueryTotal()</a></h4>
+<p>当查询中使用了 <tt class="docutils literal">limit</tt> 限制语句时，可以在完成查询后，调用此函数来获取整个表的数据量，一般用于分页使用。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$pindex = max(1, intval($_GPC['page']));
+$psize = 20;
+$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;page($pindex, $psize)-&gt;getall();
+$total = $query-&gt;getLastQueryTotal();
+$pager = pagination($total, $pindex, $psize); //页码HTML</span>
+</pre>
+</div>
+<div class="section" id="array-getlastquery">
+<h4><a class="toc-backref" href="#id44">array getLastQuery()</a></h4>
+<p>获取最后执行的 <tt class="docutils literal">SQL</tt> 语句及参数，主要用于调试代码。</p>
+<pre class="codehilite" lang="php">
+<span class="x">$query = load()-&gt;object('query');
+$row = $query-&gt;from('users', 'u')-&gt;get();
+
+print_r($query-&gt;getLastQuery());</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+    </div>
+  </body>
+</html>

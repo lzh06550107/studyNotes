@@ -1,0 +1,47 @@
+****
+重定向流
+****
+
+从版本 1.1.1 开始，增加了重定向流功能。现在，你可以通过控制请求来实时改变当前播放或者发布流。下面的调用改变订阅者流的名称为 ``newname`` 。订阅者的位于 ``ip`` 为 ``127.0.0.1`` 的 ``myapp`` 应用下。用户真实的 ``ip`` 地址可以通过 ``stat`` 请求来获取。
+
+.. code-block:: shell
+
+    http://server.com/control/redirect/subscriber?app=myapp&addr=127.0.0.1&newname=newname
+
+上面的示例更改了单个客户端的流。要更改所有客户端的流，请使用 pull 并通过更改其源端来实现。您也可以从 VOD 应用程序中提取某些流。
+
+.. code-block:: shell
+
+	application myapp {
+	  live on;
+	  hls on;
+	  hls_path /var/hls;
+	  pull rtmp://localhost/src/default name=myapp static;
+	}
+
+	application src { # 中间流，通过请求命令更改中间流来改变所有请求myapp的流
+	  live on;
+	  pull rtmp://localhost/vod/title.mp4 name=default;
+	  pull rtmp://localhost/vod/ad.mp4 name=ad;
+	}
+
+	application vod {
+	  play /var/videos;
+	}
+
+如果要播放 ad.mp4 ，需要执行如下请求命令：
+
+.. code-block:: shell
+
+    http://server.com/control/redirect/subscriber?app=src&addr=127.0.0.1&newname=ad
+
+新流在 ``RTMP`` 中立即启动。在 ``HLS`` 中，由于 ``HLS`` 的性质，流通常会稍微延迟。
+
+限制：
+
+- 该功能仅适用于单工作模式。您可以轻松地创建一个流式后端，只需一名工作人员即可完成。
+- ``MPEG-DASH`` 引擎无法处理流不连续性，因此该功能无法与 ``DASH`` 一起正常工作
+
+
+
+

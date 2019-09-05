@@ -1,0 +1,34 @@
+****
+计划任务
+****
+
+``corn.php`` 文件中可以定义模块的计划任务。
+
+规范及约定
+=========
+
+- ``Rcdonkey_signup`` 为模块标识，类名的定义遵循 ``模块标识+ModuleCron`` 规则；
+- 此类必须继承 ``WeModuleCron`` 类；
+- 所有对外公布的接口函数，必须是以 ``doCron`` 开头；
+
+其结构大概如下：
+
+
+在模块根目录创建 ``corn.php`` 文件。然后在文件内部定义如下内容：
+
+.. code-block:: php
+
+	defined('IN_IA') or exit('Access Denied');
+	class Rcdonkey_signupModuleCron extends \WeModuleCron {
+
+		doCronXXX() {
+
+		}
+	}
+
+
+计划任务执行
+===========
+模块的计划任务和系统后台任务有点区别。模块计划任务通过 ``c=corn&a=entry&id=1`` 路径来调用。
+
+

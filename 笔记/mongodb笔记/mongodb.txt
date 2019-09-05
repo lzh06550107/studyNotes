@@ -1,0 +1,140 @@
+use test;
+
+db.news.insert({today:'sunshine'});
+
+db.cnt.insert({_id:1,sn:0});
+
+db.cnt.findAndModify({query:{_id:1},update:{$inc:{sn:1}}});
+
+
+
+
+db.goods.group({
+	key:{cat_id:1},
+	cond:{ },
+	reduce:function(curr,result){
+		result.num+=curr.goods_number;
+	},
+	initial:{cnt:0}
+});
+
+db.goods.group({
+	key:{cat_id:1},
+	cond:{},
+	reduce:function(curr,result){
+		if(curr.shop_price>result.max){  //如果当前商品的价格大于本组的商品价格的最大值时
+			result.max = curr.shop_price; //当前商品的价格值赋给本组商品价格最大值
+		}
+	}
+	initial:{max:0}  //商品价格最大值的初始值设为0
+});
+
+db.goods.group({
+	key:{cat_id:1},
+	cond:{},
+	reduce:function(curr,result){
+		if(curr.shop_price>result.max){  
+			result.max = curr.shop_price; 
+		}
+	},
+	initial:{max:0} 
+});
+
+db.goods.group({
+	key:{cat_id:1},
+	cond:{},
+	reduce:function(curr,result){
+		result.cnt +=1;      			//累加每个类的商品总数
+		result.sum +=curr.shop_price;   //累加每个类的每个商品价格之和
+	},
+	initial:{sum:0,cnt:0},  //初始化商品类的价格总数和商品类的数量
+	finalize:function(result){
+		result.avg = result.sum/result.cnt;  //每组商品价格之和除以每组商品的总数
+	}
+});
+
+
+
+db.goods.group([{
+	key:{cat_id:1},
+	cond:{},
+	reduce:function(curr,result){
+		result.cnt +=1;					//累加每个类的商品总数
+		result.sum +=curr.shop_price;   //累加每个类的每个商品价格之和
+	},
+	initial:{sum:0,cnt:0},  //初始化商品类的价格总数和商品类的数量
+	finalize:function(result){
+		result.avg=result.sum/result.cnt;  //每组商品价格之和除以每组商品的总数
+	}
+}]);
+
+db.collection.aggregate([
+{$group:{_id:cat_id}},   //根据cat_id分组
+{total:{$sum:1}}         //计算每组的数据之和 (相当于mysql的count)
+]);
+
+
+db.goods.aggregate([{$group:{_id:null,total:{$sum:1}}}]);
+
+db.goods.aggregate([
+{$match:{shop_price:{$gt:50}}},     		//价格大于50的商品
+{$group:{_id:"$cat_id",total:{$sum:1}}}     //根据cat_id分组
+])   
+
+
+db.goods.aggregate([
+{$match:{shop_price:{$gt:50}}},    //价格大于50的商品
+{$group:{_id:"$cat_id",total:{$sum:1}}}, // 根据cat_id分组
+{$match:{total:{$gte:3}}}  				 //cat_id大于3的所有商品
+]);
+
+db.goods.aggregate([
+{$group:{_id:"$cat_id",			 	  //根据cat_id分组
+
+total:{$sum:"$goods_number"}}   	 //每个分组下的库存量 {goods_number 每个商品的库存量}
+}]);
+
+
+
+db.goods.aggregate([
+{$group:{_id:"$cat_id",total:{$sum:"$goods_number"}}}, //根据cat_id分组;  每个分组下的库存量 {goods_number 每个商品的库存量}
+{$sort:{total:1}}                                   //按total字段来做升序排列
+]);
+
+
+
+
+db.goods.aggregate([
+{$group:{_id:"$cat_id",avg:{$avg:"$goods_number"}}}, //根据cat_id分组;  根据goods_number来计算
+{$sort:{avg:-1}}                                   //按avg来做降序排列
+]);
+
+db.goods.aggregate([
+{$group:{_id:"$cat_id",avg:{$avg:"$goods_number"}}},
+{$sort:{avg:-1}} 
+]);
+
+
+用mapReduce计算每个类别下的库存总量
+var map=function(){
+	emit(this.cat_id,this.goods_number);  //需要映射的字段
+}
+
+var reduce=function(cat_id,numbers){  //循环数组this.cat_id 与goods_number
+	return Array.sum(numbers);        //返回每组商品库存数组
+}
+
+db.goods.mapReduce(map,reduce,{out:'res'});  //res 计算出来的结果要保存到"res" collection里
+
+
+
+
+var map=function(){
+	emit(this.cat_id,this.shop_price);   //需要映射的字段
+}
+
+var reduce =function(cat_id,values){	//循环数组this.cat_id与this.shop_price
+	return Array.avg(numbers);			//返回每组商品的平均数
+}
+
+db.goods.mapReduce(map,reduce,{out:'res'});  //res 计算出来的结果要保存到"res" collection里

@@ -1,0 +1,900 @@
+■ 8.1MySQL 多实例：
+
+
+▣ 8.1.1 什么是多实例
+		简单的说，就是在一台机器上开启多给不同的服务端口（如：3306，3307），运行多个MySQL服务进程
+	，这些服务进程通过不同的socket监听不同的服务端口来提供各自的服务。
+	这些MySQL多实例公用一套MySQL安装程序，使用不同（也可以相同）的my.cnf配置文件、启动程序，数据文件。
+		在提供服务时，多实例MySQL 在逻辑上看来时各自独立的，多个实例的自身是根据配置文件对应的设定值，来取得
+	服务器的相关硬件资源多少。
+		作个比喻，MySQL多实例相当于房子的多个卧室一样，每个实例可以看作一个卧室，整个服务器就是一套房子，服务器的硬件
+	资源(cpu,mem,disk)可以看作房子的卫生间、厨房、厅一样，是房子的公用资源，北漂蜗居在一起，肯定要共用上述资源。这样
+	想我们就应该明白了。
+		多实例补充：其实很多服务都可以有多实例，甚至在门户网站用的很广泛，例如nginx就可以多实例，apache,
+	haproxy,redis,memcahce都可以多实例。 http://edu.51cto.com/course/course_id-395.html
+
+▣ 8.1.2 MySQL 多实例的作用与问题
+
+◾ 8.1.2.1 有效利用服务器资源
+		当单个服务器资源有剩余时，可以充分利用剩余的资源提供更多的服务。
+◾ 8.1.2.2 节约服务器资源
+		当公司资金紧张，但是数据库又需要各自尽量独立提供服务，而且，需要主从同步等技术时，多实例就再好不过。 
+◾ 8.1.2.3 资源互相抢占问题
+		当某个服务实例并发很高或者有慢查询时，整个实例会消耗更多的内存、CPU、磁盘IO 资源，导致服务器上的其它
+	的实例提供服务的质量下降。这就相当于大家住在一个房子的不同卧室一样，早晨起来上班，都要刷牙、洗脸等，这样
+	卫生间就会长期占用，其他人就要等待一样的道理。
+
+■ 8.2 MySQL 多实例产生应用场景
+
+▣ 8.2.1 MySQL 资金紧张型公司的选择
+		当公司业务访问量不太大，又舍不得花钱，但是希望不同业务的数据库服务各自尽量独立的提供服务互相不受影响，
+	而且，需要主从同步进行等技术提供备份或读写分离服务时，多实例就再好不过了。如，可以通过3台服务器都部署6-9
+	个实例，交叉做主从同步备份及读写分离，实现6-9台服务器才有的效果。这里要强调的是，所谓的尽量独立是相对的。
+
+▣ 8.2.2 并发访问不是特别大的业务
+		当公司业务访问量不太大的时候，服务器的资源级别都是浪费的，这时就很适合多实例的应用，如果对 SQL 语句优化做
+	的比较好，MySQL多实例一个很值得使用的技术，即使并发很大合理分配好系统资源，也不会有太大问题。
+
+▣ 8.2.3 门户网站应用 MySQL 多实例场景
+		百度搜索引擎的数据库就是多实例，一般是从库，4-8核，内存存96G，跑3-4个实例，sina网也是用多实例，内存48G 左右。门户网
+	站使用多实例的目的是配硬件好的服务器，节省IDC机柜空间，同时，跑多实例让硬件资源不浪费。
+
+■ 8.3 MySQL 多实例常见配置方案
+
+▣ 8.3.1 多配置文件部署方案
+		即本文主要讲解的方案，通过配置多个配置文件及多个启动程序来实现多实例的方案，这是老男孩推荐的方法。
+		
+		
+		本文的配置：
+		
+		[root@c58 /]# tree /data
+		/data
+		|-- 3306
+		|	|--data   ◀━━3306 实例的数据文件
+		|	|--my.cnf ◀━━3306 实例的配置文件
+		|	`--mysql  ◀━━3306 8.1MySQL 多实例：
+
+
+▣ 8.1.1 什么是多实例
+		简单的说，就是在一台机器上开启多给不同的服务端口（如：3306，3307），运行多个MySQL服务进程
+	，这些服务进程通过不同的socket监听不同的服务端口来提供各自的服务。
+	这些MySQL多实例公用一套MySQL安装程序，使用不同（也可以相同）的my.cnf配置文件、启动程序，数据文件。
+		在提供服务时，多实例MySQL 在逻辑上看来时各自独立的，多个实例的自身是根据配置文件对应的设定值，来取得
+	服务器的相关硬件资源多少。
+		作个比喻，MySQL多实例相当于房子的多个卧室一样，每个实例可以看作一个卧室，整个服务器就是一套房子，服务器的硬件
+	资源(cpu,mem,disk)可以看作房子的卫生间、厨房、厅一样，是房子的公用资源，北漂蜗居在一起，肯定要共用上述资源。这样
+	想我们就应该明白了。
+		多实例补充：其实很多服务都可以有多实例，甚至在门户网站用的很广泛，例如nginx就可以多实例，apache,
+	haproxy,redis,memcahce都可以多实例。 http://edu.51cto.com/course/course_id-395.html
+
+▣ 8.1.2 MySQL 多实例的作用与问题
+
+◾ 8.1.2.1 有效利用服务器资源
+		当单个服务器资源有剩余时，可以充分利用剩余的资源提供更多的服务。
+◾ 8.1.2.2 节约服务器资源
+		当公司资金紧张，但是数据库又需要各自尽量独立提供服务，而且，需要主从同步等技术时，多实例就再好不过。 
+◾ 8.1.2.3 资源互相抢占问题
+		当某个服务实例并发很高或者有慢查询时，整个实例会消耗更多的内存、CPU、磁盘IO 资源，导致服务器上的其它
+	的实例提供服务的质量下降。这就相当于大家住在一个房子的不同卧室一样，早晨起来上班，都要刷牙、洗脸等，这样
+	卫生间就会长期占用，其他人就要等待一样的道理。
+
+■ 8.2 MySQL 多实例产生应用场景
+
+▣ 8.2.1 MySQL 资金紧张型公司的选择
+		当公司业务访问量不太大，又舍不得花钱，但是希望不同业务的数据库服务各自尽量独立的提供服务互相不受影响，
+	而且，需要主从同步进行等技术提供备份或读写分离服务时，多实例就再好不过了。如，可以通过3台服务器都部署6-9
+	个实例，交叉做主从同步备份及读写分离，实现6-9台服务器才有的效果。这里要强调的是，所谓的尽量独立是相对的。
+
+▣ 8.2.2 并发访问不是特别大的业务
+		当公司业务访问量不太大的时候，服务器的资源级别都是浪费的，这时就很适合多实例的应用，如果对 SQL 语句优化做
+	的比较好，MySQL多实例一个很值得使用的技术，即使并发很大合理分配好系统资源，也不会有太大问题。
+
+▣ 8.2.3 门户网站应用 MySQL 多实例场景
+		百度搜索引擎的数据库就是多实例，一般是从库，48核，存96G，跑3-4个实例，sina网也是用多实例，内存48G 左右。门户网
+	站使用多实例的目的是配硬件好的服务器，节省IDC机柜空间，同时，跑多实例让硬件资源不浪费。
+
+■ 8.3 MySQL 多实例常见配置方案
+
+▣ 8.3.1 多配置文件部署方案
+		即本文主要讲解的方案，通过配置多个配置文件及多个启动程序来实现多实例的方案，这是老男孩推荐的方法。
+		
+		
+		本文的配置：
+		
+		[root@c58 /]# tree /data
+		/data
+		|-- 3306
+		|	|--data   ◀━━3306 实例的数据文件
+		|	|--my.cnf ◀━━3306 实例的配置文件
+		|	`--mysql  ◀━━3306 实例的启动文件
+		`-- 3307
+			|--data   
+			|--my.cnf 
+			`--mysql 
+
+		4 directories，4 files
+		提示:配置文件，启动程序，数据文件分别是独立的。
+		提示：mysql 及 my.cnf 文件请见相关目录mysql_config_test.tar.gz文件或结尾附录
+
+▣ 8.3.2 单一配置文件部署方案
+	1、my.cnf 配置文件样例（mysql手册里提到的方法）
+	[mysqld_multi]实例的启动文件
+		`-- 3307
+			|--data   
+			|--my.cnf 
+			`--mysql 
+
+		4 directories，4 files
+		提示:配置文件，启动程序，数据文件分别是独立的。
+		提示：mysql 及 my.cnf 文件请见相关目录mysql_config_test.tar.gz文件或结尾附录
+
+
+▣ 8.3.2 单一配置文件部署方案
+	1、my.cnf 配置文件样例（mysql手册里提到的方法）
+	
+	[mysqld_multi]
+	mysqld =/usr/bin/mysqld_safe
+	
+	mysqladmin=/usr/bin/mysqladmin
+	user = mysql
+	
+	[mysqld1]
+	docket = /var/lib/mysql/mysql.sock
+	port =3306
+	pid-file =/var/lib/mysql/mysql.pid
+	datadir  =/var/lib/mysql/
+	user =mysql
+	
+	[mysql2]
+	socket  =/mnt/data/db1/mysql.sock
+	port 	=3302
+	pid-file=/mnt/data/db1/mysql.pid
+	datadir = /mnt/data/db1/
+	user =mysql
+	skip-name-resolve
+	server-id=10
+	default-storage-engine=innodb
+	innodb_buffer_pool_size=512M
+	innodb_addi tional_mem_pool=10M
+	default_character_set=utf8
+	character_set_server=utf8
+	#read-only
+	relay-log-space-limit=3G
+	expire_logs_day=20
+	
+	[mysqld3]
+	socket = /mnt/data/db2/mysql.sock
+	port =3303
+	pid-file = /mnt/data/db2/mysql.sock
+	datadir=/mnt/data/db2/
+	user = mysql
+	skip-name-resolve
+	server-id=11
+	master-connect-retry=60
+	default-storage-engine=innodb
+	innodb_buffer_pool_size=1G
+	innodb_additional_mem_pool=10M
+	default_character_set=utf8
+	character_set_server=utf8
+	read-only
+	relay-log-space-limit=3G
+	expire_logs_day=20
+	
+	[mysqld4]
+	
+	socket  =/mnt/data/db3/mysql.sock
+	port    =3304
+	pid-file=/mnt/data/db3/mysql.pid
+	datadir =/mnt/data/db3/
+	user 	=mysql
+	skip-name-resolve 
+	server-id=12
+	master-connect-retry=60
+	dafault-storage-engine=innodb
+	innodb_buffer_pool_size=1G
+	innodb_additional_mem_pool=10M
+	default_character_set=utf8
+	character_set_server=utf8
+	read-only
+	relay-log-space-imit=3G
+	expire_logs_day=20
+	
+	[mysqld5]
+	soket =/mnt/data/db4/mysql.sock
+	port =3305
+	pid-file=/mnt/data/db4/mysql.pid
+	datadir =/mnt/data/db4/
+	user 	=mysql
+	skip-name-resolve
+	server-id=13
+	default-storage-engine=innodb
+	innodb_buffer_pool_size=1G
+	innodb_additional_mem_pool=10M
+	default_character_set=utf8
+	character_set_server=utf8
+	read-only
+	relay-log-space-limit=3G
+	expire_logs_day=20
+	
+	[mysqld6]
+	
+	socket = /mnt/data/db5/mysql.sock
+	port =3307
+	pid-file =/mnt/data/db5/mysql.pid
+	datadir  =/mnt/data/db5/
+	user 	 =mysql
+	skip-name-resolve
+	server-id=14
+	master-connect-retry=60
+	replicate-do-db=heiz
+	default-storage-engine=innodb
+	innodb_buffer_pool_size=1G
+	innodb_additional_mem_pool=10M
+	default_character_set=utf8
+	character_set_server=utf8
+	read-only 
+	relay-log-space-limit=3G
+	expire_logs_day=20
+	
+	[mysqld7]
+	
+	socket	=/mnt/database/mysql.sock
+	port   	3308
+	pid-file=/mnt/database/mysql.pid
+	datadir	=/mnt/database/mysql
+	user 	=mysql
+	skip-name-resolve
+	default-storage-engine =innodb
+	innodb_buffer_pool_size	  =500M
+	innodb_additional_mem_pool=10M
+	default_character_set 	=utf8
+	character_set_server	=utf8
+	
+	2、启动方法
+		mysqld_multi --config-file=/data/mysql/my_multi.cnf start 1,2,3,4,5,6,7
+	
+	3、缺点耦合性太高
+		下面我们来讲解老男孩老师在生产环境中常用的多配置文件的部署方案。
+	多实例 MySQL 数据库的安装和前文讲解的单实例的安装过程没有任何区别，因此，读者如果有前文单实例的安装环境，那么可
+	以直接略过8.1.5.3 节以前的安装过程。
+		原则：降低耦合度。
+		
+■ 8.4 安装多实例 MySQL 数据库
+
+▣ 8.4.1 建立 MySQL 多实例的条件
+
+	1、安装好 MySQL 安装依赖的包
+	yum install ncurses-devel -y 
+	yum install libaio-devel -y
+
+	2、选择二进制安装方式为例
+	首先安装我们权码讲过的四种MySQL的安装方法之一安装好数据库，如果是编译安装，则到 make install 之后截止，本
+	文感觉kiss 原则，选择最简单的二进制软件为例进行讲解 MySQL 多实例的安装。
+	
+	cmake 5.5 为例讲解多实例。
+	
+▣ 8.4.2 建立 MySQL 账号
+	首先以root身份登陆到 linux 系统中，然后执行如下命令创建mysql组及用户；
+	[root@localhost ~]# groupadd mysql
+	[root@localhost ~]# useradd -s /sbin/nologin -g mysql -M mysql
+	
+	#useradd 命令参数简要说明
+	
+	#1. -s /sbin/nologin 表示禁止该用户登陆，加强安全。
+	#2. -g mysql 指定属于 mysql 组。
+	#3. -M 表示不创建用户家目录
+	检查创建的用用户
+	
+	
+	[root@localhost ~]# tail -l /etc/password
+	
+	mysql:x:1001:1001::/home/mysql:/sbin/nologin
+	
+▣ 8.4.3 获得 MySQL 软件
+	通过rz 或sftp 等命令从本地上传mysql 软件包到linux 服务器，名称如：
+  mysql-5.5.32-linux2.6-x86_64.tar.gz ,当然你也可以到网上找到地址，然后到linux系统同通过 wget 等方式下载。
+	整个上传软件执行通过程如下：
+	1、建立存放mysql软件包的目录
+	
+	[root@localhost ~]# mkdir -p /home/oldboy/tools
+	[root@localhost ~]# cd /home/odboy/tools/
+	
+	2、查看上传后的mysql二进制软件包
+	[root@localhost ~]# ls mysql-5.5.32-linux2.6-x86_64.tar.gz 
+	mysql-5.5.32-linux2.6-x86_64.tar.gz 
+	
+▣ 8.4.4 获得 MySQL 软件	
+	
+	1、解压软件包，移动到规范的软件安装目录下
+	[root@localhost ~]# tar xf mysql-5.5.32-linux2.6-x86_64.tar.gz  #◀━━解压 mysql 软件包
+	[root@localhost ~]# mkdir -p /application/
+	[root@localhost ~]# mv mysql-5.5.32-linux2.6-x86_64 /application/mysql-5.5.32
+	
+	2、生成不带版本号的软连接 /application/mysql,即mysql安装路径。
+	[root@localhost ~]# ln -s /application/mysql-5.5.32 /application/mysql
+	补充：如果系统里有我们曾经讲解过的单实例安装的数据库文件和启动程序最好删除，以免冲突
+	
+▣ 8.4.5 创建 MySQL 多实例的数据文件目录
+		在老男孩的企业中，采用的是/data 目录作为 mysql 多实例总的根目录，然后规则不同的 MySQL 实例端口号作为/data 
+	下面的二级目录，不同的端口号就是不同实例目录，以区别不同的实例，二级目录下包含 mysql 数据文件，配置文件以
+	及启动文件的目录。
+		1、创建相关 mysql 多实例的目录如下
+		[root@localhost ~]# mkdir -p /data/{3306,3307}/data
+		[root@localhost ~]# tree /data
+		/data       #◀━━总的多实例跟目录
+		|--3306		#◀━━3306 实例的目录
+		|  `--data	#◀━━3306 实例的数据文件目录
+		`--3307		#◀━━3307 实例的目录
+		   `--data	#◀━━3307 实例的数据文件目录
+	
+		提示：如果是创建多个目录可以增加，如3308，3309，一般生成环境中2-3给实例就可以了
+	
+			生产硬件配置：MEM 32g  双 cpu 8核 ，磁盘6*600g sas 15k 。2-3个实例
+			
+	
+▣ 8.4.6 创建 MySQL 多实例的配置文件
+	
+		MySQL 数据库默认为用户提供了多个配置文件模板，用户可以根据硬件配置大小来选择。
+		[root@localhost ~]# ll /usr/local/mysql/support-files/*.cnf
+		-rw-r--r-- 1 root mysql  4691 Jun 18 04:20 /usr/local/mysql/support-files/my-huge.cnf
+		-rw-r--r-- 1 root mysql 19759 Jun 18 04:20 /usr/local/mysql/support-files/my-innodb-heavy-4G.cnf
+		-rw-r--r-- 1 root mysql  4665 Jun 18 04:20 /usr/local/mysql/support-files/my-large.cnf
+		-rw-r--r-- 1 root mysql  4676 Jun 18 04:20 /usr/local/mysql/support-files/my-medium.cnf
+		-rw-r--r-- 1 root mysql  2840 Jun 18 04:20 /usr/local/mysql/support-files/my-small.cnf
+		[root@localhost ~]# cp /usr/local/mysql/bin/ support-files/my-small.cnf /etc/my.cnf
+		注 tips*:
+		#1.关于mysql my.cnf 中参数的调优，本书后面会大篇幅详细讲解，这里大家跟学习即可。
+		#2.support-files 下有mysql my.cnf 的各种配置样例。懂英文的阅读下，里面的注释非常详细。
+		#3.使用cp全路径/bin/cp 可实现拷贝而不出现替换提示。即如果有重名文件会直接覆盖。
+		#4.本例为测试安装环境，因此，选择参数配置小的my-small.cnf 配置模板。
+		
+		上面是但实例的配置过程的默认配置文件模板，我们这里配置多实例和单实例就不同了。我们为了多实例之间彼此独立，
+	因此，我们为每一个实例建立一个配置文件，一个启动文件，对应自己的数据文件。
+		我们可以通过vi命令来添加，如下:
+		vi /data/3306/my.cnf
+		vi /data/3307/my.cnf
+		需要添加的my.cnf 内容见表，（由官方的配置模板修改而来）：当然，在实际工作中我们是拿早已配置号的模板来进行修改
+	，可以通过rz等方式上传配置文件模板my.cnf文件到相关目录下。
+	
+
+	┌-------------------------------------------------------┬-------------------------------------------------------┐
+	|  3306													|   3307												|
+	├-------------------------------------------------------┼-------------------------------------------------------┤
+	|  [client] 											|	[client]											|
+	|  port = 3306 											|	port = 3307											|
+	|  socket =/data/3306/mysql.sock 						|	socket =/data/3307/mysql.sock						|
+	|														|														|
+	|  [mysql]												|	[mysql]												|
+	|  no-auto-rehash										|	no-auto-rehash										|
+	|														|														|
+	|  [mysqld]												|	[mysqld]											|
+	|  user =mysql											|	user =mysql											|
+	|  port =3306											|	port =3307											|
+	|  socket =/data/3306/mysql_sock						|	socket =/data/3307/mysql_sock						|
+	|  basedir=/usr/local/mysql	 							|	basedir=/usr/local/mysql							|
+	|  datadir=/data/3306/data	 							|	datadir=/data/3307/data								|
+	|  open_files_limit =1024	 							|	open_files_limit =1024								|
+	|  back_log=600				 							|	back_log=600										|
+	|  max_connections=800		 							|	max_connections=800									|
+	|  max_connect_errors=3000	 							|	max_connect_errors=3000								|
+	|  table_cache=614			 							|	table_cache=614										|
+	|  external-locking=FALSE								|	external-locking=FALSE								|
+	|  max_allowed_packet=8M			 					|	max_allowed_packet=8M								|
+	|  sort_buffer_size=1M			 						|	sort_buffer_size=1M									|
+	|  join_buffer_size=1M			 						|	join_buffer_size=1M									|
+	|  thread_cache_size=100			 					|	thread_cache_size=100								|
+	|  thread_concurrency=2			 						|	thread_concurrency=2								|
+	|  query_cache_size=2M			 						|	query_cache_size=2M									|
+	|  query_cache_limit=1M			 						|	query_cache_limit=1M								|
+	|  query_cache_min_res_unit=2k	 						|	query_cache_min_res_unit=2k							|
+	|  default_table_type=InnoDB		 					|	default_table_type=InnoDB							|
+	|  thread_stack=192k				 					|	thread_stack=192k									|
+	|  transaction_isolation=READ-COMMITTED					|	transaction_isolation=READ-COMMITTED				|
+	|  tmp_table_size=2M									|	tmp_table_size=2M									|
+	|  max_heap_table_size=2M								|	max_heap_table_size=2M								|
+	|  long_query_time=1									|	long_query_time=1									|
+	|  log_long_format										|	log_long_format										|
+	|  log-error=/data/3306/error.log 						|	log-error=/data/3307/error.log 						|					
+	|  log-slow-queries=/data/3306/slow.log					|	log-slow-queries=/data/3307/slow.log				|
+	|  pid-file=/data/3306/mysql.pid						|	pid-file=/data/3307/mysql.pid						|
+	|  log-bin=/data/3306/mysql-bin 						|	log-bin=/data/3307/mysql-bin 						|
+	|  relay-log=/data/3306/relay-bin						|	relay-log=/data/3307/relay-bin						|
+	|  relay-log-info-file=/data/3306/relay-log.info 		|	relay-log-info-file=/data/3307/relay-log.info		|
+	|  binlog_cache_size=1M									|	binlog_cache_size=1M								|
+	|  max_binlog_cache_size=1M 							|	 max_binlog_cache_size=1M 							|
+	|  max_binlog_size=2M									|	max_binlog_size=2M									|
+	|  expire_logs_days=7									|	expire_logs_days=7									|
+	|  key_buffer_size=16M									|	key_buffer_size=16M									|
+	|  read_buffer_size=1M									|	read_buffer_size=1M									|
+	|  read_md_buffer_size=1M 								|	read_md_buffer_size=1M 								|
+	|  bulk_insert_buffer_size=1M 							|	bulk_insert_buffer_size=1M							|
+	|  myisam_sort_buffer_size=1M 							|	myisam_sort_buffer_size=1M 							|
+	|  myisam_max_sort_file_size=10G						|	myisam_max_sort_file_size=10G						|
+	|  myisam_max_extra_sort_file_size=10G					|	myisam_max_extra_sort_file_size=10G					|
+	|  myisam_repair_threads=1								|	myisam_repair_threads=1								|
+	|  myisam_recover										|	myisam_recover										|
+	|                                                       |														|
+	|  lower_case_table_names=1								|	lower_case_table_names=1							|
+	|  skip-name-resolve									|	skip-name-resolve									|
+	|  slave-skip-errors=1032,1062							|	slave-skip-errors=1032,1062							|
+	|  replicate-ignore-db=mysql							|	replicate-ignore-db=mysql							|
+	|                                                       |														|
+	|  server-id =1											|	server-id =3										|
+	|                                                       |														|
+	|                                                       |														|
+	|  innodb_additional_mem_pool_size=4M					|	innodb_additional_mem_pool_size=4M					|
+	|  innodb_buffer_pool_size=32M							|	innodb_buffer_pool_size=32M							|
+	|  innodb_data_file_path=ibdata1:128M:autoextend		|	innodb_data_file_path=ibdata1:128M:autoextend		|
+	|  innodb_file_io_threads=4								|	innodb_file_io_threads=4							|
+	|  innodb_thread_concurrency=8							|	innodb_thread_concurrency=8							|
+	|  innodb_flush_log_at_trx_commit=2						|	innodb_flush_log_at_trx_commit=2					|
+	|  innodb_log_buffer_size=2M							|	innodb_log_buffer_size=2M							|
+	|  innodb_log_file_size=4M								|	innodb_log_file_size=4M								|
+	|  innodb_log_files_in_group=3							|	innodb_log_files_in_group=3							|
+	|  innodb_max_dirty_pages_pct=90						|	innodb_max_dirty_pages_pct=90						|
+	|  innodb_lock_wait_timeout=120							|	innodb_lock_wait_timeout=120						|
+	|  innodb_file_per_table=0								|	innodb_file_per_table=0								|
+	|                                                       |														|
+	|  [mysqldump]											|	[mysqldump]											|
+	|                                                       |														|
+	|  quick												|	quick												|
+	|                                                       |														|
+	|  max_allowed_packet=2M								|	max_allowed_packet=2M								|
+	|                                                       |														|
+	|  [mysqld_safe]										|	[mysqld_safe]										|
+	|  log-error=/data/3306/mysql_oldboy3306.err			|	log-error=/data/3307/mysql_oldboy3307.err			|
+	|  pid-file=/data/3306/mysqld.pid 						|	pid-file=/data/3307/mysqld.pid 						|
+	|   													|														|
+	└-------------------------------------------------------┴-------------------------------------------------------┘										
+		最终完成结果如下：
+		
+		[root@localhost ~]# trre /data
+		/data       
+		|--3306		
+		|  |--data	
+		|  `--my.cnf#◀━━3306 这个就是3306实例配置文件
+		`--3307		
+		   |--data	
+		   `--my.cnf#◀━━3307 这个就是3307实例配置文件
+	
+		有关配置文件的参数内容，留给同学们当作业，一定完整注释了。
+
+▣ 8.4.7 创建 MySQL 多实例的启动文件
+		启动文件的创建，和配置文件创建几乎一样，也可以通过 vi 命令来添加，如下：
+		
+		vi /data/3306/mysql
+		vi /data/3306/mysql
+		需要添加的mysql 启动文件内容见下表：当然，在实际工作中我们是拿早已配置好的模板来进行修改，可以通过rz等方式上传
+	配置文件模板mysql文件到相关目录下。
+	┌------------------------------------------------------------------------┬--------------------------------------------------------------------------┐
+	|	3306 mysql															 |	3307 mysql  														    |
+	|	#!/bin/sh 															 |	#!/bin/sh																|
+	|	###################################################################	 |	###################################################################		|
+	|	#this script is created by oldboy at 2007-06-09						 |	#this script is created by oldboy at 2007-06-09							|
+	|	#site:http://www.etiantian.org 老男孩教育培训机构					 |	#site:http://www.etiantian.org 老男孩教育培训机构						|
+	|	#blog:http://oldboy.blog.51cto.com 									 |	#blog:http://oldboy.blog.51cto.com 										|
+	|	#oldboy trainning QQ group: 2086199307 226199307 44246017			 |	#oldboy trainning QQ group: 2086199307 226199307 44246017				|
+	|	#################################################################	 |	#################################################################		|
+	|	                                                                     |																			|
+	|	#init 																 |	#init 																	|
+	|	port =3306															 |	port =3307																|
+	|	mysql_user="root"													 |	mysql_user="root"														|
+	|	mysql_pwd='oldboy'													 |	mysql_pwd='oldboy'														|
+	|	CmdPath="/application/mysql/bin"									 |	CmdPath="/application/mysql/bin"										|
+	|	mysql_sock="/data/${port}/mysql.sock"								 |	mysql_sock="/data/${port}/mysql.sock"									|
+	|	                                                                     |																			|
+	|	#startup function													 |	#startup function														|
+	|	                                                                     |																			|
+	|	function_start_mysql(){												 |function_start_mysql(){													|							
+	|		if[ ! -e "$mysql_sock" ];then									 |		if[ ! -e "$mysql_sock" ];then										|
+	|		printf "Starting MySQL....\n"									 |		printf "Starting MySQL....\n"										|
+	|		/bin/sh ${CmdPath}/mysqld_safe 									 |		/bin/sh ${CmdPath}/mysqld_safe 										|
+	|--defaults-file=/data/${port}/my.cnf 2>&1 /dev/null &					 |--defaults-file=/data/${port}/my.cnf 2>&1 /dev/null &						|
+	|		else															 |		else																|
+	|		printf "MySQL is running....\n"									 |		printf "MySQL is running....\n"										|
+	|		exit															 |		exit																|
+	|		fi																 |		fi																	|
+	|	}																	 |	}																		|	
+	|																		 |																			|
+	|	#stop function														 |	#stop function															|
+	|																		 |																			|
+	|	function_stop_mysql(){												 |	function_stop_mysql(){													|
+	|		if[! -e "$mysql_sock" ];then									 |		if[! -e "$mysql_sock" ];then										|
+	|			printf "MySQL is stopped...\n"								 |			printf "MySQL is stopped...\n"									|
+	|			exit 														 |			exit 															|
+	|		else 															 |		else 																|
+	|			printf "Stoping MySQL...\n"									 |			printf "Stoping MySQL...\n"										|
+	|			${CmdPath}/mysqladmin -u ${mysql_user} -p${mysql_pwd} -S 	 |			${CmdPath}/mysqladmin -u ${mysql_user} -p${mysql_pwd} -S 		|
+	|			/data/${port}/mysql.sock shutdown 							 |			/data/${port}/mysql.sock shutdown 								|
+	|			fi															 |			fi																|
+	|	}																	 |	}																		|
+	|	#restart function 													 |	#restart function 														|
+	|	function_restart_mysql(){											 |	function_restart_mysql(){												|
+	|		printf "Restarting MySQL...\n";									 |		printf "Restarting MySQL...\n";										|
+	|		function_stop_mysql												 |		function_stop_mysql													|
+	|		sleep 2															 |		sleep 2																|
+	|		function_start_mysql											 |		function_start_mysql												|
+	|	}																	 |	}																		|
+	|																		 |																			|
+	|	case $1 in															 |	case $1 in																|
+	|	start)																 |	start)																	|
+	|		function_start_mysql											 |		function_start_mysql												|
+	|	;;																	 |	;;																		|
+	|	stop)																 |	stop)																	|
+	|		function_stop_mysql												 |		function_stop_mysql													|
+	|	;;																	 |	;;																		|
+	|	restart)															 |	restart)																|
+	|		function_restart_mysql											 |		function_restart_mysql												|
+	|	;;																	 |	;;																		|
+	|	*)																	 |	*)																		|
+	|		printf "Usage; /data/${port}/mysql {start|stop|restart}\n"		 |		printf "Usage; /data/${port}/mysql {start|stop|restart}\n"			|
+	|	esac											   					 |	esac																	|
+	|																		 |																			|
+	└------------------------------------------------------------------------┴--------------------------------------------------------------------------┘
+		
+		最终完成的结果如下：
+		[root@localhost ~]# trre /data
+		/data       
+		|--3306		
+		|  |--data	
+		|  |--mysql #◀━━3306 实例的启动文件
+		|  `--my.cnf#◀━━3306 这个就是3306实例配置文件
+		`--3307		
+		   |--data	
+		   |--mysql #◀━━3307 实例的启动文件
+		   `--my.cnf#◀━━3307 这个就是3307实例配置文件		
+		2 directories，4 files
+		
+		多实例启动文件的启动mysql 服务实质：
+		
+		mysqld_safe --defaults-file=/data/3306/my.cnf 2>&1 >/dev/null &
+		mysqld_safe --defaults-file=/data/3307/my.cnf 2>&1 > /dev/null &
+		/usr/local/mysql/bin/mysqld_safe --defaults-file=/data/3306/my.cnf 2>&1 >/dev/null &
+		
+		多实例启动文件的停止mysql服务实质：
+		mysqladmin -u root -poldboy123 -S /data/3306/mysql.sock shut down
+		mysqladmin -u root -poldboy123 -S /data/3307/mysql.sock shut down
+	
+▣ 8.4.8 配置 MySQL 多实例的文件权限
+		
+		[root@localhost ~]# trre /data
+		/data       
+		|--3306		
+		|  |--data	
+		|  |--mysql #◀━━3306 实例的启动文件
+		|  `--my.cnf#◀━━3306 这个就是3306实例配置文件
+		`--3307		
+		   |--data	
+		   |--mysql #◀━━3307 实例的启动文件
+		   `--my.cnf#◀━━3307 这个就是3307实例配置文件	
+	
+		2 directories,4 files
+		
+		授权 mysql 用户和组管理整个多实例目录/data
+		[root@localhost ~]# chown -R mysql.mysql /data 
+		[root@localhost ~]# find /data/ -type f -name "mysql"
+		/data/3306/mysql
+		/data/3307/mysql 
+		[root@localhost ~]# find /data/ -type f -name "mysql"|xargs ls -l
+		-rw-r--r-- 1 mysql mysql 934 Jul 20 11:10 /data/3306/mysql
+		-rw-r--r-- 1 mysql mysql 934 Jul 20 11:09 /data/3307/mysql
+		
+		授权 mysql 多实例服务所有启动文件 mysql可执行
+		
+		[root@localhost ~]# find /data -name mysql -exec chmod 700 {} \;
+		[root@localhost ~]# find /data -name mysql |xargs chmod 700
+		[root@localhost ~]# find /data -name mysql -exec chmod 700 {}\;
+		[root@localhost ~]# find /data -name mysql -exec ls -l {} \;
+		-rw-r--r-- 1 mysql mysql 934 Jul 20 11:10 /data/3306/mysql
+		-rw-r--r-- 1 mysql mysql 934 Jul 20 11:09 /data/3307/mysql
+		
+		#这里是在引导读者在学习中记忆命令，结果相当于 chmod 700 /data/3306/mysql.chmod 700 /data/3307/mysql 的命令组合。
+		
+		检查结果：
+
+		[root@localhost ~]# ls -ld /data
+		drwxr-xr-x 4 mysql mysql 30 Jul 20 04:25 /data
+		[root@localhost ~]# ls -l /data
+		total 0
+		drwxr-xr-x 3 mysql mysql 45 Jul 20 11:10 3306
+		drwxr-xr-x 3 mysql mysql 45 Jul 20 11:09 3307
+		[root@localhost ~]# ls -l /data/{3306,3307}/
+		/data/3306/:
+		total 8
+		drwxr-xr-x 2 mysql mysql    6 Jul 20 04:25 data
+		-rw-r--r-- 1 mysql mysql 2598 Jul 20 11:03 my.cnf
+		-rw-r--r-- 1 mysql mysql  934 Jul 20 11:10 mysql
+		
+		/data/3307/:
+		total 8
+		drwxr-xr-x 2 mysql mysql    6 Jul 20 04:25 data
+		-rw-r--r-- 1 mysql mysql 2377 Jul 20 11:05 my.cnf
+		-rw-r--r-- 1 mysql mysql  934 Jul 20 11:09 mysql
+		[root@localhost ~]# find /data -name mysql -exec ls -l {} \;
+		-rw-r--r-- 1 mysql mysql 934 Jul 20 11:10 /data/3306/mysql
+		-rw-r--r-- 1 mysql mysql 934 Jul 20 11:09 /data/3307/mysql
+	
+▣ 8.4.9 配置 MySQL 命令全局使用路径
+
+▪ 8.4.9.1 配置全局路径意义
+	如果不配置 MySQL 命令的全局路径，就无法直接敲 mysql 等命令，也就是只能/usr/local/mysql/bin/mysql 这个命令。
+
+▪ 8.4.9.2 两种配置MySQL 路径方法
+	方法一：
+		[root@localhost ~]# echo 'export PATH=/usr/local/mysql/bin::$PATH' >> /etc/profile
+		#注意，echo 后市单引号哟，双引号是不行滴。这是为什么呢？本书后文讲到 shell 编程时会介绍。
+		
+		[root@localhost ~]# source /etc/profile
+		#执行 source 更上一行添加到 /etc/profile 中内容直接生效。
+		#以上两条命令的用途为，定义mysql 全局路径，实现在任意路径执行 mysql 命令
+		本节提示，如果不配置mysql的全局路径，就无法直接敲mysql等命令，也就是只能/usr/local/mysql/bin/mysql 这样敲命令
+	方法二:
+		还有另外一个方法，就是把/usr/local/mysql/bin/ 下面的命令拷贝到全局系统命令路径 /usr/local/sbin/也可，或者做 link 
+		[root@localhost ~]# /bin/cp /usr/local/mysql/bin/* /usr/local/sbin/
+
+▪ 8.4.9.3 因 MySQL 环境变量配置顺序导致的错误案例
+		特别强调：务必把 MySQL 路径放在其他路径的前面，否则，可能导致使用命令和安装的 MySQL 不是一个而导致错误。下面是因为 
+		MySQL 路径配置问题导致的错误案例：http://oldboy.blog.51cto.com/2561410/1122867
+		
+▣ 8.4.10 初始化Mysql 多实例的数据库文件
+		（1）初始化命令为
+		mysql5.1.X初始化命令：
+		
+		mysql_install_db --basedir=/application/mysql --datadir=/data/3306/data --user=mysql 
+		mysql_install_db --basedir=/application/mysql --datadir=/data/3307/data --user=mysql 
+		
+		mysql5.5.32 初始化命令
+		cd /application/mysql/scripts  #和5.1的路径不同，不在MySQL bin 路径下了
+		./mysql_install_db --basedir=/application/mysql --datadir=/data/3306/data --user=mysql
+		./mysql_install_db --basedir=/application/mysql --datadir=/data/3307/data --user=mysql
+		
+		提示：如果失败了删除 /data/3307/data 目录下的所有文件重新执行
+		
+		（2）操作过程如下
+		大家还记得单实例的初始化命令么？
+		
+		mysql_install_db --user=mysql
+		
+		提示：如果 mysql5.5 版本，即使是单实例，也无法使用mysql_install_db --user=mysql初始化数据库，可以指定 
+	datadir 目录安装。
+		如：mysql_install_db --datadir=/data/3306/data --user=mysql
+		
+		（3）为什么要初始化数据库？
+		 a.初始化的主要目的就是创建基础的数据文件，例如：生成mysql库表等
+		 b.初始化后查看对应实例数据目录，可以看到如下文件
+	
+		[root@localhost 3306]# tree /data 
+		|--3306
+		|	|--data
+		|	|	|--mysql
+		|	|	|	|--columns_priv.MYD
+		|	|	|	|--columns_priv.frm
+		|	|	|	|--columns_priv.MYI
+		|	|	|	|--db.frm
+		|	|	|	|--db.MYD
+		|	|	|	|--db.MYI
+		|	|	|	|--event.frm
+		|	|	|	|--event.MYD
+		|	|	|	|--event.MYI
+		|	|	|	|--func.frm
+		|	|	|	|--func.MYD
+		|	|	|	|--func.MYI
+		
+		...省略部分...
+		
+		本次执行报错了，如下：
+		
+		[root@localhost 3306]# ./mysql_install_db --basedir=/application/mysql --datadir=/data/3307/data --user=mysql
+		Installing MySQL system tables...
+		130113 12:23:56 [ERROR] /usr/libexec/mysqld:unknown variable 'table_open_cache=4'
+		Installation of system tables failed!
+		
+		根据提示是找不到'table_open_cache=4' 变量，但是，我的配置文件根本就没有这个变量
+		
+		[root@localhost 3306]# which mysql_install_db 
+		/usr/bin/mysql_install_db
+	
+		[root@localhost 3306]# tail -l /etc/profile
+		export PATH=/application/mysql/bin:$PATH
+		[root@localhost 3306]# ./etc/profile
+		
+▣ 8.4.11 启动 MySQL 多实例数据库
+		启动 mysql 实例的命令
+		[root@localhost 3306]# /data/3306/mysql start
+		Starting MySQL...
+		
+		[root@localhost 3306]# /data/3307/mysql start
+		Starting MySQL...
+		
+		检查 MySQL 数据库是否启动：
+		
+		[root@localhost 3306]# netstat -lnt|grep 330[6-7] ╲
+															一样的效果
+		[root@localhost 3306]# netstat -lnt|grep 330	  ╱
+		tcp        0      0 0.0.0.0:3307            0.0.0.0:*               LISTEN      20137/mysqld        
+		tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN      20467/mysqld 
+		
+▣ 8.4.12 MySQL 故障排错多实例数据库
+		如果MySQL 服务没有起来，排查办法如下：
+		（1）如果发现没有显示MySQL的端口，请稍微等待几秒在看看，MySQL服务启动会略微有些慢。
+		（2）如果还不行，请查看错误日志，错误日志路径在my.cnf配置最下面
+	
+		 [root@localhost 3306]# grep log-error my.cnf|tail -l 
+		 log-error=/data/3306/mysql_lufeng3306.err 
+	
+		 服务日志如：mysql 错误日志一窥，如执行 tail -100 /data/3306/mysql_oldboy336.err 检查日志报错。
+		 
+		 [root@localhost 3306]# cat /data/3306/mysql_oldboy3306.err
+		 
+	
+		 （3）细看所有执行命令返回的屏幕输出，不要忽略关键的输出内容
+		 （4）查看系统的 /var/log/messages.
+		 （5）如果是关联服务，要同时查看相关服务的LOG.
+		 #本例查看的错误日志的命令及错误日志中的完整内容。
+		 提醒：经常查看各种服务运行日志是个很好的习惯，也是高手的习惯，你要不要成为高手？黑！
+		 
+	
+▣ 8.4.13 配置 MySQL 多实例数据库开机自动启动
+	
+		并加入 /etc/rc.local,设置为开机自动启动
+	
+		[root@localhost 3306]# echo "#mysql multi instances" >> /etc/rc.local
+		[root@localhost 3306]# echo "/data/3306/mysql start" >> /etc/rc.local
+		[root@localhost 3306]# echo "/data/3307/mysql start" >> /etc/re.local
+		[root@localhost 3306]# tail -3 /etc/rc.local
+		#mysql multi instances
+		
+		/data/3306/mysql start 
+		/data/3307/mysql start 
+		
+		提示：
+		 1）要确保 mysql 脚本可执行！
+		 2）还可以把脚本加入简单配置通过 chkconfig 来配置开机自启动。
+	
+▣ 8.4.14 登陆 MySQL 测试
+		[root@localhost 3306]# mysql -S /data/3306/mysql.sock #直接敲就进来了，而且身份是root 但是多了
+	-S /data/3306/mysql.sock 区别登陆不同的实例。
+	
+		[root@localhost 3306]# mysql -S  /data/3307/mysql.sock 
+		Welcome to the MySQL monitor.  Commands end with ; or \g.
+		Your MySQL connection id is 1
+		Server version: 5.5.23 Source distribution
+		
+		Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
+		
+		Oracle is a registered trademark of Oracle Corporation and/or its
+		affiliates. Other names may be trademarks of their respective
+		owners.
+		
+		Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+		
+		mysql> show databases;  #查看当前的数据库
+		+--------------------+
+		| Database           |
+		+--------------------+
+		| information_schema |
+		| mysql              |
+		| performance_schema |
+		| test               |
+		+--------------------+
+		4 rows in set (0.00 sec)
+
+		mysql> select user();
+		+----------------+
+		| user()         |
+		+----------------+
+		| root@localhost |
+		+----------------+
+		1 row in set (0.00 sec)
+
+▣ 8.4.15 MySQL 多实例数据库管理方法
+		MySQL 安装完成后，默认情况下，管理账号root是无密码的。登陆不同库需要指定不同库的 sock 路径 ，这给是在my.cnf 里指定的。
+		1、登陆数据库
+		mysql -S /data/3306/mysql.sock
+		mysql -S /data/3307/mysql.sock
+		2、重启数据库
+		
+		/data/3306/mysql stop 
+		/data/3306/mysql start 
+		 
+■ 8.5 MySQL 安全配置 
+ 	
+▣ 8.5.1 为 root 增加密码
+	
+		[root@localhost 3306]# mysqladmin -u root -s /data/3306/mysql.sock password oldboy123; #为 mysql 设置密码，不能带任何引号
+		
+		[root@localhost 3306]# ss -lntup|grep 330
+		tcp    LISTEN     0      50        *:3307                  *:*                   users:(("mysqld",pid=20137,fd=10))
+		tcp    LISTEN     0      50        *:3306                  *:*                   users:(("mysqld",pid=20467,fd=10))
+		[root@localhost 3306]# mysql -S /data/3306/mysql.sock  #无法直接登陆了
+		ERROR 1045 (28000): Access denied for user 'root'@'localhost'(using password:NO)
+		[root@localhost 3306]# mysql -uroot -p -S /data/3306/mysql.sock #新的登陆方式
+		Enter password: #输入新密码 oldboy123 
+		Welcome to the MySQL monitor.Commands end with ; or \g.
+		Your Mysql connection id is 4
+		Server version:5.1.62 Source distribution
+		Copyright (c) 2000,2011 Oracle and /or its affiliates.All rights reserved.
+		Oracle is a registered trademark of Oracle Corporation and /or its 
+		affiliates Other names may be trademarks of their respective 
+		owners.
+		
+		Type 'help' or '\h' for help. Thpe '\c' to clear the current input statement.
+		
+		mysql > 
+	
+▣ 8.5.2 查看并清理多余用户
+		以3306实例为例：
+			mysql> select user.host from mysql.user;
+			+------+-----------------------+
+			| user | host                  |
+			+------+-----------------------+
+			| root | 127.0.0.1             |
+			| root | ::1                   |
+			|      | localhost             |
+			| root | localhost             |
+			|      | mysql 				   |
+			| root | lmysql 			   |
+			+------+-----------------------+
+			6 rows in set (0.00 sec
+
+			mysql> drop user ''@localhost;
+			Query OK , 0 rows affected (0.00 sec)
+			
+			mysql> drop user ''@mysql;
+			Query OK , 0 rows affected (0.01 sec)
+			
+			mysql> flush privileges;
+			
+			提示：如果主机名中包含大写字母或特殊字符等，可能会导致 drop user 时无法删除，解决办法如下：
+			
+			mysql> delete from mysql.user where user='' and host='picdata=1-1';
+			Query OK 1 row affected(0,01 sec )
+	
+■ 8.6 如何再增加一个MySQL 实例
+		增加一个MySQL 实例的命令过程如下；
+		rm -fr /data/3308/data
+		mkdir -p /data/3308/data
+		\cp /data/3306/my.cnf /data/3308/
+		\cp /data/3306/mysql /data/3308/ 
+		sed -i 's/3306/3308/g' /data/3308/my.cnf 
+		sed -i 's/3306/3308/g' /data/3308/mysql 
+		chown -R mysql:mysql /data/3308 
+		chmod 700 /data/3308/mysql 
+		mysql_install_db --datadir=/data/3308/data --user=mysql 
+		chown -R mysql:mysql /data/3308 
+		/data/3308/mysql start 
+		ntstat -lnt|grep 3308
+		
+		提示：最好把server-id 也改下。
+		/data/3308/mysql start 
+		netstat -lnt|grep 3308
+		如果没起来看 mysql 错误日志，在/data/3306/my.cnf 最下面有错误日志地址。
+		提示：作为作业留给同学们自己去实战。
+		好了，初学者能弄到这里就很好了。 先恭喜下，可以休息下，给自己奖励，麻花，面包，糖块什么的！以便更好的学后面的技术。
+		
+■ 附录一：关于多实例 MySQL 登陆问题学生小结
+		1、本地登录
+		多实例本地端登录通过 socket 文件来指定具体登录到哪个实例，此文件具体位置是在mysql 初始化（mysql_install_db）时指
+		定的。在本机登录程序通过socket 文件来判断登录的数据库实例。
+		mysql.sock <==文件时服务器与本地客户端进行通信的Unix 套接字文件。
+		例：mysql -uroot -p 'oldboy' -S /data/3307/mysql.sock;
+		2、远端登录
+		远程登录指定多实例主机中的其中一个实例，TCP/UDP 端口（port）来指定所要登录的mysql实例，此端口时在 mysql 配置
+	文件my.cnf 中指定的。
+		端口 port <== 端口是一种“逻辑链接位置” ，客户端程序被分派计算机上特殊服务程序一种方式。
+		例：mysql -uremote -p'hzcai123' -h 192.168.128.138-P 3307
+		
+■ 附录二：故障案例
+		问题（1）：
+		北京-王 xx(x941030) 15:16:42
+		[root@localhost 3308]# mysql start 
+		ERROR 2002 (hy000):Can't connect to local MySQL server through socket '/tmp/mysql.sock'(2)
+		
+		解答：该mysql 非3308 目录下的mysql,而是全局变量下的mysql。需要 ./mysql start 或 /data/3308/mysql start 
+		问题（2）：
+		北京-李金斗 <ljd198911205@live.cn> 20:36:30
+		ERROR can not find /application/mysql5.1.68/bin/share/mysql/english/errmsg.sys 
+		北京老男孩老师(49000448) 20:48:17 
+		
+		basedir=/application/mysql 该同学把路径写成/application/mysql/bin/了
+																																																																																													

@@ -1,0 +1,48 @@
+****
+路由缓存
+****
+
+.. note:: ``V5.1.14+`` 版本开始支持开启路由缓存（仅在部署模式下有效），在定义了大量的路由规则之后，开启该缓存可以明显提升路由解析性能，而且路由规则越多越明显。
+
+在应用配置文件 ``app.php`` 中设置开启：
+
+.. code-block:: shell
+
+    'route_check_cache'	=>	true,
+
+开启后，会自动对每次的路由请求的调度进行缓存，第二次如果是相同的请求则无需再次经过路由解析，而是直接进行请求调度。
+
+默认情况下的路由缓存标识是当前的请求类型和包含域名的 ``BaseUrl`` ，如果你的路由参数检测比较复杂，例如包含了 ``ajax/pjax`` 检测的话，需要自定义路由缓存的标识，通过下面的方式：
+
+.. code-block:: shell
+
+    'route_check_cache_key'	=>	'get_route_key',
+
+在应用公共文件中可以定义
+
+.. code-block:: php
+
+	function get_route_key($request) 
+	{
+		return md5($request->url(true) . ':' . $request->method() . ':' . ($request->isAjax() ? 1 : 0));
+	}
+
+.. note:: 需要注意的是，如果你某个路由规则的路由地址是闭包，则无法使用路由缓存功能，依然会每次进行实际的路由解析。
+
+如果你更改了某个路由规则的路由地址，则需要清理路由缓存，可以使用下面的指令清理路由缓存。
+
+.. code-block:: shell
+
+    >php think clear --route 
+
+
+
+
+
+
+
+
+
+
+
+

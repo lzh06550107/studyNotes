@@ -1,0 +1,476 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>46. 辅助函数-Tap函数 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="47. 辅助函数-其它杂项" href="Laravel的辅助函数-其它.html"/>
+        <link rel="prev" title="45. 辅助函数-路径函数" href="Laravel的辅助函数-路径操作.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">46. 辅助函数-Tap函数</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">46.1. Tap 帮助函数</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">46.1.1. 旧的实现方式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">46.1.2. 新的实现方式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">46.1.3. 它是如何工作的</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#laravel-collection-tap">46.2. Laravel collection 中的 tap 方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tap-vs-pipe">46.3. tap VS Pipe(管道)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>46. 辅助函数-Tap函数</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tap">
+<h1>46. 辅助函数-Tap函数<a class="headerlink" href="#tap" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>46.1. Tap 帮助函数<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id2">
+<h3>46.1.1. 旧的实现方式<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p>Laravel 提出了一个 <code class="docutils literal"><span class="pre">tap</span></code> 功能。这是一个非常奇怪的功能，受 <code class="docutils literal"><span class="pre">Ruby</span></code> 的启发。这是 <code class="docutils literal"><span class="pre">tap</span></code> 助手功能的基本实现。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">function</span> <span class="nf">tap</span><span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$callback</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$value</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面的代码将接受一个参数，它将使用该参数调用一个匿名函数。在调用回调函数后，它将返回参数。
+让我们看看我们如何以有意义的方式使用它。例如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">return</span> <span class="nx">tap</span><span class="p">(</span><span class="nx">App\Photo</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="k">function</span><span class="p">(</span><span class="nv">$photo</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$photo</span><span class="o">-&gt;</span><span class="na">validated</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+    <span class="nv">$photo</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>在上面的例子中，我们传递一个参数（照片模型）和一个回调函数，该函数简单地将 <code class="docutils literal"><span class="pre">validated</span></code> 设置为 <code class="docutils literal"><span class="pre">true</span></code> 并保存模型。这个函数然后将照片模型实例返回给调用者。</p>
+</div>
+<div class="section" id="id3">
+<h3>46.1.2. 新的实现方式<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>在最新版本的 Laravel 5.4 和 Laravel 5.5 中，更高级的 <code class="docutils literal"><span class="pre">tap</span></code> 来了。它引入了更短的使用方式。这里是 <code class="docutils literal"><span class="pre">tap</span></code> 函数的新实现。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">function</span> <span class="nf">tap</span><span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nv">$callback</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_null</span><span class="p">(</span><span class="nv">$callback</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">HigherOrderTapProxy</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span> <span class="c1">// 可以保持对象方法链式调用</span>
+    <span class="p">}</span>
+
+    <span class="nv">$callback</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$value</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>回调函数现在是可选的。你还可以链式使用参数中的多个方法，这里其实也就是照片 <code class="docutils literal"><span class="pre">Model</span></code> 中支持的方法。例如</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="nv">$photo</span> <span class="o">=</span> <span class="nx">App\Photo</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nx">tap</span><span class="p">(</span><span class="nv">$photo</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">([</span>
+    <span class="s1">&#39;validated&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p>我们能够将任何模型的方法通过 <code class="docutils literal"><span class="pre">tap</span></code> 链式调用。此更新方法通常返回 <code class="docutils literal"><span class="pre">true</span></code> 或 <code class="docutils literal"><span class="pre">false</span></code> ，但是这里使用了 <code class="docutils literal"><span class="pre">tap</span></code> 函数。在这种情况下，它将返回照片模型。 <code class="docutils literal"><span class="pre">tap</span></code> 可以帮助你返回作为参数传递的对象。</p>
+</div>
+<div class="section" id="id4">
+<h3>46.1.3. 它是如何工作的<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">tap</span></code> 是一个非常有用的功能，但有时它很难理解它是如何工作的。 这里来解释它是如何工作的。</p>
+<p>如果没有给出回调函数，因为它是可选的，Laravel将返回 <code class="docutils literal"><span class="pre">HigherOrderTapProxy</span></code> 的新实例。 在 <code class="docutils literal"><span class="pre">HigherOrderTapProxy</span></code> 类中定义了调用魔术方法。 调用魔术方法是由语言动态调用的(所谓的方法在类中没有定义)。 因为除了调用魔术方法， <code class="docutils literal"><span class="pre">HigherOrderTapProxy</span></code> 类中没有定义方法，所以每次使用 <code class="docutils literal"><span class="pre">tap</span></code> 函数任何方法调用时都会调用它。 在调用魔术方法中，我们的更新方法或任何我们调用的方法将通过对参数方法调用来完成，并且它将返回我们最初传递给 <code class="docutils literal"><span class="pre">tap</span></code> 函数的参数。</p>
+<p>这里是 <code class="docutils literal"><span class="pre">HigherOrderTapProxy</span></code> 类中调用魔术方法的实际内容。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// vendor/laravel/framework/src/Illuminate/Support/HigherOrderTapProxy.php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__call</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">target</span><span class="o">-&gt;</span><span class="p">{</span><span class="nv">$method</span><span class="p">}(</span><span class="o">...</span><span class="nv">$parameters</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">target</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在上面的代码中， <code class="docutils literal"><span class="pre">target</span></code> 属性是我们在 <code class="docutils literal"><span class="pre">tap</span></code> 中传递的参数。</p>
+</div>
+</div>
+<div class="section" id="laravel-collection-tap">
+<h2>46.2. Laravel collection 中的 tap 方法<a class="headerlink" href="#laravel-collection-tap" title="永久链接至标题">¶</a></h2>
+<p>Laravel 还在 <code class="docutils literal"><span class="pre">collection</span></code> 类中有一个 <code class="docutils literal"><span class="pre">tap</span></code> 方法，可让你在特定的地方传入参数到 <code class="docutils literal"><span class="pre">tap</span></code> 中，并对这些结果进行处理。 <code class="docutils literal"><span class="pre">tap</span></code> 不会影响主要 <code class="docutils literal"><span class="pre">collection</span></code> 的结果。 这对调试代码和查找在处理集合时出现错误的地方很有帮助。我们用一个例子来解释这个方法。初始化以下数组。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$photos</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s1">&#39;file_name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;wallpaper&#39;</span><span class="p">,</span> <span class="s1">&#39;validated&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span> <span class="s1">&#39;extension&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;jpg&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;file_name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;spring&#39;</span><span class="p">,</span> <span class="s1">&#39;validated&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span> <span class="s1">&#39;extension&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;png&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;file_name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;flowers&#39;</span><span class="p">,</span> <span class="s1">&#39;validated&#39;</span> <span class="o">=&gt;</span> <span class="k">false</span><span class="p">,</span> <span class="s1">&#39;extension&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;jpg&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;file_name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;mac&#39;</span><span class="p">,</span> <span class="s1">&#39;validated&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span> <span class="s1">&#39;extension&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;png&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;file_name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;books&#39;</span><span class="p">,</span> <span class="s1">&#39;validated&#39;</span> <span class="o">=&gt;</span> <span class="k">false</span><span class="p">,</span> <span class="s1">&#39;extension&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;jpg&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;file_name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;mobiles&#39;</span><span class="p">,</span> <span class="s1">&#39;validated&#39;</span> <span class="o">=&gt;</span> <span class="k">false</span><span class="p">,</span> <span class="s1">&#39;extension&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;jpg&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;file_name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;glass&#39;</span><span class="p">,</span> <span class="s1">&#39;validated&#39;</span> <span class="o">=&gt;</span> <span class="k">false</span><span class="p">,</span> <span class="s1">&#39;extension&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;png&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;file_name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;fruit&#39;</span><span class="p">,</span> <span class="s1">&#39;validated&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span> <span class="s1">&#39;extension&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;jpg&#39;</span><span class="p">],</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p>现在让我们尝试在这个数组上使用 <code class="docutils literal"><span class="pre">tap</span></code> 方法。首先，我们必须将这个数组转换为一个集合，然后在特定点处 <code class="docutils literal"><span class="pre">tap</span></code> 这个集合。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">collect</span><span class="p">(</span><span class="nv">$photos</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;validated&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">tap</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$validated</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$validated</span><span class="o">-&gt;</span><span class="na">pluck</span><span class="p">(</span><span class="s1">&#39;file_name&#39;</span><span class="p">));</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>上面的代码将会输出以下结果：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>wallpaper
+spring
+mac
+fruit
+</pre></div>
+</div>
+</div>
+<div class="section" id="tap-vs-pipe">
+<h2>46.3. tap VS Pipe(管道)<a class="headerlink" href="#tap-vs-pipe" title="永久链接至标题">¶</a></h2>
+<p>在 Laravel 中，也有类似的方法叫管道。它们在某种意义上是相似的，因为它们都在集合管道中使用。 <code class="docutils literal"><span class="pre">tap</span></code> 和 <code class="docutils literal"><span class="pre">pipe</span></code> 之间有一个区别。 <code class="docutils literal"><span class="pre">tap</span></code> 允许你使用数据，但不会修改原始返回值。 另一方面， <code class="docutils literal"><span class="pre">pipe</span></code> 根据返回值修改数据。</p>
+<p>例如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">collect</span><span class="p">(</span><span class="nv">$photos</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;validated&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$validated</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$validated</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;extension&#39;</span><span class="p">,</span> <span class="s1">&#39;jpg&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">pluck</span><span class="p">(</span><span class="s1">&#39;file_name&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>输出结果为：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>wallpaper
+fruit
+</pre></div>
+</div>
+<p>另一方面，如果我们像这样使用上面的代码：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">collect</span><span class="p">(</span><span class="nv">$photos</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;validated&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">tap</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$validated</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$validated</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;extension&#39;</span><span class="p">,</span> <span class="s1">&#39;jpg&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">pluck</span><span class="p">(</span><span class="s1">&#39;file_name&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>它将返回验证设置为 <code class="docutils literal"><span class="pre">true</span></code> 的所有照片数组。</p>
+<p>结果为：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="m">0</span>: <span class="o">{</span>
+    file_name: <span class="s2">&quot;wallpaper&quot;</span>,
+    validated: true,
+    extension: <span class="s2">&quot;jpg&quot;</span>
+<span class="o">}</span>,
+<span class="m">1</span>: <span class="o">{</span>
+    file_name: <span class="s2">&quot;spring&quot;</span>,
+    validated: true,
+    extension: <span class="s2">&quot;png&quot;</span>
+<span class="o">}</span>,
+<span class="m">3</span>: <span class="o">{</span>
+    file_name: <span class="s2">&quot;mac&quot;</span>,
+    validated: true,
+    extension: <span class="s2">&quot;png&quot;</span>
+<span class="o">}</span>,
+<span class="m">7</span>: <span class="o">{</span>
+    file_name: <span class="s2">&quot;fruit&quot;</span>,
+    validated: true,
+    extension: <span class="s2">&quot;jpg&quot;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的辅助函数-其它.html" class="btn btn-neutral float-right" title="47. 辅助函数-其它杂项" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的辅助函数-路径操作.html" class="btn btn-neutral" title="45. 辅助函数-路径函数" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

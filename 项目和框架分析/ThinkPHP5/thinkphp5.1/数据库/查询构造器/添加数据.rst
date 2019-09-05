@@ -1,0 +1,109 @@
+****
+添加数据
+****
+
+添加一条数据
+============
+
+使用 ``Db`` 类的 ``insert`` 方法向数据库提交数据
+
+.. code-block:: php
+
+	$data = ['foo' => 'bar', 'bar' => 'foo'];
+	Db::name('user')->insert($data);
+
+.. note:: ``insert`` 方法添加数据成功返回添加成功的条数，通常情况返回 ``1``
+
+或者使用 ``data`` 方法配合 ``insert`` 使用。
+
+.. code-block:: php
+
+	$data = ['foo' => 'bar', 'bar' => 'foo'];
+	Db::name('user')
+	    ->data($data)
+	    ->insert();
+
+.. note:: 如果你的数据表里面没有 ``foo`` 或者 ``bar`` 字段，那么就会抛出异常。
+
+如果不希望抛出异常，可以使用下面的方法：
+
+.. code-block:: php
+
+	$data = ['foo' => 'bar', 'bar' => 'foo'];
+	Db::name('user')->strict(false)->insert($data);
+
+不存在的字段的值将会直接抛弃。
+
+如果是 ``mysql`` 数据库，支持 ``replace`` 写入，例如：
+
+.. code-block:: php
+
+	$data = ['foo' => 'bar', 'bar' => 'foo'];
+	Db::name('user')->insert($data, true);
+
+添加数据后如果需要返回新增数据的自增主键，可以使用 ``insertGetId`` 方法新增数据并返回主键值：
+
+.. code-block:: php
+
+    $userId = Db::name('user')->insertGetId($data);
+
+.. note:: ``insertGetId`` 方法添加数据成功返回添加数据的自增主键
+
+
+添加多条数据
+===========
+
+添加多条数据直接向 ``Db`` 类的 ``insertAll`` 方法传入需要添加的数据即可
+
+.. code-block:: php
+
+	$data = [
+	    ['foo' => 'bar', 'bar' => 'foo'],
+	    ['foo' => 'bar1', 'bar' => 'foo1'],
+	    ['foo' => 'bar2', 'bar' => 'foo2']
+	];
+	Db::name('user')->insertAll($data);
+
+.. note:: ``insertAll`` 方法添加数据成功返回添加成功的条数
+
+如果是 ``mysql`` 数据库，支持 ``replace`` 写入，例如：
+
+.. code-block:: php
+
+	$data = [
+	    ['foo' => 'bar', 'bar' => 'foo'],
+	    ['foo' => 'bar1', 'bar' => 'foo1'],
+	    ['foo' => 'bar2', 'bar' => 'foo2']
+	];
+	Db::name('user')->insertAll($data, true);
+
+也可以使用 ``data`` 方法
+
+.. code-block:: php
+
+	$data = [
+	    ['foo' => 'bar', 'bar' => 'foo'],
+	    ['foo' => 'bar1', 'bar' => 'foo1'],
+	    ['foo' => 'bar2', 'bar' => 'foo2']
+	];
+	Db::name('user')->data($data)->insertAll();
+
+.. note:: 确保要批量添加的数据字段是一致的
+
+如果批量插入的数据比较多，可以指定分批插入，使用 ``limit`` 方法指定每次插入的数量限制。
+
+.. code-block:: php
+
+	$data = [
+	    ['foo' => 'bar', 'bar' => 'foo'],
+	    ['foo' => 'bar1', 'bar' => 'foo1'],
+	    ['foo' => 'bar2', 'bar' => 'foo2']
+	    ...
+	];
+	// 分批写入 每次最多100条数据
+	Db::name('user')->data($data)->limit(100)->insertAll();
+
+
+
+
+

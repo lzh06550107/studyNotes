@@ -1,0 +1,121 @@
+****
+路由分组
+****
+
+路由分组
+=========
+路由分组功能允许把相同前缀的路由定义合并分组，这样可以简化路由定义，并且提高路由匹配的效率，不必每次都去遍历完整的路由规则（尤其是开启了路由延迟解析后性能更佳）。
+
+使用 ``Route`` 类的 ``group`` 方法进行注册，给分组路由定义一些公用的路由设置参数，使用规范如下：
+
+.. code-block:: shell
+
+	Route::group('分组名（字符串）或者分组路由参数（数组）','分组路由规则（数组或者闭包）');
+
+其中路由参数和变量规则为可选，同样建议使用方法进行参数设置。
+
+例如：
+
+.. code-block:: php
+
+	Route::group('blog', [
+	    ':id'   => 'Blog/read',
+	    ':name' => 'Blog/read',
+	])->ext('html')->pattern(['id' => '\d+']);
+
+支持使用闭包方式注册路由分组，例如：
+
+.. code-block:: php
+
+	Route::group('blog', function () {
+	    Route::rule(':id', 'blog/read');
+	    Route::rule(':name', 'blog/read');
+	})->ext('html')->pattern(['id' => '\d+', 'name' => '\w+']);
+
+如果仅仅是用于对一些路由规则设置一些公共的路由参数，也可以使用：
+
+.. code-block:: php
+
+	Route::group(['method' => 'get', 'ext' => 'html'], function () {
+	    Route::rule('blog/:id', 'blog/read');
+	    Route::rule('blog/:name', 'blog/read');
+	})->pattern(['id' => '\d+', 'name' => '\w+']);
+
+路由分组支持嵌套，例如：
+
+.. code-block:: php
+
+	Route::group(['method' => 'get', 'ext' => 'html'], function () {
+	    Route::group('blog', function () {
+	        Route::rule('blog/:id', 'blog/read');
+	        Route::rule('blog/:name', 'blog/read');
+	    });
+	})->pattern(['id' => '\d+', 'name' => '\w+']);
+
+.. note:: 如果使用了嵌套分组的情况，子分组会继承父分组的参数和变量规则，而最终的路由规则里面定义的参数和变量规则为最优先。
+
+可以使用 ``prefix`` 方法简化相同 **路由地址** 的定义，例如下面的定义
+
+.. code-block:: php
+
+	Route::group('blog', function () {
+	    Route::get(':id', 'blog/read');
+	    Route::post(':id', 'blog/update');
+	    Route::delete(':id', 'blog/delete');
+	})->ext('html')->pattern(['id' => '\d+']);
+
+可以简化为
+
+.. code-block:: php
+
+	Route::group('blog', function () {
+	    Route::get(':id', 'read');
+	    Route::post(':id', 'update');
+	    Route::delete(':id', 'delete');
+	})->prefix('blog/')->ext('html')->pattern(['id' => '\d+']);
+
+延迟路由解析
+===========
+
+新版路由支持延迟路由解析，也就是说你定义的路由规则（主要是分组路由和域名路由规则）在加载路由定义文件的时候并没有实际注册，而是在匹配到路由分组或者域名的情况下，才会实际进行注册和解析，大大提高了路由注册和解析的性能。
+
+默认是关闭延迟路由解析的，你可以在应用的 ``app.php`` 配置文件中设置：
+
+.. code-block:: shell
+
+	// 开启路由延迟解析
+	'url_lazy_route'         => true,
+
+开启延迟路由解析后，如果你需要生成路由反解 ``URL`` ，需要使用命令行指令
+
+.. code-block:: shell
+
+    php think optimize:route
+
+来生成路由缓存解析。
+
+传入额外参数
+===========
+
+可以统一给分组路由传入额外的参数
+
+.. code-block:: php
+
+	Route::group('blog', [
+	    ':id'   => 'Blog/read',
+	    ':name' => 'Blog/read',
+	])->ext('html')
+	->pattern(['id' => '\d+'])
+	->append(['group_id'=>1]);
+
+上面的分组路由统一传入了 ``group_id`` 参数，该参数的值可以通过 ``Request`` 类的 ``param`` 方法获取。
+
+
+
+
+
+
+
+
+
+

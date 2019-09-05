@@ -1,0 +1,68 @@
+■ 2 MySQL 增量恢复必备条件
+	▣2.1开启 MySQL log-bin 日志功能
+		MySQL 数据库开启了 log-bin 参数记录binlog 日志功能如下：
+		[root@location ~]grep log-bin /data/3306/my.cnf
+		
+		[mysqld]
+		log-bin=/data/3306/mysql-bin 
+		
+		提示：主库和备份的从库都要开启binlog记录功能。
+		小结：增量恢复的条件：
+			存在一份全备份加上全备之后的时刻到出问题时刻的所有增量 binlog 文件备份。
+	 ▣2.2 存在MySQL 数据库全备
+	 ▪2.2.1生产环境 mysqldump 备份命令
+			在凌晨某一时刻进行数据库全备（生产场景一般通过定时任务每日凌晨执行），备份命令
+		命令如下：
+			mysqldump -u root -p123456 -S /data/3306/mysql.sock --default-character-set=gbk --single-transaction -F -B oldboy|gzip>/server/backup/mysql_$(date +%F).sql.gz 
+			
+			innodb 引擎备份：
+				mysqldump -u$MYUSER -p$MYPASS -S $MYSOCK -F --single-transaction -A -B|gzip > $DATA_FILE 
+			myisam 引擎备份：
+				mysqldump -u$MYUSER -p$MYPASS -S $MYSOCK -F -A -B --lock-all-tables|gzip>$DATA_FILE 
+				
+			
+	 ▪2.2.2生产环境mysqldump 备份脚本
+		下面是全备加上获取备份后最新起始binlog文件名的脚本。
+		
+		[root@location ~]# cat/server/scripts/mysql_bak.sh
+		
+		
+		数据库全备：
+			mysqldump -uroot -p'oldboy123' -S /data/3306/mysql.sock -F -B --master-data=2 oldboy|gzip > /server/backup/bak_$(date +%F).sql.gz
+		
+		全量恢复数据库，如果没有数据库不需要指定库，做全量恢复时需要先修改一下 bak_2014-11-06.sql 因为误操作的语句可能还在里面，需要先删除误操作的语句
+			mysql -uroot -p123456 -S /data/3306/mysql.sock < bak_2014-11-06.sql; #全量恢复
+			mysql -uroot -p123456 -S /data/3306/mysql.sock oldboy < bin.sql;  #增量恢复
+		
+		
+		
+		增量恢复全过程（重点）
+		通过防火墙禁止web等应用向主库写数据或者锁表。让主库暂时更新。然后在进行恢复。
+		检查全备及binlog日志
+		检查凌晨全备
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

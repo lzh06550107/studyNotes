@@ -1,0 +1,1063 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. 显示、循环、查询和过滤数据 &mdash; Vue示例 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="Vue示例 1.0 文档" href="index.html"/>
+        <link rel="next" title="4. 优化你的App和使用组件显示数据" href="优化你的App和使用组件显示数据.html"/>
+        <link rel="prev" title="2. Vue入门" href="Vue入门.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Vue示例
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Vue入门.html">2. Vue入门</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. 显示、循环、查询和过滤数据</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#html">3.1. HTML声明</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v-html">3.1.1. v-html</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">3.2. 声明性渲染</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">3.3. 条件渲染</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v-if">3.3.1. v-if</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v-else">3.3.2. v-else</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v-for">3.4. v-for来显示数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v-bind">3.5. 使用v-bind创建链接</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">3.6. 格式化余额</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">3.7. 格式化注册日期</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">3.8. 过滤我们的数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">3.9. 构建表单</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#inputs">3.9.1. 构建 inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vue">3.9.2. 显示和隐藏Vue内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">3.9.3. 过滤我们的内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">3.9.4. 过滤我们的过滤器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#css">3.9.5. 改变CSS类</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">3.9.6. 过滤和自定义类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">3.10. 总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="优化你的App和使用组件显示数据.html">4. 优化你的App和使用组件显示数据</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Vue示例</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>3. 显示、循环、查询和过滤数据</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/显示、循环、查询和过滤数据.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>3. 显示、循环、查询和过滤数据<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<p>在第1章 <code class="docutils literal"><span class="pre">Vue.js</span></code> 入门中，我们介绍了 <code class="docutils literal"><span class="pre">Vue</span></code> 中的 <code class="docutils literal"><span class="pre">data</span></code> ， <code class="docutils literal"><span class="pre">computed</span></code> 和 <code class="docutils literal"><span class="pre">method</span></code> 对象以及如何显示静态数据值。在本章中，我们将介绍：</p>
+<ul class="simple">
+<li>在 <code class="docutils literal"><span class="pre">Vue</span></code> 中使用 <code class="docutils literal"><span class="pre">v-if</span></code> ， <code class="docutils literal"><span class="pre">v-else</span></code> 和 <code class="docutils literal"><span class="pre">v-for</span></code> 显示列表和更复杂的数据；</li>
+<li>使用表单元素过滤列表；</li>
+<li>根据数据应用条件 <code class="docutils literal"><span class="pre">CSS</span></code> 类；</li>
+</ul>
+<p>我们要使用的数据是由 <code class="docutils literal"><span class="pre">JSON</span></code> 生成器服务(<a class="reference external" href="http://www.json-generator.com/">http://www.json-generator.com/</a>)随机生成的。 这个网站允许我们获得虚拟数据来练习。以下模板用于生成我们将要使用的数据。 将以下内容复制到左侧以生成相同格式的数据，以使属性与代码示例匹配，如下所示：</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>[
+  &#39;{{repeat(5)}}&#39;,
+  {
+    index: &#39;{{index()}}&#39;,
+    guid: &#39;{{guid()}}&#39;,
+    isActive: &#39;{{bool()}}&#39;,
+    balance: &#39;{{floating(1000, 4000, 2, &quot;00.00&quot;)}}&#39;,
+    name: &#39;{{firstName()}} {{surname()}}&#39;,
+    email: &#39;{{email()}}&#39;,
+    registered: &#39;{{date(new Date(2014, 0, 1), new Date(), &quot;YYYYMM-ddThh:mm:ss&quot;)}}&#39;
+  }
+]
+</pre></div>
+</div>
+<p>在开始构建我们的简单应用程序并显示用户之前，我们将介绍 <code class="docutils literal"><span class="pre">Vue</span></code> 的更多功能以及视图中可用的 <code class="docutils literal"><span class="pre">HTML</span></code> 特定属性。范围从动态渲染内容到循环数组。</p>
+<div class="section" id="html">
+<h2>3.1. HTML声明<a class="headerlink" href="#html" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 允许您使用 <code class="docutils literal"><span class="pre">HTML</span></code> 标记和属性来控制和更改应用程序的视图。 这涉及动态设置属性，如 <code class="docutils literal"><span class="pre">alt</span></code> 和 <code class="docutils literal"><span class="pre">href</span></code> 。 它还允许您根据应用程序中的数据渲染标签和组件。 这些属性以 <code class="docutils literal"><span class="pre">v</span></code> 开头，如本书开头所述，在渲染过程中将会从生成的 <code class="docutils literal"><span class="pre">HTML</span></code> 中移除。 在我们开始输出和过滤我们的数据之前，我们将运行一些常见的声明。</p>
+<div class="section" id="v-html">
+<h3>3.1.1. v-html<a class="headerlink" href="#v-html" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">v-html</span></code> 指令允许您输出内容而不使用胡须风格的大括号语法。 如果您的输出包含 <code class="docutils literal"><span class="pre">HTML</span></code> 标签，也可以使用它 - 它会将渲染输出为 <code class="docutils literal"><span class="pre">HTML</span></code> 而不是纯文本。 <code class="docutils literal"><span class="pre">HTML</span></code> 属性的值是数据键或计算的函数名称的值：</p>
+<p>视图：</p>
+<p>在 <code class="docutils literal"><span class="pre">app</span></code> 空间的视图中，在一个元素中添加 <code class="docutils literal"><span class="pre">v-html</span></code> 属性:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-html</span><span class="o">=</span><span class="s">&quot;message&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>JavaScript：</p>
+<p>在脚本中，设置 <code class="docutils literal"><span class="pre">message</span></code> 变量的值为包含一些 <code class="docutils literal"><span class="pre">HTML</span></code> 元素的字符串：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;&lt;h1&gt;Hello!&lt;/h1&gt;&#39;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>您应该尽量避免将 <code class="docutils literal"><span class="pre">HTML</span></code> 添加到您的 <code class="docutils literal"><span class="pre">Vue</span></code> 实例中，因为它开始混淆了我们 <code class="docutils literal"><span class="pre">MVVM</span></code> 结构的 <code class="docutils literal"><span class="pre">ViewModel</span></code> 和 <code class="docutils literal"><span class="pre">Model</span></code> 中的视图。 在内部输出无效的 <code class="docutils literal"><span class="pre">HTML</span></code> 标签也有危险。您应该只将 <code class="docutils literal"><span class="pre">v-html</span></code> 与您信任的数据一起使用，因为将它与外部 <code class="docutils literal"><span class="pre">API</span></code> 一起使用可能是一个安全问题，因为它可以让 <code class="docutils literal"><span class="pre">API</span></code> 控制您的应用程序。 潜在的恶意 <code class="docutils literal"><span class="pre">API</span></code> 可以使用 <code class="docutils literal"><span class="pre">v-html</span></code> 注入不需要的内容和 <code class="docutils literal"><span class="pre">HTML</span></code> 。 只能将 <code class="docutils literal"><span class="pre">v-html</span></code> 用于完全信任的数据。</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>3.2. 声明性渲染<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>通过使用 <code class="docutils literal"><span class="pre">v-bind:attribute</span></code> ，可以在 <code class="docutils literal"><span class="pre">Vue</span></code> 中使用动态填充常规 <code class="docutils literal"><span class="pre">HTML</span></code> 属性，例如 <code class="docutils literal"><span class="pre">&lt;img&gt;</span></code> 标签的 <code class="docutils literal"><span class="pre">src</span></code> 。 这使您可以使用 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序中的数据填充任何存在的属性。这可能是图片来源或元素 <code class="docutils literal"><span class="pre">ID</span></code> 。</p>
+<p>通过您希望填充的属性前面添加 <code class="docutils literal"><span class="pre">v-bind:</span></code> 来使用绑定选项。 例如，如果您希望使用名为 <code class="docutils literal"><span class="pre">imageSource</span></code> 的数据键的值填充图像源，则需要执行以下操作：</p>
+<p>视图：</p>
+<p>在你的 <code class="docutils literal"><span class="pre">app</span></code> 视图空间中，创建一个 <code class="docutils literal"><span class="pre">img</span></code> 标签，将该标签的 <code class="docutils literal"><span class="pre">v-bind:src</span></code> 属性值赋值为 <code class="docutils literal"><span class="pre">imageSource</span></code> 。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">v-bind:src</span><span class="o">=</span><span class="s">&quot;imageSource&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>JavaScript：</p>
+<p>在你的 <code class="docutils literal"><span class="pre">Vue</span></code> 脚本中创建一个 <code class="docutils literal"><span class="pre">imageSource</span></code> 变量。该变量的值为你希望的图片路径：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">imageSource</span><span class="o">:</span> <span class="s1">&#39;http://via.placeholder.com/350x150&#39;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">v-bind:attribute</span></code> 具有一个简写形式 <code class="docutils literal"><span class="pre">:attribute</span></code> ，例如， <code class="docutils literal"><span class="pre">v-bind:src</span></code> 变为 <code class="docutils literal"><span class="pre">:src</span></code> 。</p>
+</div>
+<div class="section" id="id3">
+<h2>3.3. 条件渲染<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>使用自定义 <code class="docutils literal"><span class="pre">HTML</span></code> 声明， <code class="docutils literal"><span class="pre">Vue</span></code> 允许您根据数据属性或 <code class="docutils literal"><span class="pre">JavaScript</span></code> 声明有条件地渲染元素和内容。 这些包括 <code class="docutils literal"><span class="pre">v-if</span></code> ，当声明为真时用于显示容器，以及 <code class="docutils literal"><span class="pre">v-else</span></code> 用于当声明为假时显示容器。</p>
+<div class="section" id="v-if">
+<h3>3.3.1. v-if<a class="headerlink" href="#v-if" title="永久链接至标题">¶</a></h3>
+<p>最基本的例子就是 <code class="docutils literal"><span class="pre">v-if</span></code> 指令 - 根据一个值或函数确定是否应该显示块。</p>
+<p>在视图内创建一个带有单个 <code class="docutils literal"><span class="pre">div</span></code> 的 <code class="docutils literal"><span class="pre">Vue</span></code> 实例，并将数据关键字 <code class="docutils literal"><span class="pre">isVisible</span></code> 设置为 <code class="docutils literal"><span class="pre">false</span></code> 。</p>
+<p>视图：</p>
+<p>视图代码如下所示：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>Now you see me<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>JavaScript：</p>
+<p>在脚本中，初始化 <code class="docutils literal"><span class="pre">Vue</span></code> 然后创建一个 <code class="docutils literal"><span class="pre">isVisible</span></code> 数据属性：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">isVisible</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>现在， <code class="docutils literal"><span class="pre">Vue</span></code> 应用可以根据 <code class="docutils literal"><span class="pre">isVisible</span></code> 的值在 <code class="docutils literal"><span class="pre">HMTL</span></code> 元素中使用 <code class="docutils literal"><span class="pre">v-if</span></code> 指令来显示元素的内容。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;isVisible&quot;</span><span class="p">&gt;</span>Now you see me<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>按保存后，您的文本应该消失。这是因为标签正在根据当前为 <code class="docutils literal"><span class="pre">false</span></code> 的值进行有条件渲染。 如果你打开你的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 控制台并运行下面的代码，你的元素应该重新出现：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">isVisible</span> <span class="o">=</span> <span class="kc">true</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">v-if</span></code> 指令不仅仅只能使用 <code class="docutils literal"><span class="pre">Boolean</span></code> 值。你可以检查数据属性是否等于指定的字符串：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;selected == &#39;yes&#39;&quot;</span><span class="p">&gt;</span>Now you see me<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>例如，前面的代码检查选定的数据属性是否等于 <code class="docutils literal"><span class="pre">yes</span></code> 的值。 <code class="docutils literal"><span class="pre">v-if</span></code> 属性接受 <code class="docutils literal"><span class="pre">JavaScript</span></code> 运算符，因此可以检查不等于，大于或小于。</p>
+<p>你的逻辑开始从你的 <code class="docutils literal"><span class="pre">ViewModel</span></code> 开始蔓延到你的 <code class="docutils literal"><span class="pre">View</span></code> 中， 这是很危险的。 为了解决这个问题，该属性同样可以接受函数作为一个值。该方法可以根据需要尽可能复杂，但如果您希望显示代码，最终必须返回 <code class="docutils literal"><span class="pre">true</span></code> ，否则返回 <code class="docutils literal"><span class="pre">false</span></code> 。 请记住，如果函数返回的值不是假值（如 <code class="docutils literal"><span class="pre">0</span></code> 或 <code class="docutils literal"><span class="pre">false</span></code> ），则结果将被解释为 <code class="docutils literal"><span class="pre">true</span></code> 。这看起来像这样：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;isSelected&quot;</span><span class="p">&gt;</span>Now you see me<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>然后你的方法将会是这样：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">isSelected</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">selected</span> <span class="o">==</span> <span class="s1">&#39;yes&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果您不希望完全删除该元素且仅仅隐藏该元素，则有更合适的指令 <code class="docutils literal"><span class="pre">v-show</span></code> 。 这适用于 <code class="docutils literal"><span class="pre">CSS</span></code> 显示属性，而不是操纵 <code class="docutils literal"><span class="pre">DOM</span></code> - 本章后面会介绍 <code class="docutils literal"><span class="pre">v-show</span></code> 。</p>
+</div>
+<div class="section" id="v-else">
+<h3>3.3.2. v-else<a class="headerlink" href="#v-else" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">v-else</span></code> 允许您基于 <code class="docutils literal"><span class="pre">v-if</span></code> 语句的相反来渲染替代元素。如果结果为真，则会显示第一个元素; 否则，包含 <code class="docutils literal"><span class="pre">v-else</span></code> 的元素将会渲染。</p>
+<p>具有 <code class="docutils literal"><span class="pre">v-else</span></code> 的元素需要直接紧跟包含 <code class="docutils literal"><span class="pre">v-if</span></code> 的元素； 否则，你的应用程序会抛出一个错误。</p>
+<p><code class="docutils literal"><span class="pre">v-else</span></code> 没有值且放置在元素标签中。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;isVisible&quot;</span><span class="p">&gt;</span>
+        Now you see me
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-else</span><span class="p">&gt;</span>
+        Now you don&#39;t
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>将前面的 <code class="docutils literal"><span class="pre">HTML</span></code> 添加到您的应用空间将仅显示其中一个 <code class="docutils literal"><span class="pre">&lt;div&gt;</span></code> 元素 - 在您的控制台中切换值，就像我们先前所做的那样会显示另一个容器。 如果你想链接你的条件，你也可以使用 <code class="docutils literal"><span class="pre">v-else-if</span></code> 。 <code class="docutils literal"><span class="pre">v-else-if</span></code> 的一个例子如下：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;isVisible&quot;</span><span class="p">&gt;</span>
+        Now you see me
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-else-if</span><span class="o">=</span><span class="s">&quot;otherVisible&quot;</span><span class="p">&gt;</span>
+        You might see me
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-else</span><span class="p">&gt;</span>
+        Now you don&#39;t
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>如果 <code class="docutils literal"><span class="pre">isVisible</span></code> 变量等于 <code class="docutils literal"><span class="pre">false</span></code> ，但 <code class="docutils literal"><span class="pre">otherVisible</span></code> 变量等于 <code class="docutils literal"><span class="pre">true</span></code> 则 <code class="docutils literal"><span class="pre">You</span> <span class="pre">might</span> <span class="pre">see</span> <span class="pre">me</span></code> 将显示。</p>
+<p>应该谨慎使用 <code class="docutils literal"><span class="pre">v-else</span></code> ，因为可能会模棱两可，并可能导致误报情况。</p>
+</div>
+</div>
+<div class="section" id="v-for">
+<h2>3.4. v-for来显示数据<a class="headerlink" href="#v-for" title="永久链接至标题">¶</a></h2>
+<p>下一个HTML声明意味着我们可以开始显示我们的数据并将这些数据的属性进行实践。 由于我们的数据是一个数组，我们需要遍历它才能显示每个元素。 为此，我们将使用 <a href="#id4"><span class="problematic" id="id5">``</span></a>v-for``指令。</p>
+<p>生成你的 <code class="docutils literal"><span class="pre">JSON</span></code> 并将其分配给一个名为 <code class="docutils literal"><span class="pre">people</span></code> 的变量。 在这些例子中，生成的 <code class="docutils literal"><span class="pre">JSON</span></code> 将以 <code class="docutils literal"><span class="pre">[...]</span></code> 形式在代码块中显示。 你的 <code class="docutils literal"><span class="pre">Vue</span></code> 应用应该如下所示：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">people</span><span class="o">:</span> <span class="p">[...]</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>我们现在需要开始在视图中将每个人的姓名显示为项目符号列表。 这是 <code class="docutils literal"><span class="pre">v-for</span></code> 指令的数据来源：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;person in people&quot;</span><span class="p">&gt;</span>
+            {{ person }}
+        <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">v-for</span></code> 循环遍历 <code class="docutils literal"><span class="pre">JSON</span></code> 列表并为每个条目临时分配它 <code class="docutils literal"><span class="pre">person</span></code> 变量。 然后我们可以输出变量的值或属性。</p>
+<p><code class="docutils literal"><span class="pre">v-for</span></code> 循环需要应用于要重复使用的 <code class="docutils literal"><span class="pre">HTML</span></code> 元素，这种情况下，是 <code class="docutils literal"><span class="pre">&lt;li&gt;</span></code> 。 如果您没有包装元素或不希望使用 <code class="docutils literal"><span class="pre">HTML</span></code> 你可以使用 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">&lt;template&gt;</span></code> 元素。 这些会在运行时被移除，同时创建一个容器供您输出数据：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">template</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;person in people&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>
+                {{ person }}
+            <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>模板标签也会隐藏内容，直到应用程序初始化完成，如果您的网络速度较慢或您的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 需要一段时间才能触发，这可能会很方便。</p>
+<p>仅仅是将 <code class="docutils literal"><span class="pre">{{person}}</span></code> 输出到视图，将会创建一串很长的信息，对我们没有任何用处。更新输出 <code class="docutils literal"><span class="pre">person</span></code> 对象的 <code class="docutils literal"><span class="pre">name</span></code> 属性：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">li</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;person in people&quot;</span><span class="p">&gt;</span>
+    {{ person.name }}
+<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>在浏览器中查看结果应该会显示用户名称的列表。 更新 <code class="docutils literal"><span class="pre">HTML</span></code> 以在表格中列出用户姓名，电子邮件地址和余额。 将 <code class="docutils literal"><span class="pre">v-for</span></code> 应用于 <code class="docutils literal"><span class="pre">&lt;tr&gt;</span></code> 元素：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;person in people&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ person.name }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ person.email }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ person.balance }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ person.registered }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>给表格添加一个额外的单元格。 如果它们处于活动状态，将显示活动状态，如果不活动，则使用 <code class="docutils literal"><span class="pre">person</span></code> 对象上的 <code class="docutils literal"><span class="pre">isActive</span></code> 属性显示活动状态。这可以通过两种方式实现 - 使用 <code class="docutils literal"><span class="pre">v-if</span></code> 指令或使用三元 <code class="docutils literal"><span class="pre">if</span></code> 。 三元 <code class="docutils literal"><span class="pre">if</span></code> 是可以放在视图的大括号内的 <code class="docutils literal"><span class="pre">if</span></code> 语句。 如果我们想使用 <code class="docutils literal"><span class="pre">HTML</span></code> 元素来应用某些样式，我们将使用 <code class="docutils literal"><span class="pre">v-if</span></code> 。</p>
+<p>如果我们使用三元 <code class="docutils literal"><span class="pre">if</span></code> ，那么单元格将如下所示：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ (person.isActive) ? &#39;Active&#39; : &#39;Inactive&#39; }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>如果我们选择使用 <code class="docutils literal"><span class="pre">v-else</span></code> 和 <code class="docutils literal"><span class="pre">v-if</span></code> 选项，允许我们使用想使用的 <code class="docutils literal"><span class="pre">HTML</span></code> ，它将如下所示：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;positive&quot;</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;person.isActive&quot;</span><span class="p">&gt;</span>Active<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;negative&quot;</span> <span class="na">v-else</span><span class="p">&gt;</span>Inactive<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>这个活动元素是 <code class="docutils literal"><span class="pre">Vue</span></code> 组件理想的完美例子 - 我们将在第3章“优化我们的应用程序和使用组件显示数据”中介绍。 作为更符合我们 <code class="docutils literal"><span class="pre">MVVM</span></code> 方法的替代方案，我们可以创建一个方法，它返回状态文本。 <strong>这将清理我们的视图并将逻辑移动到我们的应用程序</strong> ：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ activeStatus(person) }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>然后我们的方法将执行与我们的视图相同的逻辑：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">activeStatus</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;Active&#39;</span> <span class="o">:</span> <span class="s1">&#39;Inactive&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="v-bind">
+<h2>3.5. 使用v-bind创建链接<a class="headerlink" href="#v-bind" title="永久链接至标题">¶</a></h2>
+<p>下一步是链接电子邮件地址，以便查看人员列表的用户可点击。 在这种情况下，我们需要通过在电子邮件地址之前添加 <code class="docutils literal"><span class="pre">mailto:</span></code> 来连接字符串。</p>
+<p>第一个直觉应该是这样做：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;mailto:{{person.email}}&quot;</span><span class="p">&gt;</span>{{ person.email }}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>但 <code class="docutils literal"><span class="pre">Vue</span></code>  <strong>不允许在属性内插值</strong> 。相反，我们必须在 <code class="docutils literal"><span class="pre">href</span></code> 属性上使用 <code class="docutils literal"><span class="pre">v-bind</span></code> 指令。这将该属性转换为 <code class="docutils literal"><span class="pre">JavaScript</span></code> 变量，因此任何原始文本都必须用引号引起来，并与所需的变量连接起来：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">a</span> <span class="na">v-bind:href</span><span class="o">=</span><span class="s">&quot;&#39;mailto:&#39; + person.email&quot;</span><span class="p">&gt;</span>{{ person.email }}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>注意添加 <code class="docutils literal"><span class="pre">v-bind:</span></code> ，单引号和连接 <code class="docutils literal"><span class="pre">+</span></code> 标识符。</p>
+</div>
+<div class="section" id="id6">
+<h2>3.6. 格式化余额<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>在继续过滤用户之前，请添加一种方法来正确格式化余额，在数据对象中预先定义货币符号并确保小数点后有两个数字。为了实现这一点，我们可以调整在第1章 <code class="docutils literal"><span class="pre">Vue.js</span></code> 入门中的方法。我们的 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序现在应该如下所示：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">people</span><span class="o">:</span> <span class="p">[...],</span>
+        <span class="nx">currency</span><span class="o">:</span> <span class="s1">&#39;$&#39;</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">activeStatus</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;Active&#39;</span> <span class="o">:</span> <span class="s1">&#39;Inactive&#39;</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">formatBalance</span><span class="p">(</span><span class="nx">balance</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">currency</span> <span class="o">+</span> <span class="nx">balance</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>我们可以在我们的视图中使用这种新方法：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ formatBalance(person.balance) }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>3.7. 格式化注册日期<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>数据中的注册日期字段是计算机友好的，这对于阅读不是非常人性化。 创建一个名为 <code class="docutils literal"><span class="pre">formatDate</span></code> 的新方法，该方法接受一个参数 - 类似于之前的 <code class="docutils literal"><span class="pre">formatBalance</span></code> 方法。</p>
+<p>如果您想完全自定义您的日期显示，那么可以使用几个库，例如 <code class="docutils literal"><span class="pre">moment.js</span></code> ，这些库可以为您提供更多的灵活性，以便处理任何基于日期和时间的数据。 对于这种方法，我们将使用本地 <code class="docutils literal"><span class="pre">JavaScript</span></code> 函数 <code class="docutils literal"><span class="pre">LocaleString()</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">formatDate</span><span class="p">(</span><span class="nx">date</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">registered</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">date</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">registered</span><span class="p">.</span><span class="nx">toLocaleString</span><span class="p">(</span><span class="s1">&#39;en-US&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用注册日期，我们将它传递给本地 <code class="docutils literal"><span class="pre">Date()</span></code> 函数，以便 <code class="docutils literal"><span class="pre">JavaScript</span></code> 知道将该字符串解释为日期。一旦存储在已注册的变量中，我们用 <code class="docutils literal"><span class="pre">toLocaleString()</span></code> 函数将该对象作为字符串返回。该函数接受大量选项（如MDN中所述）来自定义日期的输出。 现在，我们将它传递给我们希望显示的区域并使用对应位置的默认值。 我们现在可以在视图中使用我们的方法：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ formatDate(person.registered) }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>3.8. 过滤我们的数据<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<p>随着我们的数据被列出，现在我们要建立过滤能力。 这将允许用户选择要过滤的字段和该字段输入文本作为查询。 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序将随着用户输入过滤行。为此，我们要将某些表单输入绑定到数据对象中的各个值，创建一个新方法并在表行中使用新指令； <code class="docutils literal"><span class="pre">v-show</span></code> 。</p>
+</div>
+<div class="section" id="id9">
+<h2>3.9. 构建表单<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>首先在视图中创建 <code class="docutils literal"><span class="pre">HTML</span></code> 。为每个要过滤的字段创建一个 <code class="docutils literal"><span class="pre">&lt;select&gt;</span></code> 框，一个用于查询的 <code class="docutils literal"><span class="pre">&lt;input&gt;</span></code> 和一对单选按钮 - 我们将使用它们过滤活动用户和非活动用户。确保每个 <code class="docutils literal"><span class="pre">&lt;option&gt;</span></code> 的 <code class="docutils literal"><span class="pre">value</span></code> 属性反映用户数据中的键 - 这将节省所需的代码并使选择框的用途更加明显。</p>
+<p>考虑到用户体验，您需要过滤的数据不需要显示，以便我们的过滤工作。 如果表格行显示非过滤数据是否有意义？ 创建将用于过滤的表单：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">form</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;fiterField&quot;</span><span class="p">&gt;</span>
+        Field:
+        <span class="p">&lt;</span><span class="nt">select</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;filterField&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">&gt;</span>Disable filters<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;isActive&quot;</span><span class="p">&gt;</span>Active user<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;email&quot;</span><span class="p">&gt;</span>Email<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;balance&quot;</span><span class="p">&gt;</span>Balance<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;registered&quot;</span><span class="p">&gt;</span>Date registered<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;filterQuery&quot;</span><span class="p">&gt;</span>
+        Query: <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;filterQuery&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>
+        Active:
+        <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;userStateActive&quot;</span><span class="p">&gt;</span>
+        Yes: <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;radio&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;true&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;userStateActive&quot;</span>  <span class="na">selected</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;userStateInactive&quot;</span><span class="p">&gt;</span>
+        No: <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;radio&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;false&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;userStateInactive&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>此表单包括一个选择框(用于选择一个过滤字段)，一个允许用户输入查询以过滤的输入框，以及一对单选按钮，用于当我们希望由活动用户和非活动用户过滤时。想象中的用户流程是这样的：用户将选择他们希望过滤数据的字段，并输入他们的查询或选择单选按钮。 当在选择框中选择 <code class="docutils literal"><span class="pre">isActive</span></code> （活动用户）选项时，单选按钮将被显示，并且输入框将被隐藏。 我们确保默认情况下选择第一个单选按钮。</p>
+<p>过滤输入不需要包含在表单中也可以工作; 然而，即使在 <code class="docutils literal"><span class="pre">JavaScript</span></code> 应用程序中，保留语义 <code class="docutils literal"><span class="pre">HTML</span></code> 也是一种很好的做法。</p>
+<div class="section" id="inputs">
+<h3>3.9.1. 构建 inputs<a class="headerlink" href="#inputs" title="永久链接至标题">¶</a></h3>
+<p>要将输入绑定到可通过 <code class="docutils literal"><span class="pre">Vue</span></code> 实例访问的变量，需要将 <code class="docutils literal"><span class="pre">HTML</span></code> 属性添加到字段并将相应的键添加到 <code class="docutils literal"><span class="pre">data</span></code> 对象。 在 <code class="docutils literal"><span class="pre">data</span></code> 对象中为每个字段创建一个变量，以便我们可以将表单元素绑定到它们：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">people</span><span class="o">:</span> <span class="p">[...],</span>
+        <span class="nx">currency</span><span class="o">:</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span>
+        <span class="nx">filterField</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="nx">filterQuery</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="nx">filterUserState</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>数据对象现在有三个附加键： <code class="docutils literal"><span class="pre">filterField</span></code> ，它将用于存储下拉列表的值; <code class="docutils literal"><span class="pre">filterQuery</span></code> ，输入到文本框中的数据的占位符; 和 <code class="docutils literal"><span class="pre">filterUserState</span></code> ，它允许我们存储单选按钮复选框。</p>
+<p>现在有数据键可以使用，我们可以将表单元素绑定到它们。使用数据键的值将 <code class="docutils literal"><span class="pre">v-model=&quot;&quot;</span></code> 属性应用于每个表单字段。</p>
+<p>例子如下：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;filterQuery&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;filterQuery&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>确保两个单选按钮具有完全相同的 <code class="docutils literal"><span class="pre">v-model=&quot;&quot;</span></code> 属性：这样可以更新相同的值。 要验证它是否有效，现在可以获取字段的值并输出数据变量。</p>
+<p>尝试输出 <code class="docutils literal"><span class="pre">filterField</span></code> 或 <code class="docutils literal"><span class="pre">filterQuery</span></code> 并更改字段。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>{{ filterField }}
+</pre></div>
+</div>
+<p>有一件事你可能会注意到，如果你输出的 <code class="docutils literal"><span class="pre">filterUserState</span></code> 变量看起来是在工作，但是，它没有得到所需的实际结果。变量的输出将在值属性中设置为 <code class="docutils literal"><span class="pre">true</span></code> 和 <code class="docutils literal"><span class="pre">false</span></code> (值为字符串，不是 <code class="docutils literal"><span class="pre">Boolean</span></code> 类型值)。</p>
+<p>仔细观察，这些值实际上是字符串，而不是布尔值。一个布尔值是一个硬编码的 <code class="docutils literal"><span class="pre">true</span></code> 或 <code class="docutils literal"><span class="pre">false</span></code> ， <code class="docutils literal"><span class="pre">1</span></code> 或 <code class="docutils literal"><span class="pre">0</span></code> ，你可以很容易地比较，而一个字符串需要精确检查硬编码的字符串。 这可以通过输出它的 <code class="docutils literal"><span class="pre">typeof</span></code> 类型变量来验证：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">{{</span> <span class="k">typeof</span> <span class="nx">filterUserState</span> <span class="p">}}</span>
+</pre></div>
+</div>
+<p>这可以通过使用 <code class="docutils literal"><span class="pre">vbind:value</span></code> 属性绑定单选按钮的值来解决。 该属性允许您为 <code class="docutils literal"><span class="pre">Vue</span></code> 指定值以进行解释，并且可以接受布尔值，字符串值或对象值。现在，我们传递给它 <code class="docutils literal"><span class="pre">true</span></code> 和 <code class="docutils literal"><span class="pre">false</span></code> ，就像我们已经使用标准的 <code class="docutils literal"><span class="pre">value</span></code> 属性一样，但是 <code class="docutils literal"><span class="pre">Vue</span></code> 会把它解释为布尔值：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>
+    Active:
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;userStateActive&quot;</span><span class="p">&gt;</span>
+    Yes: <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;radio&quot;</span> <span class="na">v-bind:value</span><span class="o">=</span><span class="s">&quot;true&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;userStateActive&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;filterUserState&quot;</span> <span class="na">selected</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;userStateInactive&quot;</span><span class="p">&gt;</span>
+    No: <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;radio&quot;</span> <span class="na">v-bind:value</span><span class="o">=</span><span class="s">&quot;false&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;userStateInactive&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;filterUserState&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>下一步是基于过滤器来显示和隐藏表行。</p>
+</div>
+<div class="section" id="vue">
+<h3>3.9.2. 显示和隐藏Vue内容<a class="headerlink" href="#vue" title="永久链接至标题">¶</a></h3>
+<p>除了用于显示和隐藏内容的 <code class="docutils literal"><span class="pre">v-if</span></code> 外，还可以使用 <code class="docutils literal"><span class="pre">v-show=&quot;&quot;</span></code> 指令。 <code class="docutils literal"><span class="pre">v-show</span></code> 与 <code class="docutils literal"><span class="pre">v-if</span></code> 非常相似; 它们都被添加到 <code class="docutils literal"><span class="pre">HTML</span></code> 包装器中，并且都可以接受相同的参数，包括一个函数。两者之间的区别在于 <code class="docutils literal"><span class="pre">v-if</span></code> 会更改标记，根据需要删除和添加 <code class="docutils literal"><span class="pre">HTML</span></code> 元素，而 <code class="docutils literal"><span class="pre">v-show</span></code> 则与渲染元素无关，而是使用内联 <code class="docutils literal"><span class="pre">CSS</span></code> 样式来隐藏和显示元素。 <code class="docutils literal"><span class="pre">v-if</span></code> 更适合于运行时渲染或不常见的用户交互，因为它可能会重构整个页面。 当很多元素快速进入和退出视图时， <code class="docutils literal"><span class="pre">v-show</span></code> 是有利的，例如，过滤时！</p>
+<p>当在方法中使用 <code class="docutils literal"><span class="pre">v-show</span></code> 时，函数只需返回 <code class="docutils literal"><span class="pre">true</span></code> 或 <code class="docutils literal"><span class="pre">false</span></code> 。该函数没有使用它的位置的概念，所以我们需要传递当前正在渲染的 <code class="docutils literal"><span class="pre">person</span></code> 来计算它是否应该显示。</p>
+<p>在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例上创建一个名为 <code class="docutils literal"><span class="pre">filterRow()</span></code> 方法，将其设置为 <code class="docutils literal"><span class="pre">true</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">filterRow</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>该函数接受一个参数，这个参数是我们通过 <code class="docutils literal"><span class="pre">HTML</span></code> 传入的 <code class="docutils literal"><span class="pre">person</span></code> 。 在您的视图中，在传递 <code class="docutils literal"><span class="pre">person</span></code> 对象时，将 <code class="docutils literal"><span class="pre">v-show</span></code> 属性添加到 <code class="docutils literal"><span class="pre">filterRow</span></code> 作为值的 <code class="docutils literal"><span class="pre">&lt;tr&gt;</span></code> 元素中：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">tr</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;person in people&quot;</span> <span class="na">v-show</span><span class="o">=</span><span class="s">&quot;filterRow(person)&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ person.name }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>作为一个简单的测试，将 <code class="docutils literal"><span class="pre">isActive</span></code> 值返回给此 <code class="docutils literal"><span class="pre">person</span></code> 。 这应该立即过滤掉任何不活动的人，因为他们的值将返回 <code class="docutils literal"><span class="pre">false</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">filterRow</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>3.9.3. 过滤我们的内容<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>现在，在我们视图中我们可以控制 <code class="docutils literal"><span class="pre">person</span></code> 行和一些过滤器控件，我们需要让我们的过滤器工作。 我们已经通过我们的 <code class="docutils literal"><span class="pre">isActive</span></code> 键进行过滤，因此单选按钮将首先被使用。 对于单选按钮值和我们将过滤的关键字，我们已经具有布尔值形式的值。 为了使这个过滤器正常工作，我们需要将 <code class="docutils literal"><span class="pre">isActive</span></code> 键与单选按钮的值进行比较。</p>
+<ul class="simple">
+<li>如果 <code class="docutils literal"><span class="pre">filterUserState</span></code> 值为 <code class="docutils literal"><span class="pre">true</span></code> ，那么当 <code class="docutils literal"><span class="pre">isActive</span></code> 为 <code class="docutils literal"><span class="pre">true</span></code> 时，向用户显示；</li>
+<li>如果 <code class="docutils literal"><span class="pre">filterUserState</span></code> 值为 <code class="docutils literal"><span class="pre">false</span></code> ，则仅显示其 <code class="docutils literal"><span class="pre">isActive</span></code> 值为 <code class="docutils literal"><span class="pre">false</span></code> 的用户。</li>
+</ul>
+<p>通过比较两个变量，可以将其写入一行：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">filterRow</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在加载页面时，不会显示用户，因为 <code class="docutils literal"><span class="pre">filterUserState</span></code> 键设置的值既不是 <code class="docutils literal"><span class="pre">true</span></code> 也不是 <code class="docutils literal"><span class="pre">false</span></code> 。点击其中一个单选按钮将显示相应的用户。</p>
+<p>只有在下拉菜单中选择了活动用户选项时，才让过滤器工作：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">filterRow</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span> <span class="o">===</span> <span class="s1">&#39;isActive&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>此代码将变量默认设置为 <code class="docutils literal"><span class="pre">true</span></code> 。 然后我们可以立即返回变量，我们的行将显示。然而，在返回之前，它会检查选择框的值，如果是所需的值，则会通过我们的单选按钮进行过滤。由于我们的选择框绑定到了 <code class="docutils literal"><span class="pre">filterField</span></code> 值和单选按钮绑定到 <code class="docutils literal"><span class="pre">filterUserState</span></code> 变量，因此在我们与应用程序交互时它们会更新。 尝试选择选择框中的活动用户选项并更改单选按钮。</p>
+<p>下一步是在未选择活动用户选项时使用输入查询框。我们还希望我们的查询是模糊搜索 - 例如，匹配包含搜索查询的单词而不是完全匹配。我们也希望它不区分大小写：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">filterRow</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span> <span class="o">===</span> <span class="s1">&#39;isActive&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterQuery</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">(),</span>
+                <span class="nx">field</span> <span class="o">=</span> <span class="nx">person</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span><span class="p">].</span><span class="nx">toString</span><span class="p">().</span><span class="nx">toLowerCase</span><span class="p">();</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>为了工作，我们必须添加一些东西来添加到这个方法中。第一步是检查我们的选择字段是否有开始过滤的值。由于我们选择字段中的第一个选项的 <code class="docutils literal"><span class="pre">value=&quot;&quot;</span></code> ，这等同于 <code class="docutils literal"><span class="pre">false</span></code> 。如果是这种情况，该方法返回默认值 <code class="docutils literal"><span class="pre">true</span></code> 。</p>
+<p>如果它确实有值，那么它会转到我们最初的 <code class="docutils literal"><span class="pre">if</span></code> 语句。这将检查特定值以查看它是否与 <code class="docutils literal"><span class="pre">isActive</span></code> 匹配 - 如果是，它会运行我们之前编写的代码。如果没有，我们开始我们的其它过滤。建立一个新的查询变量，它将输入的值转换为小写。</p>
+<p>第二个变量是我们要过滤的数据。这将使用选择框的值（该人员的字段键）来提取要过滤的值。此值将转换为字符串（在日期或余额的情况下），转换为小写字母并存储为字段变量。最后，我们使用 <code class="docutils literal"><span class="pre">includes</span></code> 函数来检查该字段是否包含输入的查询。如果是这样，我们返回 <code class="docutils literal"><span class="pre">true</span></code> ，并显示行；如果不是，该行则隐藏。</p>
+<p>我们可以解决的下一个问题是使用数字进行过滤。用户输入确切余额并不直观 - 更自然的搜索方式是查找低于或超过一定数量的余额的用户，例如 <code class="docutils literal"><span class="pre">&lt;2000</span></code> 。</p>
+<p>只是在 <code class="docutils literal"><span class="pre">balance</span></code> 字段时才应用这种类型的过滤。我们可以采用以下两种方法 - 我们可以检查字段名称是否是 <code class="docutils literal"><span class="pre">balance</span></code> ，类似于我们如何检查 <code class="docutils literal"><span class="pre">isActive</span></code> 字段，或者我们可以检查我们过滤的数据类型。</p>
+<p>检查字段名称更简单。我们可以在我们的方法中做一个 <code class="docutils literal"><span class="pre">else</span> <span class="pre">if()</span></code> ，或者甚至迁移到 <code class="docutils literal"><span class="pre">switch</span></code> 语句，以便于阅读和扩展。然而，检查字段类型的替代方法更具可扩展性。这意味着我们可以用更多数字字段扩展数据集，而不必扩展或更改我们的代码。但是，这确实意味着我们的代码中会有更多的 <code class="docutils literal"><span class="pre">if</span></code> 语句。</p>
+<p>我们首先要做的是改变我们的存储方法，因为我们不希望小写字段或查询：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span> <span class="o">===</span> <span class="s1">&#39;isActive&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">result</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterQuery</span><span class="p">,</span>
+        <span class="nx">field</span> <span class="o">=</span> <span class="nx">person</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>下一步是确定字段变量中数据的类型。这可以通过再次使用 <code class="docutils literal"><span class="pre">typeof</span></code> 运算符来建立。 这可以在 <code class="docutils literal"><span class="pre">if</span></code> 语句中使用，以检查字段的类型是否是数字：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span> <span class="o">===</span> <span class="s1">&#39;isActive&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">result</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterQuery</span><span class="p">,</span>
+        <span class="nx">field</span> <span class="o">=</span> <span class="nx">person</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span><span class="p">];</span>
+    <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">field</span> <span class="o">===</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Is a number</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// Is not a number</span>
+        <span class="nx">field</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦我们的检查完成，我们可以默认回到我们原来的查询代码。 如果选择选项不是 <code class="docutils literal"><span class="pre">isActive</span></code> ，并且正在过滤的数据不是数字，它将使用此代码段。如果是这种情况，那么它将小写字段，并查看它是否包含在像以前那样转换为小写字母时在查询框中写入的内容。</p>
+<p>下一阶段是实际将我们的数字数据与查询框中写入的数据进行比较。 为此，我们将使用原生 <code class="docutils literal"><span class="pre">JavaScript</span> <span class="pre">eval</span></code> 函数。</p>
+<p><code class="docutils literal"><span class="pre">eval</span></code> 函数可能是一个潜在的危险函数，如果没有一些严格的输入消毒检查，再加上它比替代品的性能低，就不应该在生产代码中使用。 它以本地 <code class="docutils literal"><span class="pre">JavaScript</span></code> 的形式运行所有内容，因此可能会被滥用。但是，由于我们正在将这个应用程序用于虚拟应用程序，因此我们将重点放在 <code class="docutils literal"><span class="pre">Vue</span></code> 本身上，而不是创建一个完全基于 <code class="docutils literal"><span class="pre">Web</span></code> 的应用程序，所以这样做很好。 您可以在24种方式中阅读更多关于 <code class="docutils literal"><span class="pre">eval</span></code> 的信息：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span> <span class="o">===</span> <span class="s1">&#39;isActive&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">result</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterQuery</span><span class="p">,</span>
+        <span class="nx">field</span> <span class="o">=</span> <span class="nx">person</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span><span class="p">];</span>
+    <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">field</span> <span class="o">===</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nx">field</span> <span class="o">+</span> <span class="nx">query</span><span class="p">);</span> <span class="c1">// query字段中包含大于、等于或小于符号</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">field</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这会将字段和查询传递给 <code class="docutils literal"><span class="pre">eval()</span></code> 函数，并将结果（ <code class="docutils literal"><span class="pre">true</span></code> 或 <code class="docutils literal"><span class="pre">false</span></code> ）传递给结果变量，以确定行的可见性。 <code class="docutils literal"><span class="pre">eval</span></code> 函数逐字地评估表达式并确定它是真是假。 下面是一个例子：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">eval</span><span class="p">(</span><span class="mi">500</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">);</span> <span class="c1">// true</span>
+<span class="nb">eval</span><span class="p">(</span><span class="mi">500</span> <span class="o">&lt;</span> <span class="mi">400</span><span class="p">);</span> <span class="c1">// false</span>
+<span class="nb">eval</span><span class="p">(</span><span class="mi">500</span> <span class="o">-</span> <span class="mi">500</span><span class="p">);</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+<p>在这个例子中，数字 <code class="docutils literal"><span class="pre">500</span></code> 是我们的字段，或在这个具体的例子中是 <code class="docutils literal"><span class="pre">balance</span></code> 。之后的任何事情都是我们用户写的。您的过滤代码现在已准备就绪。尝试从下拉菜单中选择余额并筛选余额高于 <code class="docutils literal"><span class="pre">2000</span></code> 的用户。</p>
+<p>在继续之前，我们需要添加一些错误检查。如果您的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 控制台处于打开状态，当您键入第一个更大或更小时，您可能已经注意到了一个错误。这是因为 <code class="docutils literal"><span class="pre">eval</span></code> 函数无法计算 <code class="docutils literal"><span class="pre">X&gt;``（其中</span> <span class="pre">``X</span></code> 是余额）。你可能也想用货币键入 <code class="docutils literal"><span class="pre">$2000</span></code> ，并意识到这是行不通的。这是因为货币是在渲染视图时应用的，而我们在渲染之前过滤数据。</p>
+<p>为了解决这两个错误，我们必须删除查询中键入的任何货币符号，并在 <code class="docutils literal"><span class="pre">eval</span></code> 函数调用之前测试。使用原生 JavaScript <code class="docutils literal"><span class="pre">replace()</span></code> 函数删除货币符号。如果更改，则使用应用中存储的货币符号，而不是对当前使用的货币符号进行硬编码。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">field</span> <span class="o">==</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">query</span> <span class="o">=</span> <span class="nx">query</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currency</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+    <span class="nx">result</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nx">field</span> <span class="o">+</span> <span class="nx">query</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们现在需要测试 <code class="docutils literal"><span class="pre">eval</span></code> 函数，以便它不会在按下每个按键时发生错误。 为此，我们使用 <code class="docutils literal"><span class="pre">try</span> <span class="pre">...</span> <span class="pre">catch</span></code> 语句：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">field</span> <span class="o">==</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">query</span> <span class="o">=</span> <span class="nx">query</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currency</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nx">field</span> <span class="o">+</span> <span class="nx">query</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>由于我们不想在输入错误时输出任何内容，因此我们可以将 <code class="docutils literal"><span class="pre">catch</span></code> 语句留空。 我们可以在这里放入 <code class="docutils literal"><span class="pre">field.includes</span></code> （查询）语句，所以它回落到默认功能。 我们完整的 <code class="docutils literal"><span class="pre">filterRow()</span></code> 方法现在看起来像这样：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">filterRow</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span> <span class="o">===</span> <span class="s1">&#39;isActive&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterQuery</span><span class="p">,</span>
+                <span class="nx">field</span> <span class="o">=</span> <span class="nx">person</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span><span class="p">];</span>
+            <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">field</span> <span class="o">===</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">query</span> <span class="o">=</span> <span class="nx">query</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currency</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                <span class="k">try</span> <span class="p">{</span>
+                    <span class="nx">result</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nx">field</span> <span class="o">+</span> <span class="nx">query</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{}</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">field</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">());</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>3.9.4. 过滤我们的过滤器<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>现在我们有了我们的过滤器，当我们的下拉列表中选择了 <code class="docutils literal"><span class="pre">isActive</span></code> 选项时，我们只需要显示单选按钮。使用我们学到的知识，这应该是相对直接的。</p>
+<p>创建一个检查选择框值的新方法，并在我们的下拉列表中选择活动用户时返回 <code class="docutils literal"><span class="pre">true</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">isActiveFilterSelected</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span> <span class="o">===</span> <span class="s1">&#39;isActive&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们现在可以对输入和单选按钮使用 <code class="docutils literal"><span class="pre">v-show</span></code> ，在查询框中反转效果：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;filterQuery&quot;</span> <span class="na">v-show</span><span class="o">=</span><span class="s">&quot;!isActiveFilterSelected()&quot;</span><span class="p">&gt;</span>
+    Query: <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;filterQuery&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">span</span> <span class="na">v-show</span><span class="o">=</span><span class="s">&quot;isActiveFilterSelected()&quot;</span><span class="p">&gt;</span>
+    Active:
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;userStateActive&quot;</span><span class="p">&gt;</span>
+    Yes: <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;radio&quot;</span> <span class="na">v-bind:value</span><span class="o">=</span><span class="s">&quot;true&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;userStateActive&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;filterUserState&quot;</span> <span class="na">selected</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;userStateInactive&quot;</span><span class="p">&gt;</span>
+    No: <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;radio&quot;</span> <span class="na">v-bind:value</span><span class="o">=</span><span class="s">&quot;false&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;userStateInactive&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;filterUserState&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>在输入字段调用方法之前记下感叹号。 这意味着不是，并且有效地颠倒了函数的结果，例如不正确与错误相同，反之亦然。</p>
+<p>为了改善用户体验，我们还可以在显示输入框之前检查过滤器是否处于活动状态。 这可以通过在我们的 <code class="docutils literal"><span class="pre">v-show</span></code> 属性中包含辅助检查来添加：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>&lt;label for=&quot;filterQuery&quot; v-show=&quot;this.filterField &amp;&amp; !isActiveFilterSelected()&quot;&gt;
+    Query: &lt;input type=&quot;text&quot; id=&quot;filterQuery&quot; v-model=&quot;filterQuery&quot;&gt;
+&lt;/label&gt;
+</pre></div>
+</div>
+<p>现在检查 <code class="docutils literal"><span class="pre">filterField</span></code> 是否有值，并且选择框未设置为 <code class="docutils literal"><span class="pre">isActive</span></code> 。 确保您也将该条件添加到单选按钮。</p>
+<p>进一步增强用户体验将确保在选择 <code class="docutils literal"><span class="pre">isActive</span></code> 选项时所有用户不会消失。 目前这是因为默认设置为一个字符串，该字符串与字段的真值或假值不匹配。
+在过滤此字段之前，我们应该检查 <code class="docutils literal"><span class="pre">filterUserState</span></code> 变量是 <code class="docutils literal"><span class="pre">true</span></code> 还是 <code class="docutils literal"><span class="pre">false</span></code> ，即布尔值。我们可以再次使用 <code class="docutils literal"><span class="pre">typeof</span></code> 来做到这一点：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span> <span class="o">===</span> <span class="s1">&#39;isActive&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">result</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="s1">&#39;boolean&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">)</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们使用三元运算符来检查要过滤的结果是布尔值。 如果是，那就过滤一下吧。 如果不是那么就简单地显示该行。</p>
+</div>
+<div class="section" id="css">
+<h3>3.9.5. 改变CSS类<a class="headerlink" href="#css" title="永久链接至标题">¶</a></h3>
+<p>和任何 <code class="docutils literal"><span class="pre">HTML</span></code> 属性一样， <code class="docutils literal"><span class="pre">Vue</span></code> 能够操作 <code class="docutils literal"><span class="pre">CSS</span></code> 类。 与 <code class="docutils literal"><span class="pre">Vue</span></code> 中的所有内容一样，这可以通过无数种方式完成，从对象本身的属性到使用方法。 如果用户处于活动状态，我们将开始添加一个类。</p>
+<p>绑定 <code class="docutils literal"><span class="pre">CSS</span></code> 类与其他属性相似。 该值需要一个可以从视图中计算逻辑的对象，或者将其抽象到我们的 <code class="docutils literal"><span class="pre">Vue</span></code> 实例中。 这完全取决于操作的复杂性。</p>
+<p>首先，如果用户处于活动状态，让我们向包含 <code class="docutils literal"><span class="pre">isActive</span></code> 变量的单元添加一个类：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">td</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;{ active: person.isActive }&quot;</span><span class="p">&gt;</span>
+    {{ activeStatus(person) }}
+<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>在类属性前面附加 <code class="docutils literal"><span class="pre">v-bind:</span></code> 让 <code class="docutils literal"><span class="pre">Vue</span></code> 知道需要处理该属性。该值为一个对象，该对象使用 <code class="docutils literal"><span class="pre">CSS</span></code> 类作为键，条件遍历作为值。如果 <code class="docutils literal"><span class="pre">person.isActive</span></code> 变量等于 <code class="docutils literal"><span class="pre">true</span></code> 时，单元格切换为 <code class="docutils literal"><span class="pre">active</span></code> 类。如果不是活跃用户，则切换为 <code class="docutils literal"><span class="pre">inactive</span></code> 类。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">td</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;{ active: person.isActive, inactive:!person.isActive }&quot;</span><span class="p">&gt;</span>
+    {{ activeStatus(person) }}
+<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>如果你想基于一个条件来切换两个类，可以在类属性值中使用三元运算符：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">td</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;person.isActive ? &#39;active&#39; : &#39;inactive&#39;&quot;</span><span class="p">&gt;</span>
+    {{ activeStatus(person) }}
+<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">使用单引号包围类名称。</p>
+</div>
+<p>上面导致代码逻辑开始进入视图中，这不是最佳实践。我们可以在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例中创建一个新的方法来抽取逻辑。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">activeClass</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span> <span class="o">?</span> <span class="s1">&#39;active&#39;</span> <span class="o">:</span> <span class="s1">&#39;inactive&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在，我们可以在视图中调用该方法：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">td</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;activeClass(person)&quot;</span><span class="p">&gt;</span>
+    {{ activeStatus(person) }}
+<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>这是一个相当简单的执行；让我们尝试一个稍微复杂一点。 我们希望根据 <code class="docutils literal"><span class="pre">balance</span></code> 值为该单元添加一个条件类。如果他们的余额低于 <code class="docutils literal"><span class="pre">$2000</span></code> ，我们将添加一个 <code class="docutils literal"><span class="pre">error</span></code> 类。如果它介于 <code class="docutils literal"><span class="pre">$2000</span></code> 和 <code class="docutils literal"><span class="pre">$3000</span></code> 之间，将会应用一个 <code class="docutils literal"><span class="pre">warning</span></code> 类，如果它超过 <code class="docutils literal"><span class="pre">$3000</span></code> ，则会添加一个 <code class="docutils literal"><span class="pre">success</span></code> 。</p>
+<p>除 <code class="docutils literal"><span class="pre">error</span></code> ， <code class="docutils literal"><span class="pre">warning</span></code> 和 <code class="docutils literal"><span class="pre">success</span></code> 课程外，如果余额超过500美元，将增加 <code class="docutils literal"><span class="pre">increasing</span></code> 类。 例如，2,600美元的余额将同时得到 <code class="docutils literal"><span class="pre">warning</span></code> 和 <code class="docutils literal"><span class="pre">increasing</span></code> 类，而2,400美元只能获得 <code class="docutils literal"><span class="pre">warning</span></code> 类。</p>
+<p>由于这包含逻辑，我们将在我们的实例中创建一个使用方法。 创建一个 <code class="docutils literal"><span class="pre">balanceClass</span></code> 方法，并将其绑定到包含余额的单元格的 <code class="docutils literal"><span class="pre">HTML</span> <span class="pre">class</span></code> 属性。 首先，我们将添加 <code class="docutils literal"><span class="pre">error</span></code> ， <code class="docutils literal"><span class="pre">warning</span></code> 和 <code class="docutils literal"><span class="pre">success</span></code> 类。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>&lt;td v-bind:class=&quot;balanceClass(person)&quot;&gt;
+    {{ formatBalance(person.balance) }}
+&lt;/td&gt;
+</pre></div>
+</div>
+<p>在这个方法中，我们需要访问传入的 person 的 balance 属性，然后返回我们想要增加的类名称。现在，我们先返回固定的结果来验证它工作：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">balanceClass</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;warning&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在，我们需要计算我们的余额。因此将其与我们的标准进行比较不会涉及任何转化：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">balanceClass</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;success&#39;</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">&lt;</span> <span class="mi">3000</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;warning&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">balanceLevel</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在前面的方法中，默认情况下类输出设置为 <code class="docutils literal"><span class="pre">success</span></code> ，因为我们只需要在输出小于3000时更改输出。第一个 <code class="docutils literal"><span class="pre">if</span></code> 检查余额是否低于第一个阈值 - 如果是，它将设置输出为 <code class="docutils literal"><span class="pre">error</span></code> 。 如果不是，则尝试第二个条件，即检查余额是否低于3000。如果成功，则应用的类将变为 <code class="docutils literal"><span class="pre">warning</span></code> 。最后，它输出所选的类，它直接应用于元素。</p>
+<p>我们现在需要考虑如何才能增加 <code class="docutils literal"><span class="pre">increasing</span></code> 类。 为了将它与现有的 <code class="docutils literal"><span class="pre">balanceLevel</span></code> 类一起输出，我们需要将单个变量的输出转换为数组。 要验证这是否有效，请将额外的类硬编码为输出：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">balanceClass</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;success&#39;</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">&lt;</span> <span class="mi">3000</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;warning&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nx">balanceLevel</span><span class="p">,</span> <span class="s1">&#39;increasing&#39;</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>该函数给元素增加了两个类。转换字符串为一个变量然后默认设置为 <code class="docutils literal"><span class="pre">false</span></code> 。当传入数组一个 <code class="docutils literal"><span class="pre">false</span></code> 时， <code class="docutils literal"><span class="pre">Vue</span></code> 不会输出任何东西。</p>
+<p>为了解决该问题，我们需要根据余额来计算是否需要 <code class="docutils literal"><span class="pre">increasing</span></code> 类。如果余额大于500，则我们需要 <code class="docutils literal"><span class="pre">increasing</span></code> 类：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">increasing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nx">balance</span> <span class="o">=</span> <span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">;</span>
+<span class="k">if</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">balance</span><span class="p">)</span> <span class="o">==</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="nx">balance</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// 四舍五入与大于传入参数的最小整数比较</span>
+    <span class="nx">increasing</span> <span class="o">=</span> <span class="s1">&#39;increasing&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>最初，我们设置 <code class="docutils literal"><span class="pre">increasing</span></code> 变量为 <code class="docutils literal"><span class="pre">false</span></code> 默认值。然后把余额除以1000。比较余额四舍五入与大于传入参数的最小整数比较。</p>
+<p>如果相等， <code class="docutils literal"><span class="pre">increasing</span></code> 变量设置为我们需要的类。然后和 <code class="docutils literal"><span class="pre">banbanceLevel</span></code> 变量一起传入到数组中。完整的方法如下所示：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">balanceClass</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;success&#39;</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">&lt;</span> <span class="mi">3000</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;warning&#39;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="nx">l</span>
+    <span class="nx">et</span> <span class="nx">increasing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="nx">balance</span> <span class="o">=</span> <span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">balance</span><span class="p">)</span> <span class="o">==</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="nx">balance</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">increasing</span> <span class="o">=</span> <span class="s1">&#39;increasing&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nx">balanceLevel</span><span class="p">,</span> <span class="nx">increasing</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>3.9.6. 过滤和自定义类<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>我们现在有一个完全成熟的用户列表/注册表，它根据标准对所选字段和自定义 <code class="docutils literal"><span class="pre">CSS</span></code> 类进行过滤。回顾一下，下面是我们的视图：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">form</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;fiterField&quot;</span><span class="p">&gt;</span>
+            Field:
+            <span class="p">&lt;</span><span class="nt">select</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;filterField&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;filterField&quot;</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">&gt;</span>Disable filters<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;isActive&quot;</span><span class="p">&gt;</span>Active user<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;</span>Name<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;email&quot;</span><span class="p">&gt;</span>Email<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;balance&quot;</span><span class="p">&gt;</span>Balance<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;registered&quot;</span><span class="p">&gt;</span>Date registered<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;filterQuery&quot;</span> <span class="na">v-show</span><span class="o">=</span><span class="s">&quot;this.filterField &amp;&amp; !isActiveFilterSelected()&quot;</span><span class="p">&gt;</span>
+            Query:
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;filterQuery&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;filterQuery&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span> <span class="na">v-show</span><span class="o">=</span><span class="s">&quot;isActiveFilterSelected()&quot;</span><span class="p">&gt;</span>
+            Active:
+            <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;userStateActive&quot;</span><span class="p">&gt;</span>
+            Yes:
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;radio&quot;</span> <span class="na">v-bind:value</span><span class="o">=</span><span class="s">&quot;true&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;userStateActive&quot;</span> <span class="na">vmodel</span><span class="o">=</span><span class="s">&quot;filterUserState&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;userStateInactive&quot;</span><span class="p">&gt;</span>
+            No:
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;radio&quot;</span> <span class="na">v-bind:value</span><span class="o">=</span><span class="s">&quot;false&quot;</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;userStateInactive&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;filterUserState&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;person in people&quot;</span> <span class="na">v-show</span><span class="o">=</span><span class="s">&quot;filterRow(person)&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ person.name }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">a</span> <span class="na">v-bind:href</span><span class="o">=</span><span class="s">&quot;&#39;mailto:&#39; + person.email&quot;</span><span class="p">&gt;</span>{{ person.email }}
+                <span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;balanceClass(person)&quot;</span><span class="p">&gt;</span>
+                {{ formatBalance(person.balance) }}
+            <span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ formatDate(person.registered) }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;activeClass(person)&quot;</span><span class="p">&gt;</span>
+                {{ activeStatus(person) }}
+            <span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>我们的 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 应该如下所示：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">people</span><span class="o">:</span> <span class="p">[...],</span>
+        <span class="nx">currency</span><span class="o">:</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span>
+        <span class="nx">filterField</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="nx">filterQuery</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="nx">filterUserState</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">activeStatus</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;Active&#39;</span> <span class="o">:</span> <span class="s1">&#39;Inactive&#39;</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">activeClass</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span> <span class="o">?</span> <span class="s1">&#39;active&#39;</span> <span class="o">:</span> <span class="s1">&#39;inactive&#39;</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">balanceClass</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;success&#39;</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">&lt;</span> <span class="mi">3000</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">balanceLevel</span> <span class="o">=</span> <span class="s1">&#39;warning&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="kd">let</span> <span class="nx">increasing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="nx">balance</span> <span class="o">=</span> <span class="nx">person</span><span class="p">.</span><span class="nx">balance</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">balance</span><span class="p">)</span> <span class="o">==</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="nx">balance</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">increasing</span> <span class="o">=</span> <span class="s1">&#39;increasing&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="p">[</span><span class="nx">balanceLevel</span><span class="p">,</span> <span class="nx">increasing</span><span class="p">];</span>
+        <span class="p">},</span>
+        <span class="nx">formatBalance</span><span class="p">(</span><span class="nx">balance</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">currency</span> <span class="o">+</span> <span class="nx">balance</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">formatDate</span><span class="p">(</span><span class="nx">date</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">registered</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">date</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">registered</span><span class="p">.</span><span class="nx">toLocaleString</span><span class="p">(</span><span class="s1">&#39;en-US&#39;</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">filterRow</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span> <span class="o">===</span> <span class="s1">&#39;isActive&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">result</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="s1">&#39;boolean&#39;</span><span class="p">)</span> <span class="o">?</span>
+                        <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterUserState</span> <span class="o">===</span> <span class="nx">person</span><span class="p">.</span><span class="nx">isActive</span><span class="p">)</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="kd">let</span> <span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filterQuery</span><span class="p">,</span>
+                        <span class="nx">field</span> <span class="o">=</span> <span class="nx">person</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span><span class="p">];</span>
+                    <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">field</span> <span class="o">===</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">query</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currency</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                        <span class="k">try</span> <span class="p">{</span>
+                            <span class="nx">result</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nx">field</span> <span class="o">+</span> <span class="nx">query</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{}</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">field</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+                        <span class="nx">result</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">());</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">isActiveFilterSelected</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">filterField</span> <span class="o">===</span> <span class="s1">&#39;isActive&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>3.10. 总结<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<p>在本章中，我们研究了 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">HTML</span></code> 声明，有条件地渲染 <code class="docutils literal"><span class="pre">HTML</span></code> 并在需要时显示替代方案。我们也将我们所了解的方法付诸实践。最后，我们为我们的表建立了过滤组件，允许我们显示活跃和非活跃用户，查找具有特定名称和电子邮件的用户，并根据余额过滤出行。</p>
+<p>现在我们已经在我们的应用中获得了一个很好的切入点，这是一个很好的机会来看看我们的代码，看看它是否可以通过某种方式进行优化。通过优化，我的意思是减少重复，尽可能简化代码，并将逻辑抽象为更小，可读和可重用的块。</p>
+<p>在第3章“优化我们的应用程序并使用组件显示数据”中，我们将优化代码并查看 <code class="docutils literal"><span class="pre">Vue</span></code> 组件，以此将逻辑分离为不同的段。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="优化你的App和使用组件显示数据.html" class="btn btn-neutral float-right" title="4. 优化你的App和使用组件显示数据" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Vue入门.html" class="btn btn-neutral" title="2. Vue入门" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

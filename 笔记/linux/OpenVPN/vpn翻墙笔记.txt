@@ -1,0 +1,79 @@
+4.7.2 配置openvpn 通过服务器代理出网实战（即翻墙）
+	\和普通的配置相比，server.conf的配置需要增加：
+	push "redirect-gateway def1 bypass-dhcp bypass-dns"
+	push "dhcp-option DNS 8.8.8.8"
+	push "dhcp-option DNS 8.8.4.4"
+	
+	完整配置为：
+	[root@localhost openvpn]# /bin/cp server.conf server.conf.oldboy.$(date +%F)
+	[root@localhost openvpn]# vim server.conf #把原先配置文件清空
+	local 10.0.0.28
+	port 52115
+	proto udp
+	dev tun
+	ca cat.crt
+	cert server.crt
+	key server.key
+	dh dh1024.pem
+	server 10.8.0.0 255.255.255.0
+	push "route 10.0.0.0 255.255.255.0"
+	push "redirec-gateway defl bypass-dhcp bypass-dns"
+	push "dhcp-option DNS 8.8.8.8"
+	push "dhcp-option DNS 8.8.4.4"
+	ifconfig-pool-persist ipp.txt
+	client-to-client
+	duplicate-cn
+	keepalive 10 120
+	comp-lzo
+	persist-key
+	persist-tun
+	status /var/log/openvpn/openvpn-status.log
+	log /var/log/openvpn/openvpn.log 
+	varb 3
+	
+	
+	备注 10.0.0.28 是外网 IP, 10.8.0.0 地址池，就是在拨号成功，openvpn 会自动分配以 10.8.0.0网段一个ip地址给本机客户端，
+	启动 vpn 服务
+	[root@localhost openvpn]# /usr/local/sbin/openvpn --config /etc/openvpn/server.conf & 
+	内核转发功能：
+	[root@localhost openvpn]#  sed -i 's#net.ipv4.ip_forward=0#net.ipv4.ip_forward = 1#' /etc/sysctl.conf 
+	[root@localhost openvpn]# sysctl -p 
+	开启防火墙NAT 映射：
+	[root@oldboy openvpn]# iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j SNAT --to-source 10.0.0.28
+	[root@localhost openvpn]# iptables -A INPUT -p udp -m state --state NEW -m udp -dport 52115 -j ACCEPT 
+	参考资料：
+		http://openvpn.net/index.php/open-source/documentation/howto.html#mitm
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,886 @@
+****
+验证
+****
+
+验证器
+======
+概述
+----
+ThinkPHP5.0 验证使用独立的 ``\think\Validate`` 类或者验证器进行验证。
+
+独立验证
+--------
+任何时候，都可以使用 ``Validate`` 类进行独立的验证操作，例如：
+
+.. code-block:: php
+
+    $validate = new Validate([
+        'name'  => 'require|max:25',
+        'email' => 'email'
+    ]);
+    $data = [
+        'name'  => 'thinkphp',
+        'email' => 'thinkphp@qq.com'
+    ];
+    if (!$validate->check($data)) {
+        dump($validate->getError());
+    }
+
+验证器
+------
+这是5.0推荐的验证方式，为具体的验证场景或者数据表定义好验证器类，直接调用验证类的 ``check`` 方法即可完成验证，下面是一个例子：
+
+我们定义一个 ``\app\index\validate\User`` 验证器类用于 ``User`` 的验证。
+
+.. code-block:: php
+
+    namespace app\index\validate;
+
+    use think\Validate;
+
+    class User extends Validate
+    {
+        protected $rule = [
+            'name'  =>  'require|max:25',
+            'email' =>  'email',
+        ];
+
+    }
+
+在需要进行 ``User`` 验证的地方，添加如下代码即可：
+
+.. code-block:: php
+
+    $data = [
+        'name'=>'thinkphp',
+        'email'=>'thinkphp@qq.com'
+    ];
+
+    $validate = Loader::validate('User');
+
+    if(!$validate->check($data)){
+        dump($validate->getError());
+    }
+
+使用助手函数实例化验证器
+
+.. code-block:: php
+
+    $validate = validate('User');
+
+验证规则
+========
+
++-------+---------------------------------------------+
+| 版本  | 新增功能                                    |
++=======+=============================================+
+| 5.0.4 | 支持传入field参数批量设置验证字段的描述信息 |
++-------+---------------------------------------------+
+
+设置规则
+--------
+可以在实例化 ``Validate`` 类的时候传入验证规则，例如：
+
+.. code-block:: php
+
+    $rules = [
+        'name'  => 'require|max:25',
+        'age'   => 'number|between:1,120',
+    ];
+    $validate = new Validate($rules);
+
+也可以使用 ``rule`` 方法动态添加规则，例如：
+
+.. code-block:: php
+
+    $rules = [
+        'name'  => 'require|max:25',
+        'age'   => 'number|between:1,120',
+    ];
+    $validate = new Validate($rules);
+    $validate->rule('zip', '/^\d{6}$/');
+    $validate->rule([
+        'email'   => 'email',
+    ]);
+
+规则定义
+--------
+规则定义支持下面两种方式：
+
+.. code-block:: php
+
+    $rules = [
+        'name'  => 'require|max:25',
+        'age'   => 'number|between:1,120',
+    ];
+    $validate = new Validate($rules);
+
+对于一个字段可以设置多个验证规则，使用 ``|`` 分割。
+
+或者采用数组方式定义多个规则（适用于你的验证规则中有 ``|`` 的情况）
+
+.. code-block:: php
+
+    $rules = [
+        'name'  => ['require','max'=>25],
+        'age'   => ['number','between'=>'1,120'],
+    ];
+    $validate = new Validate($rules);
+
+属性定义
+--------
+通常情况下，我们实际在定义验证类的时候，可以通过属性的方式直接定义验证规则等信息，例如：
+
+.. code-block:: php
+
+    namespace app\index\validate;
+
+    use think\Validate;
+
+    class User extends Validate
+    {
+        protected $rule =   [
+            'name'  => 'require|max:25',
+            'age'   => 'number|between:1,120',
+            'email' => 'email',
+        ];
+
+        protected $message  =   [
+            'name.require' => '名称必须',
+            'name.max'     => '名称最多不能超过25个字符',
+            'age.number'   => '年龄必须是数字',
+            'age.between'  => '年龄只能在1-120之间',
+            'email'        => '邮箱格式错误',
+        ];
+
+    }
+
+验证数据
+--------
+下面是一个典型的验证数据的例子：
+
+.. code-block:: php
+
+    $rule = [
+        'name'  => 'require|max:25',
+        'age'   => 'number|between:1,120',
+        'email' => 'email',
+    ];
+
+    $msg = [
+        'name.require' => '名称必须',
+        'name.max'     => '名称最多不能超过25个字符',
+        'age.number'   => '年龄必须是数字',
+        'age.between'  => '年龄只能在1-120之间',
+        'email'        => '邮箱格式错误',
+    ];
+
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 10,
+        'email' => 'thinkphp@qq.com',
+    ];
+
+    $validate = new Validate($rule, $msg);
+    $result   = $validate->check($data);
+
+如果需要批量验证，可以使用：
+
+.. code-block:: php
+
+    $validate = new Validate($rule, $msg);
+    $result   = $validate->batch()->check($data);
+
+.. note:: 批量验证如果验证不通过，返回的是一个错误信息的数组。
+
+如果你定义了 ``User`` 验证器类的话，可以使用下面的验证代码：
+
+.. code-block:: php
+
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 10,
+        'email' => 'thinkphp@qq.com',
+    ];
+    $validate = Loader::validate('User');
+    if(!$validate->check($data)){
+        dump($validate->getError());
+    }
+
+闭包函数验证
+------------
+可以对某个字段使用闭包验证，例如：
+
+.. code-block:: php
+
+    $validate = new \think\Validate([
+        'name'  => function($value,$data) {
+            return 'thinkphp'==$value ? true : false;
+        },
+    ]);
+
+第一个参数是当前字段的值，第二个参数是全部数据
+
+自定义验证规则
+--------------
+系统内置了一些常用的规则，如果还不够用，可以自己扩展验证规则。
+
+如果使用了验证器的话，可以直接在验证器类添加自己的验证方法，例如：
+
+.. code-block:: php
+
+    namespace app\index\validate;
+
+    use think\Validate;
+
+    class User extends Validate
+    {
+        protected $rule = [
+            'name'  =>  'checkName:thinkphp',
+            'email' =>  'email',
+        ];
+
+        protected $message = [
+            'name'  =>  '用户名必须',
+            'email' =>  '邮箱格式错误',
+        ];
+
+        // 自定义验证规则
+        protected function checkName($value,$rule,$data)
+        {
+            return $rule == $value ? true : '名称错误';
+        }
+    }
+
+验证方法可以传入的参数共有5个（后面三个根据情况选用），依次为：
+
+- 验证数据
+- 验证规则
+- 全部数据（数组）
+- 字段名
+- 字段描述
+
+.. note:: 并且需要注意的是，自定义的验证规则方法名不能和已有的规则冲突。
+
+接下来，就可以这样进行验证：
+
+.. code-block:: php
+
+    $validate = Loader::validate('User');
+    if(!$validate->check($data)){
+        dump($validate->getError());
+    }
+
+如果没有使用验证器类，则支持使用 ``extend`` 方法扩展验证规则，例如：
+
+.. code-block:: php
+
+    $validate = new Validate(['name' => 'checkName:1']);
+    $validate->extend('checkName', function ($value, $rule) {
+        return $rule == $value ? true : '名称错误';
+    });
+    $data   = ['name' => 1];
+    $result = $validate->check($data);
+
+支持批量注册验证规则，例如：
+
+.. code-block:: php
+
+    $validate = new Validate(['name' => 'checkName:1']);
+    $validate->extend([
+        'checkName'=> function ($value, $rule) {
+        return $rule == $value ? true : '名称错误';
+    },
+        'checkStatus'=> [$this,'checkStatus']
+    ]);
+    $data   = ['name' => 1];
+    $result = $validate->check($data);
+
+设置字段描述信息
+^^^^^^^^^^^^^^^^
+V5.0.4+ 版本开始，验证类的架构方法支持传入 ``field`` 参数批量设置字段的描述信息，例如：
+
+.. code-block:: php
+
+    $rule = [
+        'name'  => 'require|max:25',
+        'age'   => 'number|between:1,120',
+        'email' => 'email',
+    ];
+
+    $field = [
+        'name'  => '名称',
+        'age'   => '年龄',
+        'email' => '邮箱',
+    ];
+
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 10,
+        'email' => 'thinkphp@qq.com',
+    ];
+
+    $validate = new Validate($rule, [] , $field);
+    $result   = $validate->check($data);
+
+错误信息
+========
+验证规则的错误提示信息有三种方式可以定义，如下：
+
+使用默认的错误提示信息
+----------------------
+如果没有定义任何的验证提示信息，系统会显示默认的错误信息，例如：
+
+.. code-block:: php
+
+    $rule = [
+        'name'  => 'require|max:25',
+        'age'   => 'number|between:1,120',
+        'email' => 'email',
+    ];
+
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 121,
+        'email' => 'thinkphp@qq.com',
+    ];
+    $validate = new Validate($rule);
+    $result   = $validate->check($data);
+    if(!$result){
+        echo $validate->getError();
+    }
+
+会输出 ``age`` 只能在 1 - 120 之间。
+
+可以给 ``age`` 字段设置中文名，例如：
+
+.. code-block:: php
+
+    $rule = [
+        'name'  => 'require|max:25',
+        'age|年龄'   => 'number|between:1,120',
+        'email' => 'email',
+    ];
+
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 121,
+        'email' => 'thinkphp@qq.com',
+    ];
+    $validate = new Validate($rule);
+    $result   = $validate->check($data);
+    if(!$result){
+        echo $validate->getError();
+    }
+
+会输出 年龄只能在 1 - 120 之间。
+
+验证规则和提示信息分开定义
+--------------------------
+如果要输出自定义的错误信息，有两种方式可以设置。下面的一种方式是验证规则和提示信息分开定义：
+
+.. code-block:: php
+
+    $rule = [
+        'name'  => 'require|max:25',
+        'age'   => 'number|between:1,120',
+        'email' => 'email',
+    ];
+    $msg = [
+        'name.require' => '名称必须',
+        'name.max'     => '名称最多不能超过25个字符',
+        'age.number'   => '年龄必须是数字',
+        'age.between'  => '年龄必须在1~120之间',
+        'email'        => '邮箱格式错误',
+    ];
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 121,
+        'email' => 'thinkphp@qq.com',
+    ];
+    $validate = new Validate($rule,$msg);
+    $result   = $validate->check($data);
+    if(!$result){
+        echo $validate->getError();
+    }
+
+会输出 年龄必须在1~120之间。
+
+验证规则和提示信息一起定义
+--------------------------
+可以支持验证规则和错误信息一起定义的方式，如下：
+
+.. code-block:: php
+
+    $rule = [
+        ['name','require|max:25','名称必须|名称最多不能超过25个字符'],
+        ['age','number|between:1,120','年龄必须是数字|年龄必须在1~120之间'],
+        ['email','email','邮箱格式错误']
+    ];
+
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 121,
+        'email' => 'thinkphp@qq.com',
+    ];
+    $validate = new Validate($rule);
+    $result   = $validate->check($data);
+    if(!$result){
+        echo $validate->getError();
+    }
+
+使用多语言
+----------
+如果需要使用多语言验证信息，可以在定义验证信息的时候使用 ``{%语言变量}`` 替代 原来的验证错误信息，例如：
+
+.. code-block:: php
+
+    $rule = [
+        'name'  => 'require|max:25',
+        'age'   => 'number|between:1,120',
+        'email' => 'email',
+    ];
+    $msg = [
+        'name.require' => '{%name_require}',
+        'name.max'     => '{%name_max}',
+        'age.number'   => '{%age_number}',
+        'age.between'  => '{%age_between}',
+        'email'        => '{%email_error}',
+    ];
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 121,
+        'email' => 'thinkphp@qq.com',
+    ];
+    $validate = new Validate($rule,$msg);
+    $result   = $validate->check($data);
+    if(!$result){
+        echo $validate->getError();
+    }
+
+验证场景
+========
+验证场景
+--------
+
++-------+------------------------------------------+
+| 版本  | 新增功能                                 |
++=======+==========================================+
+| 5.0.4 | 增加hasScene方法用于检查是否存在验证场景 |
++-------+------------------------------------------+
+
+可以在定义验证规则的时候定义场景，并且验证不同场景的数据，例如：
+
+.. code-block:: php
+
+    $rule = [
+        'name'  => 'require|max:25',
+        'age'   => 'number|between:1,120',
+        'email' => 'email',
+    ];
+    $msg = [
+        'name.require' => '名称必须',
+        'name.max'     => '名称最多不能超过25个字符',
+        'age.number'   => '年龄必须是数字',
+        'age.between'  => '年龄只能在1-120之间',
+        'email'        => '邮箱格式错误',
+    ];
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 10,
+        'email' => 'thinkphp@qq.com',
+    ];
+    $validate = new Validate($rule);
+    $validate->scene('edit', ['name', 'age']);
+    $result = $validate->scene('edit')->check($data);
+
+表示验证 ``edit`` 场景（该场景定义只需要验证 ``name`` 和 ``age`` 字段）。
+
+如果使用了验证器，可以直接在类里面定义场景，例如：
+
+.. code-block:: php
+
+    namespace app\index\validate;
+
+    use think\Validate;
+
+    class User extends Validate
+    {
+        protected $rule =   [
+            'name'  => 'require|max:25',
+            'age'   => 'number|between:1,120',
+            'email' => 'email',
+        ];
+
+        protected $message  =   [
+            'name.require' => '名称必须',
+            'name.max'     => '名称最多不能超过25个字符',
+            'age.number'   => '年龄必须是数字',
+            'age.between'  => '年龄只能在1-120之间',
+            'email'        => '邮箱格式错误',
+        ];
+
+        protected $scene = [
+            'edit'  =>  ['name','age'],
+        ];
+
+    }
+
+然后再需要验证的地方直接使用 ``scene`` 方法验证
+
+.. code-block:: php
+
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 10,
+        'email' => 'thinkphp@qq.com',
+    ];
+
+    $validate = new \app\index\validate\User($rule);
+    $result = $validate->scene('edit')->check($data);
+
+可以在定义场景的时候对某些字段的规则重新设置，例如：
+
+.. code-block:: php
+
+    namespace app\index\validate;
+
+    use think\Validate;
+
+    class User extends Validate
+    {
+        protected $rule =   [
+            'name'  => 'require|max:25',
+            'age'   => 'number|between:1,120',
+            'email' => 'email',
+        ];
+
+        protected $message  =   [
+            'name.require' => '名称必须',
+            'name.max'     => '名称最多不能超过25个字符',
+            'age.number'   => '年龄必须是数字',
+            'age.between'  => '年龄只能在1-120之间',
+            'email'        => '邮箱格式错误',
+        ];
+
+        protected $scene = [
+            'edit'  =>  ['name','age'=>'require|number|between:1,120'],
+        ];
+
+    }
+
+可以对场景设置一个回调方法，用于动态设置要验证的字段，例如：
+
+.. code-block:: php
+
+    $rule = [
+        'name'  => 'require|max:25',
+        'age'   => 'number|between:1,120',
+        'email' => 'email',
+    ];
+    $msg = [
+        'name.require' => '名称必须',
+        'name.max'     => '名称最多不能超过25个字符',
+        'age.number'   => '年龄必须是数字',
+        'age.between'  => '年龄只能在1-120之间',
+        'email'        => '邮箱格式错误',
+    ];
+    $data = [
+        'name'  => 'thinkphp',
+        'age'   => 10,
+        'email' => 'thinkphp@qq.com',
+    ];
+    $validate = new Validate($rule);
+    $validate->scene('edit', function($key,$data){
+        return 'email'==$key && isset($data['id'])? true : false;
+    });
+    $result = $validate->scene('edit')->check($data);
+
+控制器验证
+==========
+如果你需要在控制器中进行验证，并且继承了 ``\think\Controller`` 的话，可以调用控制器类提供的 ``validate`` 方法进行验证，如下：
+
+.. code-block:: php
+
+    $result = $this->validate(
+        [
+            'name'  => 'thinkphp',
+            'email' => 'thinkphp@qq.com',
+        ],
+        [
+            'name'  => 'require|max:25',
+            'email'   => 'email',
+        ]);
+    if(true !== $result){
+        // 验证失败 输出错误信息
+        dump($result);
+    }
+
+如果定义了验证器类的话，例如：
+
+.. code-block:: php
+
+    namespace app\index\validate;
+
+    use think\Validate;
+
+    class User extends Validate
+    {
+        protected $rule = [
+            'name'  =>  'require|max:25',
+            'email' =>  'email',
+        ];
+
+        protected $message = [
+            'name.require'  =>  '用户名必须',
+            'email' =>  '邮箱格式错误',
+        ];
+
+        protected $scene = [
+            'add'   =>  ['name','email'],
+            'edit'  =>  ['email'],
+        ];
+    }
+
+控制器中的验证代码可以简化为：
+
+.. code-block:: php
+
+    $result = $this->validate($data,'User');
+    if(true !== $result){
+        // 验证失败 输出错误信息
+        dump($result);
+    }
+
+如果要使用场景，可以使用：
+
+.. code-block:: php
+
+    $result = $this->validate($data,'User.edit');
+    if(true !== $result){
+        // 验证失败 输出错误信息
+        dump($result);
+    }
+
+在 ``validate`` 方法中还支持做一些前置的操作回调，使用方式如下：
+
+.. code-block:: php
+
+    $result = $this->validate($data,'User.edit',[],[$this,'some']);
+    if(true !== $result){
+        // 验证失败 输出错误信息
+        dump($result);
+    }
+
+模型验证
+========
+在模型中的验证方式如下：
+
+.. code-block:: php
+
+    $User = new User;
+    $result = $User->validate(
+        [
+            'name'  => 'require|max:25',
+            'email'   => 'email',
+        ],
+        [
+            'name.require' => '名称必须',
+            'name.max'     => '名称最多不能超过25个字符',
+            'email'        => '邮箱格式错误',
+        ]
+    )->save($data);
+    if(false === $result){
+        // 验证失败 输出错误信息
+        dump($User->getError());
+    }
+
+.. note:: 第二个参数如果不传的话，则采用默认的错误提示信息。
+
+如果使用下面的验证器类的话：
+
+.. code-block:: php
+
+    namespace app\index\validate;
+    use think\Validate;
+    class User extends Validate
+    {
+        protected $rule = [
+            'name'  =>  'require|max:25',
+            'email' =>  'email',
+        ];
+
+        protected $message = [
+            'name.require'  =>  '用户名必须',
+            'email' =>  '邮箱格式错误',
+        ];
+
+        protected $scene = [
+            'add'   =>  ['name','email'],
+            'edit'  =>  ['email'],
+        ];
+    }
+
+模型验证代码可以简化为：
+
+.. code-block:: php
+
+    $User = new User;
+    // 调用当前模型对应的User验证器类进行数据验证
+    $result = $User->validate(true)->save($data);
+    if(false === $result){
+        // 验证失败 输出错误信息
+        dump($User->getError());
+    }
+
+如果需要调用的验证器类和当前的模型名称不一致，则可以使用：
+
+.. code-block:: php
+
+    $User = new User;
+    // 调用Member验证器类进行数据验证
+    $result = $User->validate('Member')->save($data);
+    if(false === $result){
+        // 验证失败 输出错误信息
+        dump($User->getError());
+    }
+
+同样也可以支持场景验证：
+
+.. code-block:: php
+
+    $User = new User;
+    // 调用Member验证器类进行数据验证
+    $result = $User->validate('User.edit')->save($data);
+    if(false === $result){
+        // 验证失败 输出错误信息
+        dump($User->getError());
+    }
+
+内置规则
+========
+系统内置的验证规则如下：
+
+格式验证类
+----------
+
+
+长度和区间验证类
+----------------
+
+
+字段比较类
+----------
+
+
+静态调用
+========
+如果需要使用内置的规则验证单个数据，可以使用静态调用的方式。
+
+.. code-block:: php
+
+    // 日期格式验证
+    Validate::dateFormat('2016-03-09','Y-m-d'); // true
+    // 验证是否有效的日期
+    Validate::is('2016-06-03','date'); // true
+    // 验证是否有效邮箱地址
+    Validate::is('thinkphp@qq.com','email'); // true
+    // 验证是否在某个范围
+    Validate::in('a',['a','b','c']); // true
+    // 验证是否大于某个值
+    Validate::gt(10,8); // true
+    // 正则验证
+    Validate::regex(100,'\d+'); // true
+
+.. note:: 静态验证的返回值为布尔值，错误信息需要自己处理。
+
+更多验证规则可以参考前面的内置规则。
+
+表单令牌
+========
+验证规则支持对表单的令牌验证，首先需要在你的表单里面增加下面隐藏域：
+
+.. code-block:: php
+
+    <input type="hidden" name="__token__" value="{$Request.token}" />
+
+.. note:: 这里的$Request.token被解析为 ``\think\Request::instance()->token()`` 具体转换代码位于 ``Template.php`` 中 ``parseVar`` 方法中。
+
+或者
+
+.. code-block:: php
+
+    {:token()}
+
+然后在你的验证规则中，添加 ``token`` 验证规则即可，例如，如果使用的是验证器的话，可以改为：
+
+.. code-block:: php
+
+    protected $rule = [
+        'name'  =>  'require|max:25|token', #这里存在问题
+        'email' =>  'email',
+        '__token__'=>'require|token', //这里__token__不能去改.
+    ];
+
+    protected $rule = [
+        'name'  =>  'require|max:25',
+        'email' =>  'email',
+        '__token__'=>'require|token', //这里__token__为默认字段名称.
+    ];
+
+如果你的令牌名称不是 ``__token__`` ，则表单需要改为：
+
+.. code-block:: php
+
+    <input type="hidden" name="__hash__" value="{$Request.token.__hash__}" />
+
+或者：
+
+.. code-block:: php
+
+    {:token('__hash__')}
+
+验证器中需要改为：
+
+.. code-block:: php
+
+    protected $rule = [
+        'name'  =>  'require|max:25|token:__hash__', #这里存在问题
+        'email' =>  'email',
+    ];
+
+    protected $rule = [
+        'name'  =>  'require|max:25,
+        'email' =>  'email',
+        '__hash__' => 'require|token:__hash__'
+    ];
+
+如果需要自定义令牌生成规则，可以调用 ``Request`` 类的 ``token`` 方法，例如：
+
+.. code-block:: php
+
+    namespace app\index\controller;
+
+    use think\Controller;
+
+    class Index extends Controller
+    {
+        public function index()
+        {
+            $token = $this->request->token('__token__', 'sha1');
+            $this->assign('token', $token);
+            return $this->fetch();
+        }
+    }
+
+然后在模板表单中使用：
+
+.. code-block:: php
+
+    <input type="hidden" name="__token__" value="{$token}" />
+
+或者不需要在控制器写任何代码，直接在模板中使用：
+
+.. code-block:: php
+
+    {:token('__token__', 'sha1')}

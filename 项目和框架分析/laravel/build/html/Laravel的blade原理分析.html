@@ -1,0 +1,449 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>27. Blade原理分析 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="28. 前端" href="Laravel的前端.html"/>
+        <link rel="prev" title="26. Blade" href="Laravel的Blade.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">27. Blade原理分析</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">27.1. 视图解析流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">27.2. Blade 引擎</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">27.2.1. 输出部分</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">27.2.2. 语句块部分</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">27.3. 后话</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>27. Blade原理分析</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="blade">
+<h1>27. Blade原理分析<a class="headerlink" href="#blade" title="永久链接至标题">¶</a></h1>
+<p>模板引擎一般是要做三件事情：</p>
+<ul class="simple">
+<li>变量值的输出（echo）</li>
+<li>条件判断和循环（if ... else、for、foreach、while）</li>
+<li>引入或继承其他文件</li>
+</ul>
+<div class="section" id="id1">
+<h2>27.1. 视图解析流程<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>Laravel 的 <code class="docutils literal"><span class="pre">View</span></code> 部分是内置了两套输出系统：直接输出和使用 <code class="docutils literal"><span class="pre">Blade</span></code> 引擎“编译”后输出，默认情况下它们通过文件名后缀来选择： <code class="docutils literal"><span class="pre">.blade.php</span></code> 后缀的认为是模板视图文件，其他的 <code class="docutils literal"><span class="pre">.php</span></code> 文件按照 PHP 本身的方式执行。虽然 <code class="docutils literal"><span class="pre">Blade</span></code> 模板文件中也可以随意嵌入 PHP 代码，但如果并没有使用，系统还去进行语法解析和替换也是没有必要的，这样可以提高效率。</p>
+<p>在使用 <code class="docutils literal"><span class="pre">View</span></code> 组件输出时，不管是调用 <code class="docutils literal"><span class="pre">helpers</span></code> 中提供的 <code class="docutils literal"><span class="pre">view</span></code> 函数还是使用 <code class="docutils literal"><span class="pre">Facades</span></code> 提供静态接口 <code class="docutils literal"><span class="pre">View::make()</span></code> ，实际上执行的都是 <code class="docutils literal"><span class="pre">Illuminate\View\Factory</span></code> 中的 <code class="docutils literal"><span class="pre">make</span></code> 方法。以此为入口，很容易就能知道视图解析输出的流程：</p>
+<ol class="arabic simple">
+<li>查找视图文件；</li>
+<li>根据文件名后缀从 Container 中取出相应的引擎；</li>
+<li>加载视图文件或编译后加载编译后的文件执行，同时将需要解析的数据暴露在视图文件环境中。</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">Factory</span></code> 中的一些方法完成了以上第一步的过程，文件查找是调用的 <code class="docutils literal"><span class="pre">FileViewFinder</span></code> ，其中使用了一些 <code class="docutils literal"><span class="pre">Illuminate\Filesystem\Filesystem</span></code> 中的方法，这个类中还有一些方法是跟 <code class="docutils literal"><span class="pre">events</span></code> 相关的，这里就忽略不表了。</p>
+<p>在以上步骤中，如果中获取到的视图文件是需要“编译”的，引擎会调用 “Blade 编译器”将原视图进行“编译”并保存在 <code class="docutils literal"><span class="pre">cache</span></code> 目录中然后加载输出。下次调用时如果发现源文件并没有被修改过就不再重新编译而是直接获取缓存文件并输出。</p>
+<p><code class="docutils literal"><span class="pre">CompilerEngine</span></code> 调用的编译器是 <code class="docutils literal"><span class="pre">CompilerInterface</span></code> 接口的实现，默认情况下也就只有 <code class="docutils literal"><span class="pre">BladeCompiler</span></code> （如果不知道解析器是如何注入的，你需要去了解 Laravel 的服务容器，这里就不细表）。</p>
+</div>
+<div class="section" id="id2">
+<h2>27.2. Blade 引擎<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>接下来就是本文的重点： <code class="docutils literal"><span class="pre">Blade</span></code> 是如何“编译”的。我一直给“编译”两个字加引号，因为这显然不是真正意义上的代码编译的过程，只是一些正则替换的过程。</p>
+<p>我们知道 Laravel 的模板引擎是很简洁的，使用时并不需要掌握太多东西，基本上只需要知道以下两点：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">{{</span></code> 与 <code class="docutils literal"><span class="pre">}}</span></code> 之间是要输出的内容，也有扩展的两个方法 <code class="docutils literal"><span class="pre">{{{</span> <span class="pre">...</span> <span class="pre">}}}</span></code> 和 <code class="docutils literal"><span class="pre">{!!</span> <span class="pre">..</span> <span class="pre">!!}</span></code> 分别用于转义输出和不转义输出，5.0 以后的版本中 <code class="docutils literal"><span class="pre">{{</span> <span class="pre">...</span> <span class="pre">}}</span></code> 之间的默认情况下也是转义输出的；</li>
+<li><code class="docutils literal"><span class="pre">&#64;</span></code> 符号开头的都是指令，包括 PHP 本身有的 <code class="docutils literal"><span class="pre">if</span> <span class="pre">else</span> <span class="pre">foreach</span></code> 以及扩展的 <code class="docutils literal"><span class="pre">include</span> <span class="pre">yield</span> <span class="pre">stop</span></code> 等等；</li>
+</ul>
+<p>而 <code class="docutils literal"><span class="pre">Blade</span></code> 对于解析的处理实际上是分了四种情况：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">Extensions</span></code> -&gt; 扩展部分</li>
+<li><code class="docutils literal"><span class="pre">Statements</span></code> -&gt; 语句块（就是 <code class="docutils literal"><span class="pre">&#64;</span></code> 开头的指令）</li>
+<li><code class="docutils literal"><span class="pre">Comments</span></code> -&gt; 注释部分（ <code class="docutils literal"><span class="pre">{{--</span> <span class="pre">...</span> <span class="pre">--}}</span></code> 的写法，解析之后是 PHP 的注释而不是 HTML 的注释）</li>
+<li><code class="docutils literal"><span class="pre">Echos</span></code> -&gt; 输出</li>
+</ul>
+<p>在解析（解析是在 <code class="docutils literal"><span class="pre">cache</span></code> 不存在的情况下）过程中， <code class="docutils literal"><span class="pre">Blade</span></code> 会先使用 <code class="docutils literal"><span class="pre">token_get_all</span></code> 函数获取到视图文件中的被 PHP 解释器认为是 HTML（T_INLINE_HTML）的部分，然后依次进行以上四种情况的解析。</p>
+<p>扩展部分是调用用户自定义的编译器解析字符串。BladeCompiler 中提供了的 extend 方法来添加可扩展。</p>
+<p>注释部分也很简单，就是将 <code class="docutils literal"><span class="pre">{{--</span> <span class="pre">...</span> <span class="pre">--}}</span></code> 替换成 <code class="docutils literal"><span class="pre">&lt;?php</span> <span class="pre">/*</span> <span class="pre">...</span> <span class="pre">*/</span> <span class="pre">?php&gt;</span></code> 。</p>
+<div class="section" id="id3">
+<h3>27.2.1. 输出部分<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>输出部分提供了三个方法，分别对应上文提到的三种情况：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">compileRawEchos</span></code> -&gt; 输出未经转义的内容 （ <code class="docutils literal"><span class="pre">{!!</span> <span class="pre">...</span> <span class="pre">!!}</span></code> ）</li>
+<li><code class="docutils literal"><span class="pre">compileEscapedEchos</span></code> -&gt; 输出转义之后的内容 （ <code class="docutils literal"><span class="pre">{{{</span> <span class="pre">...</span> <span class="pre">}}}</span></code> ）</li>
+<li><code class="docutils literal"><span class="pre">compileRegularEchos</span></code> -&gt; 正常输出 （ <code class="docutils literal"><span class="pre">{{</span> <span class="pre">...</span> <span class="pre">}}</span></code> ）</li>
+</ul>
+<p>默认情况下经过字符替换之后 <code class="docutils literal"><span class="pre">compileEscapedEchos</span></code> 和 <code class="docutils literal"><span class="pre">compileRegularEchos</span></code> 的函数体其实是完全一样的，在输出的时候都是调用一个 <code class="docutils literal"><span class="pre">e()</span></code> 的辅助函数来输出：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">function</span> <span class="nf">e</span><span class="p">(</span><span class="nv">$value</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$value</span> <span class="nx">instanceof</span> <span class="nx">Htmlable</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$value</span><span class="o">-&gt;</span><span class="na">toHtml</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nb">htmlentities</span><span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nx">ENT_QUOTES</span><span class="p">,</span> <span class="s1">&#39;UTF-8&#39;</span><span class="p">,</span> <span class="k">false</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这貌似是 5.0 之后的版本才改的，之前的版本里 <code class="docutils literal"><span class="pre">compileRegularEchos</span></code> 执行的是 <code class="docutils literal"><span class="pre">compileRawEchos</span></code> 的行为。不过两个函数还是有一个区别： <code class="docutils literal"><span class="pre">compileRegularEchos</span></code> 的转义函数是可以通过 <code class="docutils literal"><span class="pre">setEchoFormat</span></code> 自定义的（只是默认是 e()），但是 <code class="docutils literal"><span class="pre">compileEscapedEchos</span></code> 不允许自定义。</p>
+<p><code class="docutils literal"><span class="pre">echo</span></code> 后的内容也是经过正则替换的：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">compileEchoDefaults</span><span class="p">(</span><span class="nv">$value</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="s1">&#39;/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s&#39;</span><span class="p">,</span> <span class="s1">&#39;isset($1) ? $1 : $2&#39;</span><span class="p">,</span> <span class="nv">$value</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>从正则表达式中可以看出来输出提供了一个 or 的关键字，$a or $b 的写法会被替换成 isset($a) ? $a : $b。</p>
+</div>
+<div class="section" id="id4">
+<h3>27.2.2. 语句块部分<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>语句块部分可以分成三种情况：</p>
+<ul class="simple">
+<li>和 PHP 本身一样的 <code class="docutils literal"><span class="pre">if</span> <span class="pre">else</span> <span class="pre">foreach</span></code> 以及扩展的 <code class="docutils literal"><span class="pre">unless</span></code> 等流程和循环控制的关键字；</li>
+<li><code class="docutils literal"><span class="pre">include</span> <span class="pre">yield</span></code> 等模板文件引入、内容替换的部分；</li>
+<li><code class="docutils literal"><span class="pre">lang</span> <span class="pre">choice</span> <span class="pre">can</span></code> 等涉及到 Laravel 其他组件的功能性关键字；</li>
+</ul>
+<p>第一种情况是很简单的替换过程，本身 PHP 为了在 HMTL 和 PHP 混合书写方便就提供了 if foreach 等几个关键字使用冒号和 endif 等关键字代替大括号来控制流程的方法。</p>
+<p>第二种情况稍微复杂一点，比如下面的函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">compileYield</span><span class="p">(</span><span class="nv">$expression</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="s2">&quot;&lt;?php echo </span><span class="se">\$</span><span class="s2">__env-&gt;yieldContent</span><span class="si">{</span><span class="nv">$expression</span><span class="si">}</span><span class="s2">; ?&gt;&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>解析之后的语句是调用了一个名为 <code class="docutils literal"><span class="pre">$_env</span></code> 的实例中的方法。这个实例其实就是 <code class="docutils literal"><span class="pre">Illuminate\View\Factory</span></code> 的实例：</p>
+<p>Factory 的构造函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">EngineResolver</span> <span class="nv">$engines</span><span class="p">,</span> <span class="nx">ViewFinderInterface</span> <span class="nv">$finder</span><span class="p">,</span> <span class="nx">Dispatcher</span> <span class="nv">$events</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="o">...</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">share</span><span class="p">(</span><span class="s1">&#39;__env&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Illuminate\View\View</span></code> 中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getContents</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">engine</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">gatherData</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Get the data bound to the view instance.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return array</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">gatherData</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$data</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">factory</span><span class="o">-&gt;</span><span class="na">getShared</span><span class="p">(),</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">);</span>
+    <span class="o">...</span>
+    <span class="k">return</span> <span class="nv">$data</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>由此也可以看出 <code class="docutils literal"><span class="pre">each</span> <span class="pre">yield</span></code> 等指令的实现也是在 <code class="docutils literal"><span class="pre">Factory</span></code> 中，分别对应的是 <code class="docutils literal"><span class="pre">renderEach</span> <span class="pre">yieldContent</span></code> 等。</p>
+<p>所以文件引入等指令的实现方式就是：在主视图输出的时候，通过注入的 <code class="docutils literal"><span class="pre">$__env</span></code> 来重复调用 <code class="docutils literal"><span class="pre">Factory</span></code> 中的 <code class="docutils literal"><span class="pre">make</span></code> 方法来输出引入的文件。</p>
+<p>至于 <code class="docutils literal"><span class="pre">lang</span></code> 等关键字，替换后就是使用 <code class="docutils literal"><span class="pre">app()</span></code> 函数来调用 Laravel 的其他组件。此外 <code class="docutils literal"><span class="pre">Blade</span></code> 还提供了 <code class="docutils literal"><span class="pre">inject</span></code> 关键字来调用任何你想使用的组件。</p>
+<p>除了以上这些，你还可以通过 <code class="docutils literal"><span class="pre">directive</span></code> 方法来增加一些自定义指令。</p>
+<p><code class="docutils literal"><span class="pre">compileStatements</span></code> 方法中最后进行正则替换的正则表达式看起来比较复杂：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">/</span><span class="nx">\B</span><span class="o">@</span><span class="p">(</span><span class="nx">\w</span><span class="o">+</span><span class="p">)([</span> <span class="nx">\t</span><span class="p">]</span><span class="o">*</span><span class="p">)(</span><span class="nx">\</span><span class="p">(</span> <span class="p">(</span> <span class="p">(</span><span class="cp">?&gt;</span><span class="x">[^()]+) | (?3) )* \))?/x</span>
+</pre></div>
+</div>
+<p>这是因为正则后面的一部分实现了 <a class="reference external" href="http://php.net/manual/zh/regexp.reference.recursive.php">递归模式</a> 来匹配语句块中括号的数量。</p>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>27.3. 后话<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>为了能够在任何地方使用 <code class="docutils literal"><span class="pre">Blade</span></code> ，我把它核心的部分提取了出来，去掉了其他组件的依赖，也不再依赖文件扩展名来选择引擎：</p>
+<p>项目地址： <a class="reference external" href="https://github.com/XiaoLer/blade">https://github.com/XiaoLer/blade</a></p>
+<p>此外也通过这个提取之后的版本做了一个 <code class="docutils literal"><span class="pre">yii2</span></code> 能够使用的版本： <a class="reference external" href="https://github.com/XiaoLer/yii2-blade">https://github.com/XiaoLer/yii2-blade</a> 。在之前尝试的版本中直接使用 Laravel 的 <code class="docutils literal"><span class="pre">View</span></code> 组件并不灵活，现在感觉好多了。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的前端.html" class="btn btn-neutral float-right" title="28. 前端" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的Blade.html" class="btn btn-neutral" title="26. Blade" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,983 @@
+BUMPTOP_STICKY_NOTE便笺 - 双击进行编辑
+
+
+
+#安装Apache
+		configure: error: Bundled APR requested but not found at ./srclib/. Download and unpack the corresponding apr and apr-util packages to ./srclib/.
+		
+		如果报错，则：
+		
+		tar zxvf apr-1.4.6.tar.gz
+		tar zxvf apr-util-1.4.1.tar.gz
+		cp -r /lamp/apr-1.4.6 /lamp/httpd-2.4.7/srclib/apr
+		cp -r /lamp/apr-util-1.4.1 /lamp/httpd-2.4.7/srclib/apr-util
+		
+		解压apr和apr-util ,复制并取消版本号
+		
+		configure: error: pcre-config for libpcre not found. PCRE is required and available from.
+		
+		如果报错，则：
+		
+		tar zxvf pcre-8.34.tar.gz
+		
+		cd pcre-8.34
+		
+		./configure && make && make install
+		
+		checking whether to enable mod_ssl…..configure: error: mod_ssl has been requested but can not be built due to prerequisite failures
+		
+		如果报错，则：
+		
+		yum install openssl-devel
+		
+		安装apache
+		
+		cd /lamp/httpd-2.4.7
+		
+		./configure --prefix=/usr/local/apache2/ --sysconfdir=/usr/local/apache2/etc/ --with-included-apr --enable-so-enable-deflate=shared --enable-expires=shared --enable-rewrite=shared
+		
+		若前面配置 zlib 时没有指定安装目录，Apache配置时不要添加 --with-z=/usr/local/zlib/参数
+		
+		如果有报错：
+
+		make[4]: *** [mod_deflate.la] Error 1 
+		make[4]: Leaving directory `/home/roye
+
+		cd zlib-1.2.3
+		./configure
+		vim  Makefile
+		
+		找到 CFLAGS=-O3 -DUSE_MMAP
+		在后面加入-fPIC，即变成CFLAGS=-O3 -DUSE_MMAP -fPIC
+		
+		make && make install
+		
+		启动Apache 测试：
+		/usr/local/apache2/bin/apachectl start
+		ps -aux | grep httpd-2
+		
+		netstat -tlun|grep :80
+		
+		--prefix=/usr/local/apache2/            //指定Apache 的安装目录
+		--sysconfdir=/usr/local/apache2/etc/    //指定Apache 配置文件的位置
+		--with-included-apr 					//Apache 调用apr参数
+		--enable-so–enable-deflate=shared       //Apache 动态安装
+		--enable-expires=shared 				
+		--enable-rewrite=shared
+		
+		
+		若启动时提示 /usr/local/apache2/modules/mod_deflate.so 无权限，可关闭SELinux或者执行命令
+		chcon -t texrel_shlib_t /usr/local/apache2/modules/mod_deflate.so类似此类.so文件不能载入
+		或没有权限的问题，都是SELinux 问题，使用命令："chcon -t texrel_shlib_t 文件名" 即可解决
+		MySQL 和 Apache 也可能有类似的问题。
+		通过浏览器输入地址访问：http://Apache服务器地址，若是"It Works" 即表明Apache 正常工作
+		
+		设置 Apache 系统引导时启动
+		
+		echo "/usr/local/apache2/bin/apachectl start" >> /etc/rc.d/rc.local
+
+
+==================================================================================================================================================================
+
+
+	#安装 ncurses
+	
+		Ncurses 提供字符终端处理库，包括面板和菜单，它提供了一套控制光标，建立窗口，改变前景背景颜色以及处理鼠标操作的函数，
+		使用户在字符终端下编写应用程序时绕过了那些懊人的底层机制。简而言之，他是一个可以是应用程序直接控制终端屏幕显示的函数库。
+		
+		下面的1、和2、是二选一不是两个都装
+		1、 yum -y install ncurses-devel
+		注：如果报错，包找不到，是*通配符没有识别，给文件名加双引号 "ncurses" 
+		2、源代码编译：
+		cd /lamp/ncurses-5.9
+		./configure --with-shared --without-debug --without-ada --enable-overwrite
+		make
+		make install
+		若不安装ncurses 编译MySQL时会报错
+		--without-dada 参数为设定不编译为ada绑定，因进入chroot 环境不能使用 ada;
+		--enable-overwrite 参数为定义把头文件安装到 /tools/include 下面不是 /tools/include/ncurses 目录
+		--with-shared 生成共享库
+		
+		安装 cmake 和 bison 
+		
+		mysql 在5.5以后，不在使用 ./configure 工具，进行编译安装。而使用cmake 工具替代了 ./configure 工具，cmake 的具体用法参考文档cmake说明。
+		bison 是一个自由软件，用于自动生成语法分析器程序，可用于所有常见的操作系统
+		yum -y install cmake 
+		yum -y install bison 
+		
+==================================================================================================================================================================
+
+#安装MySQL
+	
+		伪用户
+		
+		groupadd mysql
+		useradd -g mysql mysql
+		
+		添加用户组mysql,将mysql用户默认组设置为mysql用户组
+		
+		cd /lamp/mysql-5.5.23
+		
+		cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DEXTRA_CHARSETS=all -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 -DMYSQL_USER=mysql -DMYSQL_TCP_PORT=3306
+	
+		参数说明
+		
+		-DCMAKE_INSTALL_PREFIX=/usr/local/mysql  //指定安装目录
+		-DMYSQL_UNIX_ADDR=/tmp/mysql.sock        //指定socket (套接字) 文件位置
+		-DEXTRA_CHARSETS=all                     //扩展字符集支持
+		-DDEFAULT_CHARSET=utf8 				   //默认字符集
+		-DDEFAULT_COLLATION=utf8_general_ci      //默认字符集校对
+		-DWITH_MYISAM_STORAGE_ENGINE=1      	   //安装 myisam 存储引擎
+		-DWITH_INNOBASE_STORAGE_ENGINE=1         //安装 innodb存储引擎
+		-DWITH_MEMORY_STORAGE_ENGINE=1 		   //安装 memory存储引擎
+		-DWITH_READLINE=1  					   //支持 readline 库
+		-DENABLED_LOCAL_INFILE=1 				   //启用加载本地数据
+		-DMYSQL_USER=mysql 					   //指定mysql运行用户
+		-DMYSQL_TCP_PORT=3306					   //指定mysql端口
+	
+	
+		make 
+		make install 
+	
+		make clean
+		rm -rf CMakeCache.txt
+		如果报错，清除缓存，请使用 rm -rf CMakeCache.txt 命令 而不是make clean
+		
+		cd /usr/local/mysql/
+		
+		#修改mysql 目录权限
+		chown -R mysql . 
+		chgrp -R mysql .
+		
+		#创建数据库授权表，初始话数据库。(这一步还不能这样初始话)
+		/usr/local/mysql/scripts/mysql_install_db --user=mysql
+		
+		
+		修改 mysql 目录权限
+		chown -R root .
+		chown -R mysql data
+		
+		
+		复制mysql 配置文件的位置
+		cp  support-files/my-medium.cnf  /etc/my.cnf
+		
+		初始化数据库：
+		/usr/local/mysql/scripts/mysql_install_db --user=mysql
+		
+		注解：初始化的主要目的就是创建基础的数据文件，例如：生成mysql库表等
+		提示：如果失败了删除 /data/3307/data 目录下的所有文件重新执行
+		
+		启动 MySQL 服务
+		1.用原本猿代码的方式去使用和启动mysql 
+		/usr/local/mysql/bin/mysqld_safe --user=mysql &
+		2.重启以后还有生效；
+		vi /etc/rc.local
+		/usr/local/mysql/bin/mysqld_safe --user=mysql &
+		3.设定 mysql 密码
+		/usr/local/mysql/bin/mysqladmin -uroot password 123
+		
+		清空历史命令 history -c
+		
+		给 mysql 用户 root 加密码123 
+		注意密码不能写成 "123" 这样的话密码就不是 123 了 而是 "123"
+		
+		/usr/local/mysql/bin/mysql -u root -p
+		
+		mysql>show databases;
+		mysql>use test;
+		mysql>show tables;
+		mysql>\s;   #查看字符集是否改成为utf8
+		mysql> exit #退出mysql
+		进入 mysql 以后用set 来改密码
+		#登录MySQL客户端控制台设置指定root 密码。
+
+ 
+==================================================================================================================================================================
+ 
+#安装辅助软件
+ 
+ 
+  #安装 libxml2
+
+       libxml 是一个用户来解析 XML 文档的函数库。它用c 语言写成，并且能为多种语言所调用，例如c语言，c++,XSH。c# Python,Kylix/Delphi Ruby,和PHP 等。Perl 中也可以使用XML::LibXML模块。它最初是为GNOME开发的项目，但现在可以用在各种各样的方面。libXML代码可移植性非常好，因为它基于标准的ANSI C 库，并采用MIT许可证。
+       
+       多命令顺序执行：
+       
+       &&  命令 1 正确执行，命令2才会执行
+       ||  命令 1 不正确执行，命令2才会执行
+       :   命令 1 执行完成，命令2才执行
+       |   命令 1 的执行结果，作为命令2的操作对象
+       
+       yum install -y libxml2-devel       如果报错，安装此包后再尝试安装
+       
+       yum -y install python-devel        必须有
+       
+       cd /lamp/libxml2-2.9.1  
+       ./configure --prefix=/usr/local/libxml2  
+       make 
+       make install 
+  
+  
+  #安装 libmcrypt
+          libmcrypt 是加密算法扩展库。支持DES 3DES RIJNDAEL,Twofish,IDEA,GOST,
+       CAST-256,ARCFOUR,SERPENT,SAFER+ 等算法
+       
+       cd /lamp/libmcrypt-2.5.8
+       ./configure --prefix=/usr/local/libmcrypt/
+       make
+       make install
+       
+       需调用 gcc-c++ 编译器，未安装会报错
+       
+       安装libltdl,也在 libmcrypt 原名目录中，非新软件
+       cd /lamp/libmcrypt-2.5.8/libltdl
+       ./configure --enable-ltdl-install
+       make 
+       make install
+  
+  
+  #安装mhash
+       Mhash 是基于离散数学原理的不可逆向的php加密方式扩展库，其在默认情况下不开启。
+       mash的可以用于创建效验数值，消息摘要，消息认证码，以及无需原文的关键信息保存
+       (如密码)等。
+       cd /lamp/mhash-0.9.9.9
+       ./configure
+       make
+       make install
+  
+  #安装mcrypt
+       mcrypt 是 php 里面重要的加密支持扩展库，Mcrypt 库支持20多种加密算法和8种加密模式。
+	   cd /lamp/mcrypt-2.6.8
+	   LD_LIBRARY_PATH=/usr/local/libmcrypt/lib:/usr/local/lib \
+	   ./configure --with-libmcrypt-prefix=/usr/local/libmcrypt
+	   以上为一天命令。LD_LIBRARY_PATH 用于指定 libmcrypt 和 mhash 的库的位置。
+	   --with-libmcrypt-prefix 用于指定 libmcrype 软件位置
+	   make
+	   make install 
+	   mcrypt 没有安装完成，这是PHP 的模块，需要等php安装完成之后，在继续安装。
+	   
+  #安装 zlib 
+	   zlib 是提供数据压缩用的函数库，由Jean-loup Gailly 与 Mark Adler 所开发，出版0.9版在1995
+	   年5月1日发表。zlib使用DEFLATE算法，最初是为libpng 函数式库所写的，后来普遍为许多软件所用。
+	   此函数库自由软件，使用授权。
+	   cd /lamp/zlib-1.2.3
+	   ./configure 
+	   make
+	   make install >> /root/zlib.log  //记录安装位置
+	   
+	   *zlib 指定安装目录可能造成 libpng 安装失败，故不指定。为卸载方便建议 make install >>/root/zlib.log
+	   执行结果输出到安装日志文件，便于日后卸载
+	   
+  #安装 libpng 
+	   libpng 软件包包含libpng 库这些库被其他程式用于解码png图片
+	   
+	   cd /lamp/libpng-1.2.31
+	   ./configure --prefix=/usr/local/libpng
+	   make
+	   make install
+	   
+	   
+  #安装 jpeg6 
+	   用于解码.jpg和.jpeg图片
+	   mkdir /usr/local/jpeg6
+	   mkdir /usr/local/jpeg6/bin
+	   mkdir /usr/local/jpeg6/lib
+	   mkdir /usr/local/jpeg6/include
+	   mkdir -p /usr/local/jpeg6/man/man1
+	   注意：man1 是  1 不是 l（L）
+	   目录必须手工建立
+	   
+	   如果报错：
+	       make: ./libtool: Command not found 
+		   make: *** [jcapimin.lo] Error 127
+		   
+		   则：
+		   
+		   首先看有没有安装libtool 及 libtool-ltdl-devel
+			rpm   -qa | grep   libtool
+			然后进入jpeg-6b的源码目录，然后执行以下步骤，切记！COPY到当前目录注意后面的点(.)
+			cp   /usr/share/libtool/config.sub  .
+			cp   /usr/share/libtool/config.guess  .
+		    也就是把 libtool里面的两个配置文件拿来覆盖掉jpeg-6b目录下的对应文件
+			make clean 再重新configure
+			
+		cd /lamp/jpeg-6b
+		./configure --prefix=/usr/local/jpeg6/ --enable-shared --enable-static
+		make 
+		make install
+		
+		--enable-shared 与--enable-static 参数分别为建立共享库和静态库使用的 libtool
+	
+	#安装 freetype
+		FreeType 库是一个完全免费（开源）的，高质量的且可移植的字体引擎，它提供统一的接口来访问多种字体格式文件，包括 TrueType,OpenType,
+		Typel,CID,CFF,Windows FON/FNT,X11 PCF 等。支持单色位图，反走样位图的渲染。FreeType 库是高度模块化的程序库，虽然他是使用ANSI C 开
+		发，但是应用面向对象的思想，因此，FreeType 的用户可以灵活的对它进行裁剪。
+		cd /lamp/freetype-2.3.5
+		./configure --prefix=/usr/local/freetype
+		make 
+		make install
+		
+    #安装 GD 库
+		GD 库是PHP 处理图形的扩展，GD库提供了一系列用来处理图片的API,使用GD库可以处理图片，或者生成图片在网站上GD库通常用来生成缩略图,
+		或者用来对图片加水印，或者用来生成汉字验证码，或者对网站数据生成报表等。
+		
+
+		cd /lamp/gd-2.0.35
+		png 错误，修改方法
+		vim gd_png.c
+		把 #include 'png.h' 替换为#include /usr/local/libpng/include/png.h
+		
+		./configure --prefix=/usr/local/gd2/ --with-jpeg=/usr/local/jpeg6/ --with-freetype=/usr/local/freetype/ --with-png=/usr/local/libpng/
+		make
+		make install 
+		
+		若前面配置zlib 时没有指定安装目录，gd配置时不要添加
+		--with-zlib=/usr/local/zlib/参数 
+		
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+==================================================================================================================================================================
+
+#安装PHP
+
+
+		编译前确保系统已经安装了libtool 和 libtool-ltdl 软件包，安装：
+		
+		yum -y install "libtool*"
+		yum -y install "libtool-ltdl*"
+		
+		
+	#php 5.4 的 bug ,检测gd库有问题，需要手工修改
+		
+		首先需要修改gd2文件夹下的 gd_io.h(这是PHPphp-5.4的小Bug 更高的版本可能不会出现这个问题)
+		
+		vi /usr/local/gd2/include/gd_io.h
+		typedef struct gdIOCtx
+		{
+		.......
+		void(*data);
+		#加入此句
+		}
+		
+		
+		
+		cd /lamp/php-5.4.25
+		
+		./configure --prefix=/usr/local/php  --with-config-file-path=/usr/local/php/etc/ --with-apxs2=/usr/local/apache2/bin/apxs --with-mysql=/usr/local/mysql/ --with-libxml-dir=/usr/local/libxml2/ --with-jpeg-dir=/usr/local/jpeg6 --with-png-dir=/usr/local/libpng/ --with-freetype-dir=/usr/local/freetype/ --with-gd=/usr/local/gd2/ --with-mcrypt=/usr/local/libmcrypt/ --with-mysqli=/usr/local/mysql/bin/mysql_config --enable-soap --enable-mbstring=all --enable-sockets --with-pdo-mysql=/usr/local/mysql/ --without-pear
+		
+		
+
+		--prefix=/usr/local/php  						 //指定PHP文件目录
+		--with-config-file-path=/usr/local/php/etc  	 //指定配置文件目录
+		--with-apxs2=/usr/local/apache2/bin/apxs    	 //指定apache动态模块位置
+		--with-mysql=/usr/local/mysql  			    	 //指定mysql位置
+		--with-libxml-dir=/usr/local/libxml2/ 			 //指定 libxml 位置
+		--with-jpeg-dir=/usr/local/jpeg6 				 //指定 jpem 位置
+		--with-png-dir=/usr/local/libpng/ 				 //指定 libpng 位置
+		--with-freetype-dir=/usr/local/freetype  		 //指定 freetype 位置
+		--with-gd=/usr/local/gd2/ 						 //指定 gd 位置
+		--with-mcrypt=/usr/local/libmcrypt/ 			 //指定 libmcrypt 位置
+		--with-mysqli=/usr/local/mysql/bin/mysql_config  //指定 mysqli 位置
+		--enable-soap 									 //支持 scap 服务
+		--enable-mbstring=all 							 //支持多字节，字符串
+		--enable-sockets 								 //支持套接字
+		--with-pdo-mysql=/usr/local/mysql 				 //启用 mysql 的pdo模块支持
+		--without-pear									 //不安装 pear (安装 pear 需要链接互联网 PEAR 是PHP扩展应用)
+		
+		make 
+		make install 
+		
+		生成 php.ini
+		
+		cp /lamp/php-5.4.25/php.ini-production /usr/local/php/etc/php.ini
+		
+		
+		测试 Apache 与 PHP 的连通性，看 Apache 是否能解析 PHP文件
+		
+		vi /usr/local/apache2/etc/httpd.config
+		
+		把下面这句话加到 httpd.config 未行
+		AddType application/x-httpd-php .php .phtml .phps
+		
+		(注意大小写)
+		.phtml 为将 .phps 做为PHP源文件进行语法高亮显示
+		重启 Apache 服务：/usr/local/apache2/bin/apachectl stop
+						  /usr/local/apache2/bin/apachectl start 
+		
+
+#PHP添加模块		
+	
+	#安装memcache	客户端
+		Memcache 是一个高性能的分布式的内存对象缓存系统，通过在内存里维护一个系统的巨大的 hash 表，它能用来存储各种格式的数据，包括图像、视频、文件以及
+		数据库检索的结果等。简单的说就是将数据调用到内存中读取，从而大大提高读取速度。
+		
+		yum -y install zlib-devel
+		cd memcache-3.0.8
+		
+		memcache 虽然是客户端但是他是php的函数所有他需要调用 phpize 来解析这个文件才可以云行
+		所以需要等 /usr/local/php/bin/phpize 执行完之后 configure 文件才会出现所以需要在 memcache-3.0.8 文件夹下执行
+		/usr/local/php/bin/phpize
+		./configure --with-php-config=/usr/local/php/bin/php-config
+		make && make install
+		
+		安装完成之后看到以下信息表示成功：
+		
+		----------------------------------------------------------------------
+
+		Build complete.
+		Don't forget to run 'make test'.
+		
+		Installing shared extensions:     /usr/local/php/lib/php/extensions/no-debug-zts-20100525/
+		[root@localhost memcache-3.0.8]# ll /usr/local/php/lib/php/extensions/no-debug-zts-20100525/
+		total 496
+		-rwxr-xr-x 1 root root 505440 Jun  9 09:37 memcache.so
+		[root@localhost memcache-3.0.8]# 
+
+	#编译安装mcrype
+	
+		cd /lamp/php-5.4.25/ext/mcrypt/
+		/usr/local/php/bin/phpize
+		./configure --with-php-config=/usr/local/php/bin/php-config --with-mcrypt=/usr/local/libmcrypt/
+		
+		本来如果是没有安装过 mcrype 的话是需要按上面的流程来走的但是由于我民之前已经安装过了mcrypt就不能这么安装了。
+		而是需要
+		
+		[root@localhost memcache-3.0.8]# cd /home/roye/Downloads/php-5.4.25/ext/mcrypt/
+		[root@localhost mcrypt]# ls
+		config.m4   CREDITS   mcrypt.dsp       mcrypt_filter.lo  php_mcrypt_filter.h  tests
+		config.w32  mcrypt.c  mcrypt_filter.c  mcrypt.lo         php_mcrypt.h         TODO
+		[root@localhost mcrypt]# 
+		
+		可以看到这里还是没有configure文件所以我们需要在这里运行一下 /usr/local/php/bin/phpize
+		
+		[root@localhost mcrypt]# /usr/local/php/bin/phpize
+		Configuring for:
+		PHP Api Version:         20100412
+		Zend Module Api No:      20100525
+		Zend Extension Api No:   220100525
+		[root@localhost mcrypt]# ls
+		acinclude.m4    config.h.in   config.w32       mcrypt.c          missing              tests
+		aclocal.m4      config.m4     CREDITS          mcrypt.dsp        mkinstalldirs        TODO
+		autom4te.cache  config.sub    install-sh       mcrypt_filter.c   php_mcrypt_filter.h
+		build           configure     ltmain.sh        mcrypt_filter.lo  php_mcrypt.h
+		config.guess    configure.in  
+
+		看 configure 文件出来了，这时我们就可以运行安装了
+		
+		./configure --with-php-config=/usr/local/php/bin/php-config --with-mcrypt=/usr/local/libmcrype/
+		make && make install
+		
+		当看到以下信息时表示成功
+		
+		----------------------------------------------------------------------
+
+		Build complete.
+		Don't forget to run 'make test'.
+		
+		Installing shared extensions:     /usr/local/php/lib/php/extensions/no-debug-zts-20100525/
+		[root@localhost mcrypt]# ls /usr/local/php/lib/php/extensions/no-debug-zts-20100525/
+		mcrypt.so  memcache.so
+		[root@localhost mcrypt]# 
+	
+	#修改 /usr/local/php/etc/php.ini
+	
+		extension_dir = /usr/local/php/lib/php/extensions/no-debug-zts-20100525/
+		打开注释，并修改
+		extension="memcache.so";
+		extension="mcrype.so";
+		
+		默认情况下 php.ini  加载新增模块是下面这种情况
+		
+		; Directory in which the loadable extensions (modules) reside.
+		; http://php.net/extension-dir
+		; extension_dir = "./"
+		; On windows:
+		; extension_dir = "ext"
+
+		我们要把它改成下面的样子
+		
+		; Directory in which the loadable extensions (modules) reside.
+		; http://php.net/extension-dir
+		
+	    extension_dir = "/usr/local/php/lib/php/extensions/no-debug-zts-20100525/"
+		extension="memcache.so";
+		extension="mcrype.so";
+		
+		; On windows:
+		; extension_dir = "ext"
+		
+		
+		
+		重启apache，在phpinfo中可以找到这两个模块
+
+			memcache
+			memcache support	   		enabled
+			Version 					3.0.8
+			Revision 					$Revision: 329835 $
+			
+			Directive						Local Value			Master Value
+			memcache.allow_failover	1		1
+			memcache.chunk_size				32768				32768
+			memcache.compress_threshold		20000				20000
+			memcache.default_port			1211				11211
+			memcache.hash_function			crc32				crc32
+			memcache.hash_strategy			consistent			consistent
+			memcache.lock_timeout			15					15
+			memcache.max_failover_attempts	20					20
+			memcache.protocol				ascii				ascii
+			memcache.redundancy				1					1
+			memcache.session_redundancy	2	2
+
+	#安装memcache	服务器端 
+	
+		首先安装依赖包 libevent
+		yum -y install "libevent*"
+		
+		#在 CentOS6.3第二张光盘中，请换盘(如果是网上yum源这一步不用管)
+		
+		
+		也可以手动安装
+		如果手动安装的话 这里有个问题 就是 
+		libevent-devel-1.4.13-4.el6.i686.rpm 
+		libevent-headers-1.4.13-4.el6.noarch.rpm 
+		libevent-doc-1.4.13-4.el6.noarch.rpm 
+		这三个包是环形依赖所以单个安装会报错
+		所以我们需要把三个包同时放到一个命令行里 同时安装 
+		
+		rpm -ivh libevent-devel-1.4.13-4.el6.i686.rpm  libevent-headers-1.4.13-4.el6.noarch.rpm libevent-doc-1.4.13-4.el6.noarch.rpm 
+		
+		这样就可以解决环形依赖的问题
+		
+		
+		
+		
+		cd /lamp/memcached-1.4.17
+		./configure --prefix=/usr/local/memcache
+		make && make install
+		
+		手动添加 memcache 用户
+		添加 memcache 用户，此用户不用登录，不设密码
+		useradd memcache
+		
+		
+		
+		
+		/usr/local/memcache/bin/memcached -u memcache &
+		netstat -an |grep :11211
+		telnet 192.168.10.1 11211
+		stats 
+		写入自启动：
+		vi /etc/rc.d/rc.local
+		/usr/local/memcache/bin/memcached -u memcache &
+
+
+
+
+	#linux 设置自动启动的文件内容 
+		
+		#!/bin/bash
+		# THIS FILE IS ADDED FOR COMPATIBILITY PURPOSES
+		#
+		# It is highly advisable to create own systemd services or udev rules
+		# to run scripts during boot instead of using this file.
+		#
+		# In contrast to previous versions due to parallel execution during boot
+		# this script will NOT be run after all other services.
+		#
+		# Please note that you must run 'chmod +x /etc/rc.d/rc.local' to ensure
+		# that this script will be executed during boot.
+		
+		touch /var/lock/subsys/local
+		/usr/local/memcache/bin/memcached -u memcache &     #自启动 memcache
+		/usr/local/mysql/bin/mysqld_safe --user=mysql &		#自启动 mysql
+		/usr/local/apache2/bin/apachectl start				#自启动 apache
+
+	#安装phpmyadmin
+		
+		[root@localhost Downloads]# cp -r phpMyAdmin-4.1.4-all-languages  /usr/local/apache2/htdocs/phpmyadmin
+		[root@localhost Downloads]# cd /usr/local/apache2/htdocs/phpmyadmin/
+		[root@localhost phpmyadmin]# cp config.sample.inc.php  config.inc.php
+		[root@localhost phpmyadmin]# vim config.inc.php 
+		
+		打开 config.inc.php 找到以下内容
+		
+		24 /*
+		25  * First server
+		26  */
+		27 $i++;
+		28 /* Authentication type */
+		29 $cfg['Servers'][$i]['auth_type'] = 'cookie';
+		30 /* Server parameters */
+		31 $cfg['Servers'][$i]['host'] = 'localhost';
+		32 $cfg['Servers'][$i]['connect_type'] = 'tcp';
+		33 $cfg['Servers'][$i]['compress'] = false;
+		34 /* Select mysql if your server does not have mysqli */
+		35 $cfg['Servers'][$i]['extension'] = 'mysqli';
+		36 $cfg['Servers'][$i]['AllowNoPassword'] = false;
+	
+		
+		把  'cookie';  改成  'http';
+		
+		29 $cfg['Servers'][$i]['auth_type'] = 'http';   //这是改完之后的样子
+
+
+		设置auth_type 为http://Apache 服务器地址/phpmyadmin/index.php
+		用户名 root ,密码为MySQL设置时指定的 root 密码(123456)
+
+==================================================================================================================================================================
+
+
+#Apache 优化配置
+
+		Apache 是世界使用排名第一的web服务器软件。它可以运行在几乎所有广泛使用的计算机平台上，由于其跨平台和安全性广泛使用，是最流行的web服务器端软件之一。它快速、可靠并且可通过简单的API扩充
+		
+		
+		
+		https://www.netcraft.com/   最权威的服务器使用量排名
+
+	##相关文件
+		日志保存位置：
+			源码包安装：
+				/usr/local/apache2/logs/
+			rpm包安装：
+				/var/log/httpd/
+	##注意日志的轮替
+		把日志保留30天在后面每增加一天的日志就把在最前面的一天的日志删除
+		实现方法：使用linux 系统自带的 logrotate 它可以很轻易的给linux系统中的日志进行切割轮替
+
+
+	##apache 配置文件说明
+	
+		httpd-autoindex.conf  apache系统别名
+		httpd-default.conf    线程控制
+		httpd-info.conf 	  状态统计网页
+		httpd-languages.conf  语言编码
+		httpd-manual.conf 	  apache 帮助文档
+	
+		###httpd-default.conf    线程控制
+		
+			Timeout 60  //60秒是服务器请求时间，当请求超过设定的时间时显示报错。一般就60秒就可以如果设的太大会影响apache性能，如果设的太短了用户一刷新服务器就直接报错。会影响用户体验
+		
+			KeepAlive ：线程和进程，这个需要开启
+				Apache2.4 的默认开启的是400个进程支持客户端访问，如果有一个用户登录就分配一个进程给这个用户如果用户打开了其他的页面又给这个用户分配多几个进程这样会造成一个用户占用多个进程。这样apache的效率会变得非常慢
+				所以我需要把KeepAlive打开 apache就变成只要用户打开网站数据一传输完就把这个进程关掉，让其他访问用户使用，而当这个用户访问本网站的另一个页面时就分配给这个用户一个子进程(线程)
+			#
+			# KeepAlive: Whether or not to allow persistent connections (more than
+			# one request per connection). Set to "Off" to deactivate.
+			#
+			KeepAlive On
+
+			但是需要注意的是这上面的是子配置文件开启的 而在主配置文件中这个是注释了的 httpd-default.conf 文件是被注释了的 把 # 号去掉即可（我们只要把#去掉后默认已经优化的很好了所以里面的东西都不用去动）
+			
+			# Various default settings
+			Include etc//extra/httpd-default.conf
+
+		###httpd-languages.conf  多语言支持	
+	
+			在主配置文件中也把 httpd-languages.conf 打开， apache 就支持多语言
+			但是如果想要实现真正的支持多语言需要Linux也支持多语言(也就是说在linux需要安装对应的语言包和字体)
+			# Language settings
+			Include etc//extra/httpd-languages.conf
+
+			
+			
+			
+			
+		httpd-mpm.conf  最大链接数  -MaxRequestWorkers  250 (默认worker MPM 模块生效 -MaxRequestWorkers 400)
+		httpd-multilang-errordoc.conf   错误页面
+		httpd-ssl.conf 					ssl安全套接字访问
+		httpd-userdir.conf 				用户主目录配置
+		httpd-vhosts.conf 				虚拟主机
+		
+		###httpd-mpm.conf  最大访问量
+				如果想要给apache的最大访问量设定更大的值需要考虑 服务器性能，网站的运行效率，MySQL的性能，访问量等。。
+				但是如果想要设最大值的话最正确的做法就是逐渐把 MaxRequestWorkers 的值设大，看看网站能不能超出服务器和带宽的限制
+				但是考虑到大部分公司网站的访问量一天的访问量都达不到巅峰值，所以一般配置的比较安全的值是 "2048" 如果想要在大的话就需要小心慢慢提升
+			<IfModule mpm_worker_module>
+				StartServers             3
+				MinSpareThreads         75
+				MaxSpareThreads        250
+				ThreadsPerChild         25
+				MaxRequestWorkers      400
+				MaxConnectionsPerChild   0
+			</IfModule>
+
+		###httpd-multilang-errordoc.conf   错误页面
+		
+			这个文件最好是不打开，因为如果不打开的话是浏览器报错，一旦打开就是apache报错。让apache报错存在一个风险，就是浏览器会显示apache的版本，这样会大大提高被攻击成功的可能性。
+		
+		
+		
+		
+		###httpd-vhosts.conf 	虚拟主机
+		
+			打开主配置文件然后把配置虚拟主机的子配置文件打开 (去掉#)
+			
+			# Virtual hosts
+			Include etc//extra/httpd-vhosts.conf
+
+			
+			
+			
+			
+			
+			vim 打开 httpd-multilang-errordoc.conf 配置虚拟主机
+			
+			
+			
+			<Directory "/share/sina">
+				Options Indexes
+				AllowOverride None
+				Require all granted  #设置所有都可以访问
+			</Directory>
+			
+			<Directory "/share/sohu">
+				Options Indexes
+				AllowOverride None
+				Require all granted  #设置所有都可以访问
+			</Directory>
+						
+
+			<VirtualHost *:80>
+				ServerAdmin webmaster@dummy-host.example.com             #配置虚拟主机管理员邮箱，当apache出现异常时会给管理员发邮件
+				DocumentRoot "/share/sina"    //网站主目录位置
+				ServerName www.sina.com											#服务器名称
+				#ServerAlias www.dummy-host.example.com							#服务器的别名，这里如果没有可以注释了
+				ErrorLog "logs/sina-error_log"									#网站错误日志
+				CustomLog "logs/sina-access_log" common							#网站日志
+			</VirtualHost>
+			
+			
+			<VirtualHost *:80>
+				ServerAdmin webmaster@dummy-host2.example.com             #配置虚拟主机管理员邮箱，当apache出现异常时会给管理员发邮件
+				DocumentRoot "/share/sohu"    //网站主目录位置
+				ServerName www.sohu.com											#服务器名称
+				#ServerAlias www.dummy-host.example.com							#服务器的别名，这里如果没有可以注释了
+				ErrorLog "logs/sohu-error_log"									#网站错误日志
+				CustomLog "logs/sohu-access_log" common							#网站日志
+			</VirtualHost>
+			
+			因为虚拟主机的配置文件的优先及的最高的所以一旦我们配置了虚拟主机后主配文件将会失效，在这里配置网站的主目录文件之后主配置文件中的目录的 WWW/目录将会失效。当用ip地址访问服务器时会自动选择第一个虚拟主机当成访问页面
+			
+			
+			
+			
+			
+		###httpd-autoindex.conf  Apache配置-用户认证
+			
+			这个我没有经过验证的，如果没有出效果可以查看兄弟连 ”课时 13 2.5 WEB服务器架构-Apache配置-用户认证“
+			需要保护的文件目录创键在哪里都可以
+			vi extra/httpd-autoindex.conf
+			
+			vi /usr/local/apache2/etc/httpd.conf
+			
+			Alias /soft/ "share/soft/"
+			
+			<Directory "/share/soft">
+				Options indexes  MultiViews
+				AllowOverride All      #权限打开
+				Require all granted 
+			</Directory>
+			
+			然后到 加密目录文件下配有权限用户
+			
+			vi share/soft/.htaccess
+				
+				AuthName ""    #提示信息
+				AuthType basic	#加密类型
+				AuthUserFile /share/apache.passwd  #加密文件，文件名自定义
+				require valid-user     #允许密码文件中(pache.passwd)所有用户访问
+			
+			在apache.passwd 文件添加用户
+			
+			/usr/local/apache2/bin/htpasswd -c /share/apache.password testuser1
+			/usr/local/apache2/bin/htpasswd -m /share/apache.password testuser1
+			
+			注意：第一次在没有apache.password 文件的时候创建用户使用的是 -c 表示创建密码文件，而当第二次有创建用户时使用的是  -m 表示修改
+			
+			
+		###httpd-autoindex.conf  Apache配置-网站目录别名	
+			
+			目录别名的好处是它可以让网站不一定放在主目录当中，可以放在服务器的任意一个目录甚至可以跨服务器。当服务器的访问量大的时候一台服务器装不下所有的内容可以用目录别名来接到另一台服务器扩充容量
+			
+			#/icons/ 是欺骗Apache  icons目录就在WWW主目录下。   /usr/local/apache2//icons/ 是icons 实际的位置
+			Alias /icons/ "/usr/local/apache2//icons/"
+			
+			
+			#实际所在位置需要指定对应的权限
+			
+			<Directory "/usr/local/apache2//icons">
+				Options Indexes MultiViews
+				AllowOverride None
+				Require all granted  ##权限是允许所有
+			</Directory>
+
+			
+			
+			
+			
+		###主配置文件httpd.conf	
+			
+			User daemon      #apache 在linux上的伪用户组
+			Group daemon
+	
+	
+			ServerAdmin you@example.com  #管理员邮箱(如果是生产服务器把管理员邮箱写上，如果服务器有什么问题apache都会给管理员发送邮件)
+			
+			<IfModule dir_module>			
+				DirectoryIndex index.html    #当前网站的默认文件。如果加上index.php 那index.php也是当前网站的默认访问的文件，但是如果两个文件同时存在就是谁靠前谁的优先及更高。
+			</IfModule>
+			
+			
+			文档主目录
+				所有可以通过浏览器访问的目录都有都必须定义它的 Directory
+			#
+			# DocumentRoot: The directory out of which you will serve your
+			# documents. By default, all requests are taken from this directory, but
+			# symbolic links and aliases may be used to point to other locations.
+			#
+			DocumentRoot "/usr/local/apache2//htdocs"
+			<Directory "/usr/local/apache2//htdocs">
+				#
+				# Possible values for the Options directive are "None", "All",         // None：没有权限   All：全部权限
+				# or any combination of:
+				#   Indexes Includes FollowSymLinks SymLinksifOwnerMatch ExecCGI MultiViews   //这行是目录权限名称 默认是给 Indexes FollowSymLinks 这两个权限      ExecCGI 不到逼不得已不能开启这个权限
+				#
+				# Note that "MultiViews" must be named *explicitly* --- "Options All"
+				# doesn't give it to you.
+				#
+				# The Options directive is both complicated and important.  Please see
+				# http://httpd.apache.org/docs/2.4/mod/core.html#options
+				# for more information.
+				#
+				Options Indexes FollowSymLinks  ##目录受权 
+				
+				#Indexes        权限是用户访问跟目录时如果没有index默认文件的话就会浏览器就会显示当前目录下的所有文件目录所以indexs是有一定的安全隐患的
+				#FollowSymLinks 权限是是否允许浏览器经过我的目录访问其他的域名网站
+				#
+				# AllowOverride controls what directives may be placed in .htaccess files.
+				# It can be "All", "None", or any combination of the keywords:
+				#   AllowOverride FileInfo AuthConfig Limit
+				#
+				AllowOverride None   #这里是一个开关，它指的是如果是All 表示 htdocs/ 当前文件夹下的 .htaccess 文件夹写的内容全部开启  如果是 None  htdocs/ 当前文件夹下的 .htaccess 写的内容全部不起作用。
+			
+				#
+				# Controls who can get stuff from this server.
+				#
+				Require all granted           #过滤ip地址 Require all granted  表示允许 所有ip访问  Require all denied 拒绝所有
+				#在2.4版本当中 允许所有 和拒绝所有 是没有标签的 只要像上面的写法就可以
+				
+				#下面是标准的写法
+				#<RequireAll>
+				#    Require all granted
+				#    Require not ip 192.168.1.2  #表示拒绝 192.168.1.2 IP访问
+				#</RequireAll>
+				#
+				#
+				#
+				#<RequireAll>
+				#    Require all denied
+				#    Require not ip 192.168.1.2  #表示只允许 192.168.1.2 IP访问
+				#</RequireAll>
+			</Directory>
+
+		###Rewrite重写
+		
+			主配置文件 httpd.conf	下
+			
+			开启 Rewrite重写模块
+			  LoadModule rewrite_module modules/mod_rewrite.so
+			  
+			子配置文件下 extra/httpd-vhosts.conf 
+			域名跳转
+			
+				<Directory "/share/sina">
+					Options Indexes FollowSymLinks   #FollowSymLinks 表示同意经过当前文件夹访问其他域名网站
+					AllowOverride All				 #AllowOverride  打开目的是使 .htaccess 文件生效
+					Require all granted
+				</Directory>
+
+				
+				
+				然后在  /share/sina 目录下新建一个 .htaccess 文件 填写的内容如下
+				
+				RewriteEngine on  					   #开启 Rewrite 功能
+				RewriteCond %{HTTP_HOST} www.sina.com  #在URL 中匹配到www.sina.com 则赋值给 HTTP_HOST变量
+				RewriteRule .* http://www.sohu.com     # .* 在正则当中表示任意内容。意思是如果%{HTTP_HOST} 有任意内容就跳转到 www.sohu.com	这个域名
+			
+			####文件跳转
+				
+				在  /share/sina 目录下新建一个 .htaccess 文件 填写的内容如下
+			
+				RewriteEngine on  				   #开启 Rewrite 功能
+				RewriteRule test  index_test.html  #表示如果有访问到 www.sina.com/test 的就跳到 index_test.html 文件中
+			
+			
+			
+			
+			
+			
+			
+		###主机名解析
+			每次启动apache时会报这个错误是因为没有解析到主机名而且启动速度还好慢，只要把 ServerName 配置成自己的主机名就OK了
+			[root@localhost etc]# /usr/local/apache2/bin/apachectl start
+			AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using localhost.localdomain. Set the 'ServerName' directive globally to suppress this message
+	
+			
+			# If your host doesn't have a registered DNS name, enter its IP address here.
+			#
+			#ServerName www.example.com:80
+	
+	
+			[root@localhost etc]从这可以看出我的主机名是 'localhost' 所以  ServerName localhost
+			但是如果是在生产环境中有DNS解析所有这个一般不用打开，只是现在是从测试环境为了避免上面的错误所以在这里需要配置好
+	
+			# If your host doesn't have a registered DNS name, enter its IP address here.
+			#
+			ServerName localhost
+
+		###错误日志
+		
+			在logs/没有写跟 / 目录表示错误是相对路径
+			
+			# ErrorLog: The location of the error log file.
+			# If you do not specify an ErrorLog directive within a <VirtualHost>
+			# container, error messages relating to that virtual host will be
+			# logged here.  If you *do* define an error logfile for a <VirtualHost>
+			# container, that host's errors will be logged there and not here.
+			#
+			ErrorLog "logs/error_log"
+	
+			#
+			# LogLevel: Control the number of messages logged to the error_log.
+			# Possible values include: debug, info, notice, warn, error, crit,
+			# alert, emerg.
+			#
+			LogLevel warn  ##默认级别一般选择 warn 警告级别
+	
+			日志等级 include: debug, info, notice, warn, error, crit,alert, emerg. 从 debug 依次往后等级越来越高，等级越低日记记录的越详细。当达到 emerg 级别时在日志中所记录的都是必须要处理的。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

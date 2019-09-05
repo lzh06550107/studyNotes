@@ -1,0 +1,832 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6. 正则的扩展 &mdash; ECMAScript6入门 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="ECMAScript6入门 1.0 文档" href="index.html"/>
+        <link rel="next" title="7. 数值的扩展" href="数值的扩展.html"/>
+        <link rel="prev" title="5. 字符串的扩展" href="字符串的扩展.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ECMAScript6入门
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECMAScript6简介.html">2. ECMAScript6简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="let和const命令.html">3. let 和 const 命令</a></li>
+<li class="toctree-l1"><a class="reference internal" href="变量的解构赋值.html">4. 变量的解构赋值</a></li>
+<li class="toctree-l1"><a class="reference internal" href="字符串的扩展.html">5. 字符串的扩展</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. 正则的扩展</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#regexp">6.1. RegExp 构造函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">6.2. 字符串的正则方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#u">6.3. u 修饰符</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.3.1. 点字符</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unicode">6.3.2. Unicode 字符表示法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">6.3.3. 量词</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">6.3.4. 预定义模式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i">6.3.5. i 修饰符</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#y">6.4. y 修饰符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sticky">6.5. sticky 属性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flags">6.6. flags 属性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#s-dotall">6.7. s 修饰符：dotAll 模式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">6.8. 环视</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">6.9. Unicode 属性类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">6.10. 命名组匹配</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">6.10.1. 简介</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">6.10.2. 解构赋值和替换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">6.10.3. 引用</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#string-prototype-matchall">6.11. String.prototype.matchAll</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="数值的扩展.html">7. 数值的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="函数的扩展.html">8. 函数的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数组的扩展.html">9. 数组的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="对象的扩展.html">10. 对象的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Symbol.html">11. Symbol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Set和Map数据结构.html">12. Set和Map数据结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Proxy.html">13. Proxy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Reflect.html">14. Reflect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Promise对象.html">15. Promise对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterator和for...of循环.html">16. Iterator 和 for…of 循环</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的语法.html">17. Generator函数的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的异步应用.html">18. Generator 函数的异步应用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="async函数.html">19. asyn函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的基本语法.html">20. Class 的基本语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的继承.html">21. Class的继承</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Decorator.html">22. 修饰器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的语法.html">23. Module 的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的加载实现.html">24. Module 的加载实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="编程风格.html">25. 编程风格</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECMAScript6入门</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>6. 正则的扩展</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1><a class="toc-backref" href="#id13">6. 正则的扩展</a><a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="contents topic" id="id2">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id13">正则的扩展</a><ul>
+<li><a class="reference internal" href="#regexp" id="id14">RegExp 构造函数</a></li>
+<li><a class="reference internal" href="#id3" id="id15">字符串的正则方法</a></li>
+<li><a class="reference internal" href="#u" id="id16">u 修饰符</a><ul>
+<li><a class="reference internal" href="#id4" id="id17">点字符</a></li>
+<li><a class="reference internal" href="#unicode" id="id18">Unicode 字符表示法</a></li>
+<li><a class="reference internal" href="#id5" id="id19">量词</a></li>
+<li><a class="reference internal" href="#id6" id="id20">预定义模式</a></li>
+<li><a class="reference internal" href="#i" id="id21">i 修饰符</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#y" id="id22">y 修饰符</a></li>
+<li><a class="reference internal" href="#sticky" id="id23">sticky 属性</a></li>
+<li><a class="reference internal" href="#flags" id="id24">flags 属性</a></li>
+<li><a class="reference internal" href="#s-dotall" id="id25">s 修饰符：dotAll 模式</a></li>
+<li><a class="reference internal" href="#id7" id="id26">环视</a></li>
+<li><a class="reference internal" href="#id8" id="id27">Unicode 属性类</a></li>
+<li><a class="reference internal" href="#id9" id="id28">命名组匹配</a><ul>
+<li><a class="reference internal" href="#id10" id="id29">简介</a></li>
+<li><a class="reference internal" href="#id11" id="id30">解构赋值和替换</a></li>
+<li><a class="reference internal" href="#id12" id="id31">引用</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#string-prototype-matchall" id="id32">String.prototype.matchAll</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="regexp">
+<h2><a class="toc-backref" href="#id14">6.1. RegExp 构造函数</a><a class="headerlink" href="#regexp" title="永久链接至标题">¶</a></h2>
+<p>在 <code class="docutils literal"><span class="pre">ES5</span></code> 中， <code class="docutils literal"><span class="pre">RegExp</span></code> 构造函数的参数有两种情况。</p>
+<p>第一种情况是，参数是字符串，这时第二个参数表示正则表达式的修饰符（flag）。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">);</span>
+<span class="c1">// 等价于</span>
+<span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/xyz/i</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>第二种情况是，参数是一个正则表示式，这时会返回一个原有正则表达式的拷贝。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="sr">/xyz/i</span><span class="p">);</span>
+<span class="c1">// 等价于</span>
+<span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/xyz/i</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>但是， <code class="docutils literal"><span class="pre">ES5</span></code> 不允许此时使用第二个参数添加修饰符，否则会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="sr">/xyz/</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">);</span>
+<span class="c1">// Uncaught TypeError: Cannot supply flags when constructing one RegExp from another</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">ES6</span></code> 改变了这种行为。如果 <code class="docutils literal"><span class="pre">RegExp</span></code> 构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有的正则表达式的修饰符，只使用新指定的修饰符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="sr">/abc/ig</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">).</span><span class="nx">flags</span>
+<span class="c1">// &quot;i&quot;</span>
+</pre></div>
+</div>
+<p>上面代码中，原有正则对象的修饰符是 <code class="docutils literal"><span class="pre">ig</span></code> ，它会被第二个参数 <code class="docutils literal"><span class="pre">i</span></code> 覆盖。</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id15">6.2. 字符串的正则方法</a><a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>字符串对象共有 4 个方法，可以使用正则表达式： <code class="docutils literal"><span class="pre">match()</span></code> 、 <code class="docutils literal"><span class="pre">replace()</span></code> 、 <code class="docutils literal"><span class="pre">search()</span></code> 和 <code class="docutils literal"><span class="pre">split()</span></code> 。</p>
+<p><code class="docutils literal"><span class="pre">ES6</span></code> 将这 4 个方法，在语言内部全部调用 <code class="docutils literal"><span class="pre">RegExp</span></code> 的实例方法，从而做到所有与正则相关的方法，全都定义在 <code class="docutils literal"><span class="pre">RegExp</span></code> 对象上。</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">String.prototype.match</span></code> 调用 <code class="docutils literal"><span class="pre">RegExp.prototype[Symbol.match]</span></code></li>
+<li><code class="docutils literal"><span class="pre">String.prototype.replace</span></code> 调用 <code class="docutils literal"><span class="pre">RegExp.prototype[Symbol.replace]</span></code></li>
+<li><code class="docutils literal"><span class="pre">String.prototype.search</span></code> 调用 <code class="docutils literal"><span class="pre">RegExp.prototype[Symbol.search]</span></code></li>
+<li><code class="docutils literal"><span class="pre">String.prototype.split</span></code> 调用 <code class="docutils literal"><span class="pre">RegExp.prototype[Symbol.split]</span></code></li>
+</ul>
+</div>
+<div class="section" id="u">
+<h2><a class="toc-backref" href="#id16">6.3. u 修饰符</a><a class="headerlink" href="#u" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">ES6</span></code> 对正则表达式添加了 <code class="docutils literal"><span class="pre">u</span></code> 修饰符，含义为“Unicode 模式”，用来正确处理大于 <code class="docutils literal"><span class="pre">\uFFFF</span></code> 的 Unicode 字符。也就是说，会正确处理四个字节的 <code class="docutils literal"><span class="pre">UTF-16</span></code> 编码。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/^\uD83D/u</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;\uD83D\uDC2A&#39;</span><span class="p">)</span> <span class="c1">// false</span>
+<span class="sr">/^\uD83D/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;\uD83D\uDC2A&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">\uD83D\uDC2A</span></code> 是一个四个字节的 UTF-16 编码，代表一个字符。但是，ES5 不支持四个字节的 UTF-16 编码，会将其识别为两个字符，导致第二行代码结果为 <code class="docutils literal"><span class="pre">true</span></code> 。加了u修饰符以后，ES6 就会识别其为一个字符，所以第一行代码结果为 <code class="docutils literal"><span class="pre">false</span></code> 。</p>
+<p>一旦加上 <code class="docutils literal"><span class="pre">u</span></code> 修饰符号，就会修改下面这些正则表达式的行为。</p>
+<div class="section" id="id4">
+<h3><a class="toc-backref" href="#id17">6.3.1. 点字符</a><a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>点（.）字符在正则表达式中，含义是除了换行符以外的任意单个字符。对于码点大于 <code class="docutils literal"><span class="pre">0xFFFF</span></code> 的 Unicode 字符，点字符不能识别，必须加上 <code class="docutils literal"><span class="pre">u</span></code> 修饰符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s1">&#39;𠮷&#39;</span><span class="p">;</span>
+
+<span class="sr">/^.$/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="c1">// false</span>
+<span class="sr">/^.$/u</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码表示，如果不添加 <code class="docutils literal"><span class="pre">u</span></code> 修饰符，正则表达式就会认为字符串为两个字符，从而匹配失败。</p>
+</div>
+<div class="section" id="unicode">
+<h3><a class="toc-backref" href="#id18">6.3.2. Unicode 字符表示法</a><a class="headerlink" href="#unicode" title="永久链接至标题">¶</a></h3>
+<p>ES6 新增了使用大括号表示 Unicode 字符，这种表示法在正则表达式中必须加上 <code class="docutils literal"><span class="pre">u</span></code> 修饰符，才能识别当中的大括号，否则会被解读为量词。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/\u{61}/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="c1">// false</span>
+<span class="sr">/\u{61}/u</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+<span class="sr">/\u{20BB7}/u</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;𠮷&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码表示，如果不加 <code class="docutils literal"><span class="pre">u</span></code> 修饰符，正则表达式无法识别 <code class="docutils literal"><span class="pre">\u{61}</span></code> 这种表示法，只会认为这匹配 61 个连续的 <code class="docutils literal"><span class="pre">u</span></code> 。</p>
+</div>
+<div class="section" id="id5">
+<h3><a class="toc-backref" href="#id19">6.3.3. 量词</a><a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">u</span></code> 修饰符后，所有量词都会正确识别码点大于 <code class="docutils literal"><span class="pre">0xFFFF</span></code> 的 Unicode 字符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/a{2}/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;aa&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+<span class="sr">/a{2}/u</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;aa&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+<span class="sr">/𠮷{2}/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;𠮷𠮷&#39;</span><span class="p">)</span> <span class="c1">// false</span>
+<span class="sr">/𠮷{2}/u</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;𠮷𠮷&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3><a class="toc-backref" href="#id20">6.3.4. 预定义模式</a><a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">u</span></code> 修饰符也影响到预定义模式，能否正确识别码点大于 <code class="docutils literal"><span class="pre">0xFFFF</span></code> 的 Unicode 字符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/^\S$/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;𠮷&#39;</span><span class="p">)</span> <span class="c1">// false</span>
+<span class="sr">/^\S$/u</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;𠮷&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码的 <code class="docutils literal"><span class="pre">\S</span></code> 是预定义模式，匹配所有非空白字符。只有加了 <code class="docutils literal"><span class="pre">u</span></code> 修饰符，它才能正确匹配码点大于 <code class="docutils literal"><span class="pre">0xFFFF</span></code> 的 Unicode 字符。</p>
+<p>利用这一点，可以写出一个正确返回字符串长度的函数。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">codePointLength</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">text</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/[\s\S]/gu</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">result</span> <span class="o">?</span> <span class="nx">result</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s1">&#39;𠮷𠮷&#39;</span><span class="p">;</span>
+
+<span class="nx">s</span><span class="p">.</span><span class="nx">length</span> <span class="c1">// 4</span>
+<span class="nx">codePointLength</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="c1">// 2</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="i">
+<h3><a class="toc-backref" href="#id21">6.3.5. i 修饰符</a><a class="headerlink" href="#i" title="永久链接至标题">¶</a></h3>
+<p>有些 Unicode 字符的编码不同，但是字型很相近，比如， <code class="docutils literal"><span class="pre">\u004B</span></code> 与 <code class="docutils literal"><span class="pre">\u212A</span></code> 都是大写的 <code class="docutils literal"><span class="pre">K</span></code> 。 <code class="docutils literal"><span class="pre">i</span></code> 修饰符用于执行对大小写不敏感的匹配。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/[a-z]/i</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;\u212A&#39;</span><span class="p">)</span> <span class="c1">// false</span>
+<span class="sr">/[a-z]/iu</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;\u212A&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中，不加 <code class="docutils literal"><span class="pre">u</span></code> 修饰符，就无法识别非规范的 <code class="docutils literal"><span class="pre">K</span></code> 字符。</p>
+</div>
+</div>
+<div class="section" id="y">
+<h2><a class="toc-backref" href="#id22">6.4. y 修饰符</a><a class="headerlink" href="#y" title="永久链接至标题">¶</a></h2>
+<p>除了 <code class="docutils literal"><span class="pre">u</span></code> 修饰符， <code class="docutils literal"><span class="pre">ES6</span></code> 还为正则表达式添加了 <code class="docutils literal"><span class="pre">y</span></code> 修饰符，叫做“粘连”（sticky）修饰符。</p>
+<p><code class="docutils literal"><span class="pre">y</span></code> 修饰符的作用与 <code class="docutils literal"><span class="pre">g</span></code> 修饰符类似，也是全局匹配，后一次匹配都从上一次匹配成功的下一个位置开始。不同之处在于， <code class="docutils literal"><span class="pre">g</span></code> 修饰符只要剩余位置中存在匹配就可，而 <code class="docutils literal"><span class="pre">y</span></code> 修饰符确保匹配必须 <strong>从剩余的第一个位置开始</strong> ，这也就是“粘连”的涵义。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s1">&#39;aaa_aa_a&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">r1</span> <span class="o">=</span> <span class="sr">/a+/g</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">r2</span> <span class="o">=</span> <span class="sr">/a+/y</span><span class="p">;</span>
+
+<span class="nx">r1</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="c1">// [&quot;aaa&quot;]</span>
+<span class="nx">r2</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="c1">// [&quot;aaa&quot;]</span>
+
+<span class="nx">r1</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="c1">// [&quot;aa&quot;]</span>
+<span class="nx">r2</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="c1">// null</span>
+</pre></div>
+</div>
+<p>上面代码有两个正则表达式，一个使用 <code class="docutils literal"><span class="pre">g</span></code> 修饰符，另一个使用 <code class="docutils literal"><span class="pre">y</span></code> 修饰符。这两个正则表达式各执行了两次，第一次执行的时候，两者行为相同，剩余字符串都是 <code class="docutils literal"><span class="pre">_aa_a</span></code> 。由于 <code class="docutils literal"><span class="pre">g</span></code> 修饰没有位置要求，所以第二次执行会返回结果，而 <code class="docutils literal"><span class="pre">y</span></code> 修饰符要求匹配必须从头部开始，所以返回 <code class="docutils literal"><span class="pre">null</span></code> 。</p>
+<p>如果改一下正则表达式，保证每次都能头部匹配， <code class="docutils literal"><span class="pre">y</span></code> 修饰符就会返回结果了。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s1">&#39;aaa_aa_a&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="sr">/a+_/y</span><span class="p">;</span>
+
+<span class="nx">r</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="c1">// [&quot;aaa_&quot;]</span>
+<span class="nx">r</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="c1">// [&quot;aa_&quot;]</span>
+</pre></div>
+</div>
+<p>上面代码每次匹配，都是从剩余字符串的头部开始。</p>
+<p>使用 <code class="docutils literal"><span class="pre">lastIndex</span></code> 属性，可以更好地说明 <code class="docutils literal"><span class="pre">y</span></code> 修饰符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">REGEX</span> <span class="o">=</span> <span class="sr">/a/g</span><span class="p">;</span>
+
+<span class="c1">// 指定从2号位置（y）开始匹配</span>
+<span class="nx">REGEX</span><span class="p">.</span><span class="nx">lastIndex</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+<span class="c1">// 匹配成功</span>
+<span class="kr">const</span> <span class="nx">match</span> <span class="o">=</span> <span class="nx">REGEX</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;xaya&#39;</span><span class="p">);</span>
+
+<span class="c1">// 在3号位置匹配成功</span>
+<span class="nx">match</span><span class="p">.</span><span class="nx">index</span> <span class="c1">// 3</span>
+
+<span class="c1">// 下一次匹配从4号位开始</span>
+<span class="nx">REGEX</span><span class="p">.</span><span class="nx">lastIndex</span> <span class="c1">// 4</span>
+
+<span class="c1">// 4号位开始匹配失败</span>
+<span class="nx">REGEX</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;xaya&#39;</span><span class="p">)</span> <span class="c1">// null</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">lastIndex</span></code> 属性指定每次搜索的开始位置， <code class="docutils literal"><span class="pre">g</span></code> 修饰符从这个位置开始向后搜索，直到发现匹配为止。</p>
+<p><code class="docutils literal"><span class="pre">y</span></code> 修饰符同样遵守 <code class="docutils literal"><span class="pre">lastIndex</span></code> 属性，但是要求必须在 <code class="docutils literal"><span class="pre">lastIndex</span></code> 指定的位置发现匹配。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">REGEX</span> <span class="o">=</span> <span class="sr">/a/y</span><span class="p">;</span>
+
+<span class="c1">// 指定从2号位置开始匹配</span>
+<span class="nx">REGEX</span><span class="p">.</span><span class="nx">lastIndex</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+<span class="c1">// 不是粘连，匹配失败</span>
+<span class="nx">REGEX</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;xaya&#39;</span><span class="p">)</span> <span class="c1">// null</span>
+
+<span class="c1">// 指定从3号位置开始匹配</span>
+<span class="nx">REGEX</span><span class="p">.</span><span class="nx">lastIndex</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="c1">// 3号位置是粘连，匹配成功</span>
+<span class="kr">const</span> <span class="nx">match</span> <span class="o">=</span> <span class="nx">REGEX</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;xaya&#39;</span><span class="p">);</span>
+<span class="nx">match</span><span class="p">.</span><span class="nx">index</span> <span class="c1">// 3</span>
+<span class="nx">REGEX</span><span class="p">.</span><span class="nx">lastIndex</span> <span class="c1">// 4</span>
+</pre></div>
+</div>
+<p>实际上， <code class="docutils literal"><span class="pre">y</span></code> 修饰符号隐含了头部匹配的标志 <code class="docutils literal"><span class="pre">^</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/b/y</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;aba&#39;</span><span class="p">)</span>
+<span class="c1">// null</span>
+</pre></div>
+</div>
+<p>上面代码由于不能保证头部匹配，所以返回 <code class="docutils literal"><span class="pre">null</span></code> 。 <code class="docutils literal"><span class="pre">y</span></code> 修饰符的设计本意，就是让头部匹配的标志 <code class="docutils literal"><span class="pre">^</span></code> 在全局匹配中都有效。</p>
+<p>下面是字符串对象的 <code class="docutils literal"><span class="pre">replace</span></code> 方法的例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">REGEX</span> <span class="o">=</span> <span class="sr">/a/gy</span><span class="p">;</span>
+<span class="s1">&#39;aaxa&#39;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">REGEX</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="c1">// &#39;--xa&#39;</span>
+</pre></div>
+</div>
+<p>上面代码中，最后一个 <code class="docutils literal"><span class="pre">a</span></code> 因为不是出现在下一次匹配的头部，所以不会被替换。</p>
+<p>单单一个 <code class="docutils literal"><span class="pre">y</span></code> 修饰符对 <code class="docutils literal"><span class="pre">match</span></code> 方法，只能返回第一个匹配，必须与 <code class="docutils literal"><span class="pre">g</span></code> 修饰符联用，才能返回所有匹配。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="s1">&#39;a1a2a3&#39;</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/a\d/y</span><span class="p">)</span> <span class="c1">// [&quot;a1&quot;]</span>
+<span class="s1">&#39;a1a2a3&#39;</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/a\d/gy</span><span class="p">)</span> <span class="c1">// [&quot;a1&quot;, &quot;a2&quot;, &quot;a3&quot;]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">y</span></code> 修饰符的一个应用，是从字符串提取 token（词元）， <code class="docutils literal"><span class="pre">y</span></code> 修饰符确保了匹配之间不会有漏掉的字符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">TOKEN_Y</span> <span class="o">=</span> <span class="sr">/\s*(\+|[0-9]+)\s*/y</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">TOKEN_G</span>  <span class="o">=</span> <span class="sr">/\s*(\+|[0-9]+)\s*/g</span><span class="p">;</span>
+
+<span class="nx">tokenize</span><span class="p">(</span><span class="nx">TOKEN_Y</span><span class="p">,</span> <span class="s1">&#39;3 + 4&#39;</span><span class="p">)</span>
+<span class="c1">// [ &#39;3&#39;, &#39;+&#39;, &#39;4&#39; ]</span>
+<span class="nx">tokenize</span><span class="p">(</span><span class="nx">TOKEN_G</span><span class="p">,</span> <span class="s1">&#39;3 + 4&#39;</span><span class="p">)</span>
+<span class="c1">// [ &#39;3&#39;, &#39;+&#39;, &#39;4&#39; ]</span>
+
+<span class="kd">function</span> <span class="nx">tokenize</span><span class="p">(</span><span class="nx">TOKEN_REGEX</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="kd">let</span> <span class="nx">match</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nx">match</span> <span class="o">=</span> <span class="nx">TOKEN_REGEX</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">str</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，如果字符串里面没有非法字符， <code class="docutils literal"><span class="pre">y</span></code> 修饰符与 <code class="docutils literal"><span class="pre">g</span></code> 修饰符的提取结果是一样的。但是，一旦出现非法字符，两者的行为就不一样了。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">tokenize</span><span class="p">(</span><span class="nx">TOKEN_Y</span><span class="p">,</span> <span class="s1">&#39;3x + 4&#39;</span><span class="p">)</span>
+<span class="c1">// [ &#39;3&#39; ]</span>
+<span class="nx">tokenize</span><span class="p">(</span><span class="nx">TOKEN_G</span><span class="p">,</span> <span class="s1">&#39;3x + 4&#39;</span><span class="p">)</span>
+<span class="c1">// [ &#39;3&#39;, &#39;+&#39;, &#39;4&#39; ]</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">g</span></code> 修饰符会忽略非法字符，而 <code class="docutils literal"><span class="pre">y</span></code> 修饰符不会，这样就很容易发现错误。</p>
+</div>
+<div class="section" id="sticky">
+<h2><a class="toc-backref" href="#id23">6.5. sticky 属性</a><a class="headerlink" href="#sticky" title="永久链接至标题">¶</a></h2>
+<p>与 <code class="docutils literal"><span class="pre">y</span></code> 修饰符相匹配，ES6 的正则对象多了 <code class="docutils literal"><span class="pre">sticky</span></code> 属性，表示是否设置了 <code class="docutils literal"><span class="pre">y</span></code> 修饰符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="sr">/hello\d/y</span><span class="p">;</span>
+<span class="nx">r</span><span class="p">.</span><span class="nx">sticky</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="flags">
+<h2><a class="toc-backref" href="#id24">6.6. flags 属性</a><a class="headerlink" href="#flags" title="永久链接至标题">¶</a></h2>
+<p>ES6 为正则表达式新增了 <code class="docutils literal"><span class="pre">flags</span></code> 属性，会返回正则表达式的修饰符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// ES5 的 source 属性</span>
+<span class="c1">// 返回正则表达式的正文</span>
+<span class="sr">/abc/ig</span><span class="p">.</span><span class="nx">source</span>
+<span class="c1">// &quot;abc&quot;</span>
+
+<span class="c1">// ES6 的 flags 属性</span>
+<span class="c1">// 返回正则表达式的修饰符</span>
+<span class="sr">/abc/ig</span><span class="p">.</span><span class="nx">flags</span>
+<span class="c1">// &#39;gi&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s-dotall">
+<h2><a class="toc-backref" href="#id25">6.7. s 修饰符：dotAll 模式</a><a class="headerlink" href="#s-dotall" title="永久链接至标题">¶</a></h2>
+<p>正则表达式中，点（ <code class="docutils literal"><span class="pre">.</span></code> ）是一个特殊字符，代表任意的单个字符，但是有两个例外。一个是四个字节的 UTF-16 字符，这个可以用 <code class="docutils literal"><span class="pre">u</span></code> 修饰符解决；另一个是行终止符（line terminator character）。</p>
+<p>所谓行终止符，就是该字符表示一行的终结。以下四个字符属于”行终止符“。</p>
+<ul class="simple">
+<li>U+000A 换行符（ <code class="docutils literal"><span class="pre">\n</span></code> ）</li>
+<li>U+000D 回车符（ <code class="docutils literal"><span class="pre">\r</span></code> ）</li>
+<li>U+2028 行分隔符（line separator）</li>
+<li>U+2029 段分隔符（paragraph separator）</li>
+</ul>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/foo.bar/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;foo\nbar&#39;</span><span class="p">)</span>
+<span class="c1">// false</span>
+</pre></div>
+</div>
+<p>上面代码中，因为 <code class="docutils literal"><span class="pre">.</span></code> 不匹配 <code class="docutils literal"><span class="pre">\n</span></code> ，所以正则表达式返回 <code class="docutils literal"><span class="pre">false</span></code> 。</p>
+<p>但是，很多时候我们希望匹配的是任意单个字符，这时有一种变通的写法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/foo[^]bar/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;foo\nbar&#39;</span><span class="p">)</span>
+<span class="c1">// true</span>
+</pre></div>
+</div>
+<p>这种解决方案毕竟不太符合直觉，ES2018 引入 <code class="docutils literal"><span class="pre">s</span></code> 修饰符，使得 <code class="docutils literal"><span class="pre">.</span></code> 可以匹配任意单个字符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>/foo.bar/s.test(&#39;foo\nbar&#39;) // true
+</pre></div>
+</div>
+<p>这被称为 <code class="docutils literal"><span class="pre">dotAll</span></code> 模式，即点（dot）代表一切字符。所以，正则表达式还引入了一个 <code class="docutils literal"><span class="pre">dotAll</span></code> 属性，返回一个布尔值，表示该正则表达式是否处在 <code class="docutils literal"><span class="pre">dotAll</span></code> 模式。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>const re = /foo.bar/s;
+// 另一种写法
+// const re = new RegExp(&#39;foo.bar&#39;, &#39;s&#39;);
+
+re.test(&#39;foo\nbar&#39;) // true
+re.dotAll // true
+re.flags // &#39;s&#39;
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/s</span></code> 修饰符和多行修饰符 <code class="docutils literal"><span class="pre">/m</span></code> 不冲突，两者一起使用的情况下， <code class="docutils literal"><span class="pre">.</span></code> 匹配所有字符，而 <code class="docutils literal"><span class="pre">^</span></code> 和 <code class="docutils literal"><span class="pre">$</span></code> 匹配每一行的行首和行尾。</p>
+</div>
+<div class="section" id="id7">
+<h2><a class="toc-backref" href="#id26">6.8. 环视</a><a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>JavaScript 语言的正则表达式，只支持顺序环视（lookahead）和顺序否定环视（negative lookahead），不支持逆序环视（lookbehind）和逆序否定环视（negative lookbehind）。ES2018 引入后行断言，V8 引擎 4.9 版（Chrome 62）已经支持。</p>
+<p>”顺序环视“指的是， <code class="docutils literal"><span class="pre">x</span></code> 只有在 <code class="docutils literal"><span class="pre">y</span></code> 前面才匹配，必须写成 <code class="docutils literal"><span class="pre">/x(?=y)/</span></code> 。比如，只匹配百分号之前的数字，要写成 <code class="docutils literal"><span class="pre">/\d+(?=%)/</span></code> 。”先行否定断言“指的是， <code class="docutils literal"><span class="pre">x</span></code> 只有不在 <code class="docutils literal"><span class="pre">y</span></code> 前面才匹配，必须写成 <code class="docutils literal"><span class="pre">/x(?!y)/</span></code> 。比如，只匹配不在百分号之前的数字，要写成 <code class="docutils literal"><span class="pre">/\d+(?!%)/</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/\d+(?=%)/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;100% of US presidents have been male&#39;</span><span class="p">)</span>  <span class="c1">// [&quot;100&quot;]</span>
+<span class="sr">/\d+(?!%)/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;that’s all 44 of them&#39;</span><span class="p">)</span>                 <span class="c1">// [&quot;44&quot;]</span>
+</pre></div>
+</div>
+<p>上面两个字符串，如果互换正则表达式，就不会得到相同结果。另外，还可以看到，”顺序环视“括号之中的部分（ <code class="docutils literal"><span class="pre">(?=%)</span></code> ），是不计入返回结果的。</p>
+<p>“逆序环视”正好与“顺序环视”相反， <code class="docutils literal"><span class="pre">x</span></code> 只有在 <code class="docutils literal"><span class="pre">y</span></code> 后面才匹配，必须写成 <code class="docutils literal"><span class="pre">/(?&lt;=y)x/</span></code> 。比如，只匹配美元符号之后的数字，要写成 <code class="docutils literal"><span class="pre">/(?&lt;=\$)\d+/</span></code> 。”逆序否定环视“则与”顺序否定环视“相反， <code class="docutils literal"><span class="pre">x</span></code> 只有不在 <code class="docutils literal"><span class="pre">y</span></code> 后面才匹配，必须写成 <code class="docutils literal"><span class="pre">/(?&lt;!y)x/</span></code> 。比如，只匹配不在美元符号后面的数字，要写成 <code class="docutils literal"><span class="pre">/(?&lt;!\$)\d+/</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/(?&lt;=\$)\d+/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;Benjamin Franklin is on the $100 bill&#39;</span><span class="p">)</span>  <span class="c1">// [&quot;100&quot;]</span>
+<span class="sr">/(?&lt;!\$)\d+/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;it’s is worth about €90&#39;</span><span class="p">)</span>                <span class="c1">// [&quot;90&quot;]</span>
+</pre></div>
+</div>
+<p>上面的例子中，“逆序环视”的括号之中的部分（ <code class="docutils literal"><span class="pre">(?&lt;=\$)</span></code> ），也是不计入返回结果。</p>
+<p>下面的例子是使用后行断言进行字符串替换。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">RE_DOLLAR_PREFIX</span> <span class="o">=</span> <span class="sr">/(?&lt;=\$)foo/g</span><span class="p">;</span>
+<span class="s1">&#39;$foo %foo foo&#39;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">RE_DOLLAR_PREFIX</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">);</span>
+<span class="c1">// &#39;$bar %foo foo&#39;</span>
+</pre></div>
+</div>
+<p>上面代码中，只有在美元符号后面的foo才会被替换。</p>
+<p>“逆序环视”的实现，需要先匹配 <code class="docutils literal"><span class="pre">/(?&lt;=y)x/</span></code> 的 <code class="docutils literal"><span class="pre">x</span></code> ，然后再回到左边，匹配 <code class="docutils literal"><span class="pre">y</span></code> 的部分。这种“先右后左”的执行顺序，与所有其他正则操作相反，导致了一些不符合预期的行为。</p>
+<p>首先，逆序环视的组匹配，与正常情况下结果是不一样的。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/(?&lt;=(\d+)(\d+))$/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;1053&#39;</span><span class="p">)</span> <span class="c1">// [&quot;&quot;, &quot;1&quot;, &quot;053&quot;]</span>
+<span class="sr">/^(\d+)(\d+)$/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;1053&#39;</span><span class="p">)</span> <span class="c1">// [&quot;1053&quot;, &quot;105&quot;, &quot;3&quot;]</span>
+</pre></div>
+</div>
+<p>上面代码中，需要捕捉两个组匹配。没有“逆序环视”时，第一个括号是贪婪模式，第二个括号只能捕获一个字符，所以结果是105和3。而“后行断言”时，由于执行顺序是从右到左，第二个括号是贪婪模式，第一个括号只能捕获一个字符，所以结果是1和053。</p>
+<p>其次，“逆序环视”的反斜杠引用，也与通常的顺序相反，必须放在对应的那个括号之前。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="sr">/(?&lt;=(o)d\1)r/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;hodor&#39;</span><span class="p">)</span>  <span class="c1">// null</span>
+<span class="sr">/(?&lt;=\1d(o))r/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;hodor&#39;</span><span class="p">)</span>  <span class="c1">// [&quot;r&quot;, &quot;o&quot;]</span>
+</pre></div>
+</div>
+<p>上面代码中，如果后行断言的反斜杠引用（ <code class="docutils literal"><span class="pre">\1</span></code> ）放在括号的后面，就不会得到匹配结果，必须放在前面才可以。因为后行断言是先从左到右扫描，发现匹配以后再回过头，从右到左完成反斜杠引用。</p>
+</div>
+<div class="section" id="id8">
+<h2><a class="toc-backref" href="#id27">6.9. Unicode 属性类</a><a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<p>ES2018 引入了一种新的类的写法 <code class="docutils literal"><span class="pre">\p{...}</span></code> 和 <code class="docutils literal"><span class="pre">\P{...}</span></code> ，允许正则表达式匹配符合 Unicode 某种属性的所有字符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">regexGreekSymbol</span> <span class="o">=</span> <span class="sr">/\p{Script=Greek}/u</span><span class="p">;</span>
+<span class="nx">regexGreekSymbol</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;π&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">\p{Script=Greek}</span></code> 指定匹配一个希腊文字母，所以匹配 <code class="docutils literal"><span class="pre">π</span></code> 成功。</p>
+<p><code class="docutils literal"><span class="pre">Unicode</span></code> 属性类要指定属性名和属性值。</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>\p{UnicodePropertyName=UnicodePropertyValue}
+</pre></div>
+</div>
+<p>对于某些属性，可以只写属性名，或者只写属性值。</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>\p{UnicodePropertyName}
+\p{UnicodePropertyValue}
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">\P{…}</span></code> 是 <code class="docutils literal"><span class="pre">\p{…}</span></code> 的反向匹配，即匹配不满足条件的字符。</p>
+<p>注意，这两种类只对 Unicode 有效，所以使用的时候一定要加上 <code class="docutils literal"><span class="pre">u</span></code> 修饰符。如果不加 <code class="docutils literal"><span class="pre">u</span></code> 修饰符，正则表达式使用 <code class="docutils literal"><span class="pre">\p</span></code> 和 <code class="docutils literal"><span class="pre">\P</span></code> 会报错，ECMAScript 预留了这两个类。</p>
+<p>由于 Unicode 的各种属性非常多，所以这种新的类的表达能力非常强。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/^\p{Decimal_Number}+$/u</span><span class="p">;</span>
+<span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;𝟏𝟐𝟑𝟜𝟝𝟞𝟩𝟪𝟫𝟬𝟭𝟮𝟯𝟺𝟻𝟼&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中，属性类指定匹配所有十进制字符，可以看到各种字型的十进制字符都会匹配成功。</p>
+<p><code class="docutils literal"><span class="pre">\p{Number}</span></code> 甚至能匹配罗马数字。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 匹配所有数字</span>
+<span class="kr">const</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/^\p{Number}+$/u</span><span class="p">;</span>
+<span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;²³¹¼½¾&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+<span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;㉛㉜㉝&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+<span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫ&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>下面是其他一些例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>// 匹配所有空格
+\p{White_Space}
+
+// 匹配各种文字的所有字母，等同于 Unicode 版的 \w
+[\p{Alphabetic}\p{Mark}\p{Decimal_Number}\p{Connector_Punctuation}\p{Join_Control}]
+
+// 匹配各种文字的所有非字母的字符，等同于 Unicode 版的 \W
+[^\p{Alphabetic}\p{Mark}\p{Decimal_Number}\p{Connector_Punctuation}\p{Join_Control}]
+
+// 匹配 Emoji
+/\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu
+
+// 匹配所有的箭头字符
+const regexArrows = /^\p{Block=Arrows}+$/u;
+regexArrows.test(&#39;←↑→↓↔↕↖↗↘↙⇏⇐⇑⇒⇓⇔⇕⇖⇗⇘⇙⇧⇩&#39;) // true
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2><a class="toc-backref" href="#id28">6.10. 命名组匹配</a><a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id10">
+<h3><a class="toc-backref" href="#id29">6.10.1. 简介</a><a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>正则表达式使用圆括号进行组匹配。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">RE_DATE</span> <span class="o">=</span> <span class="sr">/(\d{4})-(\d{2})-(\d{2})/</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>上面代码中，正则表达式里面有三组圆括号。使用 <code class="docutils literal"><span class="pre">exec</span></code> 方法，就可以将这三组匹配结果提取出来。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">RE_DATE</span> <span class="o">=</span> <span class="sr">/(\d{4})-(\d{2})-(\d{2})/</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">matchObj</span> <span class="o">=</span> <span class="nx">RE_DATE</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;1999-12-31&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">year</span> <span class="o">=</span> <span class="nx">matchObj</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="c1">// 1999</span>
+<span class="kr">const</span> <span class="nx">month</span> <span class="o">=</span> <span class="nx">matchObj</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span> <span class="c1">// 12</span>
+<span class="kr">const</span> <span class="nx">day</span> <span class="o">=</span> <span class="nx">matchObj</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span> <span class="c1">// 31</span>
+</pre></div>
+</div>
+<p>组匹配的一个问题是，每一组的匹配含义不容易看出来，而且只能用数字序号（比如 <code class="docutils literal"><span class="pre">matchObj[1]</span></code> ）引用，要是组的顺序变了，引用的时候就必须修改序号。</p>
+<p>ES2018 引入了命名组匹配（Named Capture Groups），允许为每一个组匹配指定一个名字，既便于阅读代码，又便于引用。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">RE_DATE</span> <span class="o">=</span> <span class="sr">/(?&lt;year&gt;\d{4})-(?&lt;month&gt;\d{2})-(?&lt;day&gt;\d{2})/</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">matchObj</span> <span class="o">=</span> <span class="nx">RE_DATE</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;1999-12-31&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">year</span> <span class="o">=</span> <span class="nx">matchObj</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">year</span><span class="p">;</span> <span class="c1">// 1999</span>
+<span class="kr">const</span> <span class="nx">month</span> <span class="o">=</span> <span class="nx">matchObj</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">month</span><span class="p">;</span> <span class="c1">// 12</span>
+<span class="kr">const</span> <span class="nx">day</span> <span class="o">=</span> <span class="nx">matchObj</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">day</span><span class="p">;</span> <span class="c1">// 31</span>
+</pre></div>
+</div>
+<p>上面代码中，“命名组匹配”在圆括号内部，模式的头部添加“问号 + 尖括号 + 组名”（ <code class="docutils literal"><span class="pre">?&lt;year&gt;</span></code> ），然后就可以在 <code class="docutils literal"><span class="pre">exec</span></code> 方法返回结果的 <code class="docutils literal"><span class="pre">groups</span></code> 属性上引用该组名。同时，数字序号（ <code class="docutils literal"><span class="pre">matchObj[1]</span></code> ）依然有效。</p>
+<p>命名组匹配等于为每一组匹配加上了 <code class="docutils literal"><span class="pre">ID</span></code> ，便于描述匹配的目的。如果组的顺序变了，也不用改变匹配后的处理代码。</p>
+<p>如果命名组没有匹配，那么对应的 <code class="docutils literal"><span class="pre">groups</span></code> 对象属性会是 <code class="docutils literal"><span class="pre">undefined</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">RE_OPT_A</span> <span class="o">=</span> <span class="sr">/^(?&lt;as&gt;a+)?$/</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">matchObj</span> <span class="o">=</span> <span class="nx">RE_OPT_A</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="nx">matchObj</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">as</span> <span class="c1">// undefined</span>
+<span class="s1">&#39;as&#39;</span> <span class="k">in</span> <span class="nx">matchObj</span><span class="p">.</span><span class="nx">groups</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中，命名组 <code class="docutils literal"><span class="pre">as</span></code> 没有找到匹配，那么 <code class="docutils literal"><span class="pre">matchObj.groups.as</span></code> 属性值就是 <code class="docutils literal"><span class="pre">undefined</span></code> ，并且 <code class="docutils literal"><span class="pre">as</span></code> 这个键名在 <code class="docutils literal"><span class="pre">groups</span></code> 是始终存在的。</p>
+</div>
+<div class="section" id="id11">
+<h3><a class="toc-backref" href="#id30">6.10.2. 解构赋值和替换</a><a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>有了命名组匹配以后，可以使用解构赋值直接从匹配结果上为变量赋值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="p">{</span><span class="nx">groups</span><span class="o">:</span> <span class="p">{</span><span class="nx">one</span><span class="p">,</span> <span class="nx">two</span><span class="p">}}</span> <span class="o">=</span> <span class="sr">/^(?&lt;one&gt;.*):(?&lt;two&gt;.*)$/u</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;foo:bar&#39;</span><span class="p">);</span>
+<span class="nx">one</span>  <span class="c1">// foo</span>
+<span class="nx">two</span>  <span class="c1">// bar</span>
+</pre></div>
+</div>
+<p>字符串替换时，使用 <code class="docutils literal"><span class="pre">$&lt;组名&gt;</span></code> 引用命名组。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">re</span> <span class="o">=</span> <span class="sr">/(?&lt;year&gt;\d{4})-(?&lt;month&gt;\d{2})-(?&lt;day&gt;\d{2})/u</span><span class="p">;</span>
+
+<span class="s1">&#39;2015-01-02&#39;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="s1">&#39;$&lt;day&gt;/$&lt;month&gt;/$&lt;year&gt;&#39;</span><span class="p">)</span>
+<span class="c1">// &#39;02/01/2015&#39;</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">replace</span></code> 方法的第二个参数是一个字符串，而不是正则表达式。</p>
+<p><code class="docutils literal"><span class="pre">replace</span></code> 方法的第二个参数也可以是函数，该函数的参数序列如下。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="s1">&#39;2015-01-02&#39;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="p">(</span>
+   <span class="nx">matched</span><span class="p">,</span> <span class="c1">// 整个匹配结果 2015-01-02</span>
+   <span class="nx">capture1</span><span class="p">,</span> <span class="c1">// 第一个组匹配 2015</span>
+   <span class="nx">capture2</span><span class="p">,</span> <span class="c1">// 第二个组匹配 01</span>
+   <span class="nx">capture3</span><span class="p">,</span> <span class="c1">// 第三个组匹配 02</span>
+   <span class="nx">position</span><span class="p">,</span> <span class="c1">// 匹配开始的位置 0</span>
+   <span class="nx">S</span><span class="p">,</span> <span class="c1">// 原字符串 2015-01-02</span>
+   <span class="nx">groups</span> <span class="c1">// 具名组构成的一个对象 {year, month, day}</span>
+ <span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+ <span class="kd">let</span> <span class="p">{</span><span class="nx">day</span><span class="p">,</span> <span class="nx">month</span><span class="p">,</span> <span class="nx">year</span><span class="p">}</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+ <span class="k">return</span> <span class="sb">`</span><span class="si">${</span><span class="nx">day</span><span class="si">}</span><span class="sb">/</span><span class="si">${</span><span class="nx">month</span><span class="si">}</span><span class="sb">/</span><span class="si">${</span><span class="nx">year</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>命名组匹配在原来的基础上，新增了最后一个函数参数： <strong>命名组构成的一个对象。</strong> 函数内部可以直接对这个对象进行解构赋值。</p>
+</div>
+<div class="section" id="id12">
+<h3><a class="toc-backref" href="#id31">6.10.3. 引用</a><a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>如果要在正则表达式内部引用某个“命名组匹配”，可以使用 <code class="docutils literal"><span class="pre">\k&lt;组名&gt;</span></code> 的写法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">RE_TWICE</span> <span class="o">=</span> <span class="sr">/^(?&lt;word&gt;[a-z]+)!\k&lt;word&gt;$/</span><span class="p">;</span>
+<span class="nx">RE_TWICE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;abc!abc&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+<span class="nx">RE_TWICE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;abc!ab&#39;</span><span class="p">)</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+<p>数字引用（ <code class="docutils literal"><span class="pre">\1</span></code> ）依然有效。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">RE_TWICE</span> <span class="o">=</span> <span class="sr">/^(?&lt;word&gt;[a-z]+)!\1$/</span><span class="p">;</span>
+<span class="nx">RE_TWICE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;abc!abc&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+<span class="nx">RE_TWICE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;abc!ab&#39;</span><span class="p">)</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+<p>这两种引用语法还可以同时使用。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">RE_TWICE</span> <span class="o">=</span> <span class="sr">/^(?&lt;word&gt;[a-z]+)!\k&lt;word&gt;!\1$/</span><span class="p">;</span>
+<span class="nx">RE_TWICE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;abc!abc!abc&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+<span class="nx">RE_TWICE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;abc!abc!ab&#39;</span><span class="p">)</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="string-prototype-matchall">
+<h2><a class="toc-backref" href="#id32">6.11. String.prototype.matchAll</a><a class="headerlink" href="#string-prototype-matchall" title="永久链接至标题">¶</a></h2>
+<p>如果一个正则表达式在字符串里面有多个匹配，现在一般使用 <code class="docutils literal"><span class="pre">g</span></code> 修饰符或 <code class="docutils literal"><span class="pre">y</span></code> 修饰符，在循环里面逐一取出。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/t(e)(st(\d?))/g</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s1">&#39;test1test2test3&#39;</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">matches</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="kd">var</span> <span class="nx">match</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="nx">match</span> <span class="o">=</span> <span class="nx">regex</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">string</span><span class="p">))</span> <span class="p">{</span>
+  <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">match</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">matches</span>
+<span class="c1">// [</span>
+<span class="c1">//   [&quot;test1&quot;, &quot;e&quot;, &quot;st1&quot;, &quot;1&quot;, index: 0, input: &quot;test1test2test3&quot;],</span>
+<span class="c1">//   [&quot;test2&quot;, &quot;e&quot;, &quot;st2&quot;, &quot;2&quot;, index: 5, input: &quot;test1test2test3&quot;],</span>
+<span class="c1">//   [&quot;test3&quot;, &quot;e&quot;, &quot;st3&quot;, &quot;3&quot;, index: 10, input: &quot;test1test2test3&quot;]</span>
+<span class="c1">// ]</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">while</span></code> 循环取出每一轮的正则匹配，一共三轮。</p>
+<p>目前有一个提案，增加了 <code class="docutils literal"><span class="pre">String.prototype.matchAll</span></code> 方法，可以一次性取出所有匹配。不过，它返回的是一个遍历器（ <code class="docutils literal"><span class="pre">Iterator</span></code> ），而不是数组。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">string</span> <span class="o">=</span> <span class="s1">&#39;test1test2test3&#39;</span><span class="p">;</span>
+
+<span class="c1">// g 修饰符加不加都可以</span>
+<span class="kr">const</span> <span class="nx">regex</span> <span class="o">=</span> <span class="sr">/t(e)(st(\d?))/g</span><span class="p">;</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">match</span> <span class="k">of</span> <span class="nx">string</span><span class="p">.</span><span class="nx">matchAll</span><span class="p">(</span><span class="nx">regex</span><span class="p">))</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">match</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// [&quot;test1&quot;, &quot;e&quot;, &quot;st1&quot;, &quot;1&quot;, index: 0, input: &quot;test1test2test3&quot;]</span>
+<span class="c1">// [&quot;test2&quot;, &quot;e&quot;, &quot;st2&quot;, &quot;2&quot;, index: 5, input: &quot;test1test2test3&quot;]</span>
+<span class="c1">// [&quot;test3&quot;, &quot;e&quot;, &quot;st3&quot;, &quot;3&quot;, index: 10, input: &quot;test1test2test3&quot;]</span>
+</pre></div>
+</div>
+<p>上面代码中，由于 <code class="docutils literal"><span class="pre">string.matchAll(regex)</span></code> 返回的是遍历器，所以可以用 <code class="docutils literal"><span class="pre">for...of</span></code> 循环取出。相对于返回数组，返回遍历器的好处在于，如果匹配结果是一个很大的数组，那么遍历器比较节省资源。</p>
+<p>遍历器转为数组是非常简单的，使用 <code class="docutils literal"><span class="pre">...</span></code> 运算符和 <code class="docutils literal"><span class="pre">Array.from</span></code> 方法就可以了。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 转为数组方法一</span>
+<span class="p">[...</span><span class="nx">string</span><span class="p">.</span><span class="nx">matchAll</span><span class="p">(</span><span class="nx">regex</span><span class="p">)]</span>
+
+<span class="c1">// 转为数组方法二</span>
+<span class="nb">Array</span><span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="nx">string</span><span class="p">.</span><span class="nx">matchAll</span><span class="p">(</span><span class="nx">regex</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="数值的扩展.html" class="btn btn-neutral float-right" title="7. 数值的扩展" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="字符串的扩展.html" class="btn btn-neutral" title="5. 字符串的扩展" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+
+      });
+
+
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script>
+   
+
+</body>
+</html>

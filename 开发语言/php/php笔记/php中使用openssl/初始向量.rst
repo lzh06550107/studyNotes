@@ -1,0 +1,61 @@
+********
+初始向量
+********
+
+``IV`` 通常是一个随机数，保证加密文本是唯一的。为了解释为什么需要，我们假设我们有一个用秘密密钥加密并且没有 ``IV`` 加密的人名数据库。
+
+.. code-block:: text
+
+   1 John dsfa9p8y098hasdf
+   2 Paul po43pokdfgpo3k4y
+   3 John dsfa9p8y098hasdf
+
+如果 ``John 1`` 知道他的密码文本(dsfa9p8y098hasdf)并且可以访问其他密码文本，他可以很容易地找到其他叫 ``John`` 的人。
+
+现在实际上，需要 ``IV`` 的加密模式将始终使用一个初始向量。如果你不指定 ``IV`` ，它会自动设置为一堆空字节。想象一下第一个例子，但是有一个常量 ``IV`` (00000000) 。
+
+.. code-block:: text
+
+    1 John dsfa9p8y098hasdf 00000000
+    2 Paul po43pokdfgpo3k4y 00000000
+    3 John dsfa9p8y098hasdf 00000000
+
+为防止重复的密文，我们可以使用相同的秘密密钥和随机的 ``IV`` 来加密名称：
+
+.. code-block:: text
+
+    1 John sdf875n90mh28458 45gh3546
+    2 Paul fg9087n5b60987nf 56897ngq
+    3 John gjhn0m89456vnler 8907345f
+
+正如你所看到的，这两个 ``John`` 密码文本现在是不同的。每个 ``IV`` 都是独一无二的，并影响了加密过程，使得最终结果也是独一无二的。 ``John 1`` 现在不知道用户3的名字是什么。
+
+解密需要使用与文本加密相同的 ``IV`` ，这就是为什么它必须存储在数据库中。如果没有密钥， ``IV`` 是没有用的，因此让它与加密文本一起传输或存储无关紧要。本示例过于简单，但事实是，不使用 ``IV`` 具有严重的安全后果。
+
+您也可能想要使用 ``PHP`` 的一些 ``IV`` 生成函数，代码如下：
+
+.. code-block:: php
+
+    <?php
+    $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+    $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+    $encryptedMessage = openssl_encrypt($textToEncrypt, $encryptionMethod, $secretHash, 0, $iv);
+    $decryptedMessage = openssl_decrypt($encryptedMessage, $encryptionMethod, $secretHash, 0, $iv);
+
+对于存储/传输，您可以简单地连接 ``IV`` 和密文，如下所示：
+
+.. code-block:: php
+
+    <?php
+    $data = $iv.$encryptedMessage;
+
+然后在检索时，提取 ``IV`` 以进行解密：
+
+.. code-block:: php
+
+    <?php
+    $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+    $iv = substr($data, 0, $iv_size);
+    $decryptedMessage = openssl_decrypt(substr($data, $iv_size), $encryptionMethod, $secretHash, 0, $iv);
+
+欲了解更多信息，请查看 ``PHP`` 的 `Mcrypt <http://php.net/manual/en/function.mcrypt-encrypt.php>`_ 库。它的功能非常全面，并有大量的例子，其中许多可以帮助你使用 ``openssh`` 加密实现。

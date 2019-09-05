@@ -1,0 +1,816 @@
+■0 引子：普通文件的数据同步
+		在讲解MySQL主从同步之前，请大家回忆一下，前面我们讲解过的普通文件（磁盘上的文件）的同步方法。rsync,sersync,inotify,scp,nfs,samba,svn
+		1、NFS 网络文件共享可以同步存储数据
+		2、samba共享数据。http://taokey.blog.51cto.com/4633273/1203553
+		3、定时任务或守护进程结合rsync,scp.
+		4、inotify+rsync 触发式实时数据同步
+		5、ftp 数据同步 http://down.51cto.com/data/1094997
+		6、ssh key+scp/rsync.
+	
+		7、svn 版本管理
+		8、rsync,sersync,inotify,union(双向同步)，csync2(多向同步)
+		MySQL 的主从同步方案，和上述的2,3点是类似的。只不过MySQL无需借助第三方工具，而是其自带的同步复制功能，另外一点，MySQL的主从同步并不是磁盘上文件直接同步 。replication
+		
+		总结企业linux运维场景数据同步方案
+		1、文件级别同步方案
+		scp,Nfs,Sftp,http,samba,rsync,csync2,union
+		http://oldboy.blog.51cto.com/2561410/775056
+		思想：
+			1.文件级别也可以利用mysql,mongodb等软件。
+			2.两个服务器同时写数据，双写就是一个同步机制。
+		2、文件系统级别同步
+			drbd(基于文件系统同步网络RAID1),同步几乎任何业务数据。
+			mysql 数据库的官方推荐drbd同步数据，所有单点服务例如：NFS,MFS(DRBD)等都可以用drbd.
+		3、数据库同步方案
+			a.自身同步机制：
+			mysql replication,mysql 主从复制（逻辑的SQL从写）。
+			oracle dataguard(物理的磁盘块，逻辑的SQL语句从写)。
+			b.第三方drbd,参考URL
+			http://oldboy.blog.51cto.com/2561410/1240412
+
+■.1 MySQL 主从复制
+▣1.1 MySQL 主从复制介绍
+	MySQL 支持单向、双向、链式级联、实时、异步复制。在复制过程中，一台服务器充当主服务器（Master），而一个或多个其他的服务器充当从服务器（Slave）。
+		复制可以是单向：M==>S，也可以是双向M<==>M，当然也可以多M环状同步等。
+		如果设置了链式级联复制，那么，从(slave)服务器本身除了充当从服务器外，也会同时
+		充当其下面从服务器的主服务器。
+		链式级联复制类似A->B->C->D的复制形式。
+		下面给大家展示下各种同步的模样。引导学生一起画图，学会画图很重要！
+		1、单向主从同步逻辑图；
+		
+		
+		。。。。。。
+		
+		
+		在当前的生产工作中，大多数应用的MySQL主从同步都是异步的复制方式，既不是严格的实时数据同步。
+		实时和异步：
+			当配置好主从复制后，所有数据库内容的更新就必须在主服务器上进行，以避免用户对主服务器上
+			数据库内容的更新与对从服务器上数据库内容更新不一致而导致发生冲突。
+			那么，为什么所有的更新都要在主服务器上进行呢？
+			我们又如何确保用户在主服务器上更新呢？通过发邮件或者口头告诉开发人员约定好，不让其写从库，还是有别的可行办法？
+			其实可行的方法可以有很多，下面我们给大家一一道来。
+			从技术手段上让开发人员写不了，而不是约定不让他写。
+▣1.3 MySQL 主从复制的应用场景
+	MySQL 主从复制有利于数据库架构的健壮性，提升访问速度和易于维护管理。
+	1）主从服务器互为备份
+	主从服务器架构的设置，可以大大的加强数据库架构的健壮性。例如：当前服务器出现问题时，我们可以人工或自动(http://oldboy.blog.51cto.com/2561410/1240412)
+	切换到从服务器继续提供服务。
+	这类似我们前面课程中nfs存储数据通过inotify+rsync同步到备份的nfs非常类似，只不过MySQL的同步方案，是其自带的工具。
+	非人为的硬件，服务故障，对于人为的执行drop,delete无能为力。
+	2）主从服务器读写分离分担网站压力
+	主从服务器架构可通过程序（PHP,JAVA）或代理软件（mysql-proxy,amoeba）对用户（客户端）的请求实现读写分离，即通过
+	在从服务器上仅仅处理用户select查询请求，降低用户查询响应时间及读写同时在主服务器带来的压力。对于更新的数据（
+	update,insert,delete）仍然交给主服务器处理，确保主从服务器保持实时同步，如果网站是以非更新（以浏览为主）为主的业务，
+	如blog，www 首页展示等业务，查询请求比较多，这时从服务器的读写分离负载均衡策略就很有效了，这就是传说中的读写分离数据库结构。
+		中大型公司：通过程序（php,java）
+		测试环境：代理软件(mysql-proxy,amoeba)
+		门户网站:分布式dbproxy（读写分离，hash 负载均衡，健康检查）。
+		
+		
+		
+		
+				    ↗ Slave服务器1	（浏览帖子，浏览博客，浏览文章）
+				   /
+				  /
+				 /
+				/	 ↗ Slave服务器2	（浏览帖子，浏览博客，浏览文章）
+			   /  /	
+				 /
+  Master 服务器   ——>  Slave服务器3	（浏览帖子，浏览博客，浏览文章）
+				 \
+			   \  \
+				\	 ↘ Slave服务器4	（后台访问，脚本任务，数据分析，开发人员浏览）
+				 \
+				  \
+				   \
+					↘ Slave服务器5	（开启从服务器binlog功能，可实现增量备份恢复）
+				
+▣1.4如何实现MySQL主从读写分离。
+		1、通过程序实现读写分离（性能，效率最佳，推荐）
+	php 和java程序都可以通过设置多个连接文件轻松的实现对数据库的读写分离，即当php和java程序都可以通过设置多给连接文件轻松的实现对数据库的读写分离，
+		即当select时，就去连接读库的链接文件，当update,insert,delete时就链接写库的链接文件。
+		2、通过软件实现读写分离
+	MySQL-proxy,Amoeba等代理软件也可以实现读写分离功能，但最常用好用的还是程序实现读写分离。
+		3、开发dbproxy
+		读写分离逻辑图展示如下：
+		
+		
+		
+▣1.7MySQL 主从复制原理过程
+		下面简单描述下 MySQL Replication 的复制过程
+		1.Slave 服务器上执行start slave ,开启主从复制开关。
+		2.此时，Slave服务器的IO 线程会通过在Master 上授权的复制用户权限请求链接Master 服务器，并请求从指定Binlog 日志文件的指定位置（日志文件名和位置
+	就是在配置主从复制服务时执行 change master 命令时指定的）之后发送 Binlog 日志内容。
+		3.Master 服务器接收到来自Slave 服务器的IO线程的请求后,Master 服务器上负责复制IO 线程根据Slave服务器的IO线程请求的信息读取指定位置之后Binglog
+	日志信息，然后返回给Slave端的IO线程。返回的信息中除了Binlog日志内容外，还有本次返回日志内容后在Master 服务器端的新的Binlog 文件名称以及在 Binlog
+	中的下一个指定更新位置:
+		4.当Slave服务器的IO线程获取到来自Master服务器上IO线程发送日志内容及日志文件及位置点后，将Binlog日志内容依次写入到Slave端自身的Relay Log 
+	(即中继日志)文件(MySQL-relay-bin xxxxx)的最末端，并将新的Binlog文件名和位置记录到master-info文件中，以便下一次读取Master 端新Binlog日志时能够告诉
+	Master 服务器需要从新Binlog日志内容。
+		5.Slave服务器端的SQL线程会实时的检测本地Relay Log 中新增加的日志内容，然后及时的吧Log 文件中的内容解析成在Master端曾经执行的SQL语句的内容，并
+	在自身Slave服务器上按语句顺序执行应用这些SQL语句，应用完毕后清理应用过的日志。
+		6.经过了上面的过程，就可以确保在Master端和Slave端执行了同样SQL语句，当复制状态正常的情况下，Master端和Slave端的数据是完全一样的，MySQL的同步
+	机制是有些特殊的情况的，具体请参考官方的说明，大多数情况下，大家不用担心。
+	
+		
+■1 复制准备
+	▣1.1定义服务器角色
+		主库(mysql master):[ip 为10.0.0.19 port 为3306]
+		从库(mysql slave):[ip 为10.0.0.19 port 为3307]
+		从库(mysql master):[ip 为10.0.0.19 port 为3308]
+		特别提示:
+		1.一般常规做主从复制，主从服务器多数在不同的机器上，并且监听端口均为默认的3306。
+		2.本文主从复制计算是针对前面的课程以单数据库多实例环境来讲解的。
+		3.第1点虽然不在一个机器上，但是步骤和过程和2点是一样的。
+		4.读者在掌握了本文但数据库多实例同步方法后，可以自己上当扩展，完成异机同端口之间主从复制
+		
+	▣1.2数据库环境准备
+		1)具备单机但数据库多实例的环境。
+		2)或两台服务器每个机器一个数据库的环境。
+		
+		提示：如果前面的课程配置了mysql多实例环境，之间开启环境使用即可。
+	
+	▣1.3数据库读法的约定
+		主库，也可称为master 3306
+		从库，也可称为slave  3307
+		
+		特别提示：下面的内容我们将以主库master以从库称呼slave.
+		
+■2主库上执行操作
+	▣2.1设置 server-id 值并开启binlog参数。
+		根据前文MySQL的主从同步原理，我们知道复制的关键因素就是binlog日志，所以我们首先要打开binlog日志的功能。
+		执行vi /data/3306/my.cnf 编辑my.cnf 配置文件，按如下两个参数内容修改:
+		
+		
+		[mysqld]
+		server-id=1
+		log-bin=/data/3306/mysql-bin #mysql-bin 改成自己的路径
+		
+		提示：
+		1、上面两参数要放在my.cnf中的[mysqld]模块下，否则会出错。
+		2、server-id 的值使用服务器 ip 地址的最后 8 位如 19，目的是避免不同机器或实例ID重复（不适合多实例）。
+		0<server-id<2的32次方-1的自然数。
+		3、要先在my.cnf配置文件中查找相关参数，并按要求修改。不存在时在添加参数，切记，参数不能重复。
+		4、修改my.cnf配置后需要重启数据库，命令为:/data/3306/mysql restart ,注意要确认真正重启了。
+		
+		检查配置后的结果
+		[root@localhost ~] grep -E "server-id|log-bin" /data/3306/my.cnf 
+		log-bin=/data/3306/mysql-bin 
+		server-id =1
+		
+		提示:如果有可能最好，插入数据看看binlog是不是记录了。
+		
+		[root@localhost 3308]# mysql -uroot -p123456 -S /data/3306/mysql.sock -e 'show variables;'|egrep "log_bin|server_id"
+		log_bin	ON
+		log_bin_trust_function_creators	OFF
+		server_id	1
+		sql_log_bin	ON
+
+		[root@localhost 3306]# mysql -uroot -p123456 -S /data/3306/mysql.sock -e "show variables like 'log_bin'";
+		+---------------+-------+
+		| Variable_name | Value |
+		+---------------+-------+
+		| log_bin       | ON    |
+		+---------------+-------+
+		
+
+
+		[root@localhost 3308] egrep "log-bin|server-id" my.cnf 
+		
+	▣2.2建立用于同步的账号rep
+		登录mysql 3306 实例主数据库。
+		
+		[root@localhost 3306]# mysql -uroot -p123456 -S /data/3306/mysql.sock
+		Welcome to the MySQL monitor.  Commands end with ; or \g.
+		Your MySQL connection id is 7
+		Server version: 5.5.23-log Source distribution
+		
+		Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
+		
+		Oracle is a registered trademark of Oracle Corporation and/or its
+		affiliates. Other names may be trademarks of their respective
+		owners.
+		
+		Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+		
+		mysql> 
+
+		建立用于从库复制的账号rep:
+		mysql> grant replication slave on *.* to 'rep'@'192.168.0.%' identified by '123456';
+		Query OK, 0 rows affected (0.00 sec)
+		
+		mysql> flush privileges; #刷新
+		Query OK, 0 rows affected (0.00 sec)
+
+		#replication slave 为 mysql 同步的必须权限，此处不要授权all
+		#*.* 表示所有库所表，你也可以指定具体的库和表进行复制。oldboy.test。
+		#'rep'@'10.0.0.%' rep 为同步账号。10.0.0.% 为授权主机网段，使用了%表示运行整个10.0.0.0网段以rep用户访问
+		
+		
+		mysql> flush table with read lock;  #在主库上加读的锁不禁止用户进行写操作
+		Query OK, 0 rows affected (0.13 sec)		
+		
+		mysql> show master status;
+		+------------------+----------+--------------+------------------+
+		| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
+		+------------------+----------+--------------+------------------+
+		| mysql-bin.000001 |      331 |              |                  |
+		+------------------+----------+--------------+------------------+
+	▣2.3对数据库锁表只读（当前窗口不再关掉）
+		生产环境时，操作主从复制，需要申请停机时间。数据量很大锁表会影响业务。当然了，我们后面有一键完成主从的方案。
+		mysql >flush tables with read lock;
+		Query OK ,0 rows affected (0.00 sec);
+		
+		提示：这个锁表命令的时间在不同的索引的情况，会受下面参数的控制，锁表时，如果超过设置时间不操作会自动解锁。
+		interactive_timeout=60
+		mait_timeout=60
+		
+		默认情况下的时长为；
+		mysql > show variables like '%timeout%';
+		
+		#截取部分内容如下
+
+		+----------------------------+----------+
+		| Variable_name              | Value    |
+		+----------------------------+----------+
+		| interactive_timeout        | 28800    |
+		| wait_timeout               | 28800    |
+		+----------------------------+----------+
+		10 rows in set (0.04 sec)
+		
+		提示：有关这两个参数，请读者自行测试。
+	
+	▣2.4 查看主库状态
+		查看主库状态，即当前binglog 日志文件名和二进制binlog日志偏移量 show master status; 命令显示的信息要记录在案，后面的从库复制
+	时是从这个位置开始的。
+		mysql> show master status;
+		+------------------+----------+--------------+------------------+
+		| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
+		+------------------+----------+--------------+------------------+
+		| mysql-bin.000001 |      659 |              |                  |
+		+------------------+----------+--------------+------------------+
+	
+		1 row in set (0.00 sec)
+
+		
+		或者新开窗口命令行如下命令：
+		[root@localhost /]# mysql -uroot -p123456 -S /data/3306/mysql.sock -e "show master status"
+		+------------------+----------+--------------+------------------+
+		| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
+		+------------------+----------+--------------+------------------+
+		| mysql-bin.000001 |      659 |              |                  |
+		+------------------+----------+--------------+------------------+
+
+	▣2.5  导出数据库数据
+		单开新窗口，导出数据库数据，如果数据量很大（100G+），并且允许停机，可以停库直接打包数据文件迁移。
+		
+		[root@localhost /]# mkdir /server/backup/ -p 
+		[root@localhost /]# mysqldump -uroot -p123456 -S /data/3306/mysql.sock -A -B |gzip > /server/backup/mysql_bak.$(date+%F).sql.gz
+		
+		#注意 -A 表示备份所有库，-B 表示增加 use DB 和 drop 等 (导库时会直接覆盖原有的)。
+		
+		[root@localhost ~] ls -l /server/backup/mysql_bak.$(date +%F).sql.gz
+		-rw-r--r-- 1 root root 137123 Apr 17 16:90 /server/backup/mysql_bak.2012-04-17.sql.gz 
+		为了确保导库期间，数据库没有数据插入，可以在检查下主库状态信息。
+		[root@localhost ~] mysql -uroot -p123456 -S /data/3306/mysql.sock -e "show master status"
+		+------------------+----------+--------------+------------------+
+		| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
+		+------------------+----------+--------------+------------------+
+		| mysql-bin.000001 |      659 |              |                  |
+		+------------------+----------+--------------+------------------+		
+		
+		提示：无特殊情况，binlog 文件及位置点是保持不变的。
+	导库后，解锁无主库，恢复可写：
+	
+		mysql> unlock tables;
+		
+		特别提示：有读者这里犯迷糊，实际上做从库前，无论主库更新多少数据了，最后从库都会从上面 show master status 的位置很快赶上
+	主库的速度的。
+
+	▣2.5把主库导出的 MYSQL 数据迁移到从库
+		这步常用命令有scp,rsync 等。相关命令前面的课程已详细讲解过了，这里就不多描述了。
+		CHANGE MASTER TO 
+		MASTER_HOST='192.168.0.101',  #MASTER_HOST 主库IP 
+		MASTER_PORT=3306, 	 	 #MASTER_PORT 主库端口
+		MASTER_USER='roye',		 #MASTER_USER 主库用户名
+		MASTER_PASSWORD='123456',#MASTER_PASSWORD 主库密码
+		MASTER_LOG_FILE='mysql-bin.000002',	#binlog 文件的位置
+		MASTER_LOG_POS=107;				#binlog 文件Position
+	
+	mysql -uroot -p123456 -S /data/3307/mysql.sock;
+		
+
+	[root@localhost 3306]# mysql -uroot -p -S /data/3307/mysql.sock		
+			
+	mysql> CHANGE MASTER TO 
+			MASTER_HOST='192.168.0.101',  #MASTER_HOST 主库IP 
+			MASTER_PORT=3306, 	 	 #MASTER_PORT 主库端口
+			MASTER_USER='roye',		 #MASTER_USER 主库用户名
+			MASTER_PASSWORD='123456',#MASTER_PASSWORD 主库密码
+			MASTER_LOG_FILE='mysql-bin.000002',	#binlog 文件的位置
+			MASTER_LOG_POS=107;				#binlog 文件Position
+	mysql> start slave;
+	mysql> show slave status\G;
+	*************************** 1. row ***************************
+	Slave_IO_State: Connecting to master
+	Master_Host: 10.0.0.7
+	Master_User: rep
+	Master_Port: 3306
+	Connect_Retry: 60
+	Master_Log_File: mysql-bin.000001
+	Read_Master_Log_Pos: 659
+	Relay_Log_File: relay-bin.000001
+	Relay_Log_Pos: 4
+	Relay_Master_Log_File: mysql-bin.000001
+	Slave_IO_Running: Yes		#看到这两个位置的 YES 
+	Slave_SQL_Running: Yes		#看到这两个位置的 YES 表示OK
+	Replicate_Do_DB: 
+	Replicate_Ignore_DB: 
+	Replicate_Do_Table: 
+	Replicate_Ignore_Table: 
+	Replicate_Wild_Do_Table: 
+	Replicate_Wild_Ignore_Table: 
+	Last_Errno: 0
+	Last_Error: 
+	Skip_Counter: 0
+	Exec_Master_Log_Pos: 659
+	Relay_Log_Space: 214
+	Until_Condition: None
+	Until_Log_File: 
+	Until_Log_Pos: 0
+	Master_SSL_Allowed: No
+	Master_SSL_CA_File: 
+	Master_SSL_CA_Path: 
+	Master_SSL_Cert: 
+	Master_SSL_Cipher: 
+	Master_SSL_Key: 
+	Seconds_Behind_Master: 0 #这个位置是0
+	Master_SSL_Verify_Server_Cert: No
+	Last_IO_Errno: 2003
+	Last_IO_Error: 
+	Last_SQL_Errno: 0
+	Last_SQL_Error: 
+	Replicate_Ignore_Server_Ids: 
+	Master_Server_Id: 0
+	1 row in set (0.00 sec)
+	
+	ERROR: 
+	No query specified
+	
+	成功了之后在主库上创建一个数据库看看是否能同步到从库
+	mysql> create database oldboy;
+	Query OK, 1 row affected (0.00 sec)
+		
+			
+	在从库窗口中如果找到创建好的"oldboy"库表示同步成功
+	mysql> show databases;
+	+--------------------+
+	| Database           |
+	+--------------------+
+	| information_schema |
+	| mysql              |
+	| oldboy             |
+	| performance_schema |
+	| test               |
+	+--------------------+
+	5 rows in set (0.00 sec)		
+			
+			
+			
+	一、MySQL 主从同步配置步骤
+		1、 准备两台数据库环境，或者单台多实例环境，能否正常启动和登录。
+		2、配置my.cnf 文件，主库配置log-bin和server-id参数，从库配置server-id,不能和主库及其他从库一样，一般不开启从库log-bin 功能。注意：配置参数后要重启生效。
+		3、登录主库增加用于从库链接主库同步的账户例如：rep,并授权replication slave 同步的权限。
+		4、登录主库，整库锁表 flush table with read lock (窗口关闭后即失效，超时参数到了也失效)；然后show master status 查看binlog 的位置状态。
+		5、新开窗口，linux 命令行备份或导出原有的数据库数据，并拷贝到从库所在的服务器目录。
+			如果数据量很大，并且允许停机，可以停机打包，而不用 mysqldump 。
+		6、解锁主库,unlock tables;
+		7、把主库导出的原有数据恢复到从库。
+		8、根据主库的 show master status 查看 binlog 的位置状态，在从库执行 change master to ... 语句。
+		9、从库开启同步开关 ，start slave。
+		10、从库show slave status\G，检查同步状态，并在主库进行更新测试。
+			
+
+			
+	【口头表达】
+		01）一台办公室内主机无法上网（打不开网站），请给出你的排查步骤？
+		02）作为一个运维人员，有运营人员反映我们的网站etiantian.org 打开慢，这时你如何排查？
+		03）请问你如何理解网站并发的概念。
+		04）你的公司网站并发是多少？访问量是多少？
+		05）描述mysql主从同步原理
+		06）描述mysql 主从同步部署
+		07）描述mysqlroot 密码忘了怎么办？
+		08）描述MyISAM 与 Innodb数据库引擎特点与区别？
+		09）描述mysql 多实例部署
+		10）描述如何查看mysql的命令帮助，请举例。
+		11）描述mysql增量备份和恢复过程。
+		12）mysql 出现同步故障如何解决？
+		13）mysql 出现同步延迟原因是什么？如何解决？
+			
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		mongodb ：它是一个nossql数据库，它是面向文档的是最接近关系型数据库的数据库，和它类似的有readis,memcached
+		
+		故障问题：
+			服务启动不来:[root@localhost ~]# /data/3306/mysql start
+						MySQL is running...
+						[root@localhost ~]# ps ef|grep mysql
+						root 1636 1595 0 11:47 pts/0 00:00:00 grep --color=auto mysql
+						[root@localhost ~]# rm -f /data/3306/mysql.sock /data/3306/*.pid
+						[root@localhost ~]# /data/3306/mysql start
+						Starting MySQL...
+	
+		5.5 flush table with read lock 
+			提示：这个锁表命令实际，在不同的引擎的情况，会受下面参数的控制，锁表时，如超过设置时间不操作会自动解锁。
+			
+			interactive_timeout=60
+			wait_timeout=60
+			
+			默认情况下的时长为；
+			
+			mysql> show variables like '%timeout%';
+			+----------------------------+----------+
+			| Variable_name              | Value    |
+			+----------------------------+----------+
+			| connect_timeout            | 10       |
+			| delayed_insert_timeout     | 300      |
+			| innodb_lock_wait_timeout   | 50       |
+			| innodb_rollback_on_timeout | OFF      |
+			| interactive_timeout        | 28800    |
+			| lock_wait_timeout          | 31536000 |
+			| net_read_timeout           | 30       |
+			| net_write_timeout          | 60       |
+			| slave_net_timeout          | 3600     |
+			| wait_timeout               | 28800    |
+			+----------------------------+----------+
+			10 rows in set (0.00 sec)
+		
+		
+		
+1.4生产环境主从库同步配置注意事项		
+
+1.4.1第一次做从库如何做？
+			1、申请设备资源，用来做从库服务器。
+			2、编写方案文档和实时步骤。
+			假如你的服务器只有主库，而且已经跑了生产线上应用了，现在由于业务需要第一次做从库，此时可能需要和公司申请
+		停机维护时间（要确认这个时间段内可以做一次全备），即在用户访问量最小，且不影响内部其他业务运转的时间点来停机
+		（包括锁表）配置主从复制，一般都是凌晨进行。注意：停机（锁表，停库）的最小时间段，为锁表后备份的时间，也就是
+		说无需等待主从配置好。
+			等人也可以不申请停机时间，在定时任务备份时，每天的夜里的定时备份做一些措施即可失效，见1.4.2。
+			
+1.4.2 无需熬夜在工作时间轻松配置从库。
+			当然了，也可以不申请停机时间，在定时任务备份时，每天的夜里服务里压力小时刻的定时备份时做一些
+		措施即可，如：模拟主从同步的步骤，获取及全备过程中 binlog 位置的信息或者直接用--master-data 参数
+		解决。
+	1.4.2.1一键做主从复制脚本
+		1、锁表备份全备份。
+		2、锁表前后取得show master status 值记录日志里。
+		这样就可以在白天从容的实现主从同步了。这给脚本还是很容易实现的，如:
+		
+		[root@localhost ~]# cat mysql_bak.sh
+		
+		#!/bin/sh
+		############################################################################
+		#this scripts is created by oldboy 
+		#site:http://www.etiantian.org 
+		#blog:http://oldboy.blog.51cto.com
+		############################################################################
+		
+		MYUSET=root
+		MYPASS='oldboy'
+		MYSOCK=/data/3306/mysql.sock
+		MAIN_PATH=/server/backup 
+		DATA_PATH=/server/backup 
+		LOG_FILE=${DATA_PATH}/mysqllogs_`date +%F`.log
+		DATA_FILE=${DATA_PATH}/mysql_backup_`date +%F`.sql.gz 
+		MYSQL_PATH=/usr/local/mysql/bin 
+		MYSQL_CMD="$MYSQL_PATH/mysql -u$MYUSER -P$MYPASS -S $MYSOCK"
+		MYSQL_DUMP="$MYSQL_PATH/mysqldump -u$MYUSER -p$MYPASS -S $MYSOCK -A -B --single-transaction -e"
+		$MYSQL_CMD -e "flush tables with read lock;"
+		echo "-----show master status result-----" >>$LOG_FILE 
+		$MYSQL_CMD -e "show master status;">>$LOG_FILE
+		${MYSQL_DUMP} | gzip > $DATA_FILE;
+		$MYSQL_CMD -e "unlock tables;"
+		mail -s "mysql slave log" 3133374@qq.com < $LOG_FILE
+		#特别提示：这个脚本实际上就是把主从制作的过程自动化了而已，没什么难度。
+		有关一键配置MySQL 主从同步问题：
+			如果脚本中在mysqldump 备份命令中指定刷新binlog，备份后记录 show master status 状态，虽然这和锁表备份前
+		查看master 状态的位置之间无数据插入，但是执行同步时可能会导致从数据库无法和主库同步。
+			因此，做一键主从同步时，备份导出命令去除-F 或--flush-logs ，或者想办法只记录mysqldump刷新binlog前的
+		master位置状态
+		cat|mysql -uroot -p123456 -S /data/3307/mysql.sock<<EOF
+		flush tables with read lock;
+		system echo "-----show master status result-----">>$LOG_FILE
+		system $MYSQL_CMD -e "show master status;">>$LOG_FILE
+		system ${MYSQL_DUMP}| gzip >$DATA_FILE
+		EOF 
+		
+		脚本方法2：
+		
+		
+		#!/bin/sh
+		############################################################################
+		#this scripts is created by oldboy 
+		#site:http://www.etiantian.org 
+		#blog:http://oldboy.blog.51cto.com
+		############################################################################		
+		MYUSER=root
+		MYSOCK=/data/3306/mysql.sock
+		MAIN_PATH=/server/backup
+		DATA_PATH=/server/backup 
+		LOG_FILE=${DATA_PATH}/mysqllogs_`date +%F`.log 
+		DATA_FILE=${DATA_PATH}/mysql_backup_`date +%F`.sql.gz
+		MYSQL_PATH=/application/mysql/bin 
+		MYSQL_CMD="$MYSQL_PATH/mysql -u$MYUSER -p$MYPASS -S $MYSOCK"
+		MYSQL_DUMP="$MYSQL_PATH/mysqldump -u$MYUSER -p$MYPASS -S $MYSOCK -A -B --single-transaction -e "
+		cat |$MYSQL_CMD<<EOF 
+		flush tables with read lock;
+		system echo "-----show master status result-----">>$LOG_FILE;
+		system $MYSQL_CMD -e "show master status"|tail -1 >>$LOG_FILE;
+		system ${MYSQL_DUMP}|gzip >$DATA_FILE;
+		EOF
+		$MYSQL_CMD -e "unlock tables;"
+		
+		执行过程与结果：
+		[root@localhost ~]# sh mysql_bak.sh
+		[root@localhost ~]# ls -l /server/backup/
+		total 144
+		-rw-r--r-- 1 root root 137123 Apr 17 16:45 mysql_backup_2012-04-17.sql.gz
+		-rw-r--r-- 1 root root   103 Apr 17 16:45 mysqllogs_2012-04-17.log
+		[root@localhost ~]# cat /server/backup/mysqllogs_2012-04-17.log 
+		-----show master status result-----
+		File Position 			Binlog_Do_DB Binlog_Ignore_DB
+		mysql-bin.000033  		106 
+		
+		脚本方法3
+		
+		#!/bin/sh
+		############################################################################
+		#this scripts is created by oldboy 
+		#site:http://www.etiantian.org 
+		#blog:http://oldboy.blog.51cto.com
+		############################################################################	
+
+		MYUSER=root
+		MYPASS='oldboy123'
+		MYSOCK=/data/3306/mysql.sock
+		MAIN_PATH=/server/backup
+		DATA_PATH=/server/backup
+		LOG_FILE=${DATA_PATH}/mysqllogs_`date +%F`.log
+		DATA_FILE=${DATA_PATH}/mysql_backup_`date +%F`.sql.gz
+		MYSQL_PATH=/application/mysql/bin
+		MYSQL_CMD="$MYSQL_PATH/mysql -u$MYUSER -p$MYPASS -S $MYSOCK"
+		MYSQL_DUMP="$MYSQL_PATH/mysqldump -u$MYUSER -p$MYPASS -S  $MYSOCK -A -B --master-data=1 --single-transaction -e"
+		${MYSQL_DUMP}|gzip > $DATA_FILE;
+		
+		有了 mysql_backup_2012-04-17.sql.gz 和 mysqllogs_2012-04-17.log 内容做从库还远么？
+	1.4.3不停主库一键批量创建从库
+		1.4.3.1 一键创建从库方法1
+			这不就不难了。首先，通过老男孩老师前面讲过的批量分发数据方案，把mysql_backup_2012-04-17.sql.gz 发布到想做从库同步
+		的机器上，可以多台。
+			然后在制作如下批量做从库脚本，一键完成多台机器从库的制作。
+			
+		#!/bin/sh
+		############################################################################
+		#this scripts is created by oldboy 
+		#site:http://www.etiantian.org 
+		#blog:http://oldboy.blog.51cto.com
+		############################################################################
+		MYUSER=root
+		MYPASS="oldboy"
+		MYSOCK=/data/3306/mysql.sock
+		MAIN_PATH=/server/backup
+		DATA_PATH=/server/backup
+		LOG_FILE=${DATA_PATH}/mysqllogs_`date +%F`.log
+		DATA_FILE=${DATA_PATH}/mysql_backup_`date +%F`.sql.gz 
+		MYSQL_PATH=/usr/local/mysql/bin 
+		MYSQL_CMD="$MYSQL_PATH/mysql -u$MYUSER -p$MYPASS -S $MYSOCK "
+		
+		#recover 
+		
+		cd ${DATA_PATH}
+
+		gzip -d mysql_backup_`date +%F`.sql.gz 
+		$MYSQL_CMD < mysql_backup_`date +%F`.sql 
+		
+		#config slave 
+		
+		cat |$MYSQL_CMD << EOF
+		
+		CHANGE MASTER TO 
+		MASTER_HOST='192.168.0.1',
+		MASTER_PORT=3306,
+		MASTER_USER='roye',
+		MASTER_PASSWORD='123456',
+		MASTER_LOG_FILE='mysql-bin.000008',
+		MASTER_LOG_POS=342;
+		EOF
+		
+		$MYSQL_CMD -e "start slave;"
+		$MySQL_CMD -e "show slave status \G" |egrep "IO_Running|SQL_Running" > $LOG_FILE 
+		mail -s "mysql slave result" 31333741@qq.com <$LOG_FILE
+		
+		特别提示： 
+			1）此脚本中 change master 参数要根据 mysqllogs_2012-04-17.log 修改。
+			2）此脚本未经调试，请大家自行调试。
+
+		
+		mysql> show processlist;
+		+-----+------+---------------------+-------+-------------+-------+-----------------------------------------------------------------------+------------------+
+		| Id  | User | Host                | db    | Command     | Time  | State                                                                 | Info             |
+		+-----+------+---------------------+-------+-------------+-------+-----------------------------------------------------------------------+------------------+
+		| 771 | roye | 192.168.0.101:53552 | NULL  | Binlog Dump | 82882 | Master has sent all binlog to slave; waiting for binlog to be updated | NULL             |
+		| 772 | root | localhost           | mysql | Query       |     0 | NULL                                                                  | show processlist |
+		+-----+------+---------------------+-------+-------------+-------+-----------------------------------------------------------------------+------------------+
+		2 rows in set (0.00 sec)
+		
+		
+		vim /data/3306/my.cnf 
+		[mysqld]
+		replicate-ignore-db=mysql 
+		binlog-ignore-db = mysql   #主从复制时忽略此库
+		binlog-ignore-db = performance_schema #主从复制时忽略此库
+		binlog-ignore-db = information_schema #主从复制时忽略此库
+		
+		
+		从库只读配置
+		vim /data/3306/my.cnf 
+		[mysqld]
+		read-only
+		
+		提示： 1、my.cnf 里加入read-only后 ，重启服务使参数生效，
+			   2、对用户授权时不能指定有super或all privileges权限，
+		
+		从库数据冲突导致同步停止
+		show slave status; 报错；
+		且 show slave status \G;
+		Slave_IO_Running:Yes 
+		Slave_SQL_Running:NO 
+		Seconds_Behind_Master:NULL 
+		
+		Last_Error:Error 'Can't create database 'xiaoliu'; database exists' on query.
+		Default database;'xiaoliu',Query:'create database xiaoliu'
+		
+		
+		
+		
+		stop slave;
+		set global sql_slave_skip_counter =1;  #忽略当前指针
+		start slave;
+		提示：1） 对于普通的互联网业务，忽略问题不是很大。当然，要确认不影响公司业务的前提下。
+			  2）企业场景解决主从同步，比主从不一致对当前业务更重要，然后如果主从数据一致也很重要，在找个时间恢复下这个从库。
+			  
+		主从数据不一致更重要还是保持主从同步持续状态更重要。这个我们要我们根据业务选择。
+		
+		
+		
+		根据错误号跳过指定的错误。
+			slave-skip-errors=1032,1062,1007
+
+1.7.2让MySQL slave 库记录binlog方法 
+		需要记录binlog的情况：
+		1.当前从库还要作为其他从库的主库,也就是级联同步
+		2.把从库作为备份服务器时需要开启binlog
+			
+		在从库中加入如下参数
+			log-slave-updates
+			log-bin=mysql13307-bin 
+			expire_logs_days =7   #binlog日志只保留7天，超过7天的自动删除
+			
+			
+			
+五、主库master 假设主库宕机			
+			
+	登录从库 show processlist;
+	mysql> show processlist\G;
+	*************************** 1. row ***************************
+	Id: 26
+	User: system user
+	Host: 
+	db: NULL
+	Command: Connect
+	Time: 103594
+	State: Waiting for master to send event
+	Info: NULL
+	*************************** 2. row ***************************
+	Id: 27
+	User: system user
+	Host: 
+	db: NULL
+	Command: Connect
+	Time: 101846
+	State: Slave has read all relay log; waiting for the slave I/O thread to update it
+	Info: NULL
+	*************************** 3. row ***************************
+	Id: 28
+	User: root
+	Host: localhost
+	db: NULL
+	Command: Query
+	Time: 0
+	State: NULL
+	Info: show processlist
+	3 rows in set (0.00 sec)
+	
+	ERROR: 
+	No query specified
+	
+			
+	cat /data/3307/data/master.info 		
+			
+	[root@localhost 3307]# cat /data/3307/data/master.info 
+	18
+	mysql-bin.000002 #查看哪个binlog的更大更新
+	788
+	192.168.0.101
+	roye
+	123456
+	3306
+	60
+	0
+		
+	确保更新完毕，看看4个从库哪个最快，经过测试没有延迟的情况POS差距很小，甚至是一致的
+
+
+
+	选择pos最大的做为主库
+
+	或者利用半同步功能，直接选择做了实时同步的这个从库。
+	4、 提升从库为主库
+	vi /data/3306/my.cnf 
+	
+	开启:
+		log-bin=/data/3306/mysql-bin 
+		//如果存在log-slave-updates read-only 等一定注释掉它。
+		//data/3306/mysql restart 
+		到此为止，提升主库完毕
+
+	5、如果主库服务器没宕，需要去主库拉取binlog补全提升主库的从库。
+
+
+	6、其它从库操作
+	已检查（同步user rep 均存在）
+	登录从库
+	stop slave;
+	change master to master_host='192.168.1.32';//如果不同步，就指定位置点
+	start slave;
+	show slave status \G;
+
+=============================================================主库宕机切换成功
+
+
+	7、修改程序配置文件从主数据库35的指向32。
+	平时访问数据库用域名，则直接可以修改hosts 解析。
+	
+	8、修理损坏的主库，完成后作为从库使用，或者切换。
+	提升更多恢复信息，参考mysql手册 第六章的FAQ 本文档结尾附录也有。
+	
+	我们现在讲到是主库以外宕机，假如：我们有计划切换。怎么做呢？
+	
+
+Mysql5.5以上支持半同步
+	一个插件：画图说明
+	一主多从主库宕机如何恢复。通过master.info 确定新主库。
+	半同步下的一主多从恢复，直接对设置半同步的从库确定为主库。
+	让某一个稳定从库和主库完全一致，即主库和这个从库都更新数据完毕，在返回给用户更新成功。
+	优点：
+		1、确保至少一个从库和主库数据一致。
+		
+	缺点：
+		1、主库之间网络延迟，或者从库有问题时候，用户体验很差。当然可以设置超时时间，10秒。
+		
+		
+		
+六、从库slave DOWN机
+		恢复方法：从做SLAVE。
+		直接灌数据：
+		
+		stop slave;
+		gzip -d oldboy_data_5.sql.gz //一个小时
+		mysql -uroot -p123456 -S /data/3307/mysql.sock < oldboy_data_5.sql & //约2小时30分钟
+		
+		change master to master_host='192.168.1.35' ,master_user='repl'
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+	
+			
+云涛，景洪，明珠皇庭水会
+				

@@ -1,0 +1,58 @@
+
+
+	这里只说明与swoole无刷新推送和聊天室相关的文件文件夹
+	
+	thinkphp
+	|---application
+	|	  |--admin
+	|		   |--controller
+	|				|--Image.php					//接收图片上传和处理
+	|				|--Live.php						//接收后台管理员的推送然后处理
+	|	  |--common
+	|		   |--lib
+	|				|--ali
+	|					|--Sms.php					//短信发送类
+	|				|--redis
+	|					|--Predis.php				//redis的基类
+	|				|--task
+	|					|--Task.php					//swoole的基类 ws.php和 Live.php文件有调用
+	|				|--Redis.php
+	|				|--Util.php						//消息输出到前端的正确和错误方法文件
+	|	  |--index
+	|		   |--controller
+	|				|--Chart.php					//用户聊天内容的接收和处理
+	|---config
+	|	  |--live.php								//swoole的配置文件config()方法获取
+	|	  |--redis.php								//redis 服务器配置文件
+	|---public
+	|	  |--static
+	|		   |--admin
+	|				|--css
+	|				|--fonts
+	|				|--images
+	|				|--js
+	|				|--lib
+	|				|--live.html					//后台管理员发布赛况内容
+	|		   |--live
+	|				|--assert	
+	|				|--imgs	
+	|				|--js	
+	|					|--chart.js					//监听swoole 8811端口消息和处理推送信息
+	|					|--chart-push.js
+	|					|--jquery-3.3.1.min.js
+	|					|--live.js					//监听swoole 8812端口消息和处理推送信息
+	|				|--detail.html					//赛况，聊天室主页
+	|				|--index.html
+	|				|--login.html
+	|		   |--upload							//文件上传保存到的文件夹
+	|		   |--webuploader						//webuploader文件上传组件  在detail.html 有调用的实例
+	|---script
+	|	  |--bin
+	|		   |--server
+	|				|--ws.php						//swoole 服务器核心文件 swoole与ThinkPHP结合
+	|				|--reload.sh                    
+	|	  |--monitor
+	|				|--server.php					//swoole+linux 做swoole服务器的监控脚本文件 
+	|---server
+	|	  |--ws.php    								//swoole 服务器核心文件 swoole与ThinkPHP结合
+	|---thinkphp									//ThinkPHP 核心文件夹

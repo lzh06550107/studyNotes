@@ -1,0 +1,993 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>48. 邮件 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="&lt;no title&gt;" href="Laravel的邮件发送功能原理分析.html"/>
+        <link rel="prev" title="47. 辅助函数-其它杂项" href="Laravel的辅助函数-其它.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">48. 邮件</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">48.1. 简介</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">48.1.1. 需要的驱动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">48.1.2. 环境配置</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">48.2. 生成邮件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">48.3. 编写邮件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">48.3.1. 配置发送者</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">48.3.2. 配置视图</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">48.3.3. 视图数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">48.3.4. 附件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">48.3.5. 内部附件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#swiftmailer">48.3.6. 自定义 SwiftMailer 消息</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#markdown-mailable">48.4. Markdown 格式的 Mailable 类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id17">48.4.1. 生成 Markdown 格式的 Mailable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#markdown">48.4.2. 编写 Markdown 格式的消息</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id22">48.5. 在浏览器中预览邮件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id23">48.6. 发送邮件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id24">48.7. 渲染邮件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id25">48.7.1. 在浏览器中预览邮件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mail">48.8. 队列 Mail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id26">48.8.1. 将邮件消息加入队列</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27">48.8.2. 延迟邮件消息队列</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28">48.8.3. 推送到特定队列</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id29">48.8.4. 默认使用队列</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id30">48.9. 邮件和本地开发</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id31">48.9.1. 日志驱动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id32">48.9.2. 通用收件者</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mailtrap">48.9.3. Mailtrap</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id33">48.10. 事件</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>48. 邮件</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>48. 邮件<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>48.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Laravel 基于 <code class="docutils literal"><span class="pre">SwiftMailer</span></code> 函数库提供了一套干净、简洁的邮件 <code class="docutils literal"><span class="pre">API</span></code> ， Laravel 为 <code class="docutils literal"><span class="pre">SMTP</span></code> 、 <code class="docutils literal"><span class="pre">Mailgun</span></code> 、 <code class="docutils literal"><span class="pre">SparkPost</span></code> 、 <code class="docutils literal"><span class="pre">Amazon</span> <span class="pre">SES</span></code> 、 PHP 的 <code class="docutils literal"><span class="pre">mail</span></code> 函数及 <code class="docutils literal"><span class="pre">sendmail</span></code> 提供驱动，让你可以快速从本地或云端服务自由地发送邮件。</p>
+<div class="section" id="id3">
+<h3>48.1.1. 需要的驱动<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>基于 <code class="docutils literal"><span class="pre">API</span></code> 的驱动，例如 <code class="docutils literal"><span class="pre">Mailgun</span></code> 和 <code class="docutils literal"><span class="pre">SparkPost</span></code> 通常比 <code class="docutils literal"><span class="pre">SMTP</span></code> 服务器更简单快速。如果可能，你应该尽可能使用这些驱动。所有的 <code class="docutils literal"><span class="pre">API</span></code> 驱动都需要 <code class="docutils literal"><span class="pre">Guzzle</span> <span class="pre">HTTP</span></code> 函数库，你可以使用 <code class="docutils literal"><span class="pre">Composer</span></code> 包管理器安装它：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>composer require guzzlehttp/guzzle
+</pre></div>
+</div>
+<div class="section" id="mailgun">
+<h4>48.1.1.1. Mailgun 驱动<a class="headerlink" href="#mailgun" title="永久链接至标题">¶</a></h4>
+<p>要使用 <code class="docutils literal"><span class="pre">Mailgun</span></code> 驱动，首先必须安装 <code class="docutils literal"><span class="pre">Guzzle</span></code> ，之后将 <code class="docutils literal"><span class="pre">config/mail.php</span></code> 配置文件中的 <code class="docutils literal"><span class="pre">driver</span></code> 选项设置为 <code class="docutils literal"><span class="pre">mailgun</span></code> 。接下来，确认 <code class="docutils literal"><span class="pre">config/services.php</span></code> 配置文件包含以下选项：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;mailgun&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;domain&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;your-mailgun-domain&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;secret&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;your-mailgun-key&#39;</span><span class="p">,</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sparkpost">
+<h4>48.1.1.2. SparkPost 驱动<a class="headerlink" href="#sparkpost" title="永久链接至标题">¶</a></h4>
+<p>要使用 <code class="docutils literal"><span class="pre">SparkPost</span></code> 驱动，首先必须安装 <code class="docutils literal"><span class="pre">Guzzle</span></code> ，之后将 <code class="docutils literal"><span class="pre">config/mail.php</span></code> 配置文件中的 <code class="docutils literal"><span class="pre">driver</span></code> 选项设置为 <code class="docutils literal"><span class="pre">sparkpost</span></code> 。接下来，确认 <code class="docutils literal"><span class="pre">config/services.php</span></code> 配置文件包含以下选项：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">&#39;sparkpost&#39; =&gt; [</span>
+<span class="x">    &#39;secret&#39; =&gt; &#39;your-sparkpost-key&#39;,</span>
+<span class="x">],</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ses">
+<h4>48.1.1.3. SES 驱动<a class="headerlink" href="#ses" title="永久链接至标题">¶</a></h4>
+<p>要使用 <code class="docutils literal"><span class="pre">Amazon</span> <span class="pre">SES</span></code> 驱动，必须安装 PHP 的 <code class="docutils literal"><span class="pre">Amazon</span> <span class="pre">AWS</span> <span class="pre">SDK</span></code> 。你可以在 <code class="docutils literal"><span class="pre">composer.json</span></code> 文件的 <code class="docutils literal"><span class="pre">require</span></code> 段落加入下面这一行并运行 <code class="docutils literal"><span class="pre">composer</span> <span class="pre">update</span></code> 命令：</p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">&quot;aws/aws-sdk-php&quot;: &quot;~3.0&quot;</span>
+</pre></div>
+</div>
+<p>接下来，将 <code class="docutils literal"><span class="pre">config/mail.php</span></code> 配置文件中的 <code class="docutils literal"><span class="pre">driver</span></code> 设置为 <code class="docutils literal"><span class="pre">ses</span></code> 。然后确认 <code class="docutils literal"><span class="pre">config/services.php</span></code> 配置文件包含下列选项：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;ses&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;your-ses-key&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;secret&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;your-ses-secret&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;region&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;ses-region&#39;</span><span class="p">,</span>  <span class="c1">// e.g. us-east-1</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>48.1.2. 环境配置<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">MAIL_DRIVER</span><span class="o">=</span><span class="s">smtp</span>
+<span class="na">MAIL_HOST</span><span class="o">=</span><span class="s">smtp.126.com</span>
+<span class="na">MAIL_PORT</span><span class="o">=</span><span class="s">994</span>
+<span class="na">MAIL_USERNAME</span><span class="o">=</span><span class="s">liao08022040@126.com</span>
+<span class="na">MAIL_PASSWORD</span><span class="o">=</span><span class="s">test1234567890</span>
+<span class="na">MAIL_ENCRYPTION</span><span class="o">=</span><span class="s">ssl</span>
+<span class="na">MAIL_FROM_ADDRESS</span><span class="o">=</span><span class="s">liao08022040@126.com</span>
+<span class="na">MAIL_FROM_NAME</span><span class="o">=</span><span class="s">lzh</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">driver</span></code> 用于配置默认的邮件发送驱动， Laravel 支持多种邮件驱动方式，包括 <code class="docutils literal"><span class="pre">smtp</span></code> 、 <code class="docutils literal"><span class="pre">Mailgun</span></code> 、 <code class="docutils literal"><span class="pre">Maildrill</span></code> 、 <code class="docutils literal"><span class="pre">Amazon</span> <span class="pre">SES</span></code> 、 <code class="docutils literal"><span class="pre">mail</span></code> 和 <code class="docutils literal"><span class="pre">sendmail</span></code> ， <code class="docutils literal"><span class="pre">Mailgun</span></code> 和 <code class="docutils literal"><span class="pre">Amazon</span> <span class="pre">SES</span></code> 都是收费的 <code class="docutils literal"><span class="pre">Maildrill</span></code> 目前不支持中国区用户，这三个都是第三方邮件服务。 <code class="docutils literal"><span class="pre">mail</span></code> 驱动使用 PHP 提供的 <code class="docutils literal"><span class="pre">mail</span></code> 函数发送， <code class="docutils literal"><span class="pre">sendmail</span></code> 驱动通过 <code class="docutils literal"><span class="pre">Sendmail/Postfix</span></code> （Linux）提供的命令发送邮件， <code class="docutils literal"><span class="pre">smtp</span></code> 驱动通过支持 <code class="docutils literal"><span class="pre">ESMTP</span></code> 的 <code class="docutils literal"><span class="pre">SMTP</span></code> 发送邮件。就目前状况来看，使用 <code class="docutils literal"><span class="pre">smtp</span></code> 是最明智的选择， <code class="docutils literal"><span class="pre">mail</span></code> 不安全， <code class="docutils literal"><span class="pre">sendmail</span></code> 需要安装配置 <code class="docutils literal"><span class="pre">Sendmail/Postfix</span></code> ，其他要么付费要么不能用。</li>
+<li><code class="docutils literal"><span class="pre">host</span></code> 是邮箱所在主机，比如我们使用126邮箱，对应值是 <code class="docutils literal"><span class="pre">smtp.126.com</span></code> ，使用 QQ 邮箱的话，对应值是 <code class="docutils literal"><span class="pre">smtp.qq.com</span></code> 。</li>
+<li><code class="docutils literal"><span class="pre">port</span></code> 用于配置邮箱发送服务端口号，比如一般默认值是 25 ，但如果设置 <code class="docutils literal"><span class="pre">SMTP</span></code> 使用 <code class="docutils literal"><span class="pre">SSL</span></code> 加密，该值为 <code class="docutils literal"><span class="pre">465</span></code> 。</li>
+<li><code class="docutils literal"><span class="pre">from</span></code> 配置项包含 <code class="docutils literal"><span class="pre">address</span></code> 和 <code class="docutils literal"><span class="pre">name</span></code> ，前者表示发送邮箱，后者表示发送邮件使用的用户名。</li>
+<li><code class="docutils literal"><span class="pre">encryption</span></code> 表示加密类型，可以设置为 <code class="docutils literal"><span class="pre">null</span></code> 表示不使用任何加密，也可以设置为 <code class="docutils literal"><span class="pre">tls</span></code> 或 <code class="docutils literal"><span class="pre">ssl</span></code> 。</li>
+<li><code class="docutils literal"><span class="pre">username</span></code> 表示邮箱账号，比如 <code class="docutils literal"><span class="pre">liao08022040&#64;126.com</span></code></li>
+<li><code class="docutils literal"><span class="pre">password</span></code> 表示上述邮箱登录对应登录密码。注意 QQ 邮箱的话应该开启 <code class="docutils literal"><span class="pre">POP3|SMTP</span></code> 服务时给的密钥。</li>
+<li><code class="docutils literal"><span class="pre">sendmail</span></code> 是在设置 <code class="docutils literal"><span class="pre">driver</span></code> 为 <code class="docutils literal"><span class="pre">sendmail</span></code> 时使用，用于指定 <code class="docutils literal"><span class="pre">sendmail</span></code> 命令路径。</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>48.2. 生成邮件<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>在 Laravel 中，要发送的邮件对象是一个「Mailable」对象。这些对象存储在 <code class="docutils literal"><span class="pre">app/Mail</span></code> 目录中。如果在你的应用中没有看见这个目录，别担心，在首次使用 <code class="docutils literal"><span class="pre">make:mail</span></code> 命令创建 <code class="docutils literal"><span class="pre">Mailable</span></code> 类时这个目录会被创建，例如：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:mail OrderShipped
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>48.3. 编写邮件<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>所有的 「Mailable」类都在其 <code class="docutils literal"><span class="pre">build</span></code> 方法中完成配置。在这个方法里，你可以调用其他各种方法，如 <code class="docutils literal"><span class="pre">from</span></code> 、 <code class="docutils literal"><span class="pre">subject</span></code> 、 <code class="docutils literal"><span class="pre">view</span></code> 和 <code class="docutils literal"><span class="pre">attach</span></code> 来配置完成邮件的详情。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">build</span></code> 方法中不能调用 <code class="docutils literal"><span class="pre">queue()</span></code> 方法，该方法实际调用的是 <code class="docutils literal"><span class="pre">Mailable</span></code> 类的 <code class="docutils literal"><span class="pre">queue()</span></code> ，因为队列命令处理函数实际上调用的是 <code class="docutils literal"><span class="pre">Mailable</span></code> 类的 <code class="docutils literal"><span class="pre">send()</span></code> 方法，而该方法又调用了 <code class="docutils literal"><span class="pre">build()</span></code> 方法， <code class="docutils literal"><span class="pre">build</span></code> 方法又调用的是 <code class="docutils literal"><span class="pre">Mailable</span></code> 类的 <code class="docutils literal"><span class="pre">queue()</span></code> 。这样最终形成死循环。</p>
+</div>
+<div class="section" id="id7">
+<h3>48.3.1. 配置发送者<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<div class="section" id="from">
+<h4>48.3.1.1. 使用 from 方法<a class="headerlink" href="#from" title="永久链接至标题">¶</a></h4>
+<p>首先，演示配置邮件的发送者，也就是邮件的参数 「from」，即谁发送了邮件。有两种方法配置发送者。第一种是你可以在 <code class="docutils literal"><span class="pre">build</span></code> 方法中使用 <code class="docutils literal"><span class="pre">from</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 生成消息</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return $this</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">build</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;example@example.com&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h4>48.3.1.2. 使用一个全局 from 地址<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<p>然而，如果应用使用相同的 <code class="docutils literal"><span class="pre">from</span></code> 地址，你每次发送邮件这种设置方式显得笨拙，替代的方法就是在 <code class="docutils literal"><span class="pre">config/mail.php</span></code> 配置文件中设置一个全局 <code class="docutils literal"><span class="pre">from</span></code> 地址，这个配置在没有单独指定 「from」时是默认的 <code class="docutils literal"><span class="pre">from</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;from&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;address&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;example@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;App Name&#39;</span><span class="p">],</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>48.3.2. 配置视图<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>在 <code class="docutils literal"><span class="pre">build</span></code> 方法内，你可以使用 <code class="docutils literal"><span class="pre">view</span></code> 方法指定邮件的模板，以渲染邮件的内容。因为所有邮件都会使用 <code class="docutils literal"><span class="pre">Blade</span></code> 模板 渲染内容，你能很容易的使用 <code class="docutils literal"><span class="pre">Blade</span></code> 模板引擎构建邮件的 <code class="docutils literal"><span class="pre">HTML</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 生成消息。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return $this</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">build</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">你可以创建一个 <code class="docutils literal"><span class="pre">resources/views/emails</span></code> 目录来存放所有的邮件模板；然而，这不是强制要求，你可以在有的将邮件模板放在 <code class="docutils literal"><span class="pre">resources/views</span></code> 目录的任意位置。</p>
+</div>
+<div class="section" id="id10">
+<h4>48.3.2.1. 纯文本邮件<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<p>如果你想要定义一个纯文本邮件，你可以使用 <code class="docutils literal"><span class="pre">text</span></code> 方法。如同 <code class="docutils literal"><span class="pre">view</span></code> 方法， <code class="docutils literal"><span class="pre">text</span></code> 方法接受一个模板名称，这个名称告诉方法使用哪个模板来渲染邮件，可以自由定义邮件 <code class="docutils literal"><span class="pre">HTML</span></code> 和纯文本消息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 构建消息。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return $this</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">build</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">text</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped_plain&#39;</span><span class="p">);</span> <span class="c1">// 到底使用哪个模板？？</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>48.3.3. 视图数据<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id12">
+<h4>48.3.3.1. 通过公开属性<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
+<p>通常，你会希望传递一些数据来渲染你的邮件的 <code class="docutils literal"><span class="pre">HTML</span></code> 。那么有两种方法可以让视图获得数据，第一种， <code class="docutils literal"><span class="pre">Mailable</span></code> 类任何公开属性都可以在视图中使用。所以，例如你可以传递数据到 <code class="docutils literal"><span class="pre">Mailable</span></code> 类的构造函数并且在类中定义数据的公开属性：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Mail</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Order</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Bus\Queueable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Mail\Mailable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\SerializesModels</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">OrderShipped</span> <span class="k">extends</span> <span class="nx">Mailable</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Queueable</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * order 实例。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var Order</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="nv">$order</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 创建一个新消息实例。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">Order</span> <span class="nv">$order</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">order</span> <span class="o">=</span> <span class="nv">$order</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 构建消息。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return $this</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">build</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦数据被设置为公开属性，它们将自动在视图中加载，所以你可以访问像访问其他 <code class="docutils literal"><span class="pre">Blade</span></code> 模板数据一样访问它们：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    Price: {{ $order-&gt;price }}
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="with">
+<h4>48.3.3.2. 通过 with 方法<a class="headerlink" href="#with" title="永久链接至标题">¶</a></h4>
+<p>你可以使用 <code class="docutils literal"><span class="pre">with</span></code> 方法来传递数据给模板。一般情况下，你仍然是使用 <code class="docutils literal"><span class="pre">Mailable</span></code> 类的构造函数来接受数据传参。然而你为这些数据属性设置 <code class="docutils literal"><span class="pre">protected</span></code> 或 <code class="docutils literal"><span class="pre">private</span></code> 声明，所以这些数据不会被自动加载到模板中。接下来你可以使用 <code class="docutils literal"><span class="pre">with</span></code> 方法接受键值数组传参来传递数据给模板，就如控制器里为视图传参一样：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Mail</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Order</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Bus\Queueable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Mail\Mailable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\SerializesModels</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">OrderShipped</span> <span class="k">extends</span> <span class="nx">Mailable</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Queueable</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * order 实例。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var Order</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$order</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 创建一个新消息实例。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">Order</span> <span class="nv">$order</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">order</span> <span class="o">=</span> <span class="nv">$order</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 构建消息。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return $this</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">build</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">with</span><span class="p">([</span>
+                        <span class="s1">&#39;orderName&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">order</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">,</span>
+                        <span class="s1">&#39;orderPrice&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">order</span><span class="o">-&gt;</span><span class="na">price</span><span class="p">,</span>
+                    <span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦数据已经用 <code class="docutils literal"><span class="pre">with</span></code> 方法传递，它们将自动在视图中加载，所以你可以访问像访问其他 <code class="docutils literal"><span class="pre">Blade</span></code> 模板数据一样访问它们：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    Price: {{ $orderPrice }}
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>存在 <code class="docutils literal"><span class="pre">with</span></code> 加上变量名称的方法调用，如上面的可以用如下形式来传递参数给视图：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">withOrderName</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">order</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">withOrderPrice</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">order</span><span class="o">-&gt;</span><span class="na">price</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id13">
+<h3>48.3.4. 附件<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p>要在邮件中加入附件，在 <code class="docutils literal"><span class="pre">build</span></code> 方法中使用 <code class="docutils literal"><span class="pre">attach</span></code> 方法。 <code class="docutils literal"><span class="pre">attach</span></code> 方法接受文件的绝对路径作为它的第一个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 构建消息。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return $this</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">build</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="s1">&#39;/path/to/file&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>附加文件到消息时，你也可以传递 数组 给 <code class="docutils literal"><span class="pre">attache</span></code> 方法作为第二个参数，以指定显示名称和 <code class="docutils literal"><span class="pre">MIME</span></code> 类型：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 构建消息。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return $this</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">build</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="s1">&#39;/path/to/file&#39;</span><span class="p">,</span> <span class="p">[</span> <span class="c1">// 这里的路径如何指定？？</span>
+                    <span class="s1">&#39;as&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;name.pdf&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;mime&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;application/pdf&#39;</span><span class="p">,</span>
+                <span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id14">
+<h4>48.3.4.1. 原始数据附件<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">attachData</span></code> 可以使用字节数据作为附件。例如，你可以使用这个方法将内存中生成而没有保存到磁盘中的 <code class="docutils literal"><span class="pre">PDF</span></code> 附加到邮件中。 <code class="docutils literal"><span class="pre">attachData</span></code> 方法第一个参数接收原始字节数据，第二个参数为文件名，第三个参数接受一个数组以指定其他参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 构建消息。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return $this</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">build</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">attachData</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pdf</span><span class="p">,</span> <span class="s1">&#39;name.pdf&#39;</span><span class="p">,</span> <span class="p">[</span>
+                    <span class="s1">&#39;mime&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;application/pdf&#39;</span><span class="p">,</span>
+                <span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id15">
+<h3>48.3.5. 内部附件<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p>在邮件中嵌入内部图标通常是件麻烦事；然而 Laravel 提供了一个便利的方法，让你在邮件中附件图片并获取适当的 <code class="docutils literal"><span class="pre">CID</span></code> 。要嵌入内部图片，在邮件模板的 <code class="docutils literal"><span class="pre">$message</span></code> 变量上调用 <code class="docutils literal"><span class="pre">embed</span></code> 方法，Laravel 会自动让你所有邮件模板都能够获取到 <code class="docutils literal"><span class="pre">$message</span></code> 变量，所以不必担心如何手动传递它：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    这是一张图片：
+
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;{{ $message-&gt;embed($pathToFile) }}&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="id16">
+<h4>48.3.5.1. 嵌入原始数据附<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
+<p>如果你已经有想嵌入原始数据，希望嵌入邮件模板，你可以调用 <code class="docutils literal"><span class="pre">$message</span></code> 变量的 <code class="docutils literal"><span class="pre">embedData</span></code> 方法：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    这是一张原始数据图片：
+
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;{{ $message-&gt;embedData($data, $name) }}&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="swiftmailer">
+<h3>48.3.6. 自定义 SwiftMailer 消息<a class="headerlink" href="#swiftmailer" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Mailable</span></code> 基类的 <code class="docutils literal"><span class="pre">withSwiftMessage</span></code> 方法允许你注册一个回调，该回调将在邮件发送之前调用，参数是原始 <code class="docutils literal"><span class="pre">SwiftMailer</span></code> 消息实例。这让你有机会在邮件发送之前自定义消息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 构建消息。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return $this</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">build</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped&#39;</span><span class="p">);</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">withSwiftMessage</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$message</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">getHeaders</span><span class="p">()</span>
+                <span class="o">-&gt;</span><span class="na">addTextHeader</span><span class="p">(</span><span class="s1">&#39;Custom-Header&#39;</span><span class="p">,</span> <span class="s1">&#39;HeaderValue&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="markdown-mailable">
+<h2>48.4. Markdown 格式的 Mailable 类<a class="headerlink" href="#markdown-mailable" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Markdown</span></code> 格式的 <code class="docutils literal"><span class="pre">Mailable</span></code> 消息允许你从预编译的模板和你的 <code class="docutils literal"><span class="pre">Mailable</span></code> 类中的邮件提醒组件中受益。因为消息是用 <code class="docutils literal"><span class="pre">Markdown</span></code> 格式写的， Laravel 能为消息体渲染出漂亮、响应式的 <code class="docutils literal"><span class="pre">HTML</span></code> 模板，也能 <strong>自动生成一个纯文本的副本</strong> 。</p>
+<div class="section" id="id17">
+<h3>48.4.1. 生成 Markdown 格式的 Mailable<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h3>
+<p>要生成一个包含友好的 <code class="docutils literal"><span class="pre">Markdown</span></code> 模板的 <code class="docutils literal"><span class="pre">Mailable</span></code> 类，你在使用 <code class="docutils literal"><span class="pre">make:mail</span></code> 这个 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令时，要加上 <code class="docutils literal"><span class="pre">--markdown</span></code> 选项：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:mail OrderShipped --markdown<span class="o">=</span>emails.orders.shipped
+</pre></div>
+</div>
+<p>然后，在使用 <code class="docutils literal"><span class="pre">build</span></code> 方法配置 <code class="docutils literal"><span class="pre">Mailable</span></code> 时，用 <code class="docutils literal"><span class="pre">markdown</span></code> 方法来换掉 <code class="docutils literal"><span class="pre">view</span></code> 方法， <code class="docutils literal"><span class="pre">markdown</span></code> 方法接受一个 <code class="docutils literal"><span class="pre">Markdown</span></code> 模板的名称和一个将在模板中可用的选项数组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 构建消息。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return $this</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">build</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;example@example.com&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">markdown</span><span class="p">(</span><span class="s1">&#39;emails.orders.shipped&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="markdown">
+<h3>48.4.2. 编写 Markdown 格式的消息<a class="headerlink" href="#markdown" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Markdown</span> <span class="pre">Mailable</span></code> 使用 <code class="docutils literal"><span class="pre">Blade</span></code> 组件和 <code class="docutils literal"><span class="pre">Markdown</span></code> 语法的组合，允许你轻松地构建邮件消息，同时利用 Laravel 的预制组件。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>@component(&#39;mail::message&#39;)
+# Order Shipped
+
+Your order has been shipped!
+
+@component(&#39;mail::button&#39;, [&#39;url&#39; =&gt; $url])
+View Order
+@endcomponent
+
+Thanks,<span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span>
+{{ config(&#39;app.name&#39;) }}
+@endcomponent
+</pre></div>
+</div>
+<div class="section" id="id18">
+<h4>48.4.2.1. 按钮组件<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
+<p>按钮组件渲染一个居中的连接按钮，组件接受两个参数，一个 <code class="docutils literal"><span class="pre">url</span></code> 和一个可选的 <code class="docutils literal"><span class="pre">color</span></code> 。支持的颜色有 <code class="docutils literal"><span class="pre">blue</span></code> 、 <code class="docutils literal"><span class="pre">green</span></code> 、 和 <code class="docutils literal"><span class="pre">red</span></code> 。你可以在邮件消息体中加入任意多个你想要的按钮。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>@component(&#39;mail::button&#39;, [&#39;url&#39; =&gt; $url, &#39;color&#39; =&gt; &#39;green&#39;])
+View Order
+@endcomponent
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h4>48.4.2.2. 面板组件<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h4>
+<p>面板组件将面板中给定的一块文字的背景渲染成跟其他的消息体背景稍微不同。这样可以让这块文字引起人们的注意。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>@component(&#39;mail::panel&#39;)
+This is the panel content.
+@endcomponent
+</pre></div>
+</div>
+</div>
+<div class="section" id="id20">
+<h4>48.4.2.3. 表格组件<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h4>
+<p>表格组件允许你将一个 <code class="docutils literal"><span class="pre">Markdown</span></code> 格式的表格转换成一个 HTML 格式的表格。组件接受 <code class="docutils literal"><span class="pre">Markdown</span></code> 格式的表格作为它的内容。表格列对齐方式按照默认的 <code class="docutils literal"><span class="pre">Markdown</span></code> 对齐风格而定。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>@component(&#39;mail::table&#39;)
+| Laravel       | Table         | Example  |
+| ------------- |:-------------:| --------:|
+| Col 2 is      | Centered      | $10      |
+| Col 3 is      | Right-Aligned | $20      |
+@endcomponent
+</pre></div>
+</div>
+</div>
+<div class="section" id="id21">
+<h4>48.4.2.4. 自定义组件<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h4>
+<p>你或许会为了自定义而导出你应用中所有存在的 <code class="docutils literal"><span class="pre">Markdown</span></code> 邮件组件。要导出这些组件，使用 <code class="docutils literal"><span class="pre">vendor:publish</span></code> 这个 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令来发布资源文件标签。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan vendor:publish --tag<span class="o">=</span>laravel-mail
+</pre></div>
+</div>
+<p>这个命令会发布 <code class="docutils literal"><span class="pre">Markdown</span></code> 邮件组件到 <code class="docutils literal"><span class="pre">resources/views/vendor/mail</span></code> 文件夹。而 <code class="docutils literal"><span class="pre">mail</span></code> 文件夹会包含一个 <code class="docutils literal"><span class="pre">html</span></code> 文件夹和一个 <code class="docutils literal"><span class="pre">markdown</span></code> 文件夹，每个文件夹都包含他们的可用组件的描述。你可以按照你的意愿自定义这些组件。</p>
+<div class="section" id="css">
+<h5>48.4.2.4.1. 自定义样式表 CSS<a class="headerlink" href="#css" title="永久链接至标题">¶</a></h5>
+<p>在导出组件之后， <code class="docutils literal"><span class="pre">resources/views/vendor/mail/html/themes</span></code> 文件夹将包含一个默认的 <code class="docutils literal"><span class="pre">default.css</span></code> 文件。你可以在这个文件中自定义 <code class="docutils literal"><span class="pre">CSS</span></code> ，你定义的这些样式将会在 <code class="docutils literal"><span class="pre">Markdown</span></code> 格式消息体转换成 <code class="docutils literal"><span class="pre">HTML</span></code> 格式时自动得到应用。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">如果你想为 <code class="docutils literal"><span class="pre">Markdown</span></code> 组件构建一个全新的主题，只要写一个新的 <code class="docutils literal"><span class="pre">CSS</span></code> 文件，放在 <code class="docutils literal"><span class="pre">html/themes</span></code> 文件夹，然后在你的 <code class="docutils literal"><span class="pre">mail</span></code> 配置文件中改变 <code class="docutils literal"><span class="pre">theme</span></code> 选项就可以了。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id22">
+<h2>48.5. 在浏览器中预览邮件<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h2>
+<p>当你设计一个邮件模板时，可以很方便地在浏览器中快速预览渲染出来的邮件，就像典型的 <code class="docutils literal"><span class="pre">Blade</span></code> 模板一样。为此， Laravel 允许你直接从路由闭包或者控制器中返回任何的邮件。当邮件被返回时，他会被渲染并显示在浏览器中，允许你快速预览其设计，而不必发送到实际的电子邮件地址。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/mailable&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$invoice</span> <span class="o">=</span> <span class="nx">App\Invoice</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">App\Mail\InvoicePaid</span><span class="p">(</span><span class="nv">$invoice</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id23">
+<h2>48.6. 发送邮件<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h2>
+<p>要发送邮件，使用 <code class="docutils literal"><span class="pre">Mail</span> <span class="pre">facade</span></code> 的 <code class="docutils literal"><span class="pre">to</span></code> 方法。 <code class="docutils literal"><span class="pre">to</span></code> 方法接受一个邮件地址，一个 <code class="docutils literal"><span class="pre">user</span></code> 实现或一个 <code class="docutils literal"><span class="pre">users</span></code> 集合。如果传递一个对象或集合， <code class="docutils literal"><span class="pre">mailer</span></code> 将自动使用 <code class="docutils literal"><span class="pre">email</span></code> 和 <code class="docutils literal"><span class="pre">name</span></code> 属性来设置邮件收件人，所以确保你的对象里有这些属性。一旦指定收件人，你可以传递一个实现到 <code class="docutils literal"><span class="pre">Mailable</span></code> 类的 <code class="docutils literal"><span class="pre">send</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Order</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Mail\OrderShipped</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Mail</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">OrderController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 投递指定的订单。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  Request  $request</span>
+<span class="sd">     * @param  int  $orderId</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">ship</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$orderId</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$order</span> <span class="o">=</span> <span class="nx">Order</span><span class="o">::</span><span class="na">findOrFail</span><span class="p">(</span><span class="nv">$orderId</span><span class="p">);</span>
+
+        <span class="c1">// Ship order...</span>
+
+        <span class="nx">Mail</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">())</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="k">new</span> <span class="nx">OrderShipped</span><span class="p">(</span><span class="nv">$order</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当然，不局限于只使用「to」给收件人发送邮件，你可以通过一个单一的链式调用来自由的设置 「to」，「cc」和 「bcc」接收者：</p>
+<ul class="simple">
+<li>CC 英文全称是 Carbon Copy(抄送)</li>
+<li>BCC英文全称是 Blind Carbon Copy(暗抄送)。</li>
+</ul>
+<p>两者的区别在于在 BCC 栏中的收件人可以看到所有的收件人名(TO,CC,BCC)，而在 TO 和 CC 栏中的收件人看不到 BBC 的收件人名</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Mail</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">())</span>
+    <span class="o">-&gt;</span><span class="na">cc</span><span class="p">(</span><span class="nv">$moreUsers</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">bcc</span><span class="p">(</span><span class="nv">$evenMoreUsers</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="k">new</span> <span class="nx">OrderShipped</span><span class="p">(</span><span class="nv">$order</span><span class="p">));</span>
+
+<span class="c1">// 方式二</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="s1">&#39;王宝花&#39;</span><span class="p">;</span>
+
+<span class="nv">$image</span> <span class="o">=</span> <span class="nx">public_path</span><span class="p">(</span><span class="s1">&#39;uploads&#39;</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;\Desert.jpg&#39;</span><span class="p">;</span>
+<span class="nx">Mail</span><span class="o">::</span><span class="na">send</span><span class="p">(</span><span class="s1">&#39;emails.test&#39;</span><span class="p">,[</span><span class="s1">&#39;name&#39;</span><span class="o">=&gt;</span><span class="nv">$name</span><span class="p">,</span><span class="s1">&#39;imgPath&#39;</span><span class="o">=&gt;</span><span class="nv">$image</span><span class="p">],</span><span class="k">function</span><span class="p">(</span><span class="nv">$message</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$image</span><span class="p">){</span>
+    <span class="nv">$to</span> <span class="o">=</span> <span class="s1">&#39;419720850@qq.com&#39;</span><span class="p">;</span>
+    <span class="nv">$message</span> <span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="nv">$to</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">subject</span><span class="p">(</span><span class="s1">&#39;网络图片测试&#39;</span><span class="p">);</span>
+    <span class="c1">// 在邮件中上传附件，存在中文乱码问题，需要下面这样操作</span>
+    <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="nv">$image</span> <span class="p">,[</span><span class="s1">&#39;as&#39;</span><span class="o">=&gt;</span><span class="s2">&quot;=?UTF-8?B?&quot;</span><span class="o">.</span><span class="nb">base64_encode</span><span class="p">(</span><span class="s1">&#39;中文文档&#39;</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;?=.jpg&quot;</span><span class="p">]);</span>
+<span class="p">});</span>
+<span class="k">if</span><span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nx">Mail</span><span class="o">::</span><span class="na">failures</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">){</span>
+    <span class="k">echo</span> <span class="s1">&#39;发送邮件成功，请查收！&#39;</span><span class="p">;</span>
+<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="k">echo</span> <span class="s1">&#39;发送邮件失败，请重试！&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id24">
+<h2>48.7. 渲染邮件<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h2>
+<p>有时，您可能希望在不发送邮件的情况下捕获邮件的 <code class="docutils literal"><span class="pre">HTML</span></code> 内容。 为了达到这个目的，你可以调用 <code class="docutils literal"><span class="pre">mailable</span></code> 的 <code class="docutils literal"><span class="pre">render</span></code> 方法。 这个方法会把得到的邮件内容以字符串形式返回：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$invoice</span> <span class="o">=</span> <span class="nx">App\Invoice</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">App\Mail\InvoicePaid</span><span class="p">(</span><span class="nv">$invoice</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="section" id="id25">
+<h3>48.7.1. 在浏览器中预览邮件<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h3>
+<p>在设计邮件模板时，可以方便地在浏览器中快速预览渲染好的邮件，就象典型的 <code class="docutils literal"><span class="pre">Blade</span></code> 模板一样。 因此， Laravel 允许您直接从路由闭包或控制器返回任何邮件。 当邮件返回时，它将被渲染并显示在浏览器中，使您可以快速预览其设计，而无需将其发送到实际的电子邮件地址：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/mailable&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$invoice</span> <span class="o">=</span> <span class="nx">App\Invoice</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">App\Mail\InvoicePaid</span><span class="p">(</span><span class="nv">$invoice</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="mail">
+<h2>48.8. 队列 Mail<a class="headerlink" href="#mail" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id26">
+<h3>48.8.1. 将邮件消息加入队列<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h3>
+<p>由于发送消息会大幅延迟应用响应时间，许多开发者选择将邮件消息加入队列在后台进行发送。Laravel 使用内置的 统一的队列 <code class="docutils literal"><span class="pre">API</span></code> 来轻松完成此工作。将邮件消息加入队列，使用 <code class="docutils literal"><span class="pre">Mail</span> <span class="pre">facade</span></code> 的 <code class="docutils literal"><span class="pre">queue</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Mail</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">())</span>
+    <span class="o">-&gt;</span><span class="na">cc</span><span class="p">(</span><span class="nv">$moreUsers</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">bcc</span><span class="p">(</span><span class="nv">$evenMoreUsers</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">queue</span><span class="p">(</span><span class="k">new</span> <span class="nx">OrderShipped</span><span class="p">(</span><span class="nv">$order</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>这个方法会自动将工作加入队列，以便后台发送邮件。当然，在使用这个功能前，你需要 设置你的队列 。</p>
+</div>
+<div class="section" id="id27">
+<h3>48.8.2. 延迟邮件消息队列<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h3>
+<p>如果你希望延迟发送已加入队列的邮件消息，你可以使用 <code class="docutils literal"><span class="pre">later</span></code> 方法。 <code class="docutils literal"><span class="pre">later</span></code> 第一个参数接受一个 <code class="docutils literal"><span class="pre">DateTime</span></code> 实现以告知这个消息应该何时发送：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$when</span> <span class="o">=</span> <span class="nx">Carbon\Carbon</span><span class="o">::</span><span class="na">now</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addMinutes</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="nx">Mail</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">())</span>
+    <span class="o">-&gt;</span><span class="na">cc</span><span class="p">(</span><span class="nv">$moreUsers</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">bcc</span><span class="p">(</span><span class="nv">$evenMoreUsers</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">later</span><span class="p">(</span><span class="nv">$when</span><span class="p">,</span> <span class="k">new</span> <span class="nx">OrderShipped</span><span class="p">(</span><span class="nv">$order</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id28">
+<h3>48.8.3. 推送到特定队列<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h3>
+<p>因为所有 <code class="docutils literal"><span class="pre">Mailable</span></code> 类是通过 <code class="docutils literal"><span class="pre">make:mail</span></code> 命令生成并使用 <code class="docutils literal"><span class="pre">Illuminate\Bus\Queueable</span> <span class="pre">trait</span></code> ，你可以在任何 <code class="docutils literal"><span class="pre">Mailable</span></code> 类实现中调用 <code class="docutils literal"><span class="pre">onQueue</span></code> 来指定队列名称，还有 <code class="docutils literal"><span class="pre">onConnection</span></code> 方法来指定队列链接名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$message</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nx">OrderShipped</span><span class="p">(</span><span class="nv">$order</span><span class="p">))</span>
+                <span class="o">-&gt;</span><span class="na">onConnection</span><span class="p">(</span><span class="s1">&#39;sqs&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">onQueue</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">);</span>
+
+<span class="nx">Mail</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">())</span>
+    <span class="o">-&gt;</span><span class="na">cc</span><span class="p">(</span><span class="nv">$moreUsers</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">bcc</span><span class="p">(</span><span class="nv">$evenMoreUsers</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">queue</span><span class="p">(</span><span class="nv">$message</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id29">
+<h3>48.8.4. 默认使用队列<a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h3>
+<p>如果你的 <code class="docutils literal"><span class="pre">Mailable</span></code> 类想要默认使用队列，你可以在类中实现 <code class="docutils literal"><span class="pre">ShouldQueue</span></code> 接口契约。现在，即便你调用 <code class="docutils literal"><span class="pre">send</span></code> 方法来发送邮件， <code class="docutils literal"><span class="pre">Mailable</span></code> 类仍将邮件放入队列中发送。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">OrderShipped</span> <span class="k">extends</span> <span class="nx">Mailable</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id30">
+<h2>48.9. 邮件和本地开发<a class="headerlink" href="#id30" title="永久链接至标题">¶</a></h2>
+<p>当应用处于开发阶段在发送邮件时，你或许不想真实的发送邮件到真实的邮件地址。Laravel 提供几种方法以在本地开发时不真实发送邮件。</p>
+<div class="section" id="id31">
+<h3>48.9.1. 日志驱动<a class="headerlink" href="#id31" title="永久链接至标题">¶</a></h3>
+<p>代替真实发送， <code class="docutils literal"><span class="pre">log</span></code> 邮件驱动将所有邮件消息写入日志文件以供检查，需要更多根据环境来设置应用程序的信息，可参考 配置文件.</p>
+</div>
+<div class="section" id="id32">
+<h3>48.9.2. 通用收件者<a class="headerlink" href="#id32" title="永久链接至标题">¶</a></h3>
+<p>另一个由 Laravel 提供的解决方案是设置一个通用邮件接收者，由框架发送邮件。这个方法将所有邮件发送到一个邮件地址，而不是发送给实际收件人。这可以通过 <code class="docutils literal"><span class="pre">config/mail.php</span></code> 配置文件的 <code class="docutils literal"><span class="pre">to</span></code> 选项来完成：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;to&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;address&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;example@example.com&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Example&#39;</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mailtrap">
+<h3>48.9.3. Mailtrap<a class="headerlink" href="#mailtrap" title="永久链接至标题">¶</a></h3>
+<p>最后，你可以使用像 <code class="docutils literal"><span class="pre">Mailtrap</span></code> 和 <code class="docutils literal"><span class="pre">smtp</span></code> 驱动来将你的邮件消息发送到一个 「虚假的」邮箱中，你却可以在一个真实的邮件客户端中查看它们。这个方法的好处是让你可以在 <code class="docutils literal"><span class="pre">Mailtrap</span></code> 的消息阅读器中查看最终的实际邮件。</p>
+</div>
+</div>
+<div class="section" id="id33">
+<h2>48.10. 事件<a class="headerlink" href="#id33" title="永久链接至标题">¶</a></h2>
+<p>Laravel 会在发送邮件消息之前触发一个事件。切记，这个事件只会在邮件 发送 时触发，在加入队列时不触发。你可以在你的 <code class="docutils literal"><span class="pre">EventServiceProvider</span></code> 注册一个事件监听器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 应用事件监听映射。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var array</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="nv">$listen</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Illuminate\Mail\Events\MessageSending&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;App\Listeners\LogSentMessage&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的邮件发送功能原理分析.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的辅助函数-其它.html" class="btn btn-neutral" title="47. 辅助函数-其它杂项" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

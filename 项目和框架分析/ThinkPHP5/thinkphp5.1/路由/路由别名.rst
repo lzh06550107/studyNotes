@@ -1,0 +1,76 @@
+****
+路由别名
+****
+
+路由别名
+========
+
+路由别名功能可以使用一条规则，批量定义一系列的路由规则。
+
+例如，我们希望使用 ``user`` 可以访问 ``index`` 模块的 ``User`` 控制器的所有操作，可以使用：
+
+.. code-block:: php
+
+	// user 别名路由到 index/User 控制器
+	Route::alias('user','index/User');
+
+然后可以直接通过 ``URL`` 地址访问 ``User`` 控制器的操作，例如：
+
+.. code-block:: shell
+
+	http://serverName/index.php/user/add
+	http://serverName/index.php/user/edit/id/5
+	http://serverName/index.php/user/read/id/5
+
+.. note:: 如果 ``URL`` 参数绑定方式使用按顺序绑定的话， ``URL`` 地址可以进一步简化，参考请求->参数绑定->按顺序绑定。
+
+路由别名可以指向任意一个有效的路由地址，例如下面指向一个类
+
+.. code-block:: php
+
+	// user 路由别名指向 User控制器类
+	Route::alias('user','\app\index\controller\User');
+
+.. note:: 路由别名不支持变量类型和路由条件判断，单纯只是为了缩短 ``URL`` 地址，并且在定义的时候需要注意避免和路由规则产生混淆。
+
+支持给路由别名设置路由条件，例如：?? 到底支不支持
+
+.. code-block:: php
+
+	// user 别名路由到 index/user 控制器
+	Route::alias('user', 'index/user', ['ext' => 'html']);
+
+操作方法黑白名单
+---------------
+路由别名的操作方法支持白名单或者黑名单机制，例如：
+
+.. code-block:: php
+
+	// user 别名路由到 index/user 控制器
+	Route::alias('user', 'index/user', [
+	    'ext'   => 'html',
+	    'allow' => 'index,read,edit,delete',
+	]);
+
+或者使用黑名单机制
+
+.. code-block:: php
+
+	// user 别名路由到 index/user 控制器
+	Route::alias('user', 'index/user', [
+	    'ext'    => 'html',
+	    'except' => 'save,delete',
+	]);
+
+并且支持设置操作方法的请求类型，例如：
+
+.. code-block:: php
+
+	// user 别名路由到 index/user 控制器
+	Route::alias('user', 'index/user', [
+	    'ext'    => 'html',
+	    'allow'  => 'index,save,delete',
+	    'method' => ['index' => 'GET', 'save' => 'POST', 'delete' => 'DELETE'],
+	]);
+
+

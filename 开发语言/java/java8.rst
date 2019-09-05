@@ -1,0 +1,482 @@
+============
+lambda表达式
+============
+为什么需要引入该概念
+====================
+为了在多核CPU上良好的执行，我们引入了需要外部库来更好的编程，但是这些库在抽象层次被限制了。例如，大型集合数据缺乏有效的并行操作。Java8允许你编写处理集合的复杂算法，通过简单地改变单个方法，你可以有效地在多核CPU上执行该代码。但是，为了能够批量并行的处理这些数据，Java需要一个新的改变：lambda表达式。
+
+抽象是一种我们所熟悉的面向对象编程的概念。不同之处在于面向对象编程主要涉及抽象数据，而功能编程主要是关于抽象行为。真正的世界有这两件事情，我们的编程也是如此，所以我们应该学习它。从这个新的行为抽象中，我们还有其它的好处。如代码易于阅读不需要处理匿名内部类、事件处理系统更易编程、通过传递函数来写懒加载代码，这样当需要的时候来初始化值、增加集合方法，默认方法。
+
+lambda表达式(及其相关功能)是JDK8新增的功能，它们显著增强了Java，原因有两点。首先，它们增加了新的语法元素，使Java语言的表达能力得以提升，并流线化了一些常用结构的实现方式。其次，lambda表达式的加入也导致API库中增加了新的功能，包括利用多核环境的并行处理功能(尤其是在处理for-each风格的操作时)变得更加容易，以及支持对数据执行管道操作的新的流API。lambda表达式的引入也催生了其他新的Java功能，包括默认方法和方法引用。默认方法允许定义接口方法的默认行为，而方法引用允许引用而不执行方法。
+
+lambda表达式的简介
+==================
+对于理解lambda表达式的Java实现，有两个结构十分关键。第一个就是lambda表达式自身，第二个是函数式接口。
+
+	- lambda表达式本质上就是一个匿名方法。但是，这个方法不是独立执行的，而是用于实现由函数式接口定义的另一个方法。因此，lambda表达式会导致产生一个匿名类。lambda表达式也常被称为闭包。
+	- 函数式接口是仅包含一个抽象方法的接口。一般来说，这个方法指明了接口的目标用途。因此，函数式接口通常表示单个动作。例如，标准接口Runnable是一个函数式接口，因为它只定义了一个方法run()。因此，run()定义了Runnable的动作。此外，函数式接口定义了lambda表达式的目标类型。
+
+.. note::
+	函数式接口可以指定Object定义的任何公有方法，例如equal(),而不影响其作为“函数式接口”的状态。Object的公有方法被视为函数式接口的隐式成员，因为函数式接口的实例会默认自动实现它们。
+
+lambda表达式的基础知识
+======================
+lambda表达式在Java语言中引入了一个新的语法元素和操作符。这个操作符是->,有时候被称为lambda操作符或箭头操作符。它将lambda表达式分成两个部分。 **左侧指定了lambda表达式需要的所有参数(如果不需要参数，则使用空的参数列表)。右侧指定了lambda体，即lambda表达式要执行的动作。** 
+
+下面给出一个更有意思的lambda表达式：
+
+.. code-block:: java
+
+	() -> Math.random() * 100;
+
+这个lambda表达式使用Math.random()获得一个伪随机数，将其乘以100，然后返回结果。这个lambda表达式也不需要参数。
+
+当lambda表达式需要参数时，需要在操作符左侧的参数列表中加以指定。下面是一个简单的例子：
+
+.. code-block:: java
+
+	(n) -> (n % 2)==0
+
+如果参数n的值是偶数，这个lambda表达式会返回true。尽管可以显示指定参数的类型，但是通常不需要这么做，因为很多时候，参数的类型可以推断出来的。
+
+.. code-block:: java
+
+	//没有参数的lambda表达式
+	Runnable noArguments = () -> System.out.println("Hello World");
+	
+	//只有一个参数的lambda表达式，参数不需要括号
+	ActionListener oneArgument = event -> System.out.println("button cliented");
+	
+	//不同于只有一个表达式的lambda,这里使用代码块
+	Runnable multiStatement = () -> {
+		System.out.println("Hello");
+		System.out.println(" World");
+	};
+	
+	//接收多个参数的lambda，参数使用逗号分隔
+	BinaryOperator<Long> add = (x, y) -> x + y;
+	
+	//当需要显式指定参数类型
+	BinaryOperator<Long> addExplicit = (Long x, Long y) -> x + y;
+
+lambda表达式的目标类型是lambda表达式出现的上下文类型。如，它赋予的本地变量或者它传递的方法参数。
+
+类型推断
+--------
+在某些情况下，您需要手动提供类型提示。在lambdas中使用的类型推断实际上是Java 7中引入的目标类型推断的扩展
+您可能会熟悉，允许您使用<>操作符，要求javac为您推断通用参数。 例如：
+
+.. code-block:: java
+
+	Map<String, Integer> oldWordCounts = new HashMap<String, Integer>();
+	Map<String, Integer> diamondWordCounts = new HashMap<>();
+
+如果你传递构造器给一个方法，同样可以根据方法推断泛型类型。
+
+.. code-block:: java
+
+	useHashmap(new HashMap<>());
+	...
+	private void useHashmap(Map<String, String> values);
+
+在java7中，允许你移除一个构造器的泛型类型；在java8中允许你移除lambda表达式的整个参数类型。
+
+函数式接口
+==========
+语言设计者投入了大量精力来思考如何使现有的函数友好地支持lambda。最终采取的方法是：增加函数式接口的概念。函数式接口就是一个具有一个方法的普通接口。像这样的接口，可以被隐式转换为lambda表达式。java.lang.Runnable与java.util.concurrent.Callable是函数式接口最典型的两个例子。
+
+在JDK8以前，所有接口方法都隐式地是抽象方法。但是现在情况发生了变化。从JDK8开始，可以为接口声明的方法指定默认行为，即所谓的默认方法。如今， **只有没有指定默认实现时，接口方法才是抽象方法。因为没有指定默认实现的接口方法隐式地是抽象方法，** 所以没有必要使用abstract修饰符(如果愿意的话，也可以指定该修饰符)。
+
+下面是函数式接口的一个例子：
+
+.. code-block:: java
+
+	interface MyNumber {
+		double getValue();
+	}
+
+在本例中，getValue()方法隐式地是抽象方法，并且是Mynumber定义的唯一方法。因此，MyNumber是一个函数式接口，其功能由getValue()定义。
+
+如前所述，lambda表达式不是独立执行的，而是构成了一个函数式接口定义的抽象方法的实现，该函数式接口定义了它的目标类型。结果，只有在定义了lambda表达式的目标类型的上下文中，才能使用该表达式。
+ **当把一个lambda表达式赋给一个函数式接口引用时，就创建了这样的上下文。其他目标类型上下文包括变量初始化，return语句和方法参数等。** 
+ 
+ 下面的例子说明如何在参数上下文中使用lambda表达式。
+
+	1. 首先，声明对函数式接口MyNumber的一个引用：
+
+	 .. code-block:: java
+
+		MyNumber myNum;
+	
+	2. 接下来，将一个lambda表达式赋给该接口引用：
+	 
+	 .. code-block:: java
+	 
+		myNum = () -> 123.45;
+
+当目标类型上下文中出现lambda表达式时，会自动创建实现了函数式接口的一个类的实例，函数式接口声明的抽象方法的行为由lambda表达式定义。当通过目标调用该方法时，就会执行lambda表达式。因此，lambda表达式提供了一种将代码片段转换为对象的方法。
+
+在前面的例子中，lambda表达成了getValue()方法的实现。
+
+	3. 下面的代码将显示123.45：
+	
+	 .. code-block:: java
+
+		system.out.println(myNum.getValue());
+
+.. note::
+
+	为了在目标类型上下文中使用lambda表达式，抽象方法的类型和lambda表达式的类型必须兼容。例如，如果抽象方法指定了两个int类型的参数，那么lambda表达式也必须指定两个参数，其类型要么被显示指定为int类型，要么在上下文中可以被隐式地推断为int类型。总的来说，lambda表达式的参数的类型和数量必须与方法的参数兼容；返回类型必须兼容；并且lambda表达式可能抛出的异常必须能被方法接受。
+
+	.. code-block:: java
+
+		myNum = () -> "123.03"; //Error!返回值不兼容
+
+	多个参数列表使用逗号分隔，如果需要显式声明一个参数的类型，那么必须为所有的参数声明类型。
+
+在实际使用过程中，函数式接口是容易出错的：如有某个人在接口定义中增加了另一个方法，这时，这个接口就不再是函数式的了，并且编译过程也会失败。为了克服函数式接口的这种脆弱性并且能够明确声明接口作为函数式接口的意图，Java 8增加了一种特殊的注解@FunctionalInterface（Java 8中所有类库的已有接口都添加了@FunctionalInterface注解）。让我们看一下这种函数式接口的定义：
+
+.. code-block:: java
+
+	@FunctionalInterface
+	public interface Functional {
+		void method();
+	}
+
+需要记住的一件事是： **默认方法与静态方法并不影响函数式接口的契约，可以任意使用：**
+
+.. code-block:: java
+
+	@FunctionalInterface
+	public interface FunctionalDefaultMethods {
+		void method();
+			 
+		default void defaultMethod() {            
+		}        
+	}
+
+接口的默认方法与静态方法
+------------------------
+Java 8用默认方法与静态方法这两个新概念来扩展接口的声明。默认方法使接口有点像Traits（Scala中特征(trait)类似于Java中的Interface，但它可以包含实现代码，也就是目前Java8新增的功能），但与传统的接口又有些不一样，它允许在已有的接口中添加新方法，而同时又保持了与旧版本代码的兼容性。
+
+默认方法与抽象方法不同之处在于抽象方法必须要求实现，但是默认方法则没有这个要求。相反，每个接口都必须提供一个所谓的默认实现，这样所有的接口实现者将会默认继承它（如果有必要的话，可以覆盖这个默认实现）。让我们看看下面的例子：
+
+.. code-block:: java
+
+	private interface Defaulable {
+		// Interfaces now allow default methods, the implementer may or 
+		// may not implement (override) them.
+		default String notRequired() { 
+			return "Default implementation"; 
+		}        
+	}
+			 
+	private static class DefaultableImpl implements Defaulable {
+	}
+		 
+	private static class OverridableImpl implements Defaulable {
+		@Override
+		public String notRequired() {
+			return "Overridden implementation";
+		}
+	}
+
+Defaulable接口用关键字default声明了一个默认方法notRequired()，Defaulable接口的实现者之一DefaultableImpl实现了这个接口，并且让默认方法保持原样。Defaulable接口的另一个实现者OverridableImpl用自己的方法覆盖了默认方法。
+
+Java 8带来的另一个有趣的特性是接口可以声明（并且可以提供实现）静态方法。例如：
+
+.. code-block:: java
+
+	private interface DefaulableFactory {
+		// Interfaces now allow static methods
+		static Defaulable create( Supplier< Defaulable > supplier ) {
+			return supplier.get();
+		}
+	}
+
+下面的一小段代码片段把上面的默认方法与静态方法黏合到一起。
+
+.. code-block:: java
+
+	public static void main( String[] args ) {
+		Defaulable defaulable = DefaulableFactory.create( DefaultableImpl::new );
+		System.out.println( defaulable.notRequired() );
+			 
+		defaulable = DefaulableFactory.create( OverridableImpl::new );
+		System.out.println( defaulable.notRequired() );
+	}
+
+在JVM中，默认方法的实现是非常高效的，并且通过字节码指令为方法调用提供了支持。默认方法允许继续使用现有的Java接口，而同时能够保障正常的编译过程。这方面好的例子是大量的方法被添加到java.util.Collection接口中去：stream()，parallelStream()，forEach()，removeIf()，……
+
+尽管默认方法非常强大，但是在使用默认方法时我们需要小心注意一个地方：在声明一个默认方法前，请仔细思考是不是真的有必要使用默认方法，因为默认方法会带给程序歧义，并且在复杂的继承体系中容易产生编译错误。
+
+块lambda表达式
+==============
+前面例子中显示的lambda体只包含单个表达式。但有时候会要求使用一个以上的表达式。为了处理这类情况，Java支持另外一种类型的lambda表达式，其中操作符右侧的代码可以由一个代码块构成，其中可以包含多条语句。这种类型的lambda体被称为块体。
+
+除了允许多条语句，块lambda的使用方法与刚才讨论过的表达式lambda十分类似。但是，也有一个重要区别：在块lambda中必须显式使用return语句来返回值。例如：计算阶乘
+
+.. literalinclude:: source/BlocklambdaDemo.java
+   :language: java
+
+下一个例子使用lambda颠倒了一个字符串的字符：
+
+.. literalinclude:: source/BlocklambdaDemo2.java
+   :language: java
+
+泛型函数式接口
+==============
+lambda表达式自身不能指定类型参数。因此，lambda表达式不能是泛型。然而，与lambda表达式关联的函数式接口可以是泛型。此时，lambda表达式的目标类型部分由声明函数式接口引用时指定的参数类型决定。
+
+为了理解泛型函数式接口的值，考虑这样的情况。前一节的两个示例使用两个不同的函数式接口，一个叫做NumericFunc，另一个叫做StringFunc。但是，两个接口都定义了一个叫做func()的方法，该方法接受一个参数，返回一个结果。对于第一个接口，func()方法的参数类型和返回类型为int。对于第二个接口，func()方法的参数类型和返回类型是String。因此，两个方法的唯一区别是它们需要的数据的类型。相较于使用两个函数式接口，它们的方法只是在需要的数据类型方面存在区别，也可以只声明一个泛型接口来处理两种情况。
+
+.. literalinclude:: source/GenericFunctionalInterfaceDemo.java
+   :language: java
+
+SomeFunc接口用于提供对两种不同类型的lambda表达式的引用。第一种表达式使用String类型，第二种表达式使用Integer类型。因此，同一个函数式接口可以用于引用reverse lambda表达式和factorial lambda表达式。区别仅在于传递给SomeFunc的类型参数。
+
+作为参数传递lambda表达式
+========================
+如前所述，lambda表达式可以用在任何提供了目标类型的上下文中。一种情况就是作为参数传递lambda表达式。事实上，这是lambda表达式的一种常见用途。另外，这也是lambda表达式的一种强大用途，因为可以将可执行代码作为参数传递给方法。这极大地增强了Java的表达力。
+
+为了将lambda表达式作为参数传递，接受lambda表达式的参数的类型必须是与该lambda表达式兼容的函数式接口的类型。例如：
+
+.. literalinclude:: source/lambdasAsArgumentsDemo.java
+   :language: java
+
+这里把嵌入在一个类实例中的lambda代码传递给了方法。目标类型上下文由参数的类型决定。因此lambda表达式与该类型兼容，调用是合法的。
+
+最后一点：除了变量初始化、赋值和参数传递以为，以下这些也构成了目标类型上下文：类型转换、？运算符、数组初始化器、return语句以及lambda表达式自身。
+
+lambda表达式与异常
+==================
+lambda表达式可以抛出异常。但是，如果抛出经检查的异常，该异常就必须与函数式接口的抽象方法的throws子句中列出的异常兼容。例如，计算了一个double数组的平均值。但是，如果传递了长度为0的数组，就会抛出自定义异常EmptyArrayException。从示例中可以看出，DoubleNumericArrayFunc函数式接口内声明的func()方法的throws子句中列出了此异常。
+
+.. literalinclude:: source/lambdaExceptionDemo.java
+   :language: java
+
+lambda表达式和变量捕获
+======================
+当你使用匿名内部类时，你可能遭遇一种情况，即你想要使用局部变量。为此，你必须使用final变量，这意味着，你不能重新赋值。
+
+.. code-block:: java
+
+	final String name = getUserName();
+	button.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent event) {
+			System.out.println("hi " + name);
+		}
+	});
+
+这个限制在Java 8中放松了一点。可以引用不是final的变量; 然而，他们仍然必须是有效地final。如果你用于lambda表达式，虽然你没有声明该变量是final的，你仍然不能将它们用作非final变量。如果您将它们用作非final变量，那么编译器将显示错误。
+
+.. code-block:: java
+
+	String name = getUserName();
+	button.addActionListener(event -> System.out.println("hi " + name));
+
+如果你给变量多次赋值，然后尝试在lambda表达式中使用，你可以获取到编译错误。
+
+.. code-block:: java
+
+	String name = getUserName();
+	name = formatUserName(name);
+	button.addActionListener(event -> System.out.println("hi " + name));
+
+因为使用了无效的final变量，编译失败。
+
+在lambda表达式中，可以访问其外层作用域内定义的变量。例如，lambda表达式可以使用其外层类定义的实例或静态变量。lambda表达式也可以显式地访问this变量，该变量引用lambda表达式的外层类的调用实例。因此，lambda表达式可以获取或设置其外层类的实例或静态变量的值，以及调用其外层类定义的方法。
+
+但是，当lambda表达式使用其外层作用域内定义的局部变量时，会产生一种特殊的情况，称为变量捕获。在这种情况下，lambda表达式只能使用实质上final的局部变量。实质上final的变量是指在第一次赋值以后，值不再发生变化的变量。没有必要显式地将这种变量声明为final，不过那样做也不是错误(外层作用域的this参数自动是实质上final的变量，lambda表达式没有自己的this参数)。
+
+lambda表达式不能修改外层作用域的局部变量，理解这一点很重要。修改局部变量会移除其实质上的final状态，从而使捕获该变量变得不合法。
+
+.. literalinclude:: source/VarCapture.java
+   :language: java
+
+正如注释所指的，num实质上是final变量，所以可以在mylambda内使用。但是，如果修改了num，不管是在lambda表达式内还是表达式外，num就会丢失其实质上final的状态。这会导致发送错误，程序将无法通过编译。
+
+**需要重点强调，lambda表达式可以使用和修改其调用类的实例变量，只是不能使用其外层作用域内的局部变量，除非该变量实质上是final变量。**
+
+方法引用
+========
+有一个重要的特性与lambda表达式相关，叫做方法引用。方法引用提供了一种引用而不执行方法的方式。这种特性与lambda表达式相关，因为它也需要由兼容的函数式接口构成的目标类型上下文。计算时，方法引用也会创建函数式接口的一个实例。
+
+静态方法的方法引用
+==================
+要创建静态方法引用，需要使用下面的一般语法：
+
+.. code-block:: java
+	
+	ClassName::methodName
+
+注意，类名与方法名之间使用双冒号分隔开。::是JDK8新增的一个分隔符，专门用于此目的。在与目标类型兼容的任何地方，都可以使用这个方法引用。
+
+.. literalinclude:: source/MethodRefDemo.java
+   :language: java
+
+这里，将对MyStringOps内声明的静态方法strReverse()的引用传递给了stringOP()方法的第一个参数。可以这么做，因为strReverse与StringFunc函数式接口兼容。因此，表达式MyStringOps::strReverse的计算结果为对象引用，其中strReverse提供了StringFunc的func()方法的实现。
+
+实例方法的方法引用
+==================
+要传递对某个对象的实例方法的引用，需要使用下面的基本语法：
+
+.. code-block:: java
+
+	objRef::methodName
+
+下面使用实例方法引用重写了前面的程序：MethodRefDemo2.java
+
+.. literalinclude:: source/MethodRefDemo2.java
+   :language: java
+
+也可以指定一个实例方法，使其能够用于给定类的任何对象而不仅指定对象。此时，需要像下面这样创建方法引用：
+
+.. code-block:: java
+
+	ClassName::instanceMethodName
+
+这里使用了类的名称，而不是具体的对象，尽管指定的是实例方法。使用这种形式时，函数式接口的第一个参数匹配调用对象，第二个参数匹配方法指定的参数。下面是一个例子。它定义了一个方法counter(),用于统计某个数组中，满足函数式接口MyFunc的func()方法定义的条件的对象个数。本例中，它统计HighTemp类的实例个数。
+
+.. literalinclude:: source/InstanceMethWithObjectRefDemo.java
+   :language: java
+
+上面代码中，sameTemp()和lessThanTemp()都有一个HighTemp类型的参数，并且都返回布尔结果。因此，这两个方法都与MyFunc函数式接口兼容，因为调用对象类型可以映射到func的第一个参数，传递的实参可以映射到func()的第二个参数。因此，当下面的表达式 ``HighTemp::sameTemp`` 被传递给counter()方法时，会创建函数式接口MyFunc的一个实例，其中第一个参数的参数类型就是实例方法的调用对象的类型，也就是HighTemp。第二个参数的类型也是HighTemp，因为这是sameTemp()方法的参数，对于lessThanTemp()，这也是成立的。
+
+另外一点，通过使用super，可以引用方法的超类版本，如下所示：
+
+.. code-block:: java
+
+	super::name
+
+方法的名称由name指定。
+
+泛型中的方法引用
+================
+在泛型类或泛型方法中，也可以使用方法引用。例如，
+
+.. literalinclude:: source/GenericMethodRefDemo.java
+   :language: java
+
+这里传递了类型参数Integer。注意，参数传递发生在::的后面。这种语法可以推广。当把泛型方法指定为方法引用时，类型参数出现在::之后、方法名称之前。但是，需要指出的是，在这种情况下，并非必须显示指定类型参数，因为类型参数会被自动推断得出。对于指定泛型类的情况，类型参数位于类名的后面，::的前面。
+
+方法引用能够一展拳脚的一处地方是在与集合框架一起使用时。找到集合中最大元素的一种方法是使用Collections类定义的max()方法。对于这里使用的max()版本，必须传递一个集合引用，以及一个实现了Comparator<T>接口的对象的实例。Comparator<T>接口指定如何比较两个对象，它只定义了抽象方法compare()，该方法接受两个参数，其类型均为要比较的对象的类型。如果第一个参数大于第二个参数，该方法返回一个正数；如果两个参数相等，返回0；如果第一个参数小于第二个参数，返回一个负数。
+
+过去，要在max()方法中使用用户定义的对象，必须首先通过一个类显式实现Comparator<T>接口，然后创建该类的一个实例，通过这种方法获得Comparator<T>接口的一个实例。然后，把这个实例作为比较器传递给max()方法。在JDK8中，现在可以简单地将比较方法的引用传递给max()方法，因为这将自动实现比较器。
+
+.. literalinclude:: source/UseMethodRef.java
+   :language: java
+
+在程序中，注意MyClass既没有定义自己的比较方法，也没有实现Comparator接口。但是，通过调用max()方法，仍然可以获得MyClass对象列表中的最大值，这是因为UseMethodRef定义了静态方法compareMC(),它与Comparator定义的compare()方法兼容。因此，没有必要显式地实现Comparator接口并创建其实例。
+
+构造函数引用
+============
+与创建方法引用相似，可以创建构造函数的引用。所需语法的一般形式如下所示：
+
+.. code-block:: java
+
+	classname::new
+
+可以把这个引用赋值给定义的方法与构造函数兼容的任何函数式接口的引用。下面是一个例子：
+
+.. literalinclude:: source/ConstructorRefDemo.java
+   :language: java
+
+创建泛型类的构造函数引用的方法与此相同。唯一的区别在于可以指定类型参数。这与使用泛型类创建方法引用相同：只需要在类名后面指定类型参数。下面的例子通过修改前一个例子，使MyFunc和MyClass成为泛型类演示了这一点。
+
+.. literalinclude:: source/ConstructorRefDemo2.java
+   :language: java
+
+前面的例子演示了使用构造函数引用，但是没有人会像前面展示的那样使用构造函数引用，因为这样得不到什么好处。另外，让同一个构造函数相当于具有两个名称会让人产生迷惑。不过，为了让你看到一种更加实际的用法，下面的程序使用了一个静态方法myClassFactory()，这是任意类型的MyFunc对象的工厂。可以使用该方法来创建构造函数与其第一个参数兼容的任意类型的对象。
+
+.. literalinclude:: source/ConstructorRefDemo3.java
+   :language: java
+
+程序中使用myClassFactory()方法来创建MyClass<Double>和MyClass2类型的对象，虽然这两个类不同，比如MyClass是泛型类，而MyClass2不是，但是这两个类都可以使用myClassFactory()方法创建，因为这两个类的构造函数都与MyFunc的func()方法兼容。
+
+在继续讨论之前，需要指出用于数组的构造函数引用的语法形式。要为数组创建构造函数引用，需要使用如下所示的语法：
+
+.. code-block:: java
+	
+	type[]::new
+
+其中，type指定要创建的对象类型。例如，假设有一个MyClass类，其形式与第一个构造函数引用示例相同，并且还有如下所示的MyArrayCreator接口：
+
+.. code-block:: java
+
+	interface MyArrayCreator<T> {
+		T func(int n);
+	}
+
+下面的代码创建了包含两个MyClass对象的数组，并赋给每个元素初值：
+
+.. code-block:: java
+
+	MyArrayCreator<MyClass[]> mcArrayCons = MyClass[]::new;
+	MyClass[] a = mcArrayCons.func(2);
+	a[0] = new MyClass(1);
+	a[1] = new MyClass(2);
+
+这里，调用func(2)会创建一个包含两个元素的数组。一般来说，如果函数式接口中包含的方法要用于引用数组构造函数，那么该方法只接受一个int类型的参数。
+
+预定义的函数式接口
+==================
+JDK8中包含了新包java.util.function，其中提供了一些预定义的函数式接口。
+
++-----------------+-----------------------------+
+|接口             |用途                         |
++=================+=============================+
+|unaryOperator<T> |对类型为T的对象引用一元运算，|
+|                 |并返回结果。结果的类型也是T。|
+|                 |包含的方法名为apply()        |
++-----------------+-----------------------------+
+|BinaryOperator<T>|对类型为T的两个对象应用操作，|
+|                 |并返回结果。结果的类型也是T。|
+|                 |包含的方法名为apply()        |
++-----------------+-----------------------------+
+|Consumer<T>      |对类型为T的对象应用操作。包含|
+|                 |的方法名为accept()           |
++-----------------+-----------------------------+
+|Supplier<T>      |返回类型为T的对象。包含的方法|
+|                 |名为get()                    |
++-----------------+-----------------------------+
+|Function<T,R>    |对类型为T的对象应用操作，并返|
+|                 |回结果。结果是类型为R的对象。|
+|                 |包含的方法名为apply()        |
++-----------------+-----------------------------+
+|Predicate<T>     |确定类型为T的对象是否满足某种|
+|                 |约束，并返回指出结果的布尔值 |
+|                 |。包含的方法名为test()       |
++-----------------+-----------------------------+
+
+下面的程序通过使用Function接口重写前面的BlocklambdaDemo示例，演示了Function接口的实际应用。BlocklambdaDemo示例通过实现一个阶乘，演示了块lambda。该例创建了自己的函数式接口NumbericFunc，但其实也可以使用内置的Function接口，如程序的下面版本：
+
+.. literalinclude:: source/UseFunctionInterfaceDemo.java
+   :language: java
+
+UnaryOperator
+-------------
+一元操作器被用来操作单个操作数。它返回同样类型的操作数。UnaryOperator被用做传递一个参数的lambda表达式。例如：
+
+.. literalinclude:: source/UnaryOperatorDemo.java
+   :language: java
+
+BinaryOperator
+--------------
+它接收两个同样类型的参数然后处理它返回和操作数同样类型的结果。
+例如：
+
+.. literalinclude:: source/BinaryOperatorDemo.java
+   :language: java
+
+BinaryOperator.maxBy和BinaryOperator.minBy
+++++++++++++++++++++++++++++++++++++++++++
+
+.. literalinclude:: source/MaxByMinBy.java
+   :language: java
+
+学生类为：
+
+.. literalinclude:: source/Student.java
+   :language: java
+

@@ -1,0 +1,1207 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>19. asyn函数 &mdash; ECMAScript6入门 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="ECMAScript6入门 1.0 文档" href="index.html"/>
+        <link rel="next" title="20. Class 的基本语法" href="Class的基本语法.html"/>
+        <link rel="prev" title="18. Generator 函数的异步应用" href="Generator函数的异步应用.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ECMAScript6入门
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECMAScript6简介.html">2. ECMAScript6简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="let和const命令.html">3. let 和 const 命令</a></li>
+<li class="toctree-l1"><a class="reference internal" href="变量的解构赋值.html">4. 变量的解构赋值</a></li>
+<li class="toctree-l1"><a class="reference internal" href="字符串的扩展.html">5. 字符串的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="正则的扩展.html">6. 正则的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数值的扩展.html">7. 数值的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="函数的扩展.html">8. 函数的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数组的扩展.html">9. 数组的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="对象的扩展.html">10. 对象的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Symbol.html">11. Symbol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Set和Map数据结构.html">12. Set和Map数据结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Proxy.html">13. Proxy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Reflect.html">14. Reflect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Promise对象.html">15. Promise对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterator和for...of循环.html">16. Iterator 和 for…of 循环</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的语法.html">17. Generator函数的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的异步应用.html">18. Generator 函数的异步应用</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">19. asyn函数</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">19.1. 含义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">19.2. 基本用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">19.3. 语法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#promise">19.3.1. 返回 Promise 对象</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">19.3.2. Promise 对象的状态变化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#await">19.3.3. await 命令</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">19.3.4. 错误处理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">19.3.5. 使用注意点</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#async">19.4. async 函数的实现原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">19.5. 与其他异步处理方法的比较</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">19.6. 实例：按顺序完成异步操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">19.7. 异步遍历器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">19.8. 异步遍历的接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#for-await-of">19.9. for await…of</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generator">19.10. 异步 Generator 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yield">19.11. yield* 语句</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Class的基本语法.html">20. Class 的基本语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的继承.html">21. Class的继承</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Decorator.html">22. 修饰器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的语法.html">23. Module 的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的加载实现.html">24. Module 的加载实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="编程风格.html">25. 编程风格</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECMAScript6入门</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>19. asyn函数</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="asyn">
+<h1>19. asyn函数<a class="headerlink" href="#asyn" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>19.1. 含义<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>ES2017 标准引入了 <code class="docutils literal"><span class="pre">async</span></code> 函数，使得异步操作变得更加方便。</p>
+<p><code class="docutils literal"><span class="pre">async</span></code> 函数是什么？一句话，它就是 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的语法糖。</p>
+<p>前文有一个 <code class="docutils literal"><span class="pre">Generator</span></code> 函数，依次读取两个文件。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">readFile</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fileName</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">fileName</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="k">return</span> <span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+      <span class="nx">resolve</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+<span class="kr">const</span> <span class="nx">gen</span> <span class="o">=</span> <span class="kd">function</span><span class="o">*</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">f1</span> <span class="o">=</span> <span class="k">yield</span> <span class="nx">readFile</span><span class="p">(</span><span class="s1">&#39;/etc/fstab&#39;</span><span class="p">);</span>
+  <span class="kr">const</span> <span class="nx">f2</span> <span class="o">=</span> <span class="k">yield</span> <span class="nx">readFile</span><span class="p">(</span><span class="s1">&#39;/etc/shells&#39;</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">f1</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">f2</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>写成 <code class="docutils literal"><span class="pre">async</span></code> 函数，就是下面这样。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">asyncReadFile</span> <span class="o">=</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">f1</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">readFile</span><span class="p">(</span><span class="s1">&#39;/etc/fstab&#39;</span><span class="p">);</span>
+  <span class="kr">const</span> <span class="nx">f2</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">readFile</span><span class="p">(</span><span class="s1">&#39;/etc/shells&#39;</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">f1</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">f2</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>一比较就会发现， <code class="docutils literal"><span class="pre">async</span></code> 函数就是将 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的星号（ <code class="docutils literal"><span class="pre">*</span></code> ）替换成 <code class="docutils literal"><span class="pre">async</span></code> ，将 <code class="docutils literal"><span class="pre">yield</span></code> 替换成 <code class="docutils literal"><span class="pre">await</span></code> ，仅此而已。</p>
+<p><code class="docutils literal"><span class="pre">async</span></code> 函数对 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的改进，体现在以下四点。</p>
+<ol class="arabic simple">
+<li>内置执行器。</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">Generator</span></code> 函数的执行必须靠执行器，所以才有了 <code class="docutils literal"><span class="pre">co</span></code> 模块，而 <code class="docutils literal"><span class="pre">async</span></code> 函数自带执行器。也就是说， <code class="docutils literal"><span class="pre">async</span></code> 函数的执行，与普通函数一模一样，只要一行。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">asyncReadFile</span><span class="p">();</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>更好的语义。</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">async</span></code> 和 <code class="docutils literal"><span class="pre">await</span></code> ，比起星号和 <code class="docutils literal"><span class="pre">yield</span></code> ，语义更清楚了。 <code class="docutils literal"><span class="pre">async</span></code> 表示函数里有异步操作， <code class="docutils literal"><span class="pre">await</span></code> 表示紧跟在后面的表达式需要等待结果。</p>
+<ol class="arabic simple" start="3">
+<li>更广的适用性。</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">co</span></code> 模块约定， <code class="docutils literal"><span class="pre">yield</span></code> 命令后面只能是 <code class="docutils literal"><span class="pre">Thunk</span></code> 函数或 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，而 <code class="docutils literal"><span class="pre">async</span></code> 函数的 <code class="docutils literal"><span class="pre">await</span></code> 命令后面，可以是 <code class="docutils literal"><span class="pre">Promise</span></code> 对象和原始类型的值（数值、字符串和布尔值，但这时等同于同步操作）。</p>
+<ol class="arabic simple" start="4">
+<li>返回值是 Promise。</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">async</span></code> 函数的返回值是 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，这比 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的返回值是 <code class="docutils literal"><span class="pre">Iterator</span></code> 对象方便多了。你可以用 <code class="docutils literal"><span class="pre">then</span></code> 方法指定下一步的操作。</p>
+<p>进一步说， <code class="docutils literal"><span class="pre">async</span></code> 函数完全可以看作多个异步操作，包装成的一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，而 <code class="docutils literal"><span class="pre">await</span></code> 命令就是内部 <code class="docutils literal"><span class="pre">then</span></code> 命令的语法糖。</p>
+</div>
+<div class="section" id="id2">
+<h2>19.2. 基本用法<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">async</span></code> 函数返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，可以使用 <code class="docutils literal"><span class="pre">then</span></code> 方法添加回调函数。当函数执行的时候，一旦遇到 <code class="docutils literal"><span class="pre">await</span></code> 就会先返回，等到异步操作完成，再接着执行函数体内后面的语句。</p>
+<p>下面是一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">getStockPriceByName</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">symbol</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">getStockSymbol</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+  <span class="kr">const</span> <span class="nx">stockPrice</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">getStockPrice</span><span class="p">(</span><span class="nx">symbol</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">stockPrice</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">getStockPriceByName</span><span class="p">(</span><span class="s1">&#39;goog&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>上面代码是一个获取股票报价的函数，函数前面的 <code class="docutils literal"><span class="pre">async</span></code> 关键字，表明该函数内部有异步操作。调用该函数时，会立即返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。</p>
+<p>下面是另一个例子，指定多少毫秒后输出一个值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">timeout</span><span class="p">(</span><span class="nx">ms</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">ms</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">asyncPrint</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">ms</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nx">timeout</span><span class="p">(</span><span class="nx">ms</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">asyncPrint</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>上面代码指定 <code class="docutils literal"><span class="pre">50</span></code> 毫秒以后，输出 <code class="docutils literal"><span class="pre">hello</span> <span class="pre">world</span></code> 。</p>
+<p>由于 <code class="docutils literal"><span class="pre">async</span></code> 函数返回的是 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，可以作为 <code class="docutils literal"><span class="pre">await</span></code> 命令的参数。所以，上面的例子也可以写成下面的形式。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">timeout</span><span class="p">(</span><span class="nx">ms</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">ms</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">asyncPrint</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">ms</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nx">timeout</span><span class="p">(</span><span class="nx">ms</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">asyncPrint</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>async 函数有多种使用形式。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>// 函数声明
+async function foo() {}
+
+// 函数表达式
+const foo = async function () {};
+
+// 对象的方法
+let obj = { async foo() {} };
+obj.foo().then(...)
+
+// Class 的方法
+class Storage {
+  constructor() {
+    this.cachePromise = caches.open(&#39;avatars&#39;);
+  }
+
+  async getAvatar(name) {
+    const cache = await this.cachePromise;
+    return cache.match(`/avatars/${name}.jpg`);
+  }
+}
+
+const storage = new Storage();
+storage.getAvatar(&#39;jake&#39;).then(…);
+
+// 箭头函数
+const foo = async () =&gt; {};
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>19.3. 语法<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">async</span></code> 函数的语法规则总体上比较简单，难点是错误处理机制。</p>
+<div class="section" id="promise">
+<h3>19.3.1. 返回 Promise 对象<a class="headerlink" href="#promise" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">async</span></code> 函数返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。</p>
+<p><code class="docutils literal"><span class="pre">async</span></code> 函数内部 <code class="docutils literal"><span class="pre">return</span></code> 语句返回的值，会成为 <code class="docutils literal"><span class="pre">then</span></code> 方法回调函数的参数。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="s1">&#39;hello world&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">f</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">v</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span>
+<span class="c1">// &quot;hello world&quot;</span>
+</pre></div>
+</div>
+<p>上面代码中，函数 <code class="docutils literal"><span class="pre">f</span></code> 内部 <code class="docutils literal"><span class="pre">return</span></code> 命令返回的值，会被 <code class="docutils literal"><span class="pre">then</span></code> 方法回调函数接收到。</p>
+<p><code class="docutils literal"><span class="pre">async</span></code> 函数内部抛出错误，会导致返回的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象变为 <code class="docutils literal"><span class="pre">reject</span></code> 状态。抛出的错误对象会被 <code class="docutils literal"><span class="pre">catch</span></code> 方法回调函数接收到。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;出错了&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">f</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span>
+  <span class="nx">v</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">),</span>
+  <span class="nx">e</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="c1">// Error: 出错了</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>19.3.2. Promise 对象的状态变化<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">async</span></code> 函数返回的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，必须等到内部所有 <code class="docutils literal"><span class="pre">await</span></code> 命令后面的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象执行完，才会发生状态改变，除非遇到 <code class="docutils literal"><span class="pre">return</span></code> 语句或者抛出错误。也就是说，只有 <code class="docutils literal"><span class="pre">async</span></code> 函数内部的异步操作执行完，才会执行 <code class="docutils literal"><span class="pre">then</span></code> 方法指定的回调函数。</p>
+<p>下面是一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">getTitle</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+  <span class="kd">let</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">();</span>
+  <span class="k">return</span> <span class="nx">html</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/&lt;title&gt;([\s\S]+)&lt;\/title&gt;/i</span><span class="p">)[</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span>
+<span class="nx">getTitle</span><span class="p">(</span><span class="s1">&#39;https://tc39.github.io/ecma262/&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
+<span class="c1">// &quot;ECMAScript 2017 Language Specification&quot;</span>
+</pre></div>
+</div>
+<p>上面代码中，函数 <code class="docutils literal"><span class="pre">getTitle</span></code> 内部有三个操作：抓取网页、取出文本、匹配页面标题。只有这三个操作全部完成，才会执行 <code class="docutils literal"><span class="pre">then</span></code> 方法里面的 <code class="docutils literal"><span class="pre">console.log</span></code> 。</p>
+</div>
+<div class="section" id="await">
+<h3>19.3.3. await 命令<a class="headerlink" href="#await" title="永久链接至标题">¶</a></h3>
+<p>正常情况下， <code class="docutils literal"><span class="pre">await</span></code> 命令后面是一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。如果不是，会被转成一个立即 <code class="docutils literal"><span class="pre">resolve</span></code> 的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">await</span> <span class="mi">123</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">f</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">v</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span>
+<span class="c1">// 123</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">await</span></code> 命令的参数是数值 <code class="docutils literal"><span class="pre">123</span></code> ，它被转成 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，并立即 <code class="docutils literal"><span class="pre">resolve</span></code> 。</p>
+<p><code class="docutils literal"><span class="pre">await</span></code> 命令后面的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象如果变为 <code class="docutils literal"><span class="pre">reject</span></code> 状态，则 <code class="docutils literal"><span class="pre">reject</span></code> 的参数会被 <code class="docutils literal"><span class="pre">catch</span></code> 方法的回调函数接收到。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s1">&#39;出错了&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">f</span><span class="p">()</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">v</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span>
+<span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span>
+<span class="c1">// 出错了</span>
+</pre></div>
+</div>
+<p>注意，上面代码中， <code class="docutils literal"><span class="pre">await</span></code> 语句前面没有 <code class="docutils literal"><span class="pre">return</span></code> ，但是 <code class="docutils literal"><span class="pre">reject</span></code> 方法的参数依然传入了 <code class="docutils literal"><span class="pre">catch</span></code> 方法的回调函数。这里如果在 <code class="docutils literal"><span class="pre">await</span></code> 前面加上 <code class="docutils literal"><span class="pre">return</span></code> ，效果是一样的。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">只要一个 <code class="docutils literal"><span class="pre">await</span></code> 语句后面的 <code class="docutils literal"><span class="pre">Promise</span></code> 变为 <code class="docutils literal"><span class="pre">reject</span></code> ，那么整个 <code class="docutils literal"><span class="pre">async</span></code> 函数都会中断执行。</p>
+</div>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s1">&#39;出错了&#39;</span><span class="p">);</span>
+  <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">);</span> <span class="c1">// 不会执行</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，第二个 <code class="docutils literal"><span class="pre">await</span></code> 语句是不会执行的，因为第一个 <code class="docutils literal"><span class="pre">await</span></code> 语句状态变成了 <code class="docutils literal"><span class="pre">reject</span></code> 。</p>
+<p>有时，我们希望即使前一个异步操作失败，也不要中断后面的异步操作。这时可以将第一个 <code class="docutils literal"><span class="pre">await</span></code> 放在 <code class="docutils literal"><span class="pre">try...catch</span></code> 结构里面，这样不管这个异步操作是否成功，第二个 <code class="docutils literal"><span class="pre">await</span></code> 都会执行。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s1">&#39;出错了&#39;</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">f</span><span class="p">()</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">v</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span>
+<span class="c1">// hello world</span>
+</pre></div>
+</div>
+<p>另一种方法是 <code class="docutils literal"><span class="pre">await</span></code> 后面的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象再跟一个 <code class="docutils literal"><span class="pre">catch</span></code> 方法，处理前面可能出现的错误。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s1">&#39;出错了&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">));</span>
+  <span class="k">return</span> <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">f</span><span class="p">()</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">v</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span>
+<span class="c1">// 出错了</span>
+<span class="c1">// hello world</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>19.3.4. 错误处理<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>如果 <code class="docutils literal"><span class="pre">await</span></code> 后面的异步操作出错，那么等同于 <code class="docutils literal"><span class="pre">async</span></code> 函数返回的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象被 <code class="docutils literal"><span class="pre">reject</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;出错了&#39;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">f</span><span class="p">()</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">v</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span>
+<span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">e</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span>
+<span class="c1">// Error：出错了</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">async</span></code> 函数 <code class="docutils literal"><span class="pre">f</span></code> 执行后， <code class="docutils literal"><span class="pre">await</span></code> 后面的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象会抛出一个错误对象，导致 <code class="docutils literal"><span class="pre">catch</span></code> 方法的回调函数被调用，它的参数就是抛出的错误对象。具体的执行机制，可以参考后文的“async 函数的实现原理”。</p>
+<p>防止出错的方法，也是将其放在 <code class="docutils literal"><span class="pre">try...catch</span></code> 代码块之中。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="nx">await</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;出错了&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">await</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果有多个 <code class="docutils literal"><span class="pre">await</span></code> 命令，可以统一放在 <code class="docutils literal"><span class="pre">try...catch</span></code> 结构中。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">val1</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">firstStep</span><span class="p">();</span>
+    <span class="kr">const</span> <span class="nx">val2</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">secondStep</span><span class="p">(</span><span class="nx">val1</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">val3</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">thirdStep</span><span class="p">(</span><span class="nx">val1</span><span class="p">,</span> <span class="nx">val2</span><span class="p">);</span>
+
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Final: &#39;</span><span class="p">,</span> <span class="nx">val3</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>下面的例子使用 <code class="docutils literal"><span class="pre">try...catch</span></code> 结构，实现多次重复尝试。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">superagent</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;superagent&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">NUM_RETRIES</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">test</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">i</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">NUM_RETRIES</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="nx">await</span> <span class="nx">superagent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;http://google.com/this-throws-an-error&#39;</span><span class="p">);</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="p">}</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> <span class="c1">// 3</span>
+<span class="p">}</span>
+
+<span class="nx">test</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>上面代码中，如果 <code class="docutils literal"><span class="pre">await</span></code> 操作成功，就会使用 <code class="docutils literal"><span class="pre">break</span></code> 语句退出循环；如果失败，会被 <code class="docutils literal"><span class="pre">catch</span></code> 语句捕捉，然后进入下一轮循环。</p>
+</div>
+<div class="section" id="id6">
+<h3>19.3.5. 使用注意点<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>第一点，前面已经说过， <code class="docutils literal"><span class="pre">await</span></code> 命令后面的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，运行结果可能是 <code class="docutils literal"><span class="pre">rejected</span></code> ，所以最好把 <code class="docutils literal"><span class="pre">await</span></code> 命令放在 <code class="docutils literal"><span class="pre">try...catch</span></code> 代码块中。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">myFunction</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="nx">await</span> <span class="nx">somethingThatReturnsAPromise</span><span class="p">();</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 另一种写法</span>
+
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">myFunction</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nx">somethingThatReturnsAPromise</span><span class="p">()</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>第二点，多个 <code class="docutils literal"><span class="pre">await</span></code> 命令后面的异步操作，如果不存在继发关系，最好让它们同时触发。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">getFoo</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">bar</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">getBar</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">getFoo</span></code> 和 <code class="docutils literal"><span class="pre">getBar</span></code> 是两个独立的异步操作（即互不依赖），被写成继发关系。这样比较耗时，因为只有 <code class="docutils literal"><span class="pre">getFoo</span></code> 完成以后，才会执行 <code class="docutils literal"><span class="pre">getBar</span></code> ，完全可以让它们同时触发。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 写法一</span>
+<span class="kd">let</span> <span class="p">[</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">]</span> <span class="o">=</span> <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">([</span><span class="nx">getFoo</span><span class="p">(),</span> <span class="nx">getBar</span><span class="p">()]);</span>
+
+<span class="c1">// 写法二</span>
+<span class="kd">let</span> <span class="nx">fooPromise</span> <span class="o">=</span> <span class="nx">getFoo</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">barPromise</span> <span class="o">=</span> <span class="nx">getBar</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">fooPromise</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">bar</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">barPromise</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>上面两种写法， <code class="docutils literal"><span class="pre">getFoo</span></code> 和 <code class="docutils literal"><span class="pre">getBar</span></code> 都是同时触发，这样就会缩短程序的执行时间。</p>
+<p>第三点， <code class="docutils literal"><span class="pre">await</span></code> 命令只能用在 <code class="docutils literal"><span class="pre">async</span></code> 函数之中，如果用在普通函数，就会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">dbFuc</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">docs</span> <span class="o">=</span> <span class="p">[{},</span> <span class="p">{},</span> <span class="p">{}];</span>
+
+  <span class="c1">// 报错</span>
+  <span class="nx">docs</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="nx">doc</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码会报错，因为 <code class="docutils literal"><span class="pre">await</span></code> 用在普通函数之中了。但是，如果将 <code class="docutils literal"><span class="pre">forEach</span></code> 方法的参数改成 <code class="docutils literal"><span class="pre">async</span></code> 函数，也有问题。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">dbFuc</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//这里不需要 async</span>
+  <span class="kd">let</span> <span class="nx">docs</span> <span class="o">=</span> <span class="p">[{},</span> <span class="p">{},</span> <span class="p">{}];</span>
+
+  <span class="c1">// 可能得到错误结果</span>
+  <span class="nx">docs</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="nx">doc</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码可能不会正常工作，原因是这时三个 <code class="docutils literal"><span class="pre">db.post</span></code> 操作将是并发执行，也就是同时执行，而不是继发执行(????)。正确的写法是采用 <code class="docutils literal"><span class="pre">for</span></code> 循环。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">dbFuc</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">docs</span> <span class="o">=</span> <span class="p">[{},</span> <span class="p">{},</span> <span class="p">{}];</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">doc</span> <span class="k">of</span> <span class="nx">docs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="nx">doc</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果确实希望多个请求并发执行，可以使用 <code class="docutils literal"><span class="pre">Promise.all</span></code> 方法。当三个请求都会 <code class="docutils literal"><span class="pre">resolved</span></code> 时，下面两种写法效果相同。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">dbFuc</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">docs</span> <span class="o">=</span> <span class="p">[{},</span> <span class="p">{},</span> <span class="p">{}];</span>
+  <span class="kd">let</span> <span class="nx">promises</span> <span class="o">=</span> <span class="nx">docs</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">doc</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="nx">doc</span><span class="p">));</span>
+
+  <span class="kd">let</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">promises</span><span class="p">);</span> <span class="c1">// 不需要都是promise???</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 或者使用下面的写法</span>
+
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">dbFuc</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">docs</span> <span class="o">=</span> <span class="p">[{},</span> <span class="p">{},</span> <span class="p">{}];</span>
+  <span class="kd">let</span> <span class="nx">promises</span> <span class="o">=</span> <span class="nx">docs</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">doc</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="nx">doc</span><span class="p">));</span>
+
+  <span class="kd">let</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">promise</span> <span class="k">of</span> <span class="nx">promises</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">await</span> <span class="nx">promise</span><span class="p">);</span> <span class="c1">// 这样也行？？</span>
+  <span class="p">}</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>目前， <code class="docutils literal"><span class="pre">&#64;std/esm</span></code> 模块加载器支持顶层 <code class="docutils literal"><span class="pre">await</span></code> ，即 <code class="docutils literal"><span class="pre">await</span></code> 命令可以不放在 <code class="docutils literal"><span class="pre">async</span></code> 函数里面，直接使用。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// async 函数的写法</span>
+<span class="kr">const</span> <span class="nx">start</span> <span class="o">=</span> <span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;google.com&#39;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">text</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="nx">start</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+
+<span class="c1">// 顶层 await 的写法</span>
+<span class="kr">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;google.com&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">await</span> <span class="nx">res</span><span class="p">.</span><span class="nx">text</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>上面代码中，第二种写法的脚本必须使用 <code class="docutils literal"><span class="pre">&#64;std/esm</span></code> 加载器，才会生效。</p>
+</div>
+</div>
+<div class="section" id="async">
+<h2>19.4. async 函数的实现原理<a class="headerlink" href="#async" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">async</span></code> 函数的实现原理，就是将 <code class="docutils literal"><span class="pre">Generator</span></code> 函数和自动执行器，包装在一个函数里。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="c1">// 等同于</span>
+
+<span class="kd">function</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">spawn</span><span class="p">(</span><span class="kd">function</span><span class="o">*</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>所有的 <code class="docutils literal"><span class="pre">async</span></code> 函数都可以写成上面的第二种形式，其中的 <code class="docutils literal"><span class="pre">spawn</span></code> 函数就是自动执行器。</p>
+<p>下面给出 <code class="docutils literal"><span class="pre">spawn</span></code> 函数的实现，基本就是前文自动执行器的翻版。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">spawn</span><span class="p">(</span><span class="nx">genF</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">gen</span> <span class="o">=</span> <span class="nx">genF</span><span class="p">();</span>
+    <span class="kd">function</span> <span class="nx">step</span><span class="p">(</span><span class="nx">nextF</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">next</span><span class="p">;</span>
+      <span class="k">try</span> <span class="p">{</span>
+        <span class="nx">next</span> <span class="o">=</span> <span class="nx">nextF</span><span class="p">();</span>
+      <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">reject</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">next</span><span class="p">.</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">next</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">next</span><span class="p">.</span><span class="nx">value</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">step</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">gen</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span> <span class="p">});</span>
+      <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">step</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">gen</span><span class="p">.</span><span class="k">throw</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span> <span class="p">});</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+    <span class="nx">step</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">gen</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="kc">undefined</span><span class="p">);</span> <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>19.5. 与其他异步处理方法的比较<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>我们通过一个例子，来看 <code class="docutils literal"><span class="pre">async</span></code> 函数与 <code class="docutils literal"><span class="pre">Promise</span></code> 、 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的比较。</p>
+<p>假定某个 <code class="docutils literal"><span class="pre">DOM</span></code> 元素上面，部署了一系列的动画，前一个动画结束，才能开始后一个。如果当中有一个动画出错，就不再往下执行，返回上一个成功执行的动画的返回值。</p>
+<p>首先是 <code class="docutils literal"><span class="pre">Promise</span></code> 的写法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">chainAnimationsPromise</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">animations</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="c1">// 变量ret用来保存上一个动画的返回值</span>
+  <span class="kd">let</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+  <span class="c1">// 新建一个空的Promise</span>
+  <span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">();</span>
+
+  <span class="c1">// 使用then方法，添加所有动画</span>
+  <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">anim</span> <span class="k">of</span> <span class="nx">animations</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">p</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">ret</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">anim</span><span class="p">(</span><span class="nx">elem</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="c1">// 返回一个部署了错误捕捉机制的Promise</span>
+  <span class="k">return</span> <span class="nx">p</span><span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* 忽略错误，继续执行 */</span>
+  <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+  <span class="p">});</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>虽然 <code class="docutils literal"><span class="pre">Promise</span></code> 的写法比回调函数的写法大大改进，但是一眼看上去，代码完全都是 <code class="docutils literal"><span class="pre">Promise</span></code> 的 <code class="docutils literal"><span class="pre">API</span></code> （ <code class="docutils literal"><span class="pre">then</span></code> 、 <code class="docutils literal"><span class="pre">catch</span></code> 等等），操作本身的语义反而不容易看出来。</p>
+<p>接着是 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的写法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">chainAnimationsGenerator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">animations</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="k">return</span> <span class="nx">spawn</span><span class="p">(</span><span class="kd">function</span><span class="o">*</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">anim</span> <span class="k">of</span> <span class="nx">animations</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">ret</span> <span class="o">=</span> <span class="k">yield</span> <span class="nx">anim</span><span class="p">(</span><span class="nx">elem</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="cm">/* 忽略错误，继续执行 */</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+  <span class="p">});</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码使用 <code class="docutils literal"><span class="pre">Generator</span></code> 函数遍历了每个动画，语义比 <code class="docutils literal"><span class="pre">Promise</span></code> 写法更清晰，用户定义的操作全部都出现在 <code class="docutils literal"><span class="pre">spawn</span></code> 函数的内部。这个写法的问题在于，必须有一个任务运行器，自动执行 <code class="docutils literal"><span class="pre">Generator</span></code> 函数，上面代码的 <code class="docutils literal"><span class="pre">spawn</span></code> 函数就是自动执行器，它返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，而且必须保证 <code class="docutils literal"><span class="pre">yield</span></code> 语句后面的表达式，必须返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 。</p>
+<p>最后是 <code class="docutils literal"><span class="pre">async</span></code> 函数的写法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">chainAnimationsAsync</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">animations</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">anim</span> <span class="k">of</span> <span class="nx">animations</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">ret</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">anim</span><span class="p">(</span><span class="nx">elem</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* 忽略错误，继续执行 */</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看到 <code class="docutils literal"><span class="pre">Async</span></code> 函数的实现最简洁，最符合语义，几乎没有语义不相关的代码。它将 <code class="docutils literal"><span class="pre">Generator</span></code> 写法中的自动执行器，改在语言层面提供，不暴露给用户，因此代码量最少。如果使用 <code class="docutils literal"><span class="pre">Generator</span></code> 写法，自动执行器需要用户自己提供。</p>
+</div>
+<div class="section" id="id8">
+<h2>19.6. 实例：按顺序完成异步操作<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<p>实际开发中，经常遇到一组异步操作，需要按照顺序完成。比如，依次远程读取一组 <code class="docutils literal"><span class="pre">URL</span></code> ，然后按照读取的顺序输出结果。</p>
+<p><code class="docutils literal"><span class="pre">Promise</span></code> 的写法如下。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">logInOrder</span><span class="p">(</span><span class="nx">urls</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// 远程读取所有URL</span>
+  <span class="kr">const</span> <span class="nx">textPromises</span> <span class="o">=</span> <span class="nx">urls</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">url</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">());</span>
+  <span class="p">});</span>
+
+  <span class="c1">// 按次序输出</span>
+  <span class="nx">textPromises</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">chain</span><span class="p">,</span> <span class="nx">textPromise</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">chain</span><span class="p">.</span><span class="nx">then</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="nx">textPromise</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">text</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">text</span><span class="p">));</span>
+  <span class="p">},</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码使用 <code class="docutils literal"><span class="pre">fetch</span></code> 方法，同时远程读取一组 <code class="docutils literal"><span class="pre">URL</span></code> 。每个 <code class="docutils literal"><span class="pre">fetch</span></code> 操作都返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，放入 <code class="docutils literal"><span class="pre">textPromises</span></code> 数组。然后， <code class="docutils literal"><span class="pre">reduce</span></code> 方法依次处理每个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，然后使用 <code class="docutils literal"><span class="pre">then</span></code> ，将所有 <code class="docutils literal"><span class="pre">Promise</span></code> 对象连起来，因此就可以依次输出结果。</p>
+<p>这种写法不太直观，可读性比较差。下面是 <code class="docutils literal"><span class="pre">async</span></code> 函数实现。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">logInOrder</span><span class="p">(</span><span class="nx">urls</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">url</span> <span class="k">of</span> <span class="nx">urls</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">());</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码确实大大简化，问题是所有远程操作都是继发。只有前一个 <code class="docutils literal"><span class="pre">URL</span></code> 返回结果，才会去读取下一个 <code class="docutils literal"><span class="pre">URL</span></code> ，这样做效率很差，非常浪费时间。我们需要的是并发发出远程请求。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">logInOrder</span><span class="p">(</span><span class="nx">urls</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// 并发读取远程URL</span>
+  <span class="kr">const</span> <span class="nx">textPromises</span> <span class="o">=</span> <span class="nx">urls</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">async</span> <span class="nx">url</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">();</span>
+  <span class="p">});</span>
+
+  <span class="c1">// 按次序输出</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">textPromise</span> <span class="k">of</span> <span class="nx">textPromises</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">await</span> <span class="nx">textPromise</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，虽然 <code class="docutils literal"><span class="pre">map</span></code> 方法的参数是 <code class="docutils literal"><span class="pre">async</span></code> 函数，但它是并发执行的，因为只有 <code class="docutils literal"><span class="pre">async</span></code> 函数内部是继发执行，外部不受影响。后面的 <code class="docutils literal"><span class="pre">for..of</span></code> 循环内部使用了 <code class="docutils literal"><span class="pre">await</span></code> ，因此实现了按顺序输出。</p>
+</div>
+<div class="section" id="id9">
+<h2>19.7. 异步遍历器<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>《遍历器》一章说过， <code class="docutils literal"><span class="pre">Iterator</span></code> 接口是一种数据遍历的协议，只要调用遍历器对象的 <code class="docutils literal"><span class="pre">next</span></code> 方法，就会得到一个对象，表示当前遍历指针所在的那个位置的信息。 <code class="docutils literal"><span class="pre">next</span></code> 方法返回的对象的结构是 <code class="docutils literal"><span class="pre">{value,</span> <span class="pre">done}</span></code> ，其中 <code class="docutils literal"><span class="pre">value</span></code> 表示当前的数据的值， <code class="docutils literal"><span class="pre">done</span></code> 是一个布尔值，表示遍历是否结束。</p>
+<p>这里隐含着一个规定， <code class="docutils literal"><span class="pre">next</span></code> 方法必须是同步的，只要调用就必须立刻返回值。也就是说，一旦执行 <code class="docutils literal"><span class="pre">next</span></code> 方法，就必须同步地得到 <code class="docutils literal"><span class="pre">value</span></code> 和 <code class="docutils literal"><span class="pre">done</span></code> 这两个属性。如果遍历指针正好指向同步操作，当然没有问题，但对于异步操作，就不太合适了。目前的解决方法是， <code class="docutils literal"><span class="pre">Generator</span></code> 函数里面的异步操作，返回一个 <code class="docutils literal"><span class="pre">Thunk</span></code> 函数或者 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，即 <code class="docutils literal"><span class="pre">value</span></code> 属性是一个 <code class="docutils literal"><span class="pre">Thunk</span></code> 函数或者 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，等待以后返回真正的值，而 <code class="docutils literal"><span class="pre">done</span></code> 属性则还是同步产生的。</p>
+<p>ES2018 引入了”异步遍历器“（ <code class="docutils literal"><span class="pre">Async</span> <span class="pre">Iterator</span></code> ），为异步操作提供原生的遍历器接口，即 <code class="docutils literal"><span class="pre">value</span></code> 和 <code class="docutils literal"><span class="pre">done</span></code> 这两个属性都是异步产生。</p>
+</div>
+<div class="section" id="id10">
+<h2>19.8. 异步遍历的接口<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
+<p>异步遍历器的最大的语法特点，就是调用遍历器的 <code class="docutils literal"><span class="pre">next</span></code> 方法，返回的是一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">asyncIterator</span>
+  <span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span>
+    <span class="p">({</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">done</span> <span class="p">})</span> <span class="p">=&gt;</span> <span class="cm">/* ... */</span>
+  <span class="p">);</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">asyncIterator</span></code> 是一个异步遍历器，调用 <code class="docutils literal"><span class="pre">next</span></code> 方法以后，返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。因此，可以使用 <code class="docutils literal"><span class="pre">then</span></code> 方法指定，这个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象的状态变为 <code class="docutils literal"><span class="pre">resolve</span></code> 以后的回调函数。回调函数的参数，则是一个具有 <code class="docutils literal"><span class="pre">value</span></code> 和 <code class="docutils literal"><span class="pre">done</span></code> 两个属性的对象，这个跟同步遍历器是一样的。</p>
+<p>我们知道，一个对象的同步遍历器的接口，部署在 <code class="docutils literal"><span class="pre">Symbol.iterator</span></code> 属性上面。同样地，对象的异步遍历器接口，部署在 <code class="docutils literal"><span class="pre">Symbol.asyncIterator</span></code> 属性上面。不管是什么样的对象，只要它的 <code class="docutils literal"><span class="pre">Symbol.asyncIterator</span></code> 属性有值，就表示应该对它进行异步遍历。</p>
+<p>下面是一个异步遍历器的例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">asyncIterable</span> <span class="o">=</span> <span class="nx">createAsyncIterable</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]);</span>
+<span class="kr">const</span> <span class="nx">asyncIterator</span> <span class="o">=</span> <span class="nx">asyncIterable</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">asyncIterator</span><span class="p">]();</span>
+
+<span class="nx">asyncIterator</span>
+<span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">iterResult1</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">iterResult1</span><span class="p">);</span> <span class="c1">// { value: &#39;a&#39;, done: false }</span>
+  <span class="k">return</span> <span class="nx">asyncIterator</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">iterResult2</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">iterResult2</span><span class="p">);</span> <span class="c1">// { value: &#39;b&#39;, done: false }</span>
+  <span class="k">return</span> <span class="nx">asyncIterator</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">iterResult3</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">iterResult3</span><span class="p">);</span> <span class="c1">// { value: undefined, done: true }</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>上面代码中，异步遍历器其实返回了两次值。第一次调用的时候，返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象；等到 <code class="docutils literal"><span class="pre">Promise</span></code> 对象 <code class="docutils literal"><span class="pre">resolve</span></code> 了，再返回一个表示当前数据成员信息的对象。这就是说，异步遍历器与同步遍历器最终行为是一致的，只是会先返回 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，作为中介。</p>
+<p>由于异步遍历器的 <code class="docutils literal"><span class="pre">next</span></code> 方法，返回的是一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。因此，可以把它放在 <code class="docutils literal"><span class="pre">await</span></code> 命令后面。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">asyncIterable</span> <span class="o">=</span> <span class="nx">createAsyncIterable</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]);</span>
+  <span class="kr">const</span> <span class="nx">asyncIterator</span> <span class="o">=</span> <span class="nx">asyncIterable</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">asyncIterator</span><span class="p">]();</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">await</span> <span class="nx">asyncIterator</span><span class="p">.</span><span class="nx">next</span><span class="p">());</span>
+  <span class="c1">// { value: &#39;a&#39;, done: false }</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">await</span> <span class="nx">asyncIterator</span><span class="p">.</span><span class="nx">next</span><span class="p">());</span>
+  <span class="c1">// { value: &#39;b&#39;, done: false }</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">await</span> <span class="nx">asyncIterator</span><span class="p">.</span><span class="nx">next</span><span class="p">());</span>
+  <span class="c1">// { value: undefined, done: true }</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">next</span></code> 方法用 <code class="docutils literal"><span class="pre">await</span></code> 处理以后，就不必使用 <code class="docutils literal"><span class="pre">then</span></code> 方法了(会自动调用)。整个流程已经很接近同步处理了。</p>
+<p>注意，异步遍历器的 <code class="docutils literal"><span class="pre">next</span></code> 方法是可以连续调用的，不必等到上一步产生的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象 <code class="docutils literal"><span class="pre">resolve</span></code> 以后再调用。这种情况下， <code class="docutils literal"><span class="pre">next</span></code> 方法会累积起来，自动按照每一步的顺序运行下去。下面是一个例子，把所有的 <code class="docutils literal"><span class="pre">next</span></code> 方法放在 <code class="docutils literal"><span class="pre">Promise.all</span></code> 方法里面。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">asyncGenObj</span> <span class="o">=</span> <span class="nx">createAsyncIterable</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]);</span>
+<span class="kr">const</span> <span class="p">[{</span><span class="nx">value</span><span class="o">:</span> <span class="nx">v1</span><span class="p">},</span> <span class="p">{</span><span class="nx">value</span><span class="o">:</span> <span class="nx">v2</span><span class="p">}]</span> <span class="o">=</span> <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">([</span>
+  <span class="nx">asyncGenObj</span><span class="p">.</span><span class="nx">next</span><span class="p">(),</span> <span class="nx">asyncGenObj</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+<span class="p">]);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v1</span><span class="p">,</span> <span class="nx">v2</span><span class="p">);</span> <span class="c1">// a b</span>
+</pre></div>
+</div>
+<p>另一种用法是一次性调用所有的 <code class="docutils literal"><span class="pre">next</span></code> 方法，然后 <code class="docutils literal"><span class="pre">await</span></code> 最后一步操作。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">runner</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">writer</span> <span class="o">=</span> <span class="nx">openFile</span><span class="p">(</span><span class="s1">&#39;someFile.txt&#39;</span><span class="p">);</span>
+  <span class="nx">writer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">);</span>
+  <span class="nx">writer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;world&#39;</span><span class="p">);</span>
+  <span class="nx">await</span> <span class="nx">writer</span><span class="p">.</span><span class="k">return</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="nx">runner</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="for-await-of">
+<h2>19.9. for await…of<a class="headerlink" href="#for-await-of" title="永久链接至标题">¶</a></h2>
+<p>前面介绍过， <code class="docutils literal"><span class="pre">for...of</span></code> 循环用于遍历同步的 <code class="docutils literal"><span class="pre">Iterator</span></code> 接口。新引入的 <code class="docutils literal"><span class="pre">for</span> <span class="pre">await...of</span></code> 循环，则是用于遍历异步的 <code class="docutils literal"><span class="pre">Iterator</span></code> 接口。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">await</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">x</span> <span class="k">of</span> <span class="nx">createAsyncIterable</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// a</span>
+<span class="c1">// b</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">createAsyncIterable()</span></code> 返回一个拥有异步遍历器接口的对象， <code class="docutils literal"><span class="pre">for...of</span></code> 循环自动调用这个对象的异步遍历器的 <code class="docutils literal"><span class="pre">next</span></code> 方法，会得到一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。 <code class="docutils literal"><span class="pre">await</span></code> 用来处理这个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，一旦 <code class="docutils literal"><span class="pre">resolve</span></code> ，就把得到的值（ <code class="docutils literal"><span class="pre">x</span></code> ）传入 <code class="docutils literal"><span class="pre">for...of</span></code> 的循环体。</p>
+<p><code class="docutils literal"><span class="pre">for</span> <span class="pre">await...of</span></code> 循环的一个用途，是部署了 <code class="docutils literal"><span class="pre">asyncIterable</span></code> 操作的异步接口，可以直接放入这个循环。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">body</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">await</span><span class="p">(</span><span class="kr">const</span> <span class="nx">data</span> <span class="k">of</span> <span class="nx">req</span><span class="p">)</span> <span class="nx">body</span> <span class="o">+=</span> <span class="nx">data</span><span class="p">;</span>
+  <span class="kr">const</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">body</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;got&#39;</span><span class="p">,</span> <span class="nx">parsed</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">req</span></code> 是一个 <code class="docutils literal"><span class="pre">asyncIterable</span></code> 对象，用来异步读取数据。可以看到，使用 <code class="docutils literal"><span class="pre">for</span> <span class="pre">await...of</span></code> 循环以后，代码会非常简洁。</p>
+<p>如果 <code class="docutils literal"><span class="pre">next</span></code> 方法返回的 <code class="docutils literal"><span class="pre">Promise</span></code> 对象被 <code class="docutils literal"><span class="pre">reject</span></code> ， <code class="docutils literal"><span class="pre">for</span> <span class="pre">await...of</span></code> 就会报错，要用 <code class="docutils literal"><span class="pre">try...catch</span></code> 捕捉。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">await</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">x</span> <span class="k">of</span> <span class="nx">createRejectingIterable</span><span class="p">())</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>注意， <code class="docutils literal"><span class="pre">for</span> <span class="pre">await...of</span></code> 循环也可以用于同步遍历器。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">(</span><span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">await</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">x</span> <span class="k">of</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">})();</span>
+<span class="c1">// a</span>
+<span class="c1">// b</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Node</span> <span class="pre">v10</span></code> 支持异步遍历器， <code class="docutils literal"><span class="pre">Stream</span></code> 就部署了这个接口。下面是读取文件的传统写法与异步遍历器写法的差异。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 传统写法</span>
+<span class="kd">function</span> <span class="nx">main</span><span class="p">(</span><span class="nx">inputFilePath</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">readStream</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">createReadStream</span><span class="p">(</span>
+    <span class="nx">inputFilePath</span><span class="p">,</span>
+    <span class="p">{</span> <span class="nx">encoding</span><span class="o">:</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="nx">highWaterMark</span><span class="o">:</span> <span class="mi">1024</span> <span class="p">}</span>
+  <span class="p">);</span>
+  <span class="nx">readStream</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; &#39;</span><span class="o">+</span><span class="nx">chunk</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">readStream</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;### DONE ###&#39;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="c1">// 异步遍历器写法</span>
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">main</span><span class="p">(</span><span class="nx">inputFilePath</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">readStream</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">createReadStream</span><span class="p">(</span>
+    <span class="nx">inputFilePath</span><span class="p">,</span>
+    <span class="p">{</span> <span class="nx">encoding</span><span class="o">:</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="nx">highWaterMark</span><span class="o">:</span> <span class="mi">1024</span> <span class="p">}</span>
+  <span class="p">);</span>
+
+  <span class="k">for</span> <span class="nx">await</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">chunk</span> <span class="k">of</span> <span class="nx">readStream</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; &#39;</span><span class="o">+</span><span class="nx">chunk</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;### DONE ###&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="generator">
+<h2>19.10. 异步 Generator 函数<a class="headerlink" href="#generator" title="永久链接至标题">¶</a></h2>
+<p>就像 <code class="docutils literal"><span class="pre">Generator</span></code> 函数返回一个同步遍历器对象一样，异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的作用，是返回一个异步遍历器对象。</p>
+<p>在语法上，异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数就是 <code class="docutils literal"><span class="pre">async</span></code> 函数与 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的结合。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span><span class="o">*</span> <span class="nx">gen</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">yield</span> <span class="s1">&#39;hello&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kr">const</span> <span class="nx">genObj</span> <span class="o">=</span> <span class="nx">gen</span><span class="p">();</span>
+<span class="nx">genObj</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">));</span>
+<span class="c1">// { value: &#39;hello&#39;, done: false }</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">gen</span></code> 是一个异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数，执行后返回一个异步 <code class="docutils literal"><span class="pre">Iterator</span></code> 对象。对该对象调用 <code class="docutils literal"><span class="pre">next</span></code> 方法，返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。</p>
+<p>异步遍历器的设计目的之一，就是 <code class="docutils literal"><span class="pre">Generator</span></code> 函数处理同步操作和异步操作时，能够使用同一套接口。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 同步 Generator 函数</span>
+<span class="kd">function</span><span class="o">*</span> <span class="nx">map</span><span class="p">(</span><span class="nx">iterable</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">iter</span> <span class="o">=</span> <span class="nx">iterable</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]();</span>
+  <span class="k">while</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">value</span><span class="p">,</span> <span class="nx">done</span><span class="p">}</span> <span class="o">=</span> <span class="nx">iter</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 异步 Generator 函数</span>
+<span class="nx">async</span> <span class="kd">function</span><span class="o">*</span> <span class="nx">map</span><span class="p">(</span><span class="nx">iterable</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">iter</span> <span class="o">=</span> <span class="nx">iterable</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">asyncIterator</span><span class="p">]();</span>
+  <span class="k">while</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">value</span><span class="p">,</span> <span class="nx">done</span><span class="p">}</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">iter</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">yield</span> <span class="nx">func</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">map</span></code> 是一个 <code class="docutils literal"><span class="pre">Generator</span></code> 函数，第一个参数是可遍历对象 <code class="docutils literal"><span class="pre">iterable</span></code> ，第二个参数是一个回调函数 <code class="docutils literal"><span class="pre">func</span></code> 。 <code class="docutils literal"><span class="pre">map</span></code> 的作用是将 <code class="docutils literal"><span class="pre">iterable</span></code> 每一步返回的值，使用 <code class="docutils literal"><span class="pre">func</span></code> 进行处理。上面有两个版本的 <code class="docutils literal"><span class="pre">map</span></code> ，前一个处理同步遍历器，后一个处理异步遍历器，可以看到两个版本的写法基本上是一致的。</p>
+<p>下面是另一个异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span><span class="o">*</span> <span class="nx">readLines</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">file</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">fileOpen</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span>
+
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nx">file</span><span class="p">.</span><span class="nx">EOF</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">yield</span> <span class="nx">await</span> <span class="nx">file</span><span class="p">.</span><span class="nx">readLine</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+    <span class="nx">await</span> <span class="nx">file</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，异步操作前面使用 <code class="docutils literal"><span class="pre">await</span></code> 关键字标明，即 <code class="docutils literal"><span class="pre">await</span></code> 后面的操作，应该返回 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。凡是使用 <code class="docutils literal"><span class="pre">yield</span></code> 关键字的地方，就是 <code class="docutils literal"><span class="pre">next</span></code> 方法停下来的地方，它后面的表达式的值（即 <code class="docutils literal"><span class="pre">await</span> <span class="pre">file.readLine()</span></code> 的值），会作为 <code class="docutils literal"><span class="pre">next()</span></code> 返回对象的 <code class="docutils literal"><span class="pre">value</span></code> 属性，这一点是与同步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数一致的。</p>
+<p>异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数内部，能够同时使用 <code class="docutils literal"><span class="pre">await</span></code> 和 <code class="docutils literal"><span class="pre">yield</span></code> 命令。可以这样理解， <code class="docutils literal"><span class="pre">await</span></code> 命令用于将外部操作产生的值输入函数内部， <code class="docutils literal"><span class="pre">yield</span></code> 命令用于将函数内部的值输出。</p>
+<p>上面代码定义的异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的用法如下。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">(</span><span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">await</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">readLines</span><span class="p">(</span><span class="nx">filePath</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">})()</span>
+</pre></div>
+</div>
+<p>异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数可以与 <code class="docutils literal"><span class="pre">for</span> <span class="pre">await...of</span></code> 循环结合起来使用。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span><span class="o">*</span> <span class="nx">prefixLines</span><span class="p">(</span><span class="nx">asyncIterable</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">await</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">line</span> <span class="k">of</span> <span class="nx">asyncIterable</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">yield</span> <span class="s1">&#39;&gt; &#39;</span> <span class="o">+</span> <span class="nx">line</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的返回值是一个异步 <code class="docutils literal"><span class="pre">Iterator</span></code> ，即每次调用它的 <code class="docutils literal"><span class="pre">next</span></code> 方法，会返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，也就是说，跟在 <code class="docutils literal"><span class="pre">yield</span></code> 命令后面的，应该是一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。如果像上面那个例子那样， <code class="docutils literal"><span class="pre">yield</span></code> 命令后面是一个字符串，会被自动包装成一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">fetchRandom</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;https://www.random.org/decimal-fractions/&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39;?num=1&amp;dec=10&amp;col=1&amp;format=plain&amp;rnd=new&#39;</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">async</span> <span class="kd">function</span><span class="o">*</span> <span class="nx">asyncGenerator</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Start&#39;</span><span class="p">);</span>
+  <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">fetchRandom</span><span class="p">();</span> <span class="c1">// (A)</span>
+  <span class="k">yield</span> <span class="s1">&#39;Result: &#39;</span> <span class="o">+</span> <span class="nx">await</span> <span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">();</span> <span class="c1">// (B)</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Done&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">ag</span> <span class="o">=</span> <span class="nx">asyncGenerator</span><span class="p">();</span>
+<span class="nx">ag</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">then</span><span class="p">(({</span><span class="nx">value</span><span class="p">,</span> <span class="nx">done</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">ag</span></code> 是 <code class="docutils literal"><span class="pre">asyncGenerator</span></code> 函数返回的异步遍历器对象。调用 <code class="docutils literal"><span class="pre">ag.next()</span></code> 以后，上面代码的执行顺序如下。</p>
+<ol class="arabic simple">
+<li><code class="docutils literal"><span class="pre">ag.next()</span></code> 立刻返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象。</li>
+<li><code class="docutils literal"><span class="pre">asyncGenerator</span></code> 函数开始执行，打印出 <code class="docutils literal"><span class="pre">Start</span></code> 。</li>
+<li><code class="docutils literal"><span class="pre">await</span></code> 命令返回一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象， <code class="docutils literal"><span class="pre">asyncGenerator</span></code> 函数停在这里。</li>
+<li><code class="docutils literal"><span class="pre">A</span></code> 处变成 <code class="docutils literal"><span class="pre">fulfilled</span></code> 状态，产生的值放入 <code class="docutils literal"><span class="pre">result</span></code> 变量， <code class="docutils literal"><span class="pre">asyncGenerator</span></code> 函数继续往下执行。</li>
+<li>函数在 <code class="docutils literal"><span class="pre">B</span></code> 处的 <code class="docutils literal"><span class="pre">yield</span></code> 暂停执行，一旦 <code class="docutils literal"><span class="pre">yield</span></code> 命令取到值， <code class="docutils literal"><span class="pre">ag.next()``返回的那个</span> <span class="pre">``Promise</span></code> 对象变成 <code class="docutils literal"><span class="pre">fulfilled</span></code> 状态。</li>
+<li><code class="docutils literal"><span class="pre">ag.next()</span></code> 后面的 <code class="docutils literal"><span class="pre">then</span></code> 方法指定的回调函数开始执行。该回调函数的参数是一个对象 <code class="docutils literal"><span class="pre">{value,</span> <span class="pre">done}</span></code> ，其中 <code class="docutils literal"><span class="pre">value</span></code> 的值是 <code class="docutils literal"><span class="pre">yield</span></code> 命令后面的那个表达式的值， <code class="docutils literal"><span class="pre">done</span></code> 的值是 <code class="docutils literal"><span class="pre">false</span></code> 。</li>
+</ol>
+<p><cite>A</cite> 和 <code class="docutils literal"><span class="pre">B</span></code> 两行的作用类似于下面的代码。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">fetchRandom</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">result</span> <span class="p">=&gt;</span> <span class="nx">result</span><span class="p">.</span><span class="nx">text</span><span class="p">())</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">result</span> <span class="p">=&gt;</span> <span class="p">{</span>
+     <span class="nx">resolve</span><span class="p">({</span>
+       <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;Result: &#39;</span> <span class="o">+</span> <span class="nx">result</span><span class="p">,</span>
+       <span class="nx">done</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+     <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>如果异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数抛出错误，会导致 <code class="docutils literal"><span class="pre">Promise</span></code> 对象的状态变为 <code class="docutils literal"><span class="pre">reject</span></code> ，然后抛出的错误被 <code class="docutils literal"><span class="pre">catch</span></code> 方法捕获。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span><span class="o">*</span> <span class="nx">asyncGenerator</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Problem!&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">asyncGenerator</span><span class="p">()</span>
+<span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+<span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span> <span class="c1">// Error: Problem!</span>
+</pre></div>
+</div>
+<p>注意，普通的 <code class="docutils literal"><span class="pre">async</span></code> 函数返回的是一个 <code class="docutils literal"><span class="pre">Promise</span></code> 对象，而异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数返回的是一个异步 <code class="docutils literal"><span class="pre">Iterator</span></code> 对象。可以这样理解， <code class="docutils literal"><span class="pre">async</span></code> 函数和异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数，是封装异步操作的两种方法，都用来达到同一种目的。区别在于，前者自带执行器，后者通过 <code class="docutils literal"><span class="pre">for</span> <span class="pre">await...of</span></code> 执行，或者自己编写执行器。下面就是一个异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数的执行器。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">takeAsync</span><span class="p">(</span><span class="nx">asyncIterable</span><span class="p">,</span> <span class="nx">count</span> <span class="o">=</span> <span class="kc">Infinity</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="kr">const</span> <span class="nx">iterator</span> <span class="o">=</span> <span class="nx">asyncIterable</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">asyncIterator</span><span class="p">]();</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">count</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">value</span><span class="p">,</span> <span class="nx">done</span><span class="p">}</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">iterator</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+    <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数产生的异步遍历器，会通过 <code class="docutils literal"><span class="pre">while</span></code> 循环自动执行，每当 <code class="docutils literal"><span class="pre">await</span> <span class="pre">iterator.next()</span></code> 完成，就会进入下一轮循环。一旦 <code class="docutils literal"><span class="pre">done</span></code> 属性变为 <code class="docutils literal"><span class="pre">true</span></code> ，就会跳出循环，异步遍历器执行结束。</p>
+<p>下面是这个自动执行器的一个使用实例。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">async</span> <span class="kd">function</span><span class="o">*</span> <span class="nx">gen</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">yield</span> <span class="s1">&#39;a&#39;</span><span class="p">;</span>
+    <span class="k">yield</span> <span class="s1">&#39;b&#39;</span><span class="p">;</span>
+    <span class="k">yield</span> <span class="s1">&#39;c&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">await</span> <span class="nx">takeAsync</span><span class="p">(</span><span class="nx">gen</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="nx">f</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span> <span class="c1">// [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数出现以后， <code class="docutils literal"><span class="pre">JavaScript</span></code> 就有了四种函数形式：普通函数、 <code class="docutils literal"><span class="pre">async</span></code> 函数、 <code class="docutils literal"><span class="pre">Generator</span></code> 函数和异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数。请注意区分每种函数的不同之处。基本上，如果是一系列按照顺序执行的异步操作（比如读取文件，然后写入新内容，再存入硬盘），可以使用 <code class="docutils literal"><span class="pre">async</span></code> 函数；如果是一系列产生相同数据结构的异步操作（比如一行一行读取文件），可以使用异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数。</p>
+<p>异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数也可以通过 <code class="docutils literal"><span class="pre">next</span></code> 方法的参数，接收外部传入的数据。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">writer</span> <span class="o">=</span> <span class="nx">openFile</span><span class="p">(</span><span class="s1">&#39;someFile.txt&#39;</span><span class="p">);</span>
+<span class="nx">writer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">);</span> <span class="c1">// 立即执行</span>
+<span class="nx">writer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;world&#39;</span><span class="p">);</span> <span class="c1">// 立即执行</span>
+<span class="nx">await</span> <span class="nx">writer</span><span class="p">.</span><span class="k">return</span><span class="p">();</span> <span class="c1">// 等待写入结束</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">openFile</span></code> 是一个异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数。 <code class="docutils literal"><span class="pre">next</span></code> 方法的参数，向该函数内部的操作传入数据。每次 <code class="docutils literal"><span class="pre">next</span></code> 方法都是同步执行的，最后的 <code class="docutils literal"><span class="pre">await</span></code> 命令用于等待整个写入操作结束。</p>
+<p>最后，同步的数据结构，也可以使用异步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span><span class="o">*</span> <span class="nx">createAsyncIterable</span><span class="p">(</span><span class="nx">syncIterable</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">elem</span> <span class="k">of</span> <span class="nx">syncIterable</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">yield</span> <span class="nx">elem</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，由于没有异步操作，所以也就没有使用 <code class="docutils literal"><span class="pre">await</span></code> 关键字。</p>
+</div>
+<div class="section" id="yield">
+<h2>19.11. yield* 语句<a class="headerlink" href="#yield" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">yield*</span></code> 语句也可以跟一个异步遍历器。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span><span class="o">*</span> <span class="nx">gen1</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">yield</span> <span class="s1">&#39;a&#39;</span><span class="p">;</span>
+  <span class="k">yield</span> <span class="s1">&#39;b&#39;</span><span class="p">;</span>
+  <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">async</span> <span class="kd">function</span><span class="o">*</span> <span class="nx">gen2</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// result 最终会等于 2</span>
+  <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">yield</span><span class="o">*</span> <span class="nx">gen1</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">gen2</span></code> 函数里面的 <code class="docutils literal"><span class="pre">result</span></code> 变量，最后的值是 2 。</p>
+<p>与同步 <code class="docutils literal"><span class="pre">Generator</span></code> 函数一样， <code class="docutils literal"><span class="pre">for</span> <span class="pre">await...of</span></code> 循环会展开 <code class="docutils literal"><span class="pre">yield*</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">(</span><span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">await</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">x</span> <span class="k">of</span> <span class="nx">gen2</span><span class="p">())</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">})();</span>
+<span class="c1">// a</span>
+<span class="c1">// b</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Class的基本语法.html" class="btn btn-neutral float-right" title="20. Class 的基本语法" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Generator函数的异步应用.html" class="btn btn-neutral" title="18. Generator 函数的异步应用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+
+      });
+
+
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,631 @@
+******
+表维护
+******
+
+在本章中，我们将介绍以下配方：
+
+- 安装Percona Toolkit
+- 改变表格
+- 跨数据库移动表
+- 使用在线 schema 更改工具来更改表
+- 存档表
+- 克隆表
+- 分区表
+- 分区修剪和选择
+- 分区管理
+- 分区信息
+- 有效管理生存时间和软删除行
+
+简介
+====
+维护数据库的关键方面之一是管理表。通常，您需要更改大表或克隆表。在本章中，您将学习如何管理大表。 使用一些开源第三方工具用作 ``MySQL`` 不支持的某些操作。本章还介绍了第三方工具的安装和使用。
+
+安装Percona Toolkit
+===================
+Percona Toolkit 是 Percona 开发和使用的高级开源命令行工具的集合，用于执行手动执行过于困难或复杂的各种任务。本节介绍了安装。 在后面的部分中，您将学习如何使用它。
+
+在Debian/Ubuntu
+---------------
+1. 下载仓库包：
+
+.. code-block:: shell
+
+    shell> wget https://repo.percona.com/apt/perconarelease_0.1-4.$(lsb_release -sc)_all.deb
+
+2. 安装仓库包：
+
+.. code-block:: shell
+
+    shell> sudo dpkg -i percona-release_0.1-4.$(lsb_release -sc)_all.deb
+
+3. 更新本地包列表：
+
+.. code-block:: shell
+
+    shell> sudo apt-get update
+
+4. 确保 Percona 包可用：
+
+.. code-block:: shell
+
+    shell> apt-cache search percona
+
+您应该看到类似于以下内容的输出：
+
+.. code-block:: shell
+
+    percona-xtrabackup-dbg - Debug symbols for Percona XtraBackup
+    percona-xtrabackup-test - Test suite for Percona XtraBackup
+    percona-xtradb-cluster-client - Percona XtraDB Cluster database client
+    percona-xtradb-cluster-server - Percona XtraDB Cluster database server
+    percona-xtradb-cluster-testsuite - Percona XtraDB Cluster database regression test suite
+    percona-xtradb-cluster-testsuite-5.5 - Percona Server database test suite
+    ...
+
+5. 安装 percona-toolkit 包：
+
+.. code-block:: shell
+
+    shell> sudo apt-get install percona-toolkit
+
+如果您不想安装存储库，也可以直接安装：
+
+.. code-block:: shell
+
+    shell> wget https://www.percona.com/downloads/perconatoolkit/3.0.4/binary/debian/xenial/x86_64/perconatoolkit_3.0.4-1.xenial_amd64.deb
+    shell> sudo dpkg -i percona-toolkit_3.0.4-1.yakkety_amd64.deb;
+    shell> sudo apt-get install -f
+
+
+在CentOS/Red Hat/Fedora
+------------------------
+1. 安装仓库包：
+
+.. code-block:: shell
+
+    shell> sudo yum install http://www.percona.com/downloads/perconarelease/redhat/0.1-4/percona-release-0.1-4.noarch.rpm
+
+2. 确保 Percona 包可用：
+
+.. code-block:: shell
+
+    shell> sudo yum list | grep percona
+
+3. 安装 Percona Toolkit：
+
+.. code-block:: shell
+
+    shell> sudo yum install percona-toolkit
+
+如果您不想安装存储库，可以使用 ``YUM`` 直接安装：
+
+.. code-block:: shell
+
+    shell> sudo yum install https://www.percona.com/downloads/perconatoolkit/3.0.4/binary/redhat/7/x86_64/percona-toolkit-3.0.4-1.el7.x86_64.rpm
+
+改变表格
+========
+ALTER TABLE 更改表的结构。例如，您可以添加或删除列，创建或销毁索引，更改现有列的类型，或重命名列或表本身。
+
+当执行某些更改操作（例如更改列数据类型，添加 SPATIAL INDEX ，删除主键，转换字符集，添加/删除加密等）时，会阻止表上的 ``DML`` 操作。如果表很大，则需要更多时间来更改，并且应用程序在此期间无法访问表，这是我们不希望的。在这些情况下， ``pt-online-schema`` 更改很有用，允许使用 ``DML`` 语句。
+
+``alter`` 操作有两种算法：
+
+- 内置（默认）：不需要复制整个表数据；
+- 复制：将数据复制到临时磁盘文件中并重命名；
+
+内置算法只有某些改变操作可以完成。在线 ``DDL`` 操作的性能很大程度上取决于操作是内置算法执行，还是需要复制和重建整个表。请参阅 https://dev.mysql.com/doc/refman/8.0/en/innodb-create-index-overview.html#innodb-online-ddl-summary-grid 以了解哪些操作可以使用内置算法，以及避免表复制操作所必需的。
+
+复制算法的工作原理（取自参考手册- https://dev.mysql.com/doc/refman/8.0/en/alter-table.html ）不使用内置算法的 ``ALTER TABLE`` 操作会生成原始表格临时副本。 ``MySQL`` 等待正在修改表的其他操作，然后继续。它将更改合并到副本中，删除原始表，并重命名新表。在执行 ALTER TABLE 时，原始表可由其他会话读取。对 ALTER TABLE 操作开始后开始的表的更新和写入将停止，直到新表准备就绪，然后自动重定向到新表而不会有任何失败的更新。原始表的临时副本在新表的数据库目录中创建。这可能与用于将表重命名为其他数据库的 ALTER TABLE 操作的原始表的数据库目录不同。
+
+要了解 DDL 操作是内置算法还是执行表复制算法，请查看命令完成后显示的行受影响值：
+
+- 更改列的默认值（超快，根本不影响表数据），输出将是这样的事情：
+
+.. code-block:: shell
+
+    Query OK, 0 rows affected (0.07 sec)
+
+- 增加一个索引（需要时间，但受影响的0行 显示表未被复制），输出将是这样的事情：
+
+.. code-block:: shell
+
+    Query OK, 0 rows affected (21.42 sec)
+
+- 更改列的数据类型（需要大量时间并且需要重建表的所有行），输出将是这样的事情：
+
+.. code-block:: shell
+
+    Query OK, 1671168 rows affected (1 min 35.54 sec)
+
+更改列的数据类型需要重建表的所有行，但更改 ``VARCHAR`` 大小除外，这可以使用在线 ``ALTER TABLE`` 执行。请参阅使用在线 ``schema`` 更改工具更改表中提到的示例，该部分显示了如何使用 ``pt-online-schema`` 修改列属性。
+
+如果要向 ``employees`` 表添加新列，可以执行 ``ADD COLUMN`` 语句：
+
+.. code-block:: shell
+
+    mysql> ALTER TABLE employees ADD COLUMN address varchar(100);
+
+您可以看到受影响的行数为 0 ，这意味着不会复制该表并且使用内置算法操作。
+
+如果要增加 ``varchar`` 列的长度，可以执行 ``MODIFY COLUMN`` 语句：
+
+.. code-block:: shell
+
+    mysql> ALTER TABLE employees MODIFY COLUMN address VARCHAR(255);
+
+如果您认为 ``varchar(255)`` 不足以存储地址，并且您希望将其更改为 ``tinytext`` ，则可以使用 ``MODIFY COLUMN`` 语句。但是，在这种情况下，由于您要修改列的数据类型，因此应修改现有表的所有行，这需要表副本，并且 ``DML`` 被阻止：
+
+.. code-block:: shell
+
+    mysql> ALTER TABLE employees MODIFY COLUMN address tinytext;
+    Query OK, 300025 rows affected (4.36 sec)
+    Records: 300025 Duplicates: 0 Warnings: 0
+
+您会注意到受影响的行是 300025 ，这是表的大小。
+
+您可以执行各种其他操作，例如重命名列，更改默认值，重新排序列位置等等; 请参阅 https://dev.mysql.com/doc/refman/8.0/en/innodb-create-index-overview.html 了解更多详情。
+
+添加虚拟生成列只是元数据更改，几乎是即时的：
+
+.. code-block:: shell
+
+    mysql> ALTER TABLE employees ADD COLUMN full_name VARCHAR(40) AS (CONCAT('first_name', ' ','last_name'));
+    Query OK, 0 rows affected (0.09 sec)
+    Records: 0 Duplicates: 0 Warnings: 0
+
+但是，添加 ``STORED GENERATED`` 列并修改 ``VIRTUAL GENERATED`` 列不在线：
+
+.. code-block:: shell
+
+    mysql> ALTER TABLE employees MODIFY COLUMN full_name VARCHAR(40) AS (CONCAT(first_name, '-', last_name)) VIRTUAL;
+    Query OK, 300026 rows affected (4.37 sec)
+    Records: 300026 Duplicates: 0 Warnings: 0
+
+跨数据库移动表
+==============
+您可以通过执行 ``RENAME TABLE`` 语句来重命名表。
+
+要使以下插图生效，请创建样本表和数据库
+
+.. code-block:: shell
+
+    mysql> CREATE DATABASE prod;
+    mysql> CREATE TABLE prod.audit_log (id int NOT NULL,msg varchar(64));
+    mysql> CREATE DATABASE archive;
+
+例如，如果要重命名 ``audit_log`` 表 ``audit_log_archive_2018`` ，则可以执行以下操作：
+
+.. code-block:: shell
+
+    mysql> USE prod;
+    Database changed
+    mysql> RENAME TABLE audit_log TO audit_log_archive_2018;
+    Query OK, 0 rows affected (0.07 sec)
+
+如果要将表从一个数据库移动到另一个数据库，可以使用点表示法指定数据库名称。例如，如果要将 ``audit_log`` 表从名为 ``prod`` 的数据库移动到名为 ``archive`` 的数据库，请执行以下命令：
+
+.. code-block:: shell
+
+    mysql> USE prod
+    mysql> SHOW TABLES;
+    +------------------------+
+    | Tables_in_prod         |
+    +------------------------+
+    | audit_log_archive_2018 |
+    +------------------------+
+    1 row in set (0.00 sec)
+    mysql> RENAME TABLE audit_log_archive_2018 TO archive.audit_log;
+    Query OK, 0 rows affected (0.03 sec)
+    mysql> SHOW TABLES;
+    Empty set (0.00 sec)
+    mysql> USE archive
+    mysql> SHOW TABLES;
+    +-------------------+
+    | Tables_in_archive |
+    +-------------------+
+    | audit_log         |
+    +-------------------+
+    1 row in set (0.00 sec)
+
+使用在线 schema 更改工具来更改表
+================================
+在本节中，您将了解 ``Percona`` 的 ``pt-online-schema-change`` （ ``pt-osc`` ）工具，该工具用于在不阻塞 ``DML`` 的情况下执行 ``ALTER TABLE`` 操作。
+
+``pt-osc`` 附带 ``Percona Toolkit`` 。本章前面已经介绍了 ``Percona Toolkit`` 的安装。
+
+参考 https://www.percona.com/doc/percona-toolkit/LATEST/pt-online-schema-change.html
+
+``pt-online-schema-change`` 的工作原理是创建表的空副本以进行更改，根据需要进行修改，然后将行从原始表复制到新表中。复制完成后，它会移走原始表并将其替换为新表。默认情况下，它也会删除原始表。
+
+数据复制过程在小块数据中执行，这些数据被变化以试图使它们在特定时间量内执行。复制期间对原始表中的数据的任何修改都将反映在新表中，因为该工具在原始表上创建触发器以更新新表中的相应行。 **触发器的使用意味着如果已经在表上定义了任何触发器，该工具将无法工作。**
+
+当工具完成将数据复制到新表中时，它使用原子 ``RENAME TABLE`` 操作同时重命名原始表和新表。完成此操作后，该工具将删除原始表。
+
+外键使工具的操作复杂化并带来额外的风险。当外键引用表时，自动重命名原始表和新表的技术不起作用。在 ``schema`` 更改完成后，该工具必须更新外键以引用新表。该工具支持两种实现此目的的方法。您可以在文档中 ``--alter-foreign-keys-method`` 阅读更多相关信息。
+
+修改列数据类型可以按如下方式完成
+--------------------------------
+
+.. code-block:: shell
+
+    shell> pt-online-schema-change D=employees,t=employees,h=localhost -u root --askpass --alter="MODIFY COLUMN address VARCHAR(100)" --alter-foreign-keys-method=auto --execute
+
+您将注意到该工具已创建一个具有修改结构的新表，在表上创建触发器，将行复制到新表，最后重命名新表。
+
+如果你想改变已经有触发器的工资(salaries)表，你需要指定 ``--preserver-triggers`` 选项，否则你最终会得到错误：The table `employees`.`salaries` has triggers but --preservetriggers was not specified.：
+
+.. code-block:: shell
+
+    shell> pt-online-schema-change D=employees,t=salaries,h=localhost -u user --ask-pass --alter="MODIFY COLUMN salary int" --alter-foreignkeys-method=auto --execute --no-drop-old-table --preserve-triggers
+
+如果服务器具有从服务器，则此工具可以在从现有表复制到新表时创建从属延迟。为避免这种情况，您可以指定 ``--check-slave-lag`` （默认情况下启用）；它会暂停数据副本，直到此副本的滞后小于 ``--max-lag`` ，默认为 1 秒。您可以通过传递 ``--max-lag`` 选项指定 ``--max-lag`` 。如果要确保从站不会滞后超过 10 秒，请传递 ``--max-lag = 10`` ：
+
+.. code-block:: shell
+
+    shell> pt-online-schema-change D=employees,t=employees,h=localhost -u user --askpass --alter="MODIFY COLUMN address VARCHAR(100)" --alter-foreign-keys-method=auto --execute --preservetriggers --max-lag=10
+
+对于更多详情和选项，请参考 https://www.percona.com/doc/percona-toolkit/LATEST/pt-online-schema-change.html
+
+``pt-online-schema-change`` 仅在存在主键或唯一键时才起作用，否则将失败并出现以下错误：The new table `employees`.`_employees_new` does not have a PRIMARY KEY or a unique index which is required for the DELETE trigger.
+
+因此，如果表没有任何唯一键，则不能使用 ``pt-online-schema-change`` 。
+
+https://www.cnblogs.com/xiaoyanger/p/6043986.html
+
+存档表
+=======
+有时，您不希望保留旧数据并希望删除它。如果要删除一个月前最后一次访问的所有行，如果表很小( <10k 行)，则可以立即使用以下内容：
+
+.. code-block:: shell
+
+    DELETE FROM <TABLE> WHERE last_accessed<DATE_ADD(NOW(), INTERVAL -1 MONTH)
+
+如果表很大会怎么样？您知道 ``InnoDB`` 创建一个 ``UNDO`` 日志来恢复失败的事务。因此，所有已删除的行都保存在 ``UNDO`` 日志空间中，以便在 ``DELETE`` 语句中间中止时用于还原。不幸的是，如果 ``DELETE`` 语句在中间中止， ``InnoDB`` 会将 ``UNDO`` 日志空间中的行复制到表，这会使表无法访问。
+
+要克服此行为，您可以 ``LIMIT`` 限制删除的行数和 ``COMMIT`` 事务，在循环中运行相同的操作，直到删除所有不需要的行。这是一个示例伪代码：
+
+.. code-block:: shell
+
+    WHILE count<=0:
+        DELETE FROM <TABLE> WHERE last_accessed<DATE_ADD(NOW(), INTERVAL -1 MONTH) LIMIT 10000;
+        count=SELECT COUNT(*) FROM <TABLE> WHERE last_accessed<DATE_ADD(NOW(), INTERVAL -1 MONTH);
+
+如果 ``last_accessed`` 上没有 ``INDEX`` ，它可能会锁定表。在这种情况下，您需要找出已删除行的主键并根据 ``PRIMARY KEY`` 删除。
+
+这是伪代码，假设 ``id`` 是 ``PRIMARY KEY`` ：
+
+.. code-block:: shell
+
+    WHILE count<=0:
+        SELECT id FROM <TABLE> WHERE last_accessed < DATE_ADD(NOW(), INTERVAL -1 MONTH) LIMIT 10000;
+        DELETE FROM <TABLE> WHERE id IN ('ids from above statement');
+        count=SELECT COUNT(*) FROM <TABLE> WHERE last_accessed<DATE_ADD(NOW(), INTERVAL -1 MONTH);
+
+您可以使用 ``Percona`` 的 ``pt-archiver`` 工具，而不是编写用于删除行的代码，它基本上执行相同操作并提供许多其他选项，例如将行保存到另一个表或文件中，对负载和复制延迟进行精细控制等等。
+
+清除数据
+--------
+如果要删除雇佣超过30年的 ``employees`` 表中的所有行，可以执行以下操作：
+
+.. code-block:: shell
+
+    shell> pt-archiver --source h=localhost,D=employees,t=employees -u <user> -p<pass> --where="hire_date<DATE_ADD(NOW(), INTERVAL -30 YEAR)" --no-check-charset --limit 10000 --commiteach
+
+您可以通过 ``--source`` 选项传递主机名，数据库名称和表名。您可以使用 ``--limit`` 选项限制批量删除的行数。
+
+如果指定 ``--progress`` ，则输出是标题行，以及间隔的状态输出。状态输出中的每一行都列出了当前日期和时间， ``pt-archiver`` 运行的秒数以及已归档的行数。
+
+如果指定 ``--statistics`` ，则 ``pt-archiver`` 会输出时间和其他信息，以帮助您确定归档过程的哪个部分花费最多时间。
+
+如果指定 ``--check-slave-lag`` ，该工具将暂停归档，直到从属延迟小于 ``--max-lag`` 。
+
+归档数据
+--------
+如果要将删除后的行保存到单独的表或文件中，可以指定 ``--dest`` 选项。假设您要将 ``employees`` 表的所有行从 ``employees`` 数据库移动到 ``employees_archive`` 表，您可以执行以下操作：
+
+.. code-block:: shell
+
+    shell> pt-archiver --source h=localhost,D=employees,t=employees --dest h=localhost,D=employees_archive -u <user> -p<pass> -- where="1=1" --no-check-charset --limit 10000 --commit-each
+
+如果指定 ``--where ="1 = 1"`` ，则复制所有行。
+
+拷贝数据
+--------
+如果要将数据从一个表复制到另一个表，可以使用 ``mysqldump`` 或 ``mysqlpump`` 备份某些行，然后将它们加载到目标表中。作为替代方案，您也可以使用 ``pt-archive`` 。如果指定 ``--no-delete`` 选项，则 ``pt-archiver`` 不会从源中删除行：
+
+.. code-block:: shell
+
+    shell> pt-archiver --source h=localhost,D=employees,t=employees --dest h=localhost,D=employees_archive -u <user> -p<pass> --where="1=1" --no-check-charset --limit 10000 --commit-each --no-delete
+
+为了获取 ``pt-archiver`` 更多详情和选项，请参考 https://www.percona.com/doc/percona-toolkit/LATEST/pt-archiver.html
+
+克隆表
+=======
+克隆表有很多方法：
+
+1. 使用 INSERT INTO SELECT 语句：
+
+.. code-block:: shell
+
+    mysql> CREATE TABLE employees_clone LIKE employees;
+    mysql> INSERT INTO employees_clone SELECT * FROM employees;
+
+请注意，如果有任何生成的列，则上述语句将不起作用。在这种情况下，您应该提供完整的插入语句，不包括生成的列。
+
+.. code-block:: shell
+
+    mysql> INSERT INTO employees_clone SELECT * FROM employees;
+    ERROR 3105 (HY000): The value specified for generated
+    column 'hire_date_year' in table 'employees_clone' is
+    not allowed.
+    mysql> INSERT INTO employees_clone(emp_no,birth_date, first_name, last_name, gender, hire_date)
+    SELECT emp_no, birth_date, first_name, last_name,gender, hire_date FROM employees;
+    Query OK, 300024 rows affected (3.21 sec)
+    Records: 300024 Duplicates: 0 Warnings: 0
+
+但是前面的语句在大表中是非常缓慢和危险的。请记住，如果语句失败，要恢复表状态， ``InnoDB`` 会将所有行保存在 ``UNDO`` 日志中。
+
+2. 使用 ``mysqldump`` 或 ``mysqlpump`` 并备份单个表并在目标上恢复它。 如果表很大，这可能需要很长时间。
+3. 使用 ``Innobackupex`` 备份特定表并将数据文件还原到目标。
+4. 将 ``pt-archiver`` 与 ``--no-delete`` 选项一起使用，该选项将所需的行或所有行复制到目标表。
+
+您还可以使用可传输表空间来克隆表，将在11章的复制表空间每个表文件中进行了说明。
+
+分区表
+=======
+您可以使用分区在文件系统中分发单个表的各个部分。用于完成数据划分的用户选择规则称为分区函数，其可以是模数，与一组范围或值列表的简单匹配，内部散列函数或线性散列函数。
+
+可以将表的不同行分配给不同的物理分区，这称为水平分区。 MySQL 不支持垂直分区，其中表的不同列分配给不同的物理分区。
+
+分区表有很多种方法：
+
+- RANGE ：这种类型的分区根据属于给定范围的列值将行分配给分区。
+- LIST ：与 ``RANGE`` 分区类似，不同之处在于根据匹配一组离散值之一的列选择分区。
+- HASH ：使用这种类型的分区，将根据用户定义的表达式返回的值选择分区，该表达式对要插入表中的行中的列值进行操作。该函数可以包含在 MySQL 中有效的任何表达式，该表达式产生非负整数值。
+- KEY ：这种类型的分区类似于通过 ``HASH`` 进行分区，除了仅提供一个或多个要计算的列，并且 MySQL 服务器提供其自己的散列函数。这些列可以包含非整数值，因为 MySQL 提供的散列函数保证整数结果，而不管列数据类型如何。
+
+前面的每个分区类型都有一个扩展名。 RANGE 具有 RANGE COLUMNS ， LIST 具有 LIST COLUMNS ， HASH 具有 LINEAR HASH ， KEY 具有 LINEAR KEY 。
+
+对于 [LINEAR] KEY ， RANGE COLUMNS 和 LIST COLUMNS 分区，分区表达式由一列或多列组成。
+
+在 RANGE ， LIST 和 [LINEAR] HASH 分区的情况下，分区列的值被传递给分区函数，该分区函数返回一个整数值，表示应该存储该特定记录的分区的编号。 此函数必须是非常量且非随机的。
+
+数据库分区的一个非常常见的用途是按日期隔离数据。
+
+分区优点和其它详情请参考 https://dev.mysql.com/doc/refman/8.0/en/partitioning-overview.html
+
+请注意，分区仅适用于 ``InnoDB`` 表，并且尚未支持外键与分区一起使用。
+
+您可以在创建表时指定分区，也可以通过执行 ``ALTER TABLE`` 命令来指定分区。分区列应该是表中所有唯一键的一部分。
+
+如果您基于 ``created_at`` 列定义了分区，并且 ``id`` 是主键，则应将 ``create_at`` 列包含为 ``PRIMARY KEY`` 的一部分，即 ``(id，created_at)`` 。 以下示例假定没有引用该表的外键。
+
+如果您希望在 MySQL 8.0 中基于时间范围或时间间隔实现分区方案，您有两种选择：
+
+- 通过 ``RANGE`` 对表进行分区，对于分区表达式，使用在 ``DATE`` ， ``TIME`` 或 ``DATETIME`` 列上运行的函数并返回整数值；
+- 使用 ``DATE`` 或 ``DATETIME`` 列作为分区列，通过 ``RANGE COLUMNS`` 对表进行分区
+
+范围分区
+--------
+如果要基于 ``emp_no`` 对 ``employees`` 表进行分区，并且希望在一个分区中保留 100,000 个员工，则可以像这样创建它：
+
+.. code-block:: shell
+
+    mysql> CREATE TABLE `employees` (
+    `emp_no` int(11) NOT NULL,
+    `birth_date` date NOT NULL,
+    `first_name` varchar(14) NOT NULL,
+    `last_name` varchar(16) NOT NULL,
+    `gender` enum('M','F') NOT NULL,
+    `hire_date` date NOT NULL,
+    `address` varchar(100) DEFAULT NULL,
+    PRIMARY KEY (`emp_no`),
+    KEY `name` (`first_name`,`last_name`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    PARTITION BY RANGE (emp_no)
+    (PARTITION p0 VALUES LESS THAN (100000) ENGINE = InnoDB,
+    PARTITION p1 VALUES LESS THAN (200000) ENGINE = InnoDB,
+    PARTITION p2 VALUES LESS THAN (300000) ENGINE = InnoDB,
+    PARTITION p3 VALUES LESS THAN (400000) ENGINE = InnoDB,
+    PARTITION p4 VALUES LESS THAN (500000) ENGINE = InnoDB);
+
+因此，所有 ``emp_no`` 小于 100,000 的员工都将进入分区 ``p0`` ，所有 ``emp_no`` 小于 200000 且大于 100000 的员工将进入分区 ``p1`` ，依此类推。
+
+如果员工编号高于 500000 ，由于没有为他们定义分区，插入将失败并显示错误。要避免这种情况，您必须定期检查并添加分区或创建 ``MAXVALUE`` 分区以捕获所有此类异常：
+
+.. code-block:: shell
+
+    mysql> CREATE TABLE `employees` (
+    `emp_no` int(11) NOT NULL,
+    `birth_date` date NOT NULL,
+    `first_name` varchar(14) NOT NULL,
+    `last_name` varchar(16) NOT NULL,
+    `gender` enum('M','F') NOT NULL,
+    `hire_date` date NOT NULL,
+    `address` varchar(100) DEFAULT NULL,
+    PRIMARY KEY (`emp_no`),
+    KEY `name` (`first_name`,`last_name`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    PARTITION BY RANGE (emp_no)
+    (PARTITION p0 VALUES LESS THAN (100000) ENGINE = InnoDB,
+    PARTITION p1 VALUES LESS THAN (200000) ENGINE = InnoDB,
+    PARTITION p2 VALUES LESS THAN (300000) ENGINE = InnoDB,
+    PARTITION p3 VALUES LESS THAN (400000) ENGINE = InnoDB,
+    PARTITION p4 VALUES LESS THAN (500000) ENGINE = InnoDB,
+    PARTITION pmax VALUES LESS THAN MAXVALUE ENGINE = InnoDB
+    );
+
+如果要基于 ``hire_date`` 进行分区，可以使用 ``YEAR(hire_date)`` 函数作为分区表达式：
+
+.. code-block:: shell
+
+    mysql> CREATE TABLE `employees` (
+    `emp_no` int(11) NOT NULL,
+    `birth_date` date NOT NULL,
+    `first_name` varchar(14) NOT NULL,
+    `last_name` varchar(16) NOT NULL,
+    `gender` enum('M','F') NOT NULL,
+    `hire_date` date NOT NULL,
+    `address` varchar(100) DEFAULT NULL,
+    PRIMARY KEY (`emp_no`,`hire_date`),
+    KEY `name` (`first_name`,`last_name`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    PARTITION BY RANGE (YEAR(hire_date))
+    (PARTITION p1980 VALUES LESS THAN (1980) ENGINE = InnoDB,
+    PARTITION p1990 VALUES LESS THAN (1990) ENGINE = InnoDB,
+    PARTITION p2000 VALUES LESS THAN (2000) ENGINE = InnoDB,
+    PARTITION p2010 VALUES LESS THAN (2010) ENGINE = InnoDB,
+    PARTITION p2020 VALUES LESS THAN (2020) ENGINE = InnoDB,
+    PARTITION pmax VALUES LESS THAN MAXVALUE ENGINE = InnoDB
+    );
+
+MySQL 中的分区广泛用于日期(date)，日期时间(datetime)或时间戳(timestamp)列。如果要在数据库中存储某些事件，并且所有查询都基于时间范围，则可以使用这样的分区。
+
+分区函数 ``to_days()`` 返回自 0000-01-01 以来的天数，这是一个整数：
+
+.. code-block:: shell
+
+mysql> CREATE TABLE `event_history` (
+    `event_id` int(11) NOT NULL,
+    `event_name` varchar(10) NOT NULL,
+    `created_at` datetime NOT NULL,
+    `last_updated` timestamp DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+    `event_type` varchar(10) NOT NULL,
+    `msg` tinytext NOT NULL,
+    PRIMARY KEY (`event_id`,`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+PARTITION BY RANGE (to_days(created_at))
+(PARTITION p20170930 VALUES LESS THAN (736967) ENGINE = InnoDB,
+PARTITION p20171001 VALUES LESS THAN (736968) ENGINE = InnoDB,
+PARTITION p20171002 VALUES LESS THAN (736969) ENGINE = InnoDB,
+PARTITION p20171003 VALUES LESS THAN (736970) ENGINE = InnoDB,
+PARTITION p20171004 VALUES LESS THAN (736971) ENGINE = InnoDB,
+PARTITION p20171005 VALUES LESS THAN (736972) ENGINE = InnoDB,
+PARTITION p20171006 VALUES LESS THAN (736973) ENGINE = InnoDB,
+PARTITION p20171007 VALUES LESS THAN (736974) ENGINE = InnoDB,
+PARTITION p20171008 VALUES LESS THAN (736975) ENGINE = InnoDB,
+PARTITION p20171009 VALUES LESS THAN (736976) ENGINE = InnoDB,
+PARTITION p20171010 VALUES LESS THAN (736977) ENGINE = InnoDB,
+PARTITION p20171011 VALUES LESS THAN (736978) ENGINE = InnoDB,
+PARTITION p20171012 VALUES LESS THAN (736979) ENGINE = InnoDB,
+PARTITION p20171013 VALUES LESS THAN (736980) ENGINE = InnoDB,
+PARTITION p20171014 VALUES LESS THAN (736981) ENGINE = InnoDB,
+PARTITION p20171015 VALUES LESS THAN (736982) ENGINE = InnoDB,
+PARTITION pmax VALUES LESS THAN MAXVALUE ENGINE = InnoDB
+);
+
+如果要将现有表转换为分区表，并且分区键不是 ``PRIMARY KEY`` 的一部分，则需要删除 ``PRIMARY KEY`` 并将分区键作为 ``PRIMARY KEY`` 和所有唯一键的一部分添加。否则，您将收到错误  ERROR 1503 (HY000): A PRIMARY KEY must include all columns in the table's partitioning function..。您可以按如下方式执行此操作：
+
+.. code-block:: shell
+
+    mysql> ALTER TABLE employees DROP PRIMARY KEY, ADD PRIMARY KEY(emp_no,hire_date);
+    Query OK, 0 rows affected (0.11 sec)
+    Records: 0 Duplicates: 0 Warnings: 0
+
+    mysql> ALTER TABLE employees PARTITION BY RANGE
+    (YEAR(hire_date))
+    (PARTITION p1980 VALUES LESS THAN (1980) ENGINE = InnoDB,
+    PARTITION p1990 VALUES LESS THAN (1990) ENGINE = InnoDB,
+    PARTITION p2000 VALUES LESS THAN (2000) ENGINE = InnoDB,
+    PARTITION p2010 VALUES LESS THAN (2010) ENGINE = InnoDB,
+    PARTITION p2020 VALUES LESS THAN (2020) ENGINE = InnoDB,
+    PARTITION pmax VALUES LESS THAN MAXVALUE ENGINE = InnoDB
+    );
+    Query OK, 300025 rows affected (4.71 sec)
+    Records: 300025 Duplicates: 0 Warnings: 0
+
+范围分区的更多详情，请参考 https://dev.mysql.com/doc/refman/8.0/en/partitioning-range.html
+
+移除分区
+--------
+如果要删除分区，可以执行 ``REMOVE PARTITIONING`` 语句：
+
+.. code-block:: shell
+
+    mysql> ALTER TABLE employees REMOVE PARTITIONING;
+    Query OK, 0 rows affected (0.09 sec)
+    Records: 0 Duplicates: 0 Warnings: 0
+
+范围列分区
+----------
+
+
+LIST 和 LIST 列分区
+-------------------
+
+
+
+HASH 和 LINEAR HASH 分区
+------------------------
+
+
+
+KEY 和 LINEAR KEY 分区
+----------------------
+
+
+子分区
+------
+
+分区修剪和选择
+==============
+
+分区修剪
+--------
+
+
+
+分区选择
+--------
+
+
+分区管理
+========
+
+增加分区
+--------
+
+
+重新组织分区
+------------
+
+
+截断分区
+--------
+
+
+管理HASH和KEY分区
+-----------------
+
+
+其它操作
+--------
+
+
+分区信息
+========
+
+使用 SHOW CREATE TABLE
+----------------------
+
+
+使用 SHOW TABLE STATUS
+----------------------
+
+
+使用EXPLAIN
+-----------
+
+
+查询 INFORMATION_SCHEMA.PARTITIONS 表
+-------------------------------------
+
+
+
+有效管理生存时间和软删除行
+==========================
+
+
+

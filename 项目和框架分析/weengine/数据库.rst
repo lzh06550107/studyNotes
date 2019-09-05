@@ -1,0 +1,862 @@
+******
+数据库
+******
+
+.. contents:: 目录
+   :depth: 4
+
+数据库配置
+=========
+微擎系统支持数据库的主从配置（一主多从），只需要进行简单的配置即可。
+
+配置主从支持在系统 "data/config.php" 文件中，具体配置如下：
+
+.. note:: 部分用户没有 ``master`` 项， ``$config['db']['host']`` 等同于 ``$config['db']['master']['host']``
+
+.. code-block:: php
+
+	//主库配置
+	$config['db']['master']['host'] = '192.168.1.2';
+	$config['db']['master']['username'] = 'root';
+	$config['db']['master']['password'] = '123456';
+	$config['db']['master']['port'] = '3306';
+	$config['db']['master']['database'] = 'we7_pro';
+	$config['db']['master']['charset'] = 'utf8';
+	$config['db']['master']['pconnect'] = 0;
+	$config['db']['master']['tablepre'] = 'ims_';
+
+	//从库配置
+	$config['db']['slave_status'] = false; //是否开启主从配置
+	$config['db']['slave']['1']['host'] = '192.168.1.3';        //从库配置要与主库相同??有这个必要
+	$config['db']['slave']['1']['username'] = 'root';
+	$config['db']['slave']['1']['password'] = '123456';
+	$config['db']['slave']['1']['port'] = '3306';
+	$config['db']['slave']['1']['database'] = 'we7_pro';
+	$config['db']['slave']['1']['charset'] = 'utf8';
+	$config['db']['slave']['1']['pconnect'] = 0;
+	$config['db']['slave']['1']['tablepre'] = 'ims_';
+	$config['db']['slave']['1']['weight'] = 0;                  //从库的权重值，默认0即可
+
+	//不进行主从分离的表
+	$config['db']['common']['slave_except_table'] = array(
+		'core_sessions',
+	);
+
+数据库链接
+==========
+操作微擎系统数据库使用系统封装好的 ``pdo_xxx`` 相关函数，如果您想同时连接操作其它数据库可以使用以下方法，例如：
+
+.. code-block:: php
+
+	$discuz_database = array(
+		'host' => '192.168.1.2', //数据库IP或是域名
+		'username' => 'root', // 数据库连接用户名
+		'password' => '123456', // 数据库连接密码
+		'database' => 'discuz', // 数据库名
+		'port' => 3306, // 数据库连接端口
+		'tablepre' => 'pre_', // 表前缀，如果没有前缀留空即可
+		'charset' => 'utf8', // 数据库默认编码
+		'pconnect' => 0, // 是否使用长连接
+	);
+	$discuz_db = new DB($discuz_database);
+	//查询uid为1的会员信息
+	$member = $discuz_db->get('common_member', array('uid' => 1));
+	//更新uid为1的会员信息
+	$discuz_db->update('common_member', array('username' => 'admin888'), array('uid' => 1));
+	//其它使用方法与pdo_xxx相关函数相同
+
+连接其它主从数据库
+-----------------
+如果要连接的数据库有主从分离，则构造连接 ``config`` 的时候，参考系统数据库连接配置即可，例如：
+
+.. code-block:: php
+
+	$discuz_database['master']['host'] = '192.168.1.12';
+	$discuz_database['master']['username'] = 'root';
+	$discuz_database['master']['password'] = '123456';
+	$discuz_database['master']['port'] = '3306';
+	$discuz_database['master']['database'] = 'discuz';
+	$discuz_database['master']['charset'] = 'utf8';
+	$discuz_database['master']['pconnect'] = 0;
+	$discuz_database['master']['tablepre'] = 'pre_';
+
+	$discuz_database['slave_status'] = true;
+	$discuz_database['slave']['1']['host'] = '192.168.1.11';
+	$discuz_database['slave']['1']['username'] = 'root';
+	$discuz_database['slave']['1']['password'] = '123456';
+	$discuz_database['slave']['1']['port'] = '3306';
+	$discuz_database['slave']['1']['database'] = 'discuz';
+	$discuz_database['slave']['1']['charset'] = 'utf8';
+	$discuz_database['slave']['1']['pconnect'] = 0;
+	$discuz_database['slave']['1']['tablepre'] = 'pre_';
+	$discuz_database['slave']['1']['weight'] = 0;
+
+数据库操作
+=========
+
+微擎系统中存在两种操作数据库的方式：
+
+- 通过封装 ``PDO`` 接口来提供原始 ``sql`` 语句方式；
+- 通过 ``sql`` 构建工具来生成 ``sql`` 语句方式；
+
+``sql`` 构建器本质上时调用底层封装的 ``PDO`` 接口函数来实现的。
+
+封装PDO接口操作方式
+------------------
+这种方式需要用户手动拼装sql语句。
+
+微擎系统数据库操作使用 ``PDO`` 兼容方式，以参数绑定的形式进行查询操作。
+系统已对 ``PDO`` 兼容性进行检测及封装。下面具体说明一下数据库的几种基本操作方法。
+
+微擎系统通过 ``db.class.php`` 文件中 ``DB`` 类提供对 ``PDO`` 接口最底层的封装，而 ``slave.db.class.php`` 文件中的 ``SlaveDb`` 类继承了 ``DB`` 类提供额外的主从分离的操作。 ``pdo.func.php`` 文件中的函数是对 ``DB`` 或 ``SlaveDB`` 类中方法的封装。
+
+.. code-block:: php
+
+	$discuz_database = array(
+	    'host' => '127.0.0.1', //数据库IP或是域名
+	    'username' => 'root', // 数据库连接用户名
+	    'password' => 'root', // 数据库连接密码
+	    'database' => 'we7', // 数据库名
+	    'port' => 3306, // 数据库连接端口
+	    'tablepre' => 'ims_', // 表前缀，如果没有前缀留空即可
+	    'charset' => 'utf8', // 数据库默认编码
+	    'pconnect' => 0, // 是否使用长连接
+	);
+
+	$pdo_demo = new DB($discuz_database);
+
+DB 类提供如下方法：
+
+为了在微擎提供单实例 ``DB/SlaveDB`` 类。 在 ``pdo.fun.php`` 文件中提供了全局函数 ``pdo()`` 总是返回已经初始化的同一个 ``DB/SlaveDB`` 实例。所以如下的方法调用是等价的。
+
+范围条件操作
+------------
+范围条件 ``$params`` 参数可以使用 ``>`` , ``<`` , ``<>`` , ``!=`` , ``>=`` , ``<=`` , ``+=`` , ``-=`` , ``LIKE`` , ``like`` 操作符。
+
+- 如果不带操作符，则默认使用为 ``=`` 操作符；
+- 如果不带操作符且值为数组，则默认使用 ``IN`` 操作符；
+- 如果不带操作符且值为NULL，则默认使用 ``IS`` 操作符；
+- 字段名与操作符组成条件数组的键名，字段名与操作符中间间隔一个空格；
+
+.. code-block:: php
+
+	//获取acid大于269的公众号
+	$account = pdo_get('account', array('acid >' => '269'));
+	//增加一次用户的错误登录次数，两次变为2即可
+	pdo_update('users_failed_login', array('count +=' => 1), array('username' => 'mizhou'));
+
+IN 和 NOT IN
+-------------
+当传入的条件数组的值为数组时，系统会自动转成成 ``IN`` 语句，如果和 ``<>`` 或 ``!=`` （不等于）一起使用时，会自动转换为 ``NOT IN`` 。
+
+.. code-block:: php
+
+	pdo_getall('users', array('uid' => array('1', '2', '3')));
+	//对应的SQL语句调用
+	pdo_fetchall("SELECT * FROM `ims_users` WHERE `uid` IN (:__uid_0,:__uid_1,:__uid_2)", array(':__uid_0' => 1, ':__uid_1' => 2, ':__uid_2' => 3));
+	pdo_getall('users', array('uid <>' => array('1', '2', '3')));
+	//对应的SQL语句调用
+	pdo_fetchall("SELECT * FROM `ims_users` WHERE `uid` NOT IN (:__uid_0,:__uid_1,:__uid_2)", array(':__uid_0' => 1, ':__uid_1' => 2, ':__uid_2' => 3));
+
+IS NULL 和 IS NOT NULL
+----------------------
+当且仅当值为大写的 ``NULL`` 字符串时，系统会认为这是需要查询 ``NULL`` 值，会将 ``SQL`` 写成 ``IS NULL`` 的形式，具体如下：
+
+.. code-block:: php
+
+	pdo_get('users', array('username' => 'NULL'));
+	//此语句会转化为 
+	SELECT * FROM user WHERE username IS NULL
+
+聚合查询
+--------
+当获取的字段中是聚合字段时，比如 ``COUNT(*)`` ,  ``SUM()`` 等，如果指定过别名，则可以真通过别名获取值，如果未指定别名，则可以通过字段排序的索引获取。
+
+.. code-block:: php
+
+	$usercount = pdo_get('users', array(), array('COUNT(*)', 'uid', 'MAX(uid)', 'MIN(uid) AS minuid'));
+	//$usercount 值为
+	Array (
+	    [0] => 103 //总数
+	    [uid] => 1 
+	    [2] => 179 //最大UID
+	    [minuid] => 1 //最小UID
+	)
+
+
+插入操作
+^^^^^^^^
+
+pdo_insert/insert($table, $data = array(), $replace = FALSE)
+"""""""""""""""""""""""""""""""""""""""""""""""""
+对指定数据表插入一条新记录。
+
+- $table ：表名称，不带前缀
+- $data ：插入数据，只能是一维关联数组
+- $replace ：是否执行 REPLACE INTO
+
+``replace into`` 首先尝试插入数据到表中， 1. 如果发现表中已经有此行数据（根据主键或者唯一索引判断）则先删除此行数据，然后插入新的数据。 2. 否则，直接插入新数据。
+
+.. code-block:: php
+
+    $pdo_demo->insert('demo',['username'=>'lzh', 'password'=>'测试','nickname'=>'昵称'],true);
+
+    // 不支持批量插入
+	$pdo_demo->insert('demo', [
+	    [
+	        'username'=>'lzh1','password'=>'测试1','nickname'=>'昵称1'
+	    ],
+	    [
+	        'username'=>'lzh2','password'=>'测试2','nickname'=>'昵称2'
+	    ]
+	]);
+
+	//添加一条用户记录，并判断是否成功
+	$user_data = array(
+		'username' => 'mizhou1',
+		'status' => '1',
+	);
+	$result = pdo_insert('users', $user_data);
+	if (!empty($result)) {
+		$uid = pdo_insertid();
+		message('添加用户成功，UID为' . $uid);
+	}
+
+更新操作
+^^^^^^^^
+pdo_update/update($table, $data = array(), $params = array(), $glue = 'AND')
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+更新指定的数据表的记录。
+
+- $table ：表名称，不带前缀
+- $data ：更新数据数组，只能是一维数组，操作符可以是 ``+=`` 或者 ``-=`` 表示当前字段增减操作
+- $params ：更新条件，只能是一维数组，字段的值可以是一维数组
+- $glue ：条件组合方式，如 ``AND`` 或者 ``OR``
+
+.. code-block:: php
+
+    $pdo_demo->update('demo',['password'=>'newpassword', 'nickname'=>'newnickname'],['username'=>'lzh','id'=>'8']);
+
+    //增加一次用户的错误登录次数，两次变为2即可
+	pdo_update('users_failed_login', array('count +=' => 1), array('username' => 'mizhou'));
+
+	//更uid等于2的用户的用户名
+	$user_data = array(
+		'username' => 'mizhou2',
+	);
+	$result = pdo_update('users', $user_data, array('id' => 2));
+	if (!empty($result)) {
+		message('更新成功');
+	}
+
+查询操作
+^^^^^^^^
+
+pdo_query/query($sql, $params = array())
+""""""""""""""""""""""""""""""
+当更新，插入，删除无法满足时，可以直接构造SQL语句进行操作。执行一条 ``sql`` 语句，可以是任何 ``sql`` 语句，但通常用来执行非查询，插入、更新和删除的语句，因为查询可以使用 ``fetch()`` 或者 ``get()`` 函数，插入使用 ``insert()`` 函数，更新使用 ``update()`` 函数，删除使用 ``delete()`` 函数。
+
+.. code-block:: php
+
+	//更uid等于2的用户的用户名
+	$result = pdo_query("UPDATE ".tablename('users')." SET username = :username, age = :age WHERE uid = :uid", array(':username' => 'mizhou2', ':age' => 18, ':uid' => 2));
+
+	//删除用户名为mizhou2的记录
+	$result = pdo_query("DELETE FROM ".tablename('users')." WHERE uid = :uid", array(':uid' => 2));
+	if (!empty($result)) {
+		message('删除成功');
+	}
+
+pdo_count/count($tablename, $params = array(), $cachetime = 30)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+返回满足条件的记录数。
+
+- $tablename ：表名称
+- $params ：查询条件，只能是一维数组，字段的值可以是一维数组
+
+.. code-block:: php
+
+    $pdo_demo->count('demo', ['id >='=> '1']);
+
+pdo_fetch/fetch($sql, $params = array())
+""""""""""""""""""""""""""""""""""""""""
+查询满足条件的一条记录。返回按列名为索引的关联数组。
+
+- $sql ：带有命名参数的sql语句
+- $params ：为SQL语句中的参数绑定传值，防止SQL注入。需要注意的是使用参数绑定时，SQL语中等号后不需要使用引号，传入的值必须与绑定的名称一致
+
+.. code-block:: php
+
+	// 只返回满足条件的一条记录
+    $pdo_demo->fetch('select * from ims_demo where id >=:id', [':id'=>'1']);
+
+    // :uid 是参数的一个占位符，没有使用引号，传入的第二个参数中要与SQL中的占位名称相同
+	$user = pdo_fetch("SELECT username, uid FROM ".tablename('users')." WHERE uid = :uid LIMIT 1", array(':uid' => 1));
+
+	// LIKE 占位的使用方法
+	$user = pdo_fetch("SELECT * FROM ".tablename('users')." WHERE username LIKE :username", array(':username' => '%mizhou%'));
+
+pdo_get/get($tablename, $params = array(), $fields = array(), $orderby = array())
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+查询满足条件的一条记录。返回按列名为索引的关联数组。该函数是对 ``fetch()`` 函数的封装。它会自动拼装 ``sql`` 语句。
+
+- $tablename ：表名称，不带前缀
+- $params ：查询条件，只能是一维数组，字段的值可以是一维数组。条件是按照 AND 连接，支持大于，小于等范围查询
+- $fields ：选择的字段，可传入空数组选择所有字段，或者['username','nickname']或者单个字符串'username'
+- $orderby ：排序字段，可传入字符串('id asc,username desc')或者数组(['id asc','username desc'])
+
+.. code-block:: php
+
+    $pdo_demo->get('demo', ['id >='=> 1],['username','nickname'],'id asc');
+
+    //生成的SQL等同于：SELECT username, uid FROM ims_users WHERE uid = '1' LIMIT 1
+	$user = pdo_get('users', array('uid' => 1), array('username', 'uid'));
+
+	//生成的SQL等同于：SELECT username FROM ims_users WHERE username = 'mizhou' AND status = '1' LIMIT 1
+	$user = pdo_get('users', array('username' => 'mizhou', 'status' => 1), array('username'));
+
+pdo_fetchall/fetchall($sql, $params = array(), $keyfield = '')
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+查询满足条件的多条记录。返回按列名为索引的关联数组。
+
+- $sql ：带有命名参数的sql语句
+- $params ：为SQL语句中的参数绑定传值，防止SQL注入。需要注意的是使用参数绑定时，SQL语中等号后不需要使用引号，传入的值必须与绑定的名称一致
+- $keyfield ：索引字段
+
+.. code-block:: php
+
+    // 只返回满足条件的多条记录
+    $pdo_demo->fetchall('select * from ims_demo where id >=:id', [':id'=>'1']);
+
+    // 需要注意的是，返回的数组的键值为用户的uid
+	pdo_fetchall("SELECT username, uid FROM ".tablename('users'), array(), 'uid');
+
+pdo_getall/getall($tablename, $params = array(), $fields = array(), $keyfield = '', $orderby = array(), $limit = array())
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+查询满足条件的多条记录。返回按列名为索引的关联数组。该函数是对 ``fetchall()`` 函数的封装。它会自动拼装 ``sql`` 语句。
+
+- $tablename ：表名称，不带前缀
+- $params ：查询条件，只能是一维数组，字段的值可以是一维数组，条件是按照AND 连接，支持大于，小于等范围查询
+- $fields ：选择的字段，可传入空数组选择所有字段，或者['username','nickname']或者单个字符串'username'
+- $keyfield ：索引字段，可以为空，则使用默认索引
+- $orderby ：排序字段，可传入字符串('id asc,username desc')或者数组(['id asc','username desc'])
+- $limit ：限制记录，可以传入字符串(limit 1,5或者1,5)或者数组([10]表示前10行记录或者[,5]或者[1,5])，注意只有[1,5]表示第一页，每页5个记录。
+
+.. code-block:: php
+
+    $pdo_demo->getall('demo',['id >='=>'1'], ['username','nickname'], 'username', 'id asc','limit 1,10'); //第二条记录开始的后10条记录
+    $pdo_demo->getall('demo',['id >='=>'1'], ['username','nickname'], 'username', 'id asc','1,10'); // 同上
+    $pdo_demo->getall('demo',['id >='=>'1'], ['username','nickname'], 'username', 'id asc',[10]); // 前10条记录
+    $pdo_demo->getall('demo',['id >='=>'1'], ['username','nickname'], 'username', 'id asc',[,10]); // 同上
+    $pdo_demo->getall('demo',['id >='=>'1'], ['username','nickname'], 'username', 'id asc',[1,10]); // 第一页的10条记录
+
+pdo_fetchcolumn/fetchcolumn($sql, $params = array(), $column = 0)
+"""""""""""""""""""""""""""""""""""""""""""""""""
+查询满足条件的第一条记录第N列的值。
+
+- $sql ：带有命名参数的sql语句
+- $params ：为SQL语句中的参数绑定传值，防止SQL注入。需要注意的是使用参数绑定时，SQL语中等号后不需要使用引号，传入的值必须与绑定的名称一致
+- $column ：列索引，默认第一列
+
+.. code-block:: php
+
+    $pdo_demo->fetchcolumn('select * from ims_demo where id >=:id', [':id'=>'1'], 1);
+
+    // 获取用户的总数，返回的值是一个数字
+    $user_total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('users'));
+
+pdo_getcolumn/getcolumn($tablename, $params = array(), $field = '')
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+查询满足条件的第一条记录某列的值。
+
+- $tablename ：表名称，不带前缀
+- $params ：查询条件，只能是一维数组，字段的值可以是一维数组。条件是按照AND 连接，支持大于，小于等范围查询
+- $field ：字段名称，单个字符串'username'
+
+.. code-block:: php
+
+    $pdo_demo->getcolumn('demo', ['id >='=> '1'], 'username');
+
+    //根据uid获取用户的用户名
+	//生成的SQL等同于：SELECT username FROM ims_users WHERE uid = '1'
+	$username = pdo_getcolumn('users', array('uid' => 1), 'username');
+
+pdo_getslice/getslice($tablename, $params = array(), $limit = array(), &$total = null, $fields = array(), $keyfield = '', $orderby = array())
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+查询满足条件的指定页记录并返回满足条件的总记录数。
+
+- $tablename ：表名称，不带前缀
+- $params ：查询条件，只能是一维数组，字段的值可以是一维数组。条件是按照AND 连接，支持大于，小于等范围查询
+- $limit ：限制记录，可以传入字符串(limit 1,5或者1,5)或者数组([10]表示前10行记录或者[,5]或者[1,5])，注意只有[1,5]表示第一页，每页5个记录。
+- $total ：满足条件的总记录数，注意通过引用返回总记录数。
+- $fields ：选择的字段，可传入空数组选择所有字段，或者['username','nickname']或者单个字符串'username'
+- $keyfield ：索引字段
+- $orderby ：排序字段，可传入字符串('id asc,username desc')或者数组(['id asc','username desc'])
+
+.. code-block:: php
+
+    $pdo_demo->getslice('demo', ['id >='=> '1'], [1,5], $total, ['username','nickname'],'id', 'id asc,username desc');
+
+pdo_insertid/insertid()
+"""""""""""""""""""""""
+返回上一条插入语句的主键值。
+
+删除操作
+^^^^^^^^^
+
+pdo_delete/delete($table, $params = array(), $glue = 'AND')
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+删除记录。
+
+- $table ：表名称，不带前缀
+- $params ：更新条件，只能是一维数组，字段的值可以是一维数组。条件按照AND 连接，支持大于，小于等范围查询
+- $glue ：条件组合方式，如 ``AND`` 或者 ``OR``
+
+查询条件可以使用 ``>`` ,  ``<`` ,  ``<>`` ,  ``!=`` ,  ``>=`` ,  ``<=`` ,  ``LIKE`` ,  ``like``  操作符，当不使用操作符时，默认为 ``=`` 。
+
+.. code-block:: php
+
+    $pdo_demo->delete('demo', ['id >' => '1']);
+
+	//删除用户名为mizhou2的记录
+	$result = pdo_delete('users', array('username' => 'mizhou2'));
+	if (!empty($result)) {
+		message('删除成功');
+	}
+
+其它操作
+^^^^^^^^
+tablename($table)
+"""""""""""""""""
+返回完整数据表名(加前缀)(返回是主库的数据表前缀+表明)，一般 ``getXX()`` 函数都内部调用该函数啦。
+
+- $table ：没加前缀的表名称
+
+pdo_tableexists/tableexists($table)
+"""""""""""""""""""""""""""""""""""
+判断某个数据表是否存在。
+
+- $table ：没加前缀的表名称
+
+pdo_exists/exists($tablename, $params = array())
+""""""""""""""""""""""""""""""""""""""""""""""""
+检查数据库中是否存在某个表。
+
+- $tablename ：表名称
+- $params ：查询条件，只能是一维数组，字段的值可以是一维数组
+
+.. code-block:: php
+
+	if (!pdo_tableexists('site_slide')) {
+	    echo '表不存在';
+	}
+
+pdo_fieldexists/fieldexists($tablename, $fieldname)
+"""""""""""""""""""""""""""""""""""
+查询字段是否存在。成功返回 ``TRUE`` ，失败返回 ``FALSE`` 。
+
+- $tablename ：参数指定要检查的表名称
+- $fieldname ：参数指定要检查是否存在的字段名
+
+.. code-block:: php
+
+	//如果shopping_goods表中不存在credit字段，则新增credit字段
+	if(!pdo_fieldexists('shopping_goods', 'credit')) {
+		pdo_query("ALTER TABLE ".tablename('shopping_goods')." ADD `credit` int(11) NOT NULL DEFAULT '0';");
+	}
+
+pdo_fieldmatch/fieldmatch($tablename, $fieldname, $datatype = '', $length = '')
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+查询字段类型是否匹配。成功返回 ``TRUE`` ，失败返回 ``FALSE`` ，字段存在，但类型错误返回 ``-1`` 。
+
+- $tablename ：表名称
+- $fieldname ：字段名称
+- $datatype ：字段数据类型
+- $length ：字段数据长度
+
+.. code-block:: php
+
+	pdo_fieldmatch('users', 'id', 'varchar'); // 类型不符合，返回 false
+
+	pdo_fieldmatch('users', 'id', 'int'); // 类型符合，返回 true
+
+	pdo_fieldmatch('users', 'id', 'int', 5); // 长度不符合，返回 -1
+
+pdo_indexexists/indexexists($tablename, $indexname)
+"""""""""""""""""""""""""""""""""""
+查询索引是否存在。成功返回 ``TRUE`` ，失败返回 ``FALSE`` 。
+
+- $tablename ：表名称
+- $indexname ：索引名称
+
+.. code-block:: php
+
+	//如果site_slide表中不存在multiid索引，则新增multiid索引
+	if (!pdo_indexexists('site_slide', 'multiid')) {
+		pdo_query("ALTER TABLE ".tablename('site_slide')." ADD INDEX `multiid` (`multiid`);");
+	}
+
+pdo_run/run($sql, $stuff = 'ims_')
+""""""""""""""""""""""""""""""""""
+批量执行 ``SQL`` 语句。与 ``pdo_query`` 不同的是， ``pdo_run`` 是可以一次执行多条 ``SQL`` 语句，每条 ``SQL`` 必须以 ``;`` 分隔。
+
+- $sql ：sql文件中的内容
+- $stuff ：要被当前表前缀替换的sql文件中老的表前缀
+
+.. code-block:: php
+
+	$sql = <<<EOF
+	CREATE TABLE IF NOT EXISTS `ims_multisearch` (
+	  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	  `weid` int(10) unsigned NOT NULL,
+	  PRIMARY KEY (`id`)
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+	CREATE TABLE IF NOT EXISTS `ims_multisearch_fields` (
+	  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	  `reid` int(10) unsigned NOT NULL,
+	  `type` tinyint(1) unsigned NOT NULL DEFAULT '1',
+	  `title` varchar(255) NOT NULL,
+	  PRIMARY KEY (`id`),
+	  KEY `idx_reid` (`reid`)
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	EOF;
+
+	pdo_run($sql);
+
+pdo_debug/debug($output = true, $append = array())
+"""""""""""""""""""""""""""""""""""""""""""""""""
+记录数据库sql执行栈，如果 ``$output`` 为 ``false`` ，且加入的执行结果存在错误，则输出错误sql信息和调用栈。如果 ``$output`` 为 ``true`` 且不传入第二个参数，即直接调用 ``pdo_debug()`` ，则立即打印到目前为止脚本执行的所有sql语句信息，按脚本数据库查询调用顺序输出。
+
+调试方法：直接在指定位置调用 ``die(pdo_debug())`` 即可。然后再到浏览器页面查看，最后一条sql记录是最近被执行的。
+
+.. code-block:: shell
+
+	die(pdo_debug());
+
+	//调用该函数结果如下
+	Array
+	(
+	// 最先被执行的sql语句
+	[0] => Array
+		(
+			[sql] => SET NAMES 'utf8';
+			[error] => Array
+				(
+					[0] => 00000
+					[1] =>
+					[2] =>
+				)
+		)
+
+	....
+
+	// 最后一个被执行的sql语句
+	[10] => Array
+		(
+			[sql] => SELECT `value` FROM `ims_core_cache` WHERE `key`=:key // 执行的sql语句
+			[params] => Array // 参数对应的值
+				(
+					[:key] => setting
+				)
+			[error] => Array // 如果存在错误，则保存错误信息
+				(
+					[0] => 00000
+					[1] =>
+					[2] =>
+				)
+		)
+	)
+
+事物操作
+^^^^^^^^
+
+pdo_begin/begin()
+"""""""""""""""""
+启动一个事务，关闭自动提交。
+
+pdo_commit/commit()
+"""""""""""""""""""
+提交一个事务，恢复自动提交。
+
+pdo_rollback/rollback()
+"""""""""""""""""""""""
+回滚一个事务，恢复自动提交。
+
+
+pdo_fetchallfields
+""""""""""""""""""
+获取指定表的所有字段。
+
+sql构建器操作方式
+----------------
+自微擎 v1.5.7 版本以后，增加链式查询类，提供面向对象方式查询数据，链式查询只支持一些常用简单的查询过于复杂的业务需求还是建议直接使用SQL语句。
+
+这种方式链式调用指定表的方法来自动拼装 ``sql`` 语句。 它由 ``query.class.php`` 文件的 ``Query`` 类提供。
+
+查询用户表中的前十条男性的用户数据，代码如下：
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users')->where('sex', '1')->orderby('id', 'desc')->limit(10)->getall();
+
+上方代码中， ``from`` ， ``where`` ， ``orderby`` ， ``limit`` 就是被称之为链示调用，除了一开始必须要先指定 ``from()`` 哪个表和最后需要获取数据时调用 ``get()`` ， ``getall()`` 时，其它函数书写并不区分先后顺序。
+
+但是这里并不推荐直接实例化 ``Query`` 对象进行数据查询，对于程序员来说以下的代码和上面在“语义”上并没有什么太大的区别，链示查询只是简化和方便了 SQL 语句的书写。上面代码等价于如下语句：
+
+.. code-block:: language
+
+    pdo_fetchall("SELECT * FROM `users` WHERE sex = '1' ORDER BY id DESC LIMIT 10");
+
+所以我们推荐将 ``Query`` 类结合 ``Table`` 类来一起使用，比如以上的查询可以改造为。
+
+.. code-block:: php
+
+	class UsersTable extends We7Table {
+	    public function searchNewUserList() {
+	        return $this->query->from('users')->getall();
+	    }
+	    public function searchWithSexIsBoy() {
+	        $this->where('sex', '1');
+	        return $this;
+	    }
+	    public function searchCount($limit) {
+	        $this->limit($limit);
+	        return $this;
+	    }
+	}
+	$usertable = new UsersTable();
+	$usertable->searchWithSexIsBoy();
+	$usertable->searchCount(10);
+	$list = $usertable->searchNewUserlist();
+
+以上的代码，很明显的能明白查询者的意图，而且很灵活的进行修改，比如业务改变了要查询最新的 20 名同学，只需要
+
+.. code-block:: php
+
+    $usertable->searchCount(20);
+
+即可。
+
+在微擎中，所有的 ``Query`` 对象皆是以 ``Table`` 对象的属性形式存在，而 ``Table`` 对象存放于 ``Framework/table`` 目录中，通过以下方式调用：
+
+.. code-block:: php
+
+	$users_table = table('users');
+	$users_table->searchWithFounder(ACCOUNT_MANAGE_GROUP_VICE_FOUNDER);
+	$users_table->searchWithPage($pindex, $psize);
+	$users = $users_table->searchUsersList();
+
+Query from($tablename, $alias = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+指定要查询的表名。
+
+- $tablename ：参数指定要查询的数据表名，此处传入的表名不要使用 ``tablename()`` 函数
+- $alias ：表别名，方便以构造条件语句和关联时使用
+
+.. code-block:: php
+
+	//如果指定别名，后续可以通过 别名.字段名 的形式来使用
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->select('u.username')->get();
+
+Query select($field1, $field2, ...)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+指定要查询的字段列表，相当于 ``SELECT *`` , ``SELECT name, username`` 。
+
+- $field ：指定要查询的字段名，可以是多个参数也可以是一个数组
+
+如果不调用本函数或者调用时不传入参数，则表示选择所有字段，相等于 ``SELECT *`` 。
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->select('uid', 'username')->get();
+
+	//也可以传入数组
+	$row = $query->from('users', 'u')->select(array('uid', 'username'))->get();
+
+Query where(array | string $condition, $parameters = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+指定查询条件，如果有多个条件可以连接多个 ``where`` 函数或是指定 ``$condition`` 为一个数组， 所有的查询条件将以 ``AND`` 连接。
+
+- $condition ：指定要查询的条件字段，也支持 范围条件操作， ``>`` ， ``<`` ， ``<>`` ， ``!=`` ， ``>=`` ， ``<=`` ， ``LIKE`` ， ``like``
+- $parameters ：指定查询条件的值
+
+.. code-block:: php
+
+	//users表指定了别名，后续的字段如果需要可以写上别名前缀
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->where('u.sex', '1')->where('uid >=', '2')->get();
+
+	//也可将条件写到一起
+	$row = $query->from('users', 'u')->where(array('u.sex' => 1, 'uid >=' => 2))->get();
+
+Query whereor(string | array $condition, $parameters = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+与 ``where`` 一样使用，不同的是本函数是以 ``OR`` 来连接。
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->where('sex', '1')->whereor('uid', 2)->get();
+
+	//生成SQL如下
+	SELECT * FROM users AS U WHERE sex = '1' OR uid = '2' LIMIT 1
+
+Query having(string | array $condition, $parameters = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+指定要查询的条件，与 ``where`` 参数及使用方法一样，不同的 ``having`` 在聚合函数之后执行，一般要与 ``groupby`` 一起使用。
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->having('count(*) >', 2)->groupby('age')->getall();
+
+Query groupby($field)
+^^^^^^^^^^^^^^^^^^^^^
+指定要分组的字段。
+
+- $field ：要分组查询的字段名
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->groupby('u.sex')->get();
+
+Query orderby($field, $direction = 'ASC')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+指定查询结果排序字段和方式。
+
+- $field ：要排序的字段名
+- $direction ：排序方式，可以为 ASC 或是 DESC
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->orderby('u.uid', 'DESC')->get();
+
+Query leftjoin($tablename, $alias = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+指定要左关联的表，当需要 ``rightjoin`` 时，请调换一下顺序书写即可。
+
+- $tablename ：参数指定要查询的数据表名，此处传入的表名不要使用 ``tablename()`` 函数
+- $alias ：表别名，方便以构造条件语句和关联时使用
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->leftjoin('users_profile', 'b')->on('u.id', 'b.uid')->where('u.id', '525')->get();
+
+	//如果关联条件有多个时，请使用数组形式
+	on(array('u.id' => 'b.uid', 'u.username' => 'b.username'))
+
+Query innerjoin($tablename, $alias = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+内连接， ``select * from TableA JOIN TableB on TableA.id=TableB.id`` 等价于 ``select * from TableA,TableB where TableA.id=TableB.id`` 。
+
+使用方法和上面的 ``leftjoin`` 方法一样。
+
+Query on($condition, $parameters = array())
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+指定关联查询中的关联条件。
+
+参数与 ``where`` 函数一样，多个关联条件可以使用数组形式，一个关联查询只可出现一个 ``on`` 语句。
+
+Query limit(start, size)
+^^^^^^^^^^^^^^^^^^^^^^^^
+指定要查询从第几行起的多少行，与 ``SQL`` 语句中的 ``Limit`` 意思一样。
+
+- $start ：查询从第几行起
+- $size ：查询多少行
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->limit(1, 10)->getall();
+
+Query page(pageindex, pagesize)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+根据分页获取数据，转换成 ``limit`` 语句为 ``LIMIT (pageindex - 1) * pagesize, pagesize`` 。
+
+- $pageindex ：当前页码
+- $pagesize ：一页多少条数据
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->page(1, 10)->getall();
+
+array get()
+^^^^^^^^^^^
+获取满足条件的一条记录。
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->get();
+
+array getall($keyfield = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+获取满足条件的所有记录。
+
+- $keyfield ：获取记录集数组指定为键值的字段，默认是自然排序
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->limit(1, 10)->getall('uid');
+
+Mixed getcolumn($field = '')
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+获取一条记录中指定字段的值。
+
+- $field ：具体获取哪个字段的值
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->getcolumn('username');
+
+int count()
+^^^^^^^^^^^^
+只获取结果集的数量有多少。
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->count();
+
+boolean exists()
+^^^^^^^^^^^^^^^^
+获取满足某个条件的数据是否存在。
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$is_found = $query->from('users', 'u')->where('uid', 10)->exists();
+
+int getLastQueryTotal()
+^^^^^^^^^^^^^^^^^^^^^^^
+当查询中使用了 ``limit`` 限制语句时，可以在完成查询后，调用此函数来获取整个表的数据量，一般用于分页使用。
+
+.. code-block:: php
+
+	$pindex = max(1, intval($_GPC['page']));
+	$psize = 20;
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->page($pindex, $psize)->getall();
+	$total = $query->getLastQueryTotal();
+	$pager = pagination($total, $pindex, $psize); //页码HTML
+
+array getLastQuery()
+^^^^^^^^^^^^^^^^^^^^^
+获取最后执行的 ``SQL`` 语句及参数，主要用于调试代码。
+
+.. code-block:: php
+
+	$query = load()->object('query');
+	$row = $query->from('users', 'u')->get();
+
+	print_r($query->getLastQuery());

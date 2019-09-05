@@ -1,0 +1,2755 @@
+****
+模型
+****
+
+定义
+====
+
++-------+--------------------------------------------------+
+| 版本  | 调整功能                                         |
++=======+==================================================+
+| 5.0.5 | model或者Loader::model方法支持传入完整的模型类名 |
++-------+--------------------------------------------------+
+
+模型定义
+--------
+定义一个 ``User`` 模型类：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+    }
+
+默认主键为自动识别，如果需要指定，可以设置属性：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        protected $pk = 'uid';
+    }
+
+模型会自动对应数据表，模型类的命名规则是除去表前缀的数据表名称，采用驼峰法命名，并且首字母大写，例如：
+
++----------+--------------------------------------------------+
+| 模型名   | 约定对应数据表（假设数据库的前缀定义是 think_ ） |
++==========+==================================================+
+| User     | think_user                                       |
++----------+--------------------------------------------------+
+| UserType | think_user_type                                  |
++----------+--------------------------------------------------+
+
+如果你的规则和上面的系统约定不符合，那么需要设置 ``Model`` 类的数据表名称属性，以确保能够找到对应的数据表。
+
+设置数据表
+----------
+如果你想指定数据表甚至数据库连接的话，可以使用：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    class User extends \think\Model
+    {
+        // 设置当前模型对应的完整数据表名称
+        protected $table = 'think_user';
+
+        // 设置当前模型的数据库连接
+        protected $connection = [
+            // 数据库类型
+            'type'        => 'mysql',
+            // 服务器地址
+            'hostname'    => '127.0.0.1',
+            // 数据库名
+            'database'    => 'thinkphp',
+            // 数据库用户名
+            'username'    => 'root',
+            // 数据库密码
+            'password'    => '',
+            // 数据库编码默认采用utf8
+            'charset'     => 'utf8',
+            // 数据库表前缀
+            'prefix'      => 'think_',
+            // 数据库调试模式
+            'debug'       => false,
+        ];
+    }
+
+和连接数据库的参数一样， ``connection`` 属性的值也可以设置为数据库的配置参数，而且也是官方推荐的方式，这样可以避免把数据库连接固化在代码里面。
+
+.. note:: 5.0不支持单独设置当前模型的数据表前缀。
+
+模型调用
+--------
+模型类可以使用静态调用或者实例化调用两种方式，例如：
+
+.. code-block:: php
+
+    // 静态调用
+    $user = User::get(1);
+    $user->name = 'thinkphp';
+    $user->save();
+
+    // 实例化模型
+    $user = new User;
+    $user->name= 'thinkphp';
+    $user->save();
+
+    // 使用 Loader 类实例化（单例）
+    $user = Loader::model('User');
+
+    // 或者使用助手函数`model`
+    $user = model('User');
+    $user->name= 'thinkphp';
+    $user->save();
+
+.. note:: 实例化模型类主要用于调用模型的自定义方法，更多用法参考后面的章节内容。
+
+模型初始化
+==========
+模型同样支持初始化，与控制器的初始化不同的是，模型的初始化是重写 ``Model`` 的 ``initialize`` ，具体如下
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Index extends Model
+    {
+
+        //自定义初始化
+        protected function initialize()
+        {
+            //需要调用`Model`的`initialize`方法
+            parent::initialize();
+            //TODO:自定义的初始化
+        }
+    }
+
+同样也可以使用静态 ``init`` 方法，需要注意的是 ``init`` 只在第一次实例化的时候执行，并且方法内需要注意静态调用的规范，具体如下：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Index extends Model
+    {
+
+        //自定义初始化
+        protected static function init()
+        {
+            //TODO:自定义的初始化
+        }
+    }
+
+新增
+====
+新增数据有多种方式。
+
+添加一条数据
+------------
+第一种是实例化模型对象后赋值并保存：
+
+.. code-block:: php
+
+    $user           = new User;
+    $user->name     = 'thinkphp';
+    $user->email    = 'thinkphp@qq.com';
+    $user->save();
+
+也可以使用 ``data`` 方法批量赋值：
+
+.. code-block:: php
+
+    $user = new User;
+    $user->data([
+        'name'  =>  'thinkphp',
+        'email' =>  'thinkphp@qq.com'
+    ]);
+    $user->save();
+
+或者直接在实例化的时候传入数据
+
+.. code-block:: php
+
+    $user = new User([
+        'name'  =>  'thinkphp',
+        'email' =>  'thinkphp@qq.com'
+    ]);
+    $user->save();
+
+如果需要过滤非数据表字段的数据，可以使用：
+
+.. code-block:: php
+
+    $user = new User($_POST);
+    // 过滤post数组中的非数据表字段数据
+    $user->allowField(true)->save();
+
+如果你通过外部提交赋值给模型，并且希望指定某些字段写入，可以使用：
+
+.. code-block:: php
+
+    $user = new User($_POST);
+    // post数组中只有name和email字段会写入
+    $user->allowField(['name','email'])->save();
+
+.. note:: ``save`` 方法新增数据返回的是写入的记录数。
+
+获取自增ID
+----------
+如果要获取新增数据的自增 ``ID`` ，可以使用下面的方式：
+
+.. code-block:: php
+
+    $user           = new User;
+    $user->name     = 'thinkphp';
+    $user->email    = 'thinkphp@qq.com';
+    $user->save();
+    // 获取自增ID
+    echo $user->id;
+
+注意这里其实是获取模型的主键，如果你的主键不是 ``id`` ，而是 ``user_id`` 的话，其实获取自增 ``ID`` 就变成这样：
+
+.. code-block:: php
+
+    $user           = new User;
+    $user->name     = 'thinkphp';
+    $user->email    = 'thinkphp@qq.com';
+    $user->save();
+    // 获取自增ID
+    echo $user->user_id;
+
+注意不要在同一个实例里面多次新增数据，如果确实需要多次新增，那么可以用下面的方式：
+
+.. code-block:: php
+
+    $user           = new User;
+    $user->name     = 'thinkphp';
+    $user->email    = 'thinkphp@qq.com';
+    $user->save();
+    $user->name     = 'onethink';
+    $user->email    = 'onethink@qq.com';
+    // 第二次开始必须使用下面的方式新增
+    $user->isUpdate(false)->save();
+
+添加多条数据
+------------
+支持批量新增，可以使用：
+
+.. code-block:: php
+
+    $user = new User;
+    $list = [
+        ['name'=>'thinkphp','email'=>'thinkphp@qq.com'],
+        ['name'=>'onethink','email'=>'onethink@qq.com']
+    ];
+    $user->saveAll($list);
+
+.. note:: ``saveAll`` 方法新增数据返回的是包含新增模型（带自增ID）的数据集（数组）。
+
+.. warning:: V5.0.13+ 版本开始， ``saveAll`` 方法的返回类型受模型的 ``resultSetType`` 属性影响（可能返回数据集对象）。
+
+``saveAll`` 方法新增数据默认会自动识别数据是需要新增还是更新操作，当数据中存在主键的时候会认为是更新操作，如果你需要带主键数据批量新增，可以使用下面的方式：
+
+.. code-block:: php
+
+    $user = new User;
+    $list = [
+        ['id'=>1, 'name'=>'thinkphp', 'email'=>'thinkphp@qq.com'],
+        ['id'=>2, 'name'=>'onethink', 'email'=>'onethink@qq.com'],
+    ];
+    $user->saveAll($list, false);
+
+静态方法
+--------
+还可以直接静态调用 ``create`` 方法创建并写入：
+
+.. code-block:: php
+
+    $user = User::create([
+        'name'  =>  'thinkphp',
+        'email' =>  'thinkphp@qq.com'
+    ]);
+    echo $user->name;
+    echo $user->email;
+    echo $user->id; // 获取自增ID
+
+.. note:: 和 ``save`` 方法不同的是， ``create`` 方法返回的是当前模型的对象实例。
+
+助手函数
+--------
+系统提供了 ``model`` 助手函数用于快速实例化模型，并且使用单例实现，例如：
+
+.. code-block:: php
+
+    // 使用model助手函数实例化User模型
+    $user = model('User');
+    // 模型对象赋值
+    $user->data([
+        'name'  =>  'thinkphp',
+        'email' =>  'thinkphp@qq.com'
+    ]);
+    $user->save();
+
+或者进行批量新增：
+
+.. code-block:: php
+
+    $user = model('User');
+    // 批量新增
+    $list = [
+        ['name'=>'thinkphp','email'=>'thinkphp@qq.com'],
+        ['name'=>'onethink','email'=>'onethink@qq.com']
+    ];
+    $user->saveAll($list);
+
+更新
+====
+
++--------+-------------------------------------+
+| 版本   | 调整功能                            |
++========+=====================================+
+| 5.0.13 | saveAll方法支持isUpdate方法强制更新 |
++--------+-------------------------------------+
+| 5.0.10 | 模型增加setInc和setDec方法          |
++--------+-------------------------------------+
+
+查找并更新
+----------
+在取出数据后，更改字段内容后更新数据。
+
+.. code-block:: php
+
+    $user = User::get(1);
+    $user->name     = 'thinkphp';
+    $user->email    = 'thinkphp@qq.com';
+    $user->save();
+
+直接更新数据
+------------
+也可以直接带更新条件来更新数据
+
+.. code-block:: php
+
+    $user = new User;
+    // save方法第二个参数为更新条件
+    $user->save([
+        'name'  => 'thinkphp',
+        'email' => 'thinkphp@qq.com'
+    ],['id' => 1]);
+
+上面两种方式更新数据，如果需要过滤非数据表字段的数据，可以使用：
+
+.. code-block:: php
+
+    $user = new User();
+    // 过滤post数组中的非数据表字段数据
+    $user->allowField(true)->save($_POST,['id' => 1]);
+
+如果你通过外部提交赋值给模型，并且希望指定某些字段写入，可以使用：
+
+.. code-block:: php
+
+    $user = new User();
+    // post数组中只有name和email字段会写入
+    $user->allowField(['name','email'])->save($_POST, ['id' => 1]);
+
+批量更新数据
+------------
+可以使用 ``saveAll`` 方法批量更新数据，例如：
+
+.. code-block:: php
+
+    $user = new User;
+    $list = [
+        ['id'=>1, 'name'=>'thinkphp', 'email'=>'thinkphp@qq.com'],
+        ['id'=>2, 'name'=>'onethink', 'email'=>'onethink@qq.com']
+    ];
+    $user->saveAll($list);
+
+.. note:: 批量更新仅能根据主键值进行更新，其它情况请使用 ``foreach`` 遍历更新。
+
+V5.0.13+ 版本开始，你可以使用下面的方式强制进行数据更新操作而不是新增操作（尤其适合于复合主键的情况）。
+
+.. code-block:: php
+
+    $user = new User;
+    $list = [
+        ['id'=>1, 'name'=>'thinkphp', 'email'=>'thinkphp@qq.com'],
+        ['id'=>2, 'name'=>'onethink', 'email'=>'onethink@qq.com']
+    ];
+    $user->isUpdate()->saveAll($list);
+
+``isUpdate(true, '更新条件')`` 可以指定更新条件。
+
+通过数据库类更新数据
+--------------------
+必要的时候，你也可以使用数据库对象来直接更新数据，但这样就无法使用模型的事件功能。
+
+.. code-block:: php
+
+    $user = new User;
+    $user->where('id', 1)->update(['name' => 'thinkphp']);
+
+或者使用：
+
+.. code-block:: php
+
+    $user = new User;
+    $user->update(['id' => 1, 'name' => 'thinkphp']);
+
+.. note:: 如果传入 ``update`` 的数据包含主键的话，可以无需使用 ``where`` 方法。
+
+静态方法
+--------
+模型支持静态方法直接更新数据，例如：
+
+.. code-block:: php
+
+    User::where('id', 1)->update(['name' => 'thinkphp']);
+
+或者使用：
+
+.. code-block:: php
+
+    User::update(['id' => 1, 'name' => 'thinkphp']);
+
+闭包更新
+--------
+可以通过闭包函数使用更复杂的更新条件，例如：
+
+.. code-block:: php
+
+    $user = new User;
+    $user->save(['name' => 'thinkphp'],function($query){
+        // 更新status值为1 并且id大于10的数据
+        $query->where('status', 1)->where('id', '>', 10);
+    });
+
+自动识别
+--------
+我们已经看到，模型的新增和更新方法都是 ``save`` 方法，系统有一套默认的规则来识别当前的数据需要更新还是新增。
+
+- 实例化模型后调用 ``save`` 方法表示新增；
+- 查询数据后调用 ``save`` 方法表示更新；
+- ``save`` 方法传入更新条件后表示更新；
+
+如果你的数据操作比较复杂，可以显式的指定当前调用 ``save`` 方法是新增操作还是更新操作。
+
+显式更新数据：
+
+.. code-block:: php
+
+    // 实例化模型
+    $user = new User;
+    // 显式指定更新数据操作
+    $user->isUpdate(true)->save(['id' => 1, 'name' => 'thinkphp']);
+
+显式新增数据：
+
+.. code-block:: php
+
+    $user = User::get(1);
+    $user->name = 'thinkphp';
+    // 显式指定当前操作为新增操作
+    $user->isUpdate(false)->save();
+
+注意不要在一个模型实例里面做多次更新，会导致部分重复数据不再更新，正确的方式应该是先查询后更新或者使用模型类的 ``update`` 方法更新。
+
+.. note:: 如果你调用 ``save`` 方法进行多次数据写入的时候，需要注意，第二次 ``save`` 方法的时候必须使用 ``isUpdate(false)`` ，否则会视为更新数据。
+
+删除
+====
+
++-------+-----------------------------------------------------+
+| 版本  | 更新功能                                            |
++=======+=====================================================+
+| 5.0.9 | destroy方法传入空数组和空字符串不会进行任何删除操作 |
++-------+-----------------------------------------------------+
+
+删除当前模型
+------------
+删除模型数据，可以在实例化后调用 ``delete`` 方法。
+
+.. code-block:: php
+
+    $user = User::get(1);
+    $user->delete();
+
+根据主键删除
+------------
+或者直接调用静态方法
+
+.. code-block:: php
+
+    User::destroy(1);
+    // 支持批量删除多个数据
+    User::destroy('1,2,3');
+    // 或者
+    User::destroy([1,2,3]);
+
+.. note:: V5.0.9+ 版本开始当 ``destroy`` 方法传入空值（包括空字符串和空数组）的时候不会做任何的数据删除操作，但传入 ``0`` 则是有效的。
+
+条件删除
+---------
+使用数组进行条件删除，例如：
+
+.. code-block:: php
+
+    // 删除状态为0的数据
+    User::destroy(['status' => 0]);
+
+还支持使用闭包删除，例如：
+
+.. code-block:: php
+
+    User::destroy(function($query){
+        $query->where('id','>',10);
+    });
+
+或者通过数据库类的查询条件删除
+
+.. code-block:: php
+
+    User::where('id','>',10)->delete();
+
+查询
+====
+
++--------+--------------------------------------------+
+| 版本   | 调整功能                                   |
++========+============================================+
+| 5.0.19 | 模型增加readMaster方法用于后续都从主库读取 |
++--------+--------------------------------------------+
+
+获取单个数据
+------------
+获取单个数据的方法包括：
+
+.. code-block:: php
+
+    取出主键为1的数据
+    $user = User::get(1);
+    echo $user->name;
+
+    // 使用数组查询
+    $user = User::get(['name' => 'thinkphp']);
+
+    // 使用闭包查询
+    $user = User::get(function($query){
+        $query->where('name', 'thinkphp');
+    });
+    echo $user->name;
+
+.. warning:: 如果你是在模型内部，请不要使用 ``$this->name`` 的方式来获取数据，请使用 ``$this->getAttr('name')`` 替代。
+
+或者在实例化模型后调用查询方法
+
+.. code-block:: php
+
+    $user = new User();
+    // 查询单个数据
+    $user->where('name', 'thinkphp')->find();
+
+.. note:: ``get`` 或者 ``find`` 方法返回的是当前模型的对象实例，可以使用模型的方法。
+
+获取多个数据
+------------
+
++-------+---------------------------------------------------+
+| 版本  | 新增功能                                          |
++=======+===================================================+
+| 5.0.4 | 支持在模型中设置resultSetType返回数据集对象的名称 |
++-------+---------------------------------------------------+
+
+取出多个数据：
+
+.. code-block:: php
+
+    // 根据主键获取多个数据
+    $list = User::all('1,2,3');
+    // 或者使用数组
+    $list = User::all([1,2,3]);
+    foreach($list as $key=>$user){
+        echo $user->name;
+    }
+    // 使用数组查询
+    $list = User::all(['status'=>1]);
+    // 使用闭包查询
+    $list = User::all(function($query){
+        $query->where('status', 1)->limit(3)->order('id', 'asc');
+    });
+    foreach($list as $key=>$user){
+        echo $user->name;
+    }
+
+.. note:: 数组方式和闭包方式的数据查询的区别在于，数组方式只能定义查询条件，闭包方式可以支持更多的连贯操作，包括排序、数量限制等。
+
+或者在实例化模型后调用查询方法
+
+.. code-block:: php
+
+    $user = new User();
+    // 查询数据集
+    $user->where('name', 'thinkphp')
+        ->limit(10)
+        ->order('id', 'desc')
+        ->select();
+
+.. note:: 模型的 ``all`` 方法或者 ``select`` 方法返回的是一个包含模型对象的二维数组或者数据集对象。
+
+自定义数据集对象
+----------------
+V5.0.4+ 版本开始，支持在模型中单独设置查询数据集的返回对象的名称（默认是数组），例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        // 设置返回数据集的对象名
+        protected $resultSetType = 'collection';
+    }
+
+``resultSetType`` 字段如果为空则使用数组作为数据集返回类型，如果设置为 ``collection`` 则表示使用 ``think\Collection`` 作为返回对象名，也可以设置自定义的数据集对象名称（使用完整的命名空间定义）。
+
+获取某个字段或者某个列的值
+---------------------------
+
+.. code-block:: php
+
+    // 获取某个用户的积分
+    User::where('id',10)->value('score');
+    // 获取某个列的所有值
+    User::where('status',1)->column('name');
+    // 以id为索引
+    User::where('status',1)->column('name','id');
+    User::where('status',1)->column('id,name'); // 同tp3的getField
+
+.. note:: 注意 ``value`` 和 ``column`` 方法返回的不再是一个模型对象实例，而是单纯的值或者某个列的数组。
+
+动态查询
+--------
+支持动态查询方法，例如：
+
+.. code-block:: php
+
+    // 根据name字段查询用户
+    $user = User::getByName('thinkphp');
+
+    // 根据email字段查询用户
+    $user = User::getByEmail('thinkphp@qq.com');
+
+通过Query类查询
+---------------
+或者使用数据库的查询方法进行更复杂的查询：
+
+.. code-block:: php
+
+    User::where('id','>',10)->select();
+    User::where('name','thinkphp')->find();
+
+.. note:: 可以在模型中直接使用所有数据库的链式操作方法。
+
+返回的查询结果是当前模型对应的对象或者包含模型对象的数据集。
+
+数据分批处理
+------------
+模型也可以支持对返回的数据分批处理，这在处理大量数据的时候非常有用，例如：
+
+.. code-block:: php
+
+    User::chunk(100,function($users){
+        foreach($users as $user){
+            // 处理user模型对象
+        }
+    });
+
+.. note:: 更多的分批处理用法，可以参考数据库的查询数据部分。
+
+查询缓存
+--------
+``get`` 方法和 ``all`` 方法的第三个参数表示是否使用查询缓存，或者设置缓存标识。
+
+.. code-block:: php
+
+    $user = User::get(1,'',true);
+    $list  = User::all('1,2,3','',true);
+
+.. warning:: 由于第二个参数是关联预载入定义，V5.0.6+ 版本开始，可以直接在第二个参数传入 ``true`` 表示开启查询缓存。
+
+主库读取
+--------
+如果你采用分布式数据库，如果写入数据后立刻进行该数据的读取，将会导致数据读取失败，原因是数据库同步尚未完成。
+
+规范的解决方案是在写入数据后，不要马上从从库读取，而应该调用 ``master`` 方法读取主库。
+
+.. code-block:: php
+
+    $user           = new User;
+    $user->name     = 'thinkphp';
+    $user->email    = 'thinkphp@qq.com';
+    $user->save();
+    // 从主库读取数据
+    $user->master()->get($user->id);
+
+V5.0.19+ 版本开始，你可以在数据库配置文件中设置
+
+.. code-block:: php
+
+    // 主库写入后从主从库读取
+    'read_master'   => true
+
+设置开启后，一旦你的模型写入数据，那么该请求后续的模型读取操作都会自动读取主库。
+
+或者可以在你完成主库写入操作后，执行下模型类的 ``readMaster`` 方法
+
+.. code-block:: php
+
+    $user           = new User;
+    $user->name     = 'thinkphp';
+    $user->email    = 'thinkphp@qq.com';
+    $user->readMaster()->save();
+    // 后续该模型的操作从主库读取数据
+
+也可以支持后续所有模型的查询都在主库
+
+.. code-block:: php
+
+    $user           = new User;
+    $user->name     = 'thinkphp';
+    $user->email    = 'thinkphp@qq.com';
+    $user->readMaster(true)->save();
+    // 后续该模型的操作从主库读取数据
+
+.. warning:: 注意上述设置和方法仅对模型查询有效，直接调用 ``Db`` 类查询无效。
+
+聚合
+====
+在模型中也可以调用数据库的聚合方法进行查询，例如：
+
++-------+------------------------------------------+
+| 方法  | 说明                                     |
++=======+==========================================+
+| count | 统计数量，参数是要统计的字段名（可选）   |
++-------+------------------------------------------+
+| max   | 获取最大值，参数是要统计的字段名（必须） |
++-------+------------------------------------------+
+| min   | 获取最小值，参数是要统计的字段名（必须） |
++-------+------------------------------------------+
+| avg   | 获取平均值，参数是要统计的字段名（必须） |
++-------+------------------------------------------+
+| sum   | 获取总分，参数是要统计的字段名（必须）   |
++-------+------------------------------------------+
+
+静态调用：
+
+.. code-block:: php
+
+    User::count();
+    User::where('status','>',0)->count();
+    User::where('status',1)->avg('score');
+    User::max('score');
+
+动态调用：
+
+.. code-block:: php
+
+    $user = new User;
+    $user->count();
+    $user->where('status','>',0)->count();
+    $user->where('status',1)->avg('score');
+    $user->max('score');
+
+获取器
+======
+
++--------+--------------------------------------+
+| 版本   | 更新功能                             |
++========+======================================+
+| 5.0.10 | 获取器方法增加第三个参数传入关联数据 |
++--------+--------------------------------------+
+
+获取器
+------
+获取器的作用是在获取数据的字段值后自动进行处理，例如，我们需要对状态值进行转换，可以使用：
+
+.. code-block:: php
+
+    class User extends Model
+    {
+        public function getStatusAttr($value)
+        {
+            $status = [-1=>'删除',0=>'禁用',1=>'正常',2=>'待审核'];
+            return $status[$value];
+        }
+    }
+
+数据表的字段会自动转换为驼峰法，一般 ``status`` 字段的值采用数值类型，我们可以通过获取器定义，自动转换为字符串描述。
+
+.. code-block:: php
+
+    $user = User::get(1);
+    echo $user->status; // 例如输出“正常”
+
+获取器还可以定义数据表中不存在的字段，例如：
+
+.. code-block:: php
+
+    class User extends Model
+    {
+        public function getStatusTextAttr($value,$data)
+        {
+            $status = [-1=>'删除',0=>'禁用',1=>'正常',2=>'待审核'];
+            return $status[$data['status']];
+        }
+    }
+
+.. note:: 获取器方法的第二个参数传入的是当前的所有数据数组。
+
+我们就可以直接使用 ``status_text`` 字段的值了，例如：
+
+.. code-block:: php
+
+    $user = User::get(1);
+    echo $user->status_text; // 例如输出“正常”
+
+获取器只有当获取某个数据属性的时候自动触发，如果你要获取包含获取器处理的全部数据属性的话，可以使用下面的方法：
+
+.. code-block:: php
+
+    $user = User::get(1);
+    // 获取全部获取器数据
+    dump($user->toArray());
+
+获取原始数据
+------------
+如果你定义了获取器的情况下，希望获取数据表中的原始数据，可以使用：
+
+.. code-block:: php
+
+    $user = User::get(1);
+    // 通过获取器获取字段
+    echo $user->status;
+    // 获取原始字段数据
+    echo $user->getData('status');
+    // 获取全部原始数据
+    dump($user->getData());
+
+修改器
+======
+
++--------+--------------------------------------+
+| 版本   | 更新功能                             |
++========+======================================+
+| 5.0.10 | 修改器方法增加第三个参数传入关联数据 |
++--------+--------------------------------------+
+
+修改器
+------
+修改器的作用是可以在数据赋值的时候自动进行转换处理，例如：
+
+.. code-block:: php
+
+    class User extends Model
+    {
+        public function setNameAttr($value)
+        {
+            return strtolower($value);
+        }
+    }
+
+如下代码实际保存到数据库中的时候会转为小写
+
+.. code-block:: php
+
+    $user = new User();
+    $user->name = 'THINKPHP';
+    $user->save();
+    echo $user->name; // thinkphp
+
+也可以进行序列化字段的组装：
+
+.. code-block:: php
+
+    class User extends Model
+    {
+        public function setNameAttr($value,$data)
+        {
+            return serialize($data);
+        }
+    }
+
+.. note:: 修改器方法的第二个参数会自动传入当前的所有数据数组。
+
+批量修改
+--------
+除了赋值的方式可以触发修改器外，还可以用下面的方法批量触发修改器：
+
+.. code-block:: php
+
+    $user = new User();
+    $data['name'] = 'THINKPHP';
+    $data['email'] = 'thinkphp@qq.com';
+    $user->data($data, true);
+    $user->save();
+    echo $user->name; // thinkphp
+
+或者直接使用 ``save`` 方法触发，例如：
+
+.. code-block:: php
+
+    $user = new User();
+    $data['name'] = 'THINKPHP';
+    $data['email'] = 'thinkphp@qq.com';
+    $user->save($data);
+    echo $user->name; // thinkphp
+
+时间戳
+======
+
++--------+------------------------------------------------+
+| 版本   | 调整功能                                       |
++========+================================================+
+| 5.0.10 | 增加autoWriteTimestamp方法动态设置时间字段写入 |
++--------+------------------------------------------------+
+| 5.0.6  | 增加时间字段自动格式输出设置                   |
++--------+------------------------------------------------+
+| 5.0.5  | 时间戳字段支持自动格式化输出                   |
++--------+------------------------------------------------+
+| -      | autoWriteTimestamp属性支持设置为时间日期类名   |
++--------+------------------------------------------------+
+
+系统支持自动写入创建和更新的时间戳字段，有两种方式配置支持。
+
+第一种方式，是在数据库配置文件中添加全局设置：
+
+.. code-block:: php
+
+    // 开启自动写入时间戳字段
+    'auto_timestamp' => true,
+
+第二种是直接在单独的模型类里面设置：
+
+.. code-block:: php
+
+    protected $autoWriteTimestamp = true;
+
+如果这两个地方设置为 ``true`` ，默认识别为整型 ``int`` 类型，如果你的时间字段不是 ``int`` 类型的话，例如使用 ``datetime`` 类型的话，可以这样设置：
+
+.. code-block:: php
+
+    // 开启自动写入时间戳字段
+    'auto_timestamp' => 'datetime',
+
+或者
+
+.. code-block:: php
+
+    protected $autoWriteTimestamp = 'datetime';
+
+字段名默认创建时间字段为 ``create_time`` ，更新时间字段为 ``update_time`` ，支持的字段类型包括 ``timestamp/datetime/int`` 。
+
+写入数据的时候，系统会自动写入 ``create_time`` 和 ``update_time`` 字段，而不需要定义修改器，例如：
+
+.. code-block:: php
+
+    $user = new User();
+    $user->name = 'THINKPHP';
+    $user->save();
+    echo $user->create_time; // 输出类似 2016-10-12 14:20:10
+    echo $user->update_time; // 输出类似 2016-10-12 14:20:10
+
+.. warning:: V5.0.5+ 版本开始，时间字段输出的时候会自动进行格式转换，如果不希望自动格式化输出，可以把数据库配置文件的 ``datetime_format`` 参数值改为 ``false`` （V5.0.6+版本支持，之前版本可以使用类型转换方式关闭自动格式化）
+
+如果你的数据表字段不是默认值的话，可以按照下面的方式定义：
+
+.. code-block:: php
+
+    class User extends Model
+    {
+        // 定义时间戳字段名
+        protected $createTime = 'create_at';
+        protected $updateTime = 'update_at';
+    }
+
+下面是修改字段后的输出代码：
+
+.. code-block:: php
+
+    $user = new User();
+    $user->name = 'THINKPHP';
+    $user->save();
+    echo $user->create_at; // 输出类似 2016-10-12 14:20:10
+    echo $user->update_at; // 输出类似 2016-10-12 14:20:10
+
+如果你只需要使用 ``create_time`` 字段而不需要自动写入 ``update_time`` ，则可以单独设置关闭某个字段，例如：
+
+.. code-block:: php
+
+    class User extends Model
+    {
+        // 关闭自动写入update_time字段
+        protected $updateTime = false;
+    }
+
+如果不需要任何自动写入的时间戳字段的话，可以关闭时间戳自动写入功能，设置如下：
+
+.. code-block:: php
+
+    class User extends Model
+    {
+        // 关闭自动写入时间戳
+        protected $autoWriteTimestamp = false;
+    }
+
+如果是关闭全局的自动时间写入，则可以使用：
+
+.. code-block:: php
+
+    // 关闭全局自动写入时间字段
+    'auto_timestamp' => false,
+
+只读字段
+========
+只读字段用来保护某些特殊的字段值不被更改，这个字段的值一旦写入，就无法更改。 要使用只读字段的功能，我们只需要在模型中定义 ``readonly`` 属性：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        protected $readonly = ['name','email'];
+    }
+
+例如，上面定义了当前模型的 ``name`` 和 ``email`` 字段为只读字段，不允许被更改。也就是说当执行更新方法之前会自动过滤掉只读字段的值，避免更新到数据库。
+
+下面举个例子说明下：
+
+.. code-block:: php
+
+    $user = User::get(5);
+     // 更改某些字段的值
+    $user->name = 'TOPThink';
+    $user->email = 'Topthink@gmail.com';
+    $user->address = '上海静安区';
+     // 保存更改后的用户数据
+    $user->save();
+
+事实上，由于我们对 ``name`` 和 ``email`` 字段设置了只读，因此只有 ``address`` 字段的值被更新了，而 ``name`` 和 ``email`` 的值仍然还是更新之前的值。
+
+软删除
+======
+在实际项目中，对数据频繁使用删除操作会导致性能问题，软删除的作用就是把数据加上删除标记，而不是真正的删除，同时也便于需要的时候进行数据的恢复。
+
+要使用软删除功能，需要引入 ``SoftDelete trait`` ，例如 ``User`` 模型按照下面的定义就可以使用软删除功能：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+    use traits\model\SoftDelete;
+
+    class User extends Model
+    {
+        use SoftDelete;
+        protected $deleteTime = 'delete_time';
+    }
+
+.. warning:: 5.0.2 版本之前 ``deleteTime`` 属性必须使用 ``static`` 定义。
+
+``deleteTime`` 属性用于定义你的软删除标记字段， ``ThinkPHP5`` 的软删除功能使用时间戳类型（数据表默认值为 ``Null`` ），用于记录数据的删除时间。
+
+.. note:: 可以用类型转换指定软删除字段的类型，建议数据表的所有时间字段统一一种类型。
+
+定义好模型后，我们就可以使用：
+
+.. code-block:: php
+
+    // 软删除
+    User::destroy(1);
+    // 真实删除
+    User::destroy(1,true);
+    $user = User::get(1);
+    // 软删除
+    $user->delete();
+    // 真实删除
+    $user->delete(true);
+
+默认情况下查询的数据不包含软删除数据，如果需要包含软删除的数据，可以使用下面的方式查询：
+
+.. code-block:: php
+
+    User::withTrashed()->find();
+    User::withTrashed()->select();
+
+如果仅仅需要查询软删除的数据，可以使用：
+
+.. code-block:: php
+
+    User::onlyTrashed()->find();
+    User::onlyTrashed()->select();
+
+.. warning:: 如果你的模型定义了 ``base`` 基础查询，请确保添加软删除的基础查询条件。
+
+类型转换
+========
+支持给字段设置类型自动转换，会在写入和读取的时候自动进行类型转换处理，例如：
+
+.. code-block:: php
+
+    class User extends Model
+    {
+        protected $type = [
+            'status'    =>  'integer',
+            'score'     =>  'float',
+            'birthday'  =>  'datetime',
+            'info'      =>  'array',
+        ];
+    }
+
+下面是一个类型自动转换的示例：
+
+.. code-block:: php
+
+    $user = new User;
+    $user->status = '1';
+    $user->score = '90.50';
+    $user->birthday = '2015/5/1';
+    $user->info = ['a'=>1,'b'=>2];
+    $user->save();
+    var_dump($user->status); // int 1
+    var_dump($user->score); // float 90.5;
+    var_dump($user->birthday); // string '2015-05-01 00:00:00'
+    var_dump($user->info);// array (size=2) 'a' => int 1  'b' => int 2
+
+数据库查询默认取出来的数据都是字符串类型，如果需要转换为其他的类型，需要设置，支持的类型包括如下类型：
+
+- integer ：设置为 ``integer``（整型）后，该字段写入和输出的时候都会自动转换为整型。
+- float ：该字段的值写入和输出的时候自动转换为浮点型。
+- boolean ：该字段的值写入和输出的时候自动转换为布尔型。
+- array ：如果设置为强制转换为 ``array`` 类型，系统会自动把数组编码为 ``json`` 格式字符串写入数据库，取出来的时候会自动解码。
+- object ：该字段的值在写入的时候会自动编码为 ``json`` 字符串，输出的时候会自动转换为 ``stdclass`` 对象。
+- serialize ：指定为序列化类型的话，数据会自动序列化写入，并且在读取的时候自动反序列化。
+- json ：指定为 ``json`` 类型的话，数据会自动 ``json_encode`` 写入，并且在读取的时候自动 ``json_decode`` 处理。
+- timestamp ：指定为时间戳字段类型的话，该字段的值在写入时候会自动使用 ``strtotime`` 生成对应的时间戳，输出的时候会自动转换为 ``dateFormat`` 属性定义的时间字符串格式，默认的格式为 ``Y-m-d H:i:s`` ，如果希望改变其他格式，可以定义如下：
+
+.. code-block:: php
+
+    class User extends Model
+    {
+        protected $dateFormat = 'Y/m/d';
+        protected $type = [
+            'status'    =>  'integer',
+            'score'     =>  'float',
+            'birthday'  =>  'timestamp',
+        ];
+    }
+
+或者在类型转换定义的时候使用：
+
+.. code-block:: php
+
+    class User extends Model
+    {
+        protected $type = [
+            'status'    =>  'integer',
+            'score'     =>  'float',
+            'birthday'  =>  'timestamp:Y/m/d',
+        ];
+    }
+
+然后就可以
+
+.. code-block:: php
+
+    $user = User::find(1);
+    echo $user->birthday; // 2015/5/1
+
+- datetime ：和 ``timestamp`` 类似，区别在于写入和读取数据的时候都会自动处理成时间字符串 ``Y-m-d H:i:s`` 的格式。就是把字符串日期时间标识与 ``DateTime`` 对象之间的转换。
+
+数据完成
+========
+数据自动完成指在不需要手动赋值的情况下对字段的值进行处理后写入数据库。
+
+系统支持 ``auto`` 、 ``insert`` 和 ``update`` 三个属性，可以分别在写入、新增和更新的时候进行字段的自动完成机制， ``auto`` 属性自动完成包含新增和更新操作，例如我们定义 ``User`` 模型类如下：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        protected $auto = [];
+        protected $insert = ['ip','status' => 1];
+        protected $update = ['login_ip'];
+
+        protected function setIpAttr()
+        {
+            return request()->ip();
+        }
+    }
+
+在新增数据的时候，会对 ``ip`` 和 ``status`` 字段自动完成或者处理。
+
+.. code-block:: php
+
+    $user = new User;
+    $user->name = 'ThinkPHP';
+    $user->save();
+    echo $user->name; // thinkphp
+    echo $user->status; // 1
+
+在保存操作的时候，会自动完成 ``ip`` 字段的赋值。
+
+.. code-block:: php
+
+    $user = User::find(1);
+    $user->name = 'THINKPHP';
+    $user->save();
+    echo $user->name; // thinkphp
+    echo $user->ip; // 127.0.0.1
+
+.. note:: 开发者需要理清“修改器”与“自动完成”的关系。
+
+查询范围
+========
+可以对模型的查询和写入操作进行封装，例如：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+
+        protected function scopeThinkphp($query)
+        {
+            $query->where('name','thinkphp')->field('id,name');
+        }
+
+        protected function scopeAge($query)
+        {
+            $query->where('age','>',20)->limit(10);
+        }
+
+    }
+
+就可以进行下面的条件查询：
+
+.. code-block:: php
+
+    // 查找name为thinkphp的用户
+    User::scope('thinkphp')->find();
+    // 查找年龄大于20的10个用户
+    User::scope('age')->select();
+    // 查找name为thinkphp的用户并且年龄大于20的10个用户
+    User::scope('thinkphp,age')->select();
+
+可以直接使用闭包函数进行查询，例如：
+
+.. code-block:: php
+
+    User::scope(function($query){
+        $query->where('age','>',20)->limit(10);
+    })->select();
+
+参数支持：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+
+        protected function scopeAgeAbove($query, $lowest_age)
+        {
+            $query->where('age','>',$lowest_age)->limit(10);
+        }
+    }
+
+    User::scope('ageAbove', 20)->select();
+
+.. note:: scope 的name 驼峰的 只能 ageAbove AgeAbove 不支持 age_above
+
+支持动态调用的方式，例如：
+
+.. code-block:: php
+
+    $user = new User;
+    // 查找name为thinkphp的用户
+    $user->thinkphp()->get();
+    // 查找年龄大于20的10个用户
+    $user->age()->all();
+    // 查找name为thinkphp的用户并且年龄大于20的10个用户
+    $user->thinkphp()->age()->all();
+
+.. warning:: 命名范围方法之前不能调用查询的连贯操作方法，必须首先被调用。如果在查询范围方法后面调用了其他的链式查询方法，则只能使用 ``find`` 或者 ``select`` 查询。
+
+全局查询范围
+------------
+如果你的所有查询都需要一个基础的查询范围，那么可以在模型类里面定义一个静态的 ``base`` 方法，例如：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        // 定义全局的查询范围
+        protected function base($query)
+        {
+            $query->where('status',1);
+        }
+    }
+
+.. warning:: 全局查询范围方法在 5.0.2 版本之前必须定义为 ``static`` 静态方法。
+
+然后，执行下面的代码：
+
+.. code-block:: php
+
+    $user = User::get(1);
+
+最终的查询条件会是
+
+.. code-block:: sql
+
+    status = 1 AND id = 1
+
+如果需要动态关闭/开启全局查询访问，可以使用：
+
+.. code-block:: php
+
+    // 关闭全局查询范围
+    User::useGlobalScope(false)->get(1);
+    // 开启全局查询范围
+    User::useGlobalScope(true)->get(2);
+
+模型分层
+========
+ThinkPHP 支持模型的分层 ，除了 ``Model`` 层之外，我们可以项目的需要设计和创建其他的模型层。
+
+通常情况下，不同的分层模型仍然是继承系统的 ``\think\Model`` 类或其子类，所以，其基本操作和 ``Model`` 类的操作是一致的。
+
+例如在 ``index`` 模块的设计中需要区分数据层、逻辑层、服务层等不同的模型层，我们可以在模块目录下面创建 ``model`` 、 ``logic`` 和 ``service`` 目录，把对用户表的所有模型操作分成三层：
+
+- 数据层： ``app\index\model\User`` 用于定义数据相关的自动验证和自动完成和数据存取接口；
+- 逻辑层： ``app\index\logic\User`` 用于定义用户相关的业务逻辑；
+- 服务层： ``app\index\service\User`` 用于定义用户相关的服务接口等；
+
+三个模型层的定义如下：
+
+app\index\model\User.php
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+    }
+
+实例化方法： ``\think\Loader::model('User')``
+
+``Logic`` 类： ``app\index\logic\User.php``
+
+.. code-block:: php
+
+    namespace app\index\logic;
+
+    use think\Model;
+
+    class User extends Model
+    {
+    }
+
+实例化方法： \think\Loader::model('User','logic');
+
+Service类： app\index\service\User.php
+
+.. code-block:: php
+
+    namespace app\index\service;
+
+    use think\Model;
+
+    class User extends Model
+    {
+    }
+
+实例化方法： ``\think\Loader::model('User','service');``
+
+数据访问和转换
+==============
+
+数组访问
+--------
+
++--------+----------------------------------------------+
+| 版本   | 新增功能                                     |
++========+==============================================+
+| 5.0.10 | 增加removeRelation方法去除所有的关联属性     |
++--------+----------------------------------------------+
+| 5.0.5  | hidden、visible和append方法支持关联属性      |
++--------+----------------------------------------------+
+| 5.0.4  | 增加appendRelationAttr方法追加关联模型的属性 |
++--------+----------------------------------------------+
+
+模型对象支持数组方式访问，例如：
+
+.. code-block:: php
+
+    $user = User::find(1);
+    echo $user->name ; // 有效
+    echo $user['name'] // 同样有效
+    $user->name = 'thinkphp'; // 有效
+    $user['name'] = 'thinkphp'; // 同样有效
+    $user->save();
+
+转换为数组
+----------
+可以使用 ``toArray`` 方法将当前的模型实例输出为数组，例如：
+
+.. code-block:: php
+
+    $user = User::find(1);
+    dump($user->toArray());
+
+支持设置不输出的字段属性：
+
+.. code-block:: php
+
+    $user = User::find(1);
+    dump($user->hidden(['create_time','update_time'])->toArray());
+
+数组输出的字段值会经过获取器的处理，也可以支持追加其它获取器定义（不在数据表字段列表中）的字段，例如：
+
+.. code-block:: php
+
+    $user = User::find(1);
+    dump($user->append(['status_text'])->toArray());
+
+支持设置允许输出的属性，例如：
+
+.. code-block:: php
+
+    $user = User::find(1);
+    dump($user->visible(['id','name','email'])->toArray());
+
+如果是数据集查询的话有两种情况，由于默认的数据集返回结果的类型是一个数组，因此无法调用 ``toArray`` 方法，必须先转成数据集对象然后再使用 ``toArray`` 方法，系统提供了一个 ``collection`` 助手函数实现数据集对象的转换，代码如下：
+
+.. code-block:: php
+
+    $list = User::all();
+    if($list) {
+        $list = collection($list)->toArray();
+    }
+
+如果设置了模型的数据集返回类型的话，则可以简化使用
+
+.. code-block:: php
+
+    <?php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        protected $resultSetType = 'collection';
+    }
+
+然后就可以直接使用
+
+.. code-block:: php
+
+    $list = User::all();
+    $list = $list->toArray();
+
+追加关联模型的属性（V5.0.4+）
+----------------------------
+V5.0.4+ 版本开始，支持追加一对一关联模型的属性到当前模型，例如：
+
+.. code-block:: php
+
+    $user = User::find(1);
+    dump($user->appendRelationAttr('profile',['email','nickname'])->toArray());
+
+``profile`` 是关联定义方法名， ``email`` 和 ``nickname`` 是 ``Profile`` 模型的属性。
+
+支持关联属性（V5.0.5+）
+----------------------
+模型的 ``visible`` 、 ``hidden`` 和 ``append`` 方法支持关联属性操作，例如：
+
+.. code-block:: php
+
+    $user = User::get(1,'profile');
+    // 隐藏profile关联属性的email属性
+    dump($user->hidden(['profile'=>['email']])->toArray());
+    // 或者使用
+    dump($user->hidden(['profile.email'])->toArray());
+
+``hidden`` 、 ``visible`` 和 ``append`` 方法同样支持数据集对象。
+
+JSON序列化
+==========
+
++--------+----------------------------------------------+
+| 版本   | 新增功能                                     |
++========+==============================================+
+| 5.0.10 | 增加removeRelation方法去除所有的关联属性     |
++--------+----------------------------------------------+
+| 5.0.5  | hidden、visible和append方法支持关联属性      |
++--------+----------------------------------------------+
+| 5.0.4  | 增加appendRelationAttr方法追加关联模型的属性 |
++--------+----------------------------------------------+
+
+可以调用模型的 ``toJson`` 方法进行 ``JSON`` 序列化
+
+.. code-block:: php
+
+    $user = User::get(1);
+    echo $user->toJson();
+
+可以设置无需输出的字段，例如：
+
+.. code-block:: php
+
+    $user = User::get(1);
+    echo $user->hidden(['create_time','update_time'])->toJson();
+
+或者追加其它的字段：
+
+.. code-block:: php
+
+    $user = User::get(1);
+    echo $user->append(['status_text'])->toJson();
+
+设置允许输出的属性：
+
+.. code-block:: php
+
+    $user = User::get(1);
+    echo $user->visible(['id','name','email'])->toJson();
+
+模型对象可以直接被 ``JSON`` 序列化，例如：
+
+.. code-block:: php
+
+    echo json_encode(User::get(1));
+
+输出结果类似于：
+
+.. code-block:: json
+
+    {"id":"1","name":"","title":"","status":"1","update_time":"1430409600","score":"90.5"}
+
+或者也可以直接 ``echo`` 一个模型对象，例如：
+
+.. code-block:: php
+
+    echo User::get(1);
+
+输出的结果和上面是一样的。
+
+追加关联模型的属性（V5.0.4+）
+-----------------------------
+V5.0.4+ 版本开始，支持追加一对一关联模型的属性到当前模型，例如：
+
+.. code-block:: php
+
+    $user = User::find(1);
+    echo $user->appendRelationAttr('profile',['email','nickname'])->toJson();
+
+``profile`` 是关联定义方法名， ``email`` 和 ``nickname`` 是 ``Profile`` 模型的属性。
+
+事件
+====
+
+模型事件
+--------
+
++-------+--------------------------+
+| 版本  | 新增功能                 |
++=======+==========================+
+| 5.0.4 | 增加模型事件注册快捷方法 |
++-------+--------------------------+
+
+模型事件是指在进行模型的写入操作的时候触发的操作行为，包括模型的 ``save`` 方法和 ``delete`` 方法。
+
+.. note:: 模型事件只可以在调用模型的方法才能生效，使用查询构造器通过 ``Db`` 类操作是无效的
+
+模型类支持 ``before_delete`` 、 ``after_delete`` 、 ``before_write`` 、 ``after_write`` 、 ``before_update`` 、 ``after_update`` 、 ``before_insert`` 、 ``after_insert`` 事件行为
+
++---------------+--------+
+| 标签位        | 描述   |
++===============+========+
+| before_insert | 新增前 |
++---------------+--------+
+| after_insert  | 新增后 |
++---------------+--------+
+| before_update | 更新前 |
++---------------+--------+
+| after_update  | 更新后 |
++---------------+--------+
+| before_write  | 写入前 |
++---------------+--------+
+| after_write   | 写入后 |
++---------------+--------+
+| before_delete | 删除前 |
++---------------+--------+
+| after_delete  | 删除后 |
++---------------+--------+
+
+使用方法如下：
+
+.. code-block:: php
+
+    User::event('before_insert', function ($user) {
+        if ($user->status != 1) {
+            return false;
+        }
+    });
+
+注册的回调方法支持传入一个参数（当前的模型对象实例），并且 ``before_write`` 、 ``before_insert`` 、 ``before_update``  、 ``before_delete`` 事件方法如果返回 ``false`` ，则不会继续执行。
+
+支持给一个位置注册多个回调方法，例如：
+
+.. code-block:: php
+
+    User::event('before_insert', function ($user) {
+        if ($user->status != 1) {
+            return false;
+        }
+    });
+    // 注册回调到beforeInsert函数
+    User::event('before_insert', 'beforeInsert');
+
+可以在模型类的 ``init`` 方法里面统一注册模型事件，例如：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        protected static function init()
+        {
+            User::event('before_insert', function ($user) {
+                if ($user->status != 1) {
+                    return false;
+                }
+            });
+        }
+    }
+
+.. note:: 调用当前模型也可以写入 ``self::event('before_insert', ...)``
+
+快捷注册（V5.0.4+）
+------------------
+V5.0.4+ 版本开始，系统提供了内置的事件注册的快捷方法，你可以用下面的方式替代
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        protected static function init()
+        {
+            User::beforeInsert(function ($user) {
+                if ($user->status != 1) {
+                    return false;
+                }
+            });
+        }
+    }
+
+这些模型类的快捷方法如下：
+
++--------------+--------+
+| 标签位       | 描述   |
++==============+========+
+| beforeInsert | 新增前 |
++--------------+--------+
+| afterInsert  | 新增后 |
++--------------+--------+
+| beforeUpdate | 更新前 |
++--------------+--------+
+| afterUpdate  | 更新后 |
++--------------+--------+
+| beforeWrite  | 写入前 |
++--------------+--------+
+| afterWrite   | 写入后 |
++--------------+--------+
+| beforeDelete | 删除前 |
++--------------+--------+
+| afterDelete  | 删除后 |
++--------------+--------+
+
+关联
+====
+
+一对一关联
+-----------
+
++-------+------------------------------+
+| 版本  | 功能调整                     |
++=======+==============================+
+| 5.0.5 | 增加关联自动写入和删除       |
++-------+------------------------------+
+| 5.0.4 | 增加关联属性绑定到父模型功能 |
++-------+------------------------------+
+
+定义
+^^^^
+定义一对一关联，例如，一个用户都有一个个人资料，我们定义 ``User`` 模型如下：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        public function profile()
+        {
+            return $this->hasOne('Profile');
+        }
+    }
+
+``hasOne`` 方法的参数包括：
+
+**hasOne('关联模型名','外键名','主键名',['模型别名定义'],'join类型');**
+
+默认的 ``join`` 类型为 ``INNER`` 。
+
+V5.0.3+ 版本开始，可以支持为关联模型定义需要查询的字段，例如：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        public function profile()
+        {
+            return $this->hasOne('Profile')->field('id,name,email');
+        }
+    }
+
+.. warning:: 如果使用的是 ``join`` 方式的关联，不支持指定 ``field`` 字段。
+
+5.0.5+版本开始，模型别名定义参数已经废弃。
+
+关联查找
+^^^^^^^^
+定义好关联之后，就可以使用下面的方法获取关联数据：
+
+.. code-block:: php
+
+    $user = User::get(1);
+    // 输出Profile关联模型的email属性
+    echo $user->profile->email;
+
+如果要根据关联表的查询条件查询当前模型的数据，可以使用 ``hasWhere`` 方法，例如：
+
+.. code-block:: php
+
+    $user = User::hasWhere('profile',['email'=>'thinkphp@qq.com'])->find();
+    echo $user->name;
+
+默认情况下， 我们使用的是 ``user_id`` 作为外键关联，如果不是的话则需要在关联定义的时候指定，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        public function profile()
+        {
+            return $this->hasOne('Profile','uid');
+        }
+    }
+
+.. warning:: 有一点需要注意的是，关联方法的命名规范是驼峰法，而关联属性则一般是小写+下划线的方式，系统在获取的时候会自动转换对应，读取 ``user_profile`` 关联属性则对应的关联方法应该是 ``userProfile`` 。
+
+关联新增
+^^^^^^^^
+
+.. code-block:: php
+
+    $user = User::get(1);
+    // 如果还没有关联数据 则进行新增
+    $user->profile()->save(['email' => 'thinkphp']);
+
+系统会自动把当前模型的主键传入 ``profile`` 模型。
+
+关联更新
+^^^^^^^^
+和新增一样使用 ``save`` 方法进行更新关联数据。
+
+.. code-block:: php
+
+    $user = User::get(1);
+    $user->profile->email = 'thinkphp';
+    $user->profile->save();
+    // 或者
+    $user->profile->save(['email' => 'thinkphp']);
+
+定义相对的关联
+^^^^^^^^^^^^^^
+我们可以在 ``Profile`` 模型中定义一个相对的关联关系，例如：
+
+.. code-block:: php
+
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Profile extends Model
+    {
+        public function user()
+        {
+            return $this->belongsTo('User');
+        }
+    }
+
+``belongsTo`` 的参数包括：
+
+**belongsTo('关联模型名','外键名','关联表主键名',['模型别名定义'],'join类型');**
+
+默认的关联外键是 ``user_id`` ，如果不是，需要在第二个参数定义
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Profile extends Model
+    {
+        public function user()
+        {
+            return $this->belongsTo('User','uid');
+        }
+    }
+
+我们就可以根据档案资料来获取用户模型的信息
+
+.. code-block:: php
+
+    $profile = Profile::get(1);
+    // 输出User关联模型的属性
+    echo $profile->user->account;
+
+绑定属性到父模型（V5.0.4+）
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+可以在定义关联的时候使用 ``bind`` 方法绑定属性到父模型，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        public function profile()
+        {
+            return $this->hasOne('Profile','uid')->bind('nickname,email');
+        }
+    }
+
+或者使用数组的方式指定绑定属性别名
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        public function profile()
+        {
+            return $this->hasOne('Profile','uid')->bind([
+                    'email',
+                    'truename'  => 'nickname',
+                    'profile_id'  => 'id',
+                ]);
+        }
+    }
+
+然后使用关联预载入查询的时候，可以使用
+
+.. code-block:: php
+
+    $user = User::get(1,'profile');
+    // 输出Profile关联模型的email属性
+    echo $user->email;
+    echo $user->profile_id;
+
+绑定关联属性不影响原有关联属性的读取，绑定关联模型的属性支持读取器。
+
+.. note:: 如果不是预载入查询，请使用模型的 ``appendRelationAttr`` 方法追加属性。
+
+关联自动写入（V5.0.5+）
+^^^^^^^^^^^^^^^^^^^^^^
+我们可以使用 ``together`` 方法更方便的进行关联自动写入操作。
+
+写入
+""""
+
+.. code-block:: php
+
+    $blog = new Blog;
+    $blog->name = 'thinkphp';
+    $blog->title = 'ThinkPHP5关联实例';
+    $content = new Content;
+    $content->data = '实例内容';
+    $blog->content = $content;
+    $blog->together('content')->save();
+
+更新
+""""
+
+.. code-block:: php
+
+    // 查询
+    $blog = Blog::get(1);
+    $blog->title = '更改标题';
+    $blog->content->data = '更新内容';
+    // 更新当前模型及关联模型
+    $blog->together('content')->save();
+
+删除
+""""
+
+.. code-block:: php
+
+    // 查询
+    $blog = Blog::get(1);
+    // 删除当前及关联模型
+    $blog->together('content')->delete();
+
+.. note:: 如果不想这么麻烦每次调用 ``together`` 方法，也可以直接在模型类中定义 ``relationWrite`` 属性，但必须是数组方式。不过考虑到模型的独立操作的可能性，并不建议。
+
+一对多关联
+----------
+关联定义
+^^^^^^^^
+一对多关联的情况也比较常见，使用 ``hasMany`` 方法定义，参数包括：
+
+**hasMany('关联模型名','外键名','主键名',['模型别名定义']);**
+
+例如一篇文章可以有多个评论
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Article extends Model
+    {
+        public function comments()
+        {
+            return $this->hasMany('Comment');
+        }
+    }
+
+同样，也可以定义外键的名称
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Article extends Model
+    {
+        public function comments()
+        {
+            return $this->hasMany('Comment','art_id');
+        }
+    }
+
+如果需要指定查询字段，可以使用下面的方式：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Article extends Model
+    {
+        public function comments()
+        {
+            return $this->hasMany('Comment')->field('id,author,content');
+        }
+    }
+
+关联查询
+^^^^^^^^
+我们可以通过下面的方式获取关联数据
+
+.. code-block:: php
+
+    $article = Article::get(1);
+    // 获取文章的所有评论
+    dump($article->comments);
+    // 也可以进行条件搜索
+    dump($article->comments()->where('status',1)->select());
+
+根据关联条件查询
+^^^^^^^^^^^^^^^^
+可以根据关联条件来查询当前模型对象数据，例如：
+
+.. code-block:: php
+
+    // 查询评论超过3个的文章
+    $list = Article::has('comments','>',3)->select();
+    // 查询评论状态正常的文章
+    $list = Article::hasWhere('comments',['status'=>1])->select();
+
+.. warning:: V5.0.13+ 版本开始， hasWhere 方法新增 fields 参数，用于指定返回的字段列表。例如：
+
+.. code-block:: php
+
+    // 查询评论状态正常的文章
+    $list = Article::hasWhere('comments', ['status'=>1], 'name,title')->select();
+
+关联新增
+^^^^^^^^
+
+.. code-block:: php
+
+    $article = Article::find(1);
+    // 增加一个关联数据
+    $article->comments()->save(['content'=>'test']);
+    // 批量增加关联数据
+    $article->comments()->saveAll([
+        ['content'=>'thinkphp'],
+        ['content'=>'onethink'],
+    ]);
+
+定义相对的关联
+^^^^^^^^^^^^^^
+要在 ``Comment`` 模型定义相对应的关联，可使用 ``belongsTo`` 方法：
+
+.. code-block:: php
+
+    <?php
+    name app\index\model;
+
+    use think\Model;
+
+    class Comment extends Model
+    {
+        public function article()
+        {
+            return $this->belongsTo('article');
+        }
+    }
+
+远程一对多
+----------
+远程一对多关联用于定义有跨表的一对多关系，例如：
+
+- 每个城市有多个用户
+- 每个用户有多个话题
+- 城市和话题之间并无关联
+
+关联定义
+^^^^^^^^
+就可以直接通过远程一对多关联获取每个城市的多个话题， ``City`` 模型定义如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class City extends Model
+    {
+        public function topics()
+        {
+            return $this->hasManyThrough('Topic','User');
+        }
+    }
+
+远程一对多关联，需要同时存在 ``Topic`` 和 ``User`` 模型。
+
+``hasManyThrough`` 方法的参数如下：
+
+**hasManyThrough('关联模型名','中间模型名','外键名','中间模型关联键名','当前模型主键名',['模型别名定义']);**
+
+关联查询
+^^^^^^^^
+我们可以通过下面的方式获取关联数据
+
+.. code-block:: php
+
+    $city = City::get(1);
+    // 获取同城的所有话题
+    dump($city->topics);
+    // 也可以进行条件搜索
+    dump($city->topics()->where('topic.status',1)->select());
+
+.. note:: 条件搜索的时候，需要带上模型名作为前缀
+
+多对多关联
+----------
+
++-------+----------------------------------------+
+| 版本  | 功能调整                               |
++=======+========================================+
+| 5.0.8 | 中间表名无需前缀，并支持定义中间表模型 |
++-------+----------------------------------------+
+| 5.0.6 | attach方法返回值改为Pivot对象          |
++-------+----------------------------------------+
+
+关联定义
+^^^^^^^^
+例如，我们的用户和角色就是一种多对多的关系，我们在 ``User`` 模型定义如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        public function roles()
+        {
+            return $this->belongsToMany('Role');
+        }
+    }
+
+belongsToMany 方法的参数如下：
+
+**belongsToMany('关联模型名','中间表名','另一端在关联表中外键名','当前模型在关联表中外键名',['模型别名定义']);**
+
+5.0.8+ 版本开始，中间表名无需添加表前缀，并支持定义中间表模型，例如：
+
+.. code-block:: php
+
+public function roles()
+{
+    return $this->belongsToMany('Role','\app\index\model\Access');
+}
+
+关联查询
+^^^^^^^^
+我们可以通过下面的方式获取关联数据
+
+.. code-block:: php
+
+    $user = User::get(1);
+    // 获取用户的所有角色
+    dump($user->roles);
+
+如果要获取中间表数据，可以使用
+
+.. code-block:: php
+
+    $user = User::get(1);
+    $roles = $user->roles;
+    foreach($roles as $role){
+        // 获取中间表数据
+        dump($role->pivot);
+    }
+
+关联新增
+^^^^^^^^
+
+.. code-block:: php
+
+    $user = User::get(1);
+    // 增加关联数据 会自动写入中间表数据
+    $user->roles()->save(['name'=>'管理员']);
+    // 批量增加关联数据
+    $user->roles()->saveAll([
+        ['name'=>'管理员'],
+        ['name'=>'操作员'],
+    ]);
+
+只新增中间表数据，可以使用
+
+.. code-block:: php
+
+    $user = User::get(1);
+    // 仅增加关联的中间表数据
+    $user->roles()->save(1);
+    // 或者
+    $role = Role::get(1);
+    $user->roles()->save($role);
+    // 批量增加关联数据
+    $user->roles()->saveAll([1,2,3]);
+
+单独更新中间表数据，可以使用：
+
+.. code-block:: php
+
+    $user = User::get(1);
+    // 增加关联的中间表数据
+    $user->roles()->attach(1);
+    // 传入中间表的额外属性
+    $user->roles()->attach(1,['remark'=>'test']);
+    // 删除中间表数据
+    $user->roles()->detach([1,2,3]);
+
+.. warning:: V5.0.6+ 版本开始， ``attach`` 方法的返回值是一个 ``Pivot`` 对象实例，如果是附加多个关联数据，则返回 ``Pivot`` 对象实例的数组。
+
+定义相对的关联
+^^^^^^^^^^^^^^
+我们可以在 ``Role`` 模型中定义一个相对的关联关系，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Role extends Model
+    {
+        public function users()
+        {
+            return $this->belongsToMany('User');
+        }
+    }
+
+多态关联
+--------
+
++-------+--------------------+
+| 版本  | 功能调整           |
++=======+====================+
+| 5.0.8 | 支持多态一对一关联 |
++-------+--------------------+
+| 5.0.4 | 支持多态一对多关联 |
++-------+--------------------+
+
+多态一对多关联（V5.0.4+）
+^^^^^^^^^^^^^^^^^^^^^^^^^
+多态关联允许一个模型在单个关联定义方法中从属一个以上其它模型，例如用户可以评论书和文章，但评论表通常都是同一个数据表的设计。多态一对多关联关系，就是为了满足类似的使用场景而设计。
+
+下面是关联表的数据表结构：
+
+.. code-block:: shell
+
+    article
+        id - integer
+        title - string
+        content - text
+
+    book
+        id - integer
+        title - string
+
+    comment
+        id - integer
+        content - text
+        commentable_id - integer
+        commentable_type - string
+
+有两个需要注意的字段是 ``comment`` 表中的 ``commentable_id`` 和 ``commentable_type`` 我们称之为多态字段。其中， ``commentable_id`` 用于存放书或者文章的 ``id`` （主键） ，而 ``commentable_type`` 用于存放所属模型的类型。通常的设计是多态字段有一个公共的前缀（例如这里用的 ``commentable`` ），当然，也支持设置完全不同的字段名（例如使用 ``data_id`` 和 ``type`` ）。
+
+多态关联定义
+""""""""""""
+接着，让我们来查看创建这种关联所需的模型定义：
+
+文章模型：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Article extends Model
+    {
+        /**
+         * 获取所有针对文章的评论。
+         */
+        public function comments()
+        {
+            return $this->morphMany('Comment', 'commentable');
+        }
+    }
+
+``morphMany`` 方法的参数如下：
+
+**morphMany('关联模型名','多态字段信息','多态类型');**
+
+- 关联模型名（必须）：关联的模型名称，可以使用模型名（如 ``Comment`` ）或者完整的命名空间模型名（如 ``app\index\model\Comment`` ）。
+- 多态字段信息（可选）：支持两种方式定义 如果是字符串表示多态字段的前缀，多态字段使用 ``多态前缀_type`` 和 ``多态前缀_id`` ，如果是数组，表示使用['多态类型字段名','多态ID字段名']，默认为当前的关联方法名作为字段前缀。
+- 多态类型（可选）：当前模型对应的多态类型，默认为当前模型名，可以使用模型名（如 ``Article`` ）或者完整的命名空间模型名（如 ``app\index\model\Article`` ）。
+
+书籍模型：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Book extends Model
+    {
+        /**
+         * 获取所有针对书籍的评论。
+         */
+        public function comments()
+        {
+            return $this->morphMany('Comment', 'commentable');
+        }
+    }
+
+书籍模型的设置方法同文章模型一致，区别在于多态类型不同，但由于多态类型默认会取当前模型名，因此不需要单独设置。
+
+下面是评论模型的关联定义：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Comment extends Model
+    {
+        /**
+         * 获取评论对应的多态模型。
+         */
+        public function commentable()
+        {
+            return $this->morphTo();
+        }
+    }
+
+``morphTo`` 方法的参数如下：
+
+**morphTo('多态字段信息',['多态类型别名']);**
+
+- 多态字段信息（可选）：支持两种方式定义 如果是字符串表示多态字段的前缀，多态字段使用 ``多态前缀_type`` 和 ``多态前缀_id`` ，如果是数组，表示使用['多态类型字段名','多态ID字段名']，默认为当前的关联方法名作为字段前缀
+- 多态类型别名（可选）：数组方式定义
+
+获取多态关联
+""""""""""""
+一旦你的数据表及模型被定义，则可以通过模型来访问关联。例如，若要访问某篇文章的所有评论，则可以简单的使用 ``comments`` 动态属性：
+
+.. code-block:: php
+
+    $article = Article::get(1);
+
+    foreach ($article->comments as $comment) {
+        dump($comment);
+    }
+
+你也可以从多态模型的多态关联中，通过访问调用 ``morphTo`` 的方法名称来获取拥有者，也就是此例子中 ``Comment`` 模型的 ``commentable`` 方法。所以，我们可以使用动态属性来访问这个方法：
+
+.. code-block:: php
+
+    $comment = Comment::get(1);
+    $commentable = $comment->commentable;
+
+``Comment`` 模型的 ``commentable`` 关联会返回 ``Article`` 或 ``Book`` 模型的对象实例，这取决于评论所属模型的类型。
+
+自定义多态关联的类型字段
+""""""""""""""""""""""""
+默认情况下， ``ThinkPHP`` 会使用模型名作为多态表的类型区分，例如， ``Comment`` 属于 ``Article`` 或者 ``Book`` , ``commentable_type`` 的默认值可以分别是 ``Article`` 或者 ``Book`` 。我们可以通过定义多态的时候传入参数来对数据库进行解耦。
+
+.. code-block:: php
+
+    public function commentable()
+    {
+        return $this->morphTo('commentable',[
+            'book'  =>  'app\index\model\Book',
+            'post'  =>  'app\admin\model\Article',
+        ]);
+    }
+
+多态一对一关联（V5.0.8+）
+^^^^^^^^^^^^^^^^^^^^^^^^
+多态一对一相比多态一对多关联的区别是动态的一对一关联，举个例子说有一个个人和团队表，而无论个人还是团队都有一个头像需要保存但都会对应同一个头像表
+
+.. code-block:: php
+
+    member
+        id - integer
+        name - string
+
+    team
+        id - integer
+        name - string
+
+    avatar
+        id - integer
+        avatar - string
+        imageable_id - integer
+        imageable_type - string
+
+会员模型：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Member extends Model
+    {
+        /**
+         * 获取用户的头像
+         */
+        public function avatar()
+        {
+            return $this->morphOne('Avatar', 'imageable');
+        }
+    }
+
+团队模型：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Team extends Model
+    {
+        /**
+         * 获取团队的头像
+         */
+        public function avatar()
+        {
+            return $this->morphOne('Avatar', 'imageable');
+        }
+    }
+
+``morphOne`` 方法的参数如下：
+
+**morphOne('关联模型名','多态字段信息','多态类型');**
+
+- 关联模型名（必须）：关联的模型名称，可以使用模型名（如 ``Member`` ）或者完整的命名空间模型名（如 ``app\index\model\Member`` ）。
+- 多态字段信息（可选）：支持两种方式定义 如果是字符串表示多态字段的前缀，多态字段使用 ``多态前缀_type`` 和 ``多态前缀_id`` ，如果是数组，表示使用['多态类型字段名','多态ID字段名']，默认为当前的关联方法名作为字段前缀。
+- 多态类型（可选）：当前模型对应的多态类型，默认为当前模型名，可以使用模型名（如 ``Member`` ）或者完整的命名空间模型名（如 ``app\index\model\Member`` ）。
+
+下面是头像模型的关联定义：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class Avatar extends Model
+    {
+        /**
+         * 获取头像对应的多态模型。
+         */
+        public function imageable()
+        {
+            return $this->morphTo();
+        }
+    }
+
+理解了多态一对多关联后，多态一对一关联其实就很容易理解了，区别就是当前模型和动态关联的模型之间的关联属于一对一关系。
+
+动态属性
+--------
+模型对象的关联属性可以直接作为当前模型对象的动态属性进行赋值或者取值操作（延迟查询），虽然该属性并非数据表字段，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        public function profile()
+        {
+            return $this->hasOne('Profile');
+        }
+    }
+
+我们在使用
+
+.. code-block:: php
+
+    // 查询模型数据
+    $user = User::find(1);
+    // 获取动态属性
+    dump($user->profile);
+    // 给关联模型属性赋值
+    $user->profile->phone = '1234567890';
+    // 保存关联模型数据
+    $user->profile->save();
+
+在获取动态属性 ``profile`` 的同时，模型会通过定义的关联方法去查询关联对象的数据并赋值给该动态属性，这是一种关联数据的“惰性加载”，只有真正访问关联属性的时候才会进行关联查询。
+
+当有大量的关联数据需要查询的时候，一般都会考虑选择关联预载入的方式（参考下一节）。
+
+关联预载入
+----------
+
++-------+------------------------------------------+
+| 版本  | 功能调整                                 |
++=======+==========================================+
+| 5.0.7 | 嵌套关联支持数组方式定义                 |
++-------+------------------------------------------+
+| 5.0.5 | 增加延迟关联预载入                       |
++-------+------------------------------------------+
+| 5.0.5 | 一对一关联预载入默认采用IN查询方式       |
++-------+------------------------------------------+
+| 5.0.4 | 一对一关联支持JOIN和IN两种方式预载入查询 |
++-------+------------------------------------------+
+
+关联查询的预查询载入功能，主要解决了 ``N+1`` 次查询的问题，例如下面的查询如果有 ``3`` 个记录，会执行 ``4`` 次查询：
+
+.. code-block:: php
+
+    $list = User::all([1,2,3]);
+    foreach($list as $user){
+        // 获取用户关联的profile模型数据
+        dump($user->profile);
+    }
+
+如果使用关联预查询功能，对于一对一关联来说，只有一次查询，对于一对多关联的话，就可以变成 ``2`` 次查询，有效提高性能。
+
+.. code-block:: php
+
+    $list = User::with('profile')->select([1,2,3]);
+    foreach($list as $user){
+        // 获取用户关联的profile模型数据
+        dump($user->profile);
+    }
+
+支持预载入多个关联，例如：
+
+.. code-block:: php
+
+    $list = User::with('profile,book')->select([1,2,3]);
+
+也可以支持嵌套预载入，例如：
+
+.. code-block:: php
+
+    $list = User::with('profile.phone')->select([1,2,3]);
+    foreach($list as $user){
+        // 获取用户关联的phone模型
+        dump($user->profile->phone);
+    }
+
+V5.0.7 版本以上，支持使用数组方式定义嵌套预载入，例如下面的预载入要同时获取用户的 ``Profile`` 关联模型的 ``Phone`` 、 ``Job`` 和 ``Img`` 子关联模型数据：
+
+.. code-block:: php
+
+    $list = User::with(['profile'=>['phone','job','img']])->select([1,2,3]);
+    foreach($list as $user){
+        // 获取用户关联
+        dump($user->profile->phone);
+        dump($user->profile->job);
+        dump($user->profile->img);
+    }
+
+可以在模型的 ``get`` 和 ``all`` 方法中使用预载入，和使用 ``select`` 方法是等效的：
+
+.. code-block:: php
+
+    $list = User::all([1,2,3],'profile,book');
+
+如果要指定属性查询，可以使用：
+
+.. code-block:: php
+
+    $list = User::field('id,name')->with(['profile'=>function($query){$query->field('email,phone');}])->select([1,2,3]);
+    foreach($list as $user){
+        // 获取用户关联的profile模型数据
+        dump($user->profile);
+    }
+
+关联预载入名称是关联方法名，从 V5.0.4+ 版本开始，支持传入方法名的小写和下划线定义方式，例如如果关联方法名是 ``userProfile`` 和 ``userBook`` 的话：
+
+.. code-block:: php
+
+    $list = User::with('userProfile,userBook')->select([1,2,3]);
+
+等效于：
+
+.. code-block:: php
+
+    $list = User::with('user_profile,user_book')->select([1,2,3]);
+
+V5.0.4+ 版本开始一对一关联预载入支持两种方式： ``JOIN`` 方式（一次查询）和 ``IN`` 方式（两次查询），如果要使用 ``IN`` 方式关联预载入，在关联定义方法中添加
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        public function profile()
+        {
+            // 设置预载入查询方式为IN方式
+            return $this->hasOne('Profile')->setEagerlyType(1);
+        }
+    }
+
+V5.0.5+ 版本开始，默认使用 ``IN`` 查询方式，如果需要改为 ``JOIN`` 查询方式，使用
+
+.. code-block:: php
+
+    // 设置预载入查询方式为JOIN方式
+    return $this->hasOne('Profile')->setEagerlyType(0);
+
+延迟预载入（V5.0.5+）
+^^^^^^^^^^^^^^^^^^^^
+有些情况下，需要根据查询出来的数据来决定是否需要使用关联预载入，当然关联查询本身就能解决这个问题，因为关联查询是惰性的，不过用预载入的理由也很明显，性能具有优势。
+
+延迟预载入仅针对多个数据的查询，因为单个数据的查询用延迟预载入和关联惰性查询没有任何区别，所以不需要使用延迟预载入。
+
+如果你的数据集查询返回的是数据集对象，可以使用调用数据集对象的 ``load`` 实现延迟预载入：
+
+.. code-block:: php
+
+    // 查询数据集
+    $list = User::all([1,2,3]);
+    // 延迟预载入
+    $list->load('cards');
+    foreach($list as $user){
+        // 获取用户关联的card模型数据
+        dump($user->cards);
+    }
+
+如果你的数据集查询返回的是数组，系统提供了一个 ``load_relation`` 助手函数可以完成同样的功能。
+
+.. code-block:: php
+
+    // 查询数据集
+    $list = User::all([1,2,3]);
+    // 延迟预载入
+    $list = load_relation($list,'cards');
+    foreach($list as $user){
+        // 获取用户关联的card模型数据
+        dump($user->cards);
+    }
+
+关联统计
+--------
+
++-------+----------------------------+
+| 版本  | 新增功能                   |
++=======+============================+
+| 5.0.7 | 关联统计支持指定统计属性名 |
++-------+----------------------------+
+
+关联统计（V5.0.5+）
+^^^^^^^^^^^^^^^^^^
+有些时候，并不需要获取关联数据，而只是希望获取关联数据的统计（关联统计仅针对一对多或者多对多的关联关系），这个时候可以使用 ``withCount`` 方法进行制定关联的统计。
+
+.. code-block:: php
+
+    $list = User::withCount('cards')->select([1,2,3]);
+    foreach($list as $user){
+        // 获取用户关联的card关联统计
+        echo $user->cards_count;
+    }
+
+关联统计功能会在模型的对象属性中自动添加一个以 ``关联方法名+_count`` 为名称的动态属性来保存相关的关联统计数据。
+
+如果需要对关联统计进行条件过滤，可以使用
+
+.. code-block:: php
+
+    $list = User::withCount(['cards'=>function($query){
+        $query->where('status',1);
+    }])->select([1,2,3]);
+    foreach($list as $user){
+        // 获取用户关联的card关联统计
+        echo $user->cards_count;
+    }
+
+一对一关联关系使用关联统计是无效的，一般可以用 ``exists`` 查询来判断是否存在关联数据。
+
+V5.0.7 版本以上，支持给关联统计指定统计属性名，例如：
+
+.. code-block:: php
+
+    $list = User::withCount(['cards'=>'card_count'])->select([1,2,3]);
+    foreach($list as $user){
+        // 获取用户关联的card关联统计
+        echo $user->card_count;
+    }
+
+聚合模型
+========
+https://www.kancloud.cn/manual/thinkphp5/144721

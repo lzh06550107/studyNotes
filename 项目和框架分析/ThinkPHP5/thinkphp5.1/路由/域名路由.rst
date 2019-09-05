@@ -1,0 +1,207 @@
+****
+域名路由
+****
+
+域名路由
+========
+``ThinkPHP`` 支持完整域名、子域名和 ``IP`` 部署的路由和绑定功能，同时还可以起到简化 ``URL`` 的作用。
+
+可以单独给域名设置路由规则，例如给 ``blog`` 子域名注册单独的路由规则：
+
+.. code-block:: php
+
+	Route::domain('blog', function () {
+	    // 动态注册域名的路由规则
+	    Route::rule('new/:id', 'index/news/read');
+	    Route::rule(':user', 'index/user/info');
+	});
+
+.. note:: 闭包中可以使用路由的其它方法，包括路由分组，甚至给域名设置 ``MISS`` 路由。
+
+支持数组的方式：
+
+.. code-block:: php
+
+	Route::domain('blog', [
+	    // 动态注册域名的路由规则
+	    ':id'   => ['blog/read', ['method' => 'GET'], ['id' => '\d+']],
+	    ':name' => 'blog/read',
+	]);
+
+支持同时对多个域名设置相同的路由规则：
+
+.. code-block:: php
+
+	Route::domain(['blog', 'admin'], function () {
+	    // 动态注册域名的路由规则
+	    Route::rule('new/:id', 'index/news/read');
+	    Route::rule(':user', 'index/user/info');
+	});
+
+如果你需要设置一个路由跨所有域名都可以生效，可以对分组路由或者某个路由使用 ``crossDomainRule`` 方法设置：
+
+.. code-block:: php
+
+	Route::group('', function () {
+	    // 动态注册域名的路由规则
+	    Route::rule('new/:id', 'index/news/read');
+	    Route::rule(':user', 'index/user/info');
+	})->crossDomainRule();
+
+域名绑定
+========
+绑定到模块
+----------
+除了设置域名的路由规则之外，还支持单独给域名进行路由绑定，例如绑定到模块：
+
+.. code-block:: php
+
+	// blog子域名绑定到blog模块
+	Route::domain('blog', 'blog');
+
+	// 完整域名绑定到admin模块
+	Route::domain('admin.thinkphp.cn', 'admin');
+
+	// IP绑定到admin模块
+	Route::domain('114.23.4.5', 'admin');
+
+``blog`` 子域名绑定后， ``URL`` 访问规则变成：
+
+.. code-block:: shell
+
+	// 原来的URL访问
+	http://www.thinkphp.cn/blog/article/read/id/5
+	// 绑定到blog子域名访问
+	http://blog.thinkphp.cn/article/read/id/5
+
+支持直接绑定到控制器，例如：
+
+.. code-block:: php
+
+	// blog子域名绑定到index模块的blog控制器
+	Route::domain('blog', 'index/blog');
+
+``URL`` 访问地址变化为：
+
+.. code-block:: shell
+
+	// 原来的URL访问
+	http://www.thinkphp.cn/index/blog/read/id/5
+	// 绑定到blog子域名访问
+	http://blog.thinkphp.cn/read/id/5
+
+如果你的域名后缀比较特殊，例如是 ``com.cn`` 或者 ``net.cn`` 之类的域名，需要在应用配置文件 ``app.php`` 中配置：
+
+.. code-block:: shell
+
+    'url_domain_root'	=>	'thinkphp.com.cn'
+
+如果你需要同时定义域名路由和进行域名绑定的话，可以使用下面的方式（ ``V5.1.6+`` 版本有效）
+
+.. code-block:: php
+
+	Route::domain('blog', function () {
+	    // 动态注册域名的路由规则
+	    Route::rule('new/:id', 'index/news/read');
+	    Route::rule(':user', 'index/user/info');
+	})->bind('blog');
+
+同样也支持绑定到命名空间或者类。
+
+绑定到命名空间
+
+.. code-block:: php
+
+	// blog子域名绑定命名空间
+	Route::domain('blog', ':\app\blog\controller');
+
+绑定到类
+
+.. code-block:: php
+
+	// blog子域名绑定到类
+	Route::domain('blog', '\app\blog\controller\Article');
+
+泛域名部署
+==========
+
+可以支持泛域名部署规则，例如：
+
+.. code-block:: php
+
+	// 绑定泛二级域名域名到book模块
+	Route::domain('*', 'book');
+
+下面的 ``URL`` 访问都会直接访问 ``book`` 模块
+
+.. code-block:: shell
+
+	http://hello.thinkphp.cn
+	http://quickstart.thinkphp.cn
+
+并且可以直接通过 ``Request::panDomain()`` 获取当前的泛域名值。
+
+支持三级泛域名部署，例如：
+
+.. code-block:: php
+
+	// 绑定泛三级域名到user模块
+	Route::domain('*.user', 'user');
+
+也支持直接把泛域名的值作为额外参数传入
+
+.. code-block:: php
+
+	// 绑定泛三级域名到user模块
+	Route::domain('*.user', 'user?name=*'); // 测试失败？？
+
+就可以通过 ``Request::param('name')`` 获取当前泛域名的值。
+
+.. note:: 目前只支持二级域名和三级域名的泛域名部署。
+
+绑定到Response对象
+==================
+可以直接绑定某个域名到 ``Response`` 对象，例如：
+
+.. code-block:: php
+
+	// 绑定域名到Response对象
+	Route::domain('test', response()->code(404));
+
+如果域名需要同时定义路由规则，并且对其它的情况进行绑定操作，可以在闭包里面执行绑定操作，例如：
+
+.. code-block:: php
+
+	Route::domain('blog', function () {
+	    // 动态注册域名的路由规则
+	    Route::rule('new/:id', 'index/news/read');
+	})->bind('blog');
+
+在 ``blog`` 域名下面定义了一个 ``new/:id`` 的路由规则，指向 ``index`` 模块， **而其它的路由则绑定到 ``blog`` 模块。**
+
+传入额外参数
+============
+可以在域名绑定或者路由定义后传入额外的隐藏参数，例如：
+
+.. code-block:: php
+
+	Route::domain('blog', function () {
+	    // 动态注册域名的路由规则
+	    Route::rule('new/:id', 'index/news/read');
+	    Route::rule(':user', 'index/user/info');
+	})->append(['app_id'=>1]);
+
+上面的域名路由统一传入了 ``app_id`` 参数，该参数的值可以通过 ``Request`` 类的 ``param`` 方法获取。
+
+也可以直接在域名绑定后传入额外参数
+
+.. code-block:: php
+
+    Route::domain('blog', 'blog')->append(['app_id'=>1]);
+
+
+
+
+
+
+

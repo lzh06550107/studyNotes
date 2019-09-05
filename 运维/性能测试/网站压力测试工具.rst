@@ -1,0 +1,313 @@
+********
+网站压力测试工具
+********
+
+Siegi
+=====
+``Siege`` （英文意思是围攻）是一个压力测试和评测工具，设计用于 ``WEB`` 开发这评估应用在压力下的承受能力：可以根据配置对一个 ``WEB`` 站点进行多用户的并发访问，记录每个用户所有请求过程的相应时间，并在一定数量的并发访问下重复进行。
+
+最早使用的压力测试工具是 ``apache`` 的 ``ab`` (apache benchmark) ， ``apache ab`` 做重复压力测试不错，但是每次只能测试一个链接，如何测试一组链接（比如从日志中导出的 ``1`` 个小时的日志，做真实压力测试），后来找到了这个。
+
+``Siege`` 是一个压力测试和评测工具，设计用于 ``WEB`` 开发这评估应用在压力下的承受能力：可以根据配置对一个 ``WEB`` 站点进行多用户的并发访问，记录每个用户所有请求过程的相应时间，并在一定数量的并发访问下重复进行。
+
+简介
+----
+``Siege`` 是一个 ``http/https`` 回归测试和基准测试工具。它旨在让 ``Web`` 开发人员在压力下测量其代码的性能，以了解它如何在互联网上加载。它允许用户使用可配置数量的并发模拟用户访问 ``Web`` 服务器。这些用户将网络服务器“置于围困之下”。 ``Siege`` 的持续时间是在访问中测量的，模拟用户的总和以及每个模拟用户重复点击服务器的过程的次数。因此20个并发用户50次是1000次访问，测试的长度。性能测量包括测试的经过时间，传输的数据量（包括标头），服务器的响应时间，访问速率，吞吐量，并发性和返回的确定次数。这些措施在每次运行结束时进行量化和报告。它们的含义和意义将在下面讨论。 ``Siege`` 基本上有三种操作模式，回归，互联网模拟和暴力。它可以从配置文件中读取大量 ``URL`` ，并逐步（回归）或随机（互联网模拟）运行它们。或者用户可以在命令行（蛮力）使用运行时配置简单地敲击单个 ``URL`` 。
+
+下载/安装
+---------
+``Siege`` 时一个开放源代码项目： http://www.joedog.org
+
+下载： ``wget ftp://ftp.joedog.org/pub/siege/siege-latest.tar.gz``
+安装：
+
+.. code-block:: shell
+
+	#make
+	#make install
+
+``siege`` 包含了一组压力测试工具：
+
+SIEGE (1) Siege 是一个HTTP压力测试和评测工具。
+
+.. code-block:: shell
+
+    siege <options> 或 siege <options> [url]
+
+选项说明：
+
+参数  描述
+-V, --version  打印版本号
+-v, --verbose  输出交互详情
+-h, --help  打印帮助信息
+-C, --config  打印当前配置信息
+-g, --get  拉取http头信息
+-p, --print  打印整个页面的内容
+-c, --concurrent=NUM  并发用户数量，默认10个
+-r, --reps=NUM  运行次数
+-t, --time=NUM  持续运行siege n秒(如10S),分钟(10M),小时(10H)
+-d, --delay=NUM  两个请求间随机时间延迟(秒）
+-b, --benchmark  请求没有延迟
+-i, --internet  模拟网络用户随机点击URL
+-f, --file=FILE  选择指定的URL文件
+-R, --rc=FILE  指定siegerc文件
+-l, --log[=FILE]  日志文件，默认是 PREFIX/var/siege.log
+-H, --header="text"  给请求添加头，支持多个
+-A, --user-agent="text"  给请求设置User-Agent
+-T, --content-type="text"  给请求设置Content-Type
+-u URL,–url=URL  测试指定的一个URL,对它进行siege,此选项会忽略有关urls文件的设定
+
+配置文件
+--------
+从版本 2.00 开始， ``siege`` 支持一个设置配置文件，您可以在其中存储大多数命令行选项。这使得调用 ``siege`` 变得更加容易，它可以帮助您确保一系列运行中的每次运行都具有完全相同的设置。它在哪里？ ``siege`` 配置文件名为 ``.seigerc`` ，它位于安装 ``siege`` 的用户的主目录目录中。如果您没有安装 ``siege`` 但想要使用它，则运行命令 ``siege.config`` 。这将在您的主目录中放置一个模板 ``.siegerc`` 文件。您可以使用自己喜欢的编辑器编辑设置。由 ``siege.config`` 实用程序生成的 ``.siegerc`` 文件具有描述指令的注释。这些注释应该是您开始所需的全部内容。
+
+URL格式
+-------
+``Siege`` 理解如下 ``URL`` 格式： ``[protocol://] [servername.domain.xxx] [:portnumber] [/directory/file]`` 目前， ``siege`` 仅支持 ``http`` 和 ``https`` 协议。 ``HTTP`` 是默认协议，因此不需要协议规范。 ``Siege`` 允许你简写。最低要求是 ``servername`` 。因此，如果您有位于同一域中名为 ``shemp`` 的服务器，并且 ``shemp`` 位于您的主机文件中或者位于 ``DNS`` 中，那么： ``siege -u shemp`` 将压力测试 ``http：//shemp.yourdomain.net/index.shtml`` （假设是服务器指定的首页）。如果您想测试 ``https`` 服务器，则需要指定协议。在上面的示例中，给出上述假设， ``siege -u https://shemp`` 将测试: ``http://shemp.yourdomain.net/index.shtml`` 。
+
+URLs文件
+--------
+为了运行回归测试或有效的互联网模拟，您将不得不浏览正在测试的服务器上的 ``URL`` 。要完成此操作，请将 ``URL`` 放在配置文件中。默认文件是 ``SIEGE_HOME/etc/urls.txt`` 。在该文件列表中，每行一个 ``URL`` ：
+
+.. code-block:: shell
+
+	# comments behind hashes
+	http://homer.whoohoo.com/index.shtml
+	http://homer.whoohoo.com/howto.jsp
+	http://homer.whoohoo.com/cgi-bin/hello.pl?first=bart&last=simpson
+	# and on and on....
+
+``Siege-2.06`` 及更高版本支持 ``POST`` 和 ``GET`` 指令。 ``GET`` 指令的构造如上所示，但 ``POST`` 指令需要 ``POST`` 关键字。构造 ``POST`` 指令如下：
+
+.. code-block:: shell
+
+	http://homer.whoohoo.com/cgi-bin/hello.pl POST name=homer
+	http://homer.whoohoo.com/haha.jsp POST word=doh!&scope=ALL
+
+在没有 ``URL`` 选项 ``[-u URL |-url = URL]`` 的情况下调用， ``siege`` 在文件中查找 ``URL`` 。它将其读入内存并通过 ``URL`` 运行。通常 ``siege`` 从文件的开头开始，然后按顺序遍历它。如果指定互联网模式 ``[-i |-internet]`` ，然后它随机选择 ``URL`` 。在运行时选择可以使用 ``[-f FILE | --file=FILE]`` 选项其它文件。
+
+变量
+-----
+从版本 2.57 开始， ``siege`` 支持 ``.siegerc`` 文件和 ``urls.txt`` 文件中的变量声明和计算。 ``Siege`` 采用类似于 ``UNIX shell`` 的变量语法。它们在文件中每行声明一个： ``varname=value`` 要引用变量，必须将其放在 ``$()`` 或 ``${}`` 中。在上面的示例中，键入 ``$(varname)`` 以访问值。您可以使用变量在两个协议之间切换，并在 ``urls.txt`` 文件中进行一次快速编辑。例如：
+
+.. code-block:: shell
+
+	PROT=https://
+	$(PROT)eos.joedog.org/siege/index.php
+	$(PROT)eos.joedog.org/wacky/index.php
+	$(PROT)eos.joedog.org/scout/index.php
+	$(PROT)eos.joedog.org/libping/index.php
+	$(PROT)eos.joedog.org/gunner/index.php
+
+现在，为了在 ``https`` 和 ``http`` 之间切换，您只需要在整个文件中编辑一行。
+
+日志文件
+--------
+在启用日志记录 ``[-l/--log]`` 的情况下调用 ``siege`` 时，程序会在 ``PREFIX/var/siege.log`` 中记录事务，其中 ``PREFIX`` 是安装 ``siege`` 的目录。（有关说明，请参阅文件 ``INSTALL`` 。）记录的事务类似于 ``siege`` 每次运行结束时的标准输出显示。但是，信息以逗号分隔的文本排列，以便于导入电子表格。使用日志记录选项可以保持历史记录和图表进度。为了按条件如 ``URL`` 对运行进行分组，服务器甚至协议等，添加了 ``-m "message" /--mark="message"`` 选项。这会将标记 ``message`` 放在日志文件中。因此，如果您将测试从 ``http`` 更改为 ``https`` ，则可以使用 "启动HTTPS测试" 标记日志 ``-m/--mark`` 并且不需要使用 ``-l/--log`` 选项。
+
+性能统计
+--------
+性能测量包括测试的经过时间，传输的数据量（包括标头），服务器的响应时间，事务速率，吞吐量，并发性和返回OK的确定次数。这些措施在每次运行结束时进行量化和报告。报告格式以林肯斯坦的 ``torture.pl`` 脚本为蓝本。这是 ``siege`` 输出的样本：
+
+.. code-block:: shell
+
+	Ben: $ siege -u shemp.whoohoo.com/Admin.jsp -d1 -r10 -c25
+	..Siege 2.65 2006/05/11 23:42:16
+	..Preparing 25 concurrent users for battle.
+	The server is now under siege...done
+	Transactions: 250 hits
+	Elapsed time: 14.67 secs
+	Data transferred: 448000 bytes
+	Response time: 0.43 secs
+	Transaction rate: 17.04 trans/sec
+	Throughput: 30538.51 bytes/sec
+	Concurrency: 7.38
+	Status code 200: 250
+	Successful transactions: 250
+	Failed transactions: 0
+
+
+性能参数
+
+参数  描述
+Transactions  请求次数
+Availability  命中率
+Elapsed time  整个压测花费的时间，从第一个开始到最后一个结束
+Data transferred  整个压测数据传输的总和
+Response time  响应时间是响应每个模拟用户请求所花费的平均时间
+Transaction rate  事务速率是服务器每秒能够处理的平均事务数. 简而言之：事务除以经过的时间。
+Throughput  吞吐量是从服务器到所有模拟用户每秒传输的平均字节数
+Concurrency  并发是同时连接的平均数，这是数字上升会导致服务器性能下降。
+Successful transactions  成功事务次数
+Failed transactions  失败事务次数
+Longest transaction  最长事务时间
+Shortest transaction  最短事务时间
+
+使用样例：
+
+任务列表： ``www.test.com.url`` 文件
+
+.. code-block:: shell
+
+	http://www.test.com/info.php
+	http://www.test.com/logo.png
+	….
+
+.. code-block:: shell
+
+    siege -c 200 -r 2 -f  www.test.com.url
+    # 200个并发对http://www.google.com发送请求100次
+    siege -c 200 -r 100 http://www.google.com
+    # 在urls.txt中列出所有的网址
+    siege -c 200 -r 100 -f urls.txt
+    # 随机选取urls.txt中列出所有的网址
+    siege -c 200 -r 100 -f urls.txt -i
+    # delay=0，更准确的压力测试，而不是功能测试
+    siege -c 200 -r 100 -f urls.txt -i -b
+    # 指定http请求头 文档类型
+    siege -H "Content-Type:application/json" -c 200 -r 100 -f urls.txt -i -b
+
+Siege使用的一些总结
+------------------
+
+1. 发送 post 请求时， url 格式为: http://www.xxxx.com/ POST p1=v1&p2=v2
+2. 如果 url 中含有空格和中文，要先进行 url 编码，否则 siege 发送的请求 url 不准确
+3. siege 自身感觉也是有瓶颈的，并发数最大也就 1000 ，再提高就会报下面这样的错误
+4. socket: unable to connect sock.c:222: Operation already in progress socket: connection 这样最终导致测试结果怎么都没法超过 2W 每秒的请求，所以就把 ``siege -c 1000 -r 100 -i -b -f url.txt`` 放到 ``shell`` 中并发执行
+
+.. code-block:: shell
+
+	#!/bin/bash
+	user_agent="Siege 1.0"
+	siege_rc="siege.rc"
+	concurrent=150
+	repet=200
+	siege_single_urls="singleurl.txt"
+	siege_prefix_urls="prefixurl.txt"
+
+	for i in {1..10}
+	do
+	siege -c $concurrent -r $repet -i -b -f $siege_single_urls -R $siege_rc -A "$user_agent" &;
+	done
+
+
+httperf + autobench  压力测试
+=============================
+
+HTTPerf单独使用
+---------------
+HP实验室出的命令行HTTP性能测试工具。
+
+安装httperf:
+
+.. code-block:: shell
+
+	wget http://httperf.googlecode.com/files/httperf-0.9.0.tar.gz
+	cd /opt
+	tar zxvf httperf-0.9.tar.gz
+	cd httperf-0.9
+	./configure –prefix=/opt/httperf
+	make && make install
+
+``httpref`` 是通过命令行来调用。它有如下参数
+
+.. code-block:: shell
+
+	httperf --help
+	Usage: httperf [-hdvV] [--add-header S] [--burst-length N] [--client N/N]
+	        [--close-with-reset] [--debug N] [--failure-status N]
+	        [--help] [--hog] [--http-version S] [--max-connections N]
+	        [--max-piped-calls N] [--method S] [--no-host-hdr]
+	        [--num-calls N] [--num-conns N] [--period [d|u|e]T1[,T2]]
+	        [--port N] [--print-reply [header|body]] [--print-request [header|body]]
+	        [--rate X] [--recv-buffer N] [--retry-on-failure] [--send-buffer N]
+	        [--server S] [--server-name S] [--session-cookies]
+	        [--ssl] [--ssl-ciphers L] [--ssl-no-reuse]
+	        [--think-timeout X] [--timeout X] [--uri S] [--verbose] [--version]
+	        [--wlog y|n,file] [--wsess N,N,X] [--wsesslog N,X,file]
+	        [--wset N,X]
+
+其中常用的参数的含义：
+
+- ``--server S``  web服务器地址
+- ``--num-conns N`` 测试联接数
+- ``--num-calls N`` 每连接中发起联接数，一般是1
+- ``--rate N`` 每秒请求数
+- ``--port N`` 测试端口
+- ``−−method S`` 测试HTTP方法，默认为GET
+- ``--uri S`` 测试网页，默认为/
+- ``--timeout N`` 等待服务器响应时间
+
+测试本地嵌入式 ``Web`` 服务器 ``BOA`` 性能。
+
+.. code-block:: shell
+
+    httperf --server 127.0.0.1 --port 8080 --num-conns 200 --timeout 5 --uri /index.html
+
+HTTPerf+Autobench
+-----------------
+每次设置 ``HTTPerf`` 参数来测试实在麻烦，因此 ``autobench`` 就派上用场了。 ``autobench`` 是一个自动测试工具(用的是Perl脚本）,用它来调用 ``httperf`` 来测试，省事多了。在他的官网上，也强调与 ``httperf`` 的配合。
+
+安装autobench包：
+
+.. code-block:: shell
+
+	# yum install gd gnuplot pcre pcre-devel texinfo -y
+	# wget http://www.xenoclast.org/autobench/downloads/autobench-2.1.2.tar.gz
+	# tar zxvf autobench-2.1.2.tar.gz
+	# cd autobench-2.1.2
+	# make && make install
+	# sed -i 's/postscript color/png xffffff/g' /usr/local/bin/bench2graph （修改bench2graph脚本，否则生成的图像背景有问题）
+
+``autobench`` 是一款基于 ``httperf`` 的 ``Perl`` 脚本。它会在一次测试中调用多次 ``httperf`` 来对 ``web`` 服务器进行测试，每次会按照给定的参数增加并发连接数，将 ``httperf`` 的测试结果保存为 ``CSV`` 格式的文件，该文件可以被 ``Excel`` 直接读取，方便生成测试报告。借助于 ``autobench`` 自带的 ``bench2graph`` 工具可以生成漂亮的测试结果对比图。
+
+单机测试模式
+
+测试单台主机,以下是官网样例
+
+.. code-block:: shell
+
+    autobench --single_host --host1 www.test.com --uri1 /10K --quiet\
+          --low_rate 20 --high_rate 200 --rate_step 20 --num_call 10\
+          --num_conn 5000 --timeout 5 --file results.tsv
+
+其参数含义
+
+- ``--signle_host`` 只测单机
+- ``--host1`` 测试主机地址
+- ``--uri1 host1`` 测试URI
+- ``--quiet`` 安静模式
+- ``--low_rate`` 测试时最低请求数(指 httperf)
+- ``--hight_rate`` 测试时最高请求数
+- ``--rate_step`` 每次测试请求数增加步长
+- ``--num-call`` 同httperf
+- ``--num_conn`` 同httperf
+- ``--file`` 测试结果输出的 tsv文件
+
+对 boa 的进行自动测试。
+
+.. code-block:: shell
+
+    autobench --single_host --host1 127.0.0.1 --uri1 /index.html --port1 8080 --quiet --low_rate 20 --high_rate 200 --rate_step 20 --num_call 1 --num_conn 500 --timeout 5 --file results.tsv
+
+双机测试模式
+
+``autobench`` 还能做两机对比测试，这样可以在同等网络条件下，测试两台服务器性能。它主要用增加几个参数
+
+关掉 ``--single_host`` 参数，增加 ``--host2 --uri2 --port2`` 几个参数即可。
+
+Webbench
+========
+
+
+
+
+apache下的ab测试
+================
+https://blog.csdn.net/u011277123/article/details/78913649
+
+
+
+
+
+

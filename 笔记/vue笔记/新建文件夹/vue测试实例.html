@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Vue 测试实例 - 菜鸟教程(runoob.com)</title>
+	<script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+</head>
+<body>
+	<div id="root">
+		<!-- :双向绑定,input的value绑定到content上-->
+		<input v-model="content"/>
+		<!--绑定handleClick方法-->
+		<!--v-on:click事件绑定-->
+		<div v-on:click="handleClick">{{content}}</div>
+		<!-- :title属性绑定-->
+		<div :title="title">{{content}}</div>
+		
+
+<br/>
+<br/>
+<br/>
+<br/>
+	<!--属性监听-->
+	姓：<input v-model="firstName" />
+	名：<input v-model="lastName" />
+	<div>{{fullName}}</div>
+	<div>{{count}}</div>
+<br/>
+<br/>
+<br/>
+<br/>
+	<!--显示隐藏-->
+	<!--v-if 是销毁dom然后在创建;v-show是隐藏dom通常情况下使用v-show性能更好 -->
+	<div v-if="show">hello world</div>
+	<!--绑定showClick事件-->
+	<button @click="showClick">toggle</button>
+<br/>
+<br/>
+<br/>
+<br/>
+<!--ul 循环展示 v-for 循环数组 -->
+	<ul>
+		<li v-for='item of list'>{{item}}</li>
+	<!-- 	也可以用下面的方法 -->
+		<!-- <li v-for="(item,index) of list" :key="index">{{item}}</li> -->
+	</ul>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<!--添加list节点-->
+	<div>
+		<input v-model="inputValue" />
+		<button @click="handleSubmit">提交</button>
+	</div>
+	<ul>
+		<li v-for="(item2,index2) of list2" :key="index2">
+			{{item2}}
+		</li>
+	</ul>
+	
+<!--定义组键-->
+
+ <ul>
+	<!--定义组件然后循环添加循环内容-->
+	<todo-item v-for="(item3,index3) of list3" :key="index3" :content3="item3" ></todu-item>
+</ul> 
+
+
+	</div>
+	<script>
+	//把组件内容绑定到todo-item
+	//全局组件
+	Vue.component('todo-item',{
+		props:['content3'],
+		template:'<li>{{content3}}</li>'
+	})
+	
+	//局部组件
+	//通过var定义一个局部组件
+	//var TodoItem={
+	//	template"'<li>item</li>'
+	//}
+	
+		new Vue({
+			//挂载root
+			el:"#root",
+		//  //components 把局部组件注册进来
+		//	components:{
+		//		//把局部组件放进来
+		//		'todo-item':TodoItem
+		//	}
+			data:{
+				//在挂载点root下面传入的标签内容
+				content:"hello",
+				title:"this is hello world",
+				firstName:'',
+				lastName:'',
+				show:true,
+				count:0,
+				inputValue:'',
+				list:['gggg',2,3],//ul 循环展示
+				list2:[],//ul 循环展示
+				list3:[],
+			},
+			methods:{
+				handleClick:function(){
+					//修改content标签的值
+					this.content="world"
+				},
+				//显示隐藏按钮事件
+				showClick:function(){
+					this.show=!this.show;
+				},
+				//事件添加ls节点到list2
+				handleSubmit:function(){
+					this.list2.push(this.inputValue)
+					this.list3.push(this.inputValue)
+					this.inputValue=''
+				}
+			},
+			//computed 指的是一个属性通过其他属性计算而来
+			computed:{
+			fullName:function(){
+				return this.firstName+' '+this.lastName
+				}
+			},
+			//watch监听某个数据的变化，一旦这个数据发生了改变
+			watch:{
+				fullName:function(){
+				//当全名改变时count++
+					this.count++
+				}
+			}
+		});
+	</script>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</body>
+</html>

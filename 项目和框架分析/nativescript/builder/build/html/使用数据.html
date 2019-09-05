@@ -1,0 +1,1007 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>9. 使用数据 &mdash; nativescript 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="nativescript 1.0 文档" href="index.html"/>
+        <link rel="next" title="10. 原生硬件" href="原生硬件.html"/>
+        <link rel="prev" title="8. 样式NativeScript应用" href="样式NativeScript应用.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> nativescript
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="为什么使用NativeScript.html">2. 为什么使用NativeScript</a></li>
+<li class="toctree-l1"><a class="reference internal" href="你的第一个App.html">3. 你的第一个App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="解析NativeScript应用程序.html">4. 解析NativeScript应用程序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="页面和导航.html">5. 页面和导航</a></li>
+<li class="toctree-l1"><a class="reference internal" href="理解app布局的基础.html">6. 理解app布局的基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用高级布局.html">7. 使用高级布局</a></li>
+<li class="toctree-l1"><a class="reference internal" href="样式NativeScript应用.html">8. 样式NativeScript应用</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. 使用数据</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">9.1. 数据绑定</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">9.2. 可观察者实战</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">9.2.1. 属性绑定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">9.2.2. 宠物剪贴簿页面</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">9.2.3. 绑定表达式</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">9.3. 可观察数组</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id12">9.3.1. 使用可观察数组构建主-详情页面</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">9.4. 操作栏</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">9.5. 总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="原生硬件.html">10. 原生硬件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用主题创建专业用户界面.html">11. 使用主题创建专业用户界面</a></li>
+<li class="toctree-l1"><a class="reference internal" href="细化用户体验.html">12. 细化用户体验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="部署一个Android应用程序.html">13. 部署一个Android应用程序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="准备分发iOS应用程序.html">14. 准备分发iOS应用程序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="iOS安全和使用Xcode构建您的应用程序.html">15. iOS安全和使用Xcode构建您的应用程序</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">nativescript</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>9. 使用数据</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/使用数据.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>9. 使用数据<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<p>本章涵盖</p>
+<ul class="simple">
+<li>如何使用可观察对象和可观察数组</li>
+<li>如何在 <code class="docutils literal"><span class="pre">observables</span></code> 更改其值时自动更新UI元素</li>
+<li>设备的本地存储如何用于保存数据</li>
+</ul>
+<p>在最后几章中，您深入了解了通过 <code class="docutils literal"><span class="pre">Tekmo</span></code> 应用程序的镜头如何使用 <code class="docutils literal"><span class="pre">NativeScript</span></code> 创建应用程序。 您了解了如何设计多页面应用程序，浏览页面，以及如何使用布局和 <code class="docutils literal"><span class="pre">CSS</span></code> 组织和设计 <code class="docutils literal"><span class="pre">UI</span></code> 。在 <code class="docutils literal"><span class="pre">Tekmo</span></code> 应用程序中，花了很多时间来复制 <code class="docutils literal"><span class="pre">UI</span></code> 元素：以产品页面为例（图8.1）。</p>
+<img alt="_images/8-1.png" src="_images/8-1.png" />
+<p>每个产品都在产品页面的 XML 文件中进行了硬编码。是的，只有六种产品，但如果有几十种产品的话。更多呢？如果产品定期更换怎么办？事实上，更新硬编码的 UI 元素会很快变得麻烦。</p>
+<p>让我们采取一种不同的方法：假设我们从文件，数据库或可公开访问的 <code class="docutils literal"><span class="pre">API</span></code> 端点为 <code class="docutils literal"><span class="pre">Tekmo</span></code> 应用程序提取了产品列表？检索这些数据后，我们可以使用检索到的数据更新产品列表。这将允许我们编写更少的代码，并且我们的应用程序会更加动态，因为我们不再对所有内容进行硬编码。</p>
+<p>在本章中，我们将教您如何编写更少的代码并使您的应用程序更具动态性。同时，我们将构建一个新的应用程序：宠物剪贴簿。通过宠物剪贴簿，您可以通过创建充满图像和标题的虚拟剪贴簿页面来捕捉宠物生命中的有趣时刻。我们将在接下来的几章中对应用程序进行几次迭代，在您学习它们时更改应用程序的代码以使用 NativeScript 的新功能。</p>
+<p>在开始使用宠物剪贴簿之前，您需要学习一些新概念，以便我们可以为了编写更少的代码而放弃对所有内容进行硬编码。那么，我们如何实现编写更少的代码，同时仍然允许用户使用他们的剪贴簿创建多个页面？它可能并不明显，但我们会通过使用模板来实现这一点。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">模板是创建页面的 UI 元素结构的一种方式，但不添加显示的实际文本或图像数据。一旦创建，模板中的 <code class="docutils literal"><span class="pre">UI</span></code> 元素将充当屏幕上显示的真实元素的占位符。</p>
+</div>
+<p>在宠物剪贴簿中，我们将创建一个代表单个剪贴簿页面结构的模板。该模板将包含宠物姓名，年龄，页面标题，图像和标题的占位符。您可能仍然想知道这将如何为您节省时间，并允许您编写更少的代码。让我们在真正的剪贴簿的背景下思考这个问题。想象一下，你正在创建一个实体剪贴簿，并且想要在书中添加一个页面。您会得到一张彩色纸张，然后组织页面开始：测量并使用标尺，以确保项目对齐，笔直，并且位于与剪贴簿中其他页面相似的位置。您可以为每个图片，贴纸和添加到页面的文字执行此操作。这听起来非常耗时。但是如果你开始使用一个模板：一个页面已经用页面标题，宠物名称，图片和其他设计元素的占位符进行了布局？突然之间，添加新页面变得更容易，因为已经完成了繁重的工作，您只需要担心页面的内容。在我们的应用程序中使用模板就像在真正的剪贴簿中使用模板一样。将新页面添加到 <code class="docutils literal"><span class="pre">NativeScript</span></code> 宠物剪贴簿时，您可以使用相同的模板，但显示不同的详细信息。因为我们正在重复使用相同的模板，我们还会重用我们为该页面编写的代码。</p>
+<div class="section" id="id2">
+<h2>9.1. 数据绑定<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>现在您已经了解了模板，我们想向您介绍如何重复使用单个 <code class="docutils literal"><span class="pre">UI</span></code> 模板来显示不同的细节。用来做这件事的底层技术被称为数据绑定。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">数据绑定是将 <code class="docutils literal"><span class="pre">UI</span></code> 元素链接到代码中的对象的过程。当对链接到代码中的对象的UI元素进行更改时，更改将反映在对象或属性中。链接到代码中的对象的 <code class="docutils literal"><span class="pre">UI</span></code> 元素被称为数据绑定。</p>
+</div>
+<p>数据绑定只是将 <code class="docutils literal"><span class="pre">JavaScript</span></code> 对象和 <code class="docutils literal"><span class="pre">UI</span></code> 元素链接在一起的整个过程的名称。数据绑定非常重要，因为这是我们如何解决需要将产品硬编码到 <code class="docutils literal"><span class="pre">Tekmo</span></code> 应用程序的产品页面或根据用户输入的生日更新宠物剪贴簿应用程序中的年龄字段的问题。在我们进一步深入使用数据绑定之前，让我们来了解一下推动数据绑定内部工作的另一个概念: <code class="docutils literal"><span class="pre">observables</span></code> 。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">Observable</span></code> 是特殊的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 对象，当其中一个值发生更改时，它会为您的代码提供通知。</p>
+</div>
+<p>我们喜欢把可观察想像为在教室里孩子们：每次事情发生变化时，他们都会举手告诉老师。它可能是流鼻涕，他们需要使用浴室，或者只是想向他们的老师展示他们刚刚绘制的酷酷的机器人图片，改变什么真的并不重要，但是只要改变了，他们就会举手。确保他们的老师知道这件事。孩子就像可观察物体（也称为可观察物体），但是可观察物体不会举手之外，它们会引发事件。图8.2显示了当一个可观察对象的某个内部值发生变化时如何引发一个事件。</p>
+<img alt="_images/8-2.png" src="_images/8-2.png" />
+<p>在这一点上，你可能想知道所有这些如何联系在一起。模板，数据绑定，可观察事件，事件！这些概念一起构成了我们将与之合作解决硬编码问题的基础。图8.3显示了这4个概念之间的关系。</p>
+<img alt="_images/8-3.png" src="_images/8-3.png" />
+<p>数据绑定描述了将 UI 模板和可观察数据链接在一起的行为。链接后，模板会监听可观察者引发的更改事件。当某个观察值发生变化时，会引发事件。注册事件侦听器然后通过显示 observable 的新值来响应 observable 的更改。</p>
+<p>现在您已经对数据绑定，可观察者，模板和可观察事件有了一个大概的了解，让我们来看看我们如何在代码中实际使用它们。</p>
+</div>
+<div class="section" id="id3">
+<h2>9.2. 可观察者实战<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>继续为宠物剪贴簿应用程序开始一个新的空白项目。请记住，您通过使用 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">create</span></code> 命令可以使用 <code class="docutils literal"><span class="pre">NativeScript</span> <span class="pre">CLI</span></code> 为您搭建一个新项目。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>tns create PetScrapbook --template tns-template-blank
+</pre></div>
+</div>
+<p>与您之前创建的 <code class="docutils literal"><span class="pre">Tekmo</span></code> 应用程序类似，请将一个 <code class="docutils literal"><span class="pre">views</span></code> 文件夹添加到您的项目中，如图8.4所示。这是您将为 Pet Scrapbook 应用程序添加视图的位置。我们将要创建的第一页是主页，因此将 <code class="docutils literal"><span class="pre">home-page.xml</span></code> ， <code class="docutils literal"><span class="pre">home-page.js</span></code> 和 <code class="docutils literal"><span class="pre">home-page.css</span></code> 文件添加到 <code class="docutils literal"><span class="pre">views</span></code> 文件夹中。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">不要忘记更改应用程序加载到我们添加的 homepage.xml 视图时加载的 app.js 文件中的页面。</p>
+</div>
+<img alt="_images/8-4.png" src="_images/8-4.png" />
+<p>我们首先创建一个可观察值，设置多个值，并查看当其中一个值发生变化时如何引发事件。将清单8.1中的代码添加到 home-page.js 文件中。</p>
+<p>清单8.1 views\home-page.js 文件的创建和可观察性，设置值以及监听更改</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observableModule</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">pet</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observableModule</span><span class="p">.</span><span class="nx">Observable</span><span class="p">();</span>
+<span class="nx">pet</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Riven&quot;</span><span class="p">);</span>
+<span class="nx">pet</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="s2">&quot;Dog&quot;</span><span class="p">);</span>
+<span class="nx">pet</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;Age&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="nx">pet</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;propertyChange&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventData</span><span class="p">){</span> <span class="c1">// 创建事件处理程序</span>
+    <span class="kd">var</span> <span class="nx">changedPet</span> <span class="o">=</span> <span class="nx">eventData</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span> <span class="c1">// 获取更改的对象</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Your pet is a &quot;</span> <span class="o">+</span> <span class="nx">changedPet</span><span class="p">.</span><span class="nx">Type</span> <span class="o">+</span> <span class="s2">&quot; named &quot;</span> <span class="o">+</span> <span class="nx">changedPet</span><span class="p">.</span><span class="nx">Name</span> <span class="o">+</span> <span class="s2">&quot; and is &quot;</span> <span class="o">+</span> <span class="nx">changedPet</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;Age&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; years old.&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="nx">pet</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;Age&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span> <span class="c1">// 更新该值会导致属性更改事件发生</span>
+</pre></div>
+</div>
+<p>我们认为这有助于可视化清单8.1中的内容，参考图8.5，其中显示了 observable 属性更改过程的主要事件的顺序图。</p>
+<img alt="_images/8-5.png" src="_images/8-5.png" />
+<p>在第1步中，可观察的模块被导入并创建宠物可观察对象。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observableModule</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">pet</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observableModule</span><span class="p">.</span><span class="nx">Observable</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>observable 模块公开一个名为 Observable 的对象。 在高层次上， Observable 对象就像一个普通的 JavaScript 对象（POJO），只是它监视其属性更改，并在属性发生更改时引发事件。</p>
+<p>第2步使用 <code class="docutils literal"><span class="pre">pet.set()</span></code> 语法设置宠物 <code class="docutils literal"><span class="pre">observable</span></code> 的名称，类型和年龄属性。您会注意到，此语法与 POJO 不同，因为您无法直接使用 <code class="docutils literal"><span class="pre">pet.&lt;property</span> <span class="pre">name&gt;</span></code> 来设置属性的值。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">要设置 <code class="docutils literal"><span class="pre">observable</span></code> 的属性，请使用 <code class="docutils literal"><span class="pre">.set()</span></code> 函数。</p>
+</div>
+<p>在我们设置好几个属性后，我们建立一个函数来监听 observable 属性的变化（步骤3）。每个可观察对象都会暴露一个 <code class="docutils literal"><span class="pre">propertyChange</span></code> 事件，我们可以侦听并处理对象属性更改时处理的事件。当属性更改事件发生时， <code class="docutils literal"><span class="pre">observable</span></code> 将有用的数据传递给处理事件的任何函数。我们使用了一个属性（ object ），它是对可观察对象的引用。使用此引用，宠物的名称，类型和年龄将显示在控制台中。</p>
+<p>步骤4将宠物的年龄更新为4。当年龄更新时，观察者将检测到变化并发出属性更改事件（步骤5），这将由我们的函数处理，并将宠物的更新信息打印到控制台（步骤6）。</p>
+<p>运行宠物剪贴簿应用程序，您应该在控制台窗口中看到输出结果。</p>
+<p>观察对象只是在 <code class="docutils literal"><span class="pre">NativeScript</span></code> 中使用数据绑定的第一步，为您提供了一种简单的方法来侦听和响应发生在对象上的变化。您刚刚学会了如何响应代码中可观察对象的更改，但这是否意味着您需要编写代码来响应每个属性更改的事件？当然不是。当您在数据绑定的上下文中使用 <code class="docutils literal"><span class="pre">observables</span></code> 时， <code class="docutils literal"><span class="pre">NativeScript</span></code> 会自动为您处理属性已更改的事件。 我们来看一个基本的数据绑定例子。</p>
+<div class="section" id="id4">
+<h3>9.2.1. 属性绑定<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>NativeScript 中最简单的数据绑定形式称为属性绑定。属性绑定是指将 UI 元素的属性与 observable 的属性链接起来。链接后，对 UI 元素的属性或 observable 属性所做的更改将自动反映在这两个位置。</p>
+<p>虽然你不需要知道属性绑定的内部工作方式，但我们认为重要的是你知道一些特别称为可绑定对象的东西。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">可绑定对象是从 <code class="docutils literal"><span class="pre">Bindable</span></code> 类继承的 <code class="docutils literal"><span class="pre">UI</span></code> 元素。 <code class="docutils literal"><span class="pre">Bindable</span></code> 类是特殊的，因为它允许从它继承的对象与可观察对象绑定。</p>
+</div>
+<p>属性绑定固有地要求您在可观察元素和可绑定 <code class="docutils literal"><span class="pre">UI</span></code> 元素之间进行数据绑定。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">您不应该担心可绑定类，因为它不是您在开发 NativeScript 应用程序时直接使用的东西。事实是，你会一直使用可绑定对象（因为每个 UI 元素都是可绑定的），并且你不会真正考虑 Bindable 类。如果您想了解有关 Bindable 类的更多信息，请访问 <a class="reference external" href="https://docs.nativescript.org/api-reference/classes/_ui_core_bindable_.bindable.html">https://docs.nativescript.org/api-reference/classes/_ui_core_bindable_.bindable.html</a> 官方 NativeScript 文档。</p>
+</div>
+<p>让我们来看看属性绑定如何工作的可视化示例，然后我们将编写一些代码将可观察元素和 <code class="docutils literal"><span class="pre">UI</span></code> 元素绑定在一起。图8.7显示了几个 <code class="docutils literal"><span class="pre">UI</span></code> 元素如何从可绑定类继承，以及可绑定类如何通过 <code class="docutils literal"><span class="pre">bind()</span></code> 方法将可观察对象数据绑定到 <code class="docutils literal"><span class="pre">UI</span></code> 元素。</p>
+<img alt="_images/8-7.png" src="_images/8-7.png" />
+<p>让我们通过绑定到 <code class="docutils literal"><span class="pre">Label</span></code> 元素的 <code class="docutils literal"><span class="pre">text</span></code> 属性来看到这一点。首先，更新 <code class="docutils literal"><span class="pre">home-page.xml</span></code> 文件的视图以包含堆栈布局和标签，如清单8.2所示。</p>
+<p>清单8.2 views\home-page.xml 文件</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Page</span> <span class="na">loaded=</span><span class="s">&quot;onLoaded&quot;</span><span class="nt">&gt;</span> //绑定到页面的加载事件
+    <span class="nt">&lt;StackLayout&gt;</span>
+        <span class="nt">&lt;Label</span> <span class="na">id=</span><span class="s">”title”</span> <span class="nt">/&gt;</span> //给标签一个id，以便我们可以在JavaScript中访问它
+    <span class="nt">&lt;/StackLayout&gt;</span>
+<span class="nt">&lt;/Page&gt;</span>
+</pre></div>
+</div>
+<p>请注意，我们为标签提供了一个 <code class="docutils literal"><span class="pre">id</span></code> ，因此我们可以通过 <code class="docutils literal"><span class="pre">JavaScript</span></code> 轻松在 <code class="docutils literal"><span class="pre">UI</span></code> 中找到它。接下来，通过将 <code class="docutils literal"><span class="pre">pet</span> <span class="pre">observable</span></code> 声明移动到 <code class="docutils literal"><span class="pre">onLoaded</span></code> 函数中，删除属性更改事件并使用 <code class="docutils literal"><span class="pre">bind()</span></code> 函数（列表8.3）在标签和 <code class="docutils literal"><span class="pre">pet</span> <span class="pre">observable</span></code> 之间建立数据绑定，从而更新 <code class="docutils literal"><span class="pre">home-page.js</span></code> 文件。</p>
+<p>列表8.3 显示views\home-page.js文件中绑定到Label元素的text属性</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observableModule</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">viewModule</span> <span class="o">=</span> <span class="nx">require</span> <span class="p">(</span><span class="s2">&quot;ui/core/view&quot;</span><span class="p">);</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">pet</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observableModule</span><span class="p">.</span><span class="nx">Observable</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">label</span> <span class="o">=</span> <span class="nx">viewModule</span><span class="p">.</span><span class="nx">getViewById</span><span class="p">(</span><span class="nx">page</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">);</span> <span class="c1">//通过它的id属性查找标签。</span>
+    <span class="kd">var</span> <span class="nx">bindingOptions</span> <span class="o">=</span> <span class="p">{</span> <span class="c1">//绑定选项对象描述了我们将绑定（源）和（目标）的属性。</span>
+        <span class="nx">sourceProperty</span><span class="o">:</span> <span class="s2">&quot;Name&quot;</span><span class="p">,</span>
+        <span class="nx">targetProperty</span><span class="o">:</span> <span class="s2">&quot;text&quot;</span>
+    <span class="p">};</span>
+    <span class="nx">label</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">bindingOptions</span><span class="p">,</span> <span class="nx">pet</span><span class="p">);</span> <span class="c1">//使用绑定选项将标签和宠物可观察物绑定在一起。</span>
+    <span class="nx">pet</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Riven&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当您运行宠物剪贴簿应用程序时，您会看到标签看起来与使用静态文本定义的标签看起来不同： <code class="docutils literal"><span class="pre">&lt;Label</span> <span class="pre">text</span> <span class="pre">=</span> <span class="pre">&quot;Riven&quot;</span> <span class="pre">/&gt;</span></code> 。 尽管标签看起来并不一样，但清单8.2和8.3中的标签看起来很相似。为了将标签的文本属性绑定到 <code class="docutils literal"><span class="pre">observable</span></code> 的 <code class="docutils literal"><span class="pre">name</span></code> 属性，清单8.3做了两件事：</p>
+<ol class="arabic simple">
+<li>绑定对象用于描述我们将绑定在一起的属性，将 <code class="docutils literal"><span class="pre">name</span></code> 属性指定为源（或来自）属性，将 <code class="docutils literal"><span class="pre">text</span></code> 属性指定为目标（或属性）属性；</li>
+<li>该标签是通过调用 <code class="docutils literal"><span class="pre">bind()</span></code> 方法绑定到宠物 <code class="docutils literal"><span class="pre">observable</span></code> 的数据。</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">bind()</span></code> 方法接受绑定选项和可观察对象作为参数，并知道如何使用可观察对象的更改事件（这是您之前手动执行的相同事件），以允许数据更改反映在宠物可观察者和标签之间。图8.8显示宠物剪贴簿正在运行。</p>
+<img alt="_images/8-8.png" src="_images/8-8.png" />
+<p>您第一次在代码中看到绑定语法时，可能会有点混乱。让我们重写列表8.3中的 <code class="docutils literal"><span class="pre">bind()</span></code> 函数，直接在函数调用中包含绑定选项： <code class="docutils literal"><span class="pre">label.bind({sourceProperty：“Name”，targetProperty：“text”}，pet)</span></code> 。图8.9显示了这个函数调用和它如何链接标签元素和 <code class="docutils literal"><span class="pre">pet</span> <span class="pre">observable</span></code> 的属性之间的关系。</p>
+<img alt="_images/8-9.png" src="_images/8-9.png" />
+<p>在这一点上，你可能会认为绑定属性确实是很多工作，为什么你会花费这么多时间手动绑定 <code class="docutils literal"><span class="pre">observables</span></code> 和 <code class="docutils literal"><span class="pre">UI</span></code> 元素在一起。 你说得对：属性绑定是一大堆工作。事实证明，你很少需要使用属性绑定，而是使用属性绑定的快捷方式版本，称为 <code class="docutils literal"><span class="pre">XML</span></code> 绑定。 让我们来看看 <code class="docutils literal"><span class="pre">XML</span></code> 绑定，以及它如何显着减少您写入数据绑定 <code class="docutils literal"><span class="pre">UI</span></code> 元素和可观察值的代码量。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p><strong>单向数据绑定与双向数据绑定</strong></p>
+<p>数据绑定可以以单向或双向的方式进行。在单向数据绑定中，数据从可观察数据流向 UI 或数据从 UI 流向可观察对象（但不是两者）。</p>
+<p>例如，如果使用单向数据绑定将可观察元素绑定到 <code class="docutils literal"><span class="pre">UI</span></code> 中的 <code class="docutils literal"><span class="pre">text</span></code> 字段，并且用户更改了 <code class="docutils literal"><span class="pre">text</span></code> 字段的值，则链接的可观察元素将不会更新。</p>
+<p>记住相同的例子，使用 <code class="docutils literal"><span class="pre">text</span></code> 字段和可观察元素之间的双向数据绑定，可以更新 <code class="docutils literal"><span class="pre">text</span></code> 字段或可观察元素，并影响链接属性的更改。这被称为双向的，因为它在两个方向上流动数据： <code class="docutils literal"><span class="pre">UI</span></code> 到 <code class="docutils literal"><span class="pre">observable</span></code> 和 <code class="docutils literal"><span class="pre">UI</span></code> 的 <code class="docutils literal"><span class="pre">observable</span></code> 。</p>
+<p>正如你将要学习的那样，双向数据绑定作为开发人员非常强大且对你有帮助。</p>
+<p class="last">在处理本书中的数据时，我将向您展示双向数据绑定。</p>
+</div>
+<img alt="_images/8-10.png" src="_images/8-10.png" />
+<p><code class="docutils literal"><span class="pre">XML</span></code> 绑定与属性绑定完全相同：它将可观察属性和 <code class="docutils literal"><span class="pre">UI</span></code> 元素的属性链接起来，并使两者保持同步。尽管 <code class="docutils literal"><span class="pre">XML</span></code> 绑定与属性绑定的作用相同，但它配置起来要容易得多，而且只需很少的代码即可完成设置。您不必在 JavaScript 中定义源和目标属性，而是在页面的 <code class="docutils literal"><span class="pre">XML</span></code> 标记中声明 <code class="docutils literal"><span class="pre">UI</span></code> 和 <code class="docutils literal"><span class="pre">observable</span></code> 之间的绑定关系。</p>
+<p>NativeScript 中的 XML 绑定使用胡须语法来表示绑定。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">胡须语法是一种使用大括号 <code class="docutils literal"><span class="pre">{</span></code> 和 <code class="docutils literal"><span class="pre">}</span></code> 来表示特殊值的方法。得到它的语法名字是因为大括号看起来像是竖立的胡须。在 <code class="docutils literal"><span class="pre">NativeScript</span></code> 中使用了一个双花括号。</p>
+</div>
+<p>让我们再次重构宠物剪贴簿的主页，以修改 <code class="docutils literal"><span class="pre">XML</span></code> 绑定的属性绑定。我们首先通过删除标签的 <code class="docutils literal"><span class="pre">id</span></code> 字段并添加一个数据绑定文本字段（列表8.4）来更改 <code class="docutils literal"><span class="pre">home-page.xml</span></code> 文件。</p>
+<p>清单8.4 更新了使用 XML 绑定的 views\home-page.xml 文件</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Page</span> <span class="na">loaded=</span><span class="s">&quot;onLoaded&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;StackLayout&gt;</span>
+        <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ Name }}&quot;</span> <span class="nt">/&gt;</span> //XML绑定使用双胡子语法来表示数据绑定属性
+    <span class="nt">&lt;/StackLayout&gt;</span>
+<span class="nt">&lt;/Page&gt;</span>
+</pre></div>
+</div>
+<p>当使用 <code class="docutils literal"><span class="pre">XML</span></code> 绑定时，您不必定位 <code class="docutils literal"><span class="pre">UI</span></code> 元素并调用 <code class="docutils literal"><span class="pre">bind()</span></code> 方法将其与 <code class="docutils literal"><span class="pre">observable</span></code> 链接起来。相反，使用双胡子 <code class="docutils literal"><span class="pre">text</span> <span class="pre">=</span> <span class="pre">&quot;{{Name}}&quot;</span></code> 语法。这个语法很特别，因为它标识了将被数据绑定的 <code class="docutils literal"><span class="pre">UI</span></code> 元素和 <code class="docutils literal"><span class="pre">observable</span></code> 的属性。在清单8.4中， <code class="docutils literal"><span class="pre">text</span></code> （UI元素）和 <code class="docutils literal"><span class="pre">Name</span></code> （可观察）属性将数据绑定在一起。</p>
+<p>现在，只需在 XML 标记中放置 <code class="docutils literal"><span class="pre">text</span> <span class="pre">=</span> <span class="pre">&quot;{{Name}}&quot;</span></code> 语法就足以使数据绑定发生。我们错过了一个重要的项目：数据绑定到那个可观察对象？ 为了得到答案，我们需要重构 <code class="docutils literal"><span class="pre">home-page.js</span></code> 文件中的代码以删除属性数据绑定，并通过设置页面的绑定上下文来告诉页面使用哪些 <code class="docutils literal"><span class="pre">observable</span></code> 。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">UI</span></code> 元素的绑定上下文标识将参与 <code class="docutils literal"><span class="pre">UI</span></code> 元素的数据绑定的可观察对象。通常，您设置页面的绑定上下文并创建用于页面的单个观察值。这样，页面上的所有元素都可以共享绑定上下文（和可观察对象）。</p>
+</div>
+<p>清单8.5 将一个 observable 分配给 home-page.js 页面的绑定上下文</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observableModule</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">viewModule</span> <span class="o">=</span> <span class="nx">require</span> <span class="p">(</span><span class="s2">&quot;ui/core/view&quot;</span><span class="p">);</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">pet</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observableModule</span><span class="p">.</span><span class="nx">Observable</span><span class="p">();</span> <span class="c1">// 宠物对象是一个可以绑定到页面上所有元素的可观察对象</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span> <span class="o">=</span> <span class="nx">pet</span><span class="p">;</span> <span class="c1">// 将宠物设置为页面的绑定上下文将其设置为用于绑定的页面级可观察值</span>
+    <span class="nx">pet</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Riven&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如清单8.5所示，我们已经移除了属性绑定代码，并用指定绑定上下文代码替换它。绑定上下文标识页面在数据绑定中使用的可观察对象。</p>
+<p>现在您已经了解了 <code class="docutils literal"><span class="pre">XML</span></code> 数据绑定，现在让我们将注意力转向使用 <code class="docutils literal"><span class="pre">XML</span></code> 数据绑定来构建宠物剪贴簿应用程序。</p>
+<div class="section" id="id5">
+<h4>9.2.1.1. 建立主页<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<p>宠物剪贴簿开始于主页，用户可以导航到关于页面或继续浏览剪贴簿的内容。我们将重用您在前几节中创建的 <code class="docutils literal"><span class="pre">home-page.xml</span></code> 和 <code class="docutils literal"><span class="pre">home-page.js</span></code> 文件。</p>
+<p>从 <code class="docutils literal"><span class="pre">UI</span></code> 开始，我们将为标题和页脚，图像以及两个按钮添加数据绑定标签。如清单8.6所示，数据绑定标签使用胡须语法。我们选择对这些字段使用 <code class="docutils literal"><span class="pre">XML</span></code> 绑定，因为页眉和页脚文本不是我们想要在我们的应用程序中进行硬编码的东西。</p>
+<p>清单8.6 显示 XML 绑定的 views\home-page.xml</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Page</span> <span class="na">loaded=</span><span class="s">&quot;onLoaded&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;ScrollView&gt;</span>
+        <span class="nt">&lt;StackLayout&gt;</span>
+            <span class="nt">&lt;Label</span> <span class="na">class=</span><span class="s">&quot;header&quot;</span> <span class="na">text=</span><span class="s">&quot;{{ header }}&quot;</span> <span class="nt">/&gt;</span> // 将标签的文本属性绑定到可观察对象上定义的属性
+            <span class="nt">&lt;Image</span> <span class="na">src=</span><span class="s">&quot;~/images/home.png&quot;</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;Label</span> <span class="na">class=</span><span class="s">&quot;footer&quot;</span> <span class="na">text=</span><span class="s">&quot;{{ footer }}&quot;</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;StackLayout</span> <span class="na">orientation=</span><span class="s">&quot;horizontal&quot;</span> <span class="na">horizontalAlignment=</span><span class="s">&quot;center&quot;</span> <span class="nt">&gt;</span>
+                <span class="nt">&lt;Button</span> <span class="na">class=</span><span class="s">&quot;marginRight&quot;</span> <span class="na">text=</span><span class="s">&quot;About&quot;</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;Button</span> <span class="na">class=</span><span class="s">&quot;margineLeft&quot;</span> <span class="na">text=</span><span class="s">&quot;Continue&quot;</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/StackLayout&gt;</span>
+        <span class="nt">&lt;/StackLayout&gt;</span>
+    <span class="nt">&lt;/ScrollView&gt;</span>
+<span class="nt">&lt;/Page&gt;</span>
+</pre></div>
+</div>
+<p>正如您在本章前面所记得的那样，使用胡须语法来绑定页眉和页脚的数据只是完成了一半。如果我们要运行宠物剪贴簿应用程序，页眉和页脚将是空白的，因为页面还不知道在数据绑定中使用哪些可观察项。代码清单8.7设置了一个可观察对象，并将其设置为 home-page.js 文件中页面的绑定上下文。</p>
+<p>清单8.7 显示主页的 observable 实现的 views\home-page.js 文件</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">home</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">fromObject</span><span class="p">({</span>
+        <span class="nx">header</span><span class="o">:</span> <span class="s2">&quot;Pet Scrapbook&quot;</span><span class="p">,</span>
+        <span class="nx">footer</span><span class="o">:</span> <span class="s2">&quot;Brosteins ©2016&quot;</span>
+    <span class="p">});</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span> <span class="o">=</span> <span class="nx">home</span><span class="p">;</span> <span class="c1">// 将主页的绑定上下文设置为我们创建的可观察对象，以便它可以通过胡须语法访问我们UI中的属性</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>将以下样式添加到 <code class="docutils literal"><span class="pre">home-page.css</span></code> 文件（列表8.8），并运行宠物剪贴簿。</p>
+<p>清单8.8 添加样式到主页 views\home-page.css 文件</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">header</span> <span class="p">{</span>
+    <span class="k">font-size</span><span class="p">:</span> <span class="mi">32</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">label</span> <span class="p">{</span>
+    <span class="k">text-align</span><span class="p">:</span> <span class="kc">center</span><span class="p">;</span>
+    <span class="k">margin-top</span><span class="p">:</span> <span class="mi">10</span><span class="kt">px</span><span class="p">;</span>
+    <span class="k">margin-bottom</span><span class="p">:</span> <span class="mi">10</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">.</span><span class="nc">footer</span> <span class="p">{</span>
+    <span class="k">font-size</span><span class="p">:</span> <span class="mi">10</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>运行宠物剪贴簿后（图8.10），您将不会注意到标签是数据绑定的；但是，我们使应用程序更具动态性，因为页眉和页脚的值不再在 <code class="docutils literal"><span class="pre">XML</span></code> 视图代码中进行硬编码。</p>
+<img alt="_images/8-11.png" src="_images/8-11.png" />
+<p>虽然在这一点上绑定主页字段的数据可能有些人为，但我们将在本书中继续使用这些相同的技术，并且您会看到它有多强大。</p>
+</div>
+<div class="section" id="id6">
+<h4>9.2.1.2. 把它整合在一起<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<p>在我们继续之前，让我们分析一下这个页面上发生的事情，并想象每个标签是如何绑定数据的。 在清单8.7中，我们建立了一个带有两个字段( <code class="docutils literal"><span class="pre">header</span></code> 和 <code class="docutils literal"><span class="pre">footer</span></code> )的可观察对象。通过使用 <code class="docutils literal"><span class="pre">fromObject()</span></code> 方法，我们可以即时创建可观察对象。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">home</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">fromObject</span><span class="p">({</span> <span class="nx">header</span><span class="o">:</span> <span class="s2">&quot;Pet Scrapbook&quot;</span><span class="p">,</span> <span class="nx">footer</span><span class="o">:</span> <span class="s2">&quot;Brosteins ©2016&quot;</span> <span class="p">});</span>
+</pre></div>
+</div>
+<p>然后，我们将页面绑定到 home 可观察对象: <code class="docutils literal"><span class="pre">page.bindingContext</span> <span class="pre">=</span> <span class="pre">home</span></code> 。最后，我们使用胡子语法来定义主页 <code class="docutils literal"><span class="pre">XML</span></code> 代码中可观察对象的属性。</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ header }}&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ footer }}&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>通过这三个组件一起工作，主页将 <code class="docutils literal"><span class="pre">Pet</span> <span class="pre">Scrapbook</span></code> 放入页眉，将 <code class="docutils literal"><span class="pre">Brosteins©2016</span></code> 放入页脚（图8.11）。</p>
+<img alt="_images/8-12.png" src="_images/8-12.png" />
+</div>
+</div>
+<div class="section" id="id7">
+<h3>9.2.2. 宠物剪贴簿页面<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>数据绑定不仅限于标签; 实际上，您可能希望绑定到应用程序内的其他控件，以便您的应用程序更具动态性。让我们来看看如何通过在 <code class="docutils literal"><span class="pre">Pet</span> <span class="pre">Scrapbook</span></code> 应用中实现剪贴簿页面来实现不同 <code class="docutils literal"><span class="pre">UI</span></code> 元素的数据绑定。</p>
+<p>剪贴簿页面将允许用户创建一个她或她的宠物的记忆。在剪贴簿页面的第一次迭代中，我们将允许用户输入以下信息（随着我们在本章中进一步深入，我们将更新剪贴簿页面以允许多个宠物）：</p>
+<ul class="simple">
+<li>Title;</li>
+<li>Gender;</li>
+<li>Birthday;</li>
+</ul>
+<p>让我们开始实现剪贴簿页面，方法是在 <code class="docutils literal"><span class="pre">Pet</span> <span class="pre">Scrapbook</span></code> 应用的 <code class="docutils literal"><span class="pre">views</span></code> 文件夹中添加 <code class="docutils literal"><span class="pre">scrapbook-page.xml</span></code> 和 <code class="docutils literal"><span class="pre">scrapbookpage.js</span></code> 文件。我们会先将性别和生日字段添加到剪贴簿页面，以便用户输入有关他们宠物的一些识别信息。性别和生日字段将向您引入两个新的 <code class="docutils literal"><span class="pre">UI</span></code> 元素： <code class="docutils literal"><span class="pre">ListPicker</span></code> 元素和 <code class="docutils literal"><span class="pre">DatePicker</span></code> 元素。清单8.9和清单8.10显示了如何在 <code class="docutils literal"><span class="pre">XML</span></code> 中定义列表选取器和日期选取器并将列表选取器绑定到项目数组的示例。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">ListPicker</span></code> 是一个用户界面元素，用于向用户显示可选择的值列表。要创建 <code class="docutils literal"><span class="pre">ListPicker</span></code> 元素，请使用 <code class="docutils literal"><span class="pre">XML</span></code> 代码 <code class="docutils literal"><span class="pre">&lt;ListPicker&gt;</span> <span class="pre">...</span> <span class="pre">&lt;/</span> <span class="pre">ListPicker&gt;</span></code> 。</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">DatePicker</span></code> 是一个用户界面元素，用于向用户显示可选择的月份，日期和年份。要创建 <code class="docutils literal"><span class="pre">DatePicker</span></code> 元素，请使用 <code class="docutils literal"><span class="pre">XML</span></code> 代码 <code class="docutils literal"><span class="pre">&lt;DatePicker&gt;</span> <span class="pre">...</span> <span class="pre">&lt;/</span> <span class="pre">DatePicker&gt;</span></code> 。</p>
+</div>
+<p>清单8.9 带有列表选择器和日期选择器元素的 views\scrapbook-page.xml</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Page</span> <span class="na">loaded=</span><span class="s">&quot;onLoaded&quot;</span> <span class="nt">&gt;</span>
+    <span class="nt">&lt;StackLayout&gt;</span>
+        <span class="nt">&lt;DatePicker</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;ListPicker</span> <span class="na">items=</span><span class="s">&quot;{{ items }}&quot;</span> <span class="nt">/&gt;</span> //列表选择器的项目是绑定到页面绑定上下文的项目对象的数据
+    <span class="nt">&lt;/StackLayout&gt;</span>
+<span class="nt">&lt;/Page&gt;</span>
+</pre></div>
+</div>
+<p>清单8.10 将项目绑定到 views\scrapbook-page.js 上的 <code class="docutils literal"><span class="pre">ListPicker</span></code> 元素</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">listItems</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">Observable</span><span class="p">();</span> <span class="c1">//将三个项目的数组设置为observable类型listItems变量的items属性</span>
+    <span class="nx">listItems</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Item 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Item 2&quot;</span><span class="p">,</span> <span class="s2">&quot;Item 3&quot;</span><span class="p">];</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span> <span class="o">=</span> <span class="nx">listItems</span><span class="p">;</span> <span class="c1">//页面的绑定上下文被设置为observable</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>图8.12 显示了在 <code class="docutils literal"><span class="pre">iOS</span></code> 设备上的本地控件上渲染的 <code class="docutils literal"><span class="pre">DatePicker</span></code> 和 <code class="docutils literal"><span class="pre">ListPicker</span></code> 元素。</p>
+<img alt="_images/8-13.png" src="_images/8-13.png" />
+<p>正如你所看到的， <code class="docutils literal"><span class="pre">DatePicker</span></code> 和 <code class="docutils literal"><span class="pre">ListPicker</span></code> 元素的工作方式与其他元素的工作方式相同，我们已经讨论过这一点。您可能已经注意到的一个区别是 <code class="docutils literal"><span class="pre">ListPicker</span></code> 元素。 <code class="docutils literal"><span class="pre">ListPicker</span></code> 元素的 <code class="docutils literal"><span class="pre">items</span></code> 属性不绑定到一个单一的值，而是期望绑定到一个数组变量。</p>
+<p>现在您已经介绍了几个新控件，让我们继续完成剪贴簿页面，方法是添加标题和描述性标签。我们将所有这些控件使用 XML 绑定，以便我们可以访问 JavaScript 中数据（因为我们最终会保存用户创建的剪贴簿页面）。清单8.11将新控件（和旧控件）放在一起且进行数据绑定，以实现剪贴簿页面。</p>
+<p>清单8.11 views\scrapbook-page.xml 页面显示更多数据绑定技术</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>&lt;Page loaded=”onLoaded”&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;StackLayout&gt;</dt>
+<dd>&lt;Label text=”Title: “/&gt;
+&lt;TextField class=”header” text=”{{title}}”/&gt;
+&lt;Label text=”Age: “/&gt;
+&lt;DatePicker date=”{{ date }}”/&gt;
+&lt;Label text=”Gender: “/&gt;
+&lt;ListPicker items=”{{ genders }}” selectedIndex=”{{ gender }}”/&gt; //添加了数据绑定到列表选择器的选定索引，以便我们知道选择了哪个列表项目
+&lt;Button tap=”onTap” text=”Done”/&gt;</dd>
+</dl>
+<p class="last">&lt;/StackLayout&gt;</p>
+</dd>
+</dl>
+<p>&lt;/Page&gt;</p>
+<p>正如您在清单8.11中看到的那样，我们为 <code class="docutils literal"><span class="pre">DatePicker</span></code> ， <code class="docutils literal"><span class="pre">TextField</span></code> 和 <code class="docutils literal"><span class="pre">ListPicker</span></code> 元素添加了 <code class="docutils literal"><span class="pre">XML</span></code> 绑定。通过添加的附加绑定，我们将能够访问应用程序的用户选择或键入这些字段的值。请特别注意日期选择器的 <code class="docutils literal"><span class="pre">date=&quot;{{date}}&quot;</span></code> 属性和列表选择器的 <code class="docutils literal"><span class="pre">selectedIndex</span> <span class="pre">=&quot;{{gender}}&quot;</span></code> 属性。 <code class="docutils literal"><span class="pre">DatePicker</span></code> 元素提供了一个名为 <code class="docutils literal"><span class="pre">date</span></code> 的属性，可以通过数据绑定来捕获选定的日期。同样，您可以绑定到 <code class="docutils literal"><span class="pre">ListPicker</span></code> 的 <code class="docutils literal"><span class="pre">selectedIndex</span></code> 属性以获取选定的索引。</p>
+<p>前面我们已经完成了我们的 <code class="docutils literal"><span class="pre">UI</span></code> ，现在添加数据绑定配置代码，如清单8.12所示。</p>
+<p>代码清单8.12 显示了如何设置数据绑定的 view\scrapbook-page.js</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">scrapbook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">fromObject</span><span class="p">({</span> <span class="c1">//fromObject()是一个从JavaScript对象创建可观察对象的快捷方式</span>
+        <span class="nx">genders</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Female&quot;</span><span class="p">,</span> <span class="s2">&quot;Male&quot;</span><span class="p">,</span> <span class="s2">&quot;Other&quot;</span><span class="p">]</span>
+    <span class="p">});</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span> <span class="o">=</span> <span class="nx">scrapbook</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>代码看起来并不新鲜，但有两个例外。首先，我们使用 fromObject() 方法从 JavaScript 对象创建一个 observable 。这是一个捷径，你应该使用它。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">fromObject() 方法是从现有 JavaScript 对象创建可观察对象的快捷方式。</p>
+</div>
+<p>其次，您会注意到剪贴簿可观察值没有明确定义绑定到选取器元素的性别和日期属性。由于 JavaScript 的动态性，您不必指定它们（但是如果您这样做，它不会受到影响）。 <strong>为何不用指定？？</strong></p>
+<div class="section" id="id8">
+<h4>9.2.2.1. 访问数据绑定信息<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<p>现在我们已经绑定了 UI 数据，如何访问这些属性？有几种方法可以做到这一点，你现在就可以了解其中的一种方法；我们会在本章后面指出第二种方法。
+将按钮的轻触事件处理程序添加到 scrapbook-page.js 文件（列表8.13）</p>
+<p>代码清单8.13 在 views\scrapbook-page.js 上访问数据绑定属性</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">exports</span><span class="p">.</span><span class="nx">onTap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span> <span class="c1">// args.object是对页面对象的引用</span>
+    <span class="kd">var</span> <span class="nx">scrapbook</span> <span class="o">=</span> <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span><span class="p">;</span> <span class="c1">//bindingContext变量包含对剪贴簿observable的引用</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;You have made &quot;</span> <span class="o">+</span> <span class="nx">scrapbook</span><span class="p">.</span><span class="nx">title</span><span class="p">);</span> <span class="c1">//在用户为UI控件输入值后，您可以访问JavaScript中的属性，因为这些字段是数据绑定的</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Age: &quot;</span> <span class="o">+</span> <span class="nx">scrapbook</span><span class="p">.</span><span class="nx">date</span><span class="p">.</span><span class="nx">toLocaleDateString</span><span class="p">());</span> <span class="c1">//#C</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Gender selected:&quot;</span> <span class="o">+</span> <span class="nx">scrapbook</span><span class="p">.</span><span class="nx">genders</span><span class="p">[</span><span class="nx">scrapbook</span><span class="p">.</span><span class="nx">gender</span><span class="p">]);</span> <span class="c1">//#C</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在清单8.13中，我们使用点击事件来访问绑定上下文的剪贴簿页面。当处理一个 <code class="docutils literal"><span class="pre">tap</span></code> 事件时，处理程序通过对象属性传递对页面的引用，所以 <code class="docutils literal"><span class="pre">args.object</span></code> 是对页面的引用。通过引用页面， <code class="docutils literal"><span class="pre">bindingContext</span></code> 属性具有对原始 <code class="docutils literal"><span class="pre">observable</span></code> 的引用，该 <code class="docutils literal"><span class="pre">observable</span></code> 包含所有数据绑定属性。</p>
+<p>运行时， <code class="docutils literal"><span class="pre">Scrapbook</span></code> 页面将这些属性的值记录到控制台。</p>
+<p>尽管将值记录到控制台并不是那么有趣，但重点是了解您有权访问页面绑定上下文的 <code class="docutils literal"><span class="pre">observable</span></code> 的所有属性。在后面的章节和示例中，我们将实现更复杂的业务逻辑并操纵数据绑定的属性。现在，让我们看看可以使用数据绑定更有趣的事情：绑定表达式。</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>9.2.3. 绑定表达式<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>如果宠物的名字显示在页面的标题中，但最后加上一些文字，比如 “Riven’s Scrapbook Page?” ，这不是很好吗？现在，想一想你如何用你的工具达到你的要求。到目前为止，您只学习了如何将数据绑定到整个字段； 即用数据绑定值替换标签文本属性的全部内容。</p>
+<p>那么，你怎么能展示 “Riven’s Scrapbook Page?”  一种选择是使用两个标签：一个数据绑定到标题，另一个使用 “Scrapbook Page” 的静态文本。</p>
+<p>第二种选择是使用绑定到标题的单个标签数据，同时并入绑定表达式。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">绑定表达式是直接应用于 <code class="docutils literal"><span class="pre">UI</span></code> 中的 <code class="docutils literal"><span class="pre">XML</span></code> 绑定的逻辑或计算，允许您转换显示的数据绑定值。</p>
+</div>
+<p>许多基本逻辑运算符可用于表达式绑定中。对于 Pet Scrapbook 应用程序，我们将使用一元运算符将两个字符串连接在一起，以创建具有单个标签的 “Riven’s Scrapbook Page” 。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">有关可用于绑定表达式的所有受支持操作符的完整列表，请查看官方 NativeScript 文档，网址为 <a class="reference external" href="https://docs.nativescript.org/core-concepts/databinding#supported-expressions">https://docs.nativescript.org/core-concepts/databinding#supported-expressions</a> 。</p>
+</div>
+<p>绑定表达式扩展了胡须语法。当使用绑定表达式时，我们使用逗号来分隔我们想要绑定的属性和表达式(该属性在前面)。代码清单8.14展示了如何创建一个将两个字符串连接在一起的绑定表达式。更改 <code class="docutils literal"><span class="pre">scrapbook-page.xml</span></code> 文件中的第一个 <code class="docutils literal"><span class="pre">Label</span></code> 元素以使用绑定表达式：</p>
+<p>代码清单8.14 views\scrapbook-page.xml 更新了一个将两个字符串连接在一起的绑定表达式</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Page</span> <span class="na">loaded=</span><span class="s">&quot;onLoaded&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackLayout&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ title, title + &#39; Scrapbook Page&#39; }}&quot;</span><span class="nt">/&gt;</span> // 添加绑定表达式，将标签字段中的静态字符串和数据绑定字符串连接在一起
+    <span class="nt">&lt;TextField</span> <span class="na">class=</span><span class="s">&quot;header&quot;</span> <span class="na">text=</span><span class="s">&quot;{{ title }}&quot;</span> <span class="na">hint=</span><span class="s">&quot;Enter title...&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ &#39;Age: &#39; + calcAge(year, month, day) + &#39; years old&#39;}} &quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;DatePicker</span> <span class="na">year=</span><span class="s">&quot;{{ year }}&quot;</span> <span class="na">month=</span><span class="s">&quot;{{ month }}&quot;</span> <span class="na">day=</span><span class="s">&quot;{{ day }}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;Gender: &quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;ListPicker</span> <span class="na">items=</span><span class="s">&quot;{{ genders }}&quot;</span> <span class="na">selectedIndex=</span><span class="s">&quot;{{ gender }}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Button</span> <span class="na">tap=</span><span class="s">&quot;onTap&quot;</span> <span class="na">text=</span><span class="s">&quot;Done&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/StackLayout&gt;</span>
+<span class="nt">&lt;/Page&gt;</span>
+</pre></div>
+</div>
+<p>请记住，绑定表达式的第一个字段(逗号前的值)是数据绑定属性。一旦在逗号前声明了属性，就可以在逗号后面的绑定表达式中使用该属性。在清单8.4中，绑定表达式显示了与 “Scrapbook Page” 连接的标题字段。</p>
+<p>在模拟器中运行这些更新，并在文本字段中输入您的宠物名称。您会注意到标题会在您输入时动态更改。你应该看到类似图8.14的东西。</p>
+<img alt="_images/8-14.png" src="_images/8-14.png" />
+<p>一个重要的注意事项是您可以对多个控件使用相同的 <code class="docutils literal"><span class="pre">XML</span></code> 绑定。如图8.14所示，您可以将用户输入到文本字段的剪贴簿页面的 <code class="docutils literal"><span class="pre">title</span></code> 同时绑定到标签。当您更改文本字段的值时，您会注意到标签也同时发生变化！ <code class="docutils literal"><span class="pre">NativeScript</span></code> 正在处理所有属性更改的事件，以便在两个 <code class="docutils literal"><span class="pre">UI</span></code> 元素中设置值。</p>
+<div class="section" id="id10">
+<h4>9.2.3.1. 绑定表达式函数<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<p>绑定表达式可以比简单字符串连接更先进。实际上，您可以拥有一个使用您在 JavaScript 中定义的任何函数的绑定表达式。让我们回顾剪贴簿页面的年龄字段。年龄数据绑定到日期选择器的日期属性，这看起来有点奇怪。</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;Age: &quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;DatePicker</span> <span class="na">date=</span><span class="s">&quot;{{ date }}&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>如果你密切关注，你会注意到宠物的年龄被描述为一个日期，这是不正确的。年龄被描述为一个单一的数字，而不是一个日期。理想情况下，我想通过添加数据绑定标签来更改 <code class="docutils literal"><span class="pre">UI</span></code> ，以根据所选出生日期显示宠物的年龄。动态计算宠物的年龄听起来像是一个很好的用于绑定表达式函数的用例。</p>
+<p>清单8.15和8.16显示了实现自定义年龄计算函数并使用绑定表达式在 UI 上显示它所需的更新 <code class="docutils literal"><span class="pre">XML</span></code> 代码和 <code class="docutils literal"><span class="pre">JavaScript</span></code> 代码。</p>
+<p>代码清单8.15 用绑定表达式中的自定义函数更新 views\scrapbook-page.xml 文件</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Page</span> <span class="na">loaded=</span><span class="s">&quot;onLoaded&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackLayout&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ title, title + &#39; Scrapbook Page&#39; }}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;TextField</span> <span class="na">class=</span><span class="s">&quot;header&quot;</span> <span class="na">text=</span><span class="s">&quot;{{ title }}&quot;</span> <span class="na">hint=</span><span class="s">&quot;Enter title...&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ &#39;Age: &#39; + calcAge(date) + &#39; years old&#39;}} &quot;</span><span class="nt">/&gt;</span> //调用可观察对象上的自定义函数来执行年龄计算。您可以将数据绑定属性或其他值传递给自定义函数。 您还可以将自定义函数与绑定表达式结合使用。
+    <span class="nt">&lt;DatePicker</span> <span class="na">date=</span><span class="s">&quot;{{ date }}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;Gender: &quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;ListPicker</span> <span class="na">items=</span><span class="s">&quot;{{ genders }}&quot;</span> <span class="na">selectedIndex=</span><span class="s">&quot;{{ gender }}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Button</span> <span class="na">tap=</span><span class="s">&quot;onTap&quot;</span> <span class="na">text=</span><span class="s">&quot;Done&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/StackLayout&gt;</span>
+<span class="nt">&lt;/Page&gt;</span>
+</pre></div>
+</div>
+<p>代码清单8.16 views\scrapbook-page.js 文件显示了一个函数计算年龄并在绑定表达式中使用</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">exports</span><span class="p">.</span><span class="nx">onLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">scrapbook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">Observable</span><span class="p">({</span>
+        <span class="nx">genders</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Female&quot;</span><span class="p">,</span> <span class="s2">&quot;Male&quot;</span><span class="p">,</span> <span class="s2">&quot;Other&quot;</span><span class="p">],</span>
+        <span class="nx">calcAge</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">birthDate</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//使用XML数据绑定在UI中可用的可观察对象上实现一个函数</span>
+            <span class="kd">var</span> <span class="nx">now</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+            <span class="kd">var</span> <span class="nx">diff</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">now</span> <span class="o">-</span> <span class="nx">birthDate</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">31536000</span><span class="p">;</span> <span class="c1">//Math.abs()返回不同的毫秒数，所以我们除以1000得到秒，然后以一年中的秒数（265 * 24 * 3600 = 31526000）得到年</span>
+            <span class="k">return</span> <span class="nx">diff</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span> <span class="o">=</span> <span class="nx">scrapbook</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>为 Scrapbook 页面的标题设置绑定表达式时，我们只使用了一元运算符。当使用自定义绑定表达式时，我们可以绑定到我们的 <code class="docutils literal"><span class="pre">observable</span></code> 上的一个属性，这是一个自定义函数，而不仅仅是一个简单的类型。 <code class="docutils literal"><span class="pre">NativeScript</span></code> 甚至会将参数传递给您的方法。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">您可以将绑定表达式与自定义函数结合起来，从而在您的用户界面中提供更多灵活性，只要确保该函数是可观察对象的属性即可。</p>
+</div>
+<p>图8.15 显示了用更复杂的绑定表达式更新后的剪贴簿页面。</p>
+<img alt="_images/8-15.png" src="_images/8-15.png" />
+<p>希望您在开发 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序时已经开始了解数据绑定如何帮助您。 既然您在 <code class="docutils literal"><span class="pre">observables</span></code> 数据和数据绑定的基础上有坚实的基础，现在是时候处理绑定到数组了。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id11">
+<h2>9.3. 可观察数组<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
+<p>绑定到数组与绑定到单个对象没有多大区别。事实上，我们已经绑定到性别数组来显示可用的性别选项列表： <code class="docutils literal"><span class="pre">genders:</span> <span class="pre">[&quot;Female&quot;,</span> <span class="pre">&quot;Male&quot;,</span> <span class="pre">&quot;Other&quot;]</span></code> 。 就像这个例子，当你想显示（或从中选择）一列值时，你通常会绑定到一个数组。但是如果数据绑定数组中的某个值发生了变化呢？ 数据绑定的 UI 元素会自动更新吗？ 这取决于一些因素。 以下面的代码片段为例：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">scrapbook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observableModule</span><span class="p">.</span><span class="nx">fromObject</span><span class="p">({</span><span class="nx">genders</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Female&quot;</span><span class="p">,</span> <span class="s2">&quot;Male&quot;</span><span class="p">,</span> <span class="s2">&quot;Other&quot;</span><span class="p">]});</span>
+</pre></div>
+</div>
+<p>如果将数组定义为 <code class="docutils literal"><span class="pre">observable</span></code> 的属性，则 <code class="docutils literal"><span class="pre">observable</span></code> 将只通知其数据绑定伙伴，如果整个数组被替换，则 <code class="docutils literal"><span class="pre">observable</span></code> 已发生更改。 替换3个项目的数组可能看起来不是很多，但想象一下该数组有 100 个项目，或 1000 个项目：这是一个非常低效的工作要做（取代整个数组对象），只是为了得到可观察的报告数据更改。这就是为什么有一个称为可观察数组的特殊可观察对象。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">可观察数组是数据对象（如可观察对象），当从数组中添加，移除或更改项目时，可为您的代码提供通知。</p>
+</div>
+<p>创建和使用可观察数组非常类似于您之前学习的可观察对象，不同之处在于它需要不同的 <code class="docutils literal"><span class="pre">NativeScript</span></code> 核心模块。代码清单8.17展示了如何访问 <code class="docutils literal"><span class="pre">observable</span></code> 模块并创建一个可观察数组。</p>
+<p>代码清单8.17 创建一个可观察数组</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable-array&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">pets</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">ObservableArray</span><span class="p">(</span><span class="s2">&quot;Riven&quot;</span><span class="p">,</span> <span class="s2">&quot;Pittens&quot;</span><span class="p">);</span> <span class="c1">//您可以通过将项传递给ObservableArray()函数来初始化可观察数组</span>
+<span class="nx">pets</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;Nibbles&quot;</span><span class="p">);</span> <span class="c1">//其他项目可以添加到数组</span>
+</pre></div>
+</div>
+<p>从清单8.17 可以看到，可观察数组就像 JavaScript 中的普通数组一样工作（您可以根据需要推送和拼接它们）。当你向数组添加和移除项目时， <code class="docutils literal"><span class="pre">observable</span></code> 的 <code class="docutils literal"><span class="pre">propertyChange</span></code> 事件将触发。可观察数组的属性更改事件就像常规可观察事件一样工作，所以我们不打算详细讨论。相反，让我们来看看我们如何使可观察数组在 Pet Scrapbook 应用程序内工作。</p>
+<div class="section" id="id12">
+<h3>9.3.1. 使用可观察数组构建主-详情页面<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>到目前为止，宠物剪贴簿应用程序并不是一个剪贴簿，因为它只有一个剪贴簿页面，用户只能输入一个宠物的信息。让我们重构剪贴簿，以便用户可以为多个宠物添加信息。</p>
+<p>在接下来的几个部分中，我们将更改应用的主页，以显示所有剪贴簿页面的列表。在主页面上，用户可以添加新页面或点击其中一个现有页面查看详细信息。这些变化将成为您反复使用的标准 UI 设计的基础： master-detail 。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Master-detail UI 模式描述两个页面和一组数据之间的关系（和导航）。主页包含许多数据点的简要摘要，用户可以导航到单独的页面，显示每个数据点的详细视图。</p>
+</div>
+<p>在宠物剪贴簿应用中，我们要跟踪的数据点是剪贴簿页面。主页面将成为每个页面的列表，详细信息页面显示所有信息（宠物的名字，年龄，性别等）。</p>
+<p>要构建 master-detail 页面，我们将使用可观察数组来保存剪贴簿页面。可观察数组数据将被绑定到新 UI 元素（列表视图），以在主页上显示剪贴簿页面的列表。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">列表视图是用于显示项目列表的 <code class="docutils literal"><span class="pre">UI</span></code> 元素。 <code class="docutils literal"><span class="pre">ListView</span></code> 元素支持模板系统，因此您可以创建显示列表中每个项目的 UI 元素的复杂集合。要创建 <code class="docutils literal"><span class="pre">ListView</span></code> 元素，请使用 <code class="docutils literal"><span class="pre">XML</span></code> 代码 <code class="docutils literal"><span class="pre">&lt;ListView&gt;</span> <span class="pre">...</span> <span class="pre">&lt;/</span> <span class="pre">ListView&gt;</span></code> 。</p>
+</div>
+<p>尽管列表视图可以绑定到简单数组，但是数据绑定到可观察数组是非常理想的，因为在可观察数组中添加，移除和更新项目时，列表视图的 <code class="docutils literal"><span class="pre">UI</span></code> 会自动更新。代码清单8.18显示了一个带有列表视图的更新的 <code class="docutils literal"><span class="pre">scrapbook-page.xml</span></code> 页面。此页面上的列表视图最终将允许我们将多个宠物添加到我们的剪贴簿。</p>
+<p>代码清单8.18 用列表视图更新 views\scrapbook.xml 页面</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Page</span> <span class="na">loaded=</span><span class="s">&quot;onLoaded&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;StackLayout&gt;</span>
+    <span class="nt">&lt;ListView</span> <span class="na">items=</span><span class="s">&quot;{{ pages }}&quot;</span> <span class="na">itemTap=</span><span class="s">&quot;onItemTap&quot;</span><span class="nt">&gt;</span>//pages属性是一个可观察的剪贴簿页面数组
+      <span class="nt">&lt;ListView.itemTemplate&gt;</span>//在项目模板内部定义的所有内容将为页面observable数组中的每个项目渲染一次
+        <span class="nt">&lt;StackLayout&gt;</span>
+          <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ title, title + &#39; Scrapbook Page&#39; }}&quot;</span><span class="nt">/&gt;</span> //title属性绑定到每个数组项上的属性
+        <span class="nt">&lt;/StackLayout&gt;</span>
+      <span class="nt">&lt;/ListView.itemTemplate&gt;</span>
+    <span class="nt">&lt;/ListView&gt;</span>
+  <span class="nt">&lt;/StackLayout&gt;</span>
+<span class="nt">&lt;/Page&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">列表视图模板只能有一个子属性。如果您打算为每个项目显示多个 <code class="docutils literal"><span class="pre">UI</span></code> 元素，则需要将它们放置在布局容器中。</p>
+</div>
+<p>请注意，我们已经为此页面添加了列表视图，并为列表视图添加了模板。列表视图的初始数据绑定通过 <code class="docutils literal"><span class="pre">items</span></code> 属性进行设置。在清单8.18中，一个名为 <code class="docutils literal"><span class="pre">pages</span></code> 的可观察数组包含我们所有的剪贴簿页面。对于数据绑定数组中的每个项目，项目模板的内容将显示在 <code class="docutils literal"><span class="pre">UI</span></code> 中。当显示每个项目时，项目模板中的任何数据绑定 <code class="docutils literal"><span class="pre">UI</span></code> 元素（如绑定到 <code class="docutils literal"><span class="pre">title</span></code> 属性的标签数据）将绑定到数组的每个项目。</p>
+<p>现在我们已经更新了 <code class="docutils literal"><span class="pre">UI</span></code> 代码，我们仍然需要更新我们的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 代码以添加一个名为 <code class="docutils literal"><span class="pre">pages</span></code> 的可观察数组（列表8.19）。</p>
+<p>代码清单8.19 更新了 views\scrapbook-page.js 以将数据绑定到列表视图</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">observableArray</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable-array&quot;</span><span class="p">);</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">calcAge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">year</span><span class="p">,</span> <span class="nx">month</span><span class="p">,</span> <span class="nx">day</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">date</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">year</span><span class="p">,</span> <span class="nx">month</span><span class="p">,</span> <span class="nx">day</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">now</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">diff</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">now</span> <span class="o">-</span> <span class="nx">date</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">31536000</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">diff</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kd">var</span> <span class="nx">genders</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Female&quot;</span><span class="p">,</span> <span class="s2">&quot;Male&quot;</span><span class="p">,</span> <span class="s2">&quot;Other&quot;</span><span class="p">];</span>
+    <span class="kd">var</span> <span class="nx">emptyScrapbookPage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">Observable</span><span class="p">({</span>
+        <span class="nx">genders</span><span class="o">:</span> <span class="nx">genders</span><span class="p">,</span>
+        <span class="nx">calcAge</span><span class="o">:</span> <span class="nx">calcAge</span>
+    <span class="p">});</span>
+    <span class="kd">var</span> <span class="nx">filledScrapbookPage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">Observable</span><span class="p">({</span>
+        <span class="nx">genders</span><span class="o">:</span> <span class="nx">genders</span><span class="p">,</span>
+        <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Riven&#39;s Page&quot;</span><span class="p">,</span>
+        <span class="nx">calcAge</span><span class="o">:</span> <span class="nx">calcAge</span><span class="p">,</span>
+        <span class="nx">gender</span><span class="o">:</span> <span class="mi">0</span>
+    <span class="p">});</span>
+    <span class="kd">var</span> <span class="nx">scrapbook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">Observable</span><span class="p">({</span>
+        <span class="nx">pages</span><span class="o">:</span> <span class="k">new</span> <span class="nx">observableArray</span><span class="p">.</span><span class="nx">ObservableArray</span><span class="p">(</span><span class="nx">emptyScrapbookPage</span><span class="p">,</span> <span class="nx">filledScrapbookPage</span><span class="p">)</span>
+    <span class="p">});</span> <span class="c1">//剪贴簿的绑定上下文现在包含一个可观察数组。 可观察对象可以包含其他可观察对象或不可观察对象。</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span> <span class="o">=</span> <span class="nx">scrapbook</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>当你运行这个例子时，你会看到更新后的 Scrapbook 页面添加了一个包含两个页面的可观察数组（图8.16）。</p>
+<img alt="_images/8-16.png" src="_images/8-16.png" />
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">根据您正在运行的模拟器设备版本，您可能必须滚动视图才能看到已绑定到可观察阵列的两个可观察对象。</p>
+</div>
+<p>您可能已经注意到，用户无法进入由主页面列表视图中的各个项目表示的页面。我们需要更新宠物剪贴簿，以便当用户点击列表视图中的项目时，我们导航到可以更新数据的详细信息页面。为了响应点击列表项目，我们将使用 <code class="docutils literal"><span class="pre">ListView</span></code> 元素的 <code class="docutils literal"><span class="pre">itemTap</span></code> 事件。在事件处理程序中，我们将导航到详细信息页面，传递可观察数组和我们想要查看的数组的索引。在清单8.20中更新 scrapbook-page.js 代码。不要担心，如果这些变化看起来非常困难：我们会逐个介绍它们。</p>
+<p>清单8.20 更新了 views\scrapbook-page.js 以实现列表视图的 tap 事件</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">observableArray</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable-array&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">frame</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;ui/frame&quot;</span><span class="p">);</span>
+<span class="kd">function</span> <span class="nx">scrapbookPageModel</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// 为每个剪贴簿页面定义可重复使用的模型</span>
+    <span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">Observable</span><span class="p">();</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">genders</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Female&quot;</span><span class="p">,</span> <span class="s2">&quot;Male&quot;</span><span class="p">,</span> <span class="s2">&quot;Other&quot;</span><span class="p">];</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">calcAge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">year</span><span class="p">,</span> <span class="nx">month</span><span class="p">,</span> <span class="nx">day</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">date</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">year</span><span class="p">,</span> <span class="nx">month</span><span class="p">,</span> <span class="nx">day</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">now</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">diff</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">now</span> <span class="o">-</span> <span class="nx">date</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">31536000</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">diff</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">};</span>
+    <span class="k">return</span> <span class="nx">model</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">scrapbook</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">page</span><span class="p">.</span><span class="nx">navigationContext</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 检查这是否是第一次加载页面</span>
+        <span class="nx">scrapbook</span> <span class="o">=</span> <span class="nx">page</span><span class="p">.</span><span class="nx">navigationContext</span><span class="p">.</span><span class="nx">model</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// 第一次加载，进入主页面</span>
+        <span class="nx">scrapbook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">Observable</span><span class="p">({</span>
+            <span class="nx">pages</span><span class="o">:</span> <span class="k">new</span> <span class="nx">observableArray</span><span class="p">.</span><span class="nx">ObservableArray</span><span class="p">(</span><span class="k">new</span> <span class="nx">scrapbookPageModel</span><span class="p">())</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span> <span class="o">=</span> <span class="nx">scrapbook</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onItemTap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 列表项的轻敲事件处理程序的实现</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">scrapbook</span> <span class="o">=</span> <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span><span class="p">;</span>
+    <span class="nx">frame</span><span class="p">.</span><span class="nx">topmost</span><span class="p">().</span><span class="nx">navigate</span><span class="p">({</span>
+        <span class="nx">moduleName</span><span class="o">:</span> <span class="s2">&quot;views/scrapbookUpdate-page&quot;</span><span class="p">,</span>
+        <span class="nx">context</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">model</span><span class="o">:</span> <span class="nx">scrapbook</span><span class="p">,</span>
+            <span class="nx">index</span><span class="o">:</span> <span class="nx">args</span><span class="p">.</span><span class="nx">index</span>
+        <span class="p">}</span> <span class="c1">//将我们想要更新的页面的剪贴簿模型和索引传递给我们导航到的页面</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>我们对剪贴簿页面的 JavaScript 代码进行了一些更改。我们添加的第一件事是 scrapbookPageModel() 函数。接下来我们做的是定义一个函数作为数组中每个剪贴簿页面的模型。这很重要，因为它可以帮助我们的代码更易于维护，因为我们继续向 Pet Scrapbook 应用添加功能。接下来，我们更新了页面的加载事件，以检查页面加载时是否在导航上下文中有数据。当我们第一次加载页面时，这个对象将是空的（在我们定义更新页面的时，这个对象将会更多）。我们在剪贴簿页面上更新的最后一项是实现列表视图项目的轻击事件。轻触项目时，我们导航到更新页面并使用导航上下文将剪贴簿模型和单击项目的索引传递到新视图。清单8.21和8.22显示了更新页面的定义。</p>
+<p>代码清单8.21 views\scrapbookUpdate-page.xml 页面</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Page</span> <span class="na">loaded=</span><span class="s">&quot;onLoaded&quot;</span><span class="nt">&gt;</span>// 将页面模型定义移动到它自己的xml视图
+  <span class="nt">&lt;StackLayout&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ title, title + &#39; Scrapbook Page&#39; }}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;TextField</span> <span class="na">class=</span><span class="s">&quot;header&quot;</span> <span class="na">text=</span><span class="s">&quot;{{ title }}&quot;</span> <span class="na">hint=</span><span class="s">&quot;Enter title...&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ &#39;Age: &#39; + calcAge(year, month, day) + &#39; years old&#39;}} &quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;DatePicker</span> <span class="na">year=</span><span class="s">&quot;{{ year }}&quot;</span> <span class="na">month=</span><span class="s">&quot;{{ month }}&quot;</span> <span class="na">day=</span><span class="s">&quot;{{ day }}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;Gender: &quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;ListPicker</span> <span class="na">items=</span><span class="s">&quot;{{ genders }}&quot;</span> <span class="na">selectedIndex=</span><span class="s">&quot;{{ gender }}&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Button</span> <span class="na">tap=</span><span class="s">&quot;onDoneTap&quot;</span> <span class="na">text=</span><span class="s">&quot;Done&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/StackLayout&gt;</span>
+<span class="nt">&lt;/Page&gt;</span>
+</pre></div>
+</div>
+<p>代码清单8.22 在一个单独的视图中实现更新代码的 views\scrapbookUpdate-page.js 文件</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">frame</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;ui/frame&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">scrapbook</span><span class="p">;</span> <span class="c1">// 存储对剪贴簿模型的引用，以便稍后发回</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">page</span><span class="p">.</span><span class="nx">navigationContext</span><span class="p">.</span><span class="nx">index</span><span class="p">;</span>
+    <span class="nx">scrapbook</span> <span class="o">=</span> <span class="nx">page</span><span class="p">.</span><span class="nx">navigationContext</span><span class="p">.</span><span class="nx">model</span><span class="p">;</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span> <span class="o">=</span> <span class="nx">scrapbook</span><span class="p">.</span><span class="nx">pages</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span> <span class="c1">// 将页面的绑定上下文设置为从列表视图中选择的页面</span>
+<span class="p">};</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onDoneTap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="nx">frame</span><span class="p">.</span><span class="nx">topmost</span><span class="p">().</span><span class="nx">navigate</span><span class="p">({</span> <span class="c1">// 点击完成后，将导航上下文设置为剪贴簿</span>
+        <span class="nx">moduleName</span><span class="o">:</span> <span class="s2">&quot;views/scrapbook-page&quot;</span><span class="p">,</span>
+        <span class="nx">context</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">model</span><span class="o">:</span> <span class="nx">scrapbook</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>当在列表视图中点击项目时，列表8.21和8.22中的页面将被加载并显示给用户。当更新页面被加载时，我们使用在导航上下文中传递的数据，并通过使用点击项目的索引将适当的模型绑定到更新页面。</p>
+<p>现在我们已经正确处理了 <code class="docutils literal"><span class="pre">itemTap</span></code> 事件，我们可以更新和更改每个剪贴簿页面的信息；但是，我们仍然有问题，因为用户无法将更多剪贴簿页面添加到剪贴簿！ 让我们解决这个问题，并了解另一个称为 <strong>操作栏</strong> 的 <code class="docutils literal"><span class="pre">UI</span></code> 元素。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">操作栏是用于在应用程序中显示标题头的 <code class="docutils literal"><span class="pre">UI</span></code> 元素。 <code class="docutils literal"><span class="pre">ActionBar</span></code> 元素通常用于显示标题以及应用程序中的其他控件。要创建一个 <code class="docutils literal"><span class="pre">ActionBar</span></code> 元素，请使用 XML 代码 <code class="docutils literal"><span class="pre">&lt;ActionBar&gt;</span> <span class="pre">...</span> <span class="pre">&lt;/</span> <span class="pre">ActionBar&gt;</span></code> 。</p>
+</div>
+<p>我们将使用操作栏来允许用户将新页面添加到剪贴簿。我们来看看如何实现操作栏。</p>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>9.4. 操作栏<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<p>ActionBar 元素将帮助我们完成宠物剪贴簿应用程序的打磨。您可能已经熟悉您可以在自己的设备上使用的应用程序的操作栏概念（图8.17显示了许多移动应用程序使用的常用操作栏模式）;操作栏用于双重用途或在应用程序顶部显示信息并包含用户的控件或按钮。对于宠物剪贴簿应用程序，我们将使用操作栏来显示应用程序的标题以及用于添加其他剪贴簿页面的按钮。</p>
+<img alt="_images/8-17.png" src="_images/8-17.png" />
+<p>我们将在剪贴簿应用的主页上实施操作栏，在那里我们有剪贴簿页面的列表。代码清单8.23显示了更新的 scrapbook-page.xml 文件和新包含的 ActionBar 元素。</p>
+<p>代码清单8.23 更新了 views\scrapbook-page.xml 文件以包含操作栏</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;Page</span> <span class="na">loaded=</span><span class="s">&quot;onLoaded&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Page.actionBar&gt;</span>//定义一个ActionBar元素
+    <span class="nt">&lt;ActionBar</span> <span class="na">title=</span><span class="s">&quot;Pet Scrapbook&quot;</span><span class="nt">&gt;</span>//设置ActionBar元素的标题
+      <span class="nt">&lt;ActionItem</span> <span class="na">tap=</span><span class="s">&quot;onAddTap&quot;</span> <span class="na">ios.position=</span><span class="s">&quot;right&quot;</span> <span class="na">text=</span><span class="s">&quot;Add&quot;</span> <span class="na">android.position=</span><span class="s">&quot;actionBar&quot;</span><span class="nt">/&gt;</span> //将一个控件添加到ActionBar元素，在iOS和Android上设置ActionBar元素的位置和文本
+    <span class="nt">&lt;/ActionBar&gt;</span>
+  <span class="nt">&lt;/Page.actionBar&gt;</span>
+  <span class="nt">&lt;StackLayout&gt;</span>
+    <span class="nt">&lt;ListView</span> <span class="na">items=</span><span class="s">&quot;{{ pages }}&quot;</span> <span class="na">itemTap=</span><span class="s">&quot;onItemTap&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;ListView.itemTemplate&gt;</span>
+        <span class="nt">&lt;StackLayout&gt;</span>
+          <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&quot;{{ title, title + &#39; Scrapbook Page&#39; }}&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/StackLayout&gt;</span>
+      <span class="nt">&lt;/ListView.itemTemplate&gt;</span>
+    <span class="nt">&lt;/ListView&gt;</span>
+  <span class="nt">&lt;/StackLayout&gt;</span>
+<span class="nt">&lt;/Page&gt;</span>
+</pre></div>
+</div>
+<p>在清单8.23中，我们在页面上添加了一个操作栏。注意一个操作栏可以有多个孩子。 <code class="docutils literal"><span class="pre">ActionBar</span></code> 元素的子元素可以是标签，按钮，或者在这种情况下是 <code class="docutils literal"><span class="pre">ActionItem</span></code> 。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">动作项是一个 <code class="docutils literal"><span class="pre">UI</span></code> 元素，用作 <code class="docutils literal"><span class="pre">ActionBar</span></code> 元素中的控件。操作项目的作用非常像按钮，但必须放置在操作栏内。要创建一个 <code class="docutils literal"><span class="pre">ActionItem</span></code> 元素，请使用 <code class="docutils literal"><span class="pre">XML</span></code> 代码 <code class="docutils literal"><span class="pre">&lt;ActionItem</span> <span class="pre">/&gt;</span></code> 。</p>
+</div>
+<p>虽然您可能会尝试使用按钮，但在操作栏中使用 <code class="docutils literal"><span class="pre">actionItem</span></code> 有其优点。使用动作项目的好处是，与动作有关的特定属性由动作项目公开。例如，在清单8.23中，我们在我们的操作栏内创建了一个操作项目，并为 <code class="docutils literal"><span class="pre">iOS</span></code> 和 <code class="docutils literal"><span class="pre">Android</span></code> 设置了特定的位置属性。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">操作栏是跨平台移动应用程序开发如何因平台而发生显着差异的一个很好的例子。在 Android 平台上，有一个操作栏和一个选项（溢出）菜单的概念。 Android 选项菜单是一个自动区域， Android 将无法放入操作栏的操作项目放置在该区域。在 iOS 上，选项（溢出）菜单的概念不存在。由于这些差异，不存在定义操作项目的位置的单一方法。</p>
+</div>
+<p>表8.1和表8.2显示了我们可以用来在动作栏中定位动作项目的其他位置（以及默认位置）。</p>
+<p>表8.1 Android 的操作项定位选项</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">位置</th>
+<th class="head">描述</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>actionBar(默认)</td>
+<td>操作项被放置在 Android 操作栏中</td>
+</tr>
+<tr class="row-odd"><td>popup</td>
+<td>操作项目放置在选项(溢出)菜单中</td>
+</tr>
+<tr class="row-even"><td>actionBarIfRoom</td>
+<td>如果有空间，则操作项目将放置在操作栏中，否则它将被放置在选项菜单中</td>
+</tr>
+</tbody>
+</table>
+<p>表8.1 iOS 的操作项定位选项</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">位置</th>
+<th class="head">描述</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>left(default)</td>
+<td>操作项目位于操作栏的左侧</td>
+</tr>
+<tr class="row-odd"><td>right</td>
+<td>操作项目放置在操作栏的右侧</td>
+</tr>
+</tbody>
+</table>
+<p>在定义动作项目时，我们使用数据绑定来绑定轻击事件，就像我们通常使用常规按钮一样。代码清单8.24显示了更新的代码，用于处理操作项目的点击事件，以便用户可以将新的剪贴簿页面添加到他们的剪贴簿中。</p>
+<p>代码清单8.24 更新了 views\scrapbook-page.js 文件来处理操作项目的 tap 事件</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">observableArray</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;data/observable-array&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">frame</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;ui/frame&quot;</span><span class="p">);</span>
+<span class="kd">function</span> <span class="nx">scrapbookPageModel</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">Observable</span><span class="p">();</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">genders</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Female&quot;</span><span class="p">,</span> <span class="s2">&quot;Male&quot;</span><span class="p">,</span> <span class="s2">&quot;Other&quot;</span><span class="p">];</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">calcAge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">year</span><span class="p">,</span> <span class="nx">month</span><span class="p">,</span> <span class="nx">day</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">date</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">year</span><span class="p">,</span> <span class="nx">month</span><span class="p">,</span> <span class="nx">day</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">now</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">diff</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">now</span> <span class="o">-</span> <span class="nx">date</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">31536000</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">diff</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">};</span>
+    <span class="k">return</span> <span class="nx">model</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">scrapbook</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">page</span><span class="p">.</span><span class="nx">navigationContext</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">scrapbook</span> <span class="o">=</span> <span class="nx">page</span><span class="p">.</span><span class="nx">navigationContext</span><span class="p">.</span><span class="nx">model</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">scrapbook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">Observable</span><span class="p">({</span>
+            <span class="nx">pages</span><span class="o">:</span> <span class="k">new</span> <span class="nx">observableArray</span><span class="p">.</span><span class="nx">ObservableArray</span><span class="p">(</span><span class="k">new</span> <span class="nx">scrapbookPageModel</span><span class="p">())</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span> <span class="o">=</span> <span class="nx">scrapbook</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onAddTap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 点击时实施操作项目的事件处理程序</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">scrapbook</span> <span class="o">=</span> <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span><span class="p">;</span>
+    <span class="nx">scrapbook</span><span class="p">.</span><span class="nx">pages</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">new</span> <span class="nx">scrapbookPageModel</span><span class="p">());</span> <span class="c1">// 为剪贴簿添加新的剪贴簿页面</span>
+    <span class="nx">frame</span><span class="p">.</span><span class="nx">topmost</span><span class="p">().</span><span class="nx">navigate</span><span class="p">({</span>
+        <span class="nx">moduleName</span><span class="o">:</span> <span class="s2">&quot;views/scrapbookUpdate-page&quot;</span><span class="p">,</span>
+        <span class="nx">context</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">model</span><span class="o">:</span> <span class="nx">scrapbook</span><span class="p">,</span>
+            <span class="nx">index</span><span class="o">:</span> <span class="nx">scrapbook</span><span class="p">.</span><span class="nx">pages</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">}</span> <span class="c1">// 将数据传递到更新视图</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">onItemTap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">object</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">scrapbook</span> <span class="o">=</span> <span class="nx">page</span><span class="p">.</span><span class="nx">bindingContext</span><span class="p">;</span>
+    <span class="nx">frame</span><span class="p">.</span><span class="nx">topmost</span><span class="p">().</span><span class="nx">navigate</span><span class="p">({</span>
+        <span class="nx">moduleName</span><span class="o">:</span> <span class="s2">&quot;views/scrapbookUpdate-page&quot;</span><span class="p">,</span>
+        <span class="nx">context</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">model</span><span class="o">:</span> <span class="nx">scrapbook</span><span class="p">,</span>
+            <span class="nx">index</span><span class="o">:</span> <span class="nx">args</span><span class="p">.</span><span class="nx">index</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<img alt="_images/8-18.png" src="_images/8-18.png" />
+<p>就像普通按钮一样，您可以使用操作项绑定到轻击事件。当点击操作项目时，我们继续创建一个新的剪贴簿页面并将其添加到我们的可观察数组中。为了将数据传递到更新页面，我们使用导航上下文。将数据传递到更新视图时，我们传递剪贴簿以及用户想要在数组内更新的页面的索引。</p>
+</div>
+<div class="section" id="id14">
+<h2>9.5. 总结<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<p>在本章中，您学习了如何执行以下操作：</p>
+<ul class="simple">
+<li>使用多种技术实施数据绑定；</li>
+<li>使用具有操作项目的操作栏在应用程序中创建标题；</li>
+<li>使用 <code class="docutils literal"><span class="pre">ListView</span></code> 元素和列表视图项目模板来简化视图代码；</li>
+<li>使用数据绑定来创建动态用户界面；</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="原生硬件.html" class="btn btn-neutral float-right" title="10. 原生硬件" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="样式NativeScript应用.html" class="btn btn-neutral" title="8. 样式NativeScript应用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lz.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

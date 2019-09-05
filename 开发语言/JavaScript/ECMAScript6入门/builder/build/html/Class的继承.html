@@ -1,0 +1,914 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>21. Class的继承 &mdash; ECMAScript6入门 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="ECMAScript6入门 1.0 文档" href="index.html"/>
+        <link rel="next" title="22. 修饰器" href="Decorator.html"/>
+        <link rel="prev" title="20. Class 的基本语法" href="Class的基本语法.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ECMAScript6入门
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECMAScript6简介.html">2. ECMAScript6简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="let和const命令.html">3. let 和 const 命令</a></li>
+<li class="toctree-l1"><a class="reference internal" href="变量的解构赋值.html">4. 变量的解构赋值</a></li>
+<li class="toctree-l1"><a class="reference internal" href="字符串的扩展.html">5. 字符串的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="正则的扩展.html">6. 正则的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数值的扩展.html">7. 数值的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="函数的扩展.html">8. 函数的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数组的扩展.html">9. 数组的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="对象的扩展.html">10. 对象的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Symbol.html">11. Symbol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Set和Map数据结构.html">12. Set和Map数据结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Proxy.html">13. Proxy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Reflect.html">14. Reflect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Promise对象.html">15. Promise对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterator和for...of循环.html">16. Iterator 和 for…of 循环</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的语法.html">17. Generator函数的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的异步应用.html">18. Generator 函数的异步应用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="async函数.html">19. asyn函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的基本语法.html">20. Class 的基本语法</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">21. Class的继承</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">21.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#object-getprototypeof">21.2. Object.getPrototypeOf()</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#super">21.3. super 关键字</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prototype-proto">21.4. 类的 prototype 属性和__proto__属性</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#extends">21.4.1. extends 的继承目标</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#proto">21.4.2. 实例的 __proto__ 属性</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">21.5. 原生构造函数的继承</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mixin">21.6. Mixin 模式的实现</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Decorator.html">22. 修饰器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的语法.html">23. Module 的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的加载实现.html">24. Module 的加载实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="编程风格.html">25. 编程风格</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECMAScript6入门</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>21. Class的继承</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class">
+<h1>21. Class的继承<a class="headerlink" href="#class" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>21.1. 简介<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Class</span></code> 可以通过 <code class="docutils literal"><span class="pre">extends</span></code> 关键字实现继承，这比 ES5 的通过修改原型链实现继承，要清晰和方便很多。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Point</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">ColorPoint</span> <span class="kr">extends</span> <span class="nx">Point</span> <span class="p">{</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码定义了一个 <code class="docutils literal"><span class="pre">ColorPoint</span></code> 类，该类通过 <code class="docutils literal"><span class="pre">extends</span></code> 关键字，继承了 <code class="docutils literal"><span class="pre">Point</span></code> 类的所有属性和方法。但是由于没有部署任何代码，所以这两个类完全一样，等于复制了一个 <code class="docutils literal"><span class="pre">Point</span></code> 类。下面，我们在 <code class="docutils literal"><span class="pre">ColorPoint</span></code> 内部加上代码。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">ColorPoint</span> <span class="kr">extends</span> <span class="nx">Point</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">color</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span> <span class="c1">// 调用父类的constructor(x, y)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">color</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">toString</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">color</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="kr">super</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span> <span class="c1">// 调用父类的toString()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">constructor</span></code> 方法和 <code class="docutils literal"><span class="pre">toString</span></code> 方法之中，都出现了 <code class="docutils literal"><span class="pre">super</span></code> 关键字，它在这里表示父类的构造函数，用来新建父类的 <code class="docutils literal"><span class="pre">this</span></code> 对象。</p>
+<p>子类必须在 <code class="docutils literal"><span class="pre">constructor</span></code> 方法中调用 <code class="docutils literal"><span class="pre">super</span></code> 方法，否则新建实例时会报错。这是因为子类自己的 <code class="docutils literal"><span class="pre">this</span></code> 对象，必须先通过父类的构造函数完成塑造，得到与父类同样的实例属性和方法，然后再对其进行加工，加上子类自己的实例属性和方法。如果不调用 <code class="docutils literal"><span class="pre">super</span></code> 方法，子类就得不到 <code class="docutils literal"><span class="pre">this</span></code> 对象。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Point</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">ColorPoint</span> <span class="kr">extends</span> <span class="nx">Point</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">cp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ColorPoint</span><span class="p">();</span> <span class="c1">// ReferenceError</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">ColorPoint</span></code> 继承了父类 <code class="docutils literal"><span class="pre">Point</span></code> ，但是它的构造函数没有调用 <code class="docutils literal"><span class="pre">super</span></code> 方法，导致新建实例时报错。</p>
+<p>ES5 的继承，实质是先创造子类的实例对象 <code class="docutils literal"><span class="pre">this</span></code> ，然后再将父类的方法添加到 <code class="docutils literal"><span class="pre">this</span></code> 上面（ <code class="docutils literal"><span class="pre">Parent.apply(this)</span></code> ）。ES6 的继承机制完全不同，实质是先创造父类的实例对象 <code class="docutils literal"><span class="pre">this</span></code> （所以必须先调用 <code class="docutils literal"><span class="pre">super</span></code> 方法），然后再用子类的构造函数修改 <code class="docutils literal"><span class="pre">this</span></code> 。</p>
+<p>如果子类没有定义 <code class="docutils literal"><span class="pre">constructor</span></code> 方法，这个方法会被默认添加，代码如下。也就是说，不管有没有显式定义，任何一个子类都有 <code class="docutils literal"><span class="pre">constructor</span></code> 方法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">ColorPoint</span> <span class="kr">extends</span> <span class="nx">Point</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="c1">// 等同于</span>
+<span class="kr">class</span> <span class="nx">ColorPoint</span> <span class="kr">extends</span> <span class="nx">Point</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">(...</span><span class="nx">args</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>另一个需要注意的地方是，在子类的构造函数中，只有调用 <code class="docutils literal"><span class="pre">super</span></code> 之后，才可以使用 <code class="docutils literal"><span class="pre">this</span></code> 关键字，否则会报错。这是因为子类实例的构建，是基于对父类实例加工，只有 <code class="docutils literal"><span class="pre">super</span></code> 方法才能返回父类实例。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Point</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">ColorPoint</span> <span class="kr">extends</span> <span class="nx">Point</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">color</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">color</span><span class="p">;</span> <span class="c1">// ReferenceError</span>
+    <span class="kr">super</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">color</span><span class="p">;</span> <span class="c1">// 正确</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，子类的 <code class="docutils literal"><span class="pre">constructor</span></code> 方法没有调用 <code class="docutils literal"><span class="pre">super</span></code> 之前，就使用 <code class="docutils literal"><span class="pre">this</span></code> 关键字，结果报错，而放在 <code class="docutils literal"><span class="pre">super</span></code> 方法之后就是正确的。</p>
+<p>下面是生成子类实例的代码。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">cp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ColorPoint</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">);</span>
+
+<span class="nx">cp</span> <span class="k">instanceof</span> <span class="nx">ColorPoint</span> <span class="c1">// true</span>
+<span class="nx">cp</span> <span class="k">instanceof</span> <span class="nx">Point</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中，实例对象 <code class="docutils literal"><span class="pre">cp</span></code> 同时是 <code class="docutils literal"><span class="pre">ColorPoint</span></code> 和 <code class="docutils literal"><span class="pre">Point</span></code> 两个类的实例，这与 ES5 的行为完全一致。</p>
+<p>最后，父类的静态方法，也会被子类继承。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">hello</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="nx">B</span><span class="p">.</span><span class="nx">hello</span><span class="p">()</span>  <span class="c1">// hello world</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">hello()</span></code> 是 <code class="docutils literal"><span class="pre">A</span></code> 类的静态方法， <code class="docutils literal"><span class="pre">B</span></code> 继承 <code class="docutils literal"><span class="pre">A</span></code> ，也继承了 <code class="docutils literal"><span class="pre">A</span></code> 的静态方法。</p>
+</div>
+<div class="section" id="object-getprototypeof">
+<h2>21.2. Object.getPrototypeOf()<a class="headerlink" href="#object-getprototypeof" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Object.getPrototypeOf</span></code> 方法可以用来从子类上获取父类。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">ColorPoint</span><span class="p">)</span> <span class="o">===</span> <span class="nx">Point</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>因此，可以使用这个方法判断，一个类是否继承了另一个类。</p>
+</div>
+<div class="section" id="super">
+<h2>21.3. super 关键字<a class="headerlink" href="#super" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">super</span></code> 这个关键字，既可以当作函数使用，也可以当作对象使用。在这两种情况下，它的用法完全不同。</p>
+<p>第一种情况， <code class="docutils literal"><span class="pre">super</span></code> 作为函数调用时，代表父类的构造函数。ES6 要求，子类的构造函数必须执行一次 <code class="docutils literal"><span class="pre">super</span></code> 函数。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，子类 <code class="docutils literal"><span class="pre">B</span></code> 的构造函数之中的 <code class="docutils literal"><span class="pre">super()</span></code> ，代表调用父类的构造函数。这是必须的，否则 JavaScript 引擎会报错。</p>
+<p>注意， <code class="docutils literal"><span class="pre">super</span></code> 虽然代表了父类 <code class="docutils literal"><span class="pre">A</span></code> 的构造函数，但是返回的是子类 <code class="docutils literal"><span class="pre">B</span></code> 的实例，即 <code class="docutils literal"><span class="pre">super</span></code> 内部的 <code class="docutils literal"><span class="pre">this</span></code> 指的是 <code class="docutils literal"><span class="pre">B</span></code> ，因此 super() 在这里相当于 <code class="docutils literal"><span class="pre">A.prototype.constructor.call(this)</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">new</span> <span class="nx">A</span><span class="p">()</span> <span class="c1">// A</span>
+<span class="k">new</span> <span class="nx">B</span><span class="p">()</span> <span class="c1">// B</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">new.target</span></code> 指向当前正在执行的函数。可以看到，在 <code class="docutils literal"><span class="pre">super()</span></code> 执行时，它指向的是子类 <code class="docutils literal"><span class="pre">B</span></code> 的构造函数，而不是父类 <code class="docutils literal"><span class="pre">A</span></code> 的构造函数。也就是说， <code class="docutils literal"><span class="pre">super()</span></code> 内部的 <code class="docutils literal"><span class="pre">this</span></code> 指向的是 <code class="docutils literal"><span class="pre">B</span></code> 。</p>
+<p>作为函数时， <code class="docutils literal"><span class="pre">super()</span></code> 只能用在子类的构造函数之中，用在其他地方就会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">m</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span> <span class="c1">// 报错</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">super()</span></code> 用在 <code class="docutils literal"><span class="pre">B</span></code> 类的 <code class="docutils literal"><span class="pre">m</span></code> 方法之中，就会造成句法错误。</p>
+<p>第二种情况， <code class="docutils literal"><span class="pre">super</span></code> 作为对象时，在普通方法中，指向父类的原型对象；在静态方法中，指向父类。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">p</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="kr">super</span><span class="p">.</span><span class="nx">p</span><span class="p">());</span> <span class="c1">// 2</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">B</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>上面代码中，子类 <code class="docutils literal"><span class="pre">B</span></code> 当中的 <code class="docutils literal"><span class="pre">super.p()</span></code> ，就是将 <code class="docutils literal"><span class="pre">super</span></code> 当作一个对象使用。这时， <code class="docutils literal"><span class="pre">super</span></code> 在普通方法之中，指向 <code class="docutils literal"><span class="pre">A.prototype</span></code> ，所以 <code class="docutils literal"><span class="pre">super.p()</span></code> 就相当于 <code class="docutils literal"><span class="pre">A.prototype.p()</span></code> 。</p>
+<p>这里需要注意，由于 <code class="docutils literal"><span class="pre">super</span></code> 指向父类的原型对象，所以定义在父类实例上的方法或属性，是无法通过 <code class="docutils literal"><span class="pre">super</span></code> 调用的。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">p</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">get</span> <span class="nx">m</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kr">super</span><span class="p">.</span><span class="nx">p</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">B</span><span class="p">();</span>
+<span class="nx">b</span><span class="p">.</span><span class="nx">m</span> <span class="c1">// undefined</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">p</span></code> 是父类 <code class="docutils literal"><span class="pre">A</span></code> 实例的属性， <code class="docutils literal"><span class="pre">super.p</span></code> 就引用不到它。</p>
+<p>如果属性定义在父类的原型对象上， <code class="docutils literal"><span class="pre">super</span></code> 就可以取到。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{}</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="kr">super</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span> <span class="c1">// 2</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">B</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>上面代码中，属性 <code class="docutils literal"><span class="pre">x</span></code> 是定义在 <code class="docutils literal"><span class="pre">A.prototype</span></code> 上面的，所以 <code class="docutils literal"><span class="pre">super.x</span></code> 可以取到它的值。</p>
+<p>ES6 规定，在子类普通方法中通过 <code class="docutils literal"><span class="pre">super</span></code> 调用父类的方法时，方法内部的 <code class="docutils literal"><span class="pre">this</span></code> 指向当前的子类实例。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">print</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">m</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">.</span><span class="nx">print</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">B</span><span class="p">();</span>
+<span class="nx">b</span><span class="p">.</span><span class="nx">m</span><span class="p">()</span> <span class="c1">// 2</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">super.print()</span></code> 虽然调用的是 <code class="docutils literal"><span class="pre">A.prototype.print()</span></code> ，但是 <code class="docutils literal"><span class="pre">A.prototype.print()</span></code> 内部的 <code class="docutils literal"><span class="pre">this</span></code> 指向子类 <code class="docutils literal"><span class="pre">B</span></code> 的实例，导致输出的是 2 ，而不是 1 。也就是说，实际上执行的是 <code class="docutils literal"><span class="pre">super.print.call(this)</span></code> 。</p>
+<p>由于 <code class="docutils literal"><span class="pre">this</span></code> 指向子类实例，所以如果通过 <code class="docutils literal"><span class="pre">super</span></code> 对某个属性赋值，这时 <code class="docutils literal"><span class="pre">super</span></code> 就是 <code class="docutils literal"><span class="pre">this</span></code> ，赋值的属性会变成子类实例的属性。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="kr">super</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="kr">super</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span> <span class="c1">// undefined</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span> <span class="c1">// 3</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">B</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">super.x</span></code> 赋值为 3 ，这时等同于对 <code class="docutils literal"><span class="pre">this.x</span></code> 赋值为 3 。而当读取 <code class="docutils literal"><span class="pre">super.x</span></code> 的时候，读的是 <code class="docutils literal"><span class="pre">A.prototype.x</span></code> ，所以返回 <code class="docutils literal"><span class="pre">undefined</span></code> 。</p>
+<p>如果 <code class="docutils literal"><span class="pre">super</span></code> 作为对象，用在静态方法之中，这时 <code class="docutils literal"><span class="pre">super</span></code> 将指向父类，而不是父类的原型对象。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Parent</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">myMethod</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">myMethod</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;instance&#39;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">Child</span> <span class="kr">extends</span> <span class="nx">Parent</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">myMethod</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">.</span><span class="nx">myMethod</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">myMethod</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">.</span><span class="nx">myMethod</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">Child</span><span class="p">.</span><span class="nx">myMethod</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">// static 1</span>
+
+<span class="kd">var</span> <span class="nx">child</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Child</span><span class="p">();</span>
+<span class="nx">child</span><span class="p">.</span><span class="nx">myMethod</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// instance 2</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">super</span></code> 在静态方法之中指向父类，在普通方法之中指向父类的原型对象。</p>
+<p>另外，在子类的静态方法中通过 <code class="docutils literal"><span class="pre">super</span></code> 调用父类的方法时，方法内部的 <code class="docutils literal"><span class="pre">this</span></code> 指向当前的子类，而不是子类的实例。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="kr">static</span> <span class="nx">print</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="kr">static</span> <span class="nx">m</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">.</span><span class="nx">print</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">B</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="nx">B</span><span class="p">.</span><span class="nx">m</span><span class="p">()</span> <span class="c1">// 3</span>
+</pre></div>
+</div>
+<p>上面代码中，静态方法 <code class="docutils literal"><span class="pre">B.m</span></code> 里面， <code class="docutils literal"><span class="pre">super.print</span></code> 指向父类的静态方法。这个方法里面的 <code class="docutils literal"><span class="pre">this</span></code> 指向的是 <code class="docutils literal"><span class="pre">B</span></code> ，而不是 <code class="docutils literal"><span class="pre">B</span></code> 的实例。</p>
+<p>注意，使用 <code class="docutils literal"><span class="pre">super</span></code> 的时候，必须显式指定是作为函数、还是作为对象使用，否则会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="kr">super</span><span class="p">);</span> <span class="c1">// 报错</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">console.log(super)</span></code> 当中的 <code class="docutils literal"><span class="pre">super</span></code> ，无法看出是作为函数使用，还是作为对象使用，所以 JavaScript 引擎解析代码的时候就会报错。这时，如果能清晰地表明 <code class="docutils literal"><span class="pre">super</span></code> 的数据类型，就不会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="kr">super</span><span class="p">.</span><span class="nx">valueOf</span><span class="p">()</span> <span class="k">instanceof</span> <span class="nx">B</span><span class="p">);</span> <span class="c1">// true</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">B</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">super.valueOf()</span></code> 表明 <code class="docutils literal"><span class="pre">super</span></code> 是一个对象，因此就不会报错。同时，由于 <code class="docutils literal"><span class="pre">super</span></code> 使得 <code class="docutils literal"><span class="pre">this</span></code> 指向 <code class="docutils literal"><span class="pre">B</span></code> 的实例，所以 <code class="docutils literal"><span class="pre">super.valueOf()</span></code> 返回的是一个 <code class="docutils literal"><span class="pre">B</span></code> 的实例。</p>
+<p>最后，由于对象总是继承其他对象的，所以可以在任意一个对象中，使用 <code class="docutils literal"><span class="pre">super</span></code> 关键字。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">toString</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s2">&quot;MyObject: &quot;</span> <span class="o">+</span> <span class="kr">super</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">obj</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span> <span class="c1">// MyObject: [object Object]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="prototype-proto">
+<h2>21.4. 类的 prototype 属性和__proto__属性<a class="headerlink" href="#prototype-proto" title="永久链接至标题">¶</a></h2>
+<p>大多数浏览器的 ES5 实现之中，每一个对象都有 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性，指向对应的构造函数的 <code class="docutils literal"><span class="pre">prototype</span></code> 属性。 <code class="docutils literal"><span class="pre">Class</span></code> 作为构造函数的语法糖，同时有 <code class="docutils literal"><span class="pre">prototype</span></code> 属性和 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性，因此同时存在两条继承链。</p>
+<ol class="arabic simple">
+<li>子类的 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性，表示构造函数的继承，总是指向父类。</li>
+<li>子类 <code class="docutils literal"><span class="pre">prototype</span></code> 属性的 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性，表示方法的继承，总是指向父类的 <code class="docutils literal"><span class="pre">prototype</span></code> 属性。</li>
+</ol>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="kr">extends</span> <span class="nx">A</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="nx">B</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">===</span> <span class="nx">A</span> <span class="c1">// true</span>
+<span class="nx">B</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">===</span> <span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中，子类 <code class="docutils literal"><span class="pre">B</span></code> 的 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性指向父类 <code class="docutils literal"><span class="pre">A</span></code> ，子类 <code class="docutils literal"><span class="pre">B</span></code> 的 <code class="docutils literal"><span class="pre">prototype</span></code> 属性的 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性指向父类 <code class="docutils literal"><span class="pre">A</span></code> 的 <code class="docutils literal"><span class="pre">prototype</span></code> 属性。</p>
+<p>这样的结果是因为，类的继承是按照下面的模式实现的。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">B</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="c1">// B 的实例继承 A 的实例</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="nx">B</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+
+<span class="c1">// B 继承 A 的静态属性</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="nx">B</span><span class="p">,</span> <span class="nx">A</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">B</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>《对象的扩展》一章给出过 <code class="docutils literal"><span class="pre">Object.setPrototypeOf</span></code> 方法的实现。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">Object</span><span class="p">.</span><span class="nx">setPrototypeOf</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">proto</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">obj</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">=</span> <span class="nx">proto</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">obj</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>因此，就得到了上面的结果。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">Object</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="nx">B</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+<span class="c1">// 等同于</span>
+<span class="nx">B</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">=</span> <span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="nx">B</span><span class="p">,</span> <span class="nx">A</span><span class="p">);</span>
+<span class="c1">// 等同于</span>
+<span class="nx">B</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">=</span> <span class="nx">A</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>这两条继承链，可以这样理解：作为一个对象，子类（ <code class="docutils literal"><span class="pre">B</span></code> ）的原型（ <code class="docutils literal"><span class="pre">__proto__</span></code> 属性）是父类（ <code class="docutils literal"><span class="pre">A</span></code> ）；作为一个构造函数，子类（ <code class="docutils literal"><span class="pre">B</span></code> ）的原型对象（ <code class="docutils literal"><span class="pre">prototype</span></code> 属性）是父类的原型对象（ <code class="docutils literal"><span class="pre">prototype</span></code> 属性）的实例。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+<span class="c1">// 等同于</span>
+<span class="nx">B</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">=</span> <span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="section" id="extends">
+<h3>21.4.1. extends 的继承目标<a class="headerlink" href="#extends" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">extends</span></code> 关键字后面可以跟多种类型的值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<p>class B extends A {}</p>
+<p>上面代码的 <code class="docutils literal"><span class="pre">A</span></code> ，只要是一个有 <code class="docutils literal"><span class="pre">prototype</span></code> 属性的函数，就能被 <code class="docutils literal"><span class="pre">B</span></code> 继承。由于函数都有 <code class="docutils literal"><span class="pre">prototype</span></code> 属性（除了 <code class="docutils literal"><span class="pre">Function.prototype</span></code> 函数），因此 <code class="docutils literal"><span class="pre">A</span></code> 可以是任意函数。</p>
+<p>下面，讨论三种特殊情况。</p>
+<p>第一种特殊情况，子类继承 <code class="docutils literal"><span class="pre">Object</span></code> 类。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="kr">extends</span> <span class="nb">Object</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="nx">A</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">===</span> <span class="nb">Object</span> <span class="c1">// true</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">===</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>这种情况下， <code class="docutils literal"><span class="pre">A</span></code> 其实就是构造函数 <code class="docutils literal"><span class="pre">Object</span></code> 的复制， <code class="docutils literal"><span class="pre">A</span></code> 的实例就是 <code class="docutils literal"><span class="pre">Object</span></code> 的实例。</p>
+<p>第二种特殊情况，不存在任何继承。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="nx">A</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">===</span> <span class="nb">Function</span><span class="p">.</span><span class="nx">prototype</span> <span class="c1">// true</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">===</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>这种情况下， <code class="docutils literal"><span class="pre">A</span></code> 作为一个基类（即不存在任何继承），就是一个普通函数，所以直接继承 <code class="docutils literal"><span class="pre">Function.prototype</span></code> 。但是， <code class="docutils literal"><span class="pre">A</span></code> 调用后返回一个空对象（即 <code class="docutils literal"><span class="pre">Object</span></code> 实例），所以 <code class="docutils literal"><span class="pre">A.prototype.__proto__</span></code> 指向构造函数（ <code class="docutils literal"><span class="pre">Object</span></code> ）的 <code class="docutils literal"><span class="pre">prototype</span></code> 属性。</p>
+<p>第三种特殊情况，子类继承 <code class="docutils literal"><span class="pre">null</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A</span> <span class="kr">extends</span> <span class="kc">null</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="nx">A</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">===</span> <span class="nb">Function</span><span class="p">.</span><span class="nx">prototype</span> <span class="c1">// true</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>这种情况与第二种情况非常像。 <code class="docutils literal"><span class="pre">A</span></code> 也是一个普通函数，所以直接继承 <code class="docutils literal"><span class="pre">Function.prototype</span></code> 。但是， <code class="docutils literal"><span class="pre">A</span></code> 调用后返回的对象不继承任何方法，所以它的 <code class="docutils literal"><span class="pre">__proto__</span></code> 指向 <code class="docutils literal"><span class="pre">undefined</span></code> ，即实质上执行了下面的代码。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">C</span> <span class="kr">extends</span> <span class="kc">null</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="proto">
+<h3>21.4.2. 实例的 __proto__ 属性<a class="headerlink" href="#proto" title="永久链接至标题">¶</a></h3>
+<p>子类实例的 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性的 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性，指向父类实例的 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性。也就是说，子类的原型的原型，是父类的原型。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">p1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Point</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">p2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ColorPoint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">);</span>
+
+<span class="nx">p2</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">===</span> <span class="nx">p1</span><span class="p">.</span><span class="nx">__proto__</span> <span class="c1">// false</span>
+<span class="nx">p2</span><span class="p">.</span><span class="nx">__proto__</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">===</span> <span class="nx">p1</span><span class="p">.</span><span class="nx">__proto__</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">ColorPoint</span></code> 继承了 <code class="docutils literal"><span class="pre">Point</span></code> ，导致前者原型的原型是后者的原型。</p>
+<p>因此，通过子类实例的 <code class="docutils literal"><span class="pre">__proto__.__proto__</span></code> 属性，可以修改父类实例的行为。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">p2</span><span class="p">.</span><span class="nx">__proto__</span><span class="p">.</span><span class="nx">__proto__</span><span class="p">.</span><span class="nx">printName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Ha&#39;</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">p1</span><span class="p">.</span><span class="nx">printName</span><span class="p">()</span> <span class="c1">// &quot;Ha&quot;</span>
+</pre></div>
+</div>
+<p>上面代码在 <code class="docutils literal"><span class="pre">ColorPoint</span></code> 的实例 <code class="docutils literal"><span class="pre">p2</span></code> 上向 <code class="docutils literal"><span class="pre">Point</span></code> 类添加方法，结果影响到了 <code class="docutils literal"><span class="pre">Point</span></code> 的实例 <code class="docutils literal"><span class="pre">p1</span></code> 。</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>21.5. 原生构造函数的继承<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>原生构造函数是指语言内置的构造函数，通常用来生成数据结构。 <code class="docutils literal"><span class="pre">ECMAScript</span></code> 的原生构造函数大致有下面这些。</p>
+<ul class="simple">
+<li>Boolean()</li>
+<li>Number()</li>
+<li>String()</li>
+<li>Array()</li>
+<li>Date()</li>
+<li>Function()</li>
+<li>RegExp()</li>
+<li>Error()</li>
+<li>Object()</li>
+</ul>
+<p>以前，这些原生构造函数是无法继承的，比如，不能自己定义一个 Array 的子类。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">MyArray</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nb">Array</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">MyArray</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="nx">MyArray</span><span class="p">,</span>
+    <span class="nx">writable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nx">configurable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>上面代码定义了一个继承 <code class="docutils literal"><span class="pre">Array</span></code> 的 <code class="docutils literal"><span class="pre">MyArray</span></code> 类。但是，这个类的行为与 <code class="docutils literal"><span class="pre">Array</span></code> 完全不一致。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">colors</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyArray</span><span class="p">();</span>
+<span class="nx">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span><span class="p">;</span>
+<span class="nx">colors</span><span class="p">.</span><span class="nx">length</span>  <span class="c1">// 0</span>
+
+<span class="nx">colors</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nx">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1">// &quot;red&quot;</span>
+</pre></div>
+</div>
+<p>之所以会发生这种情况，是因为子类无法获得原生构造函数的内部属性，通过 <code class="docutils literal"><span class="pre">Array.apply()</span></code> 或者分配给原型对象都不行。原生构造函数会忽略 <code class="docutils literal"><span class="pre">apply</span></code> 方法传入的 <code class="docutils literal"><span class="pre">this</span></code> ，也就是说，原生构造函数的 <code class="docutils literal"><span class="pre">this</span></code> 无法绑定，导致拿不到内部属性。</p>
+<p>ES5 是先新建子类的实例对象 <code class="docutils literal"><span class="pre">this</span></code> ，再将父类的属性添加到子类上，由于父类的内部属性无法获取，导致无法继承原生的构造函数。比如， <code class="docutils literal"><span class="pre">Array</span></code> 构造函数有一个内部属性 <code class="docutils literal"><span class="pre">[[DefineOwnProperty]]</span></code> ，用来定义新属性时，更新 <code class="docutils literal"><span class="pre">length</span></code> 属性，这个内部属性无法在子类获取，导致子类的 <code class="docutils literal"><span class="pre">length</span></code> 属性行为不正常。</p>
+<p>下面的例子中，我们想让一个普通对象继承 <code class="docutils literal"><span class="pre">Error</span></code> 对象。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="p">{};</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyNames</span><span class="p">(</span><span class="nb">Error</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span>
+<span class="c1">// [ &#39;stack&#39; ]</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyNames</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+<span class="c1">// []</span>
+</pre></div>
+</div>
+<p>上面代码中，我们想通过 <code class="docutils literal"><span class="pre">Error.call(e)</span></code> 这种写法，让普通对象 <code class="docutils literal"><span class="pre">e</span></code> 具有 <code class="docutils literal"><span class="pre">Error</span></code> 对象的实例属性。但是， <code class="docutils literal"><span class="pre">Error.call()</span></code> 完全忽略传入的第一个参数，而是返回一个新对象， <code class="docutils literal"><span class="pre">e</span></code> 本身没有任何变化。这证明了 <code class="docutils literal"><span class="pre">Error.call(e)</span></code> 这种写法，无法继承原生构造函数。</p>
+<p>ES6 允许继承原生构造函数定义子类，因为 ES6 是先新建父类的实例对象 <code class="docutils literal"><span class="pre">this</span></code> ，然后再用子类的构造函数修饰 <code class="docutils literal"><span class="pre">this</span></code> ，使得父类的所有行为都可以继承。下面是一个继承 <code class="docutils literal"><span class="pre">Array</span></code> 的例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MyArray</span> <span class="kr">extends</span> <span class="nb">Array</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">(...</span><span class="nx">args</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">arr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyArray</span><span class="p">();</span>
+<span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span>
+<span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="c1">// 1</span>
+
+<span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">// undefined</span>
+</pre></div>
+</div>
+<p>上面代码定义了一个 <code class="docutils literal"><span class="pre">MyArray</span></code> 类，继承了 <code class="docutils literal"><span class="pre">Array</span></code> 构造函数，因此就可以从 <code class="docutils literal"><span class="pre">MyArray</span></code> 生成数组的实例。这意味着，ES6 可以自定义原生数据结构（比如 <code class="docutils literal"><span class="pre">Array</span></code> 、 <code class="docutils literal"><span class="pre">String</span></code> 等）的子类，这是 ES5 无法做到的。</p>
+<p>上面这个例子也说明， <code class="docutils literal"><span class="pre">extends</span></code> 关键字不仅可以用来继承类，还可以用来继承原生的构造函数。因此可以在原生数据结构的基础上，定义自己的数据结构。下面就是定义了一个带版本功能的数组。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">VersionedArray</span> <span class="kr">extends</span> <span class="nb">Array</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="p">[[]];</span>
+  <span class="p">}</span>
+  <span class="nx">commit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">slice</span><span class="p">());</span>
+  <span class="p">}</span>
+  <span class="nx">revert</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="p">...</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VersionedArray</span><span class="p">();</span>
+
+<span class="nx">x</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nx">x</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="nx">x</span> <span class="c1">// [1, 2]</span>
+<span class="nx">x</span><span class="p">.</span><span class="nx">history</span> <span class="c1">// [[]]</span>
+
+<span class="nx">x</span><span class="p">.</span><span class="nx">commit</span><span class="p">();</span>
+<span class="nx">x</span><span class="p">.</span><span class="nx">history</span> <span class="c1">// [[], [1, 2]]</span>
+
+<span class="nx">x</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="nx">x</span> <span class="c1">// [1, 2, 3]</span>
+<span class="nx">x</span><span class="p">.</span><span class="nx">history</span> <span class="c1">// [[], [1, 2]]</span>
+
+<span class="nx">x</span><span class="p">.</span><span class="nx">revert</span><span class="p">();</span>
+<span class="nx">x</span> <span class="c1">// [1, 2]</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">VersionedArray</span></code> 会通过 <code class="docutils literal"><span class="pre">commit</span></code> 方法，将自己的当前状态生成一个版本快照，存入 <code class="docutils literal"><span class="pre">history</span></code> 属性。 <code class="docutils literal"><span class="pre">revert</span></code> 方法用来将数组重置为最新一次保存的版本。除此之外， <code class="docutils literal"><span class="pre">VersionedArray</span></code> 依然是一个普通数组，所有原生的数组方法都可以在它上面调用。</p>
+<p>下面是一个自定义 <code class="docutils literal"><span class="pre">Error</span></code> 子类的例子，可以用来定制报错时的行为。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">ExtendableError</span> <span class="kr">extends</span> <span class="nb">Error</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">message</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">MyError</span> <span class="kr">extends</span> <span class="nx">ExtendableError</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">myerror</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyError</span><span class="p">(</span><span class="s1">&#39;ll&#39;</span><span class="p">);</span>
+<span class="nx">myerror</span><span class="p">.</span><span class="nx">message</span> <span class="c1">// &quot;ll&quot;</span>
+<span class="nx">myerror</span> <span class="k">instanceof</span> <span class="nb">Error</span> <span class="c1">// true</span>
+<span class="nx">myerror</span><span class="p">.</span><span class="nx">name</span> <span class="c1">// &quot;MyError&quot;</span>
+<span class="nx">myerror</span><span class="p">.</span><span class="nx">stack</span>
+<span class="c1">// Error</span>
+<span class="c1">//     at MyError.ExtendableError</span>
+<span class="c1">//     ...</span>
+</pre></div>
+</div>
+<p>注意，继承 <code class="docutils literal"><span class="pre">Object</span></code> 的子类，有一个行为差异。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">NewObj</span> <span class="kr">extends</span> <span class="nb">Object</span><span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(){</span>
+    <span class="kr">super</span><span class="p">(...</span><span class="nx">arguments</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NewObj</span><span class="p">({</span><span class="nx">attr</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+<span class="nx">o</span><span class="p">.</span><span class="nx">attr</span> <span class="o">===</span> <span class="kc">true</span>  <span class="c1">// false</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">NewObj</span></code> 继承了 <code class="docutils literal"><span class="pre">Object</span></code> ，但是无法通过 <code class="docutils literal"><span class="pre">super</span></code> 方法向父类 <code class="docutils literal"><span class="pre">Object</span></code> 传参。这是因为 ES6 改变了 <code class="docutils literal"><span class="pre">Object</span></code> 构造函数的行为，一旦发现 <code class="docutils literal"><span class="pre">Object</span></code> 方法不是通过 <code class="docutils literal"><span class="pre">new</span> <span class="pre">Object()</span></code> 这种形式调用，ES6 规定 <code class="docutils literal"><span class="pre">Object</span></code> 构造函数会忽略参数。</p>
+</div>
+<div class="section" id="mixin">
+<h2>21.6. Mixin 模式的实现<a class="headerlink" href="#mixin" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Mixin</span></code> 指的是多个对象合成一个新的对象，新对象具有各个组成成员的接口。它的最简单实现如下。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">a</span><span class="o">:</span> <span class="s1">&#39;a&#39;</span>
+<span class="p">};</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">b</span><span class="o">:</span> <span class="s1">&#39;b&#39;</span>
+<span class="p">};</span>
+<span class="kr">const</span> <span class="nx">c</span> <span class="o">=</span> <span class="p">{...</span><span class="nx">a</span><span class="p">,</span> <span class="p">...</span><span class="nx">b</span><span class="p">};</span> <span class="c1">// {a: &#39;a&#39;, b: &#39;b&#39;}</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">c</span></code> 对象是 <code class="docutils literal"><span class="pre">a</span></code> 对象和 <code class="docutils literal"><span class="pre">b</span></code> 对象的合成，具有两者的接口。</p>
+<p>下面是一个更完备的实现，将多个类的接口“混入”（ <code class="docutils literal"><span class="pre">mix</span> <span class="pre">in</span></code> ）另一个类。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">mix</span><span class="p">(...</span><span class="nx">mixins</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">class</span> <span class="nx">Mix</span> <span class="p">{}</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">mixin</span> <span class="k">of</span> <span class="nx">mixins</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">copyProperties</span><span class="p">(</span><span class="nx">Mix</span><span class="p">,</span> <span class="nx">mixin</span><span class="p">);</span> <span class="c1">// 拷贝实例属性</span>
+    <span class="nx">copyProperties</span><span class="p">(</span><span class="nx">Mix</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">mixin</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span> <span class="c1">// 拷贝原型属性</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">Mix</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">copyProperties</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">key</span> <span class="k">of</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">ownKeys</span><span class="p">(</span><span class="nx">source</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="nx">key</span> <span class="o">!==</span> <span class="s2">&quot;constructor&quot;</span>
+      <span class="o">&amp;&amp;</span> <span class="nx">key</span> <span class="o">!==</span> <span class="s2">&quot;prototype&quot;</span>
+      <span class="o">&amp;&amp;</span> <span class="nx">key</span> <span class="o">!==</span> <span class="s2">&quot;name&quot;</span>
+    <span class="p">)</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">desc</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyDescriptor</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
+      <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">desc</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码的 <code class="docutils literal"><span class="pre">mix</span></code> 函数，可以将多个对象合成为一个类。使用的时候，只要继承这个类即可。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">DistributedEdit</span> <span class="kr">extends</span> <span class="nx">mix</span><span class="p">(</span><span class="nx">Loggable</span><span class="p">,</span> <span class="nx">Serializable</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Decorator.html" class="btn btn-neutral float-right" title="22. 修饰器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Class的基本语法.html" class="btn btn-neutral" title="20. Class 的基本语法" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+
+      });
+
+
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script>
+   
+
+</body>
+</html>

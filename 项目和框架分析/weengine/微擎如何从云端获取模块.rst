@@ -1,0 +1,240 @@
+***********
+微擎如何从云端获取模块
+***********
+
+当主创始人登录网站时，会进入 ``web/index.php?c=home&a=welcome&do=system&`` 页面，该页面列出所有模块相关的信息，包括未安装应用、可升级应用等。当进入该页面时，js脚本会自动触发如下请求：
+
+1. ``web/index.php?c=home&a=welcome&do=get_module_statistics``
+2. ``web/index.php?c=home&a=welcome&do=get_upgrade_modules``
+3. ``web/index.php?c=home&a=welcome&do=get_system_upgrade``
+4. ``web/index.php?c=home&a=welcome&do=get_not_installed_modules``
+
+统计模块信息(get_module_statistics)
+==================================
+该请求会从 ``modules_cloud`` 表中获取当前用户已经安装的模块和未安装模块以及更新模块和总模块数。
+
+
+
+可升级模块信息(get_upgrade_modules)
+==================================
+该请求会首先从云端获取所有云端模块信息，然后决定是否插入到 ``modules_cloud`` 表。该表保存本地或者云端模块更新信息。最后，查询该表获取所有可升级模块信息。
+
+
+系统升级(get_system_upgrade)
+============================
+该请求从云端获取系统更新信息。
+
+
+未安装模块信息(get_not_installed_modules)
+========================================
+该请求通过查询 ``modules_cloud`` 表来获取未安装模块信息。
+
+
+云端安装模块
+===========
+在 ``web/index.php?c=home&a=welcome&do=system&`` 页面中找到某个未安装模块，然后点击会访问 ``web/index.php?c=module&a=manage-system&do=install&module_name=bm_enterprise&support=account_support`` 请求。
+
+.. code-block:: php
+
+	if ($do =='install') {
+		if (empty($_W['isfounder'])) { // 只有创始人有权安装模块
+			itoast('您没有安装模块的权限', '', 'error');
+		}
+		$module_name = trim($_GPC['module_name']);
+		$installed_module = module_fetch($module_name); // 获取指定模块的信息
+
+		$manifest = ext_module_manifest($module_name); // 读取模块清单表
+		if (!empty($manifest)) { // 如果模块文件在本地
+		    // 先请求云端确保设置版权保护的模块，您只能通过云平台来安装
+			$result = cloud_m_prepare($module_name);
+			if (is_error($result)) {
+				itoast($result['message'], referer(), 'error');
+			}
+			if (!empty($installed_module)) { // 如果模块已经安装
+				$new_support = module_check_notinstalled_support($installed_module, $manifest['platform']['supports']);
+				if (empty($new_support)) {
+					itoast('模块已经安装或是唯一标识已存在！', '', 'error');
+				} else { // 模块更新支持类型
+					foreach ($new_support as $support => $value) {
+						if ($value == MODULE_NONSUPPORT_ACCOUNT) { // 不支持公众号
+							unset($new_support[$support]);
+						}
+					}
+					// 更新模块支持类型
+					pdo_update('modules', $new_support, array('mid' => $installed_module['mid']));
+					// 更新缓存信息
+					cache_build_account_modules($_W['uniacid'], $_W['uid']);
+					cache_build_module_info($module_name);
+					itoast('模块安装成功！', url('module/manage-system', array('support' => $module_support_name)), 'success');
+				}
+			}
+		} else { // 需要远程下载模块
+			$result = cloud_prepare(); // 下载前需要绑定云账号
+			if (is_error($result)) {
+				itoast($result['message'], url('cloud/profile'), 'error');
+			}
+			$module_info = cloud_m_info($module_name); // 从云端获取指定模块的信息
+			if (!is_error($module_info)) {
+				$packet = cloud_m_build($module_name); // 下载模块文件？？
+				if (is_error($packet)) {
+					itoast($packet['message'], '', 'error');
+				}
+
+				//TODO 将模块的清单文件保存
+	            $module_path = IA_ROOT . '/addons/' . $module_name . '/';
+				file_put_contents($module_path.'manifest.xml',$packet['manifest']);
+
+				$manifest = ext_module_manifest_parse($packet['manifest']);
+				if (empty($manifest)) {
+					itoast('模块安装配置文件不存在或是格式不正确，请刷新重试！', referer(), 'error');
+				}
+				if (!empty($installed_module)) {
+					$has_new_support = module_check_notinstalled_support($installed_module, $manifest['platform']['supports']);
+					if (empty($has_new_support)) {
+						itoast('模块已经安装或是唯一标识已存在！', '', 'error');
+					}
+				}
+				if (empty($_GPC['flag'])) {
+					if (empty($has_new_support)) {
+						header('location: ' . url('cloud/process', array('support' => $module_support_name, 'm' => $module_name)));
+					} else {
+						header('location: ' . url('cloud/process', array('support' => $module_support_name, 'm' => $module_name, 'is_upgrade' => 1, 'has_new_support' => 1)));
+					}
+					exit;
+				} else {
+					define('ONLINE_MODULE', true);
+				}
+			} else {
+				itoast($module_info['message'], '', 'error');
+			}
+		}
+		// 解析模块清单文件完成，开始安装本地或远程模块
+
+		// 如果安装的是主模块的插件，则要确保主模块已经安装
+		if (!empty($manifest['platform']['main_module'])) {
+			$plugin_exist = table('modules_plugin')->getPluginExists($manifest['platform']['main_module'], $manifest['application']['identifie']);
+			if (empty($plugin_exist)) {
+				itoast('请先更新或安装主模块后再安装插件', url('module/manage-system/installed'), 'error', array(array('title' => '查看主程序', 'url' => url('module/manage-system/module_detail', array('name' => $manifest['platform']['main_module'])))));
+			}
+		}
+
+		// 检查模块清单文件配置项
+		$check_manifest_result = ext_manifest_check($module_name, $manifest);
+		if (is_error($check_manifest_result)) {
+			itoast($check_manifest_result['message'], '', 'error');
+		}
+		// 检查模块文件
+		$check_file_result = ext_file_check($module_name, $manifest);
+		if (is_error($check_file_result)) {
+			itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
+		}
+
+		// 根据清单获取模块信息
+		$module = ext_module_convert($manifest);
+		if (!$_W['ispost'] || empty($_GPC['flag'])) {
+			$module_group = uni_groups();
+			template('system/module-group');
+			exit;
+		}
+		// 建立插件和组模块映射
+		if (!empty($manifest['platform']['plugin_list'])) {
+			foreach ($manifest['platform']['plugin_list'] as $plugin) {
+				pdo_insert('modules_plugin', array('main_module' => $manifest['application']['identifie'], 'name' => $plugin));
+			}
+		}
+		$post_groups = $_GPC['group'];
+		// 模块入口处理
+		$points = ext_module_bindings(); // 模块入口类型
+		if (!empty($points)) {
+			$bindings = array_elements(array_keys($points), $module, false);
+			foreach ($points as $name => $point) {
+				unset($module[$name]);
+				if (is_array($bindings[$name]) && !empty($bindings[$name])) {
+					foreach ($bindings[$name] as $entry) {
+						$entry['module'] = $manifest['application']['identifie'];
+						$entry['entry'] = $name;
+						if ($name == 'page' && !empty($wxapp_support)){
+							$entry['url'] = $entry['do'];
+							$entry['do'] = '';
+						}
+						table('modules_bindings')->fill($entry)->save();
+					}
+				}
+			}
+		}
+
+		$module['permissions'] = iserializer($module['permissions']);
+
+		$module_subscribe_success = true;
+		if (!empty($module['subscribes'])) {
+			$subscribes = iunserializer($module['subscribes']);
+			if (!empty($subscribes)) {
+				$module_subscribe_success = ext_check_module_subscribe($module['name']);
+			}
+		}
+
+		if (!empty($module_info['version']['cloud_setting'])) {
+			$module['settings'] = 2;
+		}
+
+		$module['title_initial'] = get_first_pinyin($module['title']);
+
+		// 模块sql语句
+		if ($packet['schemes']){
+
+	        //TODO 将模块的sql脚本保存
+	        file_put_contents($module_path.'module.sql', $packet['schemes']);
+
+			foreach ($packet['schemes'] as $remote) {
+				$remote['tablename'] = trim(tablename($remote['tablename']), '`');
+				$local = db_table_schema(pdo(), $remote['tablename']);
+				$sqls = db_table_fix_sql($local, $remote);
+				foreach ($sqls as $sql) {
+					pdo_run($sql); // 执行sql语句
+				}
+			}
+		}
+
+		// 执行模块安装脚本
+		ext_module_run_script($manifest, 'install');
+		if (pdo_insert('modules', $module)) {
+		    // 分配应用权限，即把当前模块分配到套餐组中
+			if ($_GPC['flag'] && !empty($post_groups) && $module['name']) {
+				foreach ($post_groups as $groupid) {
+					$group_info = pdo_get('uni_group', array('id' => intval($groupid)), array('id', 'name', 'modules'));
+					if (empty($group_info)) {
+						continue;
+					}
+					$group_info['modules'] = iunserializer($group_info['modules']);
+					if (!empty($group_info['modules'])) {
+						$is_continue = false;
+						foreach ($group_info['modules'] as $modulenames) {
+							if (in_array($module['name'], $modulenames)) {
+								$is_continue = true;
+								break;
+							}
+						}
+						if ($is_continue) {
+							continue;
+						}
+					}
+					$group_info['modules']['modules'][] = $module['name'];
+					$group_info['modules']['wxapp'][] = $module['name'];
+					$group_info['modules']['webapp'][] = $module['name'];
+					$group_info['modules']['xzapp'][] = $module['name'];
+					$group_info['modules']['phoneapp'][] = $module['name'];
+					$group_info['modules'] = iserializer($group_info['modules']);
+					pdo_update('uni_group', $group_info, array('id' => $groupid));
+				}
+			}
+			cache_build_module_subscribe_type();
+			cache_build_account_modules($_W['uniacid'], $_W['uid']);
+			cache_build_module_info($module_name);
+			cache_build_uni_group();
+			itoast('模块成功！', url('module/manage-system/install_success', array('support' => $module_support_name)), 'success');
+		} else {
+			itoast('模块安装失败, 请联系模块开发者！');
+		}
+	}
+
+

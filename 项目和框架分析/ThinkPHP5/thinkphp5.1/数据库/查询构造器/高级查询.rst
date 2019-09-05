@@ -1,0 +1,473 @@
+****
+高级查询
+****
+
+
+快捷查询
+========
+快捷查询方式是 **一种多字段相同查询条件** 的简化写法，可以进一步简化查询条件的写法，在多个字段之间用 ``|`` 分割表示 ``OR`` 查询，用 ``&`` 分割表示 ``AND`` 查询，可以实现下面的查询，例如：
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->where('name|title','like','thinkphp%')
+	    ->where('create_time&update_time','>',0)
+	    ->find();
+
+生成的查询 ``SQL`` 是：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE ( `name` LIKE 'thinkphp%' OR `title` LIKE 'thinkphp%' ) AND ( `create_time` > 0 AND `update_time` > 0 ) LIMIT 1
+
+.. note:: 快捷查询支持所有的查询表达式。
+
+
+
+区间查询
+========
+
+区间查询是一种 **同一字段多个查询条件** 的简化写法，例如：
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->where('name', ['like', '%thinkphp%'], ['like', '%kancloud%'], 'or')
+	    ->where('id', ['>', 0], ['<>', 10], 'and')
+	    ->find();
+
+生成的 ``SQL`` 语句为：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE ( `name` LIKE '%thinkphp%' OR `name` LIKE '%kancloud%' ) AND ( `id` > 0 AND `id` <> 10 ) LIMIT 1
+
+.. note:: 区间查询的查询条件必须使用数组定义方式，支持所有的查询表达式。
+
+下面的查询方式是错误的：
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->where('name', ['like', 'thinkphp%'], ['like', '%thinkphp'])
+	    ->where('id', 5, ['<>', 10], 'or')
+	    ->find();
+
+区间查询其实可以用下面的方式替代，更容易理解，因为查询构造器支持对同一个字段多次调用查询条件，例如：
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->where('name', 'like', '%think%')
+	    ->where('name', 'like', '%php%')
+	    ->where('id', 'in', [1, 5, 80, 50])
+	    ->where('id', '>', 10)
+	    ->find();
+
+批量（字段）查询
+===============
+
+可以进行多个条件的批量条件查询定义，例如：
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->where([
+	        ['name', 'like', 'thinkphp%'],
+	        ['title', 'like', '%thinkphp'],
+	        ['id', '>', 0],
+	        ['status', '=', 1],
+	    ])
+	    ->select();
+
+生成的SQL语句为：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE `name` LIKE 'thinkphp%' AND `title` LIKE '%thinkphp' AND `id` > 0 AND `status` = '1'
+
+.. note:: 注意， ``V5.1.7+`` 版本数组方式如果使用 ``exp`` 查询的话，一定要用 ``raw`` 方法。
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->where([
+	        ['name', 'like', 'thinkphp%'],
+	        ['title', 'like', '%thinkphp'],
+	        ['id', 'exp', Db::raw('>score')],
+	        ['status', '=', 1],
+	    ])
+	    ->select();
+
+数组查询方式，确保你的查询数组不能被用户提交数据控制，用户提交的表单数据应该是作为查询数组的一个元素传入，如下：
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->where([
+	        ['name', 'like', $name . '%'],
+	        ['title', 'like', '%' . $title],
+	        ['id', '>', $id],
+	        ['status', '=', $status],
+	    ])
+	    ->select();
+
+.. note:: 注意，相同的字段的多次查询条件可能会合并，如果希望某一个 ``where`` 方法里面的条件单独处理，可以使用下面的方式，避免被其它条件影响。
+
+.. code-block:: php
+
+	$map = [
+	        ['name', 'like', 'thinkphp%'],
+	        ['title', 'like', '%thinkphp'],
+	        ['id', '>', 0],
+	    ];
+	Db::table('think_user')
+	    ->where([ $map ])
+	    ->where('status',1)
+	    ->select();
+
+生成的 ``SQL`` 语句为：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE ( `name` LIKE 'thinkphp%' AND `title` LIKE '%thinkphp' AND `id` > 0 ) AND `status` = '1'
+
+如果使用下面的多个条件组合
+
+.. code-block:: php
+
+	$map1 = [
+	        ['name', 'like', 'thinkphp%'],
+	        ['title', 'like', '%thinkphp'],
+	    ];
+	    
+	$map2 = [
+	        ['name', 'like', 'kancloud%'],
+	        ['title', 'like', '%kancloud'],
+	    ];    
+	    
+	Db::table('think_user')
+	    ->whereOr([ $map1, $map2 ])
+	    ->select();
+
+生成的 ``SQL`` 语句为：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE ( `name` LIKE 'thinkphp%' AND `title` LIKE '%thinkphp' ) OR ( `name` LIKE 'kancloud%' AND `title` LIKE '%kancloud' )
+
+.. note:: 善用多维数组查询，可以很方便的拼装出各种复杂的SQL语句
+
+
+数组对象查询（V5.1.21+）
+=======================
+对于习惯或者重度依赖数组查询条件的用户来说，可以选择数组对象查询，该对象完成了普通数组方式查询和系统的查询表达式之间的桥接，但 **相较于系统推荐的查询表达式方方式而言，需要注意变量的安全性，避免产生 SQL 注入的情况。**
+
+使用方法如下：
+
+.. code-block:: php
+
+	use think\db\Where;
+
+	$map = [
+	    'name'   => ['like', 'thinkphp%'],
+	    'title'  => ['like', '%think%'],
+	    'id'     => ['>', 10],
+	    'status' => 1,
+	];
+
+	$where          = new Where;
+	$where['id']    = ['in', [1, 2, 3]];
+	$where['title'] = ['like', '%php%'];
+
+	Db::table('think_user')
+	    ->where(new Where($map))
+	    ->whereOr($where->enclose())
+	    ->select();
+
+``enclose`` 方法表示该查询条件两边会加上括号包起来。
+
+.. note:: 使用数组对象查询的情况请一定要注意做好数据类型检查，尽量避免让用户决定你的数据。
+
+生成的 ``SQL`` 是：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE  `name` LIKE 'thinkphp%' AND `title` LIKE '%think%' AND  `id` > 10  AND `status` =1 OR ( `id` IN (1,2,3) AND `title` LIKE '%php%' )
+
+
+闭包查询
+========
+
+.. code-block:: php
+
+	$name = 'thinkphp';
+	$id = 10;
+	Db::table('think_user')->where(function ($query) use($name, $id) {
+	    $query->where('name', $name)
+	        ->whereOr('id', '>', $id);
+	})->select();
+
+生成的 ``SQL`` 语句为：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE ( `name` = 'thinkphp' OR `id` > 10 )
+
+.. note:: 可见每个闭包条件两边也会自动加上括号，但需要注意，使用闭包查询的时候不能使用 ``cache(true)`` 数据缓存，而应该使用指定 ``key`` 的方式例如 ``cache('key')`` 。
+
+混合查询
+=======
+可以结合前面提到的所有方式进行混合查询，例如：
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->where('name', ['like', 'thinkphp%'], ['like', '%thinkphp'])
+	    ->where(function ($query) {
+	        $query->where('id', ['<', 10], ['>', 100], 'or');
+	    })
+	    ->select();
+
+生成的 ``SQL`` 语句是：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE ( `name` LIKE 'thinkphp%' AND `name` LIKE '%thinkphp' ) AND ( `id` < 10 or `id` > 100 )
+
+字符串条件查询
+=============
+对于一些实在复杂的查询，也可以直接使用原生 ``SQL`` 语句进行查询，例如：
+
+.. code-block:: shell
+
+	Db::table('think_user')
+	    ->where('id > 0 AND name LIKE "thinkphp%"')
+	    ->select();
+
+为了安全起见，我们可以对字符串查询条件使用参数绑定，例如：
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->where('id > :id AND name LIKE :name ', ['id' => 0, 'name' => 'thinkphp%'])
+	    ->select();
+
+``V5.1.8+`` 版本开始，如果你要使用字符串条件查询，推荐使用 ``whereRaw`` 方法。
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->whereRaw('id > :id AND name LIKE :name ', ['id' => 0, 'name' => 'thinkphp%'])
+	    ->select();
+
+
+使用Query对象查询（V5.1.5+）
+===========================
+
+``V5.1.5+`` 版本开始，可以通过调用一次 ``where`` 方法传入 ``Query`` 对象来进行查询。
+
+.. code-block:: php
+
+	$query = new \think\db\Query;
+	$query->where('id','>',0)
+		->where('name','like','%thinkphp');
+
+	Db::table('think_user')
+	    ->where($query)
+	    ->select();
+
+.. note:: ``Query`` 对象的 ``where`` 方法仅能调用一次，如果 ``query`` 对象里面使用了非查询条件的链式方法，则不会传入当前查询。????
+
+.. code-block:: php
+
+	$query = new \think\db\Query;
+	$query->where('id','>',0)
+		->where('name','like','%thinkphp')
+	    ->order('id','desc') // 不会传入后面的查询
+	    ->field('name,id'); // 不会传入后面的查询
+
+	Db::table('think_user')
+	    ->where($query)
+	    ->where('title','like','thinkphp%') // 有效
+	    ->select();
+
+
+快捷方法
+========
+系统封装了一系列快捷方法，用于简化查询，包括：
+
++-----------------+----------------------+
+| 方法            | 作用                 |
++=================+======================+
+| whereOr         | 字段OR查询           |
++-----------------+----------------------+
+| whereXor        | 字段XOR查询          |
++-----------------+----------------------+
+| whereNull       | 查询字段是否为Null   |
++-----------------+----------------------+
+| whereNotNull    | 查询字段是否不为Null |
++-----------------+----------------------+
+| whereIn         | 字段IN查询           |
++-----------------+----------------------+
+| whereNotIn      | 字段NOT IN查询       |
++-----------------+----------------------+
+| whereBetween    | 字段BETWEEN查询      |
++-----------------+----------------------+
+| whereNotBetween | 字段NOT BETWEEN查询  |
++-----------------+----------------------+
+| whereLike       | 字段LIKE查询         |
++-----------------+----------------------+
+| whereNotLike    | 字段NOT LIKE查询     |
++-----------------+----------------------+
+| whereExists     | EXISTS条件查询       |
++-----------------+----------------------+
+| whereNotExists  | NOT EXISTS条件查询   |
++-----------------+----------------------+
+| whereExp        | 表达式查询           |
++-----------------+----------------------+
+| whereColumn     | 比较两个字段         |
++-----------------+----------------------+
+
+下面举例说明下两个字段比较的查询条件 ``whereColumn`` 方法的用法。
+
+查询 ``update_time`` 大于 ``create_time`` 的用户数据
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->whereColumn('update_time','>','create_time')
+	    ->select();
+
+生成的 ``SQL`` 语句是：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE ( `update_time` > `create_time` ) 
+
+查询 ``name`` 和 ``nickname`` 相同的用户数据
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->whereColumn('name','=','nickname')
+	    ->select();
+
+生成的 ``SQL`` 语句是：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE ( `name` = `nickname` )
+
+相等字段条件也可以简化为
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->whereColumn('name','nickname')
+	    ->select();
+
+``V5.1.11+`` 版本开始，支持数组方式比较多个字段
+
+.. code-block:: php
+
+	Db::name('user')->whereColumn([
+		['title', '=', 'name'],
+	    ['update_time', '>=', 'create_time'],
+	])->select();
+
+生成的 ``SQL`` 语句是：
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE ( `name` = `nickname` AND `update_time` > `create_time` ) 
+
+
+动态查询
+========
+查询构造器还提供了两个动态查询机制，用于简化查询条件，包括 ``getBy`` 和 ``getFieldBy`` 。
+
++---------------------+------------------------+
+| 动态查询            | 描述                   |
++=====================+========================+
+| whereFieldName      | 查询某个字段的值       |
++---------------------+------------------------+
+| whereOrFieldName    | 查询某个字段的值       |
++---------------------+------------------------+
+| getByFieldName      | 根据某个字段查询       |
++---------------------+------------------------+
+| getFieldByFieldName | 根据某个字段获取某个值 |
++---------------------+------------------------+
+
+其中 ``FieldName`` 表示数据表的实际字段名称的驼峰法表示，假设数据表 ``user`` 中有 ``email`` 和 ``nick_name`` 字段，我们可以这样来查询。
+
+.. code-block:: php
+
+	// 根据邮箱（email）查询用户信息
+	$user = Db::table('user')
+		->whereEmail('thinkphp@qq.com')
+	    ->find();
+
+	// 根据昵称（nick_name）查询用户
+	$email = Db::table('user')
+	    ->whereNickName('like', '%流年%')
+	    ->select();
+	    
+	// 根据邮箱查询用户信息
+	$user = Db::table('user')
+	    ->getByEmail('thinkphp@qq.com');
+	    
+	// 根据昵称（nick_name）查询用户信息
+	$user = Db::table('user')
+	    ->field('id,name,nick_name,email')
+	    ->getByNickName('流年');
+	    
+	// 根据邮箱查询用户的昵称
+	$nickname = Db::table('user')
+	    ->getFieldByEmail('thinkphp@qq.com', 'nick_name');
+	    
+	// 根据昵称（nick_name）查询用户邮箱
+	$email = Db::table('user')
+	    ->getFieldByNickName('流年', 'email');
+
+.. note:: ``getBy`` 和 ``getFieldBy`` 方法只会查询一条记录，可以和其它的链式方法搭配使用
+
+
+条件查询
+========
+
+``5.1`` 的查询构造器支持条件查询，例如：
+
+.. code-block:: php
+
+	Db::name('user')->when($condition, function ($query) {
+	    // 满足条件后执行
+	    $query->where('score', '>', 80)->limit(10);
+	})->select();
+
+并且支持不满足条件的分支查询
+
+.. code-block:: php
+
+	Db::name('user')->when($condition, function ($query) {
+	    // 满足条件后执行
+	    $query->where('score', '>', 80)->limit(10);
+	}, function ($query) {
+	    // 不满足条件执行
+	    $query->where('score', '>', 60);
+	});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

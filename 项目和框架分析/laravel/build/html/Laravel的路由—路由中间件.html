@@ -1,0 +1,694 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>10. 路由的中间件 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="11. 中间件" href="Laravel的中间件.html"/>
+        <link rel="prev" title="9. 路由的匹配与参数绑定" href="Laravel的路由—路由的匹配与参数绑定.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10. 路由的中间件</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">10.1. 前言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">10.2. 中间件的搜集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">10.3. 中间件的解析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">10.4. 中间件的排序</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>10. 路由的中间件</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>10. 路由的中间件<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>10.1. 前言<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>当进行了路由匹配与路由参数绑定后，接下来就要进行路由闭包或者控制器的运行，在此之前，本文先介绍中间件的相关源码。</p>
+</div>
+<div class="section" id="id3">
+<h2>10.2. 中间件的搜集<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>由于定义的中间件方式很灵活，所以在运行控制器或者路由闭包之前，我们需要先将在各个地方注册的所有中间件都搜集到一起，然后集中排序。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">dispatchToRoute</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runRoute</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">findRoute</span><span class="p">(</span><span class="nv">$request</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">runRoute</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">Route</span> <span class="nv">$route</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 设置请求对象的路由解析器</span>
+    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setRouteResolver</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$route</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$route</span><span class="p">;</span>
+    <span class="p">});</span>
+    <span class="c1">// 发送路由匹配事件</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">events</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="k">new</span> <span class="nx">Events\RouteMatched</span><span class="p">(</span><span class="nv">$route</span><span class="p">,</span> <span class="nv">$request</span><span class="p">));</span>
+    <span class="c1">//</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prepareResponse</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runRouteWithinStack</span><span class="p">(</span><span class="nv">$route</span><span class="p">,</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">runRouteWithinStack</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">,</span> <span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 如果middleware.disable实例已经绑定，且值为Boolean类型的true，则关闭中间件</span>
+    <span class="nv">$shouldSkipMiddleware</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">bound</span><span class="p">(</span><span class="s1">&#39;middleware.disable&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;middleware.disable&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="k">true</span><span class="p">;</span>
+    <span class="c1">// 是否关闭中间件</span>
+    <span class="nv">$middleware</span> <span class="o">=</span> <span class="nv">$shouldSkipMiddleware</span> <span class="o">?</span> <span class="p">[]</span> <span class="o">:</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">gatherRouteMiddleware</span><span class="p">(</span><span class="nv">$route</span><span class="p">);</span>
+    <span class="c1">// 执行路由中间件</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">Pipeline</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="p">))</span>
+        <span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">through</span><span class="p">(</span><span class="nv">$middleware</span><span class="p">)</span> <span class="c1">// 传入路由中间件和控制器中间件</span>
+        <span class="o">-&gt;</span><span class="na">then</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$route</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prepareResponse</span><span class="p">(</span>
+                <span class="nv">$request</span><span class="p">,</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">()</span>
+            <span class="p">);</span>
+        <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">gatherRouteMiddleware</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 这里面的中间件包含控制器和路由中定义的路由中间件，而全局中间件在Kernel中已经使用</span>
+    <span class="nv">$middleware</span> <span class="o">=</span> <span class="nx">collect</span><span class="p">(</span><span class="nv">$route</span><span class="o">-&gt;</span><span class="na">gatherMiddleware</span><span class="p">())</span><span class="o">-&gt;</span><span class="na">map</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">array</span><span class="p">)</span> <span class="nx">MiddlewareNameResolver</span><span class="o">::</span><span class="na">resolve</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middlewareGroups</span><span class="p">);</span>
+    <span class="p">})</span><span class="o">-&gt;</span><span class="na">flatten</span><span class="p">();</span>
+    <span class="c1">// 根据中间件优先级对所有中间件进行排序</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sortMiddleware</span><span class="p">(</span><span class="nv">$middleware</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>路由的中间件大致有两个大的来源：</p>
+<ul class="simple">
+<li>在路由的定义过程中，利用关键字 <code class="docutils literal"><span class="pre">middleware</span></code> 为路由添加中间件，这种中间件都是在文件 <code class="docutils literal"><span class="pre">App\Http\Kernel</span></code> 中 <code class="docutils literal"><span class="pre">$middlewareGroups</span></code>  、 <code class="docutils literal"><span class="pre">$routeMiddleware</span></code> 这两个数组定义的中间件别名。</li>
+<li>在路由控制器的构造函数中，添加中间件，可以在这里定义一个闭包作为中间件，也可以利用中间件别名。</li>
+</ul>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;guest&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">except</span><span class="p">(</span><span class="s1">&#39;logout&#39;</span><span class="p">);</span> <span class="c1">// 任何游客都可以访问这里面的动作，但logout除外</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">gatherMiddleware</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">is_null</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">computedMiddleware</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">computedMiddleware</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">computedMiddleware</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="c1">// 获取该动作的所有中间件，包括路由和控制器中间件</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">computedMiddleware</span> <span class="o">=</span> <span class="nb">array_unique</span><span class="p">(</span><span class="nb">array_merge</span><span class="p">(</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(),</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">controllerMiddleware</span><span class="p">()</span>
+    <span class="p">),</span> <span class="nx">SORT_REGULAR</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>路由定义的中间件是从 <code class="docutils literal"><span class="pre">action</span></code> 数组中取出来的：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">middleware</span><span class="p">(</span><span class="nv">$middleware</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_null</span><span class="p">(</span><span class="nv">$middleware</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">array</span><span class="p">)</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">[</span><span class="s1">&#39;middleware&#39;</span><span class="p">]</span> <span class="o">??</span> <span class="p">[]);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_string</span><span class="p">(</span><span class="nv">$middleware</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">$middleware</span> <span class="o">=</span> <span class="nb">func_get_args</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">[</span><span class="s1">&#39;middleware&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">(</span>
+        <span class="p">(</span><span class="k">array</span><span class="p">)</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">[</span><span class="s1">&#39;middleware&#39;</span><span class="p">]</span> <span class="o">??</span> <span class="p">[]),</span> <span class="nv">$middleware</span>
+    <span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>控制器定义的中间件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">controllerMiddleware</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">isControllerAction</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[];</span>
+    <span class="p">}</span>
+    <span class="c1">// 从控制器实例中获取中间件</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">controllerDispatcher</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getMiddleware</span><span class="p">(</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getController</span><span class="p">(),</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getControllerMethod</span><span class="p">()</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getController</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">controller</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$class</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">parseControllerCallback</span><span class="p">()[</span><span class="mi">0</span><span class="p">];</span> <span class="c1">// 获取控制器类</span>
+        <span class="c1">// 如果在控制器构造方法中添加了中间件，则接下来会被收集</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">controller</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nb">ltrim</span><span class="p">(</span><span class="nv">$class</span><span class="p">,</span> <span class="s1">&#39;\\&#39;</span><span class="p">));</span> <span class="c1">// 实例化控制器</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">controller</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getControllerMethod</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">parseControllerCallback</span><span class="p">()[</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">parseControllerCallback</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Str</span><span class="o">::</span><span class="na">parseCallback</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">[</span><span class="s1">&#39;uses&#39;</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">parseCallback</span><span class="p">(</span><span class="nv">$callback</span><span class="p">,</span> <span class="nv">$default</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="na">contains</span><span class="p">(</span><span class="nv">$callback</span><span class="p">,</span> <span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">:</span> <span class="p">[</span><span class="nv">$callback</span><span class="p">,</span> <span class="nv">$default</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当前的路由如果使用控制器的时候，就要解析属性 <code class="docutils literal"><span class="pre">use</span></code> ，解析出控制器的类名与类方法。接下来就需要 <code class="docutils literal"><span class="pre">ControllerDispatcher</span></code> 类。</p>
+<p>在讲解 <code class="docutils literal"><span class="pre">ControllerDispatcher</span></code> 类之前，我们需要先了解一下控制器中间件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">abstract</span> <span class="k">class</span> <span class="nc">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">middleware</span><span class="p">(</span><span class="nv">$middleware</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span> <span class="o">=</span> <span class="p">[])</span>
+    <span class="p">{</span>
+        <span class="k">foreach</span> <span class="p">((</span><span class="k">array</span><span class="p">)</span> <span class="nv">$middleware</span> <span class="k">as</span> <span class="nv">$m</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s1">&#39;middleware&#39;</span> <span class="o">=&gt;</span> <span class="nv">$m</span><span class="p">,</span>
+                <span class="s1">&#39;options&#39;</span> <span class="o">=&gt;</span> <span class="o">&amp;</span><span class="nv">$options</span><span class="p">,</span>
+            <span class="p">];</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">ControllerMiddlewareOptions</span><span class="p">(</span><span class="nv">$options</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">ControllerMiddlewareOptions</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$options</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="k">array</span> <span class="o">&amp;</span><span class="nv">$options</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">options</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$options</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">only</span><span class="p">(</span><span class="nv">$methods</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">[</span><span class="s1">&#39;only&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">is_array</span><span class="p">(</span><span class="nv">$methods</span><span class="p">)</span> <span class="o">?</span> <span class="nv">$methods</span> <span class="o">:</span> <span class="nb">func_get_args</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">except</span><span class="p">(</span><span class="nv">$methods</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">[</span><span class="s1">&#39;except&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">is_array</span><span class="p">(</span><span class="nv">$methods</span><span class="p">)</span> <span class="o">?</span> <span class="nv">$methods</span> <span class="o">:</span> <span class="nb">func_get_args</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在为控制器定义中间件的时候，可以为中间件利用 <code class="docutils literal"><span class="pre">only</span></code> 指定在当前控制器中指定方法使用该中间件，也可以利用 <code class="docutils literal"><span class="pre">except</span></code> 指定在当前控制器指定方法禁止使用该中间件。这些信息都保存在控制器的变量 <code class="docutils literal"><span class="pre">middleware</span></code> 的 <code class="docutils literal"><span class="pre">options</span></code> 中。</p>
+<p>在搜集控制器的中间件时，就要利用中间件的这些信息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">ControllerDispatcher</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getMiddleware</span><span class="p">(</span><span class="nv">$controller</span><span class="p">,</span> <span class="nv">$method</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">method_exists</span><span class="p">(</span><span class="nv">$controller</span><span class="p">,</span> <span class="s1">&#39;getMiddleware&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">[];</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">collect</span><span class="p">(</span><span class="nv">$controller</span><span class="o">-&gt;</span><span class="na">getMiddleware</span><span class="p">())</span><span class="o">-&gt;</span><span class="na">reject</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$data</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$method</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="na">methodExcludedByOptions</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]);</span>
+        <span class="p">})</span><span class="o">-&gt;</span><span class="na">pluck</span><span class="p">(</span><span class="s1">&#39;middleware&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">methodExcludedByOptions</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$options</span><span class="p">[</span><span class="s1">&#39;only&#39;</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="o">!</span> <span class="nb">in_array</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="p">(</span><span class="k">array</span><span class="p">)</span> <span class="nv">$options</span><span class="p">[</span><span class="s1">&#39;only&#39;</span><span class="p">]))</span> <span class="o">||</span>
+            <span class="p">(</span><span class="o">!</span> <span class="k">empty</span><span class="p">(</span><span class="nv">$options</span><span class="p">[</span><span class="s1">&#39;except&#39;</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nb">in_array</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="p">(</span><span class="k">array</span><span class="p">)</span> <span class="nv">$options</span><span class="p">[</span><span class="s1">&#39;except&#39;</span><span class="p">]));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在 <code class="docutils literal"><span class="pre">ControllerDispatcher</span></code> 类中，利用了 <code class="docutils literal"><span class="pre">reject</span></code> 函数对每一个中间件都进行了控制器方法的判断，排除了不支持该控制器方法的中间件。 <code class="docutils literal"><span class="pre">pluck</span></code> 函数获取了控制器 <code class="docutils literal"><span class="pre">$this-&gt;middleware[]</span></code> 数组中 <code class="docutils literal"><span class="pre">middleware</span></code> 的所有元素。</p>
+</div>
+<div class="section" id="id4">
+<h2>10.3. 中间件的解析<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>中间件解析主要的工作是将路由中中间件的别名转化为中间件类全名，主要流程为：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">MiddlewareNameResolver</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">resolve</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$map</span><span class="p">,</span> <span class="nv">$middlewareGroups</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$name</span> <span class="nx">instanceof</span> <span class="nx">Closure</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$map</span><span class="p">[</span><span class="nv">$name</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$map</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="nx">instanceof</span> <span class="nx">Closure</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$map</span><span class="p">[</span><span class="nv">$name</span><span class="p">];</span>
+
+        <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$middlewareGroups</span><span class="p">[</span><span class="nv">$name</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="na">parseMiddlewareGroup</span><span class="p">(</span>
+                <span class="nv">$name</span><span class="p">,</span> <span class="nv">$map</span><span class="p">,</span> <span class="nv">$middlewareGroups</span>
+            <span class="p">);</span>
+
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">list</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">)</span> <span class="o">=</span> <span class="nb">array_pad</span><span class="p">(</span><span class="nb">explode</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="nv">$name</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="k">null</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$map</span><span class="p">[</span><span class="nv">$name</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$map</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="o">:</span> <span class="nv">$name</span><span class="p">)</span><span class="o">.</span>
+                   <span class="p">(</span><span class="o">!</span> <span class="nb">is_null</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="nv">$parameters</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看出，解析的中间件对象有三种：闭包、中间件别名、中间件组。</p>
+<ul class="simple">
+<li>对于闭包来说， <code class="docutils literal"><span class="pre">resolve</span></code> 直接返回闭包；</li>
+<li>对于中间件别名来说，例如 <code class="docutils literal"><span class="pre">auth</span></code> ，会从 <code class="docutils literal"><span class="pre">App\Http\Kernel</span></code> 文件 <code class="docutils literal"><span class="pre">$routeMiddleware</span></code> 数组中寻找中间件全名 <code class="docutils literal"><span class="pre">\Illuminate\Auth\Middleware\Authenticate::class</span></code></li>
+<li>对于具有参数的中间件别名来说，例如 <code class="docutils literal"><span class="pre">throttle:60,1</span></code> ,会将别名转化为全名 <code class="docutils literal"><span class="pre">\Illuminate\Routing\Middleware\ThrottleRequests::60,1</span></code></li>
+<li>对于中间件组来说，会调用 <code class="docutils literal"><span class="pre">parseMiddlewareGroup</span></code> 函数。</li>
+</ul>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">parseMiddlewareGroup</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$map</span><span class="p">,</span> <span class="nv">$middlewareGroups</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$results</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$middlewareGroups</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$middleware</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$middlewareGroups</span><span class="p">[</span><span class="nv">$middleware</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="nv">$results</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$results</span><span class="p">,</span> <span class="k">static</span><span class="o">::</span><span class="na">parseMiddlewareGroup</span><span class="p">(</span>
+                <span class="nv">$middleware</span><span class="p">,</span> <span class="nv">$map</span><span class="p">,</span> <span class="nv">$middlewareGroups</span>
+            <span class="p">));</span>
+
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">list</span><span class="p">(</span><span class="nv">$middleware</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">)</span> <span class="o">=</span> <span class="nb">array_pad</span><span class="p">(</span>
+            <span class="nb">explode</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="nv">$middleware</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="k">null</span>
+        <span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$map</span><span class="p">[</span><span class="nv">$middleware</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="nv">$middleware</span> <span class="o">=</span> <span class="nv">$map</span><span class="p">[</span><span class="nv">$middleware</span><span class="p">];</span>
+        <span class="p">}</span>
+
+        <span class="nv">$results</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$middleware</span><span class="o">.</span><span class="p">(</span><span class="nv">$parameters</span> <span class="o">?</span> <span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="nv">$parameters</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$results</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看出，对于中间件组来说，就要从 <code class="docutils literal"><span class="pre">App\Http\Kernel</span></code> 文件 <code class="docutils literal"><span class="pre">$$middlewareGroups</span></code> 数组中寻找组内的多个中间件，例如中间件组 <code class="docutils literal"><span class="pre">api</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;api&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;throttle:60,1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bindings&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>解析出的中间件可能存在参数，别名转化为全名后函数返回。值得注意的是，中间件组内不一定都是别名，也有可能是中间件组的组名，例如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;api&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;throttle:60,1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;web&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="s1">&#39;web&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="nx">\App\Http\Middleware\EncryptCookies</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<p>这时，就需要迭代解析。</p>
+</div>
+<div class="section" id="id5">
+<h2>10.4. 中间件的排序<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">gatherRouteMiddleware</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$middleware</span> <span class="o">=</span> <span class="nx">collect</span><span class="p">(</span><span class="nv">$route</span><span class="o">-&gt;</span><span class="na">gatherMiddleware</span><span class="p">())</span><span class="o">-&gt;</span><span class="na">map</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">array</span><span class="p">)</span> <span class="nx">MiddlewareNameResolver</span><span class="o">::</span><span class="na">resolve</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middlewareGroups</span><span class="p">);</span>
+    <span class="p">})</span><span class="o">-&gt;</span><span class="na">flatten</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sortMiddleware</span><span class="p">(</span><span class="nv">$middleware</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>将所有中间件搜集并解析完毕后，接下来就要对中间件的调用顺序做一些调整，以确保中间件功能正常。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="nv">$middlewarePriority</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nx">\Illuminate\Session\Middleware\StartSession</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\View\Middleware\ShareErrorsFromSession</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\Auth\Middleware\Authenticate</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\Session\Middleware\AuthenticateSession</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\Routing\Middleware\SubstituteBindings</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\Auth\Middleware\Authorize</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p>数组 <code class="docutils literal"><span class="pre">middlewarePriority</span></code> 中保存着必须有一定顺序的中间件，例如 <code class="docutils literal"><span class="pre">StartSession</span></code> 中间件就必须运行在 <code class="docutils literal"><span class="pre">ShareErrorsFromSession</span></code> 之前。因此一旦路由中有这两个中间件，那么就要确保两者的顺序一致。</p>
+<p>中间件的排序由函数 <code class="docutils literal"><span class="pre">sortMiddleware</span></code> 负责：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">SortedMiddleware</span> <span class="k">extends</span> <span class="nx">Collection</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="k">array</span> <span class="nv">$priorityMap</span><span class="p">,</span> <span class="nv">$middlewares</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$middlewares</span> <span class="nx">instanceof</span> <span class="nx">Collection</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$middlewares</span> <span class="o">=</span> <span class="nv">$middlewares</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">items</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sortMiddleware</span><span class="p">(</span><span class="nv">$priorityMap</span><span class="p">,</span> <span class="nv">$middlewares</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">sortMiddleware</span><span class="p">(</span><span class="nv">$priorityMap</span><span class="p">,</span> <span class="nv">$middlewares</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$lastIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$middlewares</span> <span class="k">as</span> <span class="nv">$index</span> <span class="o">=&gt;</span> <span class="nv">$middleware</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">is_string</span><span class="p">(</span><span class="nv">$middleware</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nv">$stripped</span> <span class="o">=</span> <span class="nx">head</span><span class="p">(</span><span class="nb">explode</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="nv">$middleware</span><span class="p">));</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$stripped</span><span class="p">,</span> <span class="nv">$priorityMap</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nv">$priorityIndex</span> <span class="o">=</span> <span class="nb">array_search</span><span class="p">(</span><span class="nv">$stripped</span><span class="p">,</span> <span class="nv">$priorityMap</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$lastPriorityIndex</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nv">$priorityIndex</span> <span class="o">&lt;</span> <span class="nv">$lastPriorityIndex</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sortMiddleware</span><span class="p">(</span>
+                        <span class="nv">$priorityMap</span><span class="p">,</span> <span class="nb">array_values</span><span class="p">(</span>
+                            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">moveMiddleware</span><span class="p">(</span><span class="nv">$middlewares</span><span class="p">,</span> <span class="nv">$index</span><span class="p">,</span> <span class="nv">$lastIndex</span><span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nv">$lastIndex</span> <span class="o">=</span> <span class="nv">$index</span><span class="p">;</span>
+                    <span class="nv">$lastPriorityIndex</span> <span class="o">=</span> <span class="nv">$priorityIndex</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nb">array_values</span><span class="p">(</span><span class="nb">array_unique</span><span class="p">(</span><span class="nv">$middlewares</span><span class="p">,</span> <span class="nx">SORT_REGULAR</span><span class="p">));</span> <span class="c1">// 这里去除重复的中间件</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">moveMiddleware</span><span class="p">(</span><span class="nv">$middlewares</span><span class="p">,</span> <span class="nv">$from</span><span class="p">,</span> <span class="nv">$to</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nb">array_splice</span><span class="p">(</span><span class="nv">$middlewares</span><span class="p">,</span> <span class="nv">$to</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$middlewares</span><span class="p">[</span><span class="nv">$from</span><span class="p">]);</span> <span class="c1">// 在指定的位置插入一项</span>
+
+        <span class="nb">unset</span><span class="p">(</span><span class="nv">$middlewares</span><span class="p">[</span><span class="nv">$from</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]);</span> <span class="c1">// 并清空原来的插入项</span>
+
+        <span class="k">return</span> <span class="nv">$middlewares</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>函数的方法很简单，检测当前中间件数组，查看是否存在中间件是数组 <code class="docutils literal"><span class="pre">middlewarePriority</span></code> 内元素。如果发现了两个中间件不符合顺序，那么就要调换中间件顺序，然后进行迭代。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的中间件.html" class="btn btn-neutral float-right" title="11. 中间件" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的路由—路由的匹配与参数绑定.html" class="btn btn-neutral" title="9. 路由的匹配与参数绑定" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

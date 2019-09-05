@@ -1,0 +1,588 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5. Facade的原理 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="6. 服务提供器" href="Laravel的服务提供器.html"/>
+        <link rel="prev" title="4. Facades" href="Laravel的Facades.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. Facade的原理</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">5.1. Facade 的原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aliases">5.2. 别名 Aliases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">5.2.1. 启动别名Aliases服务</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">5.2.2. 实时门面服务</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>5. Facade的原理</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="facade">
+<h1>5. Facade的原理<a class="headerlink" href="#facade" title="永久链接至标题">¶</a></h1>
+<p>首先，我们要知道 laravel 框架的核心就是个 <code class="docutils literal"><span class="pre">Ioc</span></code> 容器即 服务容器，功能类似于一个工厂模式，是个高级版的工厂。 laravel 的其他功能例如路由、缓存、日志、数据库其实都是类似于插件或者零件一样，叫做 服务。 <code class="docutils literal"><span class="pre">Ioc</span></code> 容器主要的作用就是生产各种零件，就是提供各个服务。在 laravel 中，如果我们想要用某个服务，该怎么办呢？最简单的办法就是调用服务容器的 <code class="docutils literal"><span class="pre">make</span></code> 函数，或者利用依赖注入，或者就是今天要讲的门面 <code class="docutils literal"><span class="pre">Facade</span></code> 。门面相对于其他方法来说，最大的特点就是简洁，例如我们经常使用的 <code class="docutils literal"><span class="pre">Router</span></code> ，如果利用服务容器的 <code class="docutils literal"><span class="pre">make</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">App</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;router&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;welcome&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>如果利用门面：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;welcome&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>可以看出代码更加简洁。其实，下面我们就会介绍门面最后调用的函数也是服务容器的 <code class="docutils literal"><span class="pre">make</span></code> 函数。</p>
+<div class="section" id="id1">
+<h2>5.1. Facade 的原理<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>我们以 <code class="docutils literal"><span class="pre">Route</span></code> 为例，来讲解一下门面 <code class="docutils literal"><span class="pre">Facade</span></code> 的原理与实现。我们先来看 <code class="docutils literal"><span class="pre">Route</span></code> 的门面类：</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Support\Facades\Route.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">Route</span> <span class="k">extends</span> <span class="nx">Facade</span>
+<span class="p">{</span>
+    <span class="c1">// 获取注册组件的注册名称</span>
+    <span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getFacadeAccessor</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;router&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>每个门面类也就是重定义一下 <code class="docutils literal"><span class="pre">getFacadeAccessor</span></code> 函数就行了，这个函数返回服务的唯一名称： <code class="docutils literal"><span class="pre">router</span></code> 。需要注意的是要确保这个名称可以用服务容器的 <code class="docutils literal"><span class="pre">make</span></code> 函数创建成功( <code class="docutils literal"><span class="pre">App::make('router')</span></code> )，原因我们马上就会讲到。
+那么当我们写出 <code class="docutils literal"><span class="pre">Route::get()</span></code> 这样的语句时，到底发生了什么呢？奥秘就在基类 <code class="docutils literal"><span class="pre">Facade</span></code> 中。</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Support\Facades\Facade.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="fm">__callStatic</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="nv">$args</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$instance</span> <span class="o">=</span> <span class="k">static</span><span class="o">::</span><span class="na">getFacadeRoot</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$instance</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">RuntimeException</span><span class="p">(</span><span class="s1">&#39;A facade root has not been set.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$instance</span><span class="o">-&gt;</span><span class="nv">$method</span><span class="p">(</span><span class="o">...</span><span class="nv">$args</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getFacadeRoot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="na">resolveFacadeInstance</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">getFacadeAccessor</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getFacadeAccessor</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">RuntimeException</span><span class="p">(</span><span class="s1">&#39;Facade does not implement getFacadeAccessor method.&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">resolveFacadeInstance</span><span class="p">(</span><span class="nv">$name</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="k">if</span> <span class="p">(</span><span class="nb">is_object</span><span class="p">(</span><span class="nv">$name</span><span class="p">))</span> <span class="p">{</span>
+         <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+     <span class="p">}</span>
+
+     <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="nv">$resolvedInstance</span><span class="p">[</span><span class="nv">$name</span><span class="p">]))</span> <span class="p">{</span><span class="c1">// 如果该名称对象已经解析，则返回以前的</span>
+         <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="nv">$resolvedInstance</span><span class="p">[</span><span class="nv">$name</span><span class="p">];</span>
+     <span class="p">}</span>
+
+     <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="nv">$resolvedInstance</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="o">=</span> <span class="k">static</span><span class="o">::</span><span class="nv">$app</span><span class="p">[</span><span class="nv">$name</span><span class="p">];</span><span class="c1">// 否则利用容器获取，然后保存</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们看到基类 <code class="docutils literal"><span class="pre">getFacadeRoot()</span></code> 调用了 <code class="docutils literal"><span class="pre">getFacadeAccessor()</span></code> ，也就是我们的服务重载的函数，如果调用了基类的 <code class="docutils literal"><span class="pre">getFacadeAccessor</span></code> ，就会抛出异常。在我们的例子里 <code class="docutils literal"><span class="pre">getFacadeAccessor()</span></code> 返回了 “router” ，接下来 <code class="docutils literal"><span class="pre">getFacadeRoot()</span></code> 又调用了 <code class="docutils literal"><span class="pre">resolveFacadeInstance()</span></code> 。在这个函数里重点就是</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="nv">$resolvedInstance</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="o">=</span> <span class="k">static</span><span class="o">::</span><span class="nv">$app</span><span class="p">[</span><span class="nv">$name</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>我们看到，在这里利用了 <code class="docutils literal"><span class="pre">app</span></code> 也就是服务容器创建了 “router”，创建成功后放入 <code class="docutils literal"><span class="pre">resolvedInstance</span></code> 作为缓存，以便以后快速加载。
+好了， <code class="docutils literal"><span class="pre">Facade</span></code> 的原理到这里就讲完了，但是到这里我们有个疑惑，为什么代码中写 <code class="docutils literal"><span class="pre">Route</span></code> 就可以调用 <code class="docutils literal"><span class="pre">Illuminate\Support\Facades\Route</span></code> 呢？这个就是别名的用途了，很多门面都有自己的别名，这样我们就不必在代码里面写 <code class="docutils literal"><span class="pre">use</span> <span class="pre">Illuminate\Support\Facades\Route</span></code> ，而是可以直接用 <code class="docutils literal"><span class="pre">Route</span></code> 了。</p>
+</div>
+<div class="section" id="aliases">
+<h2>5.2. 别名 Aliases<a class="headerlink" href="#aliases" title="永久链接至标题">¶</a></h2>
+<p>为什么我们可以在 larval 中全局用 <code class="docutils literal"><span class="pre">Route</span></code> ，而不需要使用 <code class="docutils literal"><span class="pre">use</span> <span class="pre">IlluminateSupportFacadesRoute</span></code> ?其实奥秘在于一个 PHP 函数： <code class="docutils literal"><span class="pre">class_alias</span></code> ，它可以为任何类创建别名。larval 在启动的时候为各个门面类调用了 <code class="docutils literal"><span class="pre">class_alias</span></code> 函数，因此不必直接用类名，直接用别名即可。在 <code class="docutils literal"><span class="pre">config</span></code> 文件夹的 <code class="docutils literal"><span class="pre">app</span></code> 文件里面存放着门面与类名的映射：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;aliases&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+
+    <span class="s1">&#39;App&#39;</span> <span class="o">=&gt;</span> <span class="nx">Illuminate\Support\Facades\App</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="s1">&#39;Artisan&#39;</span> <span class="o">=&gt;</span> <span class="nx">Illuminate\Support\Facades\Artisan</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="s1">&#39;Auth&#39;</span> <span class="o">=&gt;</span> <span class="nx">Illuminate\Support\Facades\Auth</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="o">...</span>
+   <span class="p">]</span>
+</pre></div>
+</div>
+<p>下面我们来看看 laravel 是如何为门面类创建别名的。</p>
+<div class="section" id="id2">
+<h3>5.2.1. 启动别名Aliases服务<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p>Laravel 使用启动组件 <code class="docutils literal"><span class="pre">\Illuminate\Foundation\Bootstrap\LoadConfiguration::class</span></code> 来加载定义的别名数组配置。然后使用启动组件 <code class="docutils literal"><span class="pre">\Illuminate\Foundation\Bootstrap\RegisterFacades::class</span></code> 来配置 <code class="docutils literal"><span class="pre">Facade</span></code> 类属性</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Foundation\Bootstrap\RegisterFacades::class</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">RegisterFacades</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">bootstrap</span><span class="p">(</span><span class="nx">Application</span> <span class="nv">$app</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nx">Facade</span><span class="o">::</span><span class="na">clearResolvedInstances</span><span class="p">();</span>
+
+        <span class="nx">Facade</span><span class="o">::</span><span class="na">setFacadeApplication</span><span class="p">(</span><span class="nv">$app</span><span class="p">);</span>
+
+        <span class="nx">AliasLoader</span><span class="o">::</span><span class="na">getInstance</span><span class="p">(</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;app.aliases&#39;</span><span class="p">,</span> <span class="p">[]))</span><span class="o">-&gt;</span><span class="na">register</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看出来，bootstrap 做了一下几件事：</p>
+<ol class="arabic simple">
+<li>清除了 <code class="docutils literal"><span class="pre">Facade</span></code> 中的缓存</li>
+<li>设置 <code class="docutils literal"><span class="pre">Facade</span></code> 的 <code class="docutils literal"><span class="pre">Ioc</span></code> 容器</li>
+<li>获得我们前面讲的 <code class="docutils literal"><span class="pre">config</span></code> 文件夹里面 <code class="docutils literal"><span class="pre">app</span></code> 文件 <code class="docutils literal"><span class="pre">aliases</span></code> 别名映射数组</li>
+<li>使用 <code class="docutils literal"><span class="pre">aliases</span></code> 实例化初始化 <code class="docutils literal"><span class="pre">AliasLoader</span></code></li>
+<li>调用 <code class="docutils literal"><span class="pre">AliasLoader-&gt;register()</span></code></li>
+</ol>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\AliasLoader.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registered</span><span class="p">)</span> <span class="p">{</span>
+         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prependToLoaderStack</span><span class="p">();</span>
+
+         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registered</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">prependToLoaderStack</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nb">spl_autoload_register</span><span class="p">([</span><span class="nv">$this</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">],</span> <span class="k">true</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">load</span><span class="p">(</span><span class="nv">$alias</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 这个是 laravel5.4 版本新出的功能叫做实时门面服务</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="nv">$facadeNamespace</span> <span class="o">&amp;&amp;</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$alias</span><span class="p">,</span> <span class="k">static</span><span class="o">::</span><span class="nv">$facadeNamespace</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+       <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loadFacade</span><span class="p">(</span><span class="nv">$alias</span><span class="p">);</span>
+
+       <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// class_alias 利用别名映射数组将别名映射到真正的门面类中去</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aliases</span><span class="p">[</span><span class="nv">$alias</span><span class="p">]))</span> <span class="p">{</span>
+         <span class="k">return</span> <span class="nb">class_alias</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">aliases</span><span class="p">[</span><span class="nv">$alias</span><span class="p">],</span> <span class="nv">$alias</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们可以看出，别名服务的启动关键就是这个 <code class="docutils literal"><span class="pre">spl_autoload_register</span></code> ，这个函数我们应该很熟悉了，在自动加载中这个函数用于解析命名空间，在这里用于解析别名的真正类名。所以，我们可以在任何类中直接使用别名配置的键( <code class="docutils literal"><span class="pre">Route</span></code> )作为值( <code class="docutils literal"><span class="pre">Illuminate\Support\Facades\Route</span></code> )的别名。</p>
+</div>
+<div class="section" id="id3">
+<h3>5.2.2. 实时门面服务<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>其实门面功能已经很简单了，我们只需要定义一个类继承 <code class="docutils literal"><span class="pre">Facade</span></code> 即可，但是 laravel5.4 打算更近一步——自动生成门面子类，这就是实时门面。
+实时门面怎么用？看下面的为应用服务类生成门面的例子：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Services</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">PaymentGateway</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$tax</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">TaxCalculator</span> <span class="nv">$tax</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">tax</span> <span class="o">=</span> <span class="nv">$tax</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这是一个自定义的类，如果我们想要为这个类定义一个门面，在 laravel5.4 我们可以这么做：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Facades\</span> <span class="p">{</span>
+    <span class="nx">App\Services\PaymentGateway</span>
+<span class="p">};</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/pay/{amount}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$amount</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">PaymentGateway</span><span class="o">::</span><span class="na">pay</span><span class="p">(</span><span class="nv">$amount</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>那么这么做的原理是什么呢？我们接着看源码：</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\AliasLoader.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">static</span> <span class="nv">$facadeNamespace</span> <span class="o">=</span> <span class="s1">&#39;Facades\\&#39;</span><span class="p">;</span>
+<span class="c1">// 如果命名空间是以 Facades\ 开头的，那么就会调用实时门面的功能，调用 loadFacade 函数：</span>
+<span class="k">if</span> <span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="nv">$facadeNamespace</span> <span class="o">&amp;&amp;</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$alias</span><span class="p">,</span> <span class="k">static</span><span class="o">::</span><span class="nv">$facadeNamespace</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+     <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loadFacade</span><span class="p">(</span><span class="nv">$alias</span><span class="p">);</span>
+
+     <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">//loadFacade 负责加载门面类</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">loadFacade</span><span class="p">(</span><span class="nv">$alias</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">require</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">ensureFacadeExists</span><span class="p">(</span><span class="nv">$alias</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// ensureFacadeExists 函数负责自动生成门面类</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">ensureFacadeExists</span><span class="p">(</span><span class="nv">$alias</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$path</span> <span class="o">=</span> <span class="nx">storage_path</span><span class="p">(</span><span class="s1">&#39;framework/cache/facade-&#39;</span><span class="o">.</span><span class="nb">sha1</span><span class="p">(</span><span class="nv">$alias</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;.php&#39;</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$path</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nb">file_put_contents</span><span class="p">(</span><span class="nv">$path</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">formatFacadeStub</span><span class="p">(</span>
+        <span class="nv">$alias</span><span class="p">,</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/stubs/facade.stub&#39;</span><span class="p">)</span>
+    <span class="p">));</span>
+
+    <span class="k">return</span> <span class="nv">$path</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">formatFacadeStub</span><span class="p">(</span><span class="nv">$alias</span><span class="p">,</span> <span class="nv">$stub</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$replacements</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="nb">dirname</span><span class="p">(</span><span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="nv">$alias</span><span class="p">))),</span>
+        <span class="nx">class_basename</span><span class="p">(</span><span class="nv">$alias</span><span class="p">),</span>
+        <span class="nb">substr</span><span class="p">(</span><span class="nv">$alias</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="nv">$facadeNamespace</span><span class="p">)),</span>
+    <span class="p">];</span>
+
+    <span class="k">return</span> <span class="nb">str_replace</span><span class="p">(</span>
+        <span class="p">[</span><span class="s1">&#39;DummyNamespace&#39;</span><span class="p">,</span> <span class="s1">&#39;DummyClass&#39;</span><span class="p">,</span> <span class="s1">&#39;DummyTarget&#39;</span><span class="p">],</span> <span class="nv">$replacements</span><span class="p">,</span> <span class="nv">$stub</span>
+            <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看出来，laravel 框架生成的门面类会放到 <code class="docutils literal"><span class="pre">stroge/framework/cache/</span></code> 文件夹下，名字以 <code class="docutils literal"><span class="pre">facade</span></code> 开头，以命名空间的哈希结尾。如果存在这个文件就会返回，否则就要利用 <code class="docutils literal"><span class="pre">file_put_contents</span></code> 生成这个文件。</p>
+<p>门面模板文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\stubs\facade.stub</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">DummyNamespace</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Facade</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd">* @see \DummyTarget</span>
+<span class="sd">*/</span>
+<span class="k">class</span> <span class="nc">DummyClass</span> <span class="k">extends</span> <span class="nx">Facade</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">    * Get the registered name of the component.</span>
+<span class="sd">    *</span>
+<span class="sd">    * @return string</span>
+<span class="sd">    */</span>
+    <span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getFacadeAccessor</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;DummyTarget&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>替换后的文件是：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Facades\App\Services\</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Facade</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd">* @see \DummyTarget</span>
+<span class="sd">*/</span>
+<span class="k">class</span> <span class="nc">PaymentGateway</span> <span class="k">extends</span> <span class="nx">Facade</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Get the registered name of the component.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return string</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getFacadeAccessor</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;App\Services\PaymentGateway&#39;</span><span class="p">;</span> <span class="c1">// 这里不是别名，直接完全类定义文件</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的服务提供器.html" class="btn btn-neutral float-right" title="6. 服务提供器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的Facades.html" class="btn btn-neutral" title="4. Facades" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

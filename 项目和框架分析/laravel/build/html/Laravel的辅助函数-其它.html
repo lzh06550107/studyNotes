@@ -1,0 +1,940 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>47. 辅助函数-其它杂项 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="48. 邮件" href="Laravel的邮件发送功能.html"/>
+        <link rel="prev" title="46. 辅助函数-Tap函数" href="Laravel的辅助函数-tap分析.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">47. 辅助函数-其它杂项</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">47.1. 其它函数</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">47.1.1. 分类</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>47. 辅助函数-其它杂项</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1><a class="toc-backref" href="#id5">47. 辅助函数-其它杂项</a><a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id6">47.1. 其它函数</a><a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="contents topic" id="id3">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id5">辅助函数-其它杂项</a><ul>
+<li><a class="reference internal" href="#id2" id="id6">其它函数</a><ul>
+<li><a class="reference internal" href="#id4" id="id7">分类</a><ul>
+<li><a class="reference internal" href="#abort-http" id="id8">abort：函数抛出 异常处理 程序呈现的 HTTP 异常</a></li>
+<li><a class="reference internal" href="#abort-if-true-abort-if-http" id="id9">abort_if：如果给定的布尔表达式计算结果为 true， abort_if 函数将抛出一个 HTTP 异常</a></li>
+<li><a class="reference internal" href="#abort-unless-false-abort-unless-http" id="id10">abort_unless：如果给定的布尔表达式计算结果为 false，abort_unless 函数将抛出一个 HTTP 异常</a></li>
+<li><a class="reference internal" href="#app" id="id11">app：函数返回 服务容器 实例</a></li>
+<li><a class="reference internal" href="#auth" id="id12">auth：函数返回一个 认证 实例</a></li>
+<li><a class="reference internal" href="#back-http" id="id13">back：函数生成一个重定向 HTTP 响应到用户之前的位置</a></li>
+<li><a class="reference internal" href="#bcrypt-bcrypt" id="id14">bcrypt 哈希 使用 Bcrypt 对给定的值进行散列</a></li>
+<li><a class="reference internal" href="#broadcast" id="id15">broadcast 函数将广播给定的事件到它的监听器</a></li>
+<li><a class="reference internal" href="#blank" id="id16">blank：函数判断给定的值是否为「空」</a></li>
+<li><a class="reference internal" href="#cache" id="id17">cache：函数可以用来从缓存中获取值</a></li>
+<li><a class="reference internal" href="#collect" id="id18">collect：函数根据给定的数组创建一个集合实例</a></li>
+<li><a class="reference internal" href="#config" id="id19">config：函数获取配置变量的值</a></li>
+<li><a class="reference internal" href="#cookie-cookie" id="id20">cookie：函数创建一个新的 cookie 实例</a></li>
+<li><a class="reference internal" href="#csrf-field-csrf-htmlhidden" id="id21">csrf_field：函数生成包含 CSRF 令牌值的 HTMLhidden 表单字段</a></li>
+<li><a class="reference internal" href="#csrf-token-csrf" id="id22">csrf_token：函数获取当前 CSRF 令牌的值</a></li>
+<li><a class="reference internal" href="#dd" id="id23">dd：函数输出给定的值并结束脚本运行</a></li>
+<li><a class="reference internal" href="#decrypt-laravel" id="id24">decrypt：函数使用 Laravel 的加密器来解密给定的值</a></li>
+<li><a class="reference internal" href="#dispatch-laravel" id="id25">dispatch：函数将给定的任务推送到 Laravel 任务列队中</a></li>
+<li><a class="reference internal" href="#dispatch-now-handle" id="id26">dispatch_now：函数立即运行给定的任务，并从其 handle 方法返回值</a></li>
+<li><a class="reference internal" href="#dump" id="id27">dump：函数打印给定的变量</a></li>
+<li><a class="reference internal" href="#encrypt-laravel" id="id28">encrypt：函数使用 Laravel 的加密器对给定的值进行加密</a></li>
+<li><a class="reference internal" href="#env" id="id29">env：函数获取环境变量的值或者返回默认值</a></li>
+<li><a class="reference internal" href="#event" id="id30">event：函数将给定的事件分派给它的监听器</a></li>
+<li><a class="reference internal" href="#factory" id="id31">factory：函数根据给定的类、名称和数量创建一个模型工厂构建器</a></li>
+<li><a class="reference internal" href="#filled" id="id32">filled：函数判断给定的值是否不为「空」</a></li>
+<li><a class="reference internal" href="#logger-debug" id="id33">logger：函数可以将一个 debug 级别的消息写入到日志中</a></li>
+<li><a class="reference internal" href="#method-field-html-hidden-http" id="id34">method_field：函数生成一个 HTML hidden 表单字段，其中包含表单的 HTTP 动作的欺骗值</a></li>
+<li><a class="reference internal" href="#now-illuminate-support-carbon" id="id35">now：函数为当前时间创建一个新的 <code class="docutils literal"><span class="pre">Illuminate\Support\Carbon</span></code> 实例</a></li>
+<li><a class="reference internal" href="#old" id="id36">old：函数 获取 会话中闪存的 旧输入 值</a></li>
+<li><a class="reference internal" href="#optional" id="id37">optional：函数可以接受任何参数，并且允许你访问该对象的属性或者调用方法</a></li>
+<li><a class="reference internal" href="#policy" id="id38">policy：方法为给定的类获取一个策略实例</a></li>
+<li><a class="reference internal" href="#redirect-http" id="id39">redirect：函数返回一个重定向 HTTP 响应，如果没有没有传入参数，则返回重定向实例</a></li>
+<li><a class="reference internal" href="#report-report" id="id40">report：函数将使用异常处理程序的 report 方法抛出异常</a></li>
+<li><a class="reference internal" href="#request" id="id41">request：函数返回当前请求实例或者获取输入项</a></li>
+<li><a class="reference internal" href="#rescue" id="id42">rescue：函数执行给定的闭包并捕获执行期间发生的任何异常</a></li>
+<li><a class="reference internal" href="#resolve" id="id43">resolve：函数使用服务容器将给定的类或接口名称解析为其实例</a></li>
+<li><a class="reference internal" href="#response" id="id44">response：函数创建响应实例或者获取响应工厂实例</a></li>
+<li><a class="reference internal" href="#retry" id="id45">retry：函数尝试执行给定的回调，直到到达给定的最大尝试次数</a></li>
+<li><a class="reference internal" href="#session-session" id="id46">session：函数可以用来获取或者设置 Session 值</a></li>
+<li><a class="reference internal" href="#tap-value" id="id47">tap：函数接受两个参数：一个任意的 $value 和一个闭包</a></li>
+<li><a class="reference internal" href="#today-illuminate-support-carbon" id="id48">today：函数为当前日期创建一个新的 <code class="docutils literal"><span class="pre">Illuminate\Support\Carbon</span></code> 实例</a></li>
+<li><a class="reference internal" href="#throw-if-true-throw-if" id="id49">throw_if：如果给定的布尔表达式计算结果为 true，throw_if 函数抛出给定的异常</a></li>
+<li><a class="reference internal" href="#throw-unless-false-throw-unless" id="id50">throw_unless：如果给定的布尔表达式计算结果为 false，则 throw_unless 函数会抛出给定的异常</a></li>
+<li><a class="reference internal" href="#trait-uses-recursive-trait" id="id51">trait_uses_recursive：函数返回一个类使用的所有 trait</a></li>
+<li><a class="reference internal" href="#transform-blank-closure-transform-closure" id="id52">transform：如果给定的值不为 blank 并且传入 Closure，那么 transform 函数对给定的值执行 Closure 并返回其结果</a></li>
+<li><a class="reference internal" href="#validator" id="id53">validator：函数用给定的参数创建一个新的验证器实例</a></li>
+<li><a class="reference internal" href="#value" id="id54">value：函数返回给定的值</a></li>
+<li><a class="reference internal" href="#view" id="id55">view：函数获取一个视图实例</a></li>
+<li><a class="reference internal" href="#with" id="id56">with：函数会返回给定的值</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3><a class="toc-backref" href="#id7">47.1.1. 分类</a><a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<div class="section" id="abort-http">
+<h4><a class="toc-backref" href="#id8">47.1.1.1. abort：函数抛出 异常处理 程序呈现的 HTTP 异常</a><a class="headerlink" href="#abort-http" title="永久链接至标题">¶</a></h4>
+<p>如果传入 404 则抛出 <code class="docutils literal"><span class="pre">NotFoundHttpException</span></code> 异常，其它参数，抛出 <code class="docutils literal"><span class="pre">HttpException</span></code> 异常。</p>
+<p>第一个参数是响应码；第二个参数是消息内容；第三个参数是响应头；</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你也可以提供额外的响应文本和自定义响应标头：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">,</span> <span class="s1">&#39;Unauthorized.&#39;</span><span class="p">,</span> <span class="nv">$headers</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="abort-if-true-abort-if-http">
+<h4><a class="toc-backref" href="#id9">47.1.1.2. abort_if：如果给定的布尔表达式计算结果为 true， abort_if 函数将抛出一个 HTTP 异常</a><a class="headerlink" href="#abort-if-true-abort-if-http" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">abort_if</span><span class="p">(</span><span class="o">!</span> <span class="nx">Auth</span><span class="o">::</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">(),</span> <span class="mi">403</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>和 <code class="docutils literal"><span class="pre">abort</span></code> 方法一样，你也可以提供异常的响应文本作为第三个参数，并提供一个自定义响应头数组作为第四个参数。该方法底层调用 <code class="docutils literal"><span class="pre">abort()</span></code> 函数。</p>
+</div>
+<div class="section" id="abort-unless-false-abort-unless-http">
+<h4><a class="toc-backref" href="#id10">47.1.1.3. abort_unless：如果给定的布尔表达式计算结果为 false，abort_unless 函数将抛出一个 HTTP 异常</a><a class="headerlink" href="#abort-unless-false-abort-unless-http" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">abort_unless</span><span class="p">(</span><span class="nx">Auth</span><span class="o">::</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">(),</span> <span class="mi">403</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>和 <code class="docutils literal"><span class="pre">abort</span></code> 方法一样，你也可以提供异常的响应文本作为第三个参数，并提供一个自定义响应头数组作为第四个参数。</p>
+</div>
+<div class="section" id="app">
+<h4><a class="toc-backref" href="#id11">47.1.1.4. app：函数返回 服务容器 实例</a><a class="headerlink" href="#app" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$container</span> <span class="o">=</span> <span class="nx">app</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>你可以传递一个类或接口名称来从容器中解析它：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$api</span> <span class="o">=</span> <span class="nx">app</span><span class="p">(</span><span class="s1">&#39;HelpSpot\API&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="auth">
+<h4><a class="toc-backref" href="#id12">47.1.1.5. auth：函数返回一个 认证 实例</a><a class="headerlink" href="#auth" title="永久链接至标题">¶</a></h4>
+<p>为了方便起见，你可以使用它来替代 <code class="docutils literal"><span class="pre">Auth</span> <span class="pre">Facade</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">auth</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>如果需要，你可以指定你想要访问的认证实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">auth</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="back-http">
+<h4><a class="toc-backref" href="#id13">47.1.1.6. back：函数生成一个重定向 HTTP 响应到用户之前的位置</a><a class="headerlink" href="#back-http" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">back</span><span class="p">(</span><span class="nv">$status</span> <span class="o">=</span> <span class="mi">302</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="p">[],</span> <span class="nv">$fallback</span> <span class="o">=</span> <span class="k">false</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nx">back</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bcrypt-bcrypt">
+<h4><a class="toc-backref" href="#id14">47.1.1.7. bcrypt 哈希 使用 Bcrypt 对给定的值进行散列</a><a class="headerlink" href="#bcrypt-bcrypt" title="永久链接至标题">¶</a></h4>
+<p>你可以使用它替代 Hash facade：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$password</span> <span class="o">=</span> <span class="nx">bcrypt</span><span class="p">(</span><span class="s1">&#39;my-secret-password&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="broadcast">
+<h4><a class="toc-backref" href="#id15">47.1.1.8. broadcast 函数将广播给定的事件到它的监听器</a><a class="headerlink" href="#broadcast" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">broadcast</span><span class="p">(</span><span class="k">new</span> <span class="nx">UserRegistered</span><span class="p">(</span><span class="nv">$user</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="blank">
+<h4><a class="toc-backref" href="#id16">47.1.1.9. blank：函数判断给定的值是否为「空」</a><a class="headerlink" href="#blank" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">blank</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="nx">blank</span><span class="p">(</span><span class="s1">&#39;   &#39;</span><span class="p">);</span>
+<span class="nx">blank</span><span class="p">(</span><span class="k">null</span><span class="p">);</span>
+<span class="nx">blank</span><span class="p">(</span><span class="nx">collect</span><span class="p">());</span>
+
+<span class="c1">// true</span>
+
+<span class="nx">blank</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="nx">blank</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+<span class="nx">blank</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+
+<span class="c1">// false</span>
+</pre></div>
+</div>
+<p>要使用与 <code class="docutils literal"><span class="pre">blank</span></code> 相反的功能，请看 <code class="docutils literal"><span class="pre">filled</span></code> 方法。</p>
+</div>
+<div class="section" id="cache">
+<h4><a class="toc-backref" href="#id17">47.1.1.10. cache：函数可以用来从缓存中获取值</a><a class="headerlink" href="#cache" title="永久链接至标题">¶</a></h4>
+<p>如果缓存中不存在给定的健，则返回一个可选的默认值。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">cache</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">cache</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你可以通过将一组键/值对传递给函数来将其添加到缓存中。与此同时，你还应该传递有效的分钟数或持续时间作为缓存过期时间：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">cache</span><span class="p">([</span><span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="mi">5</span><span class="p">);</span>
+
+<span class="nx">cache</span><span class="p">([</span><span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="nx">now</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">class_uses_recursive</span></code> 函数返回一个类使用的所有 <code class="docutils literal"><span class="pre">traits</span></code> ，包括任何子类使用的 <code class="docutils literal"><span class="pre">traits</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$traits</span> <span class="o">=</span> <span class="nx">class_uses_recursive</span><span class="p">(</span><span class="nx">App\User</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="collect">
+<h4><a class="toc-backref" href="#id18">47.1.1.11. collect：函数根据给定的数组创建一个集合实例</a><a class="headerlink" href="#collect" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$collection</span> <span class="o">=</span> <span class="nx">collect</span><span class="p">([</span><span class="s1">&#39;taylor&#39;</span><span class="p">,</span> <span class="s1">&#39;abigail&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="config">
+<h4><a class="toc-backref" href="#id19">47.1.1.12. config：函数获取配置变量的值</a><a class="headerlink" href="#config" title="永久链接至标题">¶</a></h4>
+<p>可以使用「点」语法访问配置值，其中包括文件的名称和希望访问的选项。如果配置选项不存在，则可以指定一个默认值并返回：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">config</span><span class="p">(</span><span class="s1">&#39;app.timezone&#39;</span><span class="p">);</span>
+
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">config</span><span class="p">(</span><span class="s1">&#39;app.timezone&#39;</span><span class="p">,</span> <span class="nv">$default</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>可以在运行时通过传递一组键/值对来设置配置变量：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">config</span><span class="p">([</span><span class="s1">&#39;app.debug&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cookie-cookie">
+<h4><a class="toc-backref" href="#id20">47.1.1.13. cookie：函数创建一个新的 cookie 实例</a><a class="headerlink" href="#cookie-cookie" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$cookie</span> <span class="o">=</span> <span class="nx">cookie</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="csrf-field-csrf-htmlhidden">
+<h4><a class="toc-backref" href="#id21">47.1.1.14. csrf_field：函数生成包含 CSRF 令牌值的 HTMLhidden 表单字段</a><a class="headerlink" href="#csrf-field-csrf-htmlhidden" title="永久链接至标题">¶</a></h4>
+<p>例如，使用 <code class="docutils literal"><span class="pre">Blade</span></code> 语法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">{{</span> <span class="nx">csrf_field</span><span class="p">()</span> <span class="p">}}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="csrf-token-csrf">
+<h4><a class="toc-backref" href="#id22">47.1.1.15. csrf_token：函数获取当前 CSRF 令牌的值</a><a class="headerlink" href="#csrf-token-csrf" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$token</span> <span class="o">=</span> <span class="nx">csrf_token</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dd">
+<h4><a class="toc-backref" href="#id23">47.1.1.16. dd：函数输出给定的值并结束脚本运行</a><a class="headerlink" href="#dd" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">dd</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+
+<span class="nx">dd</span><span class="p">(</span><span class="nv">$value1</span><span class="p">,</span> <span class="nv">$value2</span><span class="p">,</span> <span class="nv">$value3</span><span class="p">,</span> <span class="o">...</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果你不想终止脚本运行，请改用 <code class="docutils literal"><span class="pre">dump</span></code> 函数。</p>
+</div>
+<div class="section" id="decrypt-laravel">
+<h4><a class="toc-backref" href="#id24">47.1.1.17. decrypt：函数使用 Laravel 的加密器来解密给定的值</a><a class="headerlink" href="#decrypt-laravel" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$decrypted</span> <span class="o">=</span> <span class="nx">decrypt</span><span class="p">(</span><span class="nv">$encrypted_value</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dispatch-laravel">
+<h4><a class="toc-backref" href="#id25">47.1.1.18. dispatch：函数将给定的任务推送到 Laravel 任务列队中</a><a class="headerlink" href="#dispatch-laravel" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">dispatch</span><span class="p">(</span><span class="k">new</span> <span class="nx">App\Jobs\SendEmails</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dispatch-now-handle">
+<h4><a class="toc-backref" href="#id26">47.1.1.19. dispatch_now：函数立即运行给定的任务，并从其 handle 方法返回值</a><a class="headerlink" href="#dispatch-now-handle" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">dispatch_now</span><span class="p">(</span><span class="k">new</span> <span class="nx">App\Jobs\SendEmails</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dump">
+<h4><a class="toc-backref" href="#id27">47.1.1.20. dump：函数打印给定的变量</a><a class="headerlink" href="#dump" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">dump</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+
+<span class="nx">dump</span><span class="p">(</span><span class="nv">$value1</span><span class="p">,</span> <span class="nv">$value2</span><span class="p">,</span> <span class="nv">$value3</span><span class="p">,</span> <span class="o">...</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果要在打印变量后停止执行脚本，请改用 <code class="docutils literal"><span class="pre">dd</span></code> 函数。</p>
+</div>
+<div class="section" id="encrypt-laravel">
+<h4><a class="toc-backref" href="#id28">47.1.1.21. encrypt：函数使用 Laravel 的加密器对给定的值进行加密</a><a class="headerlink" href="#encrypt-laravel" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$encrypted</span> <span class="o">=</span> <span class="nx">encrypt</span><span class="p">(</span><span class="nv">$unencrypted_value</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="env">
+<h4><a class="toc-backref" href="#id29">47.1.1.22. env：函数获取环境变量的值或者返回默认值</a><a class="headerlink" href="#env" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$env</span> <span class="o">=</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;APP_ENV&#39;</span><span class="p">);</span>
+
+<span class="c1">// 如果环境变量不存在则返回默认值...</span>
+<span class="nv">$env</span> <span class="o">=</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;APP_ENV&#39;</span><span class="p">,</span> <span class="s1">&#39;production&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果在你在部署过程中执行 <code class="docutils literal"><span class="pre">config:cache</span></code> 命令，则应该保证只在配置中调用 <code class="docutils literal"><span class="pre">env</span></code> 函数。一旦配置被缓存， <code class="docutils literal"><span class="pre">.env</span></code> 文件则不会再被加载，所有对 <code class="docutils literal"><span class="pre">env</span></code> 函数的调用都将返回 <code class="docutils literal"><span class="pre">null</span></code> 。</p>
+</div>
+</div>
+<div class="section" id="event">
+<h4><a class="toc-backref" href="#id30">47.1.1.23. event：函数将给定的事件分派给它的监听器</a><a class="headerlink" href="#event" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">event</span><span class="p">(</span><span class="k">new</span> <span class="nx">UserRegistered</span><span class="p">(</span><span class="nv">$user</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="factory">
+<h4><a class="toc-backref" href="#id31">47.1.1.24. factory：函数根据给定的类、名称和数量创建一个模型工厂构建器</a><a class="headerlink" href="#factory" title="永久链接至标题">¶</a></h4>
+<p>可以在测试或数据填充中使用：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">factory</span><span class="p">(</span><span class="nx">App\User</span><span class="o">::</span><span class="na">class</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="filled">
+<h4><a class="toc-backref" href="#id32">47.1.1.25. filled：函数判断给定的值是否不为「空」</a><a class="headerlink" href="#filled" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">filled</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="nx">filled</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+<span class="nx">filled</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+
+<span class="c1">// true</span>
+
+<span class="nx">filled</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="nx">filled</span><span class="p">(</span><span class="s1">&#39;   &#39;</span><span class="p">);</span>
+<span class="nx">filled</span><span class="p">(</span><span class="k">null</span><span class="p">);</span>
+<span class="nx">filled</span><span class="p">(</span><span class="nx">collect</span><span class="p">());</span>
+
+<span class="c1">// false</span>
+</pre></div>
+</div>
+<p>要使用与 <code class="docutils literal"><span class="pre">filled</span></code> 相反的功能，请看 <code class="docutils literal"><span class="pre">blank</span></code> 方法。</p>
+<p>info：函数将信息写入日志</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">info</span><span class="p">(</span><span class="s1">&#39;一些有用的信息！&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>有上下文关系的数组也可以传递给函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">info</span><span class="p">(</span><span class="s1">&#39;用户登录尝试失败。&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="logger-debug">
+<h4><a class="toc-backref" href="#id33">47.1.1.26. logger：函数可以将一个 debug 级别的消息写入到日志中</a><a class="headerlink" href="#logger-debug" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">logger</span><span class="p">(</span><span class="s1">&#39;Debug 消息&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>有上下文关系的数组也可以传递给函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">logger</span><span class="p">(</span><span class="s1">&#39;User has logged in.&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>如果没有传值给函数则返回日志的实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">logger</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">error</span><span class="p">(</span><span class="s1">&#39;You are not allowed here.&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="method-field-html-hidden-http">
+<h4><a class="toc-backref" href="#id34">47.1.1.27. method_field：函数生成一个 HTML hidden 表单字段，其中包含表单的 HTTP 动作的欺骗值</a><a class="headerlink" href="#method-field-html-hidden-http" title="永久链接至标题">¶</a></h4>
+<p>例如，使用 <code class="docutils literal"><span class="pre">Blade</span></code> 语法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;</span><span class="nx">form</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="o">&gt;</span>
+    <span class="p">{{</span> <span class="nx">method_field</span><span class="p">(</span><span class="s1">&#39;DELETE&#39;</span><span class="p">)</span> <span class="p">}}</span>
+<span class="o">&lt;/</span><span class="nx">form</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="now-illuminate-support-carbon">
+<h4><a class="toc-backref" href="#id35">47.1.1.28. now：函数为当前时间创建一个新的 <code class="docutils literal"><span class="pre">Illuminate\Support\Carbon</span></code> 实例</a><a class="headerlink" href="#now-illuminate-support-carbon" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$now</span> <span class="o">=</span> <span class="nx">now</span><span class="p">();</span> <span class="c1">// 返回日期和时间</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="old">
+<h4><a class="toc-backref" href="#id36">47.1.1.29. old：函数 获取 会话中闪存的 旧输入 值</a><a class="headerlink" href="#old" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">old</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">);</span>
+
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">old</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="optional">
+<h4><a class="toc-backref" href="#id37">47.1.1.30. optional：函数可以接受任何参数，并且允许你访问该对象的属性或者调用方法</a><a class="headerlink" href="#optional" title="永久链接至标题">¶</a></h4>
+<p>如果给定的对象是 <code class="docutils literal"><span class="pre">null</span></code> ， 那么属性和方法会简单地返回 <code class="docutils literal"><span class="pre">null</span></code> 而不是产生一个错误：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">optional</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">address</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">street</span><span class="p">;</span>
+
+<span class="p">{</span><span class="o">!!</span> <span class="nx">old</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="nx">optional</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">)</span> <span class="o">!!</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="policy">
+<h4><a class="toc-backref" href="#id38">47.1.1.31. policy：方法为给定的类获取一个策略实例</a><a class="headerlink" href="#policy" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$policy</span> <span class="o">=</span> <span class="nx">policy</span><span class="p">(</span><span class="nx">App\User</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="redirect-http">
+<h4><a class="toc-backref" href="#id39">47.1.1.32. redirect：函数返回一个重定向 HTTP 响应，如果没有没有传入参数，则返回重定向实例</a><a class="headerlink" href="#redirect-http" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="nv">$to</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$status</span> <span class="o">=</span> <span class="mi">302</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="p">[],</span> <span class="nv">$secure</span> <span class="o">=</span> <span class="k">null</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/home&#39;</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;route.name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="report-report">
+<h4><a class="toc-backref" href="#id40">47.1.1.33. report：函数将使用异常处理程序的 report 方法抛出异常</a><a class="headerlink" href="#report-report" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">report</span><span class="p">(</span><span class="nv">$e</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="request">
+<h4><a class="toc-backref" href="#id41">47.1.1.34. request：函数返回当前请求实例或者获取输入项</a><a class="headerlink" href="#request" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span> <span class="o">=</span> <span class="nx">request</span><span class="p">();</span>
+
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">request</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="nv">$default</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rescue">
+<h4><a class="toc-backref" href="#id42">47.1.1.35. rescue：函数执行给定的闭包并捕获执行期间发生的任何异常</a><a class="headerlink" href="#rescue" title="永久链接至标题">¶</a></h4>
+<p>所有被捕获的异常将被发送到你的异常处理程序的 <code class="docutils literal"><span class="pre">report</span></code> 方法。要注意的是，该请求将继续处理：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">rescue</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>你也可以将第二个参数传递给 <code class="docutils literal"><span class="pre">rescue</span></code> 方法。如果在执行闭包时发生异常，这个参数将是应该返回的默认值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">rescue</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">();</span>
+<span class="p">},</span> <span class="k">false</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nx">rescue</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">();</span>
+<span class="p">},</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">failure</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="resolve">
+<h4><a class="toc-backref" href="#id43">47.1.1.36. resolve：函数使用服务容器将给定的类或接口名称解析为其实例</a><a class="headerlink" href="#resolve" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$api</span> <span class="o">=</span> <span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;HelpSpot\API&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="response">
+<h4><a class="toc-backref" href="#id44">47.1.1.37. response：函数创建响应实例或者获取响应工厂实例</a><a class="headerlink" href="#response" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;bar&#39;</span><span class="p">],</span> <span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="retry">
+<h4><a class="toc-backref" href="#id45">47.1.1.38. retry：函数尝试执行给定的回调，直到到达给定的最大尝试次数</a><a class="headerlink" href="#retry" title="永久链接至标题">¶</a></h4>
+<p>如果回调没有抛出异常，则返回值将被返回。如果回调抛出异常，它将自动重试。如果超过最大尝试次数，则会抛出异常：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">retry</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 在 100ms 左右尝试 5 次...</span>
+<span class="p">},</span> <span class="mi">100</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="session-session">
+<h4><a class="toc-backref" href="#id46">47.1.1.39. session：函数可以用来获取或者设置 Session 值</a><a class="headerlink" href="#session-session" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">session</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你可以通过将一组键/值对传递给该函数来设置值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">session</span><span class="p">([</span><span class="s1">&#39;chairs&#39;</span> <span class="o">=&gt;</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;instruments&#39;</span> <span class="o">=&gt;</span> <span class="mi">3</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>如果没有传递值给函数，则返回 <code class="docutils literal"><span class="pre">Session</span></code> 实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+
+<span class="nx">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">put</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="nv">$value</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tap-value">
+<h4><a class="toc-backref" href="#id47">47.1.1.40. tap：函数接受两个参数：一个任意的 $value 和一个闭包</a><a class="headerlink" href="#tap-value" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">$value</span></code> 将被传递给闭包，然后由 <code class="docutils literal"><span class="pre">tap</span></code> 函数返回。不需要在闭包中使用 <code class="docutils literal"><span class="pre">return</span></code> 返回值。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">tap</span><span class="p">(</span><span class="nx">User</span><span class="o">::</span><span class="na">first</span><span class="p">(),</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="s1">&#39;taylor&#39;</span><span class="p">;</span>
+
+    <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>如果没有闭包被传递给 <code class="docutils literal"><span class="pre">tap</span></code> 函数，你可以调用给定 <code class="docutils literal"><span class="pre">$value</span></code> 的任何方法。而你调用的方法的返回值始终为 <code class="docutils literal"><span class="pre">$value</span></code> ，无论方法在其定义中实际返回的是什么。例如， <code class="docutils literal"><span class="pre">Eloquent</span></code> 的 <code class="docutils literal"><span class="pre">update</span></code> 方法通常会返回一个整数。但是，我们可以强制通过 <code class="docutils literal"><span class="pre">tap</span></code> 函数链式调用 <code class="docutils literal"><span class="pre">update</span></code> 方法来返回模型本身：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">tap</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">([</span>
+    <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$name</span><span class="p">,</span>
+    <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="nv">$email</span><span class="p">,</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="today-illuminate-support-carbon">
+<h4><a class="toc-backref" href="#id48">47.1.1.41. today：函数为当前日期创建一个新的 <code class="docutils literal"><span class="pre">Illuminate\Support\Carbon</span></code> 实例</a><a class="headerlink" href="#today-illuminate-support-carbon" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$today</span> <span class="o">=</span> <span class="nx">today</span><span class="p">();</span> <span class="c1">//仅返回日期，不包括时间</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="throw-if-true-throw-if">
+<h4><a class="toc-backref" href="#id49">47.1.1.42. throw_if：如果给定的布尔表达式计算结果为 true，throw_if 函数抛出给定的异常</a><a class="headerlink" href="#throw-if-true-throw-if" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">throw_if</span><span class="p">(</span><span class="o">!</span> <span class="nx">Auth</span><span class="o">::</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">(),</span> <span class="nx">AuthorizationException</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+
+<span class="nx">throw_if</span><span class="p">(</span>
+    <span class="o">!</span> <span class="nx">Auth</span><span class="o">::</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">(),</span>
+    <span class="nx">AuthorizationException</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="s1">&#39;You are not allowed to access this page&#39;</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="throw-unless-false-throw-unless">
+<h4><a class="toc-backref" href="#id50">47.1.1.43. throw_unless：如果给定的布尔表达式计算结果为 false，则 throw_unless 函数会抛出给定的异常</a><a class="headerlink" href="#throw-unless-false-throw-unless" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">throw_unless</span><span class="p">(</span><span class="nx">Auth</span><span class="o">::</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">(),</span> <span class="nx">AuthorizationException</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+
+<span class="nx">throw_unless</span><span class="p">(</span>
+    <span class="nx">Auth</span><span class="o">::</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">(),</span>
+    <span class="nx">AuthorizationException</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="s1">&#39;You are not allowed to access this page&#39;</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="trait-uses-recursive-trait">
+<h4><a class="toc-backref" href="#id51">47.1.1.44. trait_uses_recursive：函数返回一个类使用的所有 trait</a><a class="headerlink" href="#trait-uses-recursive-trait" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$traits</span> <span class="o">=</span> <span class="nx">trait_uses_recursive</span><span class="p">(</span><span class="nx">\Illuminate\Notifications\Notifiable</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="transform-blank-closure-transform-closure">
+<h4><a class="toc-backref" href="#id52">47.1.1.45. transform：如果给定的值不为 blank 并且传入 Closure，那么 transform 函数对给定的值执行 Closure 并返回其结果</a><a class="headerlink" href="#transform-blank-closure-transform-closure" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$callback</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$value</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">transform</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+
+<span class="c1">// 10</span>
+</pre></div>
+</div>
+<p>默认值或 <code class="docutils literal"><span class="pre">Closure</span></code> 也可以作为方法的第三个参数传递。如果给定值为空白，则返回该值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">transform</span><span class="p">(</span><span class="k">null</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">,</span> <span class="s1">&#39;The value is blank&#39;</span><span class="p">);</span>
+
+<span class="c1">// The value is blank</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="validator">
+<h4><a class="toc-backref" href="#id53">47.1.1.46. validator：函数用给定的参数创建一个新的验证器实例</a><a class="headerlink" href="#validator" title="永久链接至标题">¶</a></h4>
+<p>为方便起见，你可以使用它来代替 <code class="docutils literal"><span class="pre">Validator</span> <span class="pre">facade</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$validator</span> <span class="o">=</span> <span class="nx">validator</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="nv">$rules</span><span class="p">,</span> <span class="nv">$messages</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="value">
+<h4><a class="toc-backref" href="#id54">47.1.1.47. value：函数返回给定的值</a><a class="headerlink" href="#value" title="永久链接至标题">¶</a></h4>
+<p>但是，如果将一个 <code class="docutils literal"><span class="pre">Closure</span></code> 传递给该函数，则将执行该 <code class="docutils literal"><span class="pre">Closure</span></code> 并返回其结果：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">value</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+
+<span class="c1">// true</span>
+
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">value</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="c1">// false</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="view">
+<h4><a class="toc-backref" href="#id55">47.1.1.48. view：函数获取一个视图实例</a><a class="headerlink" href="#view" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;auth.login&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="with">
+<h4><a class="toc-backref" href="#id56">47.1.1.49. with：函数会返回给定的值</a><a class="headerlink" href="#with" title="永久链接至标题">¶</a></h4>
+<p>如果传入一个 <code class="docutils literal"><span class="pre">Closure</span></code> 作为该函数的第二个参数，会返回 <code class="docutils literal"><span class="pre">Closure</span></code> 执行的结果：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$callback</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">is_numeric</span><span class="p">(</span><span class="nv">$value</span><span class="p">))</span> <span class="o">?</span> <span class="nv">$value</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">with</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+
+<span class="c1">// 10</span>
+
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">with</span><span class="p">(</span><span class="k">null</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+
+<span class="c1">// 0</span>
+
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">with</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="k">null</span><span class="p">);</span>
+
+<span class="c1">// 5</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的邮件发送功能.html" class="btn btn-neutral float-right" title="48. 邮件" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的辅助函数-tap分析.html" class="btn btn-neutral" title="46. 辅助函数-Tap函数" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,680 @@
+********
+文档操作
+********
+文档的数据结构和 ``JSON`` 基本一样。
+
+所有存储在集合中的数据都是 ``BSON`` 格式。
+
+``BSON`` 是一种类 ``json`` 的一种二进制形式的存储格式,简称 Binary JSON 。
+
+插入
+====
+MongoDB 使用 ``insert()`` 或 ``save()`` 方法向集合中插入文档，语法如下：
+
+.. code-block:: shell
+
+    db.COLLECTION_NAME.insert(document)
+
+实例
+----
+以下文档可以存储在 MongoDB 的 ``runoob`` 数据库 的 ``col`` 集合中：
+
+.. code-block:: shell
+
+    >db.col.insert({title: 'MongoDB 教程',
+        description: 'MongoDB 是一个 Nosql 数据库',
+        by: '菜鸟教程',
+        url: 'http://www.runoob.com',
+        tags: ['mongodb', 'database', 'NoSQL'],
+        likes: 100
+    })
+
+以上实例中 ``col`` 是我们的集合名，如果该集合不在该数据库中， ``MongoDB`` 会自动创建该集合并插入文档。
+
+查看已插入文档：
+
+.. code-block:: shell
+
+    > db.col.find()
+    { "_id" : ObjectId("56064886ade2f21f36b03134"), "title" : "MongoDB 教程", "description" : "MongoDB 是一个 Nosql 数据库", "by" : "菜鸟教程", "url" : "http://www.runoob.com", "tags" : [ "mongodb", "database", "NoSQL" ], "likes" : 100 }
+
+我们也可以将数据定义为一个变量，如下所示：
+
+.. code-block:: shell
+
+    > document=({title: 'MongoDB 教程',
+        description: 'MongoDB 是一个 Nosql 数据库',
+        by: '菜鸟教程',
+        url: 'http://www.runoob.com',
+        tags: ['mongodb', 'database', 'NoSQL'],
+        likes: 100
+    });
+    > db.col.insert(document)
+    WriteResult({ "nInserted" : 1 })
+
+插入文档你也可以使用 ``db.col.save(document)`` 命令。如果不指定 ``_id`` 字段 ``save()`` 方法类似于 ``insert()`` 方法。如果指定 ``_id`` 字段，则会更新该 ``_id`` 的数据。
+
+3.2 版本后还有以下几种语法可用于插入文档:
+
+ - db.collection.insertOne():向指定集合中插入一条文档数据
+ - db.collection.insertMany():向指定集合中插入多条文档数据
+ - db.collection.insert():将单个文档或多个文档插入集合中
+
+.. code-block:: shell
+
+    #  插入单条数据
+
+    > var document = db.collection.insertOne({"a": 3})
+    > document
+    {
+            "acknowledged" : true,
+            "insertedId" : ObjectId("571a218011a82a1d94c02333")
+    }
+
+    #  插入多条数据
+    > var res = db.collection.insertMany([{"b": 3}, {'c': 4}])
+    > res
+    {
+            "acknowledged" : true,
+            "insertedIds" : [
+                    ObjectId("571a22a911a82a1d94c02337"),
+                    ObjectId("571a22a911a82a1d94c02338")
+            ]
+    }
+
+更新
+====
+MongoDB 使用 ``update()`` 和 ``save()`` 方法来更新集合中的文档。接下来让我们详细来看下两个函数的应用及其区别。
+
+update() 方法
+-------------
+``update()`` 方法用于更新已存在的文档。语法格式如下：
+
+.. code-block:: shell
+
+    db.collection.update(
+       <query>,
+       <update>,
+       {
+         upsert: <boolean>,
+         multi: <boolean>,
+         writeConcern: <document>
+       }
+    )
+
+参数说明：
+
+- query : ``update`` 的查询条件，类似 sql update 查询内 ``where`` 后面的。
+- update : ``update`` 的对象和一些更新的操作符（如 ``$`` , ``$inc`` ...）等，也可以理解为 sql update 查询内 ``set`` 后面的
+- upsert : 可选，这个参数的意思是，如果不存在 update 的记录，是否插入 ``objNew`` , ``true`` 为插入，默认是 ``false`` ，不插入。
+- multi : 可选，mongodb 默认是 ``false`` ,只更新找到的第一条记录，如果这个参数为 ``true`` ,就把按条件查出来多条记录全部更新。
+- writeConcern :可选，抛出异常的级别。
+
+我们在集合 ``col`` 中插入如下数据：
+
+.. code-block:: shell
+
+    >db.col.insert({
+        title: 'MongoDB 教程',
+        description: 'MongoDB 是一个 Nosql 数据库',
+        by: '菜鸟教程',
+        url: 'http://www.runoob.com',
+        tags: ['mongodb', 'database', 'NoSQL'],
+        likes: 100
+    })
+
+修改文档中某个字段
+-------------------
+这种类型的更新需要传递操作符和一个文档参数作为第二个更新方法的参数。
+
+接着我们通过 ``update()`` 方法来更新标题( ``title`` ):
+
+.. code-block:: shell
+
+    >db.col.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}})
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })   # 输出信息
+    > db.col.find().pretty()
+    {
+            "_id" : ObjectId("56064f89ade2f21f36b03136"),
+            "title" : "MongoDB",
+            "description" : "MongoDB 是一个 Nosql 数据库",
+            "by" : "菜鸟教程",
+            "url" : "http://www.runoob.com",
+            "tags" : [
+                    "mongodb",
+                    "database",
+                    "NoSQL"
+            ],
+            "likes" : 100
+    }
+
+可以看到标题(title)由原来的 "MongoDB 教程" 更新为了 "MongoDB"。
+
+以上语句只会修改第一条发现的文档，如果你要修改多条相同的文档，则需要设置 ``multi`` 参数为 ``true`` 。
+
+.. code-block:: shell
+
+    >db.col.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}},{multi:true})
+
+替换整个文档
+------------
+这种类型的更新会替换除主键外的所有字段。
+
+.. code-block:: shell
+
+    >db.col.update({'title':'MongoDB 教程'},{'title':'MongoDB'})
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+    > db.col.find().pretty()
+    { "_id" : ObjectId("5b9887ff3a79fe4f724ef879"), "title" : "MongoDB" }
+
+当确定是新增或者修改数据而不是替换整个文档时，就使用 ``$set`` 操作符。
+
+save() 方法
+-----------
+``save()`` 方法通过传入的文档来替换已有文档。语法格式如下：
+
+.. code-block:: shell
+
+    db.collection.save(
+       <document>,
+       {
+         writeConcern: <document>
+       }
+    )
+
+参数说明：
+
+- document : 文档数据。
+- writeConcern :可选，抛出异常的级别。
+
+实例
+
+以下实例中我们替换了 ``_id`` 为 ``56064f89ade2f21f36b03136`` 的文档数据：
+
+.. code-block:: shell
+
+    >db.col.save({
+        "_id" : ObjectId("56064f89ade2f21f36b03136"),
+        "title" : "MongoDB",
+        "description" : "MongoDB 是一个 Nosql 数据库",
+        "by" : "Runoob",
+        "url" : "http://www.runoob.com",
+        "tags" : [
+                "mongodb",
+                "NoSQL"
+        ],
+        "likes" : 110
+    })
+
+替换成功后，我们可以通过 ``find()`` 命令来查看替换后的数据
+
+.. code-block:: shell
+
+    >db.col.find().pretty()
+    {
+            "_id" : ObjectId("56064f89ade2f21f36b03136"),
+            "title" : "MongoDB",
+            "description" : "MongoDB 是一个 Nosql 数据库",
+            "by" : "Runoob",
+            "url" : "http://www.runoob.com",
+            "tags" : [
+                    "mongodb",
+                    "NoSQL"
+            ],
+            "likes" : 110
+    }
+
+更新操作符
+----------
+
+文档普通字段操作符
+^^^^^^^^^^^^^^^^^^
+
+$currentDate
+""""""""""""
+``$currentDate`` ：将字段的值设置为当前日期，字段类型可以是 ``Date`` 或 ``Timestamp`` 。默认为 ``Date`` 。
+
+语法形式：
+
+.. code-block:: shell
+
+    { $currentDate: { <field1>: <typeSpecification1>, ... } }
+
+<typeSpecification> 可以是：
+
+- ``true`` ，设置该字段的值为 ``Date`` 类型的当前日期。
+- ``{ $type: "timestamp" }`` 或 ``{ $type: "date" }`` 文档，显示指定字段类型。
+
+当字段不存在时，该操作符会增加字段到文档。
+
+.. code-block:: shell
+
+    db.users.update(
+       { _id: 1 },
+       {
+         $currentDate: {
+            lastModified: true,
+            "cancellation.date": { $type: "timestamp" } #嵌套字段设置
+         },
+         $set: {
+            status: "D",
+            "cancellation.reason": "user request"
+         }
+       }
+    )
+
+$inc
+""""
+按指定的数量增加字段的值。
+
+语法形式：
+
+.. code-block:: shell
+
+    { $inc: { <field1>: <amount1>, <field2>: <amount2>, ... } }
+
+- 该操作符可以接受正值和负值；
+- 如果字段不存在，则增加该字段；
+- 为字段指定null值，会导致错误；
+- 在单个文档中，这是一个原子操作；
+
+.. code-block:: shell
+
+    db.products.update(
+       { sku: "abc123" },
+       { $inc: { quantity: -2, "metrics.orders": 1 } }
+    )
+
+$min
+""""
+仅当指定的值小于现有字段值时才更新字段。可以比较不同类型的值。
+
+语法形式：
+
+.. code-block:: shell
+
+    { $min: { <field1>: <value1>, ... } }
+
+$max
+""""
+仅当指定的值大于现有字段值时才更新字段。
+
+语法形式：
+
+.. code-block:: shell
+
+    { $max: { <field1>: <value1>, ... } }
+
+$mul
+""""
+将字段的值乘以指定的量。
+
+语法形式：
+
+.. code-block:: shell
+
+    { $mul: { <field1>: <number1>, ... } }
+
+- 要更新的字段必须包含数字值。
+- 如果文档中不存在该字段， ``$mul`` 将创建该字段，并将该值设置为与乘数相同的数字类型的零。
+
+.. code-block:: shell
+
+    db.products.update(
+       { _id: 1 },
+       { $mul: { price: NumberDecimal("1.25"), qty: 2 } }
+    )
+
+$rename
+"""""""
+重命名字段。
+
+语法形式：
+
+.. code-block:: shell
+
+    {$rename: { <field1>: <newName1>, <field2>: <newName2>, ... } }
+
+- 操作可能不保留文档中字段的顺序；即，重命名的字段可以在文档内移动。
+- 如果文档已有一个带有 ``<newName>`` 的字段，则 ``$rename`` 运算符将删除该字段，并将指定的 ``<field>`` 重命名为 ``<newName>`` 。
+- 如果文档中不存在要重命名的字段，则 ``$rename`` 不执行任何操作（即无操作）。
+
+.. code-block:: shell
+
+    db.students.update( { _id: 1 }, { $rename: { 'nickname': 'alias', 'cell': 'mobile' } } )
+
+$set
+""""
+设置文档中字段的值。
+
+语法形式：
+
+.. code-block:: shell
+
+    { $set: { <field1>: <value1>, ... } }
+
+- 如果该字段不存在， ``$set`` 将添加具有指定值的新字段，前提是新字段不违反类型约束。
+- 如果为不存在的字段指定点路径， ``$set`` 将根据需要创建嵌入文档，以实现字段的点路径。
+- 如果指定多个字段 - 值对， ``$set`` 将更新或创建每个字段。
+
+设置顶层级字段：
+
+.. code-block:: shell
+
+    db.products.update(
+       { _id: 100 },
+       { $set:
+          {
+            quantity: 500,
+            details: { model: "14Q3", make: "xyz" },
+            tags: [ "coats", "outerwear", "clothing" ]
+          }
+       }
+    )
+
+设置嵌套文档字段：
+
+.. code-block:: shell
+
+    db.products.update(
+       { _id: 100 },
+       { $set: { "details.make": "zzz" } }
+    )
+
+设置在数组中的元素：
+
+.. code-block:: shell
+
+db.products.update(
+   { _id: 100 },
+   { $set:
+      {
+        "tags.1": "rain gear", #设置tags数组中第二个普通元素的值
+        "ratings.0.rating": 2 #设置ratings数组中第一个文档元素的rating值
+      }
+   }
+)
+
+$setOnInsert
+""""""""""""
+如果使用 ``upsert:true`` 的更新操作导致插入文档，则 ``$setOnInsert`` 将指定的值分配给文档中的字段。如果更新操作没有导致插入，则 ``$setOnInsert`` 不执行任何操作。
+
+语法形式：
+
+.. code-block:: shell
+
+    db.collection.update(
+       <query>,
+       { $setOnInsert: { <field1>: <value1>, ... } },
+       { upsert: true }
+    )
+
+.. code-block:: shell
+
+    db.products.update(
+      { _id: 1 },
+      {
+         $set: { item: "apple" },
+         $setOnInsert: { defaultQty: 100 } #如果是插入，则插入该字段
+      },
+      { upsert: true }
+    )
+
+$unset
+""""""
+``$unset`` 运算符删除特定字段。
+
+.. code-block:: shell
+
+    { $unset: { <field1>: "", ... } }
+
+- ``$unset`` 表达式中的指定值(即"")不会影响操作。
+- 如果该字段不存在，则 ``$unset`` 不执行任何操作（即无操作）。
+- 当与 ``$`` 一起使用以匹配数组元素时， ``$unset`` 将匹配元素替换为 ``null`` ，而不是从数组中删除匹配元素。此行为使数组大小和元素位置保持一致。
+
+.. code-block:: shell
+
+    db.products.update(
+       { sku: "unknown" },
+       { $unset: { quantity: "", instock: "" } }
+    )
+
+数组字段操作符
+^^^^^^^^^^^^^^
+$
+""
+位置 ``$`` 运算符表示要更新的数组中的匹配元素，而不用显式指定元素在数组中的位置。
+
+区别：
+
+- 要从读取操作中投影或返回数组元素，用 ``$`` 投影操作符；
+- 要更新数组中的所有元素，请参阅全部位置运算符 ``$[]`` ；
+- 更新与数组过滤条件匹配的所有元素，使用 ``$[<identifier>]`` ；
+
+.. code-block:: shell
+
+    { "<array>.$" : value }
+
+- 位置 ``$`` 运算符充当与查询文档匹配的第一个元素的占位符，
+- 和数组字段必须作为查询文档的一部分出现。
+
+例如：
+
+.. code-block:: shell
+
+    db.collection.update(
+       { <array>: value ... },
+       { <update operator>: { "<array>.$" : value } }
+    )
+
+更新位于数组中的普通值:
+
+.. code-block:: shell
+
+    db.students.insert([
+       { "_id" : 1, "grades" : [ 85, 80, 80 ] },
+       { "_id" : 2, "grades" : [ 88, 90, 92 ] },
+       { "_id" : 3, "grades" : [ 85, 100, 90 ] }
+    ])
+    db.students.updateOne(
+       { _id: 1, grades: 80 },
+       { $set: { "grades.$" : 82 } } #grades.$表示匹配的数组元素
+    )
+
+更新位于数组中的文档：
+
+.. code-block:: shell
+
+    {
+      _id: 4,
+      grades: [
+         { grade: 80, mean: 75, std: 8 },
+         { grade: 85, mean: 90, std: 5 },
+         { grade: 85, mean: 85, std: 8 }
+      ]
+    }
+    db.students.updateOne(
+       { _id: 4, "grades.grade": 85 },
+       { $set: { "grades.$.std" : 6 } } #grades.$表示匹配文档对象
+    )
+
+使用多个字段匹配更新嵌入式文档：
+
+.. code-block:: shell
+
+{
+  _id: 5,
+  grades: [
+     { grade: 80, mean: 75, std: 8 },
+     { grade: 85, mean: 90, std: 5 },
+     { grade: 90, mean: 85, std: 3 }
+  ]
+}
+db.students.updateOne(
+   {
+     _id: 5,
+     grades: { $elemMatch: { grade: { $lte: 90 }, mean: { $gt: 80 } } }
+   },
+   { $set: { "grades.$.std" : 6 } } #grades.$表示匹配文档对象
+)
+
+$[]
+"""
+全位置运算符 ``$[]`` 表示更新运算符应修改指定数组字段中的所有元素。
+
+语法形式：
+
+.. code-block:: shell
+
+    { <update operator>: { "<array>.$[]" : value } }
+
+https://docs.mongodb.com/manual/reference/operator/update/positional-all/#up._S_[]
+
+
+
+删除
+====
+MongoDB ``remove()`` 函数是用来移除集合中的数据。
+
+MongoDB 数据更新可以使用 ``update()`` 函数。在执行 ``remove()`` 函数前先执行 ``find()`` 命令来判断执行的条件是否正确，这是一个比较好的习惯。
+
+语法
+-----
+``remove()`` 方法的基本语法格式如下所示：
+
+.. code-block:: shell
+
+    db.collection.remove(
+       <query>,
+       {
+         justOne: <boolean>,
+         writeConcern: <document>
+       }
+    )
+
+参数说明:
+
+- query :（可选）删除的文档的条件。
+- justOne : （可选）如果设为 true 或 1，则只删除一个文档。
+- writeConcern :（可选）抛出异常的级别。
+
+如果没有指定参数，删除操作将会清空集合里的所有文档。如果要清空foo集合里的所有文档内存，可以输入以下命令：
+
+.. code-block:: shell
+
+    >db.foo.remove()
+
+.. note:: remove()操作不会删除集合，它只会删除集合中的某个文档。我们可以把它和SQL中的DELETE命令进行类比。
+
+如果要删除集合及其附带的索引数据，可以使用drop()方法：
+
+.. code-block:: shell
+
+    >db.users.drop()
+
+
+查询
+====
+MongoDB 查询文档使用 ``find()`` 方法。
+
+``find()`` 方法以非结构化的方式来显示所有文档。
+
+语法
+----
+MongoDB 查询数据的语法格式如下：
+
+.. code-block:: shell
+
+    db.collection.find(query, projection)
+
+- query ：可选，使用查询操作符指定查询条件
+- projection ：可选，使用投影操作符指定返回的键。查询时返回文档中所有键值， 只需省略该参数即可（默认省略）。
+
+如果你需要以易读的方式来读取数据，可以使用 ``pretty()`` 方法，语法格式如下：
+
+.. code-block:: shell
+
+    >db.col.find().pretty()
+
+``pretty()`` 方法以格式化的方式来显示所有文档。
+
+MongoDB 与 RDBMS Where 语句比较
+-------------------------------
+如果你熟悉常规的 ``SQL`` 数据，通过下表可以更好的理解 MongoDB 的条件语句查询：
+
++------------+------------------------+-------------------------------------------+-----------------------+
+| 操作       | 格式                   | 范例                                      | RDBMS中的类似语句     |
++============+========================+===========================================+=======================+
+| 等于       | {<key>:<value>}        | db.col.find({"by":"菜鸟教程"}).pretty()   | where by = '菜鸟教程' |
++------------+------------------------+-------------------------------------------+-----------------------+
+| 小于       | {<key>:{$lt:<value>}}  | db.col.find({"likes":{$lt:50}}).pretty()  | where likes < 50      |
++------------+------------------------+-------------------------------------------+-----------------------+
+| 小于或等于 | {<key>:{$lte:<value>}} | db.col.find({"likes":{$lte:50}}).pretty() | where likes <= 50     |
++------------+------------------------+-------------------------------------------+-----------------------+
+| 大于       | {<key>:{$gt:<value>}}  | db.col.find({"likes":{$gt:50}}).pretty()  | where likes > 50      |
++------------+------------------------+-------------------------------------------+-----------------------+
+| 大于或等于 | {<key>:{$gte:<value>}} | db.col.find({"likes":{$gte:50}}).pretty() | where likes >= 50     |
++------------+------------------------+-------------------------------------------+-----------------------+
+| 不等于     | {<key>:{$ne:<value>}}  | db.col.find({"likes":{$ne:50}}).pretty()  | where likes != 50     |
++------------+------------------------+-------------------------------------------+-----------------------+
+
+MongoDB AND 条件
+----------------
+MongoDB 的 ``find()`` 方法可以传入多个键(key)，每个键(key)以逗号隔开，即常规 SQL 的 ``AND`` 条件。
+
+语法格式如下：
+
+.. code-block:: shell
+
+    >db.col.find({key1:value1, key2:value2}).pretty()
+
+MongoDB OR 条件
+---------------
+MongoDB OR 条件语句使用了关键字 ``$or`` ,语法格式如下：
+
+.. code-block:: shell
+
+    >db.col.find(
+       {
+          $or: [
+             {key1: value1}, {key2:value2}
+          ]
+       }
+    ).pretty()
+
+AND 和 OR 联合使用
+------------------
+以下实例演示了 AND 和 OR 联合使用，类似常规 SQL 语句为： ``where likes>50 AND (by = '菜鸟教程' OR title = 'MongoDB 教程')`` ：
+
+.. code-block:: shell
+
+    >db.col.find({"likes": {$gt:50}, $or: [{"by": "菜鸟教程"},{"title": "MongoDB 教程"}]}).pretty()
+
+projection 参数的使用方法
+-------------------------
+若不指定 ``projection`` ，则默认返回所有键，指定 ``projection`` 格式如下，有两种模式
+
+.. code-block:: shell
+
+    db.collection.find(query, {title: 1, by: 1}) // inclusion模式 指定返回的键，不返回其他键
+    db.collection.find(query, {title: 0, by: 0}) // exclusion模式 指定不返回的键,返回其他键
+
+``_id`` 键默认返回，需要主动指定 ``_id:0`` 才会隐藏。
+
+两种模式不可混用（因为这样的话无法推断其他键是否应返回）
+
+.. code-block:: shell
+
+    db.collection.find(query, {title: 1, by: 0}) // 错误
+
+只能全 1 或全 0 ，除了在 ``inclusion`` 模式时可以指定 ``_id`` 为 0 。
+
+.. code-block:: shell
+
+    db.collection.find(query, {_id:0, title: 1, by: 1}) // 正确
+
+若不想指定查询条件参数 ``query`` 可以用 ``{}`` 代替，但是需要指定 ``projection`` 参数：
+
+.. code-block:: shell
+
+    querydb.collection.find({}, {title: 1})

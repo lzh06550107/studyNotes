@@ -1,0 +1,97 @@
+***
+修改器
+***
+
+修改器
+======
+和获取器相反，修改器的主要作用是对模型设置的数据对象值进行处理。
+
+修改器方法的命名规范为：
+
+**setFieldNameAttr**
+
+修改器的使用场景和读取器类似：
+
+- 时间日期字段的转换写入；
+- 集合或枚举类型的写入；
+- 数字状态字段的写入；
+- 某个字段涉及其它字段的条件或者组合写入；
+
+定义了修改器之后会在下列情况下触发：
+
+- 模型对象赋值；
+- 调用模型的 ``data`` 方法，并且第二个参数传入 ``true`` ；
+- 调用模型的 ``save`` 方法，并且传入数据；
+- 显式调用模型的 ``setAttr`` 方法；
+- 定义了该字段的自动完成；
+
+例如：
+
+.. code-block:: php
+
+	<?php
+	class User extends Model 
+	{
+	    public function setNameAttr($value)
+	    {
+	        return strtolower($value);
+	    }
+	}
+
+如下代码实际保存到数据库中的时候会转为小写
+
+.. code-block:: php
+
+	$user = new User();
+	$user->name = 'THINKPHP';
+	$user->save();
+	echo $user->name; // thinkphp
+
+也可以进行序列化字段的组装：
+
+.. code-block:: php
+
+	class User extends Model 
+	{
+		// 修改器方法的第二个参数会自动传入当前的所有数据数组。
+	    public function setSerializeAttr($value,$data)
+	    {
+	        return serialize($data);
+	    }
+	}
+
+批量修改
+========
+
+除了赋值的方式可以触发修改器外，还可以用下面的方法批量触发修改器：
+
+.. code-block:: php
+
+	$user = new User();
+	$data['name'] = 'THINKPHP';
+	$data['email'] = 'thinkphp@qq.com';
+	$user->data($data, true); // 触发修改器
+	$user->save(); // 触发修改器
+	echo $user->name; // thinkphp
+
+如果为 ``name`` 和 ``email`` 字段都定义了修改器的话，都会进行处理。
+
+或者直接使用 ``save`` 方法触发，例如：
+
+.. code-block:: php
+
+	$user = new User();
+	$data['name'] = 'THINKPHP';
+	$data['email'] = 'thinkphp@qq.com';
+	$user->save($data);
+	echo $user->name; // thinkphp
+
+.. note:: 修改器方法仅对模型的写入方法有效，调用数据库的写入方法写入无效，例如下面的方式修改器无效。
+
+.. code-block:: php
+
+	$user = new User();
+	$data['name'] = 'THINKPHP';
+	$data['email'] = 'thinkphp@qq.com';
+	$user->insert($data);
+

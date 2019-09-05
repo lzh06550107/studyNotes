@@ -1,0 +1,976 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8. 路由的正则编译 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="9. 路由的匹配与参数绑定" href="Laravel的路由—路由的匹配与参数绑定.html"/>
+        <link rel="prev" title="7. 路由" href="Laravel的路由.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. 路由的正则编译</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">8.1. 前言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">8.2. 前期准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">8.3. 路由正则匹配</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">8.3.1. 路由可选参数转换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symfony">8.3.2. Symfony 路由初始化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">8.3.3. 路由的正则编译</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>8. 路由的正则编译</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>8. 路由的正则编译<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>8.1. 前言<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>利用 <code class="docutils literal"><span class="pre">pipeline</span></code> 进行中间件的层层处理后，接下来 laravel 就会利用请求的 <code class="docutils literal"><span class="pre">url</span></code> 来寻找与其对应的路由，laravel 采用对路由注册的 <code class="docutils literal"><span class="pre">uri</span></code> 进行正则编译，然后利用 <code class="docutils literal"><span class="pre">request</span></code> 的 <code class="docutils literal"><span class="pre">url</span></code> 进行正则匹配来寻找正确的路由。</p>
+</div>
+<div class="section" id="id3">
+<h2>8.2. 前期准备<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>在上一篇文章中，我们了解了 <code class="docutils literal"><span class="pre">Pipeline</span></code> 的原理，我们知道它调用了 <code class="docutils literal"><span class="pre">dispatchToRouter()</span></code> 这个函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">sendRequestThroughRouter</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">instance</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">,</span> <span class="nv">$request</span><span class="p">);</span>
+
+    <span class="nx">Facade</span><span class="o">::</span><span class="na">clearResolvedInstance</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">);</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bootstrap</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">Pipeline</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">))</span>
+                <span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">through</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">shouldSkipMiddleware</span><span class="p">()</span> <span class="o">?</span> <span class="p">[]</span> <span class="o">:</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">)</span> <span class="c1">// 这里是全局中间件</span>
+                <span class="o">-&gt;</span><span class="na">then</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatchToRouter</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">dispatchToRouter</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">instance</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">,</span> <span class="nv">$request</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">router</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这个函数实际上利用的是 <code class="docutils literal"><span class="pre">Router</span></code> 的 <code class="docutils literal"><span class="pre">dispatch</span></code> ，这个函数的任务是进行路由匹配，并且调用路由绑定的控制器或者闭包函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">dispatch</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentRequest</span> <span class="o">=</span> <span class="nv">$request</span><span class="p">;</span> <span class="c1">// 传递请求对象给路由管理对象</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatchToRoute</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span> <span class="c1">// 分发请求到路由实例并返回响应</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">dispatchToRoute</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runRoute</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">findRoute</span><span class="p">(</span><span class="nv">$request</span><span class="p">));</span> <span class="c1">// 进入路由项正则编译</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">findRoute</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 根据请求对象找到匹配的路由</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">current</span> <span class="o">=</span> <span class="nv">$route</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">routes</span><span class="o">-&gt;</span><span class="na">match</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+    <span class="c1">// 把匹配路由对象记录到容器中</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">instance</span><span class="p">(</span><span class="nx">Route</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nv">$route</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$route</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>寻找路由的任务由 <code class="docutils literal"><span class="pre">RouteCollection</span></code> 负责，这个函数负责匹配路由，并且把 <code class="docutils literal"><span class="pre">request</span></code> 的 <code class="docutils literal"><span class="pre">url</span></code> 参数绑定到路由中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">match</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$routes</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getMethod</span><span class="p">());</span> <span class="c1">// 获取请求方法对应的所有路由项</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 首先，我们将看看是否可以为此当前请求方法找到匹配的路由。</span>
+<span class="sd">     * 如果我们可以，那么，我们可以返回它，以便消费者可以调用它。 否则我们将检查另一个动词的路线。</span>
+<span class="sd">     */</span>
+    <span class="nv">$route</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">matchAgainstRoutes</span><span class="p">(</span><span class="nv">$routes</span><span class="p">,</span> <span class="nv">$request</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">is_null</span><span class="p">(</span><span class="nv">$route</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nv">$others</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">checkForAlternateVerbs</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$others</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRouteForMethods</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$others</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">NotFoundHttpException</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">matchAgainstRoutes</span><span class="p">(</span><span class="k">array</span> <span class="nv">$routes</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$includingMethod</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">list</span><span class="p">(</span><span class="nv">$fallbacks</span><span class="p">,</span> <span class="nv">$routes</span><span class="p">)</span> <span class="o">=</span> <span class="nx">collect</span><span class="p">(</span><span class="nv">$routes</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">partition</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$route</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">isFallback</span><span class="p">;</span>
+    <span class="p">});</span>
+    <span class="c1">// 这里先分类在合并是什么意思？？</span>
+    <span class="k">return</span> <span class="nv">$routes</span><span class="o">-&gt;</span><span class="na">merge</span><span class="p">(</span><span class="nv">$fallbacks</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$includingMethod</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$value</span><span class="o">-&gt;</span><span class="na">matches</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$includingMethod</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>8.3. 路由正则匹配<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>如何去寻找请求 <code class="docutils literal"><span class="pre">request</span></code> 想要调用的路由呢？ laravel 首先对路由进行正则编译，得到路由的正则匹配串，然后利用请求的 <code class="docutils literal"><span class="pre">url</span></code> 尝试去匹配，如果匹配成功，那么就会选定该路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">matches</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$includingMethod</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">compileRoute</span><span class="p">();</span>
+
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getValidators</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$validator</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$includingMethod</span> <span class="o">&amp;&amp;</span> <span class="nv">$validator</span> <span class="nx">instanceof</span> <span class="nx">MethodValidator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$validator</span><span class="o">-&gt;</span><span class="na">matches</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="nv">$request</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">compileRoute</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">compiled</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">compiled</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nx">RouteCompiler</span><span class="p">(</span><span class="nv">$this</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">compiled</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看出，路由的正则编译由 <code class="docutils literal"><span class="pre">RouteCompiler</span></code> 类专门负责：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">RouteCompiler</span>
+<span class="p">{</span>
+     <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$route</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span> <span class="o">=</span> <span class="nv">$route</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">compile</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$optionals</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getOptionalParameters</span><span class="p">();</span>
+
+        <span class="nv">$uri</span> <span class="o">=</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="s1">&#39;/\{(\w+?)\?\}/&#39;</span><span class="p">,</span> <span class="s1">&#39;{$1}&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span><span class="o">-&gt;</span><span class="na">uri</span><span class="p">());</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="k">new</span> <span class="nx">SymfonyRoute</span><span class="p">(</span><span class="nv">$uri</span><span class="p">,</span> <span class="nv">$optionals</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span><span class="o">-&gt;</span><span class="na">wheres</span><span class="p">,</span> <span class="p">[],</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span><span class="o">-&gt;</span><span class="na">domain</span><span class="p">()</span> <span class="o">?:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看出， laravel 真正的正则编译是重用 <code class="docutils literal"><span class="pre">symfony</span></code> 框架的，但是在利用 <code class="docutils literal"><span class="pre">symfony</span></code> 进行正则编译之前， laravel 先对路由的 <code class="docutils literal"><span class="pre">uri</span></code> 进行了一些处理，以适应 <code class="docutils literal"><span class="pre">symfony</span></code> 的要求。</p>
+<div class="section" id="id5">
+<h3>8.3.1. 路由可选参数转换<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>对于 laravel 来说，可以选择某个路由 <code class="docutils literal"><span class="pre">url</span></code> 的参数是可选的，通常来说，这种可选参数都有默认值。 laravel 利用 <code class="docutils literal"><span class="pre">?</span></code> 来表示可选参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$router</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;{foo?}/{baz?}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span> <span class="o">=</span> <span class="s1">&#39;taylor&#39;</span><span class="p">,</span> <span class="nv">$age</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span> <span class="p">{</span>
+     <span class="k">return</span> <span class="nv">$name</span><span class="o">.</span><span class="nv">$age</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>但是对于 <code class="docutils literal"><span class="pre">symfony</span></code> 来说， <code class="docutils literal"><span class="pre">?</span></code> 没有任何特殊意义， <code class="docutils literal"><span class="pre">symfony</span></code> 利用 <code class="docutils literal"><span class="pre">SymfonyRoute</span></code> 类进行路由初始化，并把第二个参数作为可选参数，因此 laravel 需要把可选参数提取出来，然后赋给 <code class="docutils literal"><span class="pre">SymfonyRoute</span></code> 构造函数。</p>
+<p>可选参数的提取由 <code class="docutils literal"><span class="pre">getOptionalParameters</span></code> 负责：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getOptionalParameters</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nb">preg_match_all</span><span class="p">(</span><span class="s1">&#39;/\{(\w+?)\?\}/&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span><span class="o">-&gt;</span><span class="na">uri</span><span class="p">(),</span> <span class="nv">$matches</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">?</span> <span class="nb">array_fill_keys</span><span class="p">(</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="k">null</span><span class="p">)</span> <span class="o">:</span> <span class="p">[];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">preg_match_all</span></code> 函数用于进行正则表达式全局匹配，成功返回整个模式匹配的次数（可能为零），如果出错返回 <code class="docutils literal"><span class="pre">FALSE</span></code> 。</p>
+</div>
+<p>默认排序方式为 <code class="docutils literal"><span class="pre">PREG_PATTERN_ORDER</span></code> ,结果排序为 <code class="docutils literal"><span class="pre">$matches[0]</span></code> 保存完整模式的所有匹配,  <code class="docutils literal"><span class="pre">$matches[1]</span></code> 保存第一个子组的所有匹配，以此类推。</p>
+<p>若排序方式为 <code class="docutils literal"><span class="pre">PREG_SET_ORDER</span></code> ,结果排序为 <code class="docutils literal"><span class="pre">$matches[0]</span></code> 包含第一次匹配得到的所有匹配(包含子组)， <code class="docutils literal"><span class="pre">$matches[1]</span></code> 是包含第二次匹配到的所有匹配(包含子组)的数组，以此类推。</p>
+<p>以 <code class="docutils literal"><span class="pre">{foo?}/{baz?}</span></code> 为例，得到的 <code class="docutils literal"><span class="pre">matches[0]</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+    <span class="mi">0</span> <span class="o">=</span> <span class="s1">&#39;{foo?}&#39;</span><span class="p">,</span>
+    <span class="mi">1</span> <span class="o">=</span> <span class="s1">&#39;{baz?}&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>得到的结果 <code class="docutils literal"><span class="pre">matches</span></code> 中 <code class="docutils literal"><span class="pre">matches[1]</span></code> 是被匹配上的字符串，以 <code class="docutils literal"><span class="pre">{foo?}/{baz?}</span></code> 为例，得到的 <code class="docutils literal"><span class="pre">matches[1]</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+    <span class="mi">0</span> <span class="o">=</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span>
+    <span class="mi">1</span> <span class="o">=</span> <span class="s1">&#39;baz&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">array_fill_keys</span></code> 函数负责使用指定的键和值填充数组，例如上例中就可以得到：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">optionals</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+    <span class="nx">foo</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span>
+    <span class="nx">baz</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>得到可选参数的数组 <code class="docutils literal"><span class="pre">optionals</span></code> 后，就要将路由的 <code class="docutils literal"><span class="pre">uri</span></code> 中 <code class="docutils literal"><span class="pre">?</span></code> 替换掉，这也就是 <code class="docutils literal"><span class="pre">preg_replace</span></code> 的作用，以 <code class="docutils literal"><span class="pre">{foo?}/{baz?}</span></code> 为例，最后得到的替换结果为 <code class="docutils literal"><span class="pre">{foo}/{baz}</span></code> 。</p>
+</div>
+<div class="section" id="symfony">
+<h3>8.3.2. Symfony 路由初始化<a class="headerlink" href="#symfony" title="永久链接至标题">¶</a></h3>
+<p>在 <code class="docutils literal"><span class="pre">symfony</span></code> 的路由初始化中，由很多参数：</p>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">path</span></code> 是路由的 <code class="docutils literal"><span class="pre">uri</span></code> ；</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">defaults</span></code> 是路由可选参数；</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">requirements</span></code> 是路由的参数正则约束；</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">options</span></code> 路由的选项参数，例如路由正则编译类等；</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">host</span></code> 是路由的主域；</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">schenes</span></code> 是 web 的协议，例如 <code class="docutils literal"><span class="pre">http</span></code> ， <code class="docutils literal"><span class="pre">https</span></code> ；</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">methods</span></code> 是调用的方法，例如 <code class="docutils literal"><span class="pre">get</span></code> 、 <code class="docutils literal"><span class="pre">post</span></code> ；</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">condition</span></code> ；</p>
+<blockquote>
+<div><div class="highlight-php"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<p>&lt;?php
+class Route implements Serializable
+{</p>
+<blockquote>
+<div><p>public function __construct($path, array $defaults = array(), array $requirements = array(), array $options = array(), $host = '', $schemes = array(), $methods = array(), $condition = '')
+{</p>
+<blockquote>
+<div><p>$this-&gt;setPath($path);
+$this-&gt;setDefaults($defaults);
+$this-&gt;setRequirements($requirements);
+$this-&gt;setOptions($options);
+$this-&gt;setHost($host);
+$this-&gt;setSchemes($schemes);
+$this-&gt;setMethods($methods);
+$this-&gt;setCondition($condition);</p>
+</div></blockquote>
+<p>}</p>
+<p>public function setOptions(array $options)
+{</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>$this-&gt;options = array(</dt>
+<dd><p class="first last">'compiler_class' =&gt; 'Symfony\Component\Routing\RouteCompiler',</p>
+</dd>
+</dl>
+<p>);</p>
+<p>return $this-&gt;addOptions($options);</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</li>
+</ul>
+<p>可以看出， laravel 初始化路由的时候，分别初始化了 <code class="docutils literal"><span class="pre">path</span></code> 、 <code class="docutils literal"><span class="pre">defaults</span></code> 、 <code class="docutils literal"><span class="pre">requirements</span></code> 、 <code class="docutils literal"><span class="pre">host</span></code> ，其余都是默认值。其中 <code class="docutils literal"><span class="pre">host</span></code> 是路由的 <code class="docutils literal"><span class="pre">domain</span></code> 去除 <code class="docutils literal"><span class="pre">http</span></code> 、 <code class="docutils literal"><span class="pre">https</span></code> 之后的主域。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">domain</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">])</span>
+            <span class="o">?</span> <span class="nb">str_replace</span><span class="p">([</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="s1">&#39;https://&#39;</span><span class="p">],</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">])</span> <span class="o">:</span> <span class="k">null</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>8.3.3. 路由的正则编译<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>路由的编译由 <code class="docutils literal"><span class="pre">symfony</span></code> 的 <code class="docutils literal"><span class="pre">route</span></code> 类完成：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">compile</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">null</span> <span class="o">!==</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">compiled</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">compiled</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$class</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getOption</span><span class="p">(</span><span class="s1">&#39;compiler_class&#39;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">compiled</span> <span class="o">=</span> <span class="nv">$class</span><span class="o">::</span><span class="na">compile</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">compiler_class</span></code> 是初始化的时候提供的类 <code class="docutils literal"><span class="pre">Symfony\\Component\\Routing\\RouteCompiler</span></code> 。</p>
+<p>下面是就是路由编译的主要功能实现：</p>
+<div class="section" id="compile">
+<h4>8.3.3.1. compile 函数<a class="headerlink" href="#compile" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">RouteCompiler</span> <span class="k">implements</span> <span class="nx">RouteCompilerInterface</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">compile</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$hostVariables</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+        <span class="nv">$variables</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+        <span class="nv">$hostRegex</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+        <span class="nv">$hostTokens</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;&#39;</span> <span class="o">!==</span> <span class="nv">$host</span> <span class="o">=</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">getHost</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nv">$result</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">compilePattern</span><span class="p">(</span><span class="nv">$route</span><span class="p">,</span> <span class="nv">$host</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+
+            <span class="nv">$hostVariables</span> <span class="o">=</span> <span class="nv">$result</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">];</span>
+            <span class="nv">$variables</span> <span class="o">=</span> <span class="nv">$hostVariables</span><span class="p">;</span>
+
+            <span class="nv">$hostTokens</span> <span class="o">=</span> <span class="nv">$result</span><span class="p">[</span><span class="s1">&#39;tokens&#39;</span><span class="p">];</span>
+            <span class="nv">$hostRegex</span> <span class="o">=</span> <span class="nv">$result</span><span class="p">[</span><span class="s1">&#39;regex&#39;</span><span class="p">];</span>
+        <span class="p">}</span>
+
+        <span class="nv">$path</span> <span class="o">=</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">getPath</span><span class="p">();</span>
+
+        <span class="nv">$result</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">compilePattern</span><span class="p">(</span><span class="nv">$route</span><span class="p">,</span> <span class="nv">$path</span><span class="p">,</span> <span class="k">false</span><span class="p">);</span>
+
+        <span class="nv">$staticPrefix</span> <span class="o">=</span> <span class="nv">$result</span><span class="p">[</span><span class="s1">&#39;staticPrefix&#39;</span><span class="p">];</span>
+
+        <span class="nv">$pathVariables</span> <span class="o">=</span> <span class="nv">$result</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">];</span>
+
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$pathVariables</span> <span class="k">as</span> <span class="nv">$pathParam</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;_fragment&#39;</span> <span class="o">===</span> <span class="nv">$pathParam</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">\InvalidArgumentException</span><span class="p">(</span><span class="nb">sprintf</span><span class="p">(</span><span class="s1">&#39;Route pattern &quot;%s&quot; cannot contain &quot;_fragment&quot; as a path parameter.&#39;</span><span class="p">,</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">getPath</span><span class="p">()));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nv">$variables</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$variables</span><span class="p">,</span> <span class="nv">$pathVariables</span><span class="p">);</span>
+
+        <span class="nv">$tokens</span> <span class="o">=</span> <span class="nv">$result</span><span class="p">[</span><span class="s1">&#39;tokens&#39;</span><span class="p">];</span>
+        <span class="nv">$regex</span> <span class="o">=</span> <span class="nv">$result</span><span class="p">[</span><span class="s1">&#39;regex&#39;</span><span class="p">];</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">CompiledRoute</span><span class="p">(</span>
+            <span class="nv">$staticPrefix</span><span class="p">,</span>
+            <span class="nv">$regex</span><span class="p">,</span>
+            <span class="nv">$tokens</span><span class="p">,</span>
+            <span class="nv">$pathVariables</span><span class="p">,</span>
+            <span class="nv">$hostRegex</span><span class="p">,</span>
+            <span class="nv">$hostTokens</span><span class="p">,</span>
+            <span class="nv">$hostVariables</span><span class="p">,</span>
+            <span class="nb">array_unique</span><span class="p">(</span><span class="nv">$variables</span><span class="p">)</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看出，路由的正则编译由两个部分构成：主域的正则编译与 <code class="docutils literal"><span class="pre">uri</span></code> 的正则编译。这两个部分的编译功能由函数 <code class="docutils literal"><span class="pre">compilePattern</span></code> 负责，这个函数会有返回三种数据结果，以 <code class="docutils literal"><span class="pre">/foo/{bar}</span></code> 为例：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">variables</span></code> 代表正则匹配的路由参数,如 <code class="docutils literal"><span class="pre">bar</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">tokens</span></code> 代表正则匹配的普通路由字符串,如 <code class="docutils literal"><span class="pre">foo</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">regex</span></code> 代表路由匹配的正则表达式结果；</li>
+<li>有时候也会有 <code class="docutils literal"><span class="pre">$staticPrefix</span></code> ,这个是路由 <code class="docutils literal"><span class="pre">url</span></code> 前没有路由参数的字符串前缀，如 <code class="docutils literal"><span class="pre">/foo/</span></code> ；</li>
+</ul>
+</div>
+<div class="section" id="compilepattern">
+<h4>8.3.3.2. compilePattern 函数<a class="headerlink" href="#compilepattern" title="永久链接至标题">¶</a></h4>
+<p>由于 <code class="docutils literal"><span class="pre">symfony</span></code> 原始的正则编译稍微复杂，本文剔除了一些处理 <code class="docutils literal"><span class="pre">utf8</span></code> 和异常处理的代码，特意挑选计算正则表达式的主干代码，如下：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">private</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">compilePattern</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">,</span> <span class="nv">$pattern</span><span class="p">,</span> <span class="nv">$isHost</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$tokens</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="nv">$variables</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="nv">$matches</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="nv">$pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="nv">$defaultSeparator</span> <span class="o">=</span> <span class="nv">$isHost</span> <span class="o">?</span> <span class="s1">&#39;.&#39;</span> <span class="o">:</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+
+    <span class="nb">preg_match_all</span><span class="p">(</span><span class="s1">&#39;#\{\w+\}#&#39;</span><span class="p">,</span> <span class="nv">$pattern</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">,</span> <span class="nx">PREG_OFFSET_CAPTURE</span> <span class="o">|</span> <span class="nx">PREG_SET_ORDER</span><span class="p">);</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$matches</span> <span class="k">as</span> <span class="nv">$match</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$varName</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$match</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="nv">$precedingText</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$pattern</span><span class="p">,</span> <span class="nv">$pos</span><span class="p">,</span> <span class="nv">$match</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nv">$pos</span><span class="p">);</span>
+        <span class="nv">$pos</span> <span class="o">=</span> <span class="nv">$match</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$match</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">strlen</span><span class="p">(</span><span class="nv">$precedingText</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nv">$precedingChar</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nv">$precedingChar</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$precedingText</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nv">$isSeparator</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="o">!==</span> <span class="nv">$precedingChar</span> <span class="o">&amp;&amp;</span> <span class="k">false</span> <span class="o">!==</span> <span class="nb">strpos</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">SEPARATORS</span><span class="p">,</span> <span class="nv">$precedingChar</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$isSeparator</span> <span class="o">&amp;&amp;</span> <span class="nv">$precedingText</span> <span class="o">!==</span> <span class="nv">$precedingChar</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$tokens</span><span class="p">[]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$precedingText</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="nb">strlen</span><span class="p">(</span><span class="nv">$precedingChar</span><span class="p">)));</span>
+        <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="o">!</span><span class="nv">$isSeparator</span> <span class="o">&amp;&amp;</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$precedingText</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$tokens</span><span class="p">[]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="nv">$precedingText</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nv">$regexp</span> <span class="o">=</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">getRequirement</span><span class="p">(</span><span class="nv">$varName</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">null</span> <span class="o">===</span> <span class="nv">$regexp</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$followingPattern</span> <span class="o">=</span> <span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$pattern</span><span class="p">,</span> <span class="nv">$pos</span><span class="p">);</span>
+
+            <span class="nv">$nextSeparator</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">findNextSeparator</span><span class="p">(</span><span class="nv">$followingPattern</span><span class="p">,</span> <span class="nv">$useUtf8</span><span class="p">);</span>
+            <span class="nv">$regexp</span> <span class="o">=</span> <span class="nb">sprintf</span><span class="p">(</span>
+                <span class="s1">&#39;[^%s%s]+&#39;</span><span class="p">,</span>
+                <span class="nb">preg_quote</span><span class="p">(</span><span class="nv">$defaultSeparator</span><span class="p">,</span> <span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="p">),</span>
+                <span class="nv">$defaultSeparator</span> <span class="o">!==</span> <span class="nv">$nextSeparator</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;&#39;</span> <span class="o">!==</span> <span class="nv">$nextSeparator</span> <span class="o">?</span> <span class="nb">preg_quote</span><span class="p">(</span><span class="nv">$nextSeparator</span><span class="p">,</span> <span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="p">)</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span>
+            <span class="p">);</span>
+            <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;&#39;</span> <span class="o">!==</span> <span class="nv">$nextSeparator</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;#^\{\w+\}#&#39;</span><span class="p">,</span> <span class="nv">$followingPattern</span><span class="p">))</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span> <span class="o">===</span> <span class="nv">$followingPattern</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nv">$regexp</span> <span class="o">.=</span> <span class="s1">&#39;+&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nv">$tokens</span><span class="p">[]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;variable&#39;</span><span class="p">,</span> <span class="nv">$isSeparator</span> <span class="o">?</span> <span class="nv">$precedingChar</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$regexp</span><span class="p">,</span> <span class="nv">$varName</span><span class="p">);</span>
+        <span class="nv">$variables</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$varName</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$pos</span> <span class="o">&lt;</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$pattern</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">$tokens</span><span class="p">[]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$pattern</span><span class="p">,</span> <span class="nv">$pos</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="c1">// find the first optional token</span>
+    <span class="nv">$firstOptional</span> <span class="o">=</span> <span class="nx">PHP_INT_MAX</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$isHost</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nv">$i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$token</span> <span class="o">=</span> <span class="nv">$tokens</span><span class="p">[</span><span class="nv">$i</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;variable&#39;</span> <span class="o">===</span> <span class="nv">$token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">hasDefault</span><span class="p">(</span><span class="nv">$token</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span> <span class="p">{</span>
+                <span class="nv">$firstOptional</span> <span class="o">=</span> <span class="nv">$i</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// compute the matching regexp</span>
+    <span class="nv">$regexp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$nbToken</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">);</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$nbToken</span><span class="p">;</span> <span class="o">++</span><span class="nv">$i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$regexp</span> <span class="o">.=</span> <span class="nx">self</span><span class="o">::</span><span class="na">computeRegexp</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">,</span> <span class="nv">$i</span><span class="p">,</span> <span class="nv">$firstOptional</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nv">$regexp</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="o">.</span><span class="s1">&#39;^&#39;</span><span class="o">.</span><span class="nv">$regexp</span><span class="o">.</span><span class="s1">&#39;$&#39;</span><span class="o">.</span><span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="o">.</span><span class="s1">&#39;s&#39;</span><span class="o">.</span><span class="p">(</span><span class="nv">$isHost</span> <span class="o">?</span> <span class="s1">&#39;i&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;staticPrefix&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text&#39;</span> <span class="o">===</span> <span class="nv">$tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">?</span> <span class="nv">$tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;regex&#39;</span> <span class="o">=&gt;</span> <span class="nv">$regexp</span><span class="p">,</span>
+        <span class="s1">&#39;tokens&#39;</span> <span class="o">=&gt;</span> <span class="nb">array_reverse</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">),</span>
+        <span class="s1">&#39;variables&#39;</span> <span class="o">=&gt;</span> <span class="nv">$variables</span><span class="p">,</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>下面本文将以 <code class="docutils literal"><span class="pre">prefix/{foo}/{baz}.{ext}/tail</span></code> 为例，来详细讲一下路由 <code class="docutils literal"><span class="pre">uri</span></code> 的正则编译过程。</p>
+</div>
+<div class="section" id="preg-match-all">
+<h4>8.3.3.3. preg_match_all 全匹配<a class="headerlink" href="#preg-match-all" title="永久链接至标题">¶</a></h4>
+<p>由于 <code class="docutils literal"><span class="pre">preg_match_all</span></code> 使用了 <code class="docutils literal"><span class="pre">PREG_SET_ORDER</span></code> ,因此结果数组 <code class="docutils literal"><span class="pre">matches</span></code> 中每一个元素都是一次匹配的结果，本例中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$matches</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+    <span class="mi">0</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+            <span class="mi">0</span> <span class="o">=</span> <span class="s2">&quot;{foo}&quot;</span><span class="p">,</span>
+            <span class="mi">1</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="mi">1</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+            <span class="mi">0</span> <span class="o">=</span> <span class="s2">&quot;{baz}&quot;</span><span class="p">,</span>
+            <span class="mi">1</span> <span class="o">=</span> <span class="mi">14</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="mi">2</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+            <span class="mi">0</span> <span class="o">=</span> <span class="s2">&quot;{ext}&quot;</span><span class="p">,</span>
+            <span class="mi">1</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>接下来，程序会用循环来分别处理各个匹配的结果。</p>
+</div>
+<div class="section" id="id7">
+<h4>8.3.3.4. 变量<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<p>每个匹配结果都会先计算变量: <code class="docutils literal"><span class="pre">varName</span></code> 、 <code class="docutils literal"><span class="pre">precedingText</span></code> 、 <code class="docutils literal"><span class="pre">precedingChar</span></code> 、 <code class="docutils literal"><span class="pre">isSeparator</span></code></p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">varName</span></code> 匹配结果会将路由参数提取出来，本例中： <code class="docutils literal"><span class="pre">foo</span></code> 、 <code class="docutils literal"><span class="pre">baz</span></code> 、 <code class="docutils literal"><span class="pre">ext</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">precedingText</span></code> 是两个路由参数之间的字符串，本例中：<code class="docutils literal"><span class="pre">prefix/</span></code> 、 <code class="docutils literal"><span class="pre">/</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">precedingChar</span></code> 是每个路由参数之前的字符，也就是 <code class="docutils literal"><span class="pre">precedingText</span></code> 的最后一个字符,本例中： <code class="docutils literal"><span class="pre">/</span></code> 、 <code class="docutils literal"><span class="pre">/</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">isSeparator</span></code> 判断 <code class="docutils literal"><span class="pre">precedingChar</span></code> 是否是 <code class="docutils literal"><span class="pre">url</span></code> 的间隔符，本例中： <code class="docutils literal"><span class="pre">true</span></code> 、 <code class="docutils literal"><span class="pre">true</span></code> 、 <code class="docutils literal"><span class="pre">true</span></code> ；</li>
+</ul>
+</div>
+<div class="section" id="tokens-text">
+<h4>8.3.3.5. tokens-text<a class="headerlink" href="#tokens-text" title="永久链接至标题">¶</a></h4>
+<p>将 <code class="docutils literal"><span class="pre">precedingText</span></code> 记录进 <code class="docutils literal"><span class="pre">tokens</span></code> 数组， <code class="docutils literal"><span class="pre">key</span></code> 为 <code class="docutils literal"><span class="pre">text</span></code> 。 第一次循环， <code class="docutils literal"><span class="pre">tokens</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">tokens</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+    <span class="mi">0</span> <span class="o">=</span> <span class="nx">text</span><span class="p">,</span>
+    <span class="mi">1</span> <span class="o">=</span> <span class="nx">prefix</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>第二次循环与第三次循环由于 <code class="docutils literal"><span class="pre">precedingText</span> <span class="pre">==</span> <span class="pre">precedingChar</span></code> ，所以并不会记录。</p>
+</div>
+<div class="section" id="regexp">
+<h4>8.3.3.6. 构建 regexp<a class="headerlink" href="#regexp" title="永久链接至标题">¶</a></h4>
+<p>若在路由定义的过程中利用 <code class="docutils literal"><span class="pre">where</span></code> 属性或者 <code class="docutils literal"><span class="pre">pattern</span></code> 为路由的参数设置正则约束，那么此时就会将约束规则赋给 <code class="docutils literal"><span class="pre">regexp</span></code> ，否则就会启用构建 <code class="docutils literal"><span class="pre">regexp</span></code> 的过程：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$followingPattern</span> <span class="o">=</span> <span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$pattern</span><span class="p">,</span> <span class="nv">$pos</span><span class="p">);</span>
+<span class="nv">$nextSeparator</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">findNextSeparator</span><span class="p">(</span><span class="nv">$followingPattern</span><span class="p">,</span> <span class="nv">$useUtf8</span><span class="p">);</span>
+
+<span class="nv">$regexp</span> <span class="o">=</span> <span class="nb">sprintf</span><span class="p">(</span>
+            <span class="s1">&#39;[^%s%s]+&#39;</span><span class="p">,</span>
+            <span class="nb">preg_quote</span><span class="p">(</span><span class="nv">$defaultSeparator</span><span class="p">,</span> <span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="p">),</span>
+            <span class="nv">$defaultSeparator</span> <span class="o">!==</span> <span class="nv">$nextSeparator</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;&#39;</span> <span class="o">!==</span> <span class="nv">$nextSeparator</span> <span class="o">?</span> <span class="nb">preg_quote</span><span class="p">(</span><span class="nv">$nextSeparator</span><span class="p">,</span> <span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="p">)</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span>
+<span class="p">);</span>
+
+<span class="k">if</span> <span class="p">((</span><span class="s1">&#39;&#39;</span> <span class="o">!==</span> <span class="nv">$nextSeparator</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;#^\{\w+\}#&#39;</span><span class="p">,</span> <span class="nv">$followingPattern</span><span class="p">))</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span> <span class="o">===</span> <span class="nv">$followingPattern</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$regexp</span> <span class="o">.=</span> <span class="s1">&#39;+&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>构建 regexp 有两个部分，</p>
+<ul class="simple">
+<li>寻找 nextSeparator ：</li>
+</ul>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">private</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">findNextSeparator</span><span class="p">(</span><span class="nv">$pattern</span><span class="p">,</span> <span class="nv">$useUtf8</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;&#39;</span> <span class="o">==</span> <span class="nv">$pattern</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;&#39;</span> <span class="o">===</span> <span class="nv">$pattern</span> <span class="o">=</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="s1">&#39;#\{\w+\}#&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$pattern</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">false</span> <span class="o">!==</span> <span class="nb">strpos</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">SEPARATORS</span><span class="p">,</span> <span class="nv">$pattern</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$pattern</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这个函数的意义在于为路由的 <code class="docutils literal"><span class="pre">uri</span></code> 的路由参数寻找非默认间隔符，例如，路由可以这样设置 <code class="docutils literal"><span class="pre">uri</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">/</span><span class="p">{</span><span class="nx">baz</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="nx">ext</span><span class="p">}</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>默认的间隔符就是 <code class="docutils literal"><span class="pre">/</span></code> ，如果不设置非默认间隔符的时候，那么 <code class="docutils literal"><span class="pre">regexp</span> <span class="pre">=</span> <span class="pre">[^/]</span></code> ， <code class="docutils literal"><span class="pre">mobile.html</span></code> 这样的请求就会被 <code class="docutils literal"><span class="pre">{baz}</span></code> 这个参数全部匹配到， <code class="docutils literal"><span class="pre">{ext}</span></code> 就没有任何参数来对应。设置了非默认间隔符后 <code class="docutils literal"><span class="pre">regexp</span> <span class="pre">=</span> <span class="pre">[^/.]</span></code> ， <code class="docutils literal"><span class="pre">baz</span></code> 就会匹配 <code class="docutils literal"><span class="pre">mobile</span></code> ， <code class="docutils literal"><span class="pre">ext</span></code> 就会匹配 <code class="docutils literal"><span class="pre">html</span></code> 。</p>
+<ul class="simple">
+<li>侵占型正则表达式</li>
+</ul>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">((</span><span class="s1">&#39;&#39;</span> <span class="o">!==</span> <span class="nv">$nextSeparator</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;#^\{\w+\}#&#39;</span><span class="p">,</span> <span class="nv">$followingPattern</span><span class="p">))</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span> <span class="o">===</span> <span class="nv">$followingPattern</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$regexp</span> <span class="o">.=</span> <span class="s1">&#39;+&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>为了减少贪婪型正则表达式的回溯导致的性能浪费，当后续字符串已经结束或者不存在 <code class="docutils literal"><span class="pre">/{x}{y}</span></code> 这样情况的时候，程序将贪婪型正则表达式改为侵占型正则表达式。有关正则表达式的模式请查看： <a class="reference external" href="http://blog.csdn.net/u014762221/article/details/68953155">正则表达式之 贪婪与非贪婪模式详解（概述）</a></p>
+</div>
+<div class="section" id="tokens-variable">
+<h4>8.3.3.7. tokens-variable<a class="headerlink" href="#tokens-variable" title="永久链接至标题">¶</a></h4>
+<p>获取路由参数和正则表达式之后，就要更新 <code class="docutils literal"><span class="pre">tokens</span></code> ，分别将 <code class="docutils literal"><span class="pre">isSeparator</span></code> ，  <code class="docutils literal"><span class="pre">regexp</span></code> ， <code class="docutils literal"><span class="pre">varName</span></code> 更新到结果数组中。</p>
+<p>以 <code class="docutils literal"><span class="pre">prefix/{foo}/{baz}.{ext}/tail</span></code> 为例， <code class="docutils literal"><span class="pre">$tokens</span></code> 在各个循环时值为：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$tokens</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+    <span class="mi">0</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="nx">‘text’</span><span class="p">,</span>
+        <span class="mi">1</span> <span class="o">=</span> <span class="s1">&#39;/prefix&#39;</span>
+    <span class="p">)</span>
+    <span class="mi">1</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="nx">‘variable’</span><span class="p">,</span>
+        <span class="mi">1</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="nx">‘</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="nx">’</span><span class="p">,</span>
+        <span class="mi">1</span> <span class="o">=</span> <span class="s1">&#39;foo&#39;</span>
+    <span class="p">)</span><span class="c1">//第一次循环结束</span>
+    <span class="mi">2</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="nx">‘variable’</span><span class="p">,</span>
+        <span class="mi">1</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="nx">‘</span><span class="p">[</span><span class="o">^/</span><span class="nx">\</span><span class="o">.</span><span class="p">]</span><span class="o">++</span><span class="nx">’</span><span class="p">,</span>
+        <span class="mi">1</span> <span class="o">=</span> <span class="s1">&#39;baz&#39;</span>
+    <span class="p">)</span><span class="c1">//第二次循环结束</span>
+    <span class="mi">3</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="nx">‘variable’</span><span class="p">,</span>
+        <span class="mi">1</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="nx">‘</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="nx">’</span><span class="p">,</span>
+        <span class="mi">1</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span>
+    <span class="p">)</span><span class="c1">//循环结束</span>
+    <span class="mi">4</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="o">=</span> <span class="nx">‘text’</span><span class="p">,</span>
+        <span class="mi">1</span> <span class="o">=</span> <span class="s1">&#39;/tail&#39;</span>
+    <span class="p">)</span><span class="c1">// 循环外</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h4>8.3.3.8. 默认路由参数<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<p>接下来就要计算首个默认路由参数在整个路由 <code class="docutils literal"><span class="pre">url</span></code> 的位置，以便在生成正则表达式中使用：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$firstOptional</span> <span class="o">=</span> <span class="nx">PHP_INT_MAX</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$isHost</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nv">$i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$token</span> <span class="o">=</span> <span class="nv">$tokens</span><span class="p">[</span><span class="nv">$i</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;variable&#39;</span> <span class="o">===</span> <span class="nv">$token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">hasDefault</span><span class="p">(</span><span class="nv">$token</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="nv">$firstOptional</span> <span class="o">=</span> <span class="nv">$i</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h4>8.3.3.9. 计算正则表达式<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<p>所有的 <code class="docutils literal"><span class="pre">tokens</span></code> 数组都构建完毕，接下来就需要利用这个数组来构建正则表达式了。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$regexp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$nbToken</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">);</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$nbToken</span><span class="p">;</span> <span class="o">++</span><span class="nv">$i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$regexp</span> <span class="o">.=</span> <span class="nx">self</span><span class="o">::</span><span class="na">computeRegexp</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">,</span> <span class="nv">$i</span><span class="p">,</span> <span class="nv">$firstOptional</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nv">$regexp</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="o">.</span><span class="s1">&#39;^&#39;</span><span class="o">.</span><span class="nv">$regexp</span><span class="o">.</span><span class="s1">&#39;$&#39;</span><span class="o">.</span><span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="o">.</span><span class="s1">&#39;s&#39;</span><span class="o">.</span><span class="p">(</span><span class="nv">$isHost</span> <span class="o">?</span> <span class="s1">&#39;i&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="k">private</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">computeRegexp</span><span class="p">(</span><span class="k">array</span> <span class="nv">$tokens</span><span class="p">,</span> <span class="nv">$index</span><span class="p">,</span> <span class="nv">$firstOptional</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$token</span> <span class="o">=</span> <span class="nv">$tokens</span><span class="p">[</span><span class="nv">$index</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;text&#39;</span> <span class="o">===</span> <span class="nv">$token</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+        <span class="c1">// Text tokens</span>
+        <span class="k">return</span> <span class="nb">preg_quote</span><span class="p">(</span><span class="nv">$token</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// Variable tokens</span>
+        <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">===</span> <span class="nv">$index</span> <span class="o">&amp;&amp;</span> <span class="mi">0</span> <span class="o">===</span> <span class="nv">$firstOptional</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// When the only token is an optional variable token, the separator is required</span>
+            <span class="k">return</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">&#39;%s(?P&lt;%s&gt;%s)?&#39;</span><span class="p">,</span> <span class="nb">preg_quote</span><span class="p">(</span><span class="nv">$token</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="p">),</span> <span class="nv">$token</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="nv">$token</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nv">$regexp</span> <span class="o">=</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">&#39;%s(?P&lt;%s&gt;%s)&#39;</span><span class="p">,</span> <span class="nb">preg_quote</span><span class="p">(</span><span class="nv">$token</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">self</span><span class="o">::</span><span class="na">REGEX_DELIMITER</span><span class="p">),</span> <span class="nv">$token</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="nv">$token</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nv">$index</span> <span class="o">&gt;=</span> <span class="nv">$firstOptional</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nv">$regexp</span> <span class="o">=</span> <span class="s2">&quot;(?:</span><span class="si">$regexp</span><span class="s2">&quot;</span><span class="p">;</span>
+                <span class="nv">$nbTokens</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nv">$nbTokens</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">==</span> <span class="nv">$index</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// Close the optional subpatterns</span>
+                    <span class="nv">$regexp</span> <span class="o">.=</span> <span class="nb">str_repeat</span><span class="p">(</span><span class="s1">&#39;)?&#39;</span><span class="p">,</span> <span class="nv">$nbTokens</span> <span class="o">-</span> <span class="nv">$firstOptional</span> <span class="o">-</span> <span class="p">(</span><span class="mi">0</span> <span class="o">===</span> <span class="nv">$firstOptional</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nv">$regexp</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">computeRegexp</span></code> 函数的大致流程为：</p>
+<ul class="simple">
+<li>若 <code class="docutils literal"><span class="pre">tokens</span></code> 当前元素是 <code class="docutils literal"><span class="pre">text</span></code> ，不是路由参数的时候，直接赋值原字符串即可；</li>
+<li>若 <code class="docutils literal"><span class="pre">url</span></code> 中路由参数都是可选参数，且没有任何 <code class="docutils literal"><span class="pre">text</span></code> ，那么第一个可选参数使用捕获分组；</li>
+<li>若当前路由参数是可选参数的时候，需要在正则表达式中不断叠加非捕获分组 (?，再最后设置为可选分组 )?，例如 <code class="docutils literal"><span class="pre">(?:/(?P&lt;baz&gt;[^/]++)(?:/(?P&lt;ext&gt;[^/]++))?)?</span></code> ；</li>
+<li>若当前路由参数不是可选参数的时候，正则表达式就是固定模式，例如： <code class="docutils literal"><span class="pre">/(?P&lt;foo&gt;[^/]++)</span></code> ；</li>
+</ul>
+<p>利用 <code class="docutils literal"><span class="pre">computeRegexp</span></code> 函数拼接正则表达式后，还要在最两侧分隔符、开始符 <code class="docutils literal"><span class="pre">^</span></code> ，结束符 <code class="docutils literal"><span class="pre">$</span></code> 、单行修正符 <code class="docutils literal"><span class="pre">s</span></code> ，如果是主域的正则表达式，还要添加不区分大小写的修正符 <code class="docutils literal"><span class="pre">i</span></code> 。</p>
+<p>以 <code class="docutils literal"><span class="pre">prefix/{foo}/{baz}.{ext}/tail</span></code> 为例，每次生成的正则表达式如下：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">/</span><span class="nx">prefix</span>
+<span class="o">/</span><span class="nx">prefix</span><span class="o">/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">foo</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="p">)</span>
+<span class="o">/</span><span class="nx">prefix</span><span class="o">/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">foo</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">baz</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="nx">\</span><span class="o">.</span><span class="p">]</span><span class="o">++</span><span class="p">)</span>
+<span class="o">/</span><span class="nx">prefix</span><span class="o">/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">foo</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">baz</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="nx">\</span><span class="o">.</span><span class="p">]</span><span class="o">++</span><span class="p">)</span><span class="nx">\</span><span class="o">.</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">ext</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="p">)</span>
+<span class="o">/</span><span class="nx">prefix</span><span class="o">/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">foo</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">baz</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="nx">\</span><span class="o">.</span><span class="p">]</span><span class="o">++</span><span class="p">)</span><span class="nx">\</span><span class="o">.</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">ext</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="p">)</span><span class="o">/</span><span class="nx">tail</span>
+<span class="c1">#^/prefix/(?P&lt;foo&gt;[^/]++)/(?P&lt;baz&gt;[^/\.]++)\.(?P&lt;ext&gt;[^/]++)/tail$#s</span>
+</pre></div>
+</div>
+<p>以 <code class="docutils literal"><span class="pre">{foo?}/{baz?}.{ext?}</span></code> 为例，每次生成的正则表达式如下：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">foo</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="p">)</span><span class="o">?</span>
+<span class="o">/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">foo</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="p">)</span><span class="o">?</span><span class="p">(</span><span class="o">?:/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">baz</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="nx">\</span><span class="o">.</span><span class="p">]</span><span class="o">++</span><span class="p">)</span>
+<span class="o">/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">foo</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="p">)</span><span class="o">?</span><span class="p">(</span><span class="o">?:/</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">baz</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="nx">\</span><span class="o">.</span><span class="p">]</span><span class="o">++</span><span class="p">)(</span><span class="o">?:</span><span class="nx">\</span><span class="o">.</span><span class="p">(</span><span class="o">?</span><span class="nx">P</span><span class="o">&lt;</span><span class="nx">ext</span><span class="o">&gt;</span><span class="p">[</span><span class="o">^/</span><span class="p">]</span><span class="o">++</span><span class="p">))</span><span class="o">?</span><span class="p">)</span><span class="o">?</span>
+<span class="c1">#^/(?P&lt;foo&gt;[^/]++)?(?:/(?P&lt;baz&gt;[^/\.]++)(?:\.(?P&lt;ext&gt;[^/]++))?)?$#s</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的路由—路由的匹配与参数绑定.html" class="btn btn-neutral float-right" title="9. 路由的匹配与参数绑定" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的路由.html" class="btn btn-neutral" title="7. 路由" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+*****
+自动时间戳
+*****
+
+系统支持自动写入创建和更新的时间戳字段（默认关闭），有两种方式配置支持。
+
+第一种方式是全局开启，在数据库配置文件中进行设置：
+
+
+.. code-block:: shell
+
+	// 开启自动写入时间戳字段
+	'auto_timestamp' => true,
+
+
+第二种是在需要的模型类里面单独开启：
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\model;
+
+	use think\Model;
+
+	class User extends Model
+	{
+	    protected $autoWriteTimestamp = true;
+	}
+
+又或者首先在数据库配置文件中全局开启，然后在个别不需要使用自动时间戳写入的模型类中单独关闭：
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\model;
+
+	use think\Model;
+
+	class User extends Model
+	{
+	    protected $autoWriteTimestamp = false;
+	}
+
+一旦配置开启的话，会自动写入 ``create_time`` 和 ``update_time`` 两个字段的值，默认为插入数据库的值是整型（int），如果你数据库的时间字段不是 ``int`` 类型的话，可以直接使用：
+
+.. code-block:: shell
+
+	// 开启自动写入时间戳字段
+	'auto_timestamp' => 'datetime',
+
+或者
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\model;
+
+	use think\Model;
+
+	class User extends Model
+	{
+	    protected $autoWriteTimestamp = 'datetime';
+	}
+
+默认的创建时间字段为 ``create_time`` ，更新时间字段为 ``update_time`` ，支持的字段类型包括 ``timestamp/datetime/int`` 。
+
+写入数据的时候，系统会自动写入 ``create_time`` 和 ``update_time`` 字段，而不需要定义修改器，例如：
+
+
+.. code-block:: php
+
+	$user = new User();
+	$user->name = 'thinkphp';
+	$user->save();
+	echo $user->create_time; // 输出类似 2016-10-12 14:20:10
+	echo $user->update_time; // 输出类似 2016-10-12 14:20:10
+
+.. note:: 时间字段的自动写入仅针对模型的写入方法，如果使用数据库的更新或者写入方法则无效。
+
+.. note:: 时间字段输出的时候会自动进行格式转换，如果不希望自动格式化输出，可以把数据库配置文件的 ``datetime_format`` 参数值改为 ``false``
+
+如果你只需要使用 ``create_time`` 字段而不需要自动写入 ``update_time`` ，则可以单独关闭某个字段，例如：
+
+.. code-block:: php
+
+	class User extends Model 
+	{
+	    // 关闭自动写入update_time字段
+	    protected $updateTime = false;
+	}
+
+支持动态关闭时间戳写入功能，例如你希望更新阅读数的时候不修改更新时间，可以使用 ``isAutoWriteTimestamp`` 方法：
+
+.. code-block:: php
+
+	$user = User::get(1);
+	$user->read +=1;
+	$user->isAutoWriteTimestamp(false)->save();
+

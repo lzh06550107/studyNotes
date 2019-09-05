@@ -1,0 +1,923 @@
+
+
+提示在VPN调试好之前先停掉防火墙，等VPN测试好之后才可以开启
+如果是公司环境不允许停止防火墙那就现在线下测试好。
+
+
+
+机器名称：本地主机  虚拟机01vpnserver  虚拟机02client  
+
+
+
+
+
+◾ 1.4.2 安装 lzo 压缩模块
+		
+		选检查以下有没有安装gcc
+			[root@localhost openvpn]# tar zxf lzo-2.06.tar.gz
+			[root@localhost openvpn]# cd lzo-2.06
+			[root@localhost openvpn]# ./configure
+			[root@localhost openvpn]# make
+			[root@localhost openvpn]# make install
+
+
+◾ 1.4.3 安装 openvpn 软件 
+			检查有没有安装 openssl
+			
+			checking for openssl/evp.h... no
+			configure: error: OpenSSL Crypto headers not found.  #安装openvpn报error: OpenSSL 需要安装 openssl
+			[root@bogon openvpn-2.2.2]# echo $?
+			1
+			[root@bogon openvpn-2.2.2]# make clean
+			make: *** No rule to make target `clean'.  Stop.
+			[root@bogon openvpn-2.2.2]# rpm -qa|grep openssl	 #检查有没有安装openssl
+			openssl-1.0.2k-8.el7.x86_64
+			openssl-libs-1.0.2k-8.el7.x86_64
+			xmlsec1-openssl-1.2.20-5.el7.x86_64
+			[root@localhost openvpn-2.2.2]# yum install openssl* -y		#安装  openssl
+			[root@localhost openvpn-2.2.2]# tar zxf openvpn-2.2.2.tar.gz
+			[root@localhost openvpn-2.2.2]# cd openvpn-2.2.2
+			[root@localhost openvpn-2.2.2]# ./configure --with-lzo-headers=/usr/local/include --with-lzo-lib=/usr/local/lib
+			[root@localhost openvpn-2.2.2]# make 
+			[root@localhost openvpn-2.2.2]# make install
+			[root@localhost openvpn-2.2.2]# cd ..
+			提示：configure:error:OpenSSL Crypto headers not found.
+			解答：前面讲过openvpn通信原理需要SSL支持。
+			注意：可执行文件安装路径：/usr/local/sbin/openvpn 
+			[root@localhost openvpn]# which openvpn
+			/usr/local/sbin/openvpn					#表示装好了
+
+			[root@localhost openvpn]# ll /usr/local/sbin/openvpn 
+			-rwxr-xr-x 1 root root 2863520 Aug 17 00:39 /usr/local/sbin/openvpn  #也表示安装成功
+
+◾ 1.4.4 配置 openvpn server-建立 CA(Certificate Authority)证书
+			[root@bogon openvpn-2.2.2]# cd easy-rsa/2.0/
+			[root@bogon 2.0]# cp vars vars.roye.20180817
+			[root@bogon 2.0]# vim vars  #打开vars 到结尾最后11行替换成下修改过的内容
+			export KEY_COUNTRY="CN"
+			export KEY_PROVINCE="BJ"
+			export KEY_CITY="Beijing"
+			export KEY_ORG="oldboy"
+			export KEY_EMAIL="154256500@qq.com"
+			export KEY_EMAIL=154256500@qq.com
+			export KEY_CN="CN"
+			export KEY_NAME="oldboy"
+			export KEY_OU="oldboy"
+			export PKCS11_MODULE_PATH="changeme"
+			export PKCS11_PIN=1234
+			
+			[root@bogon 2.0]# tail -12 vars   #修改好后查看结尾12行
+			# Don't leave any of these fields blank.
+			export KEY_COUNTRY="CN"
+			export KEY_PROVINCE="BJ"
+			export KEY_CITY="Beijing"
+			export KEY_ORG="oldboy"
+			export KEY_EMAIL="154256500@qq.com"
+			export KEY_EMAIL=154256500@qq.com
+			export KEY_CN="CN"
+			export KEY_NAME="oldboy"
+			export KEY_OU="oldboy"
+			export PKCS11_MODULE_PATH="changeme"
+			export PKCS11_PIN=1234
+			
+			[root@localhost 2.0]# source vars  #重新加载配置文件
+			NOTE: If you run ./clean-all, I will be doing a rm -rf on /root/test/openvpn-2.2.2/easy-rsa/2.0/keys
+		
+		
+			[root@localhost 2.0]# ./clean-all  #<--清除所有证书相关
+			[root@localhost 2.0]# ./build-ca   #<--生成 CA 证书		
+		
+			[root@bogon 2.0]# ./build-ca	   #
+			Generating a 1024 bit RSA private key
+			.....................................++++++
+			.......................++++++
+			writing new private key to 'ca.key'
+			-----
+			You are about to be asked to enter information that will be incorporated
+			into your certificate request.
+			What you are about to enter is what is called a Distinguished Name or a DN.
+			There are quite a few fields but you can leave some blank
+			For some fields there will be a default value,
+			If you enter '.', the field will be left blank.
+			-----
+			Country Name (2 letter code) [CN]:				#刚才在配置文件里的默认值
+			State or Province Name (full name) [BJ]:
+			Locality Name (eg, city) [Beijing]:
+			Organization Name (eg, company) [oldboy]:
+			Organizational Unit Name (eg, section) [oldboy]:
+			Common Name (eg, your name or your server's hostname) [CN]:oldboy  #应输入 VPN 服务器FQDN
+			Name [oldboy]:
+			Email Address [154256500@qq.com]:
+		
+			[root@bogon 2.0]# ll keys/		#查看生成的ca证书
+			total 12
+			-rw-r--r-- 1 root root 1314 Aug 20 09:42 ca.crt  	<------证书
+			-rw------- 1 root root  916 Aug 20 09:42 ca.key		<------私钥
+			-rw-r--r-- 1 root root    0 Aug 20 09:38 index.txt
+			-rw-r--r-- 1 root root    3 Aug 20 09:38 serial		
+		
+◾ 1.4.5 生成服务器端证书和密钥key 文件 		
+		
+		[root@bogon 2.0]# ./build-key-server server		<---生成服务端证书命令
+		Generating a 1024 bit RSA private key
+		..........................++++++
+		........++++++
+		writing new private key to 'server.key'
+		-----
+		You are about to be asked to enter information that will be incorporated
+		into your certificate request.
+		What you are about to enter is what is called a Distinguished Name or a DN.
+		There are quite a few fields but you can leave some blank
+		For some fields there will be a default value,
+		If you enter '.', the field will be left blank.
+		-----
+		Country Name (2 letter code) [CN]:
+		State or Province Name (full name) [BJ]:
+		Locality Name (eg, city) [Beijing]:
+		Organization Name (eg, company) [oldboy]:
+		Organizational Unit Name (eg, section) [oldboy]:
+		Common Name (eg, your name or your server's hostname) [server]:
+		Name [oldboy]:
+		Email Address [154256500@qq.com]:
+		
+		Please enter the following 'extra' attributes
+		to be sent with your certificate request
+		A challenge password []:123456				<----密码
+		An optional company name []:oldboy			<----公司名称
+		Using configuration from /root/Documents/openvpn-2.2.2/easy-rsa/2.0/openssl-1.0.0.cnf
+		Check that the request matches the signature
+		Signature ok
+		The Subject's Distinguished Name is as follows
+		countryName           :PRINTABLE:'CN'
+		stateOrProvinceName   :PRINTABLE:'BJ'
+		localityName          :PRINTABLE:'Beijing'
+		organizationName      :PRINTABLE:'oldboy'
+		organizationalUnitName:PRINTABLE:'oldboy'
+		commonName            :PRINTABLE:'server'
+		name                  :PRINTABLE:'oldboy'
+		emailAddress          :IA5STRING:'154256500@qq.com'
+		Certificate is to be certified until Aug 17 13:54:08 2028 GMT (3650 days)
+		Sign the certificate? [y/n]:y
+		
+		
+		1 out of 1 certificate requests certified, commit? [y/n]y
+		Write out database with 1 new entries
+		Data Base Updated
+		[root@bogon 2.0]# ll keys/					<---查看服务端生成命令
+		total 40
+		-rw-r--r-- 1 root root 4002 Aug 20 09:54 01.pem
+		-rw-r--r-- 1 root root 1314 Aug 20 09:42 ca.crt
+		-rw------- 1 root root  916 Aug 20 09:42 ca.key
+		-rw-r--r-- 1 root root  121 Aug 20 09:54 index.txt
+		-rw-r--r-- 1 root root   21 Aug 20 09:54 index.txt.attr
+		-rw-r--r-- 1 root root    0 Aug 20 09:38 index.txt.old
+		-rw-r--r-- 1 root root    3 Aug 20 09:54 serial
+		-rw-r--r-- 1 root root    3 Aug 20 09:38 serial.old
+		-rw-r--r-- 1 root root 4002 Aug 20 09:54 server.crt
+		-rw-r--r-- 1 root root  769 Aug 20 09:54 server.csr
+		-rw------- 1 root root  916 Aug 20 09:54 server.key		
+		
+		
+◾ 1.4.6 生成客户端证书和key文件	
+		
+		提示：用 ./build-key 创建证书在拨号时是没有密码的，但是可以改密码加密码。
+			如果想要有密码的客户端可以使用 ./build-key-pass 
+
+		[root@bogon 2.0]# ./build-key test
+		Generating a 1024 bit RSA private key
+		..............................................................................++++++
+		.++++++
+		writing new private key to 'test.key'
+		-----
+		You are about to be asked to enter information that will be incorporated
+		into your certificate request.
+		What you are about to enter is what is called a Distinguished Name or a DN.
+		There are quite a few fields but you can leave some blank
+		For some fields there will be a default value,
+		If you enter '.', the field will be left blank.
+		-----
+		Country Name (2 letter code) [CN]:
+		State or Province Name (full name) [BJ]:
+		Locality Name (eg, city) [Beijing]:
+		Organization Name (eg, company) [oldboy]:
+		Organizational Unit Name (eg, section) [oldboy]:
+		Common Name (eg, your name or your server's hostname) [test]:
+		Name [oldboy]:
+		Email Address [154256500@qq.com]:
+		
+		Please enter the following 'extra' attributes
+		to be sent with your certificate request
+		A challenge password []:123456
+		An optional company name []:oldboy
+		Using configuration from /root/Documents/openvpn-2.2.2/easy-rsa/2.0/openssl-1.0.0.cnf
+		Check that the request matches the signature
+		Signature ok
+		The Subject's Distinguished Name is as follows
+		countryName           :PRINTABLE:'CN'
+		stateOrProvinceName   :PRINTABLE:'BJ'
+		localityName          :PRINTABLE:'Beijing'
+		organizationName      :PRINTABLE:'oldboy'
+		organizationalUnitName:PRINTABLE:'oldboy'
+		commonName            :PRINTABLE:'test'
+		name                  :PRINTABLE:'oldboy'
+		emailAddress          :IA5STRING:'154256500@qq.com'
+		Certificate is to be certified until Aug 17 14:05:10 2028 GMT (3650 days)
+		Sign the certificate? [y/n]:y
+		
+		
+		1 out of 1 certificate requests certified, commit? [y/n]y
+		Write out database with 1 new entries
+		Data Base Updated		
+		[root@bogon 2.0]# ll keys/
+		total 64
+		-rw-r--r-- 1 root root 4002 Aug 20 09:54 01.pem
+		-rw-r--r-- 1 root root 3878 Aug 20 10:05 02.pem
+		-rw-r--r-- 1 root root 1314 Aug 20 09:42 ca.crt
+		-rw------- 1 root root  916 Aug 20 09:42 ca.key
+		-rw-r--r-- 1 root root  240 Aug 20 10:05 index.txt
+		-rw-r--r-- 1 root root   21 Aug 20 10:05 index.txt.attr
+		-rw-r--r-- 1 root root   21 Aug 20 09:54 index.txt.attr.old
+		-rw-r--r-- 1 root root  121 Aug 20 09:54 index.txt.old
+		-rw-r--r-- 1 root root    3 Aug 20 10:05 serial
+		-rw-r--r-- 1 root root    3 Aug 20 09:54 serial.old
+		-rw-r--r-- 1 root root 4002 Aug 20 09:54 server.crt
+		-rw-r--r-- 1 root root  769 Aug 20 09:54 server.csr
+		-rw------- 1 root root  916 Aug 20 09:54 server.key
+		-rw-r--r-- 1 root root 3878 Aug 20 10:05 test.crt	<--生成客户端的证书密钥文件
+		-rw-r--r-- 1 root root  769 Aug 20 10:05 test.csr	<--生成客户端的证书密钥文件
+		-rw------- 1 root root  916 Aug 20 10:05 test.key	<--生成客户端的证书密钥文件
+		
+创建一个带密码的客户端密钥文件		
+		
+		[root@bogon 2.0]# ./build-key-pass ett
+		Generating a 1024 bit RSA private key
+		.++++++
+		...................................++++++
+		writing new private key to 'ett.key'
+		Enter PEM pass phrase:
+		Verifying - Enter PEM pass phrase:
+		-----
+		You are about to be asked to enter information that will be incorporated
+		into your certificate request.
+		What you are about to enter is what is called a Distinguished Name or a DN.
+		There are quite a few fields but you can leave some blank
+		For some fields there will be a default value,
+		If you enter '.', the field will be left blank.
+		-----
+		Country Name (2 letter code) [CN]:
+		State or Province Name (full name) [BJ]:
+		Locality Name (eg, city) [Beijing]:
+		Organization Name (eg, company) [oldboy]:
+		Organizational Unit Name (eg, section) [oldboy]:
+		Common Name (eg, your name or your server's hostname) [ett]:
+		Name [oldboy]:
+		Email Address [154256500@qq.com]:
+		
+		Please enter the following 'extra' attributes
+		to be sent with your certificate request
+		A challenge password []:123456
+		An optional company name []:oldboy
+		Using configuration from /root/Documents/openvpn-2.2.2/easy-rsa/2.0/openssl-1.0.0.cnf
+		Check that the request matches the signature
+		Signature ok
+		The Subject's Distinguished Name is as follows
+		countryName           :PRINTABLE:'CN'
+		stateOrProvinceName   :PRINTABLE:'BJ'
+		localityName          :PRINTABLE:'Beijing'
+		organizationName      :PRINTABLE:'oldboy'
+		organizationalUnitName:PRINTABLE:'oldboy'
+		commonName            :PRINTABLE:'ett'
+		name                  :PRINTABLE:'oldboy'
+		emailAddress          :IA5STRING:'154256500@qq.com'
+		Certificate is to be certified until Aug 17 14:19:09 2028 GMT (3650 days)
+		Sign the certificate? [y/n]:y
+		
+		
+		1 out of 1 certificate requests certified, commit? [y/n]y
+		Write out database with 1 new entries
+		Data Base Updated		
+		[root@bogon 2.0]# ll keys/
+		total 80
+		-rw-r--r-- 1 root root 4002 Aug 20 09:54 01.pem
+		-rw-r--r-- 1 root root 3878 Aug 20 10:05 02.pem
+		-rw-r--r-- 1 root root 3877 Aug 20 10:19 03.pem
+		-rw-r--r-- 1 root root 1314 Aug 20 09:42 ca.crt
+		-rw------- 1 root root  916 Aug 20 09:42 ca.key
+		-rw-r--r-- 1 root root 3877 Aug 20 10:19 ett.crt	<--生成带密码的客户端的证书密钥文件
+		-rw-r--r-- 1 root root  765 Aug 20 10:19 ett.csr	<--生成带密码的客户端的证书密钥文件
+		-rw------- 1 root root 1041 Aug 20 10:19 ett.key	<--生成带密码的客户端的证书密钥文件
+		-rw-r--r-- 1 root root  358 Aug 20 10:19 index.txt
+		-rw-r--r-- 1 root root   21 Aug 20 10:19 index.txt.attr
+		-rw-r--r-- 1 root root   21 Aug 20 10:05 index.txt.attr.old
+		-rw-r--r-- 1 root root  240 Aug 20 10:05 index.txt.old
+		-rw-r--r-- 1 root root    3 Aug 20 10:19 serial
+		-rw-r--r-- 1 root root    3 Aug 20 10:05 serial.old
+		-rw-r--r-- 1 root root 4002 Aug 20 09:54 server.crt
+		-rw-r--r-- 1 root root  769 Aug 20 09:54 server.csr
+		-rw------- 1 root root  916 Aug 20 09:54 server.key
+		-rw-r--r-- 1 root root 3878 Aug 20 10:05 test.crt
+		-rw-r--r-- 1 root root  769 Aug 20 10:05 test.csr
+		-rw------- 1 root root  916 Aug 20 10:05 test.key
+		
+		
+◾ 1.4.7	生成 generate diffie hellman parameters
+		提示：Diffie Hellman parameters must be generated for the OpenVPN server.
+		生成传输进行密钥交换时用到的交换密钥协议文件		
+		./build-dh <--(不能落了不执行啊，否则出错)		
+		
+		
+		[root@bogon 2.0]# ./build-dh 
+		Generating DH parameters, 1024 bit long safe prime, generator 2
+		This is going to take a long time
+		....+...........................................+....................................+...................................................+...........+..................+.........................+..............................................................................+...................................................+.......................................................................................................................................................+......................................+.........................+..............................................................................................................+............+.....................+.............+.........+............................................+.+...........+...........................................................................+............................+............................++*++*++*		
+		
+		[root@bogon 2.0]# ll keys/dh1024.pem 		<-----生成这个文件
+		-rw-r--r-- 1 root root 245 Aug 20 10:26 keys/dh1024.pem
+
+		[root@bogon 2.0]# ll keys/					<------列出所有生成的文件
+		total 84
+		-rw-r--r-- 1 root root 4002 Aug 20 09:54 01.pem
+		-rw-r--r-- 1 root root 3878 Aug 20 10:05 02.pem
+		-rw-r--r-- 1 root root 3877 Aug 20 10:19 03.pem
+		-rw-r--r-- 1 root root 1314 Aug 20 09:42 ca.crt
+		-rw------- 1 root root  916 Aug 20 09:42 ca.key
+		-rw-r--r-- 1 root root  245 Aug 20 10:26 dh1024.pem
+		-rw-r--r-- 1 root root 3877 Aug 20 10:19 ett.crt
+		-rw-r--r-- 1 root root  765 Aug 20 10:19 ett.csr
+		-rw------- 1 root root 1041 Aug 20 10:19 ett.key
+		-rw-r--r-- 1 root root  358 Aug 20 10:19 index.txt
+		-rw-r--r-- 1 root root   21 Aug 20 10:19 index.txt.attr
+		-rw-r--r-- 1 root root   21 Aug 20 10:05 index.txt.attr.old
+		-rw-r--r-- 1 root root  240 Aug 20 10:05 index.txt.old
+		-rw-r--r-- 1 root root    3 Aug 20 10:19 serial
+		-rw-r--r-- 1 root root    3 Aug 20 10:05 serial.old
+		-rw-r--r-- 1 root root 4002 Aug 20 09:54 server.crt
+		-rw-r--r-- 1 root root  769 Aug 20 09:54 server.csr
+		-rw------- 1 root root  916 Aug 20 09:54 server.key
+		-rw-r--r-- 1 root root 3878 Aug 20 10:05 test.crt
+		-rw-r--r-- 1 root root  769 Aug 20 10:05 test.csr
+		-rw------- 1 root root  916 Aug 20 10:05 test.key
+		
+		
+		
+
+		
+		为防止恶意攻击（如DOS、UDP port flooding），我们生成"HMAC firewall"（但是效果不太好说）
+		[root@bogon 2.0]# openvpn --genkey --secret keys/ta.key
+		[root@bogon 2.0]# ls keys/ta.key 
+		keys/ta.key		
+◾ 1.4.10  详解服务器端 VPN server.conf 重要参数		
+		[root@bogon 2.0]# mkdir /etc/openvpn
+		[root@bogon 2.0]# cd /root/Documents/openvpn-2.2.2/easy-rsa/2.0/
+		[root@bogon 2.0]# cp -ap keys /etc/openvpn/ 		#复制keys 密钥文件夹到/etc/openvpn目录下
+		[root@bogon 2.0]# cd /root/Documents/openvpn-2.2.2/sample-config-files/
+		[root@bogon sample-config-files]# cp client.conf server.conf  /etc/openvpn/
+		[root@bogon sample-config-files]# ll /etc/openvpn/	#查看/etc/openvpn/ 目录
+		total 20
+		-rw-r--r-- 1 root root  3426 Aug 20 10:57 client.conf
+		drwx------ 2 root root  4096 Aug 20 10:40 keys
+		-rw-r--r-- 1 root root 10288 Aug 20 10:57 server.con	
+		
+		[root@bogon sample-config-files]# cd /etc/openvpn/		 
+		[root@bogon openvpn]# cp server.conf  server.conf.ori	#备份文件	
+		
+		[root@bogon openvpn]# grep -vE ";|#|^$" server.conf #把包含#号;分号 空格的行过滤掉
+		port 1194
+		proto udp
+		dev tun
+		ca ca.crt
+		cert server.crt
+		dh dh1024.pem
+		server 10.8.0.0 255.255.255.0
+		ifconfig-pool-persist ipp.txt
+		keepalive 10 120
+		comp-lzo
+		persist-key
+		persist-tun
+		status openvpn-status.log
+		verb 3
+		[root@bogon openvpn]# grep -vE ";|#|^$" server.conf >tmp.log  #把结果定向到临时文件
+		[root@bogon openvpn]# cat tmp.log > server.conf				  #在从新导回来
+		
+		然后在server.conf 文件中增加以下几行
+		local 10.0.0.28
+		port 52115
+		push "route 10.0.0.0 255.255.255.0"
+		client-to-client 
+		duplicate-cn 
+		log /var/log/openvpn.log
+		
+		[root@bogon openvpn]# vim server.conf 		
+		local 10.0.0.28
+		port 52115
+		push "route 10.0.0.0 255.255.255.0"
+		client-to-client
+		duplicate-cn
+		log /var/log/openvpn.log
+		port 1194
+		proto udp
+		dev tun
+		ca ca.crt
+		cert server.crt
+		dh dh1024.pem
+		server 10.8.0.0 255.255.255.0
+		ifconfig-pool-persist ipp.txt
+		keepalive 10 120
+		comp-lzo
+		persist-key
+		persist-tun
+		status openvpn-status.log
+		verb 3		
+		
+		[root@bogon openvpn]#  vim server.conf #调整后的
+		local 10.0.2.15
+		port 52115
+		proto tcp		#使用tcp协议
+		dev tun
+		ca /etc/openvpn/keys/ca.crt
+		cert /etc/openvpn/keys/server.crt
+		key /etc/openvpn/keys/server.key
+		dh /etc/openvpn/keys/dh1024.pem
+		server 10.8.0.0 255.255.255.0
+		push "route 192.168.0.109 255.255.255.0"
+		ifconfig-pool-persist ipp.txt
+		keepalive 10 120
+		comp-lzo
+		persist-key
+		persist-tun
+		status openvpn-status.log
+		verb 3
+		client-to-client
+		duplicate-cn  #如果想要多哥用户共用一个证书 把 duplicate-cn 注释掉即可
+		log /var/log/openvpn.log
+		
+◾ 1.4.12 调试服务器端 VPN 服务启动环境		
+		
+		#CentOS7 开启路由转发
+		1.临时开启，（写入内存，在内存中开启）
+		
+		echo "1" > /proc/sys/net/ipv4/ip_forward
+		
+		2.永久开启，（写入内核）
+		
+		在 vim /etc/sysctl.conf 下
+		
+		加入此行   net.ipv4.ip_forward = 1
+		
+		sysctl -p               ----加载一下
+		
+		[root@localhost ~]# sysctl -a |grep "ip_forward"    ----查看一下
+		net.ipv4.ip_forward = 1
+		
+		net.ipv4.ip_forward_use_pmtu = 0		
+		
+		
+		
+		[root@bogon openvpn]# firewall-cmd --permanent --zone=public --add-port=52115/tcp #防火墙开启52115端口；但是为了排除将来排除不是防火墙的原因造成的错误一般现在是关闭状态最好
+		success		
+◾ 1.4.13 启动服务端的VPN 服务并检查
+		[root@bogon openvpn]# /usr/local/sbin/openvpn  --config /etc/openvpn/server.conf &
+		[1] 6136	
+		
+		[root@bogon openvpn]# netstat -lntup|grep vpn	 #确认vpn是否真的启动，如果这一步没有启动表示还未启动
+		tcp        0      0 10.0.2.15:52115         0.0.0.0:*               LISTEN      2512/openvpn		
+		
+		#以下两行命令为开机自启动命令，需要时执行以下
+		echo '#startup openvpn service by oldboy' >> /etc/rc.local
+		echo '/usr/local/sbin/openvpn --config /etc/openvpn/server.conf &' >> /etc/rc.local
+		
+		
+		
+		
+◼ 1.5 安装 Windows vpn 客户端配置 VPN	连接
+		
+		下载客户端openvpn-2.2.2-install.exe
+
+		[root@bogon ~]# sz -y ca.crt test.crt test.key client.conf #把这几个文件下载到客户端
+		然后把下下来的ca证书和密钥文件放到客户端安装目录下的config文件夹下，新建一个test文件夹
+		
+		F:\software>tree openvpn
+		卷 本地磁盘 的文件夹 PATH 列表
+		卷序列号为 000001F4 27AD:0B04
+		F:\SOFTWARE\OPENVPN
+		├─bin
+		├─config
+		│  └─test  <--把证书和密钥文件放到此文件夹下，test文件夹名可以按照自己的需求取
+		├─driver
+		├─easy-rsa
+		├─log
+		└─sample-config
+		
+		在test目录下新建一个 test.ovpn文件做为客户端的配置文件
+		
+		F:\software\openvpn\config\test>type test.ovpn
+		client
+		dev tun
+		proto tcp					#<--使用tcp协议
+		remote 127.0.0.10 52115		#<--远程地址和端口
+		resolv-retry infinite
+		nobind
+		persist-key
+		persist-tun
+		ca ca.crt		#<--CA 证书
+		cert test.crt	#<--用户证书
+		key test.key	#<--用户密钥文件
+		ns-cert-type server
+		comp-lzo
+		verb 3	
+
+		
+		
+		
+		F:\software\openvpn\config\test>dir
+		驱动器 F 中的卷是 本地磁盘
+		卷的序列号是 27AD-0B04
+		
+		F:\software\openvpn\config\test 的目录
+		
+		2018/08/21  18:54    <DIR>          .
+		2018/08/21  18:54    <DIR>          ..
+		2018/08/21  18:07             1,314 ca.crt
+		2018/08/21  18:52             3,426 client.conf
+		2018/08/21  18:11             3,878 test.crt
+		2018/08/21  18:11               916 test.key
+		2018/08/21  21:58               189 test.ovpn
+					5 个文件          9,723 字节
+					2 个目录 57,725,685,760 可用字节
+		
+
+◾ 1.5.3 在win10上 拨号远程连接 openvpn 服务
+		
+		双击打开 OpenVPN GUI 图标 然后右下角 右键选择 connect 连接
+		
+		客户端打开时发现的错误报错
+		
+		错误1、
+
+		具体错误如下：
+		d Feb 24 17:08:08 2016 VERIFY ERROR: depth=0, error=certificate signature failure: C=US, ST=CA, L=SanFrancisco, O=OpenVPN, OU=changeme, CN=changeme, name=changeme, emailAddress=mail@host.domain
+		Wed Feb 24 17:08:08 2016 TLS_ERROR: BIO read tls_read_plaintext error: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed
+		Wed Feb 24 17:08:08 2016 TLS Error: TLS object -> incoming plaintext read error
+		Wed Feb 24 17:08:08 2016 TLS Error: TLS handshake failed
+		Wed Feb 24 17:08:08 2016 Fatal TLS error (check_tls_errors_co), restarting
+		Wed Feb 24 17:08:08 2016 SIGUSR1[soft,tls-error] received, process restarting
+		Wed Feb 24 17:08:13 2016 Attempting to establish TCP connection with [AF_INET] [nonblock]
+		Wed Feb 24 17:08:14 2016 TCP connection established with [AF_INET]
+		Wed Feb 24 17:08:14 2016 TCPv4_CLIENT link local: [undef]
+		Wed Feb 24 17:08:14 2016 TCPv4_CLIENT link remote: [AF_INET]
+		Wed Feb 24 17:08:14 2016 VERIFY ERROR: depth=0, error=certificate signature failure: C=US, ST=CA, L=SanFrancisco, O=OpenVPN, OU=changeme, CN=changeme, name=changeme, emailAddress=mail@host.domain
+		Wed Feb 24 17:08:14 2016 TLS_ERROR: BIO read tls_read_plaintext error: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed
+		
+		上网查很多人说是时间不同步我同步服务器的时间也没有解决问题！后来才发现问题所在
+		主要原因是Centos 7移除了Openssl的MD5支持
+		openssl仍然默认以md5作为散列算法并且可以正确识别md5散列算法，所以就悲剧了，只有cenots7不好用。关键是这个错误是大错误被小错误还掩盖了一下，所以很难被发现。
+		
+		解决方法:
+		
+		[root@localhost openvpn]# export NSS_HASH_ALG_SUPPORT=+MD5
+		[root@localhost openvpn]# export OPENSSL_ENABLE_MD5_VERIFY=1
+		编辑  vim /usr/lib/systemd/system/NetworkManager.service
+		
+		[Service]
+		添加Environment="OPENSSL_ENABLE_MD5_VERIFY=1 NSS_HASH_ALG_SUPPORT=+MD5"
+		
+		保存退出后
+		
+		[root@localhost openvpn]# systemctl daemon-reload
+		[root@localhost openvpn]# systemctl restart NetworkManager.service
+		wKiom1bNdYnDyGMGAAB1KOfvEw8314.png
+
+		错误2、
+		
+		因为我这次是测试本地映射的端口是22而openvpn配置文件上的端口是 52115 所以 我在虚拟机上设置映射端口改为52115就好了
+
+
+		错误3、
+		时间不同步引起的需要，
+		手工执行如下命令
+		[root@localhost ~]# /usr/sbin/ntpdate pool.ntp.org
+		16 Aug 07:05:02 ntpdate[2886]: adjust time server 182.92.12.11 offset 0.001803 sec 
+		加入到定时任务
+		命令：
+		[root@localhost ~]# echo '#time sync' >>/var/spool/cron/root
+		[root@localhost ~]# echo '*/5 * * * * /usr/sbin/ntpdate pool.ntp.org > /dev/null 2>&1' >>/var/spool/cron/root crontab -l
+
+		openvpn客户端好的状态图标是绿色的。
+
+
+		到现在还不能ping通内网"虚拟机02client"  网络这时 "虚拟机02client"还没有网关需要添加一个网关
+		添加的网关地址需要和 "虚拟机01vpnserver" 内网卡的地址一样
+		
+		
+		
+		在本地主机 抓 ICMP 包看有没有，有算通了
+		tcpdump -nnn -s 10000|grep ICMP	#抓包
+		第一个方法：
+		在“虚拟机02client”虚拟机上执行添加网关命令
+		#这是在 "虚拟机02client" 机上配置的哦
+		[root@localhost ~]# route add default gw 192.168.1.104  #这个网关是 "虚拟机01vpnserver" 的内网卡ip
+		
+		
+		
+		然后可以在 本地主机 ping一下 "虚拟机01vpnserver" 然后在 "虚拟机01vpnserver" 抓包看看是否有回复
+		tcpdump -nnn -s 10000|grep ICMP	#抓包
+		
+		
+		
+		
+		第二个方法：
+		然后也可以用以下方法 添加一个网络路由(详情可以看老男孩 【第34讲】36-通过tcpdump逐层抓包实践理解路由方式VPN的运行原理)
+		#这是在 "虚拟机02client" 机上配置的哦
+		[root@localhost ~]# route add -net 10.8.0.0/24 gw 192.168.1.104  #凡是10.8.0.0段的都路由到192.168.1.104去
+		
+		方法三（称之为NET方法）（推荐）
+		此方法在 "虚拟机01vpnserver" 上操作
+		#此方法确定有效
+		
+		-t nat: 在nat表上面添加一条规则
+		-A POSTROUTING：这条规则是在POSTROUTING这个连上
+		-s 10.8.0.0/24 ：离开防火墙的时候源地址为 10.8.0.0/24 这个网段 ，然后转成 192.168.1.104  这个地址
+		
+		[root@localhost ~]# /sbin/iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o enp0s8 -j SNAT --to-source 192.168.1.104
+		
+		[root@localhost ~]# iptables -t nat -L -n   #查看是否添加成功
+		Chain PREROUTING (policy ACCEPT)
+		target     prot opt source               destination         
+		
+		Chain INPUT (policy ACCEPT)
+		target     prot opt source               destination         
+		
+		Chain OUTPUT (policy ACCEPT)
+		target     prot opt source               destination         
+		
+		Chain POSTROUTING (policy ACCEPT)
+		target     prot opt source               destination         
+		SNAT       all  --  192.168.5.0/24       0.0.0.0/0            to:192.168.1.101
+		
+
+
+		[root@localhost ~]# iptables -t nat -L -n  #查看是否删除成功
+		Chain PREROUTING (policy ACCEPT)
+		target     prot opt source               destination         
+		
+		Chain INPUT (policy ACCEPT)
+		target     prot opt source               destination         
+		
+		Chain OUTPUT (policy ACCEPT)
+		target     prot opt source               destination         
+		
+		Chain POSTROUTING (policy ACCEPT)
+		target     prot opt source               destination		
+				
+				
+				
+				
+				
+		
+		#此行表示删除与第一行唯一的区别是-A 变成了-D 
+		[root@localhost ~]# /sbin/iptables -t nat -D POSTROUTING -s 10.8.0.0/24 -o enp0s8 -j SNAT --to-source 192.168.1.104  
+		
+		
+							/sbin/iptables -t nat -A  POSTROUTING -s 192.168.5.0/24 -o enp0s8 -j SNAT --to-source 192.168.1.101
+		
+		
+		如果想要永久生效路由
+		vim /etc/sysconfig/network-scripts/route-eth0
+		
+开启防火墙端口		
+		在开启防火墙的状态下首先需要开启 52115 这个端口就是openvpn占用的端口
+		firewall-cmd --permanent --zone=public --add-port=52115/tcp		#防火墙开启52115端口
+		
+		
+还有需要注意的是 forward 转发也要允许
+		如果是在 CentOS6可以在  /etc/sysconfig/iptables文件下把 "-A FORWARD -j REJECT --reject-with icmp-host-prohibited" 这条去掉就可以
+		在CentOS7下还没有测试过
+		
+		Chain FORWARD (policy ACCEPT)
+
+		
+使用vpn自带的防火墙脚本修改实现
+		
+		cd /root/Documents/openvpn-2.2.2/sample-config-files/
+		vim firewall.sh  #在这里可以对vpn定义一些防火墙的规则
+		
+		
+		
+给公司需要客户端的人的备用语录
+
+
+	你好！
+		附件清单如下：
+		roye-key.rar   --里面是证书及配置文件
+		openvpn-2.2.2-gui-1.0.3-install.exe   --XP系统请使用这个客户端
+		openvpn-2.2.2-install.exe			  --vista/win7系统，请使用这个客户端
+		如果win7的系统若发现客户端不能使用，请在百度搜索下"openvpn win7系统客户端"也可下载到
+		 我这里没有win7环境，如果大家实在找不到，可以联系我，我可以帮大家下一个。谢谢。
+		
+		请大家不要领错了自己的证书哈：）
+		 具体使用方法：
+			
+			首先，将openvpn软件安装，默认安装最好，不建议修改安装路径，以方便操作及解决问题。安装过程就像安装QQ一样单。
+		安装后你会发现，屏幕右下角多了一个红色的电脑，不要管它。
+			安装后，将证书，rar包解压缩，里面一共有6哥文件。将里面的6个文件覆盖到
+		C:Program Files\OpenVPN\config 里面 
+			覆盖后，双击屏幕右下角的红色电脑，窗口会弹出，什么都不用点，它会自带拨号，成功后变为绿色并自动隐藏。
+			
+		如有问题请及时与我沟通，谢谢。
+		
+		
+		
+如果一个公司有人离职了需要取消他的拨号权限	
+		
+		
+		[root@localhost ~]# cd /root/Documents/openvpn-2.2.2/easy-rsa/2.0/
+		
+		
+		
+		如果是centos6.3和 openvpn2.0.9的版本这需要把 openssl.cnf 最好7行注释掉
+		[root@localhost 2.0]# tail -7  openssl.cnf 
+		#[ pkcs11_section ]
+		#engine_id = pkcs11 
+		#dynamic_path = /usr/lib/engines/enginc_pkcsl1.so 
+		#MODULE_FATH = $ENV::PKCS11_MODULE_PATH 
+		#PIN = $ENV::PKCS11_PIN 
+		#init = 0
+		提示：看到 error 23 at 0 depth lookup:certificate revoked 的话，表示授权失败，这是因为：
+		The revoke-full script will generate a CRL (certificate revocation list) file called crl.pem in the keys 
+		subdirectory. The file should be copied to a dircotory where the OpenVPN server can access it ,then CRL
+		varification should be enabled in the server configuration:
+			
+		
+		
+		如果是2.2.2则不用
+		[root@localhost ~]# cd /root/Documents/openvpn-2.2.2/easy-rsa/2.0/
+		[root@localhost 2.0]# ./revoke-full xiaowang  #命令revoke-full 加 需要取消的名字xiaowang
+		[root@localhost 2.0]# ll keys/crl.pem #取消后生成的文件（）
+		[root@localhost 2.0]# cat keys/index.txt  #查看取消是否成功 
+		取消成功后行首会有一个”R“ 如下显示
+		R 240227100046z   140301101226z 04 unknown /C=CN/ST=BJ/L=Beijing/0=oldboy/OU=oldboy/CN=xiaowang/name=oldboy/emailAddress=4900048@qq.com 
+		
+		使需要取消的用户生效
+		[root@localhost 2.0]# cp /root/Documents/openvpn-2.2.2/easy-rsa/2.0/keys/crl.pem   /etc/openvpn/keys/crl.pem
+		[root@localhost 2.0]# cd /etc/openvpn
+		[root@localhost 2.0]# vim server.conf
+		在 server.conf 文件结尾添加
+		crl-verify /etc/openvpn/keys/crl.pem
+		
+		[root@localhost 2.0]# cat server.conf  #添加后的结果是
+		local 192.168.0.106
+		port 52115
+		proto tcp		
+		dev tun
+		ca /etc/openvpn/keys/ca.crt
+		cert /etc/openvpn/keys/server.crt
+		key /etc/openvpn/keys/server.key
+		dh /etc/openvpn/keys/dh1024.pem
+		server 192.168.5.0 255.255.255.0
+		push "route 192.168.1.0 255.255.255.0"
+		ifconfig-pool-persist ipp.txt
+		keepalive 10 120
+		comp-lzo
+		persist-key
+		persist-tun
+		status openvpn-status.log
+		verb 3
+		client-to-client
+		duplicate-cn
+		log /var/log/openvpn.log
+		crl-verify /etc/openvpn/keys/crl.pem
+		
+		
+取消多个证书
+		其实就是安装上面的操作执行一下 ./revoke-full xiaowang 这个命令然后把生成的 crl.pem 文件 在覆盖到/etc/openvpn/keys/目录下而已
+		[root@localhost 2.0]# cp /etc/openvpn/keys/crl.pem /tmp/xiaowang   #备份/etc/openvpn/keys/目录下的 crl.pem
+		[root@localhost 2.0]# cp /keys/crl.pem  /etc/openvpn/keys/crl.pem  #覆盖 crl.pem
+		[root@localhost 2.0]# pkill openvpn  #为了确保成功用 ps -ef|grep vpn 检查一下看看是否真的取消
+		
+		启动openvpn
+		[root@localhost 2.0]# /usr/local/sbin/openvpn  --config /etc/openvpn/server.conf & 即可生效
+		
+配置linux下 openvpn 客户端（和windows客户端一样的角色）
+		安装过程和服务器端一样，具体步骤如下：
+		在安装openvpn 软件前我们先来安装一下lzo压缩模块
+		操作命令：
+		cd /root/Documents/
+		wget http://www.oberhumer.com/opensource/lzo/download/lzo-2.06.tar.gz
+		tar zxf lzo-2.0.6.tar.gz 
+		cd lzo-2.06
+		./configure 
+		make 
+		make install
+		
+		下载地址：http://www.oberhumer.com/opensource/lzo/dowmload/
+		寻找软件方法：浏览器打开谷歌搜索，http://www.google.com tw 然后关机字：download 软件包名，如：download lzo-2.0.06.tar.gz 
+		
+安装 openvpn软件
+	
+	
+	提示：这个软件依赖 openssl 
+		[root@localhost ~]# yum install openssl* -y   # 最好是这样安装以下openssl
+		
+		操作命令：
+		wget http://www.openvpn.net/release/openvpn-2.2.2.tar.gz
+		yum install openssl* -y 
+		tar xzf openvpn-2.2.2.tar.gz 
+		cd openvpn-2.2.2
+		./configure --with-lzo-headers=/usr/local/include --with-lzo-lib=/usr/local/lib 
+		make 
+		make install
+		cd ../
+		
+		
+		
+		然后是从 服务端生成的证书文件和key文件如 " ca.crt , test.key , test.crt , client.conf "都放到 /etc/openvpn
+		client.conf这个的配置和windowns的 test.ovpn 文件是一样的配置
+		
+		mkdir -p /etc/openvpn 目录下 
+		cd /etc/openvpn 
+		
+		启动 openvpn client 服务并检查 
+		[root@localhost openvpn]# /usr/local/sbin/openvpn --config /etc/openvpn/client.conf &
+		[1] 2564
+		[root@localhost openvpn]# ps -ef|grep vpn|grep -v grep #检查是否启动成功
+		
+		
+openvpn 在linux 客户端中 的故障
+		[root@localhost ~]# /usr/local/sbin/openvpn --config /etc/openvpn/client.conf &
+		[1] 14208
+		[root@localhost ~]# Fri Feb 28 02:59:03 2014 OpenVPN 2.2.2 x86_64-unknown-linux-gnu [SSL] [LZ0Z] [EPOLL]
+		[eurephia] built on Feb 28 2014 
+		Fri Feb 28 02:59:03 2014 NOTE: OpenVPN 2.1 requires '--script-security 2' or higher to call user-defined scripts or executables 
+		Fri Feb 28 02:59:03 2014 Cannot load oertificate file linux.crt:error:02001002:system library:fopen:No such file or directory:error:20074002
+		:BIO routines:FILE_CTRL:system lib: ERROR:140ad002:SSL 
+		routines:SSL_CTX_use_certificate_file:system lib 
+		Fri Feb 28 02:59:03 2014 Exiting 
+		^C 
+		[1]+ Exit 1       /usr/local/sbin/openvpn --config /etc/openvpn/client.conf 
+		
+		解决方案 ：
+		[root@localhost ~]# pwd 
+		/etc/openvpn 
+		[root@localhost ~]#tail -1 client.conf 
+		--script-security 3 #在 client.conf  文件中加上--script-security  3
+		[root@localhost ~]# ps -ef|grep vpn|grep -v grep 
+		[root@localhost ~]# /usr/local/sbin/openvpn --config /etc/openvpn/client.conf 
+		[1] 14450 
+		[root@localhost ~]# Fri Feb 28 03:05:09 2014 OpenVPN 2.2.2 x86_64-unknown-linux-gnu [SSL] [LZ02] [EPOLL]
+		[eurephia] built on Feb 28 2014 
+		Fri Feb 28 03:05:09 2014 NOTE: the current --script-security setting may allow this configuration to call user-defined scripts 
+		Fri Feb 28 03:05:09 2014 WARNING: file 'linux.key' is group or others accessible 
+		Fri Feb 28 03:05:09 2014 LZO compression initialized 
+		Fri Feb 28 03:05:09 2014 Control Control Channel MTU parms [ L:1544 D:140 EF:40 EB:40 EB:0 ET:0 EL:0 ]
+		Fri Feb 28 03:05:09 2014 Socket Buffers:R=[87380->131072] S=[16384->131072]
+		Fri Feb 28 03:05:09 2014 Data channel MTU parms [ L:1554 D:1450 EF:44 EB:135 ET:0 EL:0 AF:3/1 ]
+		Fri Feb 28 03:05:09 2014 Expected Remote Options hash (VER-V4) : 'c01103fa8'
+		。。。。。
+		。。。。。
+		
+		
+		
+		很奇诡，第二次拨号就出现如下错误
+		[root@localhost ~]# /usr/local/sbin/openvpn --config /etc/openvpn/client.conf & 
+		[1] 14540 
+		[root@locahost ~]# Fri Feb 28 03:14:37 2014 OpenVPN 2.2.2 x86_64-unknown-linux-gnu [SSL] [LZ02] [EPOLL]
+		[eurephia] built on Feb 28 2014 
+		Fri Feb 28 03:14:37 2014 note : the current --script-security setting may allow this configuration to call user-defined socripts 
+		Fri Feb 28 03:14:37 2014 Cannot load certificate file linux.crt error:02001002:system library:fopen:No such file or directory:error:
+		20074002:BIO routines:FILE_CTRL:system lib:error:140Ad002:SSL 
+		routines:SSL_CTX_use_certificate_file:system lib 
+		Fri Feb 28 03:14:37 2014 Exiting 
+		
+		解决方案：改名 client.conif 为 c.conf 就好了 ，一共出现2次此问题
+		然后重新启动
+		
+		问题：当 VPN 客户端的GW不是VPN SERVER 内网地址的时候，所有的VPN 客户端都要加网络路由，命令如下，route add -net 10.8.0.0/24 gw 192.168.1.104
+		如果当vpn客户端GW是 VPN SERVER 内网地址的时候。无需增加路由了。
+		
+		测试 vpn客户端连接 VPN SERVER连通性的方法
+		在主机上 ping 以下 vpn服务端分配过来的ip 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

@@ -1,0 +1,1720 @@
+************************
+请求到web响应的生命周期
+************************
+
+.. contents:: 目录
+   :depth: 4
+
+这里介绍了请求到响应的整个执行过程，主要分为四个阶段，即程序启动准备阶段、请求实例化阶段、请求处理阶段、响应发送和程序终止阶段。每个阶段都有相应的职责功能。
+
+- 程序启动准备阶段：主要完成文件自动加载的实现、服务容器的实例化、基础服务器提供者的注册及核心类的实例化等，核心类实例对象用于控制请求实例对象生成和处理过程的各个环节，而服务容器实例化是为整个过程提供资源服务。
+- 请求实例化阶段：将请求信息以对象的形式进行记录保存的过程。
+- 请求处理阶段：首先是准备请求处理的环境，包括环境检测、配置加载、日志管理、异常处理、外观注册、服务提供者注册、启动服务器提供者等七个环节，然后将请求实例通过中间件处理及通过路由和控制器的分发控制，使得不同请求通过相应的处理函数进行处理并生成响应的过程。
+- 响应的发送和程序终止阶段：将响应返回给客户端并记录与客户端有关的信息等工作。
+
+程序启动准备
+============
+在Laravel框架中，所有的请求入口文件是 ``public`` 目录下的 ``index.php`` 文件。
+
+文件 ``laravel\public\index.php``
+
+.. code-block:: php
+
+    <?php
+
+        define('LARAVEL_START', microtime(true));
+
+        // 注册composer的自动加载器
+        require __DIR__.'/../vendor/autoload.php';
+
+        // 程序启动准备阶段入口文件
+        $app = require_once __DIR__.'/../bootstrap/app.php';
+
+        // 使用容器创建内核对象
+        $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+        // 处理请求
+        $response = $kernel->handle(
+            $request = Illuminate\Http\Request::capture()
+        );
+        // 返回响应给浏览器
+        $response->send();
+        // 响应后的处理，如调用中间件的terminate()方法
+        $kernel->terminate($request, $response);
+
+程序的启动准备阶段是入口文件中的代码 ``require_once __DIR__.'/../bootstrap/app.php'`` 部分，主要实现了服务容器的实例化和基本注册，包括基础路径注册、服务容器本身注册、基础服务提供者注册、核心类别名注册。在注册过程中，服务容器会在对应属性中记录注册的内容，以便在程序运行期间提供对应的服务。
+
+程序启动准备阶段具体过程如图所示：
+
+(图片)
+
+服务容器实例化
+--------------
+入口文件 ``index.php`` 的第一句为加载composer的自动加载器。文件的第二句是调用 ``bootstrap`` 文件夹下的 ``app.php`` 中的代码，主要用来实例化服务容器，并注册 ``laravel`` 框架的核心类服务，为后面自动生成 ``$kernel`` 核心类实例提供基础。
+
+文件 ``laravel\bootstrap\app.php``
+
+.. code-block:: php
+
+    <?php
+
+        // 创建应用容器
+        $app = new Illuminate\Foundation\Application(
+            realpath(__DIR__.'/../')
+        );
+
+        // 在容器中为重要的接口绑定实现类
+        // 绑定处理web请求的内核
+        $app->singleton(
+            Illuminate\Contracts\Http\Kernel::class,
+            App\Http\Kernel::class
+        );
+        // 绑定处理CLI请求的内核
+        $app->singleton(
+            Illuminate\Contracts\Console\Kernel::class,
+            App\Console\Kernel::class
+        );
+        // 绑定异常处理接口
+        $app->singleton(
+            Illuminate\Contracts\Debug\ExceptionHandler::class,
+            App\Exceptions\Handler::class
+        );
+
+        return $app;
+
+在服务容器的实例化过程中，在构造函数中对服务容器中的服务进行了绑定。那么，服务容器的构造函数绑定了那些服务。需要注意的是，服务容器的实例化参数是 ``Laravel`` 框架的根目录地址。
+
+文件 ``Illuminate\Foundation\Application.php``
+
+.. code-block:: php
+
+    <?php
+        public function __construct($basePath = null)
+        {
+            if ($basePath) {
+                $this->setBasePath($basePath); // 设置各个文件夹路径
+            }
+
+            $this->registerBaseBindings(); // 绑定基础实例
+
+            $this->registerBaseServiceProviders(); // 注册事件、日志、路由服务提供器
+
+            $this->registerCoreContainerAliases(); // 注册服务绑定名称的别名
+        }
+
+注册应用的基础路径
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    <?php
+    //注册应用的基础路径
+    public function setBasePath($basePath)
+    {
+        $this->basePath = rtrim($basePath, '\/');
+
+        $this->bindPathsInContainer();
+
+        return $this;
+    }
+    // 在容器中绑定应用程序的基础路径
+    protected function bindPathsInContainer()
+    {
+        $this->instance('path', $this->path());  // 设置App目录路径，默认为app
+        $this->instance('path.base', $this->basePath()); // 设置应用所在路径，默认为项目所在的路径
+        $this->instance('path.lang', $this->langPath()); // 设置语言包所在路径，默认为resources/lang
+        $this->instance('path.config', $this->configPath()); // 设置配置所在的路径，默认为config
+        $this->instance('path.public', $this->publicPath()); // 设置public所在的路径，默认为public
+        $this->instance('path.storage', $this->storagePath()); // 设置存储所在的路径，默认为storage
+        $this->instance('path.database', $this->databasePath()); // 设置数据库相关的路径，默认为database
+        $this->instance('path.resources', $this->resourcePath()); // 设置资源所在的路径，默认为resources
+        $this->instance('path.bootstrap', $this->bootstrapPath()); // 设置启动文件所在路径，默认为bootstrap
+    }
+
+
+注册基础绑定
+^^^^^^^^^^^^
+主要是绑定容器实例本身，使得其他的对象可以很容易得到服务容器实例，其中服务容器中设置了一个静态变量 ``$instance`` ，该变量是在 ``Container`` 容器类中定义的，因为 ``Application`` 类继承了 ``Container`` 容器类，所以继承该静态变量，可以通过 ``Container`` 中的静态函数 ``getInstance()`` 直接获取服务容器实例。另外，为服务容器实例绑定了不同的服务别名，记录在 ``$instances`` 共享实例数组中，可以通过这些别名的任何一个找到服务容器实例。源码如下：
+
+.. code-block:: php
+
+    <?php
+    protected function registerBaseBindings()
+    {
+        static::setInstance($this); // 保存容器到$instance中，实现容器的单实例
+
+        $this->instance('app', $this); // 绑定容器别名为app
+
+        $this->instance(Container::class, $this); // 绑定容器实例到Container类
+
+        // laravel5.5 包自动发现机制，http://www.jb51.net/article/123598.htm
+        // 运行时该机制会自动注册包中的provider和alias
+        $this->instance(PackageManifest::class, new PackageManifest(
+            new Filesystem, $this->basePath(), $this->getCachedPackagesPath()
+        ));
+    }
+
+文件 ``Illuminate\Container\Container.php``
+
+.. code-block:: php
+
+    <?php
+    public function instance($abstract, $instance)
+    {
+        $this->removeAbstractAlias($abstract); // 删除抽象别名数组中的别名
+
+        $isBound = $this->bound($abstract); // 判断该别名是否绑定
+
+        unset($this->aliases[$abstract]); // 删除别名数组中的别名
+
+        $this->instances[$abstract] = $instance;
+
+        if ($isBound) { // 重新绑定该命名别名实例
+            $this->rebound($abstract);
+        }
+
+        return $instance;
+    }
+
+
+注册基础服务提供者
+^^^^^^^^^^^^^^^^^^
+接下来，将进行基础服务提供者的注册。服务器提供者的注册是 ``Laravel`` 应用程序的启动和运行中最重要的行为之一，因为它为服务容器添加应用需要的各种服务。在服务容器的构造函数中只注册了最基础的两个服务提供者，随着 ``Laravel`` 应用程序的运行还会有很多服务提供者被加载注册。
+
+文件 ``Illuminate\Foundation\Application.php``
+
+.. code-block:: php
+
+    <?php
+    // 注册基础服务提供者
+    protected function registerBaseServiceProviders()
+    {
+        $this->register(new EventServiceProvider($this)); // 注册事件服务提供器
+
+        $this->register(new LogServiceProvider($this)); // 注册日志服务提供器
+
+        $this->register(new RoutingServiceProvider($this)); // 注册路由服务提供器
+    }
+    // 在服务容器中注册一个服务提供者
+    public function register($provider, $options = [], $force = false)
+    {
+        // 如果容器中已经注册，则直接返回该服务提供者
+        if (($registered = $this->getProvider($provider)) && ! $force) {
+            return $registered;
+        }
+
+        if (is_string($provider)) { // 根据类名来解析服务提供者实例
+            $provider = $this->resolveProvider($provider);
+        }
+
+        if (method_exists($provider, 'register')) {
+            $provider->register(); // 调用服务提供者注册方法
+        }
+
+        $this->markAsRegistered($provider); // 保存该实例到容器中，标记为已经加载
+
+        /*
+         * 如果应用程序已经启动，我们将在提供程序类中调用此引导方法，以便它有机会执行其引导逻辑，并且可以为此开发人员的应用程序逻辑的任何使用做好准备。
+         */
+        if ($this->booted) {// 只有在应用已经启动时，才执行此逻辑
+            $this->bootProvider($provider); // 调用服务提供者的boot方法
+        }
+
+        return $provider;
+    }
+
+基础服务提供者注册所必须的步骤：
+
+1. 实例化服务提供者，由 ``$this->resolveProvider($provider)`` 函数完成；
+2. 调用服务提供者的 ``register()`` ，该函数用于向服务容器中注册服务；
+3. 标识该服务提供者已经注册过了，这部分内容通过 ``markAsRegistered()`` 函数实现的；
+4. 如果应用程序已经启动过了，则以后注册的服务提供者都会调用它的 ``boot()`` 方法；
+
+.. note:: (存在问题，这个类中根本没有定义register/boot抽象方法？？)每个服务提供者都继承自 ``\Illuminate\Support\ServiceProvider`` 类，该类有个 ``register()`` 虚函数，所以每个服务提供者必须实现这个函数，用来填充服务容器并提供服务。同时，应用程序会在适当时候统一调用服务提供者的 ``boot()`` 函数，但这个函数服务提供者可以不实现，因为在 ``\Illuminate\Support\ServiceProvider`` 类中的魔术方法 ``__call()`` 提供了该函数的处理。所以，如果自己需要设计服务提供者来进行服务注册，则需要继承该类并实现这个函数。
+
+注册核心类别名
+^^^^^^^^^^^^^^
+由于 ``Laravel`` 框架的类是基于命名空间的，所以类名都比较长，为此在服务容器中为一些常用的类注册了别名，在后面程序中会通过别名来代替这个类名。
+
+.. code-block:: php
+
+    <?php
+    public function registerCoreContainerAliases()
+    {
+        foreach ([
+            'app'                  => [\Illuminate\Foundation\Application::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class,  \Psr\Container\ContainerInterface::class],
+            'auth'                 => [\Illuminate\Auth\AuthManager::class, \Illuminate\Contracts\Auth\Factory::class],
+            'auth.driver'          => [\Illuminate\Contracts\Auth\Guard::class],
+            'blade.compiler'       => [\Illuminate\View\Compilers\BladeCompiler::class],
+            'cache'                => [\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class],
+            'cache.store'          => [\Illuminate\Cache\Repository::class, \Illuminate\Contracts\Cache\Repository::class],
+            'config'               => [\Illuminate\Config\Repository::class, \Illuminate\Contracts\Config\Repository::class],
+            'cookie'               => [\Illuminate\Cookie\CookieJar::class, \Illuminate\Contracts\Cookie\Factory::class, \Illuminate\Contracts\Cookie\QueueingFactory::class],
+            'encrypter'            => [\Illuminate\Encryption\Encrypter::class, \Illuminate\Contracts\Encryption\Encrypter::class],
+            'db'                   => [\Illuminate\Database\DatabaseManager::class],
+            'db.connection'        => [\Illuminate\Database\Connection::class, \Illuminate\Database\ConnectionInterface::class],
+            'events'               => [\Illuminate\Events\Dispatcher::class, \Illuminate\Contracts\Events\Dispatcher::class],
+            'files'                => [\Illuminate\Filesystem\Filesystem::class],
+            'filesystem'           => [\Illuminate\Filesystem\FilesystemManager::class, \Illuminate\Contracts\Filesystem\Factory::class],
+            'filesystem.disk'      => [\Illuminate\Contracts\Filesystem\Filesystem::class],
+            'filesystem.cloud'     => [\Illuminate\Contracts\Filesystem\Cloud::class],
+            'hash'                 => [\Illuminate\Contracts\Hashing\Hasher::class],
+            'translator'           => [\Illuminate\Translation\Translator::class, \Illuminate\Contracts\Translation\Translator::class],
+            'log'                  => [\Illuminate\Log\Writer::class, \Illuminate\Contracts\Logging\Log::class, \Psr\Log\LoggerInterface::class],
+            'mailer'               => [\Illuminate\Mail\Mailer::class, \Illuminate\Contracts\Mail\Mailer::class, \Illuminate\Contracts\Mail\MailQueue::class],
+            'auth.password'        => [\Illuminate\Auth\Passwords\PasswordBrokerManager::class, \Illuminate\Contracts\Auth\PasswordBrokerFactory::class],
+            'auth.password.broker' => [\Illuminate\Auth\Passwords\PasswordBroker::class, \Illuminate\Contracts\Auth\PasswordBroker::class],
+            'queue'                => [\Illuminate\Queue\QueueManager::class, \Illuminate\Contracts\Queue\Factory::class, \Illuminate\Contracts\Queue\Monitor::class],
+            'queue.connection'     => [\Illuminate\Contracts\Queue\Queue::class],
+            'queue.failer'         => [\Illuminate\Queue\Failed\FailedJobProviderInterface::class],
+            'redirect'             => [\Illuminate\Routing\Redirector::class],
+            'redis'                => [\Illuminate\Redis\RedisManager::class, \Illuminate\Contracts\Redis\Factory::class],
+            'request'              => [\Illuminate\Http\Request::class, \Symfony\Component\HttpFoundation\Request::class],
+            'router'               => [\Illuminate\Routing\Router::class, \Illuminate\Contracts\Routing\Registrar::class, \Illuminate\Contracts\Routing\BindingRegistrar::class],
+            'session'              => [\Illuminate\Session\SessionManager::class],
+            'session.store'        => [\Illuminate\Session\Store::class, \Illuminate\Contracts\Session\Session::class],
+            'url'                  => [\Illuminate\Routing\UrlGenerator::class, \Illuminate\Contracts\Routing\UrlGenerator::class],
+            'validator'            => [\Illuminate\Validation\Factory::class, \Illuminate\Contracts\Validation\Factory::class],
+            'view'                 => [\Illuminate\View\Factory::class, \Illuminate\Contracts\View\Factory::class],
+        ] as $key => $aliases) {
+            foreach ($aliases as $alias) {
+                $this->alias($key, $alias);
+            }
+        }
+    }
+    // 在容器中注册别名
+    public function alias($abstract, $alias)
+    {   // 以类名作为key,别名作为值
+        $this->aliases[$alias] = $abstract;
+        // 以别名作为key，类名作为值
+        $this->abstractAliases[$abstract][] = $alias;
+    }
+
+在 ``registerCoreContainerAliases()`` 的 ``$aliases`` 数组变量中定义了整个框架的核心服务别名，在服务解析过程中，需要根据实例化的类或接口名称查找服务别名，然后通过服务别名获取具体的服务。至此，应用程序的准备工作已经完成了，这里已经生成了服务容器，在服务容器中注册绑定了基础的服务提供者、服务别名和基础路径。
+
+.. code-block:: php
+
+    <?php
+    $app->singleton(
+        Illuminate\Contracts\Http\Kernel::class,
+        App\Http\Kernel::class
+    );
+
+执行到这里并没有实例化 ``App\Http\Kernel::class`` 类，仅仅是生成了一个闭包。当需要的时候，使用该闭包生成实例对象。
+
+核心类(Kernel类)实例化
+-----------------------
+
+.. code-block:: php
+
+    <?php
+        // 使用容器创建内核对象
+        $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+
+服务容器实例化后，就可以通过服务容器来自动实例化对象了。 ``Kernel`` 类就是通过服务容器自动化创建而成的。那么我们又在什么时候绑定了映射？在 ``laravel\bootstrap\app.php`` 文件中，实例化服务容器之后就注册了三个服务，其中就包括这个核心类接口。在注册服务时，服务名一般是接口。在 ``Contracts`` 命名空间下存储的都是接口，而提供的服务则是具体类、实例对象或返回实例对象的回调函数。
+
+由于注册的服务只是具体类名，所以可以通过反射机制来实例化，并通过反射机制自动解决构造函数中的依赖关系。于是，通过服务容器实例化 ``App\Http\Kernel`` 类时，这个类只是定义了 ``$middleware`` (全局中间件) 、 ``$middlewareGroups`` 和 ``$routeMiddleware`` (路由中间件)三个数组属性，其中中间件是请求进入路由处理前的处理类(全局的中间件)，中间件组是对中间件进行分组，从而方便使用。而路由中间件是请求进入路由处理后的处理类(路由中间件)，所以这里可以在路由中添加新的中间件处理类，只要按照中间件的设计原则进行设计，并在中间件类组的正确位置添加类名，在处理请求的过程中就会调用新添加的中间件处理过程。
+
+因为 ``App\Http\Kernel`` 类继承了 ``Illuminate\Foundation\Http\Kernel`` 类，所以实例化过程中会调用该类中的构造函数，下面是构造函数源码。
+
+文件 ``Illuminate\Foundation\Http\Kernel.php``
+
+.. code-block:: php
+
+    <?php
+    // 创建一个新的HTTP核心类实例
+    public function __construct(Application $app, Router $router)
+    {
+        $this->app = $app; // 传入容器实例
+        $this->router = $router; // 传入前面容器实例化的路由实例对象
+
+        $router->middlewarePriority = $this->middlewarePriority; // 设置路由实例中间件执行优先级
+
+        // 传入配置的中间件组到路由实例对象中
+        foreach ($this->middlewareGroups as $key => $middleware) {
+            $router->middlewareGroup($key, $middleware);
+        }
+
+        // 传入配置的路由中间件到路由实例对象中
+        foreach ($this->routeMiddleware as $key => $middleware) {
+            $router->aliasMiddleware($key, $middleware);
+        }
+    }
+
+这里通过构造函数的类型提示使用容器来进行依赖注入，完成了服务容器和核心类的实例化之后，接下来该处理请求了。
+
+请求实例化
+==========
+在 ``Laravel`` 框架中，完成准备工作后，将进行请求的实例化。在 ``Laravel`` 框架中我们将请求信息分类并保存在 ``Illuminate\Http\Request`` 类的实例对象中，于是请求也就转换为一个实例对象。在处理请求的过程中，只需要处理这个实例对象就可以了。请求实例的创建时通过 ``Illuminate\Http\Request`` 类的 ``capture()`` 静态函数完成的，即 ``$request = Illuminate\Http\Request::capture()`` ，这个函数的源码如下：
+
+文件 ``Illuminate\Http\Request.php``
+
+.. code-block:: php
+
+    <?php
+    // 通过服务器提供的变量创建一个HTTP请求实例对象
+    public static function capture()
+    {
+        static::enableHttpMethodParameterOverride();  // 开启表单方法重载
+        // 先创建Symfony\Component\HttpFoundation\Request的对象，然后使用\Illuminate\Http\Request对象封装
+        return static::createFromBase(SymfonyRequest::createFromGlobals());
+    }
+    // 创建并返回\Illuminate\Http\Request对象
+    public static function createFromBase(SymfonyRequest $request)
+    {
+        // 首先确认是不是Illuminate\Http\Request实例，这里刚创建的是
+        // Symfony\Component\HttpFoundation, 所以if判断为false,
+        if ($request instanceof static) {
+            return $request;
+        }
+
+        $content = $request->content;
+        // 因为不是Illuminate\Http\Request实例，所以这里创建一个laravel处理的Request类的实例
+        $request = (new static)->duplicate(
+            $request->query->all(), $request->request->all(), $request->attributes->all(),
+            $request->cookies->all(), $request->files->all(), $request->server->all()
+        );
+
+        $request->content = $content;
+        // 有无请求参数，如果有的话，就在这里拿（刚生成是没有的，都从$_SERVER等参数那里拿）
+        $request->request = $request->getInputSource();
+
+        return $request;
+    }
+
+通过上面的代码可以看到， ``Laravel`` 框架的请求实例是在 ``Symfony`` 请求实例的基础上创建的。而 ``Symfony`` 框架的请求实例是通过 ``createFromGlobals()`` 静态函数实现的，接下来介绍 ``Symfony`` 框架对请求是如何进行实例化封装的，这也是请求实例化的重点。在 ``Symfony`` 框架中，是通过PHP的全局数组作为参数来实例化请求的，其中包括 ``$_GET, $_POST, $_COOKIE, $_FILES, $_SERVER`` 只是开始先对 ``$_SERVER`` 中的参数进行了一下处理，因为PHP的一个bug，当PHP的接口类型为cli-server时，会将 ``Content-Type`` 和 ``Content-Length`` 的值存储在 ``HTTP_CONTENT_TYPE`` 和 ``HTTP_CONTENT_LENGTH`` 两个字段中，这里需要对其进行修改，然后这些全局数组交给请求创建工厂。
+
+文件 ``symfony\http-foundation\Request.php``
+
+.. code-block:: php
+
+    <?php
+    // 通过PHP全局变量创建一个新的请求实例
+    public static function createFromGlobals()
+    {
+        // CLI mode 需要对字段调整
+        $server = $_SERVER;
+        if ('cli-server' === PHP_SAPI) {
+            if (array_key_exists('HTTP_CONTENT_LENGTH', $_SERVER)) {
+                $server['CONTENT_LENGTH'] = $_SERVER['HTTP_CONTENT_LENGTH'];
+            }
+            if (array_key_exists('HTTP_CONTENT_TYPE', $_SERVER)) {
+                $server['CONTENT_TYPE'] = $_SERVER['HTTP_CONTENT_TYPE'];
+            }
+        }
+
+        // 创建并返回\Symfony\Component\HttpFoundation\Request对象，实际上是用全局变量来实例化对应的类（可以对全局变量进行安全过滤），在赋予Request对象
+        $request = self::createRequestFromFactory($_GET, $_POST, array(), $_COOKIE, $_FILES, $server);
+
+        // 如果是以PUT|DELETE|PATCH方法进行的标准编码传输方式，就从原始数据的只读流解析数据到request属性（此属性其实对应的是POST键值对，PUT|DELETE|PATCH传输方式会被转成POST方式进行统一处理）
+        if (0 === strpos($request->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
+            && in_array(strtoupper($request->server->get('REQUEST_METHOD', 'GET')), array('PUT', 'DELETE', 'PATCH'))
+        ) {
+            parse_str($request->getContent(), $data);
+            $request->request = new ParameterBag($data);
+        }
+
+        return $request;
+    }
+    // 
+    private static function createRequestFromFactory(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null)
+    {
+        // 如果存在自定义的方法，则调用并返回相应的对象
+        if (self::$requestFactory) {
+            $request = call_user_func(self::$requestFactory, $query, $request, $attributes, $cookies, $files, $server, $content);
+
+            if (!$request instanceof self) {
+                throw new \LogicException('The Request factory must return an instance of Symfony\Component\HttpFoundation\Request.');
+            }
+
+            return $request;
+        }
+        // 后期静态绑定
+        return new static($query, $request, $attributes, $cookies, $files, $server, $content);
+    }
+    
+    // 
+    public function getContent($asResource = false)
+    {
+        $currentContentIsResource = is_resource($this->content);
+        if (\PHP_VERSION_ID < 50600 && false === $this->content) {
+            throw new \LogicException('getContent() can only be called once when using the resource return type and PHP below 5.6.');
+        }
+        // 内容作为资源类型处理
+        if (true === $asResource) {
+            if ($currentContentIsResource) {
+                rewind($this->content); // 重置文件指针
+
+                return $this->content; // 返回资源流
+            }
+
+            // Content passed in parameter (test)
+            if (is_string($this->content)) { // 如果是字符串，写入临时文件中
+                $resource = fopen('php://temp', 'r+');
+                fwrite($resource, $this->content);
+                rewind($resource);
+
+                return $resource;
+            }
+
+            $this->content = false;
+
+            return fopen('php://input', 'rb');
+        }
+
+        if ($currentContentIsResource) {
+            rewind($this->content);
+
+            return stream_get_contents($this->content); // 从资源流中返回字符串
+        }
+
+        if (null === $this->content || false === $this->content) {
+            $this->content = file_get_contents('php://input'); // 从输入流中返回字符串
+        }
+
+        return $this->content;
+    }
+
+请求相关信息的参数是通过 ``parameterBag`` 、 ``FileBag`` 等类的实例来封装的，其中 ``FileBag、ServerBag`` 等类也继承了 ``ParameterBag`` 类，相应的参数存储方式是相同的，只是添加了更多的参数处理函数功能。
+
+总之：最后创建了一个解析了 ``$_GET, $_POST, $_COOKIE, $_FILES, $_SERVER`` 等变量之后的 ``Illuminate\Http\Request`` 类的对象。
+
+这里只是介绍了 ``Laravel`` 框架的请求实例化过程，在开发过程中还需要对请求的实例进行不同的操作，包括对请求参数的访问和存储等，这部分内容将在后续章节详细介绍。
+
+处理请求
+=========
+在完成了请求实例化后，将进入对请求实例的处理阶段，即 ``$response = $kernel->handle($request)`` 过程。请求的处理是服务器应用程序的核心功能，通过不同的处理方式最终返回各种响应，实现不同的功能。如何提供可扩展的请求分发处理模块是服务器框架程序成功的关键，具体代码如下：
+
+.. code-block:: php
+
+    <?php
+    // 处理一个输入HTTP请求
+    public function handle($request)
+    {
+        try {
+            $request->enableHttpMethodParameterOverride(); // 开启请求方法重载
+            // 通过路由来发送请求
+            $response = $this->sendRequestThroughRouter($request);
+        } catch (Exception $e) {
+            $this->reportException($e);
+
+            $response = $this->renderException($request, $e);
+        } catch (Throwable $e) {
+            $this->reportException($e = new FatalThrowableError($e));
+
+            $response = $this->renderException($request, $e);
+        }
+        // 分发请求已经处理的事件
+        $this->app['events']->dispatch(
+            new Events\RequestHandled($request, $response)
+        );
+
+        return $response;
+    }
+
+请求的处理是通过 ``sendRequestThroughRouter()`` 方法实现的，通过该方法名就可以看出来，即通过路由传输请求实例。这里需要注意的是， ``enableHttpMethodParameterOverride()`` 方法会拒绝请求，需要在请求处理过程中添加 ``CSRF`` 保护。
+
+请求处理准备工作
+----------------
+前面介绍了应用程序运行的准备环节，而要实现请求的处理，还有很多基础工作要做，这里包括环境检测和变量加载、配置加载、异常处理、外观注册、服务提供者注册和启动服务共六哥步骤，下面将对其中几个步骤的关键环节进行介绍。首先看一下这七个步骤是如何启动的，具体源码如下：
+
+文件 ``Illuminate\Foundation\Http\Kernel.php``
+
+.. code-block:: php
+
+    <?php
+    protected $bootstrappers = [
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+    ];
+    // 将请求通过中间件和路由处理
+    protected function sendRequestThroughRouter($request)
+    {
+        // 注入请求对象到服务容器，供后面使用
+        $this->app->instance('request', $request);
+        // 清空门面类中保存request实例
+        Facade::clearResolvedInstance('request');
+        // 启动应用（包括加载设置环境变量、加载配置文件、设置系统错误异常、Facade、注册和启动各服务提供者等）
+        $this->bootstrap();
+        // 委托管道形式处理请求，这个是middleware实现的本质
+        return (new Pipeline($this->app))
+                    ->send($request)
+                    ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+                    ->then($this->dispatchToRouter());
+    }
+    // 开始请求处理准备工作
+    public function bootstrap()
+    {
+        if (! $this->app->hasBeenBootstrapped()) {// 如果应用程序没有完全启动
+            $this->app->bootstrapWith($this->bootstrappers());
+        }
+    }
+
+文件 ``Illuminate\Foundation\Application.php``
+
+.. code-block:: php
+
+    <?php
+    // 运行给定的启动类数组
+    public function bootstrapWith(array $bootstrappers)
+    {
+        $this->hasBeenBootstrapped = true;
+
+        foreach ($bootstrappers as $bootstrapper) {
+            // 启动前的事件触发
+            $this['events']->fire('bootstrapping: '.$bootstrapper, [$this]);
+            // 创建相应的对象并执行引导操作
+            $this->make($bootstrapper)->bootstrap($this);
+            // 启动后的事件触发
+            $this['events']->fire('bootstrapped: '.$bootstrapper, [$this]);
+        }
+    }
+
+上面提到的，在请求处理的准备阶段共六个环节，每一个环节是由一个类来负责实现的，而每个类都会有一个 ``bootstrap()`` 函数用于实现准备工作，这六个类名就存储在 ``Illuminate\Foundation\Http\Kernel.php`` 类的 ``$bootstrappers`` 数组属性中。在请求发送路由之前，首先通过 ``bootstrap()`` 函数完成准备工作，该函数会调用服务容器实例中的 ``bootstrapWith()`` 函数，这里将通过代码 ``$this->make($bootstrapper)`` 完成每个准备类的实例化工作，然后调用准备类的 ``bootstrap()`` 方法实现准备工作。
+
+环境检测和配置加载
+^^^^^^^^^^^^^^^^^^
+环境检测阶段是对程序运行的环境进行总体配置，这部分内容实际上和配置加载的功能是相同的，都是配置应用程序的运行环境，包括系统配置、身份认证配置、缓存配置、数据库配置、文件系统配置和session配置等。这些配置都是以文件的形式提供的，其中环境检测文件是 ``Laravel`` 框架根目录下的 ``.env`` 文件，而配置加载的配置文件是 ``laravel\config\目录`` 下的所有文件，两者的关系可以看做是主从的关系，即在配置加载过程中设置的参数都可以在 ``.env`` 文件中进行设置，而 ``.env`` 中对环境的配置将会覆盖配置加载项，当然也可以修改成不覆盖。
+
+文件 ``Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables.php``
+
+.. code-block:: php
+
+    <?php
+    // 执行bootstrap()函数
+    public function bootstrap(Application $app)
+    {
+        if ($app->configurationIsCached()) { // 检测配置是否缓存
+            return;
+        }
+        // 通过检测设置的环境来获取指定的环境配置文件路径
+        $this->checkForSpecificEnvironmentFile($app);
+
+        try { // 通过读取指定路径环境文件来设置环境变量，默认是.env环境变量文件
+            (new Dotenv($app->environmentPath(), $app->environmentFile()))->load();
+        } catch (InvalidPathException $e) {
+            //
+        }
+    }
+    // 检测是否存在与APP_ENV环境变量值匹配的自定义环境文件
+    protected function checkForSpecificEnvironmentFile($app)
+    {
+        if ($app->runningInConsole() && ($input = new ArgvInput)->hasParameterOption('--env')) {
+            if ($this->setEnvironmentFilePath( // 如果是控制台命令，则获取环境文件路径
+                $app, $app->environmentFile().'.'.$input->getParameterOption('--env')
+            )) {
+                return;
+            }
+        }
+
+        if (! env('APP_ENV')) { // 如果没有设置该环境变量，则返回，直接使用.env环境配置文件
+            return;
+        }
+        // 检测该指定路径环境配置文件是否存在，并设置该值
+        $this->setEnvironmentFilePath(
+            $app, $app->environmentFile().'.'.env('APP_ENV')
+        );
+    }
+
+``LoadEnvironmentVariables`` 类的 ``bootstrap()`` 函数通过 ``Dotenv`` 类的 ``load()`` 函数实现环境文件的配置加载，在该文件中配置项以 ``配置项=参数值`` 的形式给出，最后通过 ``Loader`` 类的 ``setEnvironmentVariable()`` 的函数来设置环境变量，并在 ``$_ENV`` 和 ``$_SERVER`` 全局数组中记录。
+
+`环境变量使用教程 <https://laravel-china.org/articles/5638/laravel-env-the-loading-of-environment-variables-and-source-code-analysis>`_ 
+
+
+配置文件的加载
+^^^^^^^^^^^^^^
+对于配置加载，是通过 ``\Illuminate\Foundation\Bootstrap\LoadConfiguration`` 类的 ``bootstrap()`` 函数实现的。部分源代码如下：
+
+.. code-block:: php
+
+    <?php
+    // 加载配置文件
+    public function bootstrap(Application $app)
+    {
+        $items = [];
+
+        /**
+         * 首先我们会看看我们是否有缓存配置文件。 如果我们这样做，我们将从该文件加载配置项目，以便它非常快速。 否则，我们需要遍历每个配置文件并加载它们。
+         */
+        if (file_exists($cached = $app->getCachedConfigPath())) {
+            $items = require $cached;
+
+            $loadedFromCache = true;
+        }
+
+        /**
+         * 接下来，我们将遍历配置目录中的所有配置文件，并将每个配置文件加载到存储库中。 这将使开发人员可以在应用程序各个部分使用所有配置选项。
+         */
+        $app->instance('config', $config = new Repository($items));
+
+        if (! isset($loadedFromCache)) {
+            $this->loadConfigurationFiles($app, $config);
+        }
+
+        /**
+         * 最后，我们将根据加载的配置值设置应用程序的环境。 我们将传递一个回调函数，用于在不存在“--env”开关的Web上下文中获取环境。
+         * 应用实例中保存当前环境
+         */
+        $app->detectEnvironment(function () use ($config) {
+            return $config->get('app.env', 'production'); // 返回当前应用使用的环境
+        });
+        // 设置时区
+        date_default_timezone_set($config->get('app.timezone', 'UTC'));
+        // 设置内部字符编码，字符编码名称使用于 HTTP 输入字符编码转换、HTTP 输出字符编码转换、mbstring 模块系列函数字符编码转换的默认编码
+        mb_internal_encoding('UTF-8');
+    }
+
+首先会查找是否有缓存的配置文件，如果有将先加载，这样加载配置项速度快，否则将文件顺序加载。对于程序配置项，将会存放到一个仓库类 ``Repository`` 类实例中，而该类的实例被添加进服务容器的共享实例数组中，服务名称为 ``config`` ，以后就可以用该名称通过服务容器自动获得需要的配置参数。在完成仓库类的实例化和服务绑定后，将通过 ``loadConfigurationFiles()`` 函数进行配置项的加载。接下来介绍加载的实现过程。
+
+文件 ``\Illuminate\Foundation\Bootstrap\LoadConfiguration.php``
+
+.. code-block:: php
+
+    <?php
+    // 加载所有配置文件的配置项
+     protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
+    {
+        // 获取所有配置文件的绝对路径
+        $files = $this->getConfigurationFiles($app);
+
+        if (! isset($files['app'])) {
+            throw new Exception('Unable to load the "app" configuration file.');
+        }
+
+        foreach ($files as $key => $path) {
+            $repository->set($key, require $path); // 把所有配置文件的配置项放置到仓库类中
+        }
+    }
+
+对于配置项的加载，首先需要获取配置文件，通过 ``getConfigurationFiles()`` 将 ``Laravel`` 框架下的配置文件全部读取出来并存储到 ``$files`` 数组中返回，该过程是通过服务容器获取配置文件的路径（代码 ``$app->configPath()`` ），然后通过 ``Symfony`` 组件中的探测类（ ``Symfony\Component\Finder\Finder`` 类）实现文件的识别，最后提取出文件名和文件路径并以关联数组的形式（如 ``app => D：\WWW\laravel\config\app.php`` ）存储到 ``$files`` 数组中返回。对于配置文件，每个文件返回一个数组，这里通过 ``require'文件路径'`` 的形式获取配置项数组，最后通过仓库实例的 ``set()`` 函数添加到仓库中。
+
+前面讲到， ``.env`` 文件中的配置项会覆盖配置文件中的配置项，其实是通过 ``env('APP_DEBUG', false)`` 函数实现的， ``env`` 函数是 ``Illuminate\Support\helpers.php`` 文件中定义的，该文件定义了一些全局函数，可以在其它文件中调用。 ``evn`` 函数先检测环境变量，如果该环境变量存在，则返回环境变量，如果不存在则用第二个参数作为返回值。前面讲到，在环境检测过程中，配置项已经通过 ``putenv()`` 设置为环境变量。
+
+这里加载配置的目的是为在后面的程序运行过程中经常用到这些配置项时，可以通过服务容器方便地获取这些配置， ``$app['config']['app.aliases']`` 和 ``$app->make('config')->get('app.aliases')`` 两种方法都是获取 ``laravel\config\app.php`` 文件中键名为 ``aliases`` 的值，即外观别名数组，因为在 ``Container`` 类和 ``Repository`` 类中都实现了 ``ArrayAccess`` (数组访问)接口，而 ``$app['config']`` 相当于调用该实例的 ``offsetGet($key)`` 方法。
+
+异常处理
+^^^^^^^^
+异常处理就是开启所有错误报告，并通过注册错误处理器、异常处理器和程序结束处理器来管理所有异常和错误。
+
+文件 ``Illuminate\Foundation\Bootstrap\HandleExceptions.php``
+
+.. code-block:: php
+
+    <?php
+    public function bootstrap(Application $app)
+    {
+        $this->app = $app;
+
+        error_reporting(-1);  // 报告所有的php错误，方便以后添加新的错误类型
+
+        /**
+         * set_error_handler(error_function,error_types)
+         * error_types  可选。规定在哪个错误报告级别会显示用户定义的错误。默认是 "E_ALL"。
+         * 自定义的错误处理函数一定要有这４个输入变量$errno,$errstr,$errfile,$errline，否则无效。
+         * 其中$errno为系统内置的错误，也可以是用户定义的错误号
+         * 提示：如果使用了该函数，会完全绕过标准的 PHP 错误处理函数，如果必要，用户定义的错误处理程序必须终止 (die() ) 脚本。 注意：如果在脚本执行前发生错误，由于在那时自定义程序还没有注册，因此就不会用到这个自定义错误处理程序。
+         * 不过注意两点是： （1）E_ERROR、 E_PARSE、E_CORE_ERROR、E_CORE_WARNING、E_COMPILE_ERROR、E_COMPILE_WARNING是不会 被这个句柄处理的，也就是会用最原始的方式显示出来。不过出现这些错误都是编译或PHP内核出错，在通常情况下不会发生。 （2）使用set_error_handler()后，error_reporting ()将会失效。也就是所有的错误（除上述的错误）都会交给自定义的函数处理。
+         */
+        set_error_handler([$this, 'handleError']); // 注册错误处理器
+
+        set_exception_handler([$this, 'handleException']); // 注册异常处理器
+        /**
+         * PHP中止的情况有三种：执行完成；exit/die导致的中止；发生致命错误中止
+         */
+        register_shutdown_function([$this, 'handleShutdown']); // 注册脚本结束处理器
+
+        if (! $app->environment('testing')) { // 非测试环境，则关闭客户端显示错误
+            ini_set('display_errors', 'Off');
+        }
+    }
+
+    public function handleError($level, $message, $file = '', $line = 0, $context = [])
+    {
+        if (error_reporting() & $level) { // 如果开启该错误，则抛出错误异常
+            throw new ErrorException($message, 0, $level, $file, $line);
+        }
+    }
+
+    public function handleException($e)
+    {
+        // Throwable 是 php7 新增的顶级异常 interface，包含了 Error 和 Exception。
+        if (! $e instanceof Exception) { //不是异常，则可能是Error
+            $e = new FatalThrowableError($e);
+        }
+
+        try { // 记录异常信息
+            $this->getExceptionHandler()->report($e);
+        } catch (Exception $e) {
+            //
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->renderForConsole($e);
+        } else { // 通过响应返回给浏览器
+            $this->renderHttpResponse($e);
+        }
+    }
+
+    public function handleShutdown()
+    {
+        // 处理程序结束存在的错误，将其转变为异常
+        if (! is_null($error = error_get_last()) && $this->isFatal($error['type'])) {
+            $this->handleException($this->fatalExceptionFromError($error, 0));
+        }
+    }
+
+外观注册
+^^^^^^^^
+接下来介绍一下外观注册，因为在后面很多地方都用到了外观别名，通过外观别名调用对应实例的属性和方法。主要是为了测试方便，但在程序中很多地方也用到了外观别名。比如路由。
+
+.. code-block:: php
+
+    <?php
+    public function bootstrap(Application $app)
+    {
+        Facade::clearResolvedInstances(); // 清空所有解析的实例
+
+        Facade::setFacadeApplication($app); // 保存容器实例
+        // 读取 app.php 的 aliases 数组，然后与 bootstrap/cache/packages.php 的 packages 数组合并
+        AliasLoader::getInstance(array_merge(
+            $app->make('config')->get('app.aliases', []),
+            $app->make(PackageManifest::class)->aliases()
+        ))->register(); // 并注册load()方法到类的自动加载机制
+    }
+
+你可以看到，它首先读取 ``app.php`` 的 ``aliases`` 数组，然后与 ``bootstrap/cache/packages.php`` 的 ``packages`` 数组合并，这个时候，就可以获取到所有的 ``packages`` 信息进行发现和自带加载了。这样合并的好处就是，你还是可以直接在 ``app.php`` 中定义你的 ``alias`` 来覆盖自动发现的 ``package`` ，从而保证你的项目还是可以运行得很流畅。
+
+P142
+
+`包自动发现机制 <https://mp.weixin.qq.com/s?__biz=MzI5MDcyODM1OA%3D%3D&mid=2247483730&idx=1&sn=dc97c25629da96fa94c33616cd42e4d0&chksm=ec1a319bdb6db88d497d32d0ba61ce8462c92ac5b881ce5fcdb7785fea17fb0a74f30a21bd6d>`_ 
+
+`门面原理 <https://segmentfault.com/a/1190000009369566>`_ 
+
+服务提供者注册
+^^^^^^^^^^^^^^
+服务提供者注册为应用程序运行提供服务支持，在应用程序启动的准备阶段进行了基础服务提供者的加载，但这些服务只能应对前期启动阶段，而对于后期请求处理需要用到的数据库服务、认证服务、session服务等还远远不够，所以这里会绑定后期使用的服务。源码如下：
+
+文件 ``config\app.php``
+
+.. code-block:: php
+
+    <?php
+    'providers' => [
+
+            /*
+             * Laravel Framework Service Providers...
+             */
+            Illuminate\Auth\AuthServiceProvider::class,
+            Illuminate\Broadcasting\BroadcastServiceProvider::class,
+            Illuminate\Bus\BusServiceProvider::class,
+            Illuminate\Cache\CacheServiceProvider::class,
+            Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+            Illuminate\Cookie\CookieServiceProvider::class,
+            Illuminate\Database\DatabaseServiceProvider::class,
+            Illuminate\Encryption\EncryptionServiceProvider::class,
+            Illuminate\Filesystem\FilesystemServiceProvider::class,
+            Illuminate\Foundation\Providers\FoundationServiceProvider::class,
+            Illuminate\Hashing\HashServiceProvider::class,
+            Illuminate\Mail\MailServiceProvider::class,
+            Illuminate\Notifications\NotificationServiceProvider::class,
+            Illuminate\Pagination\PaginationServiceProvider::class,
+            Illuminate\Pipeline\PipelineServiceProvider::class,
+            Illuminate\Queue\QueueServiceProvider::class,
+            Illuminate\Redis\RedisServiceProvider::class,
+            Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
+            Illuminate\Session\SessionServiceProvider::class,
+            Illuminate\Translation\TranslationServiceProvider::class,
+            Illuminate\Validation\ValidationServiceProvider::class,
+            Illuminate\View\ViewServiceProvider::class,
+
+            /*
+             * Package Service Providers...
+             */
+
+            /*
+             * Application Service Providers...
+             */
+            App\Providers\AppServiceProvider::class,
+            App\Providers\AuthServiceProvider::class,
+            // App\Providers\BroadcastServiceProvider::class,
+            App\Providers\EventServiceProvider::class,
+            App\Providers\RouteServiceProvider::class,
+            //App\Providers\DemoServiceProvider::class
+
+        ],
+
+文件 ``Illuminate\Foundation\Bootstrap\RegisterProviders.php``
+
+.. code-block:: php
+
+    <?php
+    public function bootstrap(Application $app)
+    {
+        $app->registerConfiguredProviders();
+    }
+    // 注册所有配置的服务提供者
+    public function registerConfiguredProviders()
+    {
+        $providers = Collection::make($this->config['app.providers'])
+                        ->partition(function ($provider) {
+                            return Str::startsWith($provider, 'Illuminate\\');
+                        }); // 分组
+        // 插入包自动发现的服务提供者到集合中
+        $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
+        // 使用缓存中服务清单来初始化一个提供器仓库，并用该对象来加载服务提供者的配置
+        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
+                    ->load($providers->collapse()->toArray());
+    }
+
+在服务提供者的注册过程中将服务提供者分为三类，即 ``when`` 类、 ``eager`` 类、 ``deferred`` 类。
+
+- ``when`` 类是注册事件，只有当事件发生时才会自动注册这个服务提供者；
+- ``eager`` 类会直接加载，加载方式和注册基础服务提供者的过程相同；
+- ``deferred`` 类的服务提供者存储在列表中，需要使用时才会加载；
+
+在 ``Laravel`` 框架中，提供了一个文件记录服务提供者的类别信息，即 ``bootstrap\cache\services.php`` ，而该路径是通过 ``getCachedServicesPath()`` 函数获取的。
+
+服务提供者的注册经过两个步骤：
+
+1. 第一步是服务提供者仓库的创建，即 ``registerConfiguredProviders()`` 函数中的 ``new ProviderRepository()`` 过程；
+2. 第二步是通过load()函数进行注册；
+
+创建服务提供者仓库时需要提供该文件的路径参数，同时调用 ``load()`` 函数时会添加 ``app.php`` 配置文件中关于服务提供者的内容。
+
+文件 ``Illuminate\Foundation\ProviderRepository.php``
+
+.. code-block:: php
+
+    <?php
+    public function load(array $providers)
+    {
+        // 加载bootstrap\cache\services.php文件中的服务提供者
+        $manifest = $this->loadManifest();
+
+        /**
+         * 首先，我们将加载服务清单，其中包含有关在应用程序中注册的所有服务提供商以及它提供的服务的信息。 这用于知道哪些服务是“延迟”装载机。
+         */
+        if ($this->shouldRecompile($manifest, $providers)) { // 判断是否应该重新编译
+            $manifest = $this->compileManifest($providers); // 生成指定格式的服务清单
+        }
+
+        /**
+         * 接下来，我们将注册事件以加载它所请求的每个事件的服务提供者。 这允许服务提供者在发生某些事件时自动加载。
+         */
+        foreach ($manifest['when'] as $provider => $events) {
+            $this->registerLoadEvents($provider, $events);
+        }
+
+        /**
+         * 我们将继续向应用程序注册所有急切加载的服务提供者，以便他们的服务可以作为提供的服务在应用程序中注册。
+         */
+        foreach ($manifest['eager'] as $provider) {
+            $this->app->register($provider);
+        }
+        // 设置延迟服务提供者列表
+        $this->app->addDeferredServices($manifest['deferred']);
+    }
+
+前面提到服务提供者的记录在两个地方存在，实际上在配置文件 ``app.php`` 的 ``providers`` 中存储的是应用程序运行过程中所有的服务提供者，但是对于服务提供者的类型没有进行划分。当进行服务提供者注册时，首先通过 ``loadManifest()`` 函数读取 ``bootstrap/cache/services.php`` 文件，该文件不仅记录服务提供者，还对服务提供者进行了分类，即前面提到的三种类型，但是该文件是一个临时记录文件，记录的是上一次运行时服务提供者加载的情况，所以需要与当前程序的服务提供者进行比对，通过 ``shouldRecompile()`` 函数实现，如果临时文件 ``bootstrap/cache/services.php`` 记录的服务提供者与配置文件 ``app.php`` 文件记录的相同，则直接使用临时文件中服务提供者的分类进行注册。对于 ``when`` 类服务提供者，通过 ``registerLoadEvents()`` 函数创建事件监听者，当事件发生时调用服务提供者的 ``register()`` 函数进行服务注册。对于 ``deferred`` 类服务提供者，则记录在服务容器实例的 ``$deferredServices`` 数组属性中，在使用服务容器的 ``make()`` 函数进行服务解析时，如果发现这个服务在延时服务数组中，则会注册这个服务提供者，再解析相应的服务。
+
+文件 ``Illuminate\Foundation\ProviderRepository.php``
+
+.. code-block:: php
+
+    <?php
+    protected function registerLoadEvents($provider, array $events)
+    {
+        if (count($events) < 1) {
+            return;
+        }
+        // 注册事件监听器，当事件发生时，调用回调函数来注册服务提供者，即调用服务提供器的register()方法
+        $this->app->make('events')->listen($events, function () use ($provider) {
+            $this->app->register($provider);
+        });
+    }
+
+
+
+启动服务
+^^^^^^^^
+准备阶段的最后一个步骤是启动服务，服务提供者必须要实现 ``register()`` 函数，还有一个 ``boot()`` 函数根据需要决定是否实现(延迟服务提供者没有发现该方法？？？)，主要用于启动服务，而该函数不是必须的，如果不实现会在父类中统一处理。而对于实现 ``boot()`` 函数的服务提供者，会通过 ``BootProviders`` 类进行统一管理调用。源码如下：
+
+文件 ``Illuminate\Foundation\Bootstrap\BootProviders.php``
+
+.. code-block:: php
+
+    <?php
+    public function bootstrap(Application $app)
+    {
+        $app->boot();
+    }
+
+对于服务提供者启动管理类 ``BootProviders`` 来说，实现比较简单，只是调用服务容器中的 ``boot()`` 函数就可以了，因为服务提供者的注册信息都记录在服务容器中。下面给出服务容器启动服务提供者的代码：
+
+文件 ``Illuminate\Foundation\Application.php``
+
+.. code-block:: php
+
+    <?php
+    // 启动应用程序的服务提供者
+    public function boot()
+    {
+        if ($this->booted) {
+            return;
+        }
+
+        /**
+         * 一旦应用程序启动，我们还会为任何需要在初始启动完成后工作的侦听器启动一些“booted”回调。 这在定制我们运行的启动过程时非常有用。
+         */
+        // 服务启动之前的回调
+        $this->fireAppCallbacks($this->bootingCallbacks);
+
+        array_walk($this->serviceProviders, function ($p) {
+            $this->bootProvider($p); // 调用所有注册的服务提供者boot()方法
+        });
+
+        $this->booted = true;
+        // 服务启动之后的回调
+        $this->fireAppCallbacks($this->bootedCallbacks);
+    }
+    // 启动给定的服务提供者
+    protected function bootProvider(ServiceProvider $provider)
+    {
+        if (method_exists($provider, 'boot')) {
+            return $this->call([$provider, 'boot']);
+        }
+    }
+
+从上面可以看到，在 ``Laravel`` 应用程序的服务容器中保存了服务提供者的实例数组，即 ``$serviceProviders`` 属性。这里包含了服务容器实例化过程中的注册的两个基础服务提供者及在服务提供者注册过程中注册的 ``eager`` 类服务提供者，然后通过代码 ``$this->call([$provider, 'boot'])`` 调用 ``$serviceProviders`` 属性中记录的每一个服务提供者实例的 ``boot()`` 函数，该函数主要是对服务进行初始化，如对于数据库提供者 ``Illuminate\Database\DatabaseServiceProvider`` 类来讲会建立数据库连接，而对于路由服务提供者 ``App\Providers\RouteServiceProvider`` 来讲会建立路由表等。这里介绍一下路由表的建立。
+
+文件 ``App\Providers\RouteServiceProvider.php``
+
+.. code-block:: php
+
+    <?php
+    public function boot()
+    {
+        parent::boot();
+    }
+    // 定义应用的路由
+    public function map()
+    {
+        $this->mapApiRoutes(); // api路由映射
+
+        $this->mapWebRoutes(); // web路由映射
+
+        //
+    }
+
+文件 ``Illuminate\Foundation\Support\Providers\RouteServiceProvider.php``
+
+.. code-block:: php
+
+    <?php
+    public function boot()
+    {
+        // 设置路由UrlGenerator对象的控制器根命名空间
+        $this->setRootControllerNamespace();
+        // 是否存在 bootstrap/cache/routes.php文件
+        if ($this->app->routesAreCached()) {
+            $this->loadCachedRoutes(); // 当应用启动完成加载路由缓存文件
+        } else {
+            $this->loadRoutes(); // 调用路由提供器的map()方法
+            // 应用启动后调用的函数
+            $this->app->booted(function () {
+                // Illuminate\Routing\Router.php
+                // Illuminate\Routing\RouteCollection
+                $this->app['router']->getRoutes()->refreshNameLookups(); // 刷新路由名称和路由对象映射表
+                $this->app['router']->getRoutes()->refreshActionLookups(); // 刷新控制器动作和路由对象的映射表
+            });
+        }
+    }
+
+    // 加载应用的路由
+    protected function loadRoutes()
+    {
+        if (method_exists($this, 'map')) {
+            $this->app->call([$this, 'map']); // 调用路由提供器的map方法
+        }
+    }
+
+在 ``Laravel`` 框架中，默认情况下路由配置服务提供者是最后一个注册并启动的，该类位于 ``app\Providers\`` 文件夹下，通过上面的代码可以看出，该类调用父类的 ``boot()`` 函数，父类会通过 ``loadRoutes()`` 函数调用本实例对象的 ``map()`` 函数，这里需要注意的是，通过服务容器实例的 ``call()`` 函数调用一个函数时会解决函数的依赖问题。服务容器不但解决类实例化时构造函数的依赖注入问题，还可以解决函数调用的依赖注入问题，就是通过 ``call()`` 函数来实现，其内部机制基本相同，也是通过反射机制来解决依赖的。
+
+文件 ``app\Providers\RouteServiceProvider.php``
+
+.. code-block:: php
+
+    <?php
+    public function map()
+    {
+        $this->mapApiRoutes(); // api路由映射
+
+        $this->mapWebRoutes(); // web路由映射
+    }
+    protected function mapWebRoutes()
+    {
+        // 通过门面来调用
+        Route::middleware('web')
+             ->namespace($this->namespace)
+             ->group(base_path('routes/web.php'));
+    }
+
+文件 ``Illuminate\Routing\Router.php``
+
+.. code-block:: php
+
+    <?php
+    public function group(array $attributes, $routes)
+    {
+        // 合并prefix/namespace/as/where/中间件，形成新的attribute
+        $this->updateGroupStack($attributes);
+
+        /**
+         * 一旦我们更新了组堆栈，我们将加载提供的路由并在创建路由时合并组的属性。 在创建路由之后，我们将弹出堆栈中的属性。
+         */
+        $this->loadRoutes($routes); // 加载的配置文件可能包含分组
+
+        array_pop($this->groupStack); // 弹出当前分组的属性信息
+    }
+    // 增加get方法路由
+    public function get($uri, $action = null)
+    {
+        return $this->addRoute(['GET', 'HEAD'], $uri, $action);
+    }
+    // 增加一个路由到底层路由集合
+    protected function addRoute($methods, $uri, $action)
+    {
+        return $this->routes->add($this->createRoute($methods, $uri, $action));
+    }
+
+在 ``map()`` 函数中，依赖一个参数为 ``Illuminate\Routing\Router.php`` 类的实例，会通过服务容器来解决这个依赖，而这个实现对象管理应用程序的路由情况，所有的路由配置信息最终都会记录在路由器实例对象中。 注意，路由分组可以嵌套定义，解析路由时遇到路由分组中定义的公共信息时，路由实例会自动添加对应的信息。
+
+中间件
+------
+在请求处理的过程中，经过繁琐的准备工作，应用程序开始对请求进行处理了。对请求的处理， ``Laravel`` 框架是逐级进行的，首先是经过中间件的处理，然后经过路由处理，最后到控制器生成响应，对请求从中间件到路由处理再到响应生成整个过程中基本是以装饰模式进行处理的。
+
+文件 ``app\Http\Kernel.php``
+
+.. code-block:: php
+
+    <?php
+    protected $middleware = [
+        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\TrustProxies::class,
+    ];
+
+文件 ``Illuminate\Foundation\Http\Kernel.php``
+
+.. code-block:: php
+
+    <?php
+    // 将请求通过中间件和路由处理
+    protected function sendRequestThroughRouter($request)
+    {
+        // 注入请求对象到服务容器，供后面使用
+        $this->app->instance('request', $request);
+        // 清空门面类中保存request实例
+        Facade::clearResolvedInstance('request');
+        // 启动应用（包括加载设置环境变量、加载配置文件、设置系统错误异常、Facade、注册和启动各服务提供者等）
+        $this->bootstrap();
+        // 委托管道形式处理请求，这个是middleware实现的本质
+        return (new Pipeline($this->app))
+                    ->send($request)
+                    ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+                    ->then($this->dispatchToRouter());
+    }
+    // 设置路由分发回调函数
+    protected function dispatchToRouter()
+    {
+        return function ($request) {
+            $this->app->instance('request', $request); // 保存请求实例到容器中
+
+            return $this->router->dispatch($request); // 路由分发请求
+        };
+    }
+
+文件 ``Illuminate\Routing\Pipeline.php``
+
+.. code-block:: php
+
+    <?php
+    protected function carry()
+    {
+        return function ($stack, $pipe) {
+            return function ($passable) use ($stack, $pipe) {
+                try {
+                    $slice = parent::carry(); // 构造闭包
+
+                    $callable = $slice($stack, $pipe); // 调用闭包并传入参数，返回一个闭包
+
+                    return $callable($passable); // 调用该闭包并传入请求对象
+                } catch (Exception $e) {
+                    return $this->handleException($passable, $e);
+                } catch (Throwable $e) {
+                    return $this->handleException($passable, new FatalThrowableError($e));
+                }
+            };
+        };
+    }
+
+文件 ``Illuminate\Pipeline\Pipeline.php``
+
+.. code-block:: php
+
+    <?php
+    public function __construct(Container $container = null)
+    {
+        $this->container = $container;
+    }
+    // 设置被送入管道的对象，这里是请求对象
+    public function send($passable)
+    {
+        $this->passable = $passable;
+
+        return $this;
+    }
+    // 设置导管数组，即被送入管道的对象需要通过的导管，这里是中间件数组
+    public function through($pipes)
+    {
+        $this->pipes = is_array($pipes) ? $pipes : func_get_args();
+
+        return $this;
+    }
+    // 以一个回调函数为终点执行“管道”处理
+    public function then(Closure $destination)
+    {
+        // 反转中间件，通过carry()函数聚合为多次嵌套的函数，然后调用该函数
+        $pipeline = array_reduce(
+            array_reverse($this->pipes), $this->carry(), $this->prepareDestination($destination)
+        );
+
+        return $pipeline($this->passable); // 调用函数，并传入Request对象
+    }
+    // 最内层调用函数
+    protected function prepareDestination(Closure $destination)
+    {
+        return function ($passable) use ($destination) {
+            return $destination($passable); // 最内层调用函数，并传入Request对象
+        };
+    }
+    // 获取一个用来代替应用处理“洋葱”层的回调函数
+    protected function carry()
+    {
+        return function ($stack, $pipe) {
+            return function ($passable) use ($stack, $pipe) {
+                if (is_callable($pipe)) {
+                    /**
+                     * 如果管道是闭包的一个实例，我们将直接调用它，否则我们会将这些管道从容器中解析出来，并用适当的方法和参数调用它，并将结果返回。
+                     */
+                    return $pipe($passable, $stack); // 其中$passable为请求对象，$stack为中间件的嵌套函数
+                } elseif (! is_object($pipe)) {
+                    list($name, $parameters) = $this->parsePipeString($pipe);
+
+                    /**
+                     * 如果管道是字符串，我们将解析字符串并将该类从依赖注入容器中解析出来。 然后，我们可以构建一个可调用的函数，并传入所需的参数到管道函数中来执行。
+                     */
+                    $pipe = $this->getContainer()->make($name);
+                    // 合并传入调用方法的参数，包括请求对象，中间件的嵌套函数，用户自定义的参数
+                    $parameters = array_merge([$passable, $stack], $parameters);
+                } else {
+                    /**
+                     * 如果管道已经是一个对象，我们只需创建一个闭包，然后将它传递给管道。 没有必要做任何额外的解析和格式化，因为我们提供的对象已经是完全实例化的对象。
+                     */
+                    $parameters = [$passable, $stack]; // 只包含请求对象和中间件的嵌套函数，这两个参数
+                }
+                // 如果存在handle方法，则使用handle方法来处理，否则使用构造函数
+                return method_exists($pipe, $this->method)
+                                ? $pipe->{$this->method}(...$parameters)
+                                : $pipe(...$parameters);
+            };
+        };
+    }
+
+在 ``Laravel`` 框架中，很多注释和代码名称已经非常形象地表达了程序代码的功能，代码注释中将中间件称为"洋葱"层，将整个处理流程称为“管道”，有些地方会用到这些名称，如果读者理解了真正的含义就会更容易理解程序。对请求的处理阶段，首先对管道类进行了实例化，分别通过 ``send()`` 函数和 ``through()`` 函数将请求实例和中间件数组赋值给管道实例，而最终的处理是通过 ``then()`` 函数完成的，该函数有一个参数，这个参数是经过“管道后”的终点处理函数，即下一步的路由处理。而 ``then()`` 函数其实就是将整个中间件数组通过服务容器生成实例，并对这些实例的 ``handle()`` 函数和传入的终点处理回调函数进行组装，形成一个递归调用的回调函数，再进行调用，最终完成“管道”的逐级处理。
+
+对于初始的 ``Laravel`` 框架程序，中间件包括 ``CheckForMaintenanceMode`` 、 ``ValidatePostSize`` 、 ``TrimStrings`` 、 ``ConvertEmptyStringsToNull`` 、 ``TrustProxies`` 。定义在 ``app\Http\Kernel.php`` 文件中的 ``$middleware`` 数组中，分别用来完成验证维护模式、验证 post 数据大小、去除首尾空白字符、转换空字符串为 null、信任代理设置。如果在程序开发过程中需要添加新的中间件，可以按照这几个类进行设计并添加到中间件数组中。
+
+路由处理生成响应
+----------------
+对于 ``Laravel`` 框架，请求是通过路由与控制器的响应函数对应的，整个路由表的生成是在请求处理的准备工作中的启动服务过程中完成的，通过 ``RouteServiceProvider`` 中的 ``boot()`` 函数实现。下面将按请求处理的步骤逐步介绍。
+
+路由匹配
+^^^^^^^^
+在路由的定义过程中，通常有两个参数，一个是URI(唯一资源标识符)，另一个是处理函数或处理函数定位，而大部分是处理函数定位，即控制器中相应的函数。那么，在路由表中就是请求与处理函数的对应信息，每一个对应信息为一个路由，通过 ``Illuminate\Routing\Route`` 实例进行保存，而所有的路由信息又通过 ``Illuminate\Routing\RouteCollection`` 实例保存形成路由表，而路由表则由 ``Illuminate\Routing\Router`` 类实例保存，这就是路由信息的结构。对于请求的处理，首先是在路由信息结构中找到对应的路由，即对应的 ``Illuminate\Routing\Route`` 实例，下面是这部分源码：
+
+文件 ``Illuminate\Foundation\Http\Kernel.php``
+
+.. code-block:: php
+
+    <?php
+    protected function dispatchToRouter()
+    {
+        return function ($request) {
+            $this->app->instance('request', $request); // 保存请求实例到容器中
+
+            return $this->router->dispatch($request); // 路由分发请求
+        };
+    }
+
+上面提到，所有的路由信息其实都保存在一个 ``Illuminate\Routing\Router`` 类实例中，而这个类实例存储在 ``Kernel`` 类的实例中，于是通过 ``$this->router->dispatch($request)`` 将请求信息传递给路由信息存储实例。
+
+文件 ``Illuminate\Routing\Router.php``
+
+.. code-block:: php
+
+    <?php
+    public function dispatch(Request $request)
+    {
+        $this->currentRequest = $request; // 传递请求对象给路由管理对象
+
+        return $this->dispatchToRoute($request); // 分发请求到路由实例并返回响应
+    }
+
+    public function dispatchToRoute(Request $request)
+    {
+        return $this->runRoute($request, $this->findRoute($request));
+    }
+
+    protected function findRoute($request)
+    {
+        // 根据请求对象找到匹配的路由
+        $this->current = $route = $this->routes->match($request);
+        // 把匹配路由对象记录到容器中
+        $this->container->instance(Route::class, $route);
+
+        return $route;
+    }
+    protected function runRoute(Request $request, Route $route)
+    {
+        // 设置请求对象的路由解析器
+        $request->setRouteResolver(function () use ($route) {
+            return $route;
+        });
+        // 发送路由匹配事件
+        $this->events->dispatch(new Events\RouteMatched($route, $request));
+
+        return $this->prepareResponse($request,
+            $this->runRouteWithinStack($route, $request)
+        );
+    }
+    protected function runRouteWithinStack(Route $route, Request $request)
+    {
+        // 如果middleware.disable实例已经绑定，且值为Boolean类型的true，则关闭中间件
+        $shouldSkipMiddleware = $this->container->bound('middleware.disable') &&
+                                $this->container->make('middleware.disable') === true;
+        // 是否关闭中间件
+        $middleware = $shouldSkipMiddleware ? [] : $this->gatherRouteMiddleware($route);
+        // 执行路由中间件
+        return (new Pipeline($this->container))
+                        ->send($request)
+                        ->through($middleware)
+                        ->then(function ($request) use ($route) {
+                            return $this->prepareResponse(
+                                $request, $route->run()
+                            );
+                        });
+    }
+    // 收集路由和控制器中该动作的中间件
+    public function gatherRouteMiddleware(Route $route)
+    {
+        // 这里面的中间件包含控制器和路由中定义的中间件
+        $middleware = collect($route->gatherMiddleware())->map(function ($name) {
+            return (array) MiddlewareNameResolver::resolve($name, $this->middleware, $this->middlewareGroups);
+        })->flatten();
+        // 根据中间件优先级对所有中间件进行排序
+        return $this->sortMiddleware($middleware);
+    }
+
+在路由信息存储实例中，通过 ``$this->findRoute($request)`` 来查找请求对应的路由实例，查找主要是根据请求的方法和请求的URI来实现对应，当查找到请求对应的路由后，请求将会传递到对应的路由中去处理，即 ``$route->run()`` 。
+
+文件 ``Illuminate\Routing\Route.php``
+
+.. code-block:: php
+
+    <?php
+    public function run()
+    {
+        $this->container = $this->container ?: new Container;
+
+        try {
+            if ($this->isControllerAction()) {
+                return $this->runController(); // 执行控制器动作
+            }
+
+            return $this->runCallable(); // 执行闭包
+        } catch (HttpResponseException $e) {
+            return $e->getResponse();
+        }
+    }
+    // 执行控制器动作
+    protected function runController()
+    {
+        return $this->controllerDispatcher()->dispatch(
+            $this, $this->getController(), $this->getControllerMethod()
+        );
+    }
+    // 生成控制器对象
+    public function getController()
+    {
+        if (! $this->controller) {
+            $class = $this->parseControllerCallback()[0]; // 解析路由中控制器名称
+            // 使用容器创建控制器对象
+            $this->controller = $this->container->make(ltrim($class, '\\'));
+        }
+
+        return $this->controller;
+    }
+    // 返回方法名称
+    protected function getControllerMethod()
+    {
+        return $this->parseControllerCallback()[1]; // 解析路由中方法名称
+    }
+
+在请求对应的路由中，会使用控制器分发器处理，在初始的 ``Laravel`` 框架中使用的是控制器分发器，通过服务容器自动生成这个分发器，这个服务是通过服务提供者 ``ControllerServiceProvider`` 注册的，下一步将会把请求及路由中关于处理函数的信息交给 控制分发器去处理。
+
+控制器生成
+^^^^^^^^^^
+在控制分发器中，将会根据路由提供的响应函数信息来实例化控制类，并调用对应的响应函数生成响应的内容部分。下面给出部分源码：
+
+文件 ``Illuminate\Routing\ControllerDispatcher.php``
+
+.. code-block:: php
+
+    <?php
+    public function dispatch(Route $route, $controller, $method)
+    {
+        $parameters = $this->resolveClassMethodDependencies(
+            $route->parametersWithoutNulls(), $controller, $method
+        );
+
+        if (method_exists($controller, 'callAction')) {
+            return $controller->callAction($method, $parameters); // 通过BaseController中的callAction来间接调用该方法
+        }
+        // 如果没有继承基类，则直接调用动作方法
+        return $controller->{$method}(...array_values($parameters));
+    }
+
+在控制分发器中，首先根据控制器类名，通过服务容器进行实例化，再通过调用控制器实例对应的方法来生成响应的主体部分。
+
+这里需要注意：可以定义控制器层次的中间件，通过在构造函数中 ``$this->middleware('auth')`` 或者 ``$this->middleware('guest')->except('logout')`` 来声明该控制器中处理请求过程中需要进行对应中间件的处理，即权限验证。当声明了中间件后，就会在 ``callWithinStack()`` 函数中获取对应的中间件信息，然后通过管道方式进行处理。在 ``Laravel`` 框架中，对于身份验证等功能就是这样实现的，在响应之前首先经过 ``auth`` 中间件的 ``handle()`` 函数进行处理，如果验证通过将会进行响应处理，否则重定向到登陆页面。
+
+响应生成
+^^^^^^^^
+经历了层层的处理，应用程序终于找到了对应请求的处理函数，这里假设就是 ``Laravel`` 框架的欢迎页面。对于不同的应用可能生成的响应主体是不同的，对于移动应用可能响应的就是一些 ``JSON`` 格式的数据，而对于网页应用响应的可能是一个 ``HTML`` 页面。下面是部分源码:
+
+文件 ``app\Http\Controllers\WelcomeController.php``
+
+.. code-block:: php
+
+    <?php
+    // 显示视图到屏幕
+    public function index() {
+        return view('welcome');
+    }
+
+文件 ``Illuminate\Foundation\helpers.php``
+
+.. code-block:: php
+
+    <?php
+    function view($view = null, $data = [], $mergeData = [])
+    {
+        $factory = app(ViewFactory::class); // 获取视图工厂的实例
+
+        if (func_num_args() === 0) {  // 如果函数参数为0，则直接返回视图工厂对象，用来支持链式操作
+            return $factory;
+        }
+        // 使用视图工厂创建视图对象
+        return $factory->make($view, $data, $mergeData);
+    }
+
+文件 ``Illuminate\View\Factory.php``
+
+.. code-block:: php
+
+    <?php
+    public function make($view, $data = [], $mergeData = [])
+    {
+        // 查找和规范模板文件的路径
+        $path = $this->finder->find(
+            $view = $this->normalizeName($view)
+        );
+
+        /**
+         * 接下来，我们将创建视图实例并为可以设置任何数据的视图调用视图创建器等。
+         * 然后，我们将视图实例返回给调用者以进行渲染或对其执行其他视图操作。
+         */
+        $data = array_merge($mergeData, $this->parseData($data));
+
+        // 传入视图实例到闭包函数，该函数主要发出创建视图事件
+        return tap($this->viewInstance($view, $path, $data), function ($view) {
+            $this->callCreator($view);
+        });
+    }
+
+对于视图的生成实际上是通过实例化 ``Illuminate\View\View`` 类实现的，在 ``View`` 实例中包含了视图文件路径、名称、数据及它的编译引擎等，接下来将会根据生成的响应主体生成响应实例。在 ``Laravel`` 框架中对响应的封装是通过 ``Illuminate\Http\Response`` 类完成的，而该类的底层也用到了 ``Symfony`` 框架中的 ``Response`` 类，即 ``Symfony\Component\HttpFoundation\Response`` 类。
+
+文件 ``Illuminate\Routing\Router.php``
+
+.. code-block:: php
+
+    <?php
+    protected function runRouteWithinStack(Route $route, Request $request)
+    {
+        // 如果middleware.disable实例已经绑定，且值为Boolean类型的true，则关闭中间件
+        $shouldSkipMiddleware = $this->container->bound('middleware.disable') &&
+                                $this->container->make('middleware.disable') === true;
+        // 是否关闭中间件
+        $middleware = $shouldSkipMiddleware ? [] : $this->gatherRouteMiddleware($route);
+        // 执行路由中间件
+        return (new Pipeline($this->container))
+                        ->send($request)
+                        ->through($middleware)
+                        ->then(function ($request) use ($route) {
+                            return $this->prepareResponse(
+                                $request, $route->run()
+                            );
+                        });
+    }
+    // 用给定的视图对象创建一个响应对象
+    public function prepareResponse($request, $response)
+    {
+        return static::toResponse($request, $response);
+    }
+
+    public static function toResponse($request, $response)
+    {
+        if ($response instanceof Responsable) {
+            $response = $response->toResponse($request);
+        }
+
+        if ($response instanceof PsrResponseInterface) {
+            $response = (new HttpFoundationFactory)->createResponse($response);
+        } elseif (! $response instanceof SymfonyResponse &&
+                   ($response instanceof Arrayable ||
+                    $response instanceof Jsonable ||
+                    $response instanceof ArrayObject ||
+                    $response instanceof JsonSerializable ||
+                    is_array($response))) {
+            $response = new JsonResponse($response);
+        } elseif (! $response instanceof SymfonyResponse) {
+            $response = new Response($response); // 把view对象传入响应对象中，Illuminate\http\Response对象
+        }
+
+        if ($response->getStatusCode() === Response::HTTP_NOT_MODIFIED) {
+            $response->setNotModified();
+        }
+
+        return $response->prepare($request);
+    }
+
+文件 ``Illuminate\Http\Response.php``
+
+.. code-block:: php
+
+    <?php
+    public function setContent($content)
+    {
+        $this->original = $content;
+
+        /**
+         * 如果内容是“JSONable”，我们将设置适当的header并将内容转换为JSON。
+         *  当从路由中返回类似于模型的东西时，这将很有用，它将自动转换为JSON格式。
+         */
+        if ($this->shouldBeJson($content)) {
+            $this->header('Content-Type', 'application/json');
+
+            $content = $this->morphToJson($content);
+        }
+
+        /**
+         * 如果这个内容实现了“Renderable”接口，那么我们将在对象上调用render方法，
+         * 这样我们就可以避免任何可能抛出的“__toString”异常，并且它们的错误被PHP的处理所掩盖。
+         */
+        elseif ($content instanceof Renderable) {
+            $content = $content->render();
+        }
+
+        parent::setContent($content);
+
+        return $this;
+    }
+
+文件 ``symfony/http-foundation/Response.php``
+
+.. code-block:: php
+
+    <?php
+    // 通过传入内容来构造响应对象
+    public function __construct($content = '', $status = 200, $headers = array())
+    {
+        $this->headers = new ResponseHeaderBag($headers);
+        $this->setContent($content); // 这里会解析视图对象为字符串
+        $this->setStatusCode($status);
+        $this->setProtocolVersion('1.0');
+    }
+    // 在响应传输到客户端之前进行准备
+    public function prepare(Request $request)
+    {
+        $headers = $this->headers;
+
+        if ($this->isInformational() || $this->isEmpty()) {
+            $this->setContent(null);
+            $headers->remove('Content-Type');
+            $headers->remove('Content-Length');
+        } else {
+            // Content-type based on the Request
+            if (!$headers->has('Content-Type')) { // 设置响应的内容类型
+                $format = $request->getRequestFormat();
+                if (null !== $format && $mimeType = $request->getMimeType($format)) {
+                    $headers->set('Content-Type', $mimeType);
+                }
+            }
+
+            // Fix Content-Type，设置响应编码
+            $charset = $this->charset ?: 'UTF-8';
+            if (!$headers->has('Content-Type')) {
+                $headers->set('Content-Type', 'text/html; charset='.$charset);
+            } elseif (0 === stripos($headers->get('Content-Type'), 'text/') && false === stripos($headers->get('Content-Type'), 'charset')) {
+                // add the charset
+                $headers->set('Content-Type', $headers->get('Content-Type').'; charset='.$charset);
+            }
+
+            // Fix Content-Length
+            if ($headers->has('Transfer-Encoding')) {
+                $headers->remove('Content-Length');
+            }
+
+            if ($request->isMethod('HEAD')) {
+                // cf. RFC2616 14.13
+                $length = $headers->get('Content-Length');
+                $this->setContent(null);
+                if ($length) {
+                    $headers->set('Content-Length', $length);
+                }
+            }
+        }
+
+        // Fix protocol
+        if ('HTTP/1.0' != $request->server->get('SERVER_PROTOCOL')) {
+            $this->setProtocolVersion('1.1');
+        }
+
+        // Check if we need to send extra expire info headers
+        if ('1.0' == $this->getProtocolVersion() && false !== strpos($this->headers->get('Cache-Control'), 'no-cache')) {
+            $this->headers->set('pragma', 'no-cache');
+            $this->headers->set('expires', -1);
+        }
+
+        $this->ensureIEOverSSLCompatibility($request);
+
+        return $this;
+    }
+
+从上面可以看到，响应最终是封装在 ``Illuminate\Http\Response`` 实例中的，其中不仅包括了控制器处理函数得到的响应主体，还包括根据请求生成的响应头的内容。至此，从请求的发出到响应的生成就已经完成了，接下来就是将响应发给客户端并记录相关的信息。
+
+
+
+响应的发送和程序终止
+====================
+
+响应的发送
+----------
+到这里，对HTTP请求的响应已经生成了，接下来需要将封装在 ``Illuminate\Http\Response`` 实例中的响应以 ``HTTP`` 响应的形式发送给客户端，实现一个请求生命周期的最后环节。响应的发送是在 ``public\index.php`` 文件中通过 ``$response->send()`` 实现的。
+
+文件 ``public\index.php``
+
+.. code-block:: php
+
+    <?php
+    $response->send();
+
+文件 ``symfony\http-foundation\Response.php``
+
+.. code-block:: php
+
+    <?php
+    public function send()
+    {
+        $this->sendHeaders(); //发送头到输出缓冲区
+        $this->sendContent(); // 发送内容到输出缓冲区
+
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request(); // 不等脚本结束，快速发送响应到浏览器端
+        } elseif ('cli' !== PHP_SAPI) { // 通过关闭输出缓冲区来发送响应到浏览器
+            static::closeOutputBuffers(0, true);
+        }
+
+        return $this;
+    }
+    // 发送HTTP头部内容
+    public function sendHeaders()
+    {
+        // headers have already been sent by the developer
+        if (headers_sent()) {
+            return $this;
+        }
+
+        // headers
+        foreach ($this->headers->allPreserveCaseWithoutCookies() as $name => $values) {
+            foreach ($values as $value) {
+                header($name.': '.$value, false, $this->statusCode);
+            }
+        }
+
+        // status
+        header(sprintf('HTTP/%s %s %s', $this->version, $this->statusCode, $this->statusText), true, $this->statusCode);
+
+        // cookies
+        foreach ($this->headers->getCookies() as $cookie) {
+            if ($cookie->isRaw()) {
+                setrawcookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
+            } else {
+                setcookie($cookie->getName(), $cookie->getValue(), $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
+            }
+        }
+
+        return $this;
+    }
+    // 发送Web响应的内容
+    public function sendContent()
+    {
+        echo $this->content;
+
+        return $this;
+    }
+
+响应的发送包括两部分内容，分别是响应头信息的发送和响应主体内容的发送。响应头信息包括状态行、首部字段和 ``Cookie`` 的发送，状态行和首部字段是通过 ``header()`` 函数完成的， ``Cookie`` 的发送是通过 ``setCookie()`` 函数完成的，这里的 ``Cookie`` 内容主要是 ``session`` 的 ``ID`` 以及 ``CSRF`` 令牌，一个用于会话控制，另一个是防止 ``CSRF`` 攻击。在响应发送完成后，通过调用 ``closeOutputBuffers()`` 静态函数完成缓冲区的释放。
+
+程序终止
+---------
+在完成 ``HTTP`` 响应的发送后，接下来进入程序生命周期的最后阶段——程序终止，对于 ``Laravel`` 框架，程序终止主要是完成终止中间件的调用。
+
+文件 ``public\index.php``
+
+.. code-block:: php
+
+    <?php
+    $kernel->terminate($request, $response);
+
+文件 ``Illuminate\Foundation\Http\Kernel.php``
+
+.. code-block:: php
+
+    <?php
+    public function terminate($request, $response)
+    {
+        // 调用所有中间件(包含全局、路由、控制器中的中间件)的terminate()方法
+        $this->terminateMiddleware($request, $response);
+        // 调用容器注册的所有结束回调方法
+        $this->app->terminate();
+    }
+
+在 ``Laravel`` 框架默认情况下，只有会话中间件存在该函数，主要用于会话记录、即用户状态信息的记录。
+

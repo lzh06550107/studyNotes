@@ -1,0 +1,113 @@
+****
+缓存机制
+****
+
+数据缓存是指将一些 PHP 变量存储到缓存中，使用时再从缓存中取回，避免过多的操作直接从数据库中存取，减轻数据库压力。微擎系统提供一系列的操作缓存的函数，不需要开发者手动加载引入。
+
+缓存规范
+========
+
+缓存书写规范
+------------
+在微擎系统中，缓存大致可以分为两种：
+
+- 全局性的缓存，一次建立所有用户皆可以使用的缓存。比如：菜单数据、站点配置信息等等。
+- 特有的缓存，缓存只针对于某个用户有效。比如：粉丝数据、会员数据等等。
+
+.. note:: 对于重建缓存操作中需要有数据的拼接、计算、获取的复杂操作，建议将重建缓存函数单独封装成一个方法，在微擎系统中是存放在 ``cache.mod.php`` 中，否则您只需要在模型函数中处理即可
+
+缓存命名空间
+-----------
+
+- 对于缓存数据来说，强烈建议您存放时增加自己有前缀以防止数据冲突
+- 命名键名时应该使键名以功能分组，以冒号隔开，例如公众号相关的缓存命名为： ``account:info`` ， ``account:auth`` 等等
+- 系统的缓存数据是以 ``we7:`` 开头，使用时用 ``cache_system_key('account:info')`` 即可
+
+缓存方法
+========
+
+cache_write
+------------
+cache_write() - 按照指定的键名存储缓存数据
+
+.. code-block:: php
+
+    cache_write(string $key, mixed $data)
+
+参数
+
+- ``$key`` 参数指定要存储缓存数据的键名，键名必须保证是唯一
+- ``$data`` 参数指定要存储数据的内容，可以为字符串，数组等
+
+示例
+
+.. code-block:: php
+
+	$data = array(1, 2, 3);
+	cache_write('test', $data);
+	cache_write('test1', 'testdata');
+
+cache_load
+-----------
+cache_load() - 读取指定键名的缓存数据
+
+.. code-block:: php
+
+	cache_load(string $key)
+
+参数
+
+- ``$key`` 参数指定要读取缓存数据的键名
+
+示例
+
+.. code-block:: php
+
+	$data = array(1, 2, 3);
+	cache_write('test', $data);
+	$result = cache_load('test');
+	cache_write('test1', 'testdata');
+	cache_load('test1'); //未接收返回值时，缓存数据会保存在$_W['cache']中
+
+cache_delete
+-------------
+cache_delete() - 删除指定的缓存
+
+.. code-block:: php
+
+    cache_delete(string $key)
+
+参数
+
+- ``$key`` 参数指定要删除缓存数据的键名
+
+示例
+
+.. code-block:: php
+
+	$data = array(1, 2, 3);
+	cache_write('test', $data);
+	cache_delete('test');
+
+cache_clean
+------------
+cache_clean() - 清空所有缓存
+
+
+cache_system_key
+-----------------
+
+.. code-block:: php
+
+    cache_system_key($cache_key)
+
+统一系统缓存名称前缀，支持缓存名称中包含占位符，最多不得超过5个
+
+示例
+
+.. code-block:: php
+
+	$cachekey = cache_system_key('permission:%s:%s', $_W['uniacid'], $_W['uid']);
+	$cache = cache_load($cachekey);
+
+也可以将 ``permission:%s:%s`` 定义为常量，方便统一管理。

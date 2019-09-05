@@ -1,0 +1,221 @@
+老男孩教育shell考试提
+1：手机充值，例如：充值10元，每发一次短信（输出当前余额）扣1角5分钱，当余额低于1角5分钱不能发短信，提示余
+额不足，请充值（可以允许用户充值继续发短信），请用while语句实现。
+提示：（单位换算。统一单位，统一成整数）10元=1000分，1角5分=15分
+
+
+老男孩教育shell考试提
+2、猜数字游戏：首先让系统随机生成一个数字，给这个数字定一个范围（数字前50及后50），让用户输入猜的数字，对输
+入判断，如果不符合数字就给予高于低的提示，猜对后给下猜对用的次数，请用while语句实现
+
+
+
+#!/bin/sh
+TOTAL=1000#钱
+MSG_FEE=500
+
+function IS_NUM(){
+	expr $1 +1 &>/dev/null  #执行$1 +1 取消输出
+	if [ $? -ne 0 -a "$1" != "-1" ];then
+		return 1
+	fi
+	return 0
+}
+
+function consum(){
+	read -p "Pls input your msg:" TXT
+	read -p "Are you to send?[y|n]" OPTION
+	case $OPTION in 
+		[yY]|[yY][eE][sS]) #如果是y不区分大小写或是yes不区分大小写
+			echo "Send successfully!"
+			((TOTAL=TOTAL-MSG_FEE))#扣费
+			echo "Your have $TOTAL left!"
+			;;
+		[nN]|[nN][oO])	#如果输入的是n或是no不区分大小写
+			echo "Canceled" #不发送信息
+			;;
+		*)
+			echo "Invalid Input,this msg doesnt send out"
+			;;
+		esac
+}
+
+function eharge(){
+	if[ $TOTAL -lt $MSG_FEE ];then  #如果余额小于发送需要的现金就
+		read -p "Money is not enough,Are U want to charge?[y|n]" OPT2 #输出提示信息
+
+	case $OPT2 in  #case 判断
+			y|Y)
+				while true #如果为真
+				do 
+					read -p "How much are you want to charge?[INT]" CHARGE #输入向冲多少钱
+					IS_NUM $CHARGE&&break||{  #调用IS_NUM 函数 $CHARGE赋值 &&break 跳出循环；如果成功跳出整个循环 
+						echo "INVALID INPUT"
+						exit 100
+					}
+					done 
+					((TOTAL+=CHARGE)) && echo "you have $TOTAL money."#把钱加入到账户 然后打印出余额
+					;;
+			n|N)
+					exit 101
+					;;
+			  *)		#如果输入错误
+					echo "INVALID INPUT!"
+					exit 102
+					;;
+		esac 
+		fi 
+}					
+
+main(){
+	while [ $TOTAL -ge $MSG_FEE ]
+	do 
+	consum
+	charge
+done
+}
+main			
+
+
+
+
+
+改提高过后的版本
+
+#!/bin/sh
+TOTAL=1000
+MSG_FEE=499
+. /etc/init.d/functions
+
+RED_COLOR='\E[1;31m'
+GREEN_COLOR='\E[1;32m'
+YELLOW_COLOR='\E[1;33m'
+BLUE_COLOR='\E[1;34m'
+PINK='\E[1;35m'
+RES='\E[0m'
+
+color(){
+	if [ "$1" = "red" ];then 
+		echo -e "${RED_COLOR}$2 $RES" 
+	elif [ "$1" = "green" ];then 
+		echo -e "${GREEN_COLOR}$2 $RES"
+	elif [ "$1" "yellow" ];then 
+		echo -e "{$YELLOW_COLOR}$2 $RES"
+	else
+		usage
+	fi
+}
+
+
+function IS_NUM(){
+	expr $1 + 1 &>/dev/null
+	
+	if [ $? -ne 0 -a "$1" !="-1" ];then 
+	return 1
+	fi
+	return 0
+}
+
+function consum(){
+	read -p "Pls input your msg:" TXT
+	read -p "Are you to send?[y|n]" OPTIN
+	
+	case $OPTION in 
+		[yY]|[yY][eE][sS])
+			color "Send successfully" yellow   		#给yellow颜色
+			echo $TXT >>/tmp/consum.log
+			((TOTAL=TOTAL-MSG_FEE))
+			color "Your have $TOTAL left!" yellow   #给提示加颜色
+			;;
+		[nN]|[nN][oO])
+			echo "Canceled"
+			;;
+		*)
+			echo "Invalid input this msg doesnt send out"
+			;;
+	esac
+}
+
+function charge(){
+	if [ $TOTAL -lt $MSG_FEE ];then
+		color "Money is not enough,Are U want to charge?[y|n]"red
+		read OPT2
+	case $OPT2 in
+		y|Y)
+			while true 
+			do 
+				read -p "How much are you want to charge?[INT]" CHARGE 
+				IS_NUM $CHARGE&&break||{
+					echo "INVALID INPUT"
+					exit 100
+				}
+			done
+			((TOTAL+=CHARGE)) && echo "you have $TOTAL money."
+			if [ $TOTAL -lt $MSG_FEE ];then 
+			charge
+			fi
+			;;
+		n|N)
+			#exit 101
+			charge
+			;;
+		*)
+			#echo "INVALID INPUT!"
+			#exit 102
+			charge
+			;;
+	esac 
+	fi
+}
+
+main(){
+	while [ $TOTAL -ge $MSG_FEE ]
+	do
+		consum
+		charge
+	done
+}
+main 
+
+
+
+
+
+批量配置ip别名
+
+	[root@localhost ~]# cat add_ip.sh
+	#!/bin/sh
+	./etc/init.d/functions 
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

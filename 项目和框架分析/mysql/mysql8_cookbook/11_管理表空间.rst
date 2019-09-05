@@ -1,0 +1,334 @@
+**********
+管理表空间
+**********
+
+在本章中，我们将介绍以下主题：
+
+- 更改 InnoDB REDO 日志文件的数量或大小
+- 调整 InnoDB 系统表空间的大小
+- 在数据目录外创建每表文件表空间
+- 将每个表的文件表空间复制到另一个实例
+- 管理 UNDO 表空间
+- 管理常规表空间
+- 压缩 InnoDB 表
+
+简介
+====
+在开始本章之前，您应该了解 InnoDB 的基础知识。根据 MySQL 文档，
+
+系统表空间（共享表空间）
+-----------------------
+InnoDB系统表空间包含 InnoDB 数据字典（ InnoDB 相关对象的元数据），是双写缓冲区，更改缓冲区和 ``undo`` 日志的存储区域。系统表空间还包含在系统表空间中创建的任何用户创建表的表和索引数据。系统表空间被视为共享表空间，因为它由多个表共享。
+
+系统表空间由一个或多个数据文件表示。默认情况下，一个名为 ``ibdata1`` 的系统数据文件在 MySQL 数据目录中创建。系统数据文件的大小和数量由 ``innodb_data_file_path`` 启动选项控制。
+
+File-per-table 表空间
+---------------------
+``file-per-table`` 表空间是一个单表表空间，它在自己的数据文件中而不是在系统表空间中创建。启用 ``innodb_file_per_table`` 选项时，将在每个表的文件表空间中创建表。否则， ``InnoDB`` 表将在系统表空间中创建。每个 ``table-per-table`` 表空间由单个 ``.ibd`` 数据文件表示，该文件默认在数据库目录中创建。
+
+``File-per-table`` 表空间支持 ``DYNAMIC`` 和 ``COMPRESSED`` 行格式，这些格式支持可变长度数据和表压缩的页外存储等功能。
+
+为了知道单表表空间的优缺点，请参考 https://dev.mysql.com/doc/refman/8.0/en/innodb-multiple-tablespaces.html 和 https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_file_per_table 。
+
+普通表空间
+----------
+通用表空间是使用 ``CREATE TABLESPACE`` 语法创建的共享 ``InnoDB`` 表空间。一般表空间可以在 MySQL 数据目录(data directory)之外创建，能够保存多个表，并支持所有行格式的表。
+
+UNDO 表空间
+-----------
+撤消日志是与单个事务关联的撤消日志记录的集合。撤消日志记录包含有关如何撤消事务到聚簇索引记录的最新更改的信息。如果另一个事务需要查看原始数据（作为一致读取操作的一部分），则从撤消日志记录中检索未修改的数据。撤消日志存在于撤消日志段中，这些日志段包含在回滚段中。回滚段驻留在系统表空间，临时表空间和撤消表空间中。
+
+UNDO 表空间包含一个或多个包含 undo 日志的文件。 InnoDB 使用的撤消表空间数由 ``innodb_undo_tablespaces`` 配置选项定义。 **这些日志用于回滚事务以及多版本并发控制。**
+
+数据字典
+--------
+数据字典是跟踪数据库对象（如表，索引和表列）的元数据。对于 MySQL 8.0 中引入的 MySQL 数据字典，元数据实际位于 MySQL 数据库目录中的 InnoDB 文件每表表空间文件中。 对于 InnoDB 数据字典，元数据实际位于 InnoDB 系统表空间中。
+
+MySQL数据字段
+-------------
+MySQL服务器包含一个事务数据字典，用于存储有关数据库对象的信息。在以前的 MySQL 版本中，字典数据存储在元数据文件，非事务表和具体存储引擎的数据字典中。
+
+在以前的MySQL版本中，字典数据部分存储在元数据文件中。基于文件的元数据存储的问题包括昂贵的文件扫描，对文件系统相关错误的敏感性，处理复制和崩溃恢复失败状态的复杂代码，以及缺乏可扩展性，这使得难以为新功能和关系对象添加元数据。
+
+MySQL数据字典的好处包括：
+
+- 统一存储字典数据的简单集中式数据字典模式；
+- 删除基于文件的元数据存储；
+- 事务性，崩溃安全存储的字典数据；
+- 字典对象的统一和集中式缓存；
+- 一些INFORMATION_SCHEMA表的更简单和改进的实现；
+- 原子DDL
+
+从 MySQL 中删除如下列出的元数据文件。除非另有说明，否则先前存储在元数据文件中的数据现在存储在数据字典表中：
+
+- .frm 文件：表定义的表元数据文件。
+- .par 文件：分区定义文件。 ``InnoDB`` 停止使用 MySQL 5.7 中的 .definition 分区文件，并引入了对 InnoDB 表的本机分区支持。
+- .trn 文件：触发器命名空间文件。
+- .trg 文件：触发器参数文件。
+- .isl 文件：InnoDB 符号链接文件，包含在 MySQL 数据目录之外创建的每表文件表空间文件的位置。
+- db.opt 文件：数据库配置文件。 这些文件（每个数据库目录一个）包含数据库缺省字符集属性。
+
+MySQL数据字典的局限性如下：
+
+- 不支持在数据目录下手动创建数据库目录（例如，使用 ``mkdir`` ）。MySQL服务器无法识别手动创建的数据库目录。
+- 通过复制和移动 MyISAM 数据文件来移动存储在 MyISAM 表中的数据是不受支持的。服务器不会发现使用此方法移动的表。
+- 不支持使用复制的数据文件简单备份和还原单个MyISAM表。
+- 由于写入存储，撤消日志和重做日志而不是 .frm 文件， DDL 操作需要更长时间。
+
+字典数据的事务存储
+------------------
+数据字典 schema 将字典数据存储在事务（InnoDB）表中。数据字典表与非数据字典系统表一起位于 mysql 数据库中。
+
+数据字典表是在 MySQL 数据目录中名为 mysql.ibd 的单个 InnoDB 表空间中创建的。 mysql.ibd 表空间文件必须驻留在 MySQL 数据目录中，并且其名称不能被其他表空间修改或使用。以前，这些表是在 MySQL数据库目录中的各个表空间文件中创建的。
+
+更改 InnoDB REDO 日志文件的数量或大小
+======================================
+``ib_logfile0`` 文件和 ``ib_logfile1`` 是在数据目录中创建的默认 ``InnoDB`` 重做日志文件，每个文件有 48MB 。 如果您希望更改重做日志文件的大小，只需在配置文件中更改它并重新启动 MySQL 即可。在以前的版本中，您必须慢慢关闭 MySQL 服务器，删除重做日志文件，更改配置文件，然后启动 MySQL 服务器。
+
+从MySQL 8开始， ``InnoDB`` 检测到 ``innodb_log_file_size`` 与重做日志文件大小不同。它会写入日志检查点，关闭并删除旧的日志文件，以请求的大小创建新的日志文件，并打开新的日志文件。
+
+1. 检查当前文件的大小：
+
+.. code-block:: shell
+
+    shell> sudo ls -lhtr /var/lib/mysql/ib_logfile*
+    -rw-r-----. 1 mysql mysql 48M Oct 7 10:16 /var/lib/mysql/ib_logfile1
+    -rw-r-----. 1 mysql mysql 48M Oct 7 10:18 /var/lib/mysql/ib_logfile0
+
+2. 停止MySQL服务器然后确保关闭没有错误：
+
+.. code-block:: shell
+
+    shell> sudo systemctl stop mysqld
+
+3. 编辑配置文件：
+
+.. code-block:: shell
+
+    shell> sudo vi /etc/my.cnf
+    [mysqld]
+    innodb_log_file_size=128M
+    innodb_log_files_in_group=4
+
+4. 启动MySQL服务器：
+
+.. code-block:: shell
+
+    shell> sudo systemctl start mysqld
+
+5. 你可以验证MySQL在日志文件中干了什么：
+
+.. code-block:: shell
+
+    shell> sudo less /var/log/mysqld.log
+
+6. 你可以查看新创建日志文件：
+
+.. code-block:: shell
+
+    shell> sudo ls -lhtr /var/lib/mysql/ib_logfile*
+    -rw-r-----. 1 mysql mysql 128M Oct 7 11:09 /var/lib/mysql/ib_logfile1
+    -rw-r-----. 1 mysql mysql 128M Oct 7 11:09 /var/lib/mysql/ib_logfile2
+    -rw-r-----. 1 mysql mysql 128M Oct 7 11:09 /var/lib/mysql/ib_logfile3
+    -rw-r-----. 1 mysql mysql 128M Oct 7 11:09 /var/lib/mysql/ib_logfile0
+
+调整 InnoDB 系统表空间的大小
+============================
+数据目录中的 ``ibdata1`` 文件是默认的系统表空间。您可以使用 ``innodb_data_file_path`` 和 ``innodb_data_home_dir`` 配置选项配置 ``ibdata1`` 。 ``innodb_data_file_path`` 配置选项用于配置 ``InnoDB`` 系统表空间数据文件。 ``innodb_data_file_path`` 的值应该是一个或多个规范的数据文件列表。 如果您命名两个或多个数据文件，请用分号（;）分隔它们。
+
+如果您想在数据目录中包含一个名为 ``ibdata1`` 的固定大小的 50MB 数据文件和一个名为 ``ibdata2`` 的 50MB 自动扩展文件的表空间，可以像这样配置：
+
+.. code-block:: shell
+
+    shell> sudo vi /etc/my.cnf
+    [mysqld]
+    innodb_data_file_path=ibdata1:50M;ibdata2:50M:autoextend
+
+如果 ``ibdata`` 文件变得如此之大，尤其是当未启用 ``innodb_file_per_table`` 且磁盘已满时，您可能希望在另一个磁盘上添加另一个数据文件。
+
+增加InnoDB系统表空间
+--------------------
+假设 ``innodb_data_file_path`` 是 ``ibdata1:50M:autoextend`` ，大小已经达到 76MB ，而你的磁盘只有 100MB ，你可以添加另一个磁盘并配置为在新磁盘上添加另一个表空间：
+
+1. 停止MySQL服务器：
+
+.. code-block:: shell
+
+    shell> sudo systemctl stop mysql
+
+2. 检查现有 ibdata1 文件的大小：
+
+.. code-block:: shell
+
+    shell> sudo ls -lhtr /var/lib/mysql/ibdata1
+    -rw-r----- 1 mysql mysql 76M Oct 6 13:33 /var/lib/mysql/ibdata1
+
+3. 挂载新磁盘。假设它挂载在 ``/var/lib/mysql_extend`` 上，将所有权更改为 ``mysql;`` 确保该文件尚未创建。如果您使用的是 AppArmour 或 SELinux ，请确保正确设置别名或上下文：
+
+.. code-block:: shell
+
+    shell> sudo chown mysql:mysql /var/lib/mysql_extend
+    shell> sudo chmod 750 /var/lib/mysql_extend
+    shell> sudo ls -lhtr /var/lib/mysql_extend
+
+4. 打开 my.cnf 然后增加如下内容：
+
+.. code-block:: shell
+
+    shell> sudo vi /etc/my.cnf
+    [mysqld]
+    innodb_data_home_dir=
+    innodb_data_file_path =
+    ibdata1:76M;/var/lib/mysql_extend/ibdata2:50M:autoextend
+
+由于 ibdata1 的现有大小为 76MB ，因此您必须选择至少 76MB 的最大值。将在安装在 ``/var/lib/mysql_extend/`` 上的新磁盘上创建下一个 ``ibdata`` 文件。应指定 ``innodb_data_home_dir`` 选项; 否则， ``mysqld`` 会查看不同的路径并因错误而失败。
+
+5. 启动MySQL服务器：
+
+.. code-block:: shell
+
+    shell> sudo systemctl start mysql
+
+6. 验证新文件。由于您已将其设置为 50MB ，因此文件的初始大小为 50MB ：
+
+.. code-block:: shell
+
+    shell> sudo ls -lhtr /var/lib/mysql_extend/
+    total 50M
+    -rw-r-----. 1 mysql mysql 50M Oct 7 07:38 ibdata2
+
+    mysql> SHOW VARIABLES LIKE 'innodb_data_file_path'; #查看配置
+
+缩小InnoDB系统表空间
+--------------------
+如果您不使用 ``innodb_file_per_table`` ，则所有表数据都存储在系统表空间中。如果您删除一张表，则不会回收该空间。您可以缩小系统表空间并回收磁盘空间。这需要一个重要的停机时间，因此建议通过在从服务器上执行该任务，然后提升它为主服务器来完成。
+
+您可以通过查询 ``INFORMATION_SCHEMA`` 表来检查可用空间：
+
+.. code-block:: shell
+
+    mysql> SELECT SUM(data_free)/1024/1024 FROM INFORMATION_SCHEMA.TABLES;
+    +--------------------------+
+    | sum(data_free)/1024/1024 |
+    +--------------------------+
+    | 6.00000000               |
+    +--------------------------+
+    1 row in set (0.00 sec)
+
+1. 停止写入到数据库。如果是主服务器， ``mysql> SET @@GLOBAL.READ_ONLY=1;`` 如果是一个从服务器，停止从复制然后保存二进制日志坐标：
+
+.. code-block:: shell
+
+    mysql> STOP SLAVE;
+    mysql> SHOW SLAVE STATUS\G
+
+2. 使用mysqldump或者mydumper，排除 sys 数据库来进行全备：
+
+.. code-block:: shell
+
+    shell> mydumper -u root --password=<password> --trx-consistency-only --kill-long-queries --longquery-guard 500 --regex '^(?!sys)' --outputdir /backups
+
+3. 停止MySQL服务器：
+
+.. code-block:: shell
+
+    shell> sudo systemctl stop mysql
+
+4. 删除所有 ``*.ibd`` ， ``*.ib_log`` 和 ``ibdata`` 文件。如果仅使用 ``InnoDB`` 表，则可以擦除数据目录以及存储系统表空间的所有( ``innodb_data_file_path`` )位置：
+
+.. code-block:: shell
+
+    shell> sudo rm -rf /var/lib/mysql/ib*
+    /var/lib/mysql/<database directories>
+    shell> sudo rm -rf /var/lib/mysql_extend/*
+
+5. 初始化数据目录：
+
+.. code-block:: shell
+
+    shell> sudo mysqld --initialize --datadir=/var/lib/mysql
+    shell> chown -R mysql:mysql /var/lib/mysql/
+    shell> chown -R mysql:mysql /var/lib/mysql_extend/
+
+6. 获取临时密码：
+
+.. code-block:: shell
+
+    shell> sudo grep "temporary password is generated" /var/log/mysql/error.log | tail -1
+    2017-10-07T09:33:31.966223Z 4 [Note] A temporary password is generated for root@localhost: lIqerr5agpa
+
+7. 开始MySQL和改变密码：
+
+.. code-block:: shell
+
+    shell> sudo systemctl start mysqld
+    shell> mysql -u root -plI-qerr5agpa
+    mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'xxxx';
+    Query OK, 0 rows affected (0.01 sec)
+
+8. 恢复备份。使用临时密码连接到 MySQL ：
+
+.. code-block:: shell
+
+    shell> /opt/mydumper/myloader --directory=/backups/ --queries-pertransaction=50000 --threads=6 --user=root --password=xxxx --overwrite-tables
+
+9. 如果是主服务器，则通过 ``mysql> SET @@ GLOBAL.READ_ONLY=0;`` 启用写入。如果它是从服务器，则通过执行 ``CHANGE MASTER TO COMMAND`` 和 ``START SLAVE;`` 来恢复复制。
+
+在数据目录外创建每表文件表空间
+==============================
+
+
+将每个表的文件表空间复制到另一个实例
+====================================
+
+复制整个表
+----------
+
+
+复制一个表的单个分区
+--------------------
+
+
+管理 UNDO 表空间
+================
+
+
+管理常规表空间
+==============
+
+创建一个常规表空间
+------------------
+
+
+向常规表空间增加表
+------------------
+
+
+在表空间移动非分区表
+--------------------
+
+
+在常规表空间管理分区表
+----------------------
+
+
+删除常规表空间
+--------------
+
+
+压缩 InnoDB 表
+==============
+
+为每个表一个文件的表开启压缩
+----------------------------
+
+
+
+为每个表一个文件的表关闭压缩
+----------------------------
+
+
+为常规表空间开启压缩
+--------------------
+
+

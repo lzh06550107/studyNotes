@@ -1,0 +1,643 @@
+****
+扩展
+****
+
+函数
+====
+你可以方便的在 ThinkPHP5 中添加自定义函数，包括替换已有的助手函数。
+
+扩展系统函数
+------------
+这里指的系统函数是对系统自带的函数进行替换或者增加，具体方式如下：
+
+在应用目录下面增加一个助手函数文件（文件名随意，例如 ``application/helper.php`` ），添加：
+
+.. code-block:: php
+
+    // 增加一个新的table助手函数
+    function table($table, $config = [])
+    {
+        return \think\Db::connect($config)->setTable($table);
+    }
+
+    // 替换已有的db助手函数
+    function db($name, $config= [])
+    {
+        return \think\Db::connect($config)->name($name);
+    }
+
+然后，在应用配置文件中设置：
+
+.. code-block:: php
+
+    // 扩展函数文件
+    'extra_file_list'        => [ APP_PATH . 'helper.php', THINK_PATH . 'helper.php'],
+
+``extra_file_list`` 定义的顺序不能反，否则就不能替换已有的助手函数。
+
+.. note:: 注意，尽量避免直接修改核心的 ``helper.php`` 文件。
+
+添加应用函数
+------------
+如果需要给当前应用添加函数，只需要在应用的公共文件（ ``application/common.php`` ）中定义需要的函数即可，系统会自动加载，如果你需要增加新的函数文件，例如需要增加一个 ``sys.php`` ，那么就需要和上面一样设置 ``extra_file_list`` 配置：
+
+.. code-block:: php
+
+    // 扩展函数文件
+    'extra_file_list'        => [ APP_PATH . 'helper.php', THINK_PATH . 'helper.php', APP_PATH . 'sys.php'],
+
+类库
+====
+
+
+
+行为
+====
+
+概述
+----
+
++-------+----------------------------+
+| 版本  | 新增功能                   |
++=======+============================+
+| 5.0.4 | 行为类的方法采用驼峰法命名 |
++-------+----------------------------+
+
+行为绑定支持绑定到类的方法
+行为（Behavior）是 ThinkPHP 扩展机制中比较关键的一项扩展，行为既可以独立调用，也可以绑定到某个标签中进行侦听，在官方提出的 CBD 模式中行为也占了主要的地位，可见行为在ThinkPHP框架中意义非凡。
+
+这里指的行为是一个比较抽象的概念，你可以把行为想象成在应用执行过程中的一个动作或者处理。在框架的执行流程中，例如路由检测是一个行为，静态缓存是一个行为，用户权限检测也是行为，大到业务逻辑，小到浏览器检测、多语言检测等等都可以当做是一个行为，甚至说你希望给你的网站用户的第一次访问弹出Hello，world！这些都可以看成是一种行为，行为的存在让你无需改动框架和应用，而在外围通过扩展或者配置来改变或者增加一些功能。
+
+而不同的行为之间也具有位置共同性，比如，有些行为的作用位置都是在应用执行前，有些行为都是在模板输出之后，我们把这些行为发生作用的位置称之为标签（位），当应用程序运行到这个标签的时候，就会被拦截下来，统一执行相关的行为，类似于AOP编程中的“切面”的概念，给某一个切面绑定相关行为就成了一种类 AOP 编程的思想。
+
+行为标签位
+----------
+在定义行为之前，我们先来了解下系统有哪些标签位，系统核心提供的标签位置包括下面几个（按照执行顺序排列）：
+
++----------------+--------------------------------+
+| 标签位         | 描述                           |
++================+================================+
+| app_init       | 应用初始化标签位               |
++----------------+--------------------------------+
+| app_begin      | 应用开始标签位                 |
++----------------+--------------------------------+
+| module_init    | 模块初始化标签位               |
++----------------+--------------------------------+
+| action_begin   | 控制器开始标签位               |
++----------------+--------------------------------+
+| view_filter    | 视图输出过滤标签位             |
++----------------+--------------------------------+
+| app_end        | 应用结束标签位                 |
++----------------+--------------------------------+
+| log_write      | 日志write方法标签位            |
++----------------+--------------------------------+
+| log_write_done | 日志写入完成标签位（V5.0.10+） |
++----------------+--------------------------------+
+| response_send  | 响应发送标签位（V5.0.10+）     |
++----------------+--------------------------------+
+| response_end   | 输出结束标签位（V5.0.1+）      |
++----------------+--------------------------------+
+
+在每个标签位置，可以配置多个行为定义，行为的执行顺序按照定义的顺序依次执行。除非前面的行为里面中断执行了（某些行为可能需要中断执行，例如检测机器人或者非法执行行为），否则会继续下一个行为的执行。
+
+.. note:: 除了这些系统内置标签之外，开发人员还可以在应用中添加自己的应用标签。
+
+添加行为标签位
+--------------
+可以使用 ``\think\Hook`` 类的 ``listen`` 方法添加自己的行为侦听位置，例如：
+
+.. code-block:: php
+
+    Hook::listen('action_init');
+
+可以给侦听方法传入参数（仅能传入一个参数），该参数使用引用传值，因此必须使用变量，例如：
+
+.. code-block:: php
+
+    Hook::listen('action_init',$params);
+
+侦听的标签位置可以随意放置。
+
+行为定义
+--------
+行为类的定义很简单，定义行为的执行入口方法 ``run`` 即可，适用于所有标签位，例如：
+
+.. code-block:: php
+
+    namespace app\index\behavior;
+
+    class Test
+    {
+        public function run(&$params)
+        {
+            // 行为逻辑
+        }
+    }
+
+行为类并不需要继承任何类，相对比较灵活。
+
+如果行为类需要绑定到多个标签，各个方法对应相应的标签位，可以采用如下定义：
+
+.. code-block:: php
+
+    namespace app\index\behavior;
+
+    class Test
+    {
+        public function app_init(&$params)
+        {
+
+        }
+
+        public function app_end(&$params)
+        {
+
+        }
+    }
+
+绑定到 ``app_init`` 和 ``app_end`` 后就会调用相关的方法。
+
+V5.0.4+ 版本以上，行为类的方法需要采用驼峰法命名，上面的行为类需要改成：
+
+.. code-block:: php
+
+    namespace app\index\behavior;
+
+    class Test
+    {
+        public function appInit(&$params)
+        {
+
+        }
+
+        public function appEnd(&$params)
+        {
+
+        }
+    }
+
+行为绑定
+--------
+行为定义完成后，就需要绑定到某个标签位置才能生效，否则是不会执行的。
+使用 ``Hook`` 类的 ``add`` 方法注册行为，例如：
+
+.. code-block:: php
+
+    // 注册 app\index\behavior\CheckLang行为类到app_init标签位
+    Hook::add('app_init','app\\index\\behavior\\CheckLang');
+    //注册 app\admin\behavior\CronRun行为类到app_init标签位
+    Hook::add('app_init','app\\admin\\behavior\\CronRun');
+
+如果要批量注册行为的话，可以使用：
+
+.. code-block:: php
+
+    Hook::add('app_init',['app\\index\\behavior\\CheckAuth','app\\index\\behavior\\CheckLang','app\\admin\\behavior\\CronRun']);
+
+当应用运行到 ``app_init`` 标签位的时候，就会依次调用 ``app\index\behavior\CheckAuth`` 、 ``app\index\behavior\CheckLang和app\admin\behavior\CronRun`` 行为。如果其中一个行为中有中止代码的话则后续不会执行，如果返回 ``false`` 则当前标签位的后续行为将不会执行，但应用将继续运行。
+
+我们也可以直接在 ``APP_PATH`` 目录下面或者模块的目录下面定义 ``tags.php`` 文件来统一定义行为，定义格式如下：
+
+.. code-block:: php
+
+    return [
+        'app_init'=> [
+            'app\\index\\behavior\\CheckAuth',
+            'app\\index\\behavior\\CheckLang'
+        ],
+        'app_end'=> [
+            'app\\admin\\behavior\\CronRun'
+        ]
+    ]
+
+如果 ``APP_PATH`` 目录下面和模块目录下面的 ``tags.php`` 都定义了 ``app_init`` 的行为绑定的话，会采用合并模式，如果希望覆盖，那么可以在模块目录下面的 ``tags.php`` 中定义如下：
+
+.. code-block:: php
+
+    return [
+        'app_init'=> [
+            'app\\index\\behavior\\CheckAuth',
+            '_overlay'=>true
+        ],
+        'app_end'=> [
+            'app\\admin\\behavior\\CronRun'
+        ]
+    ]
+
+如果某个行为标签定义了 ``'_overlay' =>true`` 就表示覆盖之前的相同标签下面的行为定义。
+
+闭包支持
+--------
+可以不用定义行为直接把闭包函数绑定到某个标签位，例如：
+
+.. code-block:: php
+
+    Hook::add('app_init',function(){
+        echo 'Hello,world!';
+    });
+
+如果标签位有传入参数的话，闭包也可以支持传入参数，例如：
+
+.. code-block:: php
+
+    Hook::listen('action_init',$params);
+    Hook::add('action_init',function($params){
+        var_dump($params);
+    });
+
+直接执行行为
+------------
+如果需要，你也可以不绑定行为标签，直接调用某个行为，使用：
+
+.. code-block:: php
+
+    // 执行 app\index\behavior\CheckAuth行为类的run方法 并引用传入params参数
+    $result = Hook::exec('app\\index\\behavior\\CheckAuth','run',$params);
+
+驱动
+====
+系统的驱动类都支持单独扩展，并且驱动文件的位置和命名空间可以随意设置，包括缓存、日志、调试和数据库驱动。
+
+以缓存驱动为例，如果我们扩展了一个自己的 ``redis`` 驱动，类名为 ``app\driver\cache\Redis`` ，那么我们只需要设置缓存类型为：
+
+.. code-block:: php
+
+    'cache'                  => [
+        // 驱动方式
+        'type'   => '\app\driver\cache\Redis',
+        // 缓存前缀
+        'prefix' => '',
+        // 缓存有效期 0表示永久缓存
+        'expire' => 0,
+    ],
+
+Composer包
+==========
+新版建议采用 ``Composer`` 包的方式扩展框架及类库，关于 ``Composer`` 的基础知识请参考 `Composer 官方文档（英文） <https://getcomposer.org/doc/>`_ ，或者在看云上阅读本 `中文版本 <http://www.kancloud.cn/thinkphp/composer>`_ 。
+
+Composer安装
+
+ThinkPHP5.0 支持使用 ``Composer`` 安装包，例如在应用根目录下面执行：
+
+.. code-block:: shell
+
+    composer require topthink/think-mongo
+
+更新
+
+.. code-block:: shell
+
+    composer update topthink/think-mongo
+
+.. warning:: 官方的 5.0 版本的扩展库版本号都是 1.* ，2.0 版本均为 ThinkPHP5.1 版本专用。
+
+安装指定版本的扩展使用下面的方式
+
+.. code-block:: shell
+
+    composer require topthink/think-mongo=1.*
+
+或者直接在 ``composer.json`` 中设置依赖的版本号，然后使用 ``composer update`` 更新。
+
+Time
+----
+时间戳操作
+^^^^^^^^^^
+首先通过 ``composer`` 安装
+
+.. code-block:: shell
+
+    composer require topthink/think-helper
+
+在文件头部引入
+
+.. code-block:: php
+
+    use think\helper\Time;
+
+比如需要获得今天的 ``零点时间戳`` 和 ``23点59分59秒`` 的时间戳
+
+.. code-block:: php
+
+    list($start, $end) = Time::today();
+
+    echo $start; // 零点时间戳
+    echo $end; // 23点59分59秒的时间戳
+
+完整示例如下:
+
+.. code-block:: php
+
+    // 今日开始和结束的时间戳
+    Time::today();
+
+    // 昨日开始和结束的时间戳
+    Time::yesterday();
+
+    // 本周开始和结束的时间戳
+    Time::week();
+
+    // 上周开始和结束的时间戳
+    Time::lastWeek();
+
+    // 本月开始和结束的时间戳
+    Time::month();
+
+    // 上月开始和结束的时间戳
+    Time::lastMonth();
+
+    // 今年开始和结束的时间戳
+    Time::year();
+
+    // 去年开始和结束的时间戳
+    Time::lastYear();
+
+    // 获取7天前零点到现在的时间戳
+    Time::dayToNow(7)
+
+    // 获取7天前零点到昨日结束的时间戳
+    Time::dayToNow(7, true)
+
+    // 获取7天前的时间戳
+    Time::daysAgo(7)
+
+    //  获取7天后的时间戳
+    Time::daysAfter(7)
+
+    // 天数转换成秒数
+    Time::daysToSecond(5)
+
+    // 周数转换成秒数
+    Time::weekToSecond(5)
+
+数据库迁移工具
+--------------
+首先通过 ``composer`` 安装
+
+.. code-block:: shell
+
+    composer require topthink/think-migration
+
+.. note:: 注意事项，不支持修改文件配置目录
+
+在命令行下运行查看帮助，可以看到新增的命令
+
+.. code-block:: shell
+
+    php think
+
+.. code-block:: shell
+
+    migrate
+      migrate:create     Create a new migration
+      migrate:rollback   Rollback the last or to a specific migration
+      migrate:run        Migrate the database
+      migrate:status     Show migration status
+    optimize
+      optimize:autoload  Optimizes PSR0 and PSR4 packages to be loaded with classmaps too, good for production.
+      optimize:config    Build config and common file cache.
+      optimize:route     Build route cache.
+      optimize:schema    Build database schema cache.
+    seed
+      seed:create        Create a new database seeder
+      seed:run           Run database seeders
+
+创建迁移类，首字母必须为大写
+
+.. code-block:: shell
+
+    php think migrate:create Users
+
+可以看到目录下有新文件 ``.\database\migrations\20161117144043_users.php``
+
+使用实例
+
+.. code-block:: php
+
+    <?php
+
+    use Phinx\Migration\AbstractMigration;
+
+    class Users extends AbstractMigration
+    {
+        /**
+         * Change Method.
+         */
+        public function change()
+        {
+            // create the table
+            $table = $this->table('users',array('engine'=>'MyISAM'));
+            $table->addColumn('username', 'string',array('limit' => 15,'default'=>'','comment'=>'用户名，登陆使用'))
+                ->addColumn('password', 'string',array('limit' => 32,'default'=>md5('123456'),'comment'=>'用户密码'))
+                ->addColumn('login_status', 'boolean',array('limit' => 1,'default'=>0,'comment'=>'登陆状态'))
+                ->addColumn('login_code', 'string',array('limit' => 32,'default'=>0,'comment'=>'排他性登陆标识'))
+                ->addColumn('last_login_ip', 'integer',array('limit' => 11,'default'=>0,'comment'=>'最后登录IP'))
+                ->addColumn('last_login_time', 'datetime',array('default'=>0,'comment'=>'最后登录时间'))
+                ->addColumn('is_delete', 'boolean',array('limit' => 1,'default'=>0,'comment'=>'删除状态，1已删除'))
+                ->addIndex(array('username'), array('unique' => true))
+                ->create();
+        }
+
+        /**
+         * Migrate Up.
+         */
+        public function up()
+        {
+
+        }
+
+        /**
+         * Migrate Down.
+         */
+        public function down()
+        {
+
+        }
+    }
+
+对于同一个数据表，如果需要新的迁移动作，例如删除字段、创建字段，可以创建新的更改文件，像 ``svn`` 一样往前记录操作，方便回滚。
+
+更具体的使用可查看 http://docs.phinx.org/en/latest/
+
+Workerman
+---------
+
+``Workerman`` 是一款纯 PHP 开发的开源高性能的 PHP socket 服务器框架。被广泛的用于手机 app 、手游服务端、网络游戏服务器、聊天室服务器、硬件通讯服务器、智能家居、车联网、物联网等领域的开发。 支持 TCP长连接，支持 Websocket 、 HTTP 等协议，支持自定义协议。基于 workerman 开发者可以更专注于业务逻辑开发，不必再为 PHP Socket 底层开发而烦恼。
+
+首先通过 ``composer`` 安装
+
+.. code-block:: shell
+
+    composer require topthink/think-worker
+
+如果需要在 ``window`` 下做服务端，还需要
+
+.. code-block:: shell
+
+    composer require workerman/workerman-for-win
+
+运行出现错误 PHP Fatal error: Call to undefined function Workerman\Lib\pcntl_signal()，需要删除 ``vendor\workerman\workerman`` ，防止命名覆盖
+
+服务端使用示例如下:
+
+新增启动服务文件 ``server.php`` ，在项目根目录
+
+.. code-block:: php
+
+    #!/usr/bin/env php
+    <?php
+    define('APP_PATH', __DIR__ . '/application/');
+    define('BIND_MODULE','push/Worker');
+    // 加载框架引导文件
+    require __DIR__ . '/thinkphp/start.php';
+
+新增服务处理类， ``push.app`` 是我本地测试域名
+
+.. code-block:: php
+
+    <?php
+
+    namespace app\push\controller;
+
+    use think\worker\Server;
+
+    class Worker extends Server
+    {
+        protected $socket = 'websocket://push.app:2346';
+
+        /**
+         * 收到信息
+         * @param $connection
+         * @param $data
+         */
+        public function onMessage($connection, $data)
+        {
+            $connection->send('我收到你的信息了');
+        }
+
+        /**
+         * 当连接建立时触发的回调函数
+         * @param $connection
+         */
+        public function onConnect($connection)
+        {
+
+        }
+
+        /**
+         * 当连接断开时触发的回调函数
+         * @param $connection
+         */
+        public function onClose($connection)
+        {
+
+        }
+
+        /**
+         * 当客户端的连接上发生错误时触发
+         * @param $connection
+         * @param $code
+         * @param $msg
+         */
+        public function onError($connection, $code, $msg)
+        {
+            echo "error $code $msg\n";
+        }
+
+        /**
+         * 每个进程启动
+         * @param $worker
+         */
+        public function onWorkerStart($worker)
+        {
+
+        }
+    }
+
+在命令行下运行，启动监听服务
+
+.. code-block:: shell
+
+    php server.php
+
+打开 ``chrome`` 浏览器，先打开 ``push.app`` 域名下的网页（js跨域不能通讯），按 ``F12`` 打开调试控制台，在 ``Console`` 一栏输入(或者把下面代码放入到 ``html`` 页面用 ``js`` 运行)
+
+.. code-block:: js
+
+    ws = new WebSocket("ws://push.app:2346");
+    ws.onopen = function() {
+        alert("连接成功");
+        ws.send('tom');
+        alert("给服务端发送一个字符串：tom");
+    };
+    ws.onmessage = function(e) {
+        alert("收到服务端的消息：" + e.data);
+    };
+
+继续测试
+
+.. code-block:: js
+
+    ws.send('保持连接，发第二次信息，查看服务器回应');
+
+MongoDb
+-------
+
+.. warning:: 首先，确保你已经安装了MongoDB driver for PHP（重要），参考： http://pecl.php.net/package/mongodb
+
+然后使用 ``Composer`` 安装 ThinkPHP5.0 的 ``MongoDb`` 驱动：
+
+.. code-block:: shell
+
+    composer require topthink/think-mongo=1.*
+
+.. note:: 5.0版本的核心框架支持 ``think-mongo`` 扩展的版本是1.* 版本
+
+修改你的数据库配置文件 ``database.php`` 中的 ``type`` 参数为：
+
+.. code-block:: php
+
+    'type'  =>  '\think\mongo\Connection',
+
+接下来可以使用 ``Db`` 类直接操作 ``MongoDb`` 了，例如：
+
+.. code-block:: php
+
+    Db::name('demo')
+        ->find();
+    Db::name('demo')
+        ->field('id,name')
+        ->limit(10)
+        ->order('id','desc')
+        ->select();
+
+或者使用模型操作：
+
+.. code-block:: php
+
+    User::get(1);
+    User::all('1,2,3');
+
+``MongoDb`` 默认的主键是 ``_id`` 并且是一个 ``ObjectID`` 对象，如果需要和 mysql 一样使用 ``id`` 作为主键，可以如下参数：
+
+.. code-block:: php
+
+    // 强制把_id转换为id
+    'pk_convert_id' => true,
+
+SAE
+===
+
+
+标签扩展
+========
+标签库加载
+----------
+模板中加载标签库，预加载自定义标签库，扩展内置标签库的加载 请参考:模板/标签库
+
+.. note:: 建议开发者将自定义标签库请放置应用目录中，请勿放在框架系统目录内，以免使用Composer更新框架时导致自定义标签库的丢失
+
+下面以标签库放在common作为一个示例：
+
+https://www.kancloud.cn/manual/thinkphp5/185286
+

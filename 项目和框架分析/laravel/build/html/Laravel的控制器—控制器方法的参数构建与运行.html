@@ -1,0 +1,526 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>16. 控制器方法的参数构建与运行 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="17. 响应" href="Laravel的响应.html"/>
+        <link rel="prev" title="15. 控制器" href="Laravel的控制器.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">16. 控制器方法的参数构建与运行</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">16.1. 前言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">16.2. 路由控制器的调用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">16.3. 解析控制器方法参数</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#callaction">16.3.1. 调用控制器方法 callAction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">16.4. 路由闭包函数的调用</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>16. 控制器方法的参数构建与运行</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>16. 控制器方法的参数构建与运行<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>16.1. 前言<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>经过前面一系列中间件的工作，现在请求终于要达到了正确的控制器方法了。本篇文章主要讲 laravel 如何调用控制器方法，并且为控制器方法依赖注入构建参数的过程。</p>
+</div>
+<div class="section" id="id3">
+<h2>16.2. 路由控制器的调用<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>我们前面已经解析过中间件的搜集与排序、 <code class="docutils literal"><span class="pre">pipeline</span></code> 的原理，接下来就要进行路由的 <code class="docutils literal"><span class="pre">run</span></code> 运行函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">runRouteWithinStack</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">,</span> <span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$shouldSkipMiddleware</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">bound</span><span class="p">(</span><span class="s1">&#39;middleware.disable&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+                            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;middleware.disable&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="k">true</span><span class="p">;</span>
+
+    <span class="nv">$middleware</span> <span class="o">=</span> <span class="nv">$shouldSkipMiddleware</span> <span class="o">?</span> <span class="p">[]</span> <span class="o">:</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">gatherRouteMiddleware</span><span class="p">(</span><span class="nv">$route</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">Pipeline</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="p">))</span>
+                    <span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">through</span><span class="p">(</span><span class="nv">$middleware</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">then</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$route</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prepareResponse</span><span class="p">(</span>
+                            <span class="nv">$request</span><span class="p">,</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">()</span>
+                        <span class="p">);</span>
+                    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>路由的 <code class="docutils literal"><span class="pre">run</span></code> 函数主要负责路由控制器方法与路由闭包函数的运行：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span> <span class="o">?:</span> <span class="k">new</span> <span class="nx">Container</span><span class="p">;</span>
+
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">isControllerAction</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runController</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runCallable</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">HttpResponseException</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>路由的运行主要靠 <code class="docutils literal"><span class="pre">ControllerDispatcher</span></code> 这个类：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">Route</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">isControllerAction</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">is_string</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">[</span><span class="s1">&#39;uses&#39;</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">runController</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">ControllerDispatcher</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span>
+            <span class="nv">$this</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getController</span><span class="p">(),</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getControllerMethod</span><span class="p">()</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">ControllerDispatcher</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">RouteDependencyResolverTrait</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">dispatch</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">,</span> <span class="nv">$controller</span><span class="p">,</span> <span class="nv">$method</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$parameters</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">resolveClassMethodDependencies</span><span class="p">(</span>
+            <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">parametersWithoutNulls</span><span class="p">(),</span> <span class="nv">$controller</span><span class="p">,</span> <span class="nv">$method</span>
+        <span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">method_exists</span><span class="p">(</span><span class="nv">$controller</span><span class="p">,</span> <span class="s1">&#39;callAction&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$controller</span><span class="o">-&gt;</span><span class="na">callAction</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$controller</span><span class="o">-&gt;</span><span class="p">{</span><span class="nv">$method</span><span class="p">}(</span><span class="o">...</span><span class="nb">array_values</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面可以很清晰地看出，控制器的运行分为两步：解析函数参数、调用 <code class="docutils literal"><span class="pre">callAction</span></code> 。</p>
+</div>
+<div class="section" id="id4">
+<h2>16.3. 解析控制器方法参数<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>解析参数的功能主要由 <code class="docutils literal"><span class="pre">ControllerDispatcher</span></code> 类的 <code class="docutils literal"><span class="pre">RouteDependencyResolverTrait</span></code> 这一 <code class="docutils literal"><span class="pre">trait</span></code> 负责：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">trait</span> <span class="nx">RouteDependencyResolverTrait</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">resolveClassMethodDependencies</span><span class="p">(</span><span class="k">array</span> <span class="nv">$parameters</span><span class="p">,</span> <span class="nv">$instance</span><span class="p">,</span> <span class="nv">$method</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">method_exists</span><span class="p">(</span><span class="nv">$instance</span><span class="p">,</span> <span class="nv">$method</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$parameters</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">resolveMethodDependencies</span><span class="p">(</span>
+            <span class="nv">$parameters</span><span class="p">,</span> <span class="k">new</span> <span class="nx">ReflectionMethod</span><span class="p">(</span><span class="nv">$instance</span><span class="p">,</span> <span class="nv">$method</span><span class="p">)</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">resolveMethodDependencies</span><span class="p">(</span><span class="k">array</span> <span class="nv">$parameters</span><span class="p">,</span> <span class="nx">ReflectionFunctionAbstract</span> <span class="nv">$reflector</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$instanceCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="nv">$values</span> <span class="o">=</span> <span class="nb">array_values</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">);</span>
+
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$reflector</span><span class="o">-&gt;</span><span class="na">getParameters</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$parameter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$instance</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transformDependency</span><span class="p">(</span>
+                <span class="nv">$parameter</span><span class="p">,</span> <span class="nv">$parameters</span>
+            <span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">is_null</span><span class="p">(</span><span class="nv">$instance</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nv">$instanceCount</span><span class="o">++</span><span class="p">;</span>
+
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">spliceIntoParameters</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="nv">$instance</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="o">!</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$values</span><span class="p">[</span><span class="nv">$key</span> <span class="o">-</span> <span class="nv">$instanceCount</span><span class="p">])</span> <span class="o">&amp;&amp;</span>
+                      <span class="nv">$parameter</span><span class="o">-&gt;</span><span class="na">isDefaultValueAvailable</span><span class="p">())</span> <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">spliceIntoParameters</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="nv">$parameter</span><span class="o">-&gt;</span><span class="na">getDefaultValue</span><span class="p">());</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$parameters</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>控制器方法函数参数构造难点在于，参数来源有三种：</p>
+<ul class="simple">
+<li>路由参数赋值</li>
+<li><code class="docutils literal"><span class="pre">Ioc</span></code> 容器自动注入</li>
+<li>函数自带默认值</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">路由中定义的参数和方法中的参数是位置对应，和名称没有一点关系，而且方法中的默认值参数只能放在最后。</p>
+</div>
+<p>在 <code class="docutils literal"><span class="pre">Ioc</span></code> 容器自动注入的时候，要保证路由的现有参数中没有相应的类，防止依赖注入覆盖路由绑定的参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">transformDependency</span><span class="p">(</span><span class="nx">ReflectionParameter</span> <span class="nv">$parameter</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$class</span> <span class="o">=</span> <span class="nv">$parameter</span><span class="o">-&gt;</span><span class="na">getClass</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$class</span> <span class="o">&amp;&amp;</span> <span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">alreadyInParameters</span><span class="p">(</span><span class="nv">$class</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nv">$class</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">alreadyInParameters</span><span class="p">(</span><span class="nv">$class</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$parameters</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="o">!</span> <span class="nb">is_null</span><span class="p">(</span><span class="nx">Arr</span><span class="o">::</span><span class="na">first</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$class</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$value</span> <span class="nx">instanceof</span> <span class="nv">$class</span><span class="p">;</span>
+    <span class="p">}));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>由 <code class="docutils literal"><span class="pre">Ioc</span></code> 容器构造出的参数需要插入到原有的路由参数数组中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">is_null</span><span class="p">(</span><span class="nv">$instance</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$instanceCount</span><span class="o">++</span><span class="p">;</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">spliceIntoParameters</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="nv">$instance</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">spliceIntoParameters</span><span class="p">(</span><span class="k">array</span> <span class="o">&amp;</span><span class="nv">$parameters</span><span class="p">,</span> <span class="nv">$offset</span><span class="p">,</span> <span class="nv">$value</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nb">array_splice</span><span class="p">(</span>
+        <span class="nv">$parameters</span><span class="p">,</span> <span class="nv">$offset</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="nv">$value</span><span class="p">]</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当路由的参数数组与 <code class="docutils literal"><span class="pre">Ioc</span></code> 容器构造的参数数量不足以覆盖控制器参数个数时，就要去判断控制器是否具有默认参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">elseif</span> <span class="p">(</span><span class="o">!</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$values</span><span class="p">[</span><span class="nv">$key</span> <span class="o">-</span> <span class="nv">$instanceCount</span><span class="p">])</span> <span class="o">&amp;&amp;</span>
+       <span class="nv">$parameter</span><span class="o">-&gt;</span><span class="na">isDefaultValueAvailable</span><span class="p">())</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">spliceIntoParameters</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="nv">$parameter</span><span class="o">-&gt;</span><span class="na">getDefaultValue</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="callaction">
+<h3>16.3.1. 调用控制器方法 callAction<a class="headerlink" href="#callaction" title="永久链接至标题">¶</a></h3>
+<p>所有的控制器并非是直接调用相应方法的，而是通过 <code class="docutils literal"><span class="pre">callAction</span></code> 函数再分配，如果实在没有相应方法还会调用魔术方法 <code class="docutils literal"><span class="pre">__call()</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">callAction</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nb">call_user_func_array</span><span class="p">([</span><span class="nv">$this</span><span class="p">,</span> <span class="nv">$method</span><span class="p">],</span> <span class="nv">$parameters</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__call</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">BadMethodCallException</span><span class="p">(</span><span class="s2">&quot;Method [</span><span class="si">{</span><span class="nv">$method</span><span class="si">}</span><span class="s2">] does not exist.&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>16.4. 路由闭包函数的调用<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>路由闭包函数的调用与控制器方法一样，仍然需要依赖注入，参数构造：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">runCallable</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$callable</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">[</span><span class="s1">&#39;uses&#39;</span><span class="p">];</span>
+
+    <span class="k">return</span> <span class="nv">$callable</span><span class="p">(</span><span class="o">...</span><span class="nb">array_values</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">resolveMethodDependencies</span><span class="p">(</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">parametersWithoutNulls</span><span class="p">(),</span> <span class="k">new</span> <span class="nx">ReflectionFunction</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">[</span><span class="s1">&#39;uses&#39;</span><span class="p">])</span>
+    <span class="p">)));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的响应.html" class="btn btn-neutral float-right" title="17. 响应" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的控制器.html" class="btn btn-neutral" title="15. 控制器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

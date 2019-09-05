@@ -1,0 +1,856 @@
+******
+控制器
+******
+
+控制器定义
+==========
+ThinkPHP V5.0 的控制器定义比较灵活，可以无需继承任何的基础类，也可以继承官方封装的 ``\think\Controller`` 类或者其他的控制器类。
+
+控制器定义
+----------
+一个典型的控制器类定义如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    class Index
+    {
+        public function index()
+        {
+            return 'index';
+        }
+    }
+
+控制器类文件的实际位置是 ``application\index\controller\Index.php`` 。
+
+控制器类可以无需继承任何类，命名空间默认以 ``app`` 为根命名空间。
+
+控制器的根命名空间可以设置，例如我们在应用配置文件中修改：
+
+.. code-block:: php
+
+    // 修改应用类库命名空间
+    'app_namespace' => 'application',
+
+.. warning:: V5.0.8+ 版本的话， ``app_namespace`` 配置参数改为 ``APP_NAMESPACE`` 常量在入口文件中定义。
+
+则实际的控制器类应该更改定义如下：
+
+.. code-block:: php
+
+    <?php
+    namespace application\index\controller;
+
+    class Index
+    {
+        public function index()
+        {
+            return 'index';
+        }
+    }
+
+.. note:: 只是命名空间改变了，但实际的文件位置和文件名并没有改变。
+
+使用该方式定义的控制器类，如果要在控制器里面渲染模板，可以使用
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    use think\View;
+
+    class Index
+    {
+        public function index()
+        {
+            $view = new View();
+            return $view->fetch('index');
+        }
+    }
+
+或者直接使用 ``view`` 助手函数渲染模板输出，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    class Index
+    {
+        public function index()
+        {
+            return view('index');
+        }
+    }
+
+如果继承了 ``think\Controller`` 类的话，可以直接调用 ``think\View及think\Request`` 类的方法，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    use think\Controller;
+
+    class Index extends Controller
+    {
+        public function index()
+        {
+            // 获取包含域名的完整URL地址
+            $this->assign('domain',$this->request->url(true));
+            return $this->fetch('index');
+        }
+    }
+
+渲染输出
+--------
+默认情况下，控制器的输出全部采用 ``return`` 的方式，无需进行任何的手动输出，系统会自动完成渲染内容的输出。
+
+下面都是有效的输出方式：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    class Index
+    {
+        public function hello()
+        {
+            return 'hello,world!';
+        }
+
+        public function json()
+        {
+            return json_encode($data);
+        }
+
+        public function read()
+        {
+            return view();
+        }
+    }
+
+.. note:: 控制器一般不需要任何输出，直接 ``return`` 即可。
+
+输出转换
+--------
+默认情况下，控制器的返回输出不会做任何的数据处理，但可以设置输出格式，并进行自动的数据转换处理，前提是控制器的输出数据必须采用 ``return`` 的方式返回。
+
+如果控制器定义为：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    class Index
+    {
+        public function hello()
+        {
+            return 'hello,world!';
+        }
+
+        public function data()
+        {
+            return ['name'=>'thinkphp','status'=>1];
+        }
+    }
+
+当我们设置输出数据格式为 ``JSON`` ：
+
+.. code-block:: php
+
+    // 默认输出类型
+    'default_return_type'   => 'json',
+
+我们访问
+
+.. code-block:: shell
+
+    http://localhost/index.php/index/Index/hello
+    http://localhost/index.php/index/Index/data
+
+输出的结果变成：
+
+.. code-block:: shell
+
+    "hello,world!"
+    {"name":"thinkphp","status":1}
+
+默认情况下，控制器在 ``ajax`` 请求会对返回类型自动转换，默认为 ``json``
+
+如果我们控制器定义
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    class Index
+    {
+        public function data()
+        {
+            return ['name'=>'thinkphp','status'=>1];
+        }
+
+    }
+
+我们访问： ``http://localhost/index.php/index/Index/data``
+
+输出的结果变成：
+
+.. code-block:: shell
+
+    {"name":"thinkphp","status":1}
+
+当我们设置输出数据格式为 ``html`` ：
+
+.. code-block:: php
+
+    // 默认输出类型
+    'default_ajax_return'   => 'html',
+
+这种情况下 ``ajax`` 请求不会对返回内容进行转换。
+
+控制器初始化
+=============
+如果你的控制器类继承了 ``\think\Controller`` 类的话，可以定义控制器初始化方法 ``_initialize`` ，在该控制器的方法调用之前首先执行。
+
+例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    use think\Controller;
+
+    class Index extends Controller
+    {
+
+        public function _initialize()
+        {
+            echo 'init<br/>';
+        }
+
+        public function hello()
+        {
+            return 'hello';
+        }
+
+        public function data()
+        {
+            return 'data';
+        }
+    }
+
+如果访问 ``http://localhost/index.php/index/Index/hello`` 会输出
+
+.. code-block:: shell
+
+    init
+    hello
+
+如果访问 ``http://localhost/index.php/index/Index/data`` 会输出
+
+.. code-block:: shell
+
+    init
+    data
+
+前置操作
+========
+可以为某个或者某些操作指定前置执行的操作方法，设置 ``beforeActionList`` 属性可以指定某个方法为其他方法的前置操作，数组键名为需要调用的前置方法名，无值的话为当前控制器下所有方法的前置方法。
+
+.. code-block:: php
+
+    ['except' => '方法名,方法名']
+
+表示这些方法不使用前置方法，
+
+.. code-block:: php
+
+    ['only' => '方法名,方法名']
+
+表示只有这些方法使用前置方法。
+
+示例如下:
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    use think\Controller;
+
+    class Index extends Controller
+    {
+        protected $beforeActionList = [
+            'first',
+            'second' =>  ['except'=>'hello'],
+            'three'  =>  ['only'=>'hello,data'],
+        ];
+
+        protected function first()
+        {
+            echo 'first<br/>';
+        }
+
+        protected function second()
+        {
+            echo 'second<br/>';
+        }
+
+        protected function three()
+        {
+            echo 'three<br/>';
+        }
+
+        public function hello()
+        {
+            return 'hello';
+        }
+
+        public function data()
+        {
+            return 'data';
+        }
+    }
+
+访问 ``http://localhost/index.php/index/Index/hello`` 最后的输出结果是：
+
+.. code-block:: shell
+
+    first
+    three
+    hello
+
+访问 ``http://localhost/index.php/index/Index/data`` 的输出结果是：
+
+.. code-block:: shell
+
+    first
+    second
+    three
+    data
+
+跳转和重定向
+============
+页面跳转
+--------
+在应用开发中，经常会遇到一些带有提示信息的跳转页面，例如操作成功或者操作错误页面，并且自动跳转到另外一个目标页面。系统的 ``\think\Controller`` 类内置了两个跳转方法 ``success`` 和 ``error`` ，用于页面跳转提示。
+
+使用方法很简单，举例如下：
+
+.. code-block:: shell
+
+    <?php
+    namespace app\index\controller;
+
+    use think\Controller;
+    use app\index\model\User;
+
+    class Index extends Controller
+    {
+        public function index()
+        {
+            $User = new User; //实例化User对象
+            $result = $User->save($data);
+            if($result){
+                //设置成功后跳转页面的地址，默认的返回页面是$_SERVER['HTTP_REFERER']
+                $this->success('新增成功', 'User/list');
+            } else {
+                //错误页面的默认跳转页面是返回前一页，通常不需要设置
+                $this->error('新增失败');
+            }
+        }
+    }
+
+跳转地址是可选的， ``success`` 方法的默认跳转地址是 ``$_SERVER["HTTP_REFERER"]`` ， ``error`` 方法的默认跳转地址是 ``javascript:history.back(-1);`` 。
+
+.. note:: 默认的等待时间都是3秒
+
+``success`` 和 ``error`` 方法都可以对应的模板，默认的设置是两个方法对应的模板都是：
+
+.. code-block:: php
+
+    THINK_PATH . 'tpl/dispatch_jump.tpl'
+
+我们可以改变默认的模板：
+
+.. code-block:: php
+
+    //默认错误跳转对应的模板文件
+    'dispatch_error_tmpl' => APP_PATH . 'tpl/dispatch_jump.tpl',
+    //默认成功跳转对应的模板文件
+    'dispatch_success_tmpl' => APP_PATH . 'tpl/dispatch_jump.tpl',
+
+也可以使用项目内部的模板文件
+
+.. code-block:: php
+
+    //默认错误跳转对应的模板文件
+    'dispatch_error_tmpl' => 'public/error',
+    //默认成功跳转对应的模板文件
+    'dispatch_success_tmpl' => 'public/success',
+
+模板文件可以使用模板标签，并且可以使用下面的模板变量：
+
++-------+-----------------------+
+| 变量  | 含义                  |
++=======+=======================+
+| $data | 要返回的数据          |
++-------+-----------------------+
+| $msg  | 页面提示信息          |
++-------+-----------------------+
+| $code | 返回的code            |
++-------+-----------------------+
+| $wait | 跳转等待时间 单位为秒 |
++-------+-----------------------+
+| $url  | 跳转页面地址          |
++-------+-----------------------+
+
+.. note:: ``error`` 方法会自动判断当前请求是否属于 ``Ajax`` 请求，如果属于 ``Ajax`` 请求则会自动转换为 ``default_ajax_return`` 配置的格式返回信息。 ``success`` 在 ``Ajax`` 请求下不返回信息，需要开发者自行处理。
+
+重定向
+------
+``\think\Controller`` 类的 ``redirect`` 方法可以实现页面的重定向功能。
+
+``redirect`` 方法的参数用法和 ``Url::build`` 方法的用法一致（参考 URL 生成部分），例如：
+
+.. code-block:: php
+
+    //重定向到News模块的Category操作
+    $this->redirect('News/category', ['cate_id' => 2]);
+
+上面的用法是跳转到 ``News`` 模块的 ``category`` 操作，重定向后会改变当前的 ``URL`` 地址。
+
+或者直接重定向到一个指定的外部 ``URL`` 地址，例如：
+
+.. code-block:: php
+
+    //重定向到指定的URL地址 并且使用302
+    $this->redirect('http://thinkphp.cn/blog/2',302);
+
+可以在重定向的时候通过 ``session`` 闪存数据传值，例如
+
+.. code-block:: php
+
+    $this->redirect('News/category', ['cate_id' => 2], 302, ['data' => 'hello']);
+
+使用 ``redirect`` 助手函数还可以实现更多的功能，例如可以记住当前的 ``URL`` 后跳转
+
+.. code-block:: php
+
+    redirect('News/category')->remember();
+
+需要跳转到上次记住的 ``URL`` 的时候使用：
+
+.. code-block:: php
+
+    redirect()->restore();
+
+.. warning:: 跳转和重定向的 ``URL`` 地址不需要再使用 ``url`` 方法进行生成，会自动调用，请注意避免，否则会导致多次生成而出现两个重复的 ``URL`` 后缀。
+
+空控制器
+========
+空控制器的概念是指当系统找不到指定的控制器名称的时候，系统会尝试定位空控制器( ``Error`` )，利用这个机制我们可以用来定制错误页面和进行 ``URL`` 的优化。
+
+现在我们把前面的需求进一步，把 ``URL`` 由原来的
+
+.. code-block:: shell
+
+    http://serverName/index/city/shanghai/
+
+变成
+
+.. code-block:: shell
+
+    http://serverName/index/shanghai/
+
+这样更加简单的方式，如果按照传统的模式，我们必须给每个城市定义一个控制器类，然后在每个控制器类的 ``index`` 方法里面进行处理。可是如果使用空控制器功能，这个问题就可以迎刃而解了。
+
+我们可以给项目定义一个 ``Error`` 控制器类
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    use think\Request;
+
+    class Error
+    {
+        public function index(Request $request)
+        {
+            //根据当前控制器名来判断要执行那个城市的操作
+            $cityName = $request->controller();
+            return $this->city($cityName);
+        }
+
+        //注意 city方法 本身是 protected 方法
+        protected function city($name)
+        {
+            //和$name这个城市相关的处理
+             return '当前城市' . $name;
+        }
+    }
+
+接下来，我们就可以在浏览器里面输入
+
+.. code-block:: shell
+
+    http://serverName/index/beijing/
+    http://serverName/index/shanghai/
+    http://serverName/index/shenzhen/
+
+由于系统并不存在 ``beijing`` 、 ``shanghai`` 或者 ``shenzhen`` 控制器，因此会定位到空控制器 ( ``Error`` ) 去执行，会看到依次输出的结果是：
+
+.. code-block:: shell
+
+    当前城市:beijing
+    当前城市:shanghai
+    当前城市:shenzhen
+
+空控制器和空操作还可以同时使用，用以完成更加复杂的操作。
+
+空控制器 ``Error`` 是可以配置的
+
+.. code-block:: php
+
+    // 更改默认的空控制器名
+    'empty_controller'      => 'MyError',
+
+当找不到控制器的时候，就会定位到 ``MyError`` 控制器类进行操作。
+
+空操作
+======
+空操作是指系统在找不到指定的操作方法的时候，会定位到空操作( ``_empty`` )方法来执行，利用这个机制，我们可以实现错误页面和一些 ``URL`` 的优化。
+
+例如，下面我们用空操作功能来实现一个城市切换的功能。我们只需要给 ``City`` 控制器类定义一个 ``_empty`` (空操作)方法：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    class City
+    {
+        public function _empty($name)
+        {
+            //把所有城市的操作解析到city方法
+            return $this->showCity($name);
+        }
+
+        //注意 showCity方法 本身是 protected 方法
+        protected function showCity($name)
+        {
+            //和$name这个城市相关的处理
+             return '当前城市' . $name;
+        }
+    }
+
+接下来，我们就可以在浏览器里面输入
+
+.. code-block:: shell
+
+    http://serverName/index/city/beijing/
+    http://serverName/index/city/shanghai/
+    http://serverName/index/city/shenzhen/
+
+由于 ``City`` 并没有定义 ``beijing`` 、 ``shanghai`` 或者 ``shenzhen`` 操作方法，因此系统会定位到空操作方法 ``_empty`` 中去解析， ``_empty`` 方法的参数就是当前 ``URL`` 里面的操作名，因此会看到依次输出的结果是：
+
+.. code-block:: shell
+
+    当前城市:beijing
+    当前城市:shanghai
+    当前城市:shenzhen
+
+.. warning:: V5.0.2+ 开始，空操作方法不需要任何参数，如果要获取当前的操作方法名，直接调用当前请求对象来获取，你也可以使用依赖注入（参考请求章节的依赖注入）
+
+多级控制器
+==========
+新版支持任意层次级别的控制器，并且支持路由，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller\one;
+
+    use think\Controller;
+
+    class Blog extends Controller
+    {
+        public function index()
+        {
+            return $this->fetch();
+        }
+
+        public function add()
+        {
+            return $this->fetch();
+        }
+
+        public function edit($id)
+        {
+            return $this->fetch();
+        }
+    }
+
+该控制器类的文件位置为：
+
+.. code-block:: shell
+
+    application/index/controller/one/Blog.php
+
+访问地址可以使用
+
+.. code-block:: shell
+
+    http://serverName/index.php/index/one.blog/index
+
+如果要在路由定义中使用多级控制器，可以使用：
+
+.. code-block:: shell
+
+    \think\Route::get('blog/add','index/one.Blog/add');
+
+如果要使用 ``http://serverName/index.php/index/one/Blog`` 访问，则参考自定定位控制器。
+
+分层控制器
+==========
+访问控制器
+----------
+ThinkPHP 引入了分层控制器的概念，通过 ``URL`` 访问的控制器为访问控制器层（Controller）或者主控制器，访问控制器是由 ``\think\App`` 类负责调用和实例化的，无需手动实例化。
+
+``URL`` 解析和路由后，会把当前的 ``URL`` 地址解析到 ``[模块/控制器/操作]`` ，其实也就是执行某个控制器类的某个操作方法，下面是一个示例：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    class Blog
+    {
+        public function index()
+        {
+            return 'index';
+        }
+
+        public function add()
+        {
+            return 'add';
+        }
+
+        public function edit($id)
+        {
+            return 'edit:'.$id;
+        }
+    }
+
+当前定义的主控制器位于 ``index`` 模块下面，所以当访问不同的 ``URL`` 地址的页面输出如下：
+
+.. code-block:: shell
+
+    http://serverName/index/blog/index // 输出 index
+    http://serverName/index/blog/add     // 输出 add
+    http://serverName/index/blog/edit/id/5 // 输出 edit:5
+
+.. note:: 新版的控制器可以不需要继承任何基类，当然，你可以定义一个公共的控制器基础类来被继承，也可以通过控制器扩展来完成不同的功能（例如Restful实现）。
+
+如果不经过路由访问的话， ``URL`` 中的控制器名会首先强制转为小写，然后再解析为驼峰法实例化该控制器。
+
+分层控制器
+----------
+除了访问控制器外，我们还可以定义其他分层控制器类，这些分层控制器是不能够被 ``URL`` 访问直接调用到的，只能在访问控制器、模型类的内部，或者视图模板文件中进行调用。
+
+例如，我们定义 ``Blog`` 事件控制器如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\event;
+
+    class Blog
+    {
+        public function insert()
+        {
+            return 'insert';
+        }
+
+        public function update($id)
+        {
+            return 'update:'.$id;
+        }
+
+        public function delete($id)
+        {
+            return 'delete:'.$id;
+        }
+    }
+
+定义完成后，就可以用下面的方式实例化并调用方法了：
+
+.. code-block:: php
+
+    $event = \think\Loader::controller('Blog', 'event');
+    echo $event->update(5); // 输出 update:5
+    echo $event->delete(5); // 输出 delete:5
+
+为了方便调用，系统提供了 ``controller`` 助手函数直接实例化多层控制器，例如：
+
+.. code-block:: php
+
+    $event = controller('Blog', 'event');
+    echo $event->update(5); // 输出 update:5
+    echo $event->delete(5); // 输出 delete:5
+
+支持跨模块调用，例如：
+
+.. code-block:: php
+
+    $event = controller('Admin/Blog', 'event');
+    echo $event->update(5); // 输出 update:5
+
+表示实例化 ``Admin`` 模块的 ``Blog`` 控制器类，并执行 ``update`` 方法。
+
+除了实例化分层控制器外，还可以直接调用分层控制器类的某个方法，例如：
+
+.. code-block:: php
+
+    echo \think\Loader::action('Blog/update', ['id' => 5], 'event'); // 输出 update:5
+
+也可以使用助手函数 ``action`` 实现相同的功能：
+
+.. code-block:: php
+
+    echo action('Blog/update', ['id' => 5], 'event'); // 输出 update:5
+
+利用分层控制器的机制，我们可以用来实现 ``Widget`` （其实就是在模板中调用分层控制器），例如：
+定义 ``index\widget\Blog`` 控制器类如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\widget;
+
+    class Blog {
+        public function header()
+        {
+            return 'header';
+        }
+
+        public function left()
+        {
+            return 'left';
+        }
+
+        public function menu($name)
+        {
+            return 'menu:'.$name;
+        }
+    }
+
+我们在模板文件中就可以直接调用 ``app\index\widget\Blog`` 分层控制器了，使用助手函数 ``action``
+
+.. code-block:: php
+
+    {:action('Blog/header', '', 'widget')}
+    {:action('Blog/menu', ['name' => 'think'], 'widget')}
+
+框架还提供了 ``widget`` 函数用于简化 ``Widget`` 控制器的调用，可以直接使用助手函数 ``widget``
+
+.. code-block:: php
+
+    {:widget('Blog/header')}
+    {:widget('Blog/menu', ['name' => 'think'])}
+
+Rest控制器
+==========
+过时
+
+自动定位控制器
+==============
+如果你使用了多级控制器的话，可以设置 ``controller_auto_search`` 参数开启自动定位控制器，便于 ``URL`` 访问，例如首先在配置文件中添加：
+
+.. code-block:: php
+
+    'controller_auto_search' => true,
+
+然后定义控制器如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller\one;
+
+    use think\Controller;
+
+    class Blog extends Controller
+    {
+        public function index()
+        {
+            return $this->fetch();
+        }
+
+        public function add()
+        {
+            return $this->fetch();
+        }
+
+        public function edit($id)
+        {
+            return $this->fetch('edit:'.$id);
+        }
+    }
+
+我们就可以直接访问下面的 ``URL`` 地址了：
+
+.. code-block:: shell
+
+    http://serverName/index.php/index/one/Blog
+
+资源控制器
+==========
+资源控制器可以让你轻松的创建 ``RESTFul`` 资源控制器，可以通过命令行生成需要的资源控制器，例如：
+
+.. code-block:: shell
+
+    // 生成index模块的Blog资源控制器
+    php think make:controller index/Blog
+
+或者使用完整的命名空间生成
+
+.. code-block:: shell
+
+    php think make:controller app\index\controller\Blog
+
+然后你只需要为资源控制器注册一个资源路由：
+
+.. code-block:: php
+
+    Route::resource('blog','index/Blog');
+
+设置后会自动注册7个路由规则，如下：
+
++----------+---------------+--------------+
+| 请求类型 | 生成路由规则  | 对应操作方法 |
++==========+===============+==============+
+| GET      | blog          | index        |
++----------+---------------+--------------+
+| GET      | blog/create   | create       |
++----------+---------------+--------------+
+| POST     | blog          | save         |
++----------+---------------+--------------+
+| GET      | blog/:id      | read         |
++----------+---------------+--------------+
+| GET      | blog/:id/edit | edit         |
++----------+---------------+--------------+
+| PUT      | blog/:id      | update       |
++----------+---------------+--------------+
+| DELETE   | blog/:id      | delete       |
++----------+---------------+--------------+

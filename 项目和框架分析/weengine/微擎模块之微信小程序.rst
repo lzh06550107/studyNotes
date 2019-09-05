@@ -1,0 +1,608 @@
+*****
+微信小程序
+*****
+
+小程序开发
+=========
+微擎小程序是我们在微擎与微信小程序的结合上开发小程序开发框架，结合微擎系统处理了用户信息、粉丝关联、支付、模块等业务功能。
+
+微擎小程序会以微擎模块为基础，为用户提供一键打包小程序功能，将所需要的模块功能快速的打包为一个微信小程序。所以开发者在开发小程序时，请严格按照微擎小程序框架来开发小程序。
+
+功能介绍
+--------
+``wxapp.php`` 是定义小程序获取数据或是操作数据的接口文件。小程序中一切与后端交流的数据都是通过 ``doPageXXX`` 方法提供的 ``API`` 来实现。而在 ``site.php`` 文件 ``doWebXXX`` 方法中定义后端管理功能。
+
+规范及约定
+---------
+
+- ``Rcdonkey_signup`` 为模块标识，类名的定义遵循 ``模块标识+ModuleWxapp`` 规则；
+- 此类必须继承 ``WeModuleWxapp`` 类；
+- 所有对外（小程序）公布的接口函数，必须是以 ``doPage`` 开头；
+
+这个文件就是小程序的后端文件。其结构大概如下：
+
+.. code-block:: php
+
+	/**
+	 * 接龙报名模块小程序接口定义
+	 *
+	 * @author lzh
+	 */
+	defined('IN_IA') or exit('Access Denied');
+	class Rcdonkey_signupModuleWxapp extends WeModuleWxapp {
+	    private function checkLogin() {
+	        global $_W;
+	        if (empty($_W['fans'])) {
+	            return error(1, '请先登录');
+	        }
+	        return true;
+	    }
+	    /**
+	     * 添加活动
+	     */
+	    public function doPagePostActivity() {
+	        //新增一个活动
+	        global $_W, $_GPC;
+	        $id = intval($_GPC['id']);
+	        $login_success = $this->checkLogin();
+	        if (is_error($login_success)) {
+	            return $this->result($login_success['errno'], $login_success['message']);
+	        }
+	        if (empty($_GPC['title']) || empty($_GPC['description']) || empty($_GPC['joindeadline'])) {
+	            return $this->result(2, '请填写完整活动内容');
+	        }
+	        $join_deadline = strtotime($_GPC['joindeadline']);
+	        if (empty($join_deadline)) {
+	            $join_deadline = strtotime("+7 day");
+	        }
+	        $require = explode(',', $_GPC['require']);
+	        if (in_array('mobile', $require)) {
+	            $require_mobile = 1;
+	        }
+	        if (in_array('realname', $require)) {
+	            $require_realname = 1;
+	        }
+	        $data = array(
+	            'title' => trim($_GPC['title']),
+	            'description' => trim($_GPC['description']),
+	            'join_deadline' => $join_deadline,
+	            'join_total' => 0,
+	            'organizer_openid' => $_W['fans']['openid'],
+	            'organizer_nickname' => $_W['fans']['nickname'],
+	            'organizer_avatar' => $_W['fans']['avatar'],
+	            'longitude' => $_GPC['longitude'],
+	            'latitude' => $_GPC['latitude'],
+	            'status' => 1,
+	            'createtime' => TIMESTAMP,
+	            'require_realname' => $require_realname,
+	            'require_mobile' => $require_mobile,
+	            'fee' => floatval($_GPC['fee']),
+	        );
+	        if (empty($id)) {
+	            if (pdo_insert('rcdonkey_activity', $data)) {
+	                $id = pdo_insertid();
+	                $code = $this->makeActivityCode($id);
+	                if (!is_error($code)) {
+	                    pdo_update('rcdonkey_activity', array('code' => $code), array('id' => $id));
+	                }
+	                return $this->result(0, '发布成功', array('id' => $id));
+	            }
+	        } else {
+	            $activity = $this->getActivity($id);
+	            if ($_W['openid'] != $activity['organizer_openid']) {
+	                return $this->result(2, '您没有权限修改该活动');
+	            }
+	            $data = array(
+	                'title' => trim($_GPC['title']),
+	                'description' => trim($_GPC['description']),
+	                'join_deadline' => $join_deadline,
+	            );
+	            pdo_update('rcdonkey_activity', $data, array('id' => $id));
+	            return $this->result(0, '修改成功', array('id' => $id));
+	        }
+	        return $this->result(3, '发布失败，请重试');
+	    }
+	    public function doPageDetail() {
+	        global $_W, $_GPC;
+	        $id = intval($_GPC['id']);
+	        if (empty($id)) {
+	            $this->result(1, '活动不存在或是已经被删除');
+	        }
+	        $activity = $this->getActivity($id);
+	        $join_user = pdo_get('rcdonkey_join_list', array('openid' => $_W['openid'], 'activity_id' => $id));
+	        $activity['already_join'] = !empty($join_user) ? true : false;
+	        $this->result(0, '', $activity);
+	    }
+	    private function getActivity($id) {
+	        global $_W;
+	        if (empty($id)) {
+	            return array();
+	        }
+	        $activity = pdo_get('rcdonkey_activity', array('id' => $id));
+	        if (empty($activity)) {
+	            return error(1, '活动不存在或是已经被删除');
+	        }
+	        $activity['description'] = emoji_unicode_decode($activity['description']);
+	        if (empty($activity['code'])) {
+	            $code = $this->makeActivityCode($id);
+	            if (!is_error($code)) {
+	                pdo_update('rcdonkey_activity', array('code' => $code), array('id' => $id));
+	            }
+	            $activity['code'] = $code;
+	        } else {
+	            $activity['code'] = tomedia($activity['code']);
+	        }
+	        if ($activity['status'] == 3) {
+	            $activity['join_deadline'] = TIMESTAMP - 38400;
+	        }
+	        $activity['join_deadline_date'] = date('Y-m-d H:i', $activity['join_deadline']);
+	        $activity['join_list'] = pdo_getall('rcdonkey_join_list', array('activity_id' => $id), array(), 'openid', 'id DESC');
+	        if (!empty($activity['join_list'])) {
+	            foreach ($activity['join_list'] as $i => &$join_user) {
+	                $join_user['join_date'] = date('Y-m-d H:i', $join_user['createtime']);
+	            }
+	        }
+	        if ($_W['openid'] == $activity['organizer_openid']) {
+	            $activity['is_manager'] = true;
+	        }
+	        if ($activity['join_deadline'] < TIMESTAMP) {
+	            pdo_update('rcdonkey_activity', array('status' => 3), array('id' => $id));
+	            $activity['status'] = 3;
+	        }
+	        return $activity;
+	    }
+	}
+
+结果返回
+--------
+由于小程序中沟通数据是采用API的形式，所以数据都是以JSON的形式进行返回，在这里可以直接调用 ``$this->result()`` 来返回结果。
+
+result($errno, $message, $data = '')
+
+以JSON的形式返回接口数据。
+
+参数：
+
+- $errno 错误代码，通常0表示没有错误，非0数值表示错误
+- $message 错误信息或是成功信息
+- $data 要返回的数据，可以是数组，字符串，数值等
+
+返回值：JSON数据格式。
+
+.. code-block:: json
+
+    {"errno":0,"message":"活动添加成功","data":{"title":"活动名称","id":1}}
+
+.. code-block:: php
+
+	public function doPageDetail() {
+	    global $_W, $_GPC;
+	    $id = intval($_GPC['id']);
+	    if (empty($id)) {
+	        $this->result(1, '活动不存在或是已经被删除');
+	    }
+	    $activity = $this->getActivity($id);
+	    $this->result(0, '获取活动详情成功', $activity);
+	}
+
+定义接口action
+--------------
+小程序的接口 ``action`` 定义，遵循 ``doPageXXX`` 其中 ``XXX`` 可为任何数字、字母、下划线，定义好后可以直接通过以下 ``URL`` 请求:
+
+http://pro.we7.cc/app/index.php?i=281&c=entry&a=wxapp&do=PageDetail&m=Rcdonkey_signup&sign=f04b5e2487d0fc9f6139f05bcf8b824c
+
+- i：表示统一帐号；
+- c：表示控制器；
+- a：表示动作；
+- do：表示该动作内的方法；
+- m：表示模块标识；
+- sign：表示签名；
+
+接口验签
+--------
+通信token及验签
+^^^^^^^^^^^^^^
+为了保证接口通信安全，如果在 ``wxapp`` 接口类中定义了 ``token`` 则在请求时会进行验证签名。未定义时不会验证，验证过程如下：
+
+.. code-block:: php
+
+	if (!empty($site->token)) {
+	    if (!$site->checkSign()) {
+	        message(error(1, '签名错误'), '', 'ajax');
+	    }
+	}
+
+在微擎小程序的 ``JS`` 框架中， ``util.url`` 和 ``util.request`` 函数请求接口时，会自动计算签名。
+
+签名算法
+^^^^^^^^
+将链接地址的所有参数按字母排序后拼接上 ``siteinfo.token`` 的值然后 ``md5`` 。例如请求的 ``URL`` 如下：
+
+.. code-block:: shell
+
+    http://s.we7.cc/app/index.php?i=67&t=0&v=v1.0.3&from=wxapp&c=entry&a=wxapp&do=detail&&state=we7sid-dd18fc87753f3e64a2f95583bf855a13
+
+先将 ``querystring`` 中的值取出，然后字母升序排序后连接得到如下结果：
+
+.. code-block:: shell
+
+    a=wxapp&c=entry&do=detail&from=wxapp&i=67&id=423&m=rcdonkey_signup&state=we7sid-dd18fc87753f3e64a2f95583bf855a13&t=0&v=v1.0.3&
+
+然后再拼接上 ``siteinfo.token`` 得到如下值：
+
+.. code-block:: shell
+
+    a=wxapp&c=entry&do=detail&from=wxapp&i=67&id=423&m=rcdonkey_signup&state=we7sid-dd18fc87753f3e64a2f95583bf855a13&t=0&v=v1.0.3&we7teammizhou
+
+然后进行 ``MD5`` 得到签名，带入 ``GET`` 参数。
+
+.. code-block:: shell
+
+    http://s.we7.cc/app/index.php?i=67&t=0&v=v1.0.3&from=wxapp&c=entry&a=wxapp&do=detail&&state=we7sid-dd18fc87753f3e64a2f95583bf855a13&sign=26fb15bb62fa4309c1d68735ba5e3a78
+
+PHP接口返回值
+------------
+通过 ``$this->result($errno, $message, $data)`` 函数来返回 ``json`` 格式的值。
+
+.. code-block:: json
+
+	$this->result(0, '登录成功', array('uid' => 1235));
+	//输出
+	{"errno":0,"message":"","data":{"test":1235}}
+
+小程序版本
+----------
+小程序请求接口时会附带 ``referer`` 值，地址大概如下：
+
+.. code-block:: shell
+
+    https://servicewechat.com/wxb4bf68b72dee1969/4/page-frame.html
+
+其中 ``4`` 为小程序当前线上发布的版本（微信的线上版本号是根据发布版本的顺序来定，比如发过三个版本，第四个的版本号就是 ``4`` ），如果需要专门给此版本定义接口方法，则需要将文件写到以下目录中。
+
+注意，本地调试版，版本号统一为 ``devtools`` ，发布线上开发版，版本号统一为 ``0``
+
+我们可以通过微信附带的 ``referer`` 值区分接口版本，具体版本目录如下：
+
+.. code-block:: shell
+
+    addons/we7_testhook/inc/wxapp/4/newversion.inc.php
+
+由此接口方法仅对 ``4`` 版本有效，其它版本以此类推，不区分版本时就直接定义到 ``wxapp.php`` 中即可。
+
+``newversion.inc.php`` 即是 ``wxapp.php`` 中的 ``doNewVersionPage`` 函数内容，具体如下：
+
+.. code-block:: php
+
+	/**
+	 * 小程序入口
+	 * [WeEngine System] Copyright (c) 2013 WE7.CC
+	 */
+	defined('IN_IA') or exit('Access Denied');
+	class Wn_storexModuleWxapp extends WeModuleWxapp {
+	    public function doNewVersionPage(){
+	        global $_W;
+	        print_r($_W);
+	    }
+	}
+
+在 ``newversion.inc.php`` 中可以写成以下代码，区分版本时， ``wxapp.php`` 中不得再出现 ``doNewVersionPage`` 方法，可将之前的代码放至到一个旧版本号为目录的 ``newversion.inc.php`` 文件中。
+
+.. code-block:: php
+
+	global $_W;
+	print_r($_W);
+
+session机制
+-----------
+session机制简述
+^^^^^^^^^^^^^^^
+在 php 开发过程中，保存用户登录信息时，一般会存储在 session 中。在微擎中重定义过 session 的 hander ，将会存储在 core_sessions 表中。
+
+php 端启用 session 后，在响应浏览器请求时会在 Header 头部信息附加 sessionid 的值，此值是随机串，且每个用户唯一。
+
+浏览器接收到此值时，会保存到 cookie 中，以便下次请求时附加上，这样用户信息就会在 php 端一直保持住。
+
+小程序中的session机制
+^^^^^^^^^^^^^^^^^^^^
+小程序中并没有上面所说的浏览器的 session 机制，所以微擎系统自己实现了一个类似的 session 机制。如果在小程序中开发时，请求接口使用的是微擎提供的 util.request 函数，则系统会帮你附加 sessionid ，保持用户的 session 信息。
+
+如果你没有使用微擎提供的函数，这样就需要手动来传递 sessionid ，也是可以在 php 保持 session 信息。
+
+小程序中使用session的好处
+^^^^^^^^^^^^^^^^^^^^^^^^
+因为 HTTP 请求是无状态的，当我们请求需要用户信息时，每次请求都必须要附带上用户信息。但是这样的做法无疑是存在安全隐患的，因为我们应该不信任 GET、POST 值传递过来的值。
+
+利用 session 机制，用户第一次请求登录时，我们将状态保存起来，生成 sessionid （可以理解为一个身份证号），下次请求附加这个 sessionid ，由服务器端查询得到用户数据。这样做就可以尽量保证请求安全。
+
+当然 sessionid 也可通过 XSS 或是其实方式伪造，这不在本章讨论的范围，任何技术手段都有漏洞，我们只能是尽最大程度的提高安全门槛。
+
+手动附加 sessionid
+^^^^^^^^^^^^^^^^^^
+未使用微擎相关 util.js 函数时，如果还想使用 session 则需要手动附加传递，具体方法如下：
+
+调用登录接口得到sessionid
+""""""""""""""""""""""""
+用户进入小程序后，通过调用 ``wx.login`` 拿到 ``code`` 码，请求微擎接口 url('auth/session/openid') 后，接口会返回客户端一个 sessionid ，如果粉丝是老用户，则会连带粉丝信息一起返回，结构如下：
+
+.. code-block:: json
+
+	{
+	    "errno": 0,  //非0时表示有错误，不会返回以下信息
+	    "message": "",
+	    "data": {
+	        "sessionid": "c6d0d0253a8cc06e59672ae6bd165ef3",
+	        "userinfo": { //仅在老用户时会返回此数据
+	            "fanid": "99695",
+	            "acid": "100218",
+	            "uniacid": "937",
+	            "uid": "10687",
+	            "openid": "oeR_90NUgNOhLNT84HG4weroOohk",
+	            "nickname": "",
+	            "groupid": "",
+	            "salt": "BXfVDHIq",
+	            "follow": "1",
+	            "followtime": "1524887119",
+	            "unfollowtime": "0",
+	            "tag": [ ],
+	            "updatetime": "1524887119",
+	            "unionid": "",
+	            "user_from": null
+	        },
+	        "openid": "oeR_90NUgNOhLNT84HG4weroOohk"
+	    }
+	}
+
+保存 sessionid ，然后再请求后面附加
+"""""""""""""""""""""""""""""""""
+客户端拿到数据后，请保存 ``data.sessionid`` 以便下次请求时使用，在构造 ``URL`` 时，请按以下方式附加 ``sessionid`` ：
+
+.. code-block:: shell
+
+	http://pro.we7.cc/app/index.php?i=281&c=entry&a=wxapp&m=rcdonkey_signup&state=we7sid-(sessionid)
+
+其中( sessionid ) 就是要替换成上面返回数据中的 data.sessionid 值。
+
+发起支付
+-------
+
+在小程序端发起支付，需要配合 ``PHP`` 端共同来完成， ``PHP`` 调用支付函数，传入订单号、金额、用户OPENID 等信息，生成支付参数，返回给小程序端，然后利用 ``JS`` 发起支付。
+
+支付完成后，与模块中支付处理一样，系统会调用小程序接口类中的 ``payResult`` 方法来执行支付完成的代码。
+
+``PHP`` 端生成支付参数
+^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+	class We7WxappDemoModuleWxapp extends WeModuleWxapp {
+	    public function doPagePay() {
+	        global $_GPC, $_W;
+	        //获取订单号，保证在业务模块中唯一即可
+	        $orderid = intval($_GPC['orderid']);
+	        //构造支付参数
+	        $order = array(
+	            'tid' => $orderid,
+	            'user' => $_W['openid'], //用户OPENID
+	            'fee' => floatval($fee), //金额
+	            'title' => '小程序支付示例',
+	        );
+	        //生成支付参数，返回给小程序端
+	        $pay_params = $this->pay($order);
+	        if (is_error($pay_params)) {
+	            return $this->result(1, '支付失败，请重试');
+	        }
+	        return $this->result(0, '', $pay_params);
+	    }
+	}
+
+小程序端发起支付
+^^^^^^^^^^^^^^^
+
+.. code-block:: js
+
+	app.util.request({
+	    'url': 'entry/wxapp/pay', //调用wxapp.php中的doPagePay方法获取支付参数
+	    data: {
+	        orderid: options.orderid,
+	    },
+	    'cachetime': '0',
+	    success(res) {
+	        if (res.data && res.data.data && !res.data.errno) {
+	            //发起支付
+	            wx.requestPayment({
+	                'timeStamp': res.data.data.timeStamp,
+	                'nonceStr': res.data.data.nonceStr,
+	                'package': res.data.data.package,
+	                'signType': 'MD5',
+	                'paySign': res.data.data.paySign,
+	                'success': function (res) {
+	                    //执行支付成功提示
+	                },
+	                'fail': function (res) {
+	                    backApp()
+	                }
+	            })
+	        }
+	    },
+	    fail(res) {
+	        wx.showModal({
+	            title: '系统提示',
+	            content: res.data.message ? res.data.message : '错误',
+	            showCancel: false,
+	            success: function (res) {
+	                if (res.confirm) {
+	                    backApp()
+	                }
+	            }
+	        })
+	    }
+	})
+
+验证支付结果
+^^^^^^^^^^^^
+和模块一样，验证代码写在 ``payResult()`` 函数中即可。
+
+.. code-block:: php
+
+	class We7WxappDemoModuleWxapp extends WeModuleWxapp {
+	    public function payResult($log) {
+	}
+
+
+app.js
+------
+在 ``app.js`` 中除了定义一些小程序需要的快捷菜单，启动事件还需要引用与微擎系统交互的信息，具体如下：
+
+.. code-block:: js
+
+	//app.js
+	App({
+	    onLaunch: function () {
+	        //调用API从本地缓存中获取数据
+	    },
+	    onShow: function () {
+	    },
+	    onHide: function () {
+	    },
+	    on<x>error: function (msg) {
+	        console.log(msg)
+	    },
+	    tabBar: {
+	    },
+	    globalData:{
+	        userInfo : null,
+	    },
+	    util: require('we7/resource/js/util.js'), // util 引用微擎公共工具库JS文件
+	    siteInfo: require('siteinfo.js') //siteInfo 引用微擎系统定义的公共信息，接口通信时需要使用，打包小程序时会自动生成，开发时需要开发者自行定义一下。
+	});
+
+siteInfo.js定义说明
+^^^^^^^^^^^^^^^^^^^
+定义到 ``app.js`` 同级目录即可。
+
+.. code-block:: js
+
+	var siteinfo = {
+	  'uniacid': '67', //小程序uniacid
+	  'acid': '67',
+	  'multiid': '10000',  //小程序版本id
+	  'version': '1.0.0',  //小程序版本
+	  'siteroot': 'https://demo.91fyt.com/app/index.php',  //站点URL
+	  'token': 'woshiyanzhengtoken' //将用于接口中的数据安全校验
+	};
+	module.exports = siteinfo;
+
+获取用户信息
+-----------
+腾讯将调整获取用户信息的方式 ，微擎在2018年4月28日后的版本支持。
+
+4.30接口调整说明
+^^^^^^^^^^^^^^^
+
+.. code-block:: shell
+
+    wx.getUserInfo()
+
+此函数2018年4月30失效不能主动获取到用户信息，需要通过 ``button`` 组件由用户点击请求来获取用户信息。
+
+也就是说，此次调整是将获取用户信息这个操作，从主动被成了被动。对比之前的调用方式，这次调整就是多了一个函数嵌套而已。
+
+获取用户信息
+^^^^^^^^^^^
+通过 ``button`` 组件来获取，代码如下：
+
+.. code-block:: html
+
+    <button size="mini" open-type="getUserInfo" bindgetuserinfo="updateUserInfo">获取用户信息</button>
+
+点击些按钮后，拿到用户信息，调用 ``updateUserInfo`` 函数，实现如下：
+
+.. code-block:: js
+
+	updateUserInfo(result) {
+	    var app = getApp()
+	    //拿到用户数据时，通过app.util.getUserinfo将加密串传递给服务端
+	    //服务端会解密，并保存用户数据，生成sessionid返回
+	    app.util.getUserInfo(function(userInfo) {
+	        //这回userInfo为用户信息
+	         console.log(userInfo)
+	    }, result.detail)
+	}
+
+result变量
+^^^^^^^^^^
+``result`` 用户信息结构，其中 ``result.detail`` 为具体用户加密数据，此数据等同于之前 ``wx.getUserInfo`` 返回的数据，拿到值后，需要传递给服务端，解密数据并返回。
+
+userInfo变量
+^^^^^^^^^^^^
+``userInfo`` 请求服务器接口后返回数据，结构如下：
+
+- sessionid 用户sessionid标识
+- wxInfo 粉丝数据，昵称，头像等
+- memberInfo 粉丝关联的会员数据
+
+
+util.js工具库
+-------------
+``util.js`` 是微擎小程序提供的一套基础的JS工具库，使用时需要先在 ``app.js`` 中引用，如下：
+
+.. code-block:: js
+
+	//app.js
+	App({
+	    onLaunch: function () {
+	        //调用API从本地缓存中获取数据
+	    },
+	    onShow: function () {
+	    },
+	    onHide: function () {
+	    },
+	    on<x>error: function (msg) {
+	        console.log(msg)
+	    },
+	    tabBar: {
+	    },
+	    globalData:{
+	        userInfo : null,
+	    },
+	    util: require('we7/resource/js/util.js'),
+	    siteInfo: require('siteinfo.js')
+	});
+
+在页面中，通过 ``app.util.xxx()`` 来使用，具体如下：
+
+.. code-block:: js
+
+	Page({
+	    data : {
+	        activity : {}
+	    },
+	    on<x>load: function (request) {
+	        var $this = this;
+	        if (request.id) {
+	            app.util.request({
+	                url: 'entry/wxapp/detail',
+	                data: {
+	                    m: 'rcdonkey_signup',
+	                    id : request.id
+	                },
+	                method : 'post',
+	                success: function (response) {
+	                    $this.setData({
+	                        'activity' : response.data.data
+	                    });
+	                }
+	            });
+	        }
+	    },
+	    onReady: function () {
+	        var $this = this;
+	        app.util.getUserInfo(function (response) {
+	            $this.setData({
+	                session: response
+	            });
+	        });
+	    }
+	})
+

@@ -1,0 +1,1094 @@
+******
+基本线程同步
+******
+
+介绍
+====
+在并发编程中发生的最常见的一种情况是超过一个执行线程使用共享资源。在并发应用程序中，多个线程读或写相同的数据或访问同一文件或数据库连接这是很平常的。这些共享资源会引发错误或数据不一致的情况，我们必须通过一些机制来避免这些错误。
+
+解决这些问题从临界区的概念开始。临界区是在同一时间不能超过一个线程访问共享资源的代码块。
+
+Java(和几乎所有的编程语言)提供同步机制，帮助程序员实现临界区。当一个线程想要访问一个临界区，它使用其中的一个同步机制来找出是否有任何其他线程执行临界区。如果没有，这个线程就进入临界区。否则，这个线程通过同步机制暂停直到另一个线程执行完临界区。当多个线程正在等待一个线程完成执行的一个临界 区， ``JVM`` 选择其中一个线程执行，其余的线程会等待直到轮到它们。
+
+本章展示了一些的指南，指导如何使用 ``Java`` 语言提供的两种基本的同步机制:
+
+- 关键字synchronized
+- Lock接口及其实现
+
+同步方法
+========
+在这个指南中，我们将学习在 ``Java`` 中如何使用一个最基本的同步方法，即使用 ``synchronized`` 关键字来控制并发访问方法。只有一个执行线程能够访问一个对象中被 ``synchronized`` 关键字声明的方法。如果另一个线程试图访问同一个对象中任何被 ``synchronized`` 关键字声明的方法，它将被暂停，直到第一个线程结束方法的执行。
+
+换句话说，每个方法声明为 ``synchronized`` 关键字是一个临界区， ``Java`` 只允许一个对象执行其中的一个临界区。
+
+静态方法有不同的行为。只有一个线程执行访问被 ``synchronized`` 关键字声明的静态方法，但另一个线程可以访问该类的一个对象中的其他非静态的方法。你必须非常小心这一点，因为两个线程可以访问两个不同的同步方法，如果其中一个是静态的而另一个不是。如果这两种方法改变相同的数据,你将会有数据不一致的错误。
+
+- ``synchronized`` 是对类的当前实例（当前对象）进行加锁，防止其他线程同时访问该类的该实例的所有 ``synchronized`` 块（注：是所有），注意这里是"类的当前实例"， 类的两个不同实例就没有这种约束了。
+- ``static synchronized`` 恰好就是要控制类的所有实例的并发访问， ``static synchronized`` 是限制多线程中该类的所有实例同时访问jvm中该类所对应的代码块。
+
+https://www.cnblogs.com/lixuwu/p/5676143.html
+
+为了学习这个概念，我们将实现一个有两个线程访问共同对象的示例。我们将有一个银行帐户和两个线程：其中一个线程将钱转移到帐户而另一个线程将从账户中扣款。在没有同步方法，我们可能得到不正确的结果。同步机制保证了账户的正确。
+
+存在问题的代码
+-------------
+
+.. code-block:: java
+
+	public class Account {
+
+		private double balance;
+
+		public double getBalance() {
+			return balance;
+		}
+
+		public void setBalance(double balance) {
+			this.balance = balance;
+		}
+
+
+		public void addAmount(double amount) {
+			double tmp = balance;
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			tmp += amount;
+			balance = tmp;
+
+			System.out.println("增加后账户金额：" + balance);
+		}
+
+
+		public void subtractAmount(double amount) {
+			double tmp = balance;
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			tmp -= amount;
+			balance = tmp;
+
+			System.out.println("减去后账户金额：" + balance);
+		}
+	}
+
+	public class Bank implements Runnable {
+		//  用户账户
+		private Account account;
+
+		public Bank(Account account) {
+			this.account = account;
+		}
+
+		@Override
+		public void run() {
+			for (int i = 0; i < 100; i++) {
+				account.subtractAmount(1000);
+			}
+		}
+	}
+
+	public class Company implements Runnable {
+
+		private Account account;
+
+		public Company(Account account) {
+			this.account = account;
+		}
+
+		@Override
+		public void run() {
+			for (int i = 0; i < 100; i++) {
+				account.addAmount(1000);
+			}
+		}
+	}
+
+	public class Main {
+
+		public static void main(String[] args) {
+			Account account = new Account();
+
+			account.setBalance(1000);
+
+			Company company = new Company(account);
+			Thread companyThread = new Thread(company);
+
+			Bank bank = new Bank(account);
+			Thread bankThread = new Thread(bank);
+
+			System.out.printf("Account : Initial Balance: %f\n", account.getBalance());
+
+			companyThread.start();
+			bankThread.start();
+
+			try {
+				companyThread.join();
+				bankThread.join();
+				System.out.printf("Account : Final Balance: %f\n", account.getBalance());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+从执行结果看，没有得到正确的结果。
+
+使用同步块的代码
+---------------
+
+.. code-block:: java
+
+	// 1.创建一个Account类来模拟我们的银行账户。它只有一个double类型的属性，名为balance
+	public class Account {
+
+		private double balance;
+
+		// 2.实现setBalance()和getBalance()方法来写和读balance属性的值
+		public double getBalance() {
+			return balance;
+		}
+
+		public void setBalance(double balance) {
+			this.balance = balance;
+		}
+
+		// 3.实现一个addAmount()方法，用来根据传入的参数增加balance的值。由于应该只有一个线程能改变balance的值，所以使用synchronized关键字将这个方法转换成临界区
+		public synchronized void addAmount(double amount) {
+			double tmp = balance;
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			tmp += amount;
+			balance = tmp;
+
+			System.out.println("增加后账户金额：" + balance);
+		}
+
+		// 4.实现一个subtractAmount()方法，用来根据传入的参数减少balance的值。由于应该只有一个线程能改变balance的值，所以使用synchronized关键字将这个方法转换成临界区
+		public synchronized void subtractAmount(double amount) {
+			double tmp = balance;
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			tmp -= amount;
+			balance = tmp;
+
+			System.out.println("减去后账户金额：" + balance);
+		}
+	}
+
+	// 5.实现一个类来模拟ATM，它调用subtractAmount()方法来减少账户上的余额（balance值）。这个类必须实现Runnable接口，作为一个线程执行
+	public class Bank implements Runnable {
+		// 6.在这个类中，添加一个Account对象。实现构造器用来初始化account的值
+		private Account account;
+
+		public Bank(Account account) {
+			this.account = account;
+		}
+
+		//7.实现run()方法。它将调用100次account对象上的subtractAmount()方法，用来减少余额（balance值）
+		@Override
+		public void run() {
+			for (int i = 0; i < 100; i++) {
+				account.subtractAmount(1000);
+			}
+		}
+	}
+
+	// 8.实现一个类来模拟公司，它调用addAmount()方法来增加账户上的余额（balance值）。这个类必须实现Runnable接口，作为一个线程执行
+	public class Company implements Runnable {
+
+		// 9.在这个类中，添加一个Account对象。实现构造器用来初始化account的值
+		private Account account;
+
+		public Company(Account account) {
+			this.account = account;
+		}
+
+		// 10.实现run()方法。它将调用100次account对象上的addAmount()方法，用来增加余额（balance值）
+		@Override
+		public void run() {
+			for (int i = 0; i < 100; i++) {
+				account.addAmount(1000);
+			}
+		}
+	}
+
+	// 11.通过创建一个类，类名为main，包含main()方法来实现应用程序的主类
+	public class Main {
+
+		public static void main(String[] args) {
+			// 12.创建一个Account对象，并且初始化balance值为1000
+			Account account = new Account();
+			account.setBalance(1000);
+
+			// 13.创建一个Company对象，并且用一个线程来运行它
+			Company company = new Company(account);
+			Thread companyThread = new Thread(company);
+
+			// 14.创建一个Bank对象，并且用一个线程来运行它
+			Bank bank = new Bank(account);
+			Thread bankThread = new Thread(bank);
+
+			// 15.在控制台打印balance初始值
+			System.out.printf("Account : Initial Balance: %f\n", account.getBalance());
+
+			// 16.启动这些线程
+			companyThread.start();
+			bankThread.start();
+
+			// 17.等待两个使用join()方法结束的线程，并且在控制台打印账户的最终余额（balance值）
+			try {
+				companyThread.join();
+				bankThread.join();
+				System.out.printf("Account : Final Balance: %f\n", account.getBalance());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+在这个指南中，你已经开发了一个增加和减少模拟银行账户的类的余额的应用程序。在这个程序中，每次都调用 100 次 ``addAmount()`` 方法来增加 1000 的余额和调用 100 次 ``subtractAmount()`` 方法来减少 1000 的余额。你应该期望最终的余额和初始的余额是相等的。你试图促使一个错误情况使用 ``tmp`` 变量来存储账户余额，所以你读取帐户余额，你增加临时变量的值，然后你再次设置账户的余额值。另外，你通过使用 ``Thread`` 类的 ``sleep()`` 方法引入一个小延迟，让执行该方法的线程睡眠10毫秒，所以，如果另一个线程执行该方法，它可以修改账户的余额来引发一个错误。这是 ``synchronized`` 关键字机制，避免这些错误。
+
+如果你想看到并发访问共享数据的问题，那么就删除 ``addAmount()`` 和 ``subtractAmount()`` 方法的 ``synchronized`` 关键字，然后运行该程序。在没有 ``synchronized`` 关键字的情况下，当一个线程在睡眠后再读取账户的余额，另一个方法将读取该账户的余额。所以这两个方法将修改相同的余额并且其中一个操作不会反映在最终的结果。
+
+使用 ``synchronized`` 关键字，在并发应用程序中，我们保证了正确地访问共享数据。
+
+如我们在介绍中提到的这个指南，只有一个线程能访问一个对象的声明为 ``synchronized`` 关键字的方法。如果一个线程A正在执行一个 ``synchronized`` 方法，而线程B想要执行同个实例对象的 ``synchronized`` 方法，它将阻塞，直到线程A执行完。但是如果线程B访问相同类的不同实例对象，它们都不会被阻塞。
+
+``synchronized`` 关键字不利于应用程序的性能，所以你必须仅在修改共享数据的并发环境下的方法上使用它。如果你有多个线程正在调用一个 ``synchronized`` 方法，在同一时刻只有一个线程执行它，而其他的线程将会等待。如果这个操作没有使用 ``synchronized`` 关键字，所有线程可以在同一时刻执行这个操作，减少总的执行时间。如果你知道一个方法将不会被多个线程 调用，请不要使用 ``synchronized`` 关键字。
+
+你可以使用递归调用 ``synchronized`` 方法。当线程访问一个对象的 ``synchronized`` 方法，你可以调用该对象的其他 ``synchronized`` 方法，包括正在执行的方法。
+
+在 Java 内部，同一个线程调用自己类中其它 ``synchronized`` 方法/块时不会阻碍该线程的执行，同一个线程对同一个对象锁是可重入的，同一个线程可以获取同一把锁多次，也就是可以多次重入。原因是Java中线程获得对象锁的操作是以线程为单位的，而不是以调用为单位的。
+
+我们可以使用 ``synchronized`` 关键字来保护访问的代码块，替换在整个方法上使用 ``synchronized`` 关键字。我们应该使用 ``synchronized`` 关键字以这样的方式来保护访问的共享数据，其余的操作留出此代码块，这将会获得更好的应用程序性能。这个目标就是让临界区（在同 一时刻可以被多个线程访问的代码块）尽可能短。我们已经使用了 ``synchronized`` 关键字来保护访问指令，将不使用共享数据的长操作留出此代码块。当你以这个方式使用 ``synchronized`` 关键字，你必须通过一个对象引用作为参数。只有一个线程可以访问那个对象的 ``synchronized`` 代码（代码块或方法）。通常，我们将使用 ``this`` 关键字引用执行该方法的对象。
+
+.. code-block:: java
+
+	synchronized (this) {
+		// Java code
+	}
+
+
+在同步的类里安排独立属性
+======================
+当你使用 ``synchronized`` 关键字来保护代码块时，你必须通过一个对象的引用作为参数。通常，你将会使用 ``this`` 关键字来引用执行该方法的对象，但是你也可以使用其他对象引用。通常情况下，这些对象被创建只有这个目的。比如，你在一个类中有被多个线程共享的两个独立属性。你必须同步访问每个变量，如果有一个线程访问一个属性和另一个线程在同一时刻访问另一个属性，这是没有问题的。
+
+在这个指南中，你将学习如何解决这种情况的一个例子，编程模拟一家电影院有两个屏幕和两个售票处。当一个售票处出售当前屏幕座位时，另一个售票处就不能出售该屏幕座位，所以在每个屏幕的席位的数量是独立的属性。
+
+.. code-block:: java
+
+	// 1.创建一个Cinema类，添加两个long类型的属性，命名为vacanciesCinema1和vacanciesCinema2
+	public class Cinema {
+
+		private long vacanciesCinema1;
+		private long vacanciesCinema2;
+
+		// 2.给Cinema类添加两个额外的Object属性，命名为controlCinema1和controlCinema2
+		private final Object controlCinema1, controlCinema2;
+
+		// 3.实现Cinema类的构造方法，初始化所有属性
+		public Cinema() {
+			controlCinema1 = new Object();
+			controlCinema2 = new Object();
+
+			vacanciesCinema1 = 20;
+			vacanciesCinema2 = 20;
+		}
+
+		// 4.实现sellTickets1()方法，当第一个电影院出售一些门票将调用它。使用controlCinema1对象来控制访问synchronized的代码块
+		public boolean sellTickets1(int number) {
+			synchronized (controlCinema1) {
+				if (number < vacanciesCinema1) {
+					vacanciesCinema1 -= number;
+					return true;
+				}
+
+				return false;
+			}
+		}
+
+		// 5.实现sellTickets2()方法，当第二个电影院出售一些门票将调用它。使用controlCinema2对象来控制访问synchronized的代码块
+		public boolean sellTickets2(int number) {
+			synchronized (controlCinema2) {
+				if (number < vacanciesCinema2) {
+					vacanciesCinema2 -= number;
+					return true;
+				}
+
+				return false;
+			}
+		}
+
+		// 6.实现returnTickets1()方法，当第一个电影院被退回一些票时将调用它。使用controlCinema1对象来控制访问synchronized的代码块
+		public boolean returnTickets1(int number) {
+			synchronized (controlCinema1) {
+				vacanciesCinema1 += number;
+				return true;
+			}
+		}
+
+		// 7.实现returnTickets2()方法，当第二个电影院被退回一些票时将调用它。使用controlCinema2对象来控制访问synchronized的代码块
+		public boolean returnTickets2(int number) {
+			synchronized (controlCinema2) {
+				vacanciesCinema2 += number;
+				return true;
+			}
+		}
+
+		// 8.实现其他两个方法，用来返回每个电影院空缺位置的数量
+		public long getVacanciesCinema1() {
+			return vacanciesCinema1;
+		}
+
+		public long getVacanciesCinema2() {
+			return vacanciesCinema2;
+		}
+
+	}
+
+	// 9.售票窗口，实现TicketOffice1类，并指定它实现Runnable接口
+	public class TicketOffice1 implements Runnable {
+		// 10.声明一个Cinema对象，并实现该类（类TicketOffice1）的构造器用来初始化这个对象
+		private Cinema cinema;
+		public TicketOffice1(Cinema cinema) {
+			this.cinema = cinema;
+		}
+
+		// 11.实现run()方法，用来模拟在两个电影院的一些操作
+		@Override
+		public void run() {
+
+			cinema.sellTickets1(3);
+			cinema.sellTickets1(2);
+			cinema.sellTickets2(2);
+			cinema.returnTickets1(3);
+			cinema.sellTickets1(5);
+			cinema.sellTickets2(2);
+			cinema.sellTickets2(2);
+			cinema.sellTickets2(2);
+		}
+	}
+
+	// 12.实现TicketOffice2类，并指定它实现Runnable接口
+	public class TicketOffice2 implements Runnable {
+		// 13.声明一个Cinema对象，并实现该类（类TicketOffice2）的构造器用来初始化这个对象
+		private Cinema cinema;
+		public TicketOffice2(Cinema cinema) {
+			this.cinema = cinema;
+		}
+
+		// 14.实现run()方法，用来模拟在两个电影院的一些操作
+		@Override
+		public void run() {
+			cinema.sellTickets2(2);
+			cinema.sellTickets2(4);
+			cinema.sellTickets1(2);
+			cinema.sellTickets1(1);
+			cinema.returnTickets2(2);
+			cinema.sellTickets1(3);
+			cinema.sellTickets2(2);
+			cinema.sellTickets1(2);
+		}
+	}
+
+当你使用 ``synchronized`` 关键字来保护代码块，你使用一个对象作为参数。JVM可以保证只有一个线程可以访问那个对象保护所有的代码块（请注意，我们总是谈论的对象，而不是类）。
+
+注释：在这个示例中，我们用一个对象来控制 ``vacanciesCinema1`` 属性的访问。所以，在任意时刻，只有一个线程能修改该属性。用另一个对象来控制 ``vacanciesCinema2`` 属性的访问。所以，在任意时刻，只有一个线程能修改这个属性。但是可能有两个线程同时运行，一个修改 ``vacancesCinema1`` 属性而另一个修改 ``vacanciesCinema2`` 属性。
+
+
+在同步代码中使用条件
+==================
+在并发编程中的一个经典问题是生产者与消费者问题，我们有一个数据缓冲区，一个或多个数据的生产者在缓冲区存储数据，而一个或多个数据的消费者，把数据从缓冲区取出。
+
+由于缓冲区是一个共享的数据结构，我们必须采用同步机制，比如 ``synchronized`` 关键字来控制对它的访问。但是我们有更多的限制因素，如果缓冲区是满的，则生产者不能存储数据；如果缓冲区是空的，则消费者不能取出数据。
+
+对于这些类型的情况， Java 在 ``Object`` 对象中提供 ``wait()`` ， ``notify()`` 和 ``notifyAll()`` 方法的实现。一个线程可以在 ``synchronized`` 代码块中调用 ``wait()`` 方法。如果在 ``synchronized`` 代码块外部调用 ``wait()`` 方法， JVM 会抛出 ``IllegalMonitorStateException`` 异常。当线程调用 ``wait()`` 方法， JVM 让这个线程睡眠，并且释放控制 ``synchronized`` 代码块的对象，这样，虽然它正在执行但允许其他线程执行由该对象保护的其它 ``synchronized`` 代码块。为了唤醒线程，你必 须在由相同对象保护的 ``synchronized`` 代码块中调用 ``notify()`` 或 ``notifyAll()`` 方法。
+
+在这个指南中，你将学习如何通过使用 ``synchronized`` 关键字和 ``wait()`` 和 ``notify()`` ， ``notifyAll()`` 方法实现生产者消费者问题。
+
+.. code-block:: java
+
+	// 1.创建EventStorage类，包括一个名为maxSize，类型为int的属性和一个名为storage，类型为LinkedList<Date>的属性
+	public class EventStorage {
+
+		private int maxSize;
+		private List<Date> storage;
+
+		// 2.实现这个类的构造器，初始化所有属性
+		public EventStorage() {
+			maxSize = 10;
+			storage = new LinkedList<>();
+		}
+
+		// 3. 实现synchronized方法set()，用来在storage上存储一个事件。首先，检查storage是否已满。如果满了，调用wait()方 法，直到storage有空的空间。在方法的尾部，我们调用notifyAll()方法来唤醒，所有在wait()方法上睡眠的线程
+		public synchronized void set() {
+			while (storage.size() == maxSize) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			storage.add(new Date());
+			System.out.printf("Set: %d \n", storage.size());
+
+			notifyAll();
+		}
+
+		// 4. 实现synchronized方法get()，用来在storage上获取一个事件。首先，检查storage是否有事件。如果没有，调用wait()方法直到，storage有一些事件，在方法的尾部，我们调用notifyAll()方法来唤醒，所有在wait()方法上睡眠的线程
+		public synchronized void get() {
+			while (storage.size() == 0) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			System.out.printf("Get: %d: %s \n", storage.size(), ((LinkedList<?>) storage).poll());
+			notifyAll();
+		}
+	}
+
+	// 5.创建Producer类，并指定它实现Runnable接口，它将实现这个示例的生产者
+	public class Producer implements Runnable {
+		// 6.声明一个EventStore对象，并实现（Producer类）构造器，初始化该对象
+		private EventStorage storage;
+		public Producer(EventStorage storage) {
+			this.storage = storage;
+		}
+
+		// 7.实现run()方法，该方法调用EventStorage对象的set()方法100次
+		@Override
+		public void run() {
+			for (int i = 0; i < 100; i++) {
+				storage.set();
+			}
+		}
+	}
+
+	// 8.创建Consumer类，并指定它实现Runnable接口，它将实现这个示例的消费者
+	public class Consumer implements Runnable {
+		// 9.声明一个EventStore对象，并实现（Consumer类）构造器，初始化该对象
+		private EventStorage storage;
+		public Consumer(EventStorage storage) {
+			this.storage = storage;
+		}
+
+		// 10.实现run()方法，该方法调用EventStorage对象的get()方法100次
+		@Override
+		public void run() {
+			for (int i = 0; i < 100; i++) {
+				storage.get();
+			}
+		}
+	}
+
+	// 11.通过创建类名为Main，且包括main（）方法来实现这个示例的主类
+	public class Main {
+
+		public static void main(String[] args) {
+			// 12.创建一个EventStorage对象
+			EventStorage storage = new EventStorage();
+
+			// 13.创建一个Producer对象，并且用线程运行它
+			Producer producer = new Producer(storage);
+			Thread thread1 = new Thread(producer);
+
+			// 14.创建一个Consumer对象，并且用线程运行它
+			Consumer consumer = new Consumer(storage);
+			Thread thread2 = new Thread(consumer);
+
+			// 15.启动这两个线程
+			thread2.start();
+			thread1.start();
+		}
+	}
+
+``EventStorage`` 类的 ``set()`` 方法和 ``get()`` 方法是这个示例的关键。首先， ``set()`` 方法检查 ``storage`` 属性是否有空闲空间。如果它满了，调用 ``wait()`` 方法等待有空闲的空间。当其它线程调用 ``notifyAll()`` 方法，这些被阻塞的线程将被唤醒并且再次检查这个条件。这个 ``notifyAll()`` 方法并不保证线程会醒 来。这个过程是重复，直到 ``storage`` 有空闲空间，然后它可以生成一个新的事件并存储它。
+
+``get()`` 方法的行为是相似的。首先，它检查 ``storage`` 是否有事件。如果 ``EventStorage`` 类是空的，调用 ``wait()`` 方法等待事件。当其它线程调用 ``notifyAll()`` 方法，这个线程将被唤醒并且再次检查这个条件直到 ``storage`` 有一些事件。
+
+注释：在 ``while`` 循环中，你必须保持检查条件和调用 ``wait()`` 方法。你不能继续执行，直到这个条件为 ``true`` 。
+
+
+使用Lock来同步代码块
+===================
+Java 提供另外的机制用来同步代码块。它比 ``synchronized`` 关键字更加强大、灵活。它是基于 ``Lock`` 接口和实现它的类（如 ``ReentrantLock`` ）。这种机制有如下优势：
+
+- 它允许以一种更灵活的方式来构建 ``synchronized`` 块。使用 ``synchronized`` 关键字，你必须以结构化方式得到释放 ``synchronized`` 代码块的控制权。 ``Lock`` 接口允许你获得更复杂的结构来实现你的临界区。
+- ``Lock`` 接口比 ``synchronized`` 关键字提供更多额外的功能。新功能之一是实现的 ``tryLock()`` 方法。这种方法试图获取锁的控制权并且如果它不能获取该锁，是因为其他线程在使用这个锁，它将返回这个锁。使用 ``synchronized`` 关键字，当线程 A 试图执行 ``synchronized`` 代码块，如果线程 B 正在执行它，那么线程 A 将阻塞直到线程 B 执行完 ``synchronized`` 代码块。使用锁，你可以执行 ``tryLock()`` 方法，这个方法返回一个 ``Boolean`` 值表示，是否有其他线程正在运行这个锁所保护的代码。
+- 当有多个读者和一个写者时， ``Lock`` 接口允许读写操作分离。
+- ``Lock`` 接口比 ``synchronized`` 关键字提供更好的性能。
+
+在这个指南中，你将学习如何通过锁来同步代码块和通过 ``Lock`` 接口及其实现者 ``ReentrantLock`` 类来创建临界区，实现一个程序来模拟打印队列。
+
+.. code-block:: java
+
+	// 1.创建PrintQueue类，来实现打印队列
+	public class PrintQueue {
+		// 2.声明一个Lock对象，并且使用ReentrantLock类的一个新对象来初始化它
+		private final Lock queueLock = new ReentrantLock();
+		private final SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS.sss");
+
+		// 3.实现printJob()方法，它将接收Object对象作为参数，并且不会返回任何值
+		public void printJob(Object document) {
+			// 4.在printJob()方法内部，通过调用lock()方法来获取Lock对象的控制权
+			queueLock.lock();
+
+			// 5.然后，包含以下代码来模拟文档的打印
+			try {
+				long duration = (long) (Math.random() * 10000);
+				System.out.printf("%s: PrintQueue: Printing a Job during %d seconds, sleep at %s \n", Thread.currentThread().getName(),
+						(duration / 1000), sdf.format(new Date()));
+				Thread.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				// 6.最后，通过调用unlock()方法来释放Lock对象的控制
+				queueLock.unlock();
+			}
+		}
+	}
+
+	// 7.创建一个Job类，并指定它实现Runnable接口
+	public class Job implements Runnable {
+		// 8.声明一个PrintQueue类的对象，并通过实现类（Job类）的构造器来初始化这个对象
+		private PrintQueue printQueue;
+		public Job(PrintQueue printQueue) {
+			this.printQueue = printQueue;
+		}
+
+		// 9.实现run()方法，它使用PrintQueue对象来发送一个打印任务
+		@Override
+		public void run() {
+			System.out.printf("%s: Going to print a document\n", Thread.currentThread().getName());
+			printQueue.printJob(new Object());
+			System.out.printf("%s: The document has been printed\n", Thread.currentThread().getName());
+		}
+	}
+
+	// 10.通过创建类名为Main，且包括main（）方法来实现这个示例的主类
+	public class Main {
+
+		public static void main(String[] args) {
+			// 11.创建一个共享的PrintQueue对象
+			PrintQueue printQueue = new PrintQueue();
+
+			// 12.创建10个Job对象，并且使用10个线程来运行它们
+			Thread thread[] = new Thread[10];
+			for (int i = 0; i < 10; i++) {
+				thread[i] = new Thread(new Job(printQueue), "Thread " + i);
+			}
+			// 13.启动这10个线程
+			for (int i = 0; i < 10; i++) {
+				thread[i].start();
+			}
+		}
+	}
+
+在 ``printJob()`` 中， ``PrintQueue`` 类是这个示例的关键所在。当我们通过锁来实现一个临界区并且保证只有一个执行线程能运行一个代码块，我们必须创建一个 ``ReentrantLock`` 对象。在临界区的起始部分，我们必须通过使用 ``lock()`` 方法来获得锁的控制权。当一个线程 A 调用这个方法时，如果没有其他线程持有这个锁的控制权，那么这个方法就会给线程 A 分配这个锁的控制权并且立即返回允许线程 A 执行这个临界区。否则，如果其他线程 B 正在执行由这 个锁控制的临界区， ``lock()`` 方法将会使线程 A 睡眠直到线程 B 完成这个临界区的执行。
+
+在临界区的尾部，我们必须使用 ``unlock()`` 方法来释放锁的控制权，允许其他线程运行这个临界区。如果你在临界区的尾部没有调用 ``unlock()`` 方法，那么其他正在等待该代码块的线程将会永远等待，造成 死锁情况。如果你在临界区使用 ``try-catch`` 代码块，别忘了在 ``finally`` 部分的内部包含 ``unlock()`` 方法的代码。
+
+``Lock`` 接口（和 ``ReentrantLock`` 类）包含其他方法来获取锁的控制权，那就是 ``tryLock()`` 方法。这个方法与 ``lock()`` 方法的最大区别是，如果一个线程调用这个方法不能获取 ``Lock`` 接口的控制权时，将会立即返回并且不会使这个线程进入睡眠。这个方法返回一个 ``boolean`` 值， ``true`` 表示这个线程获取了锁的控制权， ``false`` 则表示没有。
+
+注释：考虑到这个方法的结果，并采取相应的措施，这是程序员的责任。如果这个方法返回 ``false`` 值，则你的程序不会执行这个临界区。如果执行，你的应用程序会得到错误的结果。
+
+``ReentrantLock`` 类也允许递归调用（锁的可重入性，译者注），当一个线程有锁的控制权并且使用递归调用，它延续了锁的控制权，所以调用 ``lock()`` 方法将会立即返回并且继续递归调用的执行。此外，我们也可以调用其它方法。
+
+你必须要非常小心使用锁来避免死锁，这种情况发生在，当两个或两个以上的线程被阻塞等待将永远不会解开的锁。比如，线程 A 锁定 ``Lock(X)`` 而线程 B 锁定 ``Lock(Y)`` 。如果现在，线程 A 试图锁住 ``Lock(Y)`` 而线程 B 同时也试图锁住 ``Lock(X)`` ，这两个线程将无限期地被阻塞，因为它们等待的锁将不会被解开。请注意，这个问题的发生是因为这两个线程尝试以相反的顺序获取锁（译者注：锁顺序死锁）。在附录中，提供了一些很好的并发编程设计的建议，适当的设计并发应用程序，来避免这些死锁问题。
+
+使用读/写锁来同步数据访问
+=======================
+锁所提供的最重要的改进之一就是 ``ReadWriteLock`` 接口和唯一一个实现它的 ``ReentrantReadWriteLock`` 类。这个类提供两把锁，一把用于读操作和一把用于写操作。同时可以有多个线程执行读操作，但只有一个线程可以执行写操作。当一个线程正在执行一个写操作，不可能有任何线程执行读操作。
+
+在这个指南中，你将会学习如何使用 ``ReadWriteLock`` 接口实现一个程序，使用它来控制访问一个存储两个产品价格的对象。
+
+.. code-block:: java
+
+	// 1.创建PricesInfo类，用它来存储两个产品价格的信息
+	public class PricesInfo {
+
+		// 2.声明两个double类型的属性，分别命名为price1和price2
+		private double price1;
+		private double price2;
+
+		// 3.声明一个名为lock的ReadWriteLock对象
+		private ReadWriteLock lock;
+
+		// 4.实现类的构造器，初始化这三个属性。其中，对于lock属性，我们创建一个新的ReentrantReadWriteLock对象
+		public PricesInfo() {
+			price1 = 1.0;
+			price2 = 2.0;
+
+			lock = new ReentrantReadWriteLock();
+		}
+
+		// 5.实现getPrice1()方法，用它来返回price1属性的值。它使用读锁来控制这个属性值的访问
+		public double getPrice1() {
+			lock.readLock().lock();
+
+			System.out.println("读取 price1 开始 =====>");
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			double value = price1;
+			System.out.println("读取 price1 结束 <=====");
+
+			lock.readLock().unlock();
+
+			return value;
+		}
+
+		// 6.实现getPrice2()方法，用它来返回price2属性的值。它使用读锁来控制这个属性值的访问
+		public double getPrice2() {
+			lock.readLock().lock();
+
+			System.out.println("读取 price2 开始 =====>");
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			double value = price2;
+			System.out.println("读取 price2 结束 <=====");
+
+			lock.readLock().unlock();
+
+			return value;
+		}
+
+		// 7.实现setPrices()方法，用来建立这两个属性的值。它使用写锁来控制对它们的访问
+		public void setPrices(double price1, double price2) {
+			lock.writeLock().lock();
+			System.out.println("对 price 写入开始" + new Date());
+			try {
+				Thread.sleep(2 * 1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			this.price1 = price1;
+			this.price2 = price2;
+
+			System.out.println("对 price 写入结束" + new Date());
+			lock.writeLock().unlock();
+		}
+	}
+
+	// 8.创建Reader类，并指定它实现Runnable接口。这个类实现了PricesInfo类属性值的读者
+	public class Reader implements Runnable {
+
+		// 9.声明一个PricesInfo对象，并且实现Reader类的构造器来初始化这个对象
+		private PricesInfo pricesInfo;
+		public Reader(PricesInfo pricesInfo) {
+			this.pricesInfo = pricesInfo;
+		}
+
+		// 10.实现Reader类的run()方法，它读取10次两个价格的值
+		@Override
+		public void run() {
+			for (int i = 0; i < 10; i++) {
+				System.out.printf("%s: Price 1: %f\n", Thread.currentThread().getName(), pricesInfo.getPrice1());
+				System.out.printf("%s: Price 2: %f\n", Thread.currentThread().getName(), pricesInfo.getPrice2());
+			}
+		}
+	}
+
+	// 11.创建Writer类，并指定它实现Runnable接口。这个类实现了PricesInfo类属性值的修改者
+	class Writer implements Runnable {
+
+		// 12.声明一个PricesInfo对象，并且实现Writer类的构造器来初始化这个对象
+		private PricesInfo pricesInfo;
+		public Writer(PricesInfo pricesInfo) {
+			this.pricesInfo = pricesInfo;
+		}
+
+		// 13.实现run()方法，它修改了三次两个价格的值，并且在每次修改之后睡眠2秒
+		@Override
+		public void run() {
+			for (int i = 0; i < 3; i++) {
+				System.out.printf("Writer: Attempt to modify the prices.\n");
+				pricesInfo.setPrices(Math.random() * 10, Math.random() * 8);
+				System.out.printf("Writer: Prices have been modified.\n");
+				try {
+					Thread.sleep(2);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	// 14.通过创建类名为Main，且包括main（）方法来实现这个示例的主类
+	public class Main {
+
+		public static void main(String[] args) {
+			// 15.创建一个PricesInfo对象
+			PricesInfo pricesInfo = new PricesInfo();
+
+			// 16.创建5个Reader对象，并且用5个线程来执行它们
+			Reader readers[] = new Reader[5];
+			Thread threadsReader[] = new Thread[5];
+
+			for (int i = 0; i < 5; i++) {
+				readers[i] = new Reader(pricesInfo);
+				threadsReader[i] = new Thread(readers[i]);
+			}
+
+			// 17.创建一个Writer对象，并且用线程来执行它
+			Writer writer = new Writer(pricesInfo);
+			Thread threadWriter = new Thread(writer);
+
+			// 18.启动这些线程
+			for (int i = 0; i < 5; i++) {
+				threadsReader[i].start();
+			}
+			threadWriter.start();
+		}
+	}
+
+正如我们前面提及到的， ``ReentrantReadWriteLock`` 类有两把锁，一把用于读操作，一把用于写操作。用于读操作的锁，是通过在 ``ReadWriteLock`` 接口中声明的 ``readLock()`` 方法获取的。这个锁是实现 ``Lock`` 接口的一个对象，所以我们可以使用 ``lock()`` ， ``unlock()`` 和 ``tryLock()`` 方法。用于写操作的锁，是通过在 ``ReadWriteLock`` 接口中声明的 ``writeLock()`` 方法获取的。这个锁是实现 ``Lock`` 接 口的一个对象，所以我们可以使用 ``lock()`` ， ``unlock()`` 和 ``tryLock()`` 方法。确保正确的使用这些锁，使用它们与被设计的目的是一样的，这是程序猿的职责。当你获得 ``Lock`` 接口的读锁时，不能修改这个变量的值。否则，你可能会有数据不一致的错误。
+
+
+修改Lock的公平性
+===============
+在 ``ReentrantLock`` 类和 ``ReentrantReadWriteLock`` 类的构造器中，允许一个名为 ``fair`` 的 ``boolean`` 类型参数，它允许你来控制这些类的行为。默认值为 ``false`` ，这将启用非公平模式。在这个模式中，当有多个线程正在等待一把锁（ ``ReentrantLock`` 或者 ``ReentrantReadWriteLock`` ），这个锁必须选择它们中间的一个来获得进入临界区，选择任意一个是没有任何标准的。 ``true`` 值将开启公平模式。在这个模式中，当有多个线程正在等待一把锁（ ``ReentrantLock`` 或者 ``ReentrantReadWriteLock`` ），这个锁必须选择它们中间的一个来获得进入临界区，它将选择等待时间最长的线程。考虑到之前解释的行为只是使用 ``lock()`` 和 ``unlock()`` 方法。由于 ``tryLock()`` 方 法并不会使线程进入睡眠，即使 ``Lock`` 接口正在被使用，这个公平属性并不会影响它的功能。
+
+在这个指南中，我们将修改使用 ``Lock`` 同步代码块食谱示例来使用这个属性，并且观察公平与非公平模式之间的差别。
+
+.. code-block:: java
+
+	public class PrintQueue {
+		// 2.在PrintQueue类，修改Lock对象的构造
+		private final Lock queueLock = new ReentrantLock(true);
+
+		// 3.修改printJob()方法，使用两个代码块分离打印的模拟，在它们之间释放锁
+		public void printJob(Object document) {
+			queueLock.lock();
+
+			try {
+				Long duration = (long) (Math.random() * 10000);
+				System.out.printf("%s: PrintQueue: Printing a Job during %d seconds in first  code block\n", Thread.currentThread().getName(),
+						(duration / 1000));
+				Thread.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				queueLock.unlock();
+			}
+
+			queueLock.lock();
+			try {
+				Long duration = (long) (Math.random() * 10000);
+				System.out.printf("%s: PrintQueue: Printing a Job during %d seconds in second code block\n", Thread.currentThread().getName(),
+						(duration / 1000));
+				Thread.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				queueLock.unlock();
+			}
+		}
+	}
+
+	public class Job implements Runnable {
+
+		private PrintQueue printQueue;
+
+		public Job(PrintQueue printQueue) {
+			this.printQueue = printQueue;
+		}
+
+		@Override
+		public void run() {
+			System.out.printf("%s: Going to print a job\n", Thread.currentThread().getName());
+			printQueue.printJob(new Object());
+			System.out.printf("%s: The document has been printed\n", Thread.currentThread().getName());
+		}
+	}
+
+	// 4.修改Main类中，启动线程的代码块
+	public class Main {
+		public static void main(String[] args) {
+			PrintQueue printQueue = new PrintQueue();
+
+			Thread thread[] = new Thread[10];
+			for (int i = 0; i < 10; i++) {
+				thread[i] = new Thread(new Job(printQueue), "Thread " + i);
+			}
+
+			for (int i = 0; i < 10; i++) {
+				thread[i].start();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+.. image:: ../images/ReentrantLock的fair为true模式.png
+
+
+在Lock中使用多条件
+=================
+一个锁可能伴随着多个条件。这些条件声明在 ``Condition`` 接口中。这些条件的目的是允许线程拥有锁的控制并且检查条件是否为 ``true`` ，如果是 ``false`` ，那么线程将被阻塞，直到其他线程唤醒它们。 ``Condition`` 接口提供一种机制，阻塞一个线程和唤醒一个被阻塞的线程。
+
+在并发编程中，生产者与消费者是经典的问题。我们有一个数据缓冲区，一个或多个数据生产者往缓冲区存储数据，一个或多个数据消费者从缓冲区中取出数据，正如在这一章中前面所解释的一样。
+
+在这个指南中，你将学习如何通过使用锁和条件来实现生产者与消费者问题。
+
+.. code-block:: java
+
+	// 1.首先，让我们创建一个类来模拟文本文件。创建FileMock类，包括两个属性：一个字符串数组类型，名叫content，另一个int类型，名叫index。它们将存储文件内容和被检索到的模拟文件的行数
+	public class FileMock {
+
+		private String[] content;
+		private int index;
+
+		// 2.实现FileMock类的构造器，用随机字符初始化文件的内容
+		public FileMock(int size, int length) {
+			content = new String[size];
+			for (int i = 0; i < size; i++) {
+				StringBuilder buffer = new StringBuilder(length);
+				for (int j = 0; j < length; j++) {
+					int indice = (int) Math.random() * 255;
+					buffer.append((char) indice);
+				}
+				content[i] = buffer.toString();
+			}
+			index = 0;
+		}
+
+		// 3.实现hasMoreLines()方法，如果文件有更多的行来处理，则返回true，如果我们已经取到了模拟文件的尾部，则返回false
+		public boolean hasMoreLines() {
+			return index < content.length;
+		}
+
+		// 4.实现getLine()方法，返回index属性所确定的行数并增加其值
+		public String getLine() {
+			if (this.hasMoreLines()) {
+				System.out.println("Mock: " + (content.length - index));
+				return content[index++];
+			}
+			return null;
+		}
+	}
+
+	// 5.现在，实现Buffer类，用来实现在生产者与消费者之间共享的缓冲区
+	public class Buffer {
+
+		/*
+		6.Buffer类，有6个属性：
+
+	一个类型为LinkedList<String>，名为buffer的属性，用来存储共享数据
+	一个类型为int，名为maxSize的属性，用来存储缓冲区的长度
+	一个名为lock的ReentrantLock对象，用来控制修改缓冲区代码块的访问
+	两个名分别为lines和space，类型为Condition的属性
+	一个Boolean类型，名为pendingLines的属性，表明如果缓冲区中有行
+
+		 */
+		private LinkedList<String> buffer;
+		private int maxSize;
+		private ReentrantLock lock;
+		private Condition lines; // 等待缓冲区有资源
+		private Condition space; // 等待缓冲区有空间
+		private boolean pendingLines; // 缓冲区是否存在行
+
+		// 7.实现Buffer类的构造器，初始化前面描述的所有属性
+		public Buffer(int maxSize) {
+			this.maxSize = maxSize;
+			buffer = new LinkedList<>();
+			lock = new ReentrantLock();
+			lines = lock.newCondition();
+			space = lock.newCondition();
+			pendingLines = true;
+		}
+
+		/*
+		8. 实现insert()方法，接收一个String类型参数并试图将它存储到缓冲区。首先，它获得锁的控制。当它有锁的控制，它将检查缓冲区是否有空闲空 间。如果缓冲区已满，它将调用await()方法在space条件上等待释放空间。如果其他线程在space条件上调用signal()或 signalAll()方法，这个线程将被唤醒。当这种情况发生，这个线程在缓冲区上存储行并且在lines条件上调用signallAll()方法，稍 后我们将会看到，这个条件将会唤醒所有在缓冲行上等待的线程
+		 */
+		public void insert(String line) {
+			lock.lock();
+			try {
+				while (buffer.size() == maxSize) {
+					space.await();
+				}
+				buffer.offer(line);
+				System.out.printf("%s: Inserted Line: %d\n", Thread.currentThread().getName(), buffer.size());
+				lines.signalAll();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				lock.unlock();
+			}
+		}
+
+		/*
+		9. 实现get()方法，它返回存储在缓冲区上的第一个字符串。首先，它获取锁的控制。当它拥有锁的控制，它检查缓冲区是否有行。如果缓冲区是空的，它调用 await()方法在lines条件上等待缓冲区中的行。如果其他线程在lines条件上调用signal()或signalAll()方法，这个线程将 被唤醒。当它发生时，这个方法获取缓冲区的首行，并且在space条件上调用signalAll()方法，然后返回String。
+		 */
+		public String get() {
+			String line = null;
+			lock.lock();
+			try {
+				while ((buffer.size() == 0) && hasPendingLines()) {
+					lines.await();
+				}
+				if (hasPendingLines()) {
+					line = buffer.poll();
+					System.out.printf("%s: Line Readed: %d\n", Thread.currentThread().getName(), buffer.size());
+					space.signalAll();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				lock.unlock();
+			}
+			return line;
+		}
+
+		// 10.实现setPendingLines()方法，用来设置pendingLines的值。当没有更多的行生产时，它将被生产者调用
+		public void setPendingLines(boolean pendingLines) {
+			this.pendingLines = pendingLines;
+		}
+
+		// 11.实现hasPendingLines()方法，如果有更多的行被处理时，返回true，否则返回false
+		public boolean hasPendingLines() {
+			return pendingLines || buffer.size() > 0;
+		}
+	}
+
+	// 12.现在轮到生产者，实现Producer类，并指定其实现Runnable接口
+	public class Producer implements Runnable {
+		// 13.声明两个属性：一个FileMock类对象，另一个Buffer类对象
+		private FileMock mock;
+		private Buffer buffer;
+
+		// 14.实现Producer类的构造器，初始化这两个属性
+		public Producer(FileMock mock, Buffer buffer) {
+			this.mock = mock;
+			this.buffer = buffer;
+		}
+
+		// 15.实现run()方法，读取在FileMock对象中创建的所有行，并使用insert()方法将它们存储到缓冲区。一旦这个过程结束，使用setPendingLines()方法警告缓冲区，不会再产生更多的行
+		@Override
+		public void run() {
+			buffer.setPendingLines(true);
+			while (mock.hasMoreLines()) {
+				String line = mock.getLine();
+				buffer.insert(line);
+			}
+			buffer.setPendingLines(false);
+		}
+	}
+
+	// 16.接下来轮到消费者，实现Consumer类，并指定它实现Runnable接口
+	public class Consumer implements Runnable {
+		// 17.声明Buffer对象，实现Consumer构造器来初始化这个对象
+		private Buffer buffer;
+		public Consumer(Buffer buffer) {
+			this.buffer = buffer;
+		}
+
+		// 18.实现run()方法，当缓冲区有等待的行，它将获取一个并处理它
+		@Override
+		public void run() {
+			while (buffer.hasPendingLines()) {
+				String line = buffer.get();
+				processLine(line);
+			}
+		}
+
+		// 19.实现辅助方法processLine()，它只睡眠10毫秒，用来模拟某种行的处理
+		private void processLine(String line) {
+			try {
+				Random random = new Random();
+				Thread.sleep(random.nextInt(100));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	// 20.通过创建类名为Main，且包括main（）方法来实现这个示例的主类
+	public class Main {
+		public static void main(String[] args) {
+			// 21.创建一个FileMock对象
+			FileMock mock = new FileMock(101, 10);
+			// 22.创建一个Buffer对象
+			Buffer buffer = new Buffer(20);
+
+			// 23.创建Producer对象，并且用10个线程运行它
+			Producer producer = new Producer(mock, buffer);
+			Thread threadProducer = new Thread(producer, "Producer");
+
+			// 24.创建Consumer对象，并且用10个线程运行它
+			Consumer consumers[] = new Consumer[3];
+			Thread threadConsumers[] = new Thread[3];
+
+			for (int i = 0; i < 3; i++) {
+				consumers[i] = new Consumer(buffer);
+				threadConsumers[i] = new Thread(consumers[i], "Consumer " + i);
+			}
+
+			// 25.启动producer和3个consumers
+			threadProducer.start();
+			for (int i = 0; i < 3; i++) {
+				threadConsumers[i].start();
+			}
+		}
+	}
+
+所有 ``Condition`` 对象都与锁有关，并且使用声明在 ``Lock`` 接口中的 ``newCondition()`` 方法来创建。使用 ``condition`` 做任何操作之前，你必须获取与这个 ``condition`` 相关的锁的控制。所以， ``condition`` 的操作一定是在以调用 ``Lock`` 对象的 ``lock()`` 方法为开头，以调用相同 ``Lock`` 对象的 ``unlock()`` 方法为结尾的代码块中。
+
+当一个线程在一个 ``condition`` 上调用 ``await()`` 方法时，它将自动释放锁的控制，所以其他线程可以获取这个锁的控制并开始执行相同操作，或者由同个锁保护的其他临界区。
+
+注释：当一个线程在一个 ``condition`` 上调用 ``signal()`` 或 ``signallAll()`` 方法，一个或者全部在这个 ``condition`` 上等待的线程将被唤醒。这并不能保证的使它们现在睡眠的条件现在是 ``true`` ，所以你必须在 ``while`` 循环内部调用 ``await()`` 方法。你不能离开这个循环，直到 ``condition`` 为 ``true`` 。当 ``condition`` 为 ``false`` ，你必须再次调用 ``await()`` 方法。
+
+为什么 wait() 或者 await() 方法需要在一个循环中？
+
+1. 中断或超时可能会唤醒一个线程而不是通知唤醒的，所以条件可能不成立，需要重新检查；
+2. 即使是 ``signal`` 或者 ``nofity`` ， ``signalAll`` ， ``notifyAll`` 等方法唤醒，条件也可能不成立，需要重新检查；
+
+在使用 ``await()`` 和 ``signal()`` 方法时，你必须十分小心。如果你在 ``condition`` 上调用 ``await()`` 方法而却没有在这个 ``condition`` 上调用 ``signal()`` 方法，这个线程将永远睡眠下去。
+
+在调用 ``await()`` 方法后，一个线程可以被中断的，所以当它正在睡眠时，你必须处理 ``InterruptedException`` 异常。
+
+``Condition`` 接口提供不同版本的 ``await()`` 方法，如下：
+
+- await(long time, TimeUnit unit) ：这个线程将会一直睡眠直到：
+
+  + 它被中断；
+  + 其他线程在这个condition上调用singal()或signalAll()方法；
+  + 指定的时间已经过了；
+  + TimeUnit类是一个枚举类型如下的常量：DAYS,HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS,SECONDS
+
+- awaitUninterruptibly() ：这个线程将不会被中断，一直睡眠直到其他线程调用signal()或signalAll()方法
+
+- awaitUntil(Date date) ：这个线程将会一直睡眠直到：
+
+  + 它被中断
+  + 其他线程在这个condition上调用singal()或signalAll()方法
+  + 指定的日期已经到了
+
+你可以在一个读/写锁中的 ``ReadLock`` 和 ``WriteLock`` 上使用 ``conditions`` 。
+

@@ -1,0 +1,19 @@
+******
+连接处理方法
+******
+
+``nginx`` 支持多种连接处理方法。特定方法的可用性取决于所使用的平台。在支持多种方法的平台上， ``nginx`` 通常会自动选择最高效的方法。但是，如果有需要，可以使用 ``use`` 指令显式地选择连接处理方法。
+
+支持以下连接处理方法:
+
+- ``select`` — 标准的方法。支持模块是在缺乏更有效方法的平台上自动构建的。可以使用 ``--with-select_module`` 和 ``--without-select_module`` 配置参数强制启用或禁用此模块的构建。
+- ``poll`` — 标准的方法。支持模块是在缺乏更有效方法的平台上自动构建的。可以使用 ``--with-poll_module`` 和 ``--without-poll_module`` 配置参数强制启用或禁用此模块的构建。
+- ``kqueue`` — 在 FreeBSD 4.1+、OpenBSD 2.9+、NetBSD 2.0 和 ``macOS`` 系统上使用的高效方法。
+- ``epoll`` — 在 ``Linux 2.6+`` 系统上使用的高效方法。
+
+  - 从1.11.3开始支持 EPOLLRDHUP (Linux 2.6.17, glibc 2.8) 和EPOLLEXCLUSIVE (Linux 4.5, glibc 2.24) 。
+  - 一些更老的版本，像 SuSE 8.2 提供了向2.4内核添加epoll支持的补丁。
+
+- ``/dev/poll`` — Solaris 7 11/99+、HP/UX 11.22+ (eventport)、IRIX 6.5.15+和Tru64 UNIX 5.1A+上使用的高效方法。
+- ``eventport`` — 事件端口， Solaris 10+ 中使用的方法(由于已知的问题，建议使用 ``/dev/poll`` 方法)。
+

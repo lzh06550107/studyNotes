@@ -1,0 +1,924 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. 请求到console响应的生命周期 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="3. 容器" href="Laravel的容器.html"/>
+        <link rel="prev" title="1. 请求到web响应的生命周期" href="请求到响应的生命周期-web.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. 请求到console响应的生命周期</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">2.1. 程序启动准备</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#web">2.1.1. 服务容器实例化(同web过程)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kernel">2.1.2. 核心类(Kernel类)实例化</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2.2. 输入、输出实例化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">2.3. 处理命令</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">2.3.1. 处理准备工作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">2.3.2. 启动应用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">2.3.3. 注册延迟服务提供器提供的命令定义</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">2.3.4. 加载自定义命令</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#artisan">2.3.5. 生成artisan应用实例并解析自定义命令</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">2.3.6. 命令执行</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">2.4. 命令返回和程序终止</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>2. 请求到console响应的生命周期</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="console">
+<h1>2. 请求到console响应的生命周期<a class="headerlink" href="#console" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>2.1. 程序启动准备<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>在 Laravel 框架中，所有的请求入口文件是根目录下的 <code class="docutils literal"><span class="pre">artisan.php</span></code> 文件。</p>
+<p>文件 <code class="docutils literal"><span class="pre">laravel\public\index.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;LARAVEL_START&#39;</span><span class="p">,</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">true</span><span class="p">));</span>
+
+<span class="c1">// 注册自动加载类</span>
+<span class="k">require</span> <span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/vendor/autoload.php&#39;</span><span class="p">;</span>
+
+<span class="c1">// 实例化app容器对象</span>
+<span class="nv">$app</span> <span class="o">=</span> <span class="k">require_once</span> <span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/bootstrap/app.php&#39;</span><span class="p">;</span>
+
+<span class="c1">// 创建控制台内核实例</span>
+<span class="nv">$kernel</span> <span class="o">=</span> <span class="nv">$app</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nx">Illuminate\Contracts\Console\Kernel</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+
+<span class="c1">// 处理控制台命令</span>
+<span class="nv">$status</span> <span class="o">=</span> <span class="nv">$kernel</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span>
+    <span class="nv">$input</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Symfony\Component\Console\Input\ArgvInput</span><span class="p">,</span> <span class="c1">// 实例化输入对象</span>
+    <span class="k">new</span> <span class="nx">Symfony\Component\Console\Output\ConsoleOutput</span> <span class="c1">// 实例化输出对象</span>
+<span class="p">);</span> <span class="c1">// 返回执行状态</span>
+
+<span class="c1">// 命令执行后的一些处理</span>
+<span class="nv">$kernel</span><span class="o">-&gt;</span><span class="na">terminate</span><span class="p">(</span><span class="nv">$input</span><span class="p">,</span> <span class="nv">$status</span><span class="p">);</span> <span class="c1">// 调用注册到容器的函数</span>
+
+<span class="k">exit</span><span class="p">(</span><span class="nv">$status</span><span class="p">);</span> <span class="c1">// exit() 函数输出一条消息，并退出当前脚本。该函数是 die() 函数的别名</span>
+</pre></div>
+</div>
+<p>程序的启动准备阶段是入口文件中的代码 require_once __DIR__.'/../bootstrap/app.php' 部分，主要实现了服务容器的实例化和基本注册，包括基础路径注册、服务容器本身注册、基础服务提供者注册、核心类别名注册。在注册过程中，服务容器会在对应属性中记录注册的内容，以便在程序运行期间提供对应的服务。</p>
+<div class="section" id="web">
+<h3>2.1.1. 服务容器实例化(同web过程)<a class="headerlink" href="#web" title="永久链接至标题">¶</a></h3>
+<p>入口文件 <code class="docutils literal"><span class="pre">artisan.php</span></code> 的第一句为加载composer的自动加载器。文件的第二句是调用 <code class="docutils literal"><span class="pre">bootstrap</span></code> 文件夹下的 <code class="docutils literal"><span class="pre">app.php</span></code> 中的代码，主要用来实例化服务容器，并注册 <code class="docutils literal"><span class="pre">laravel</span></code> 框架的核心类服务，为后面自动生成 <code class="docutils literal"><span class="pre">$kernel</span></code> 核心类实例提供基础。具体代码和流程请参考？？？</p>
+</div>
+<div class="section" id="kernel">
+<h3>2.1.2. 核心类(Kernel类)实例化<a class="headerlink" href="#kernel" title="永久链接至标题">¶</a></h3>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$app</span><span class="o">-&gt;</span><span class="na">singleton</span><span class="p">(</span>
+    <span class="nx">Illuminate\Contracts\Console\Kernel</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">App\Console\Kernel</span><span class="o">::</span><span class="na">class</span>
+<span class="p">);</span>
+
+<span class="nv">$kernel</span> <span class="o">=</span> <span class="nv">$app</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nx">Illuminate\Contracts\Console\Kernel</span><span class="o">::</span><span class="na">class</span><span class="p">);</span> <span class="c1">// 创建控制台内核实例</span>
+</pre></div>
+</div>
+<p>服务容器实例化后，就可以通过服务容器来自动实例化对象了。 <code class="docutils literal"><span class="pre">Kernel</span></code> 类就是通过服务容器自动化创建而成的。那么我们又在什么时候绑定了映射？在 <code class="docutils literal"><span class="pre">laravel\bootstrap\app.php</span></code> 文件中，实例化服务容器之后就注册了三个服务，其中就包括这个核心类接口。在注册服务时，服务名一般是接口。在 <code class="docutils literal"><span class="pre">Contracts</span></code> 命名空间下存储的都是接口，而提供的服务则是具体类、实例对象或返回实例对象的回调函数。</p>
+<p>由于注册的服务只是具体类名，所以可以通过反射机制来实例化，并通过反射机制自动解决构造函数中的依赖关系。于是，通过服务容器实例化 <code class="docutils literal"><span class="pre">App\Console\Kernel</span></code> 类时，这个类只是定义了 <code class="docutils literal"><span class="pre">$commands</span></code> 数组属性和 <code class="docutils literal"><span class="pre">schedule(Schedule</span> <span class="pre">$schedule)</span></code> 以及 <code class="docutils literal"><span class="pre">commands()</span></code> 方法：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">$commands</span></code> ： 属性是用来注册自定义命令类的。</li>
+<li><code class="docutils literal"><span class="pre">commands()</span></code> : 方法是用来自动搜索自定义命令类或者闭包命令的。</li>
+<li><code class="docutils literal"><span class="pre">schedule()</span></code> : 暂时不知道。</li>
+</ul>
+<p>因为 <code class="docutils literal"><span class="pre">App\Console\Kernel</span></code> 类继承了 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Console\Kernel.php</span></code> 类，所以实例化过程中会调用该类中的构造函数，下面是构造函数源码。</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Console\Kernel.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">Application</span> <span class="nv">$app</span><span class="p">,</span> <span class="nx">Dispatcher</span> <span class="nv">$events</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;ARTISAN_BINARY&#39;</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// 定义命令名称</span>
+    <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;ARTISAN_BINARY&#39;</span><span class="p">,</span> <span class="s1">&#39;artisan&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span> <span class="o">=</span> <span class="nv">$app</span><span class="p">;</span>
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">events</span> <span class="o">=</span> <span class="nv">$events</span><span class="p">;</span>
+
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">booted</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span> <span class="c1">// 注册一个应用完全启动后的回调函数</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">defineConsoleSchedule</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这里通过构造函数的类型提示使用容器来进行依赖注入，完成了服务容器和核心类的实例化之后，接下来该处理请求了。</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>2.2. 输入、输出实例化<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="id3">
+<h2>2.3. 处理命令<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>在完成了输入、输出实例化后，将进入对输入实例的处理阶段。命令的加载和处理是控制台应用程序的核心功能，通过不同的处理命令最终返回各种响应，实现不同的功能。如何提供可扩展的命令处理模块是控制台框架程序成功的关键，具体代码如下：</p>
+<div class="section" id="id4">
+<h3>2.3.1. 处理准备工作<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>前面介绍了应用程序运行的准备环节，而要实现命令的处理，还有很多基础工作要做，这里包括环境检测和变量加载、配置加载、异常处理、外观注册、服务提供者注册和启动服务共七个步骤，下面将对其中几个步骤的关键环节进行介绍。首先看一下这七个步骤是如何启动的，具体源码如下：</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Console\Kernel.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+ <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nv">$input</span><span class="p">,</span> <span class="nv">$output</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bootstrap</span><span class="p">();</span> <span class="c1">// 加载基础服务和闭包命令以及自定义命令</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getArtisan</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">(</span><span class="nv">$input</span><span class="p">,</span> <span class="nv">$output</span><span class="p">);</span> <span class="c1">// 生成Artisan应用并执行命令</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Exception</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reportException</span><span class="p">(</span><span class="nv">$e</span><span class="p">);</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">renderException</span><span class="p">(</span><span class="nv">$output</span><span class="p">,</span> <span class="nv">$e</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Throwable</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$e</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FatalThrowableError</span><span class="p">(</span><span class="nv">$e</span><span class="p">);</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reportException</span><span class="p">(</span><span class="nv">$e</span><span class="p">);</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">renderException</span><span class="p">(</span><span class="nv">$output</span><span class="p">,</span> <span class="nv">$e</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>2.3.2. 启动应用<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>启动应用，为命令执行准备好各种环境。</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Console\Kernel.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">bootstrap</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">hasBeenBootstrapped</span><span class="p">())</span> <span class="p">{</span> <span class="c1">// 如果基础应用没有完全启动</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">bootstrapWith</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bootstrappers</span><span class="p">());</span> <span class="c1">// 初始化并启动注册的基础服务</span>
+  <span class="p">}</span>
+
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">loadDeferredProviders</span><span class="p">();</span> <span class="c1">// 初始化并启动所有延迟服务，在这些服务中可能需要注册服务提供的命令</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">commandsLoaded</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">commands</span><span class="p">();</span> <span class="c1">// 如果没有加载闭包命令，则调用app/Console/Kernel.php中commands()方法</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">commandsLoaded</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="nv">$bootstrappers</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nx">\Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\Foundation\Bootstrap\LoadConfiguration</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\Foundation\Bootstrap\HandleExceptions</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\Foundation\Bootstrap\RegisterFacades</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\Foundation\Bootstrap\SetRequestForConsole</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="nx">\Illuminate\Foundation\Bootstrap\RegisterProviders</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="c1">// 注册配置的所有服务供应器</span>
+    <span class="nx">\Illuminate\Foundation\Bootstrap\BootProviders</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="c1">// 调用所有立即服务的boot方法,并设置基础应用已经完成启动</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">bootstrappers</span></code> 数组中定义的基础类，都定义了 <code class="docutils literal"><span class="pre">bootstrap()</span></code> 方法，没有 <code class="docutils literal"><span class="pre">register()</span></code> 方法</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Application.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">bootstrapWith</span><span class="p">(</span><span class="k">array</span> <span class="nv">$bootstrappers</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasBeenBootstrapped</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>  <span class="c1">// 标识应用已经完全启动</span>
+
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$bootstrappers</span> <span class="k">as</span> <span class="nv">$bootstrapper</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 启动前的事件触发</span>
+    <span class="nv">$this</span><span class="p">[</span><span class="s1">&#39;events&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">fire</span><span class="p">(</span><span class="s1">&#39;bootstrapping: &#39;</span><span class="o">.</span><span class="nv">$bootstrapper</span><span class="p">,</span> <span class="p">[</span><span class="nv">$this</span><span class="p">]);</span>
+    <span class="c1">// 创建相应的对象并执行引导操作，在boot()过程中可能会注册自定义命令闭包到Illuminate/Console/Application.php中$bootstrappers数组中</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nv">$bootstrapper</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">bootstrap</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
+    <span class="c1">// 启动后的事件触发</span>
+    <span class="nv">$this</span><span class="p">[</span><span class="s1">&#39;events&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">fire</span><span class="p">(</span><span class="s1">&#39;bootstrapped: &#39;</span><span class="o">.</span><span class="nv">$bootstrapper</span><span class="p">,</span> <span class="p">[</span><span class="nv">$this</span><span class="p">]);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// RegisterProviders类调用该方法来注册配置的服务提供者</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">registerConfiguredProviders</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$providers</span> <span class="o">=</span> <span class="nx">Collection</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="p">[</span><span class="s1">&#39;app.providers&#39;</span><span class="p">])</span>
+        <span class="o">-&gt;</span><span class="na">partition</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$provider</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Str</span><span class="o">::</span><span class="na">startsWith</span><span class="p">(</span><span class="nv">$provider</span><span class="p">,</span> <span class="s1">&#39;Illuminate\\&#39;</span><span class="p">);</span>
+        <span class="p">});</span> <span class="c1">// 分组</span>
+    <span class="c1">// 插入包自动发现的服务提供者到集合中</span>
+    <span class="nv">$providers</span><span class="o">-&gt;</span><span class="na">splice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nx">PackageManifest</span><span class="o">::</span><span class="na">class</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">providers</span><span class="p">()]);</span>
+    <span class="c1">// 使用缓存中服务清单来初始化一个提供器仓库，并用该对象来加载服务提供者的配置</span>
+    <span class="p">(</span><span class="k">new</span> <span class="nx">ProviderRepository</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Filesystem</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getCachedServicesPath</span><span class="p">()))</span>
+        <span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="nv">$providers</span><span class="o">-&gt;</span><span class="na">collapse</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">toArray</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">booted</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 一旦应用程序启动，我们还会为任何需要在初始启动完成后工作的侦听器启动一些“booted”回调。</span>
+<span class="sd">     * 这在定制我们运行的启动过程时非常有用。</span>
+<span class="sd">     */</span>
+    <span class="c1">// 服务启动之前的回调</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fireAppCallbacks</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bootingCallbacks</span><span class="p">);</span>
+
+    <span class="nb">array_walk</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">serviceProviders</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bootProvider</span><span class="p">(</span><span class="nv">$p</span><span class="p">);</span> <span class="c1">// 调用所有注册的服务提供者boot()方法</span>
+    <span class="p">});</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">booted</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span> <span class="c1">// 基础应用完全启动</span>
+    <span class="c1">// 服务启动之后的回调</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fireAppCallbacks</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bootedCallbacks</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这里加载内核类中定义的基础启动类。 <code class="docutils literal"><span class="pre">RegisterProviders</span></code> 类负责注册配置的服务提供者，在此函数中会调用急切加载的服务提供者的 <code class="docutils literal"><span class="pre">register()</span></code> 方法。在上面代码中当调用 <code class="docutils literal"><span class="pre">BootProviders</span></code> 类的 <code class="docutils literal"><span class="pre">bootstrap()</span></code> 方法时，则会调用用户配置所有急切加载的服务提供者的 <code class="docutils literal"><span class="pre">bootstrap()</span></code> 该方法。</p>
+<p><strong>至此，基础应用完全启动。</strong></p>
+</div>
+<div class="section" id="id6">
+<h3>2.3.3. 注册延迟服务提供器提供的命令定义<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>接下来是加载延迟服务提供器。该方法主要是实例化延迟服务，并调用该服务的 <code class="docutils literal"><span class="pre">register()</span></code> 方法。</p>
+<p>延迟服务提供器可以注册命令。主要是通过 <code class="docutils literal"><span class="pre">config\app.php</span></code> 中注册的 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Providers\ConsoleSupportServiceProvider.php</span></code> 聚合服务加载器来注册。</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Application.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">loadDeferredProviders</span><span class="p">()</span>
+<span class="p">{</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 我们将简单地遍历每个延迟提供器并注册每个提供器，并在应用程序启动时启动它们。</span>
+<span class="sd">     * 这使每个剩余的服务可供此应用程序立即使用。</span>
+<span class="sd">     */</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">deferredServices</span> <span class="k">as</span> <span class="nv">$service</span> <span class="o">=&gt;</span> <span class="nv">$provider</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loadDeferredProvider</span><span class="p">(</span><span class="nv">$service</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// 该数组存储的是服务名称和实现类名称映射关系</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">deferredServices</span> <span class="o">=</span> <span class="p">[];</span> <span class="c1">// 清空保存延迟服务类数组</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">loadDeferredProvider</span><span class="p">(</span><span class="nv">$service</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">deferredServices</span><span class="p">[</span><span class="nv">$service</span><span class="p">]))</span> <span class="p">{</span> <span class="c1">// 如果为空，则返回</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$provider</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">deferredServices</span><span class="p">[</span><span class="nv">$service</span><span class="p">];</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 如果服务提供者尚未加载并注册，我们可以将其注册到应用程序中，即存储在loadedProviders数组中</span>
+<span class="sd">     * 当延迟服务提供器被加载后则需要从延迟服务列表(即deferredServices数组)中删除该服务。</span>
+<span class="sd">     */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loadedProviders</span><span class="p">[</span><span class="nv">$provider</span><span class="p">]))</span> <span class="p">{</span> <span class="c1">// 如果延迟服务没有加载，则需要加载</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerDeferredProvider</span><span class="p">(</span><span class="nv">$provider</span><span class="p">,</span> <span class="nv">$service</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">registerDeferredProvider</span><span class="p">(</span><span class="nv">$provider</span><span class="p">,</span> <span class="nv">$service</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 一旦延迟服务提供器已经注册，我们将从延迟服务列表中删除该服务提供器，</span>
+<span class="sd">     * 以便此容器不会尝试再次解析它。</span>
+<span class="sd">     */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$service</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">unset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">deferredServices</span><span class="p">[</span><span class="nv">$service</span><span class="p">]);</span> <span class="c1">// 移除延迟服务提供器</span>
+    <span class="p">}</span>
+    <span class="c1">// 调用服务提供者的注册方法</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">register</span><span class="p">(</span><span class="nv">$instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nv">$provider</span><span class="p">(</span><span class="nv">$this</span><span class="p">));</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">booted</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 如果应用没有完全启动，则注册服务提供者的boot()回调</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">booting</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$instance</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bootProvider</span><span class="p">(</span><span class="nv">$instance</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>此处为止，应用基本上加载完成立即和延迟服务提供者，即调用了两类服务提供者 <code class="docutils literal"><span class="pre">register()</span></code> 方法和立即服务提供者的 <code class="docutils literal"><span class="pre">boot()</span></code> 方法。但是却没有调用延迟服务提供者的 <code class="docutils literal"><span class="pre">boot()</span></code> 方法？？？？</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Providers\ConsoleSupportServiceProvider.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="nv">$providers</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nx">ArtisanServiceProvider</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="c1">// 一般命令</span>
+    <span class="nx">MigrationServiceProvider</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="c1">// 迁移命令</span>
+    <span class="nx">ComposerServiceProvider</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="c1">// composer命令</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">ConsoleSupportServiceProvider</span></code> 类继承了 <code class="docutils literal"><span class="pre">AggregateServiceProvider</span></code> 类。</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Support\AggregateServiceProvider.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 在基础启动加载配置的时候，就会调用该方法来建立聚合服务提供器中聚合的所有服务提供器类</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">provides</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$provides</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="c1">// 遍历聚合服务提供器中注册的服务提供器类型</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">providers</span> <span class="k">as</span> <span class="nv">$provider</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$instance</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">resolveProvider</span><span class="p">(</span><span class="nv">$provider</span><span class="p">);</span> <span class="c1">// 实例化服务提供器</span>
+
+        <span class="nv">$provides</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$provides</span><span class="p">,</span> <span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">provides</span><span class="p">());</span> <span class="c1">// 合并所有服务提供器中的provides</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$provides</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 当加载延迟服务提供器类时，会调用该方法</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">instances</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">providers</span> <span class="k">as</span> <span class="nv">$provider</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 分别调用每个在聚合服务提供器中注册的服务提供器</span>
+        <span class="c1">// 调用Illuminate\Foundation\Application.php中register()方法</span>
+        <span class="c1">// 实例化该服务提供器并调用它的register()方法，</span>
+        <span class="c1">// 并保存该服务提供器实例的单例到当前聚合服务提供器中</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">instances</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">register</span><span class="p">(</span><span class="nv">$provider</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>加载延迟服务提供器会实例化该聚合服务提供器，当调用该聚合服务提供器的 <code class="docutils literal"><span class="pre">register()</span></code> 方法时，则会调用 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Application.php</span></code> 中 <code class="docutils literal"><span class="pre">register()</span></code> 方法来实例化延迟服务提供器和调用聚合服务器内的延迟服务提供器的 <code class="docutils literal"><span class="pre">register()</span></code> 。</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Foundation\Providers\ArtisanServiceProvider</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// 在注册的服务的时候，就加载所有命令工厂</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerCommands</span><span class="p">(</span><span class="nb">array_merge</span><span class="p">(</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">commands</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">devCommands</span>
+    <span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">registerCommands</span><span class="p">(</span><span class="k">array</span> <span class="nv">$commands</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nb">array_keys</span><span class="p">(</span><span class="nv">$commands</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$command</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//在基础容器中建立 命令名称和命令单实例的映射</span>
+        <span class="nb">call_user_func_array</span><span class="p">([</span><span class="nv">$this</span><span class="p">,</span> <span class="s2">&quot;register</span><span class="si">{</span><span class="nv">$command</span><span class="si">}</span><span class="s2">Command&quot;</span><span class="p">],</span> <span class="p">[]);</span>
+    <span class="p">}</span>
+    <span class="c1">// 增加创建命令实例的闭包到artisan容器$bootstrappers数组中</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">commands</span><span class="p">(</span><span class="nb">array_values</span><span class="p">(</span><span class="nv">$commands</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">commands</span><span class="p">(</span><span class="nv">$commands</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$commands</span> <span class="o">=</span> <span class="nb">is_array</span><span class="p">(</span><span class="nv">$commands</span><span class="p">)</span> <span class="o">?</span> <span class="nv">$commands</span> <span class="o">:</span> <span class="nb">func_get_args</span><span class="p">();</span>
+    <span class="c1">// 当处理命令之前，会把所有自定义命令和闭包命令通过回调方式注册到artisan容器的$bootstrappers数组中</span>
+    <span class="nx">Artisan</span><span class="o">::</span><span class="na">starting</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$artisan</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$commands</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$artisan</span><span class="o">-&gt;</span><span class="na">resolveCommands</span><span class="p">(</span><span class="nv">$commands</span><span class="p">);</span> <span class="c1">// 从基础容器中实例化命令对象，然后增加到artisan中</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>到此为止，服务提供器注册命令的过程已经完成。</p>
+</div>
+<div class="section" id="id7">
+<h3>2.3.4. 加载自定义命令<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>当应用服务提供者加载完成后，需要调用 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Console\Kernel.php</span></code> 文件中的 <code class="docutils literal"><span class="pre">commands()</span></code> 方法来加载自定义命令，该函数实际调用的是继承 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Console\Kernel.php</span></code> 的 <code class="docutils literal"><span class="pre">app\Console\Kernel.php</span></code> 类中的 <code class="docutils literal"><span class="pre">commands()</span></code> 方法。</p>
+<p>文件 <code class="docutils literal"><span class="pre">app\Console\Kernel.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">commands</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/Commands&#39;</span><span class="p">);</span> <span class="c1">// 加载以类形式定义的命令</span>
+
+    <span class="k">require</span> <span class="nx">base_path</span><span class="p">(</span><span class="s1">&#39;routes/console.php&#39;</span><span class="p">);</span> <span class="c1">// 加载以闭包形式定义的命令</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Console\Kernel.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">load</span><span class="p">(</span><span class="nv">$paths</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$paths</span> <span class="o">=</span> <span class="nb">array_unique</span><span class="p">(</span><span class="nb">is_array</span><span class="p">(</span><span class="nv">$paths</span><span class="p">)</span> <span class="o">?</span> <span class="nv">$paths</span> <span class="o">:</span> <span class="p">(</span><span class="k">array</span><span class="p">)</span> <span class="nv">$paths</span><span class="p">);</span>
+
+    <span class="nv">$paths</span> <span class="o">=</span> <span class="nb">array_filter</span><span class="p">(</span><span class="nv">$paths</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$path</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">is_dir</span><span class="p">(</span><span class="nv">$path</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">empty</span><span class="p">(</span><span class="nv">$paths</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$namespace</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">getNamespace</span><span class="p">();</span>
+
+    <span class="k">foreach</span> <span class="p">((</span><span class="k">new</span> <span class="nx">Finder</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">in</span><span class="p">(</span><span class="nv">$paths</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">files</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$command</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$command</span> <span class="o">=</span> <span class="nv">$namespace</span><span class="o">.</span><span class="nb">str_replace</span><span class="p">(</span>
+                <span class="p">[</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;.php&#39;</span><span class="p">],</span>
+                <span class="p">[</span><span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">],</span>
+                <span class="nx">Str</span><span class="o">::</span><span class="na">after</span><span class="p">(</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">getPathname</span><span class="p">(),</span> <span class="nx">app_path</span><span class="p">()</span><span class="o">.</span><span class="nx">DIRECTORY_SEPARATOR</span><span class="p">)</span>
+            <span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">is_subclass_of</span><span class="p">(</span><span class="nv">$command</span><span class="p">,</span> <span class="nx">Command</span><span class="o">::</span><span class="na">class</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+            <span class="o">!</span> <span class="p">(</span><span class="k">new</span> <span class="nx">ReflectionClass</span><span class="p">(</span><span class="nv">$command</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">isAbstract</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">Artisan</span><span class="o">::</span><span class="na">starting</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$artisan</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$command</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 把自定义命令初始化闭包注册到artisan容器的$bootstrappers数组中</span>
+                <span class="nv">$artisan</span><span class="o">-&gt;</span><span class="na">resolve</span><span class="p">(</span><span class="nv">$command</span><span class="p">);</span> <span class="c1">// 实例化命令对象然后添加到artisan容器中</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Console\Application.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">resolve</span><span class="p">(</span><span class="nv">$command</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">laravel</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nv">$command</span><span class="p">));</span> <span class="c1">// 实例化命令对象然后添加到artisan容器中</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">add</span><span class="p">(</span><span class="nx">SymfonyCommand</span> <span class="nv">$command</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$command</span> <span class="nx">instanceof</span> <span class="nx">Command</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 如果是laravel继承类即用户自定义的类</span>
+        <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">setLaravel</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">laravel</span><span class="p">);</span> <span class="c1">// 则设置命令容器为laravel容器</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addToParent</span><span class="p">(</span><span class="nv">$command</span><span class="p">);</span> <span class="c1">// 增加到symfony容器中</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>此处的 <code class="docutils literal"><span class="pre">resolve</span></code> 方法不会立即调用，先是以包含该函数的闭包形式注册到 <code class="docutils literal"><span class="pre">Illuminate\Console\Application.php</span></code> 类的静态数组 <code class="docutils literal"><span class="pre">$bootstrappers</span></code> 中。</p>
+<p>加载完类形式自定义命令后，需要加载以闭包形式定义的自定义命令。</p>
+<p>文件 <code class="docutils literal"><span class="pre">routes\console.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Artisan</span><span class="o">::</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;inspire&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span> <span class="c1">// 通过闭包来注册命令</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">comment</span><span class="p">(</span><span class="nx">Inspiring</span><span class="o">::</span><span class="na">quote</span><span class="p">());</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">describe</span><span class="p">(</span><span class="s1">&#39;Display an inspiring quote&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Console\Kernel.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">command</span><span class="p">(</span><span class="nv">$signature</span><span class="p">,</span> <span class="nx">Closure</span> <span class="nv">$callback</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$command</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ClosureCommand</span><span class="p">(</span><span class="nv">$signature</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span> <span class="c1">// 生成闭包命令</span>
+
+    <span class="nx">Artisan</span><span class="o">::</span><span class="na">starting</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$artisan</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$command</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 把该命令初始化闭包注册到到artisan类的$bootstrappers静态数组中</span>
+        <span class="nv">$artisan</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$command</span><span class="p">);</span> <span class="c1">// 把命令实例注册到artisan实例中</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nv">$command</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>此处的 <code class="docutils literal"><span class="pre">ClosureCommand</span></code> 类继承 <code class="docutils literal"><span class="pre">command</span></code> 类，用来封装闭包。</p>
+<p>此处的 <code class="docutils literal"><span class="pre">add</span></code> 方法不会立即调用，先是以包含该函数的闭包形式注册到 <code class="docutils literal"><span class="pre">Illuminate\Console\Application.php</span></code> 类的静态数组 <code class="docutils literal"><span class="pre">$bootstrappers</span></code> 中。</p>
+<p><strong>至此，自定义命令加载完成。</strong></p>
+<p>由上面的分析可知，注册自定义命令存在三种方式：</p>
+<ul class="simple">
+<li>通过延迟服务提供器来注册；</li>
+<li>直接把自定义命令类放在 <code class="docutils literal"><span class="pre">app/Console/Commands</span></code> 目录下；</li>
+<li>在 <code class="docutils literal"><span class="pre">routes/console.php</span></code> 文件中定义命令闭包；</li>
+</ul>
+</div>
+<div class="section" id="artisan">
+<h3>2.3.5. 生成artisan应用实例并解析自定义命令<a class="headerlink" href="#artisan" title="永久链接至标题">¶</a></h3>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Console\Kernel.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getArtisan</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_null</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">artisan</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">// 创建artisan容器并利用静态bootStrapper属性中注册的命令来初始化所有命令对象实例</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">artisan</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nx">Artisan</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">events</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">version</span><span class="p">()))</span> <span class="c1">// laravel框架的版本</span>
+        <span class="o">-&gt;</span><span class="na">resolveCommands</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">commands</span><span class="p">);</span> <span class="c1">// 这里优先解析console/Kernel中的commands属性中定义的命令类</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">artisan</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Console\Application.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">Container</span> <span class="nv">$laravel</span><span class="p">,</span> <span class="nx">Dispatcher</span> <span class="nv">$events</span><span class="p">,</span> <span class="nv">$version</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">(</span><span class="s1">&#39;Laravel Framework&#39;</span><span class="p">,</span> <span class="nv">$version</span><span class="p">);</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">laravel</span> <span class="o">=</span> <span class="nv">$laravel</span><span class="p">;</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">events</span> <span class="o">=</span> <span class="nv">$events</span><span class="p">;</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">setAutoExit</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">setCatchExceptions</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">events</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="k">new</span> <span class="nx">Events\ArtisanStarting</span><span class="p">(</span><span class="nv">$this</span><span class="p">));</span> <span class="c1">// 分发artisan启动事件并调用监听器</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bootstrap</span><span class="p">();</span> <span class="c1">// 实例化闭包命令和自定义命令，并添加到容器中</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">bootstrap</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// 这些启动器是各个服务加载时注册的闭包命令和自定义命令，现在开始回调这些闭包来把他们实例化到artisan应用中</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="nv">$bootstrappers</span> <span class="k">as</span> <span class="nv">$bootstrapper</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$bootstrapper</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>前面各个阶段注册到 <code class="docutils literal"><span class="pre">Illuminate\Console\Application.php</span></code> 类的静态数组 <code class="docutils literal"><span class="pre">$bootstrappers</span></code> 中的闭包开始执行。目的就是把命令实例化并注册到artisan应用中。</p>
+<p>文件 <code class="docutils literal"><span class="pre">symfony\console\Application.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">add</span><span class="p">(</span><span class="nx">Command</span> <span class="nv">$command</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">init</span><span class="p">();</span> <span class="c1">// 加载symfony中定义help和list命令</span>
+
+    <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">setApplication</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">isEnabled</span><span class="p">())</span> <span class="p">{</span>
+        <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">setApplication</span><span class="p">(</span><span class="k">null</span><span class="p">);</span>
+
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">null</span> <span class="o">===</span> <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">getDefinition</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">LogicException</span><span class="p">(</span><span class="nb">sprintf</span><span class="p">(</span><span class="s1">&#39;Command class &quot;%s&quot; is not correctly initialized. You probably forgot to call the parent constructor.&#39;</span><span class="p">,</span> <span class="nb">get_class</span><span class="p">(</span><span class="nv">$command</span><span class="p">)));</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">getName</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">LogicException</span><span class="p">(</span><span class="nb">sprintf</span><span class="p">(</span><span class="s1">&#39;The command defined in &quot;%s&quot; cannot have an empty name.&#39;</span><span class="p">,</span> <span class="nb">get_class</span><span class="p">(</span><span class="nv">$command</span><span class="p">)));</span>
+    <span class="p">}</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">commands</span><span class="p">[</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">getName</span><span class="p">()]</span> <span class="o">=</span> <span class="nv">$command</span><span class="p">;</span> <span class="c1">// 保存命令名称和实例的映射关系</span>
+
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">getAliases</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$alias</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">commands</span><span class="p">[</span><span class="nv">$alias</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$command</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$command</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">private</span> <span class="k">function</span> <span class="nf">init</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">initialized</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">initialized</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getDefaultCommands</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$command</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$command</span><span class="p">);</span> <span class="c1">// 把symfony中默认命令注册到artisan应用中</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getDefaultCommands</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">array</span><span class="p">(</span><span class="k">new</span> <span class="nx">HelpCommand</span><span class="p">(),</span> <span class="k">new</span> <span class="nx">ListCommand</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面的代码是会自动加载 <code class="docutils literal"><span class="pre">symfony</span></code> 中定义的 <code class="docutils literal"><span class="pre">list</span></code> 和 <code class="docutils literal"><span class="pre">help</span></code> 命令。</p>
+<p>初始完成 <code class="docutils literal"><span class="pre">artisan</span></code> 应用实例后，需要调用 <code class="docutils literal"><span class="pre">resolveCommands($this-&gt;commands)</span></code> 方法。 <code class="docutils literal"><span class="pre">commands</span></code> 属性来自于 <code class="docutils literal"><span class="pre">app\Console\Kernel.php</span></code> 类的 <code class="docutils literal"><span class="pre">commands</span></code> 属性。</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Console\Application.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">resolveCommands</span><span class="p">(</span><span class="nv">$commands</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$commands</span> <span class="o">=</span> <span class="nb">is_array</span><span class="p">(</span><span class="nv">$commands</span><span class="p">)</span> <span class="o">?</span> <span class="nv">$commands</span> <span class="o">:</span> <span class="nb">func_get_args</span><span class="p">();</span>
+
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$commands</span> <span class="k">as</span> <span class="nv">$command</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">resolve</span><span class="p">(</span><span class="nv">$command</span><span class="p">);</span> <span class="c1">// 实例化命令对象并添加到artisan应用实例中</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>至此，把 <code class="docutils literal"><span class="pre">app\Console\Kernel.php</span></code> 类的 <code class="docutils literal"><span class="pre">commands</span></code> 属性中定义的自定义命令实例也添加到artisan应用实例中。</p>
+<p><strong>到此为止，artisan实例初始化和命令解析完成。为接下来的命令执行准备好了所有环境。</strong></p>
+</div>
+<div class="section" id="id8">
+<h3>2.3.6. 命令执行<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Console\Application.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">(</span><span class="nx">InputInterface</span> <span class="nv">$input</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nx">OutputInterface</span> <span class="nv">$output</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$commandName</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getCommandName</span><span class="p">(</span> <span class="c1">// 从输入中获取命令</span>
+        <span class="nv">$input</span> <span class="o">=</span> <span class="nv">$input</span> <span class="o">?:</span> <span class="k">new</span> <span class="nx">ArgvInput</span>
+    <span class="p">);</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">events</span><span class="o">-&gt;</span><span class="na">fire</span><span class="p">(</span> <span class="c1">// 触发命令开始执行的事件</span>
+        <span class="k">new</span> <span class="nx">Events\CommandStarting</span><span class="p">(</span>
+            <span class="nv">$commandName</span><span class="p">,</span> <span class="nv">$input</span><span class="p">,</span> <span class="nv">$output</span> <span class="o">=</span> <span class="nv">$output</span> <span class="o">?:</span> <span class="k">new</span> <span class="nx">ConsoleOutput</span>
+        <span class="p">)</span>
+    <span class="p">);</span>
+
+    <span class="nv">$exitCode</span> <span class="o">=</span> <span class="k">parent</span><span class="o">::</span><span class="na">run</span><span class="p">(</span><span class="nv">$input</span><span class="p">,</span> <span class="nv">$output</span><span class="p">);</span> <span class="c1">// Symfony中执行该命令</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">events</span><span class="o">-&gt;</span><span class="na">fire</span><span class="p">(</span> <span class="c1">// 触发命令执行结束的事件</span>
+        <span class="k">new</span> <span class="nx">Events\CommandFinished</span><span class="p">(</span><span class="nv">$commandName</span><span class="p">,</span> <span class="nv">$input</span><span class="p">,</span> <span class="nv">$output</span><span class="p">,</span> <span class="nv">$exitCode</span><span class="p">)</span>
+    <span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$exitCode</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">symfony\console\Application.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<p>&lt;?php</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>2.4. 命令返回和程序终止<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Console\Kernel.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">terminate</span><span class="p">(</span><span class="nv">$input</span><span class="p">,</span> <span class="nv">$status</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">terminate</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Foundation\Application.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">terminate</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">terminatingCallbacks</span> <span class="k">as</span> <span class="nv">$terminating</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">call</span><span class="p">(</span><span class="nv">$terminating</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>脚本结束的时候会回调自定义的接收闭包。可以在服务提供者的 <code class="docutils literal"><span class="pre">register()</span></code> 或 <code class="docutils literal"><span class="pre">boot()</span></code> 方法中定义脚本结束回调函数。如下所示：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// 定义一个结束方法</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">terminating</span><span class="p">(</span><span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">print</span> <span class="s1">&#39;测试结束方法&#39;</span><span class="p">;</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的容器.html" class="btn btn-neutral float-right" title="3. 容器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="请求到响应的生命周期-web.html" class="btn btn-neutral" title="1. 请求到web响应的生命周期" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

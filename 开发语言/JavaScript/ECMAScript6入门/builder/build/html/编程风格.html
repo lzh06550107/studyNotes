@@ -1,0 +1,497 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>25. 编程风格 &mdash; ECMAScript6入门 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="ECMAScript6入门 1.0 文档" href="index.html"/>
+        <link rel="next" title="&lt;no title&gt;" href="读懂规格.html"/>
+        <link rel="prev" title="24. Module 的加载实现" href="Module的加载实现.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ECMAScript6入门
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECMAScript6简介.html">2. ECMAScript6简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="let和const命令.html">3. let 和 const 命令</a></li>
+<li class="toctree-l1"><a class="reference internal" href="变量的解构赋值.html">4. 变量的解构赋值</a></li>
+<li class="toctree-l1"><a class="reference internal" href="字符串的扩展.html">5. 字符串的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="正则的扩展.html">6. 正则的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数值的扩展.html">7. 数值的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="函数的扩展.html">8. 函数的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数组的扩展.html">9. 数组的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="对象的扩展.html">10. 对象的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Symbol.html">11. Symbol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Set和Map数据结构.html">12. Set和Map数据结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Proxy.html">13. Proxy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Reflect.html">14. Reflect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Promise对象.html">15. Promise对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterator和for...of循环.html">16. Iterator 和 for…of 循环</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的语法.html">17. Generator函数的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的异步应用.html">18. Generator 函数的异步应用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="async函数.html">19. asyn函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的基本语法.html">20. Class 的基本语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的继承.html">21. Class的继承</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Decorator.html">22. 修饰器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的语法.html">23. Module 的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的加载实现.html">24. Module 的加载实现</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">25. 编程风格</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">25.1. 块级作用域</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#let-var">25.1.1. let 取代 var</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">25.1.2. 全局常量和线程安全</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">25.2. 字符串</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">25.3. 解构赋值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">25.4. 对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">25.5. 数组</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">25.6. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#map">25.7. Map 结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class">25.8. Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">25.9. 模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#eslint">25.10. ESLint 的使用</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECMAScript6入门</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>25. 编程风格</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>25. 编程风格<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<p>本章探讨如何将 ES6 的新语法，运用到编码实践之中，与传统的 JavaScript 语法结合在一起，写出合理的、易于阅读和维护的代码。</p>
+<p>多家公司和组织已经公开了它们的风格规范，下面的内容主要参考了 Airbnb 公司的 JavaScript 风格规范。</p>
+<div class="section" id="id2">
+<h2>25.1. 块级作用域<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="let-var">
+<h3>25.1.1. let 取代 var<a class="headerlink" href="#let-var" title="永久链接至标题">¶</a></h3>
+<p>ES6 提出了两个新的声明变量的命令： <code class="docutils literal"><span class="pre">let</span></code> 和 <code class="docutils literal"><span class="pre">const</span></code> 。其中， <code class="docutils literal"><span class="pre">let</span></code> 完全可以取代 <code class="docutils literal"><span class="pre">var</span></code> ，因为两者语义相同，而且 <code class="docutils literal"><span class="pre">let</span></code> 没有副作用。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码如果用 <code class="docutils literal"><span class="pre">var</span></code> 替代 <code class="docutils literal"><span class="pre">let</span></code> ，实际上就声明了两个全局变量，这显然不是本意。变量应该只在其声明的代码块内有效， <code class="docutils literal"><span class="pre">var</span></code> 命令做不到这一点。</p>
+<p><code class="docutils literal"><span class="pre">var</span></code> 命令存在变量提升效用， <code class="docutils literal"><span class="pre">let</span></code> 命令没有这个问题。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span> <span class="c1">// ReferenceError</span>
+  <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码如果使用 <code class="docutils literal"><span class="pre">var</span></code> 替代 <code class="docutils literal"><span class="pre">let</span></code> ， <code class="docutils literal"><span class="pre">console.log</span></code> 那一行就不会报错，而是会输出 <code class="docutils literal"><span class="pre">undefined</span></code> ，因为变量声明提升到代码块的头部。这违反了变量先声明后使用的原则。</p>
+<p>所以，建议不再使用 <code class="docutils literal"><span class="pre">var</span></code> 命令，而是使用 <code class="docutils literal"><span class="pre">let</span></code> 命令取代。</p>
+</div>
+<div class="section" id="id3">
+<h3>25.1.2. 全局常量和线程安全<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>在 <code class="docutils literal"><span class="pre">let</span></code> 和 <code class="docutils literal"><span class="pre">const</span></code> 之间，建议优先使用 <code class="docutils literal"><span class="pre">const</span></code> ，尤其是在全局环境，不应该设置变量，只应设置常量。</p>
+<p><code class="docutils literal"><span class="pre">const</span></code> 优于 <code class="docutils literal"><span class="pre">let</span></code> 有几个原因。一个是 <code class="docutils literal"><span class="pre">const</span></code> 可以提醒阅读程序的人，这个变量不应该改变；另一个是 <code class="docutils literal"><span class="pre">const</span></code> 比较符合函数式编程思想，运算不改变值，只是新建值，而且这样也有利于将来的分布式运算；最后一个原因是 JavaScript 编译器会对 <code class="docutils literal"><span class="pre">const</span></code> 进行优化，所以多使用 <code class="docutils literal"><span class="pre">const</span></code> ，有利于提高程序的运行效率，也就是说 <code class="docutils literal"><span class="pre">let</span></code> 和 <code class="docutils literal"><span class="pre">const</span></code> 的本质区别，其实是编译器内部的处理不同。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// bad</span>
+<span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">c</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="c1">// good</span>
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">c</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="c1">// best</span>
+<span class="kr">const</span> <span class="p">[</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">const</span></code> 声明常量还有两个好处，一是阅读代码的人立刻会意识到不应该修改这个值，二是防止了无意间修改变量值所导致的错误。</p>
+<p>所有的函数都应该设置为常量。</p>
+<p>长远来看，JavaScript 可能会有多线程的实现（比如 Intel 公司的 River Trail 那一类的项目），这时 <code class="docutils literal"><span class="pre">let</span></code> 表示的变量，只应出现在单线程运行的代码中，不能是多线程共享的，这样有利于保证线程安全。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>25.2. 字符串<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>静态字符串一律使用单引号或反引号，不使用双引号。动态字符串使用反引号。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// bad</span>
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="s2">&quot;foobar&quot;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="s1">&#39;foo&#39;</span> <span class="o">+</span> <span class="nx">a</span> <span class="o">+</span> <span class="s1">&#39;bar&#39;</span><span class="p">;</span>
+
+<span class="c1">// acceptable</span>
+<span class="kr">const</span> <span class="nx">c</span> <span class="o">=</span> <span class="sb">`foobar`</span><span class="p">;</span>
+
+<span class="c1">// good</span>
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="s1">&#39;foobar&#39;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="sb">`foo</span><span class="si">${</span><span class="nx">a</span><span class="si">}</span><span class="sb">bar`</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">c</span> <span class="o">=</span> <span class="s1">&#39;foobar&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>25.3. 解构赋值<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>使用数组成员对变量赋值时，优先使用解构赋值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">];</span>
+
+<span class="c1">// bad</span>
+<span class="kr">const</span> <span class="nx">first</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="kr">const</span> <span class="nx">second</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+
+<span class="c1">// good</span>
+<span class="kr">const</span> <span class="p">[</span><span class="nx">first</span><span class="p">,</span> <span class="nx">second</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>函数的参数如果是对象的成员，优先使用解构赋值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// bad</span>
+<span class="kd">function</span> <span class="nx">getFullName</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">firstName</span><span class="p">;</span>
+  <span class="kr">const</span> <span class="nx">lastName</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">lastName</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// good</span>
+<span class="kd">function</span> <span class="nx">getFullName</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="p">{</span> <span class="nx">firstName</span><span class="p">,</span> <span class="nx">lastName</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// best</span>
+<span class="kd">function</span> <span class="nx">getFullName</span><span class="p">({</span> <span class="nx">firstName</span><span class="p">,</span> <span class="nx">lastName</span> <span class="p">})</span> <span class="p">{</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果函数返回多个值，优先使用对象的解构赋值，而不是数组的解构赋值。这样便于以后添加返回值，以及更改返回值的顺序。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// bad</span>
+<span class="kd">function</span> <span class="nx">processInput</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">[</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">,</span> <span class="nx">top</span><span class="p">,</span> <span class="nx">bottom</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="c1">// good</span>
+<span class="kd">function</span> <span class="nx">processInput</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span> <span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">,</span> <span class="nx">top</span><span class="p">,</span> <span class="nx">bottom</span> <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="p">{</span> <span class="nx">left</span><span class="p">,</span> <span class="nx">right</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">processInput</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>25.4. 对象<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>单行定义的对象，最后一个成员不以逗号结尾。多行定义的对象，最后一个成员以逗号结尾。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// bad</span>
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">k1</span><span class="o">:</span> <span class="nx">v1</span><span class="p">,</span> <span class="nx">k2</span><span class="o">:</span> <span class="nx">v2</span><span class="p">,</span> <span class="p">};</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">k1</span><span class="o">:</span> <span class="nx">v1</span><span class="p">,</span>
+  <span class="nx">k2</span><span class="o">:</span> <span class="nx">v2</span>
+<span class="p">};</span>
+
+<span class="c1">// good</span>
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">k1</span><span class="o">:</span> <span class="nx">v1</span><span class="p">,</span> <span class="nx">k2</span><span class="o">:</span> <span class="nx">v2</span> <span class="p">};</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">k1</span><span class="o">:</span> <span class="nx">v1</span><span class="p">,</span>
+  <span class="nx">k2</span><span class="o">:</span> <span class="nx">v2</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>对象尽量静态化，一旦定义，就不得随意添加新的属性。如果添加属性不可避免，要使用 <code class="docutils literal"><span class="pre">Object.assign</span></code> 方法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// bad</span>
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">a</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="c1">// if reshape unavoidable</span>
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="p">{</span> <span class="nx">x</span><span class="o">:</span> <span class="mi">3</span> <span class="p">});</span>
+
+<span class="c1">// good</span>
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">x</span><span class="o">:</span> <span class="kc">null</span> <span class="p">};</span>
+<span class="nx">a</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>如果对象的属性名是动态的，可以在创造对象的时候，使用属性表达式定义。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// bad</span>
+<span class="kr">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;San Francisco&#39;</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="nx">obj</span><span class="p">[</span><span class="nx">getKey</span><span class="p">(</span><span class="s1">&#39;enabled&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+<span class="c1">// good</span>
+<span class="kr">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;San Francisco&#39;</span><span class="p">,</span>
+  <span class="p">[</span><span class="nx">getKey</span><span class="p">(</span><span class="s1">&#39;enabled&#39;</span><span class="p">)]</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>上面代码中，对象 <code class="docutils literal"><span class="pre">obj</span></code> 的最后一个属性名，需要计算得到。这时最好采用属性表达式，在新建 <code class="docutils literal"><span class="pre">obj</span></code> 的时候，将该属性与其他属性定义在一起。这样一来，所有属性就在一个地方定义了。</p>
+<p>另外，对象的属性和方法，尽量采用简洁表达法，这样易于描述和书写。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">ref</span> <span class="o">=</span> <span class="s1">&#39;some value&#39;</span><span class="p">;</span>
+
+<span class="c1">// bad</span>
+<span class="kr">const</span> <span class="nx">atom</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">ref</span><span class="o">:</span> <span class="nx">ref</span><span class="p">,</span>
+
+  <span class="nx">value</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+
+  <span class="nx">addValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">atom</span><span class="p">.</span><span class="nx">value</span> <span class="o">+</span> <span class="nx">value</span><span class="p">;</span>
+  <span class="p">},</span>
+<span class="p">};</span>
+
+<span class="c1">// good</span>
+<span class="kr">const</span> <span class="nx">atom</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">ref</span><span class="p">,</span>
+
+  <span class="nx">value</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+
+  <span class="nx">addValue</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">atom</span><span class="p">.</span><span class="nx">value</span> <span class="o">+</span> <span class="nx">value</span><span class="p">;</span>
+  <span class="p">},</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>25.5. 数组<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="id8">
+<h2>25.6. 函数<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="map">
+<h2>25.7. Map 结构<a class="headerlink" href="#map" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="class">
+<h2>25.8. Class<a class="headerlink" href="#class" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="id9">
+<h2>25.9. 模块<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="eslint">
+<h2>25.10. ESLint 的使用<a class="headerlink" href="#eslint" title="永久链接至标题">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="读懂规格.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Module的加载实现.html" class="btn btn-neutral" title="24. Module 的加载实现" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+
+      });
+
+
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script>
+   
+
+</body>
+</html>

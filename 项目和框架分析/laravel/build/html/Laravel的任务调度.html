@@ -1,0 +1,699 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>51. 任务调度 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="&lt;no title&gt;" href="Laravel的数据库—服务的注册与启动.html"/>
+        <link rel="prev" title="50. 消息队列任务与分发源码剖析" href="Laravel Queue——消息队列任务与分发源码剖析.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">51. 任务调度</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">51.1. 简介</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">51.1.1. 启动调度器</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">51.2. 定义调度</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#artisan">51.2.1. Artisan 命令调度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">51.2.2. 队列任务调度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#shell">51.2.3. Shell 命令调度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">51.2.4. 调度频率设置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">51.2.5. 时区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">51.2.6. 避免任务重复</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">51.2.7. 任务只运行在一台服务器上(5.5不存在该方法)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">51.2.8. 维护模式</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">51.3. 任务输出</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">51.4. 任务钩子</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ping">51.4.1. Ping 网址</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">51.5. 多个任务并行执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">51.6. 负载均衡</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>51. 任务调度</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>51. 任务调度<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>51.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>在过去，开发者必须在服务器上为每个任务生成单独的 <code class="docutils literal"><span class="pre">Cron</span></code> 项。而令人头疼的是任务调度不受源代码控制，而且必须通过 <code class="docutils literal"><span class="pre">SSH</span></code> 连接到服务器上来增加 <code class="docutils literal"><span class="pre">Cron</span></code> 项。</p>
+<p>Laravel 的命令调度程序允许你在 Laravel 中对命令调度进行清晰流畅的定义。并且在使用调度程序时，只需要在服务器上增加一条 <code class="docutils literal"><span class="pre">Cron</span></code> 项目即可。调度是在 <code class="docutils literal"><span class="pre">app/Console/Kernel.php</span></code> 文件的 <code class="docutils literal"><span class="pre">schedule</span></code> 方法中定义的。为了方便你开始，该方法已经包含了一个简单的例子。</p>
+<div class="section" id="id3">
+<h3>51.1.1. 启动调度器<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>使用调度器时，只需将以下 <code class="docutils literal"><span class="pre">Cron</span></code> 项目添加到服务器。如果你不知道如何将 <code class="docutils literal"><span class="pre">Cron</span></code> 项目添加到服务器，可以考虑使用 Laravel Forge 等服务来管理你的 <code class="docutils literal"><span class="pre">Cron</span></code> 项目：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="nx">php</span> <span class="o">/</span><span class="nx">path</span><span class="o">-</span><span class="nx">to</span><span class="o">-</span><span class="nx">your</span><span class="o">-</span><span class="nx">project</span><span class="o">/</span><span class="nx">artisan</span> <span class="nx">schedule</span><span class="o">:</span><span class="nx">run</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="nx">dev</span><span class="o">/</span><span class="k">null</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>上面这个 <code class="docutils literal"><span class="pre">Cron</span></code> 会每分钟调用一次 Laravel 命令调度器。执行 <code class="docutils literal"><span class="pre">schedule:run</span></code> 命令时， Laravel 会根据你的调度运行预定任务。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>51.2. 定义调度<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>你可以在 <code class="docutils literal"><span class="pre">App\Console\Kernel</span></code> 类的 <code class="docutils literal"><span class="pre">schedule</span></code> 方法中定义所有调度任务。在开始之前，先看看一个调度任务的例子。在该例子中，我们将计划在每天午夜调用一个 <code class="docutils literal"><span class="pre">Closure</span></code> 。在这个 <code class="docutils literal"><span class="pre">Closure</span></code> 中，将执行一个数据库查询来清除一个表：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Console</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">DB</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Console\Scheduling\Schedule</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Console\Kernel</span> <span class="k">as</span> <span class="nx">ConsoleKernel</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Kernel</span> <span class="k">extends</span> <span class="nx">ConsoleKernel</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 应用提供的 Artisan 命令</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$commands</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c1">//</span>
+    <span class="p">];</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     *定义应用的命令调度</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">schedule</span><span class="p">(</span><span class="nx">Schedule</span> <span class="nv">$schedule</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">call</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;recent_users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">delete</span><span class="p">();</span>
+        <span class="p">})</span><span class="o">-&gt;</span><span class="na">daily</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="artisan">
+<h3>51.2.1. Artisan 命令调度<a class="headerlink" href="#artisan" title="永久链接至标题">¶</a></h3>
+<p>除了通过以 <code class="docutils literal"><span class="pre">Closure</span> <span class="pre">calls</span></code> 这种方式调度，你还能调度 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 以及系统命令。举个例子，你可以给 <code class="docutils literal"><span class="pre">command</span></code> 方法传递命令名称或者类名称来调度一个 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;emails:send --force&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">daily</span><span class="p">();</span>
+
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="nx">EmailsCommand</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;--force&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">daily</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>51.2.2. 队列任务调度<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">job</span></code> 方法可以用来调度队列任务。这个方法提供了一种快捷方式来调度任务，而无需使用 <code class="docutils literal"><span class="pre">call</span></code> 方法手动创建闭包来调度任务：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">job</span><span class="p">(</span><span class="k">new</span> <span class="nx">Heartbeat</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">everyFiveMinutes</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="shell">
+<h3>51.2.3. Shell 命令调度<a class="headerlink" href="#shell" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">exec</span></code> 方法可用于向操作系统发出命令：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">exec</span><span class="p">(</span><span class="s1">&#39;node /home/forge/script.js&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">daily</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>51.2.4. 调度频率设置<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>当然，你可以为你的任务分配多种调度计划： <code class="docutils literal"><span class="pre">\Illuminate\Console\Scheduling\ManagesFrequencies</span></code> 类中定义了这些方法。</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="47%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">方法</th>
+<th class="head">描述</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-&gt;cron('*</span> <span class="pre">*</span> <span class="pre">*</span> <span class="pre">*</span> <span class="pre">*');</span></code></td>
+<td>在自定义的 Cron 时间表上执行该任务</td>
+</tr>
+<tr class="row-odd"><td>-&gt;everyMinute();</td>
+<td>每分钟执行一次任务</td>
+</tr>
+<tr class="row-even"><td>-&gt;everyFiveMinutes();</td>
+<td>每五分钟执行一次任务</td>
+</tr>
+<tr class="row-odd"><td>-&gt;everyTenMinutes();</td>
+<td>每十分钟执行一次任务</td>
+</tr>
+<tr class="row-even"><td>-&gt;everyFifteenMinutes();</td>
+<td>每十五分钟执行一次任务</td>
+</tr>
+<tr class="row-odd"><td>-&gt;everyThirtyMinutes();</td>
+<td>每半小时执行一次任务</td>
+</tr>
+<tr class="row-even"><td>-&gt;hourly();</td>
+<td>每小时执行一次任务</td>
+</tr>
+<tr class="row-odd"><td>-&gt;hourlyAt(17);</td>
+<td>每小时的第 17 分钟执行一次任务</td>
+</tr>
+<tr class="row-even"><td>-&gt;daily();</td>
+<td>每天午夜执行一次任务</td>
+</tr>
+<tr class="row-odd"><td>-&gt;dailyAt('13:00');/at('13:00');</td>
+<td>每天的 13:00 执行一次任务</td>
+</tr>
+<tr class="row-even"><td>-&gt;twiceDaily(1, 13);</td>
+<td>每天的 1:00 和 13:00 分别执行一次任务</td>
+</tr>
+<tr class="row-odd"><td>-&gt;weekly();</td>
+<td>每周执行一次任务</td>
+</tr>
+<tr class="row-even"><td>-&gt;weeklyOn(4， '15:00');</td>
+<td>在每周的第4天的 15:00 执行一次任务</td>
+</tr>
+<tr class="row-odd"><td>-&gt;monthly();</td>
+<td>每月执行一次任务</td>
+</tr>
+<tr class="row-even"><td>-&gt;monthlyOn(4, '15:00');</td>
+<td>在每个月的第四天的 15:00 执行一次任务</td>
+</tr>
+<tr class="row-odd"><td>-&gt;twiceMonthly(4, 6);</td>
+<td>在每月的4号和6号分别执行一次任务</td>
+</tr>
+<tr class="row-even"><td>-&gt;quarterly();</td>
+<td>每季度执行一次任务</td>
+</tr>
+<tr class="row-odd"><td>-&gt;yearly();</td>
+<td>每年执行一次任务</td>
+</tr>
+<tr class="row-even"><td>-&gt;timezone('America/New_York');</td>
+<td>设置时区</td>
+</tr>
+</tbody>
+</table>
+<p>这些方法可以合并其它限制条件以生成更精确的调度。例如，计划每周周一的调度：</p>
+<p>以下是额外限制条件的列表：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="42%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">方法</th>
+<th class="head">描述</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>-&gt;weekdays();</td>
+<td>将任务限制在工作日</td>
+</tr>
+<tr class="row-odd"><td>-&gt;weekends();</td>
+<td>将任务限制在周末两天</td>
+</tr>
+<tr class="row-even"><td>-&gt;sundays();</td>
+<td>将任务限制在星期天</td>
+</tr>
+<tr class="row-odd"><td>-&gt;mondays();</td>
+<td>将任务限制在星期一</td>
+</tr>
+<tr class="row-even"><td>-&gt;tuesdays();</td>
+<td>将任务限制在星期二</td>
+</tr>
+<tr class="row-odd"><td>-&gt;wednesdays();</td>
+<td>将任务限制在星期三</td>
+</tr>
+<tr class="row-even"><td>-&gt;thursdays();</td>
+<td>将任务限制在星期四</td>
+</tr>
+<tr class="row-odd"><td>-&gt;fridays();</td>
+<td>将任务限制在星期五</td>
+</tr>
+<tr class="row-even"><td>-&gt;saturdays();</td>
+<td>将任务限制在星期六</td>
+</tr>
+<tr class="row-odd"><td>-&gt;between($start, $end);</td>
+<td>限制任务运行在开始到结束时间范围内</td>
+</tr>
+<tr class="row-even"><td>-&gt;when(Closure);</td>
+<td>根据闭包函数的返回来限制任务</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="id7">
+<h4>51.2.4.1. 时间范围限制<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">between</span></code> 方法可以用来限制一天中某个时间范围内的任务执行：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;reminders:send&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">hourly</span><span class="p">()</span>
+                    <span class="o">-&gt;</span><span class="na">between</span><span class="p">(</span><span class="s1">&#39;7:00&#39;</span><span class="p">,</span> <span class="s1">&#39;22:00&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>类似的， <code class="docutils literal"><span class="pre">unlessBetween</span></code> 方法可以用来在一段时间内排除任务的执行：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;reminders:send&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">hourly</span><span class="p">()</span>
+                    <span class="o">-&gt;</span><span class="na">unlessBetween</span><span class="p">(</span><span class="s1">&#39;23:00&#39;</span><span class="p">,</span> <span class="s1">&#39;4:00&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h4>51.2.4.2. 闭包测试限制<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">when</span></code> 方法可以用来根据给定的测试的结果来限制任务的执行。换句话说，如果给定的 <code class="docutils literal"><span class="pre">Closure</span></code> 返回 <code class="docutils literal"><span class="pre">true</span></code> ，那么只要没有其他约束条件阻止任务运行，任务就会执行：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;emails:send&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">daily</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">when</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">skip</span></code> 方法可以被看作是 <code class="docutils literal"><span class="pre">when</span></code> 的逆过程。如果 <code class="docutils literal"><span class="pre">skip</span></code> 方法返回 <code class="docutils literal"><span class="pre">true</span></code> 的话，那么任务将不会运行：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;emails:send&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">daily</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">skip</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>当链式调用多个 <code class="docutils literal"><span class="pre">when</span></code> 方法时，调度命令只有在所有的 <code class="docutils literal"><span class="pre">when</span></code> 条件返回 <code class="docutils literal"><span class="pre">true</span></code> 时才运行。</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>51.2.5. 时区<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">timezone</span></code> 方法，您可以指定计划任务的时间应该在给定时区内执行：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;report:generate&#39;</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="na">timezone</span><span class="p">(</span><span class="s1">&#39;America/New_York&#39;</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="na">at</span><span class="p">(</span><span class="s1">&#39;02:00&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">请记住，有些时区会利用夏令时。夏时制时间发生变化时，您的计划任务可能会运行两次，甚至根本不运行。 出于这个原因，我们建议尽可能避免使用时区来安排计划任务。</p>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>51.2.6. 避免任务重复<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>默认情况，即便有相同的任务还在运行，调度内的任务依旧会被执行。为了避免这个问题，你可以使用 <code class="docutils literal"><span class="pre">withoutOverlapping</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;emails:send&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">withoutOverlapping</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>底层利用缓存调度任务的互斥锁来阻止其它同一个任务重叠执行。在上面这个例子中，如果没有其它 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">emails:send</span></code> 在运行的话，此任务将于每分钟被运行一次。如果你的任务在执行时间上有很大的不同，你无法准确预测给定任务需要多长时间， <code class="docutils literal"><span class="pre">withoutOverlapping</span></code> 方法将会特别有帮助。</p>
+<p>如果需要, 你可以指定在 &quot;without overlapping&quot; 锁过期之前必须经过多少分钟。 默认情况下，锁将在24小时后过期：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;emails:send&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">withoutOverlapping</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>51.2.7. 任务只运行在一台服务器上(5.5不存在该方法)<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">要使用这个功能，必须使用 <code class="docutils literal"><span class="pre">memcached</span></code> 或 <code class="docutils literal"><span class="pre">redis</span></code> 作为你应用程序的默认缓存驱动程序。 另外，所有服务器都必须与同一个中央缓存服务器进行通信。</p>
+</div>
+<p>如果您的应用程序在多个服务器上运行，则你可能会想限制计划任务仅在单个服务器上执行。 例如，您有一个计划任务，每个星期五晚上都会生成一个新报告。 如果在三台服务器上运行，则将在所有三台服务器上运行并生成三次报告。 这样不好！</p>
+<p>为了让计划任务只在一台服务器上运行，在定义计划任务时可使用 <code class="docutils literal"><span class="pre">onOneServer</span></code> 方法。 原理是获取到该任务的第一台服务器将对该任务加上原子锁，以防止其他服务器同时运行相同的任务：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;report:generate&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">fridays</span><span class="p">()</span>
+                <span class="o">-&gt;</span><span class="na">at</span><span class="p">(</span><span class="s1">&#39;17:00&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">onOneServer</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>51.2.8. 维护模式<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>当 Laravel 处于 维护模式时，Laravel 的调度功能将不会生效。这是因为我们不想让任务调度干扰你服务器上可能还未完成的项目。然而，如果你想强制某个任务在维护模式下运行的话，你可以使用 <code class="docutils literal"><span class="pre">evenInMaintenanceMode</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;emails:send&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">evenInMaintenanceMode</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>51.3. 任务输出<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<p>Laravel 调度器提供了几个方便的方法来处理调度任务生成的输出。首先，使用 <code class="docutils literal"><span class="pre">sendOutputTo</span></code> 方法可以将输出发送到单个文件上以便后续检查：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;emails:send&#39;</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="na">daily</span><span class="p">()</span>
+         <span class="o">-&gt;</span><span class="na">sendOutputTo</span><span class="p">(</span><span class="nv">$filePath</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果想将输出附加到指定的文件上，则可以使用 <code class="docutils literal"><span class="pre">appendOutputTo</span></code> 方法:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;emails:send&#39;</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="na">daily</span><span class="p">()</span>
+         <span class="o">-&gt;</span><span class="na">appendOutputTo</span><span class="p">(</span><span class="nv">$filePath</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>使用 <code class="docutils literal"><span class="pre">emailOutputTo</span></code> 方法，你可以通过电子邮件将输出发送到你所指定的邮箱上。在发送任务的输出之前，你应该先配置 Laravel 的 <code class="docutils literal"><span class="pre">e-mail</span> <span class="pre">services</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="na">daily</span><span class="p">()</span>
+         <span class="o">-&gt;</span><span class="na">sendOutputTo</span><span class="p">(</span><span class="nv">$filePath</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="na">emailOutputTo</span><span class="p">(</span><span class="s1">&#39;foo@example.com&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">emailOutputTo</span></code> 、 <code class="docutils literal"><span class="pre">sendOutputTo</span></code> 和 <code class="docutils literal"><span class="pre">appendOutputTo</span></code> 方法是 <code class="docutils literal"><span class="pre">command</span></code> 和 <code class="docutils literal"><span class="pre">exec</span></code> 方法独有的。</p>
+</div>
+<div class="section" id="id14">
+<h2>51.4. 任务钩子<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<p>通过 <code class="docutils literal"><span class="pre">before</span></code> 与 <code class="docutils literal"><span class="pre">after</span></code> 方法，你可以指定要在调度任务完成之前和之后执行的代码：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;emails:send&#39;</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="na">daily</span><span class="p">()</span>
+         <span class="o">-&gt;</span><span class="na">before</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+             <span class="c1">// 任务开始...</span>
+         <span class="p">})</span>
+         <span class="o">-&gt;</span><span class="na">after</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+             <span class="c1">// 任务结束...</span>
+         <span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="ping">
+<h3>51.4.1. Ping 网址<a class="headerlink" href="#ping" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">pingBefore</span></code> 与 <code class="docutils literal"><span class="pre">thenPing</span></code> 方法，调度器可以在任务完成之前或之后自动 <code class="docutils literal"><span class="pre">ping</span></code> 给定的 <code class="docutils literal"><span class="pre">URL</span></code> 。这个方法对于通知外部服务（例如 Laravel Envoyer）你的调度任务正在开始或已经完成执行很有用：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$schedule</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;emails:send&#39;</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="na">daily</span><span class="p">()</span>
+         <span class="o">-&gt;</span><span class="na">pingBefore</span><span class="p">(</span><span class="nv">$url</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="na">thenPing</span><span class="p">(</span><span class="nv">$url</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>无论是使用 <code class="docutils literal"><span class="pre">pingBefore($url)</span></code> 还是 <code class="docutils literal"><span class="pre">thenPing($url)</span></code> 的功能，都需要 Guzzle HTTP 函数库的支持。你可以使用 <code class="docutils literal"><span class="pre">Composer</span></code> 将 <code class="docutils literal"><span class="pre">Guzzle</span></code> 函数库添加到你的项目中：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>composer require guzzlehttp/guzzle
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">使用 <code class="docutils literal"><span class="pre">runInBackground</span></code> 方法可使当前计划任务进入后台运行，从而不阻塞其他任务的执行。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id15">
+<h2>51.5. 多个任务并行执行<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h2>
+<p>先简单介绍一下 Laravel 定时任务组件的基本原理：</p>
+<p>当 <code class="docutils literal"><span class="pre">cli</span></code> 初始化完毕之后，系统会调用 <code class="docutils literal"><span class="pre">App\Console\Kernel::schedule</span></code> 方法，也就是我们定义定时任务列表的地方，这个方法里每调用一次 <code class="docutils literal"><span class="pre">$schedule-&gt;command()</span></code> 就会生成一个 <code class="docutils literal"><span class="pre">Illuminate\Console\Scheduling\Event</span></code> 对象并保存在 <code class="docutils literal"><span class="pre">$schedule-&gt;events</span></code> 数组里。当执行 <code class="docutils literal"><span class="pre">php</span> <span class="pre">artisan</span> <span class="pre">scheduled:run</span></code> 时，系统会遍历 <code class="docutils literal"><span class="pre">$schedule-&gt;events</span></code> ，把当前时间需要执行的任务放在一个集合中，最后依次 串行执行 这些任务。</p>
+<p>这样做在大多数情况下是没有问题的，但有一些特殊的情况，比如在每个月的第一天要给 100W 个用户发送邮件，同一批次的定时任务必须等到这些邮件全部发送完毕之后才会被执行，假如这些任务里有对执行时间十分敏感的任务，比每 5 分钟一次的数据快照，就会导致那个时间点数据的缺失。</p>
+<p>这种情况下如果定时任务能够并发执行，就不会有这样的问题。 Laravel 实际上提供了解决方案，但很奇怪文档里面并没有提到，就是 <code class="docutils literal"><span class="pre">runInBackground</span></code> 方法，在定义定时任务时 <code class="docutils literal"><span class="pre">$schedule-&gt;command('foo:bar')-&gt;everyMinutes()-&gt;runInBackground();</span></code> 就可以了。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">只有 <code class="docutils literal"><span class="pre">$schedule-&gt;command()</span></code> 方法和 <code class="docutils literal"><span class="pre">$schedule-&gt;exec()</span></code> 方法可以开启多个进程在前台或者后台进行处理。前台进程运行结束后，可以调用注册在任务结束时回调函数，而后台进程不能调用注册在任务结束时回调函数。</p>
+</div>
+<p><code class="docutils literal"><span class="pre">$schedule-&gt;call()</span></code> 和 <code class="docutils literal"><span class="pre">$schedule-&gt;job()</span></code> 是在调度进程中执行的，不能另开进程，所以，这里应该执行花费时间少的任务或者是队列任务。</p>
+</div>
+<div class="section" id="id16">
+<h2>51.6. 负载均衡<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h2>
+<p>随着业务逻辑的增多，定时任务也会越来越多，定时任务服务器的负载也会越来越高，甚至导致任务执行缓慢，然而我们却只能在一台服务器上设置定时任务，如果在多台服务器上同时配置了定时任务，还会导致定时任务的重复执行。这个时候我们希望能够像队列那样，将定时任务分散到多台服务器上。</p>
+<p>截止 v5.4.15，Laravel 还没有提供内置方案来解决这个问题，但只需要简单的改造就可以实现我们需要的效果。首先我们把将每个定时任务里 <code class="docutils literal"><span class="pre">handle</span></code> 方法提取出来创建一个新的 <code class="docutils literal"><span class="pre">Job</span></code> 并继承 <code class="docutils literal"><span class="pre">ShouldQueue</span></code> ，然后在定时任务的 <code class="docutils literal"><span class="pre">handle</span></code> 里直接 <code class="docutils literal"><span class="pre">dispatch</span></code> 对应的 <code class="docutils literal"><span class="pre">Job</span></code> 即可，这样原本的业务逻辑就会被队列处理掉，当系统有多台服务器在处理队列时，也就实现了我们需要的负载均衡。</p>
+<p>但是这样毕竟还是麻烦，每个定时任务都要创建一个 <code class="docutils literal"><span class="pre">Command</span></code> 和一个 <code class="docutils literal"><span class="pre">Job</span></code> ，太费劲，于是我提交了一个 Proposal ，目前已经实现并且merge入5.4分支，相信下个版本大家就能用上了。用法也很简单，只需要创建一个继承 <code class="docutils literal"><span class="pre">ShouldQueue</span></code> 的 <code class="docutils literal"><span class="pre">Job</span></code> ，然后在 <code class="docutils literal"><span class="pre">App\Console\Kernel::schedule</span></code> 方法里定义</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">$schedule-&gt;job(new FooBarJob())-&gt;everyMinutes();</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的数据库—服务的注册与启动.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel Queue——消息队列任务与分发源码剖析.html" class="btn btn-neutral" title="50. 消息队列任务与分发源码剖析" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

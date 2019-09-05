@@ -1,0 +1,57 @@
+****
+数据完成
+****
+
+数据自动完成指在不需要手动赋值的情况下对字段的值进行处理后写入数据库。
+
+系统支持 ``auto`` 、 ``insert`` 和 ``update`` 三个属性，可以分别在写入、新增和更新的时候进行字段的自动完成机制， ``auto`` 属性自动完成 **包含新增和更新操作** ，例如我们定义 ``User`` 模型类如下：
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\model;
+
+	use think\Model;
+
+	class User extends Model
+	{
+	    protected $auto = ['name', 'ip'];
+	    protected $insert = ['status' => 1];  
+	    protected $update = [];  
+	    
+	    protected function setNameAttr($value)
+	    {
+	        return strtolower($value);
+	    }
+	    
+	    protected function setIpAttr()
+	    {
+	        return request()->ip();
+	    }
+	}
+
+.. note:: 数据自动完成如果需要写入固定的值，可以直接指定（例如上面的 ``status`` 字段固定写入了 ``1`` ），类似于数据表字段的默认值功能。
+
+在新增数据的时候，会对 ``name`` 、 ``ip`` 和 ``status`` 字段自动完成或者处理。
+
+.. code-block:: php
+
+	$user = new User;
+	$user->name = 'ThinkPHP';
+	$user->save();
+	echo $user->name; // thinkphp
+	echo $user->status; // 1
+
+在更新数据的时候，会自动处理 ``name`` 字段的值及完成 ``ip`` 字段的赋值。
+
+.. code-block:: php
+
+	$user = User::find(1);
+	$user->name = 'THINKPHP';
+	$user->save();
+	echo $user->name; // thinkphp
+	echo $user->ip; // 127.0.0.1
+
+.. note:: **数据自动完成仍然还是调用的修改器，要注意避免数据被两次处理的可能，自动完成定义的属性不要和表单提交的冲突。**
+
+

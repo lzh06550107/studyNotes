@@ -1,0 +1,635 @@
+********
+高级使用
+********
+
+使用JSON
+========
+正如您在上一章中所看到的，要在 ``MySQL`` 中存储数据，您必须定义数据库和表结构（模式），这是一个主要限制。为了解决这个问题， MySQL 5.7 支持 ``JavaScript Object Notation(JSON)`` 数据类型。之前没有单独的数据类型，它存储为字符串。新的 ``JSON`` 数据类型提供 ``JSON`` 文档的自动验证和优化的存储格式。
+
+``JSON`` 文档以二进制格式存储，可实现以下功能：
+
+- 对文档元素的快速读取访问；
+- 当服务器再次读取 ``JSON`` 时，无需从文本表示中解析值；
+- 直接通过键或数组索引查找子对象或嵌套值，而不读取文档之前或之后的所有值；
+
+创建带有json格式的字段：
+
+.. code-block:: shell
+
+    CREATE TABLE emp_details(
+        emp_no int primary key,
+        details json
+    );
+
+插入JSON
+--------
+
+.. code-block:: shell
+
+    INSERT INTO emp_details(emp_no, details)
+    VALUES ('1',
+    '{ "location": "IN", "phone": "+11800000000",
+    "email": "abc@example.com", "address": { "line1":
+    "abc", "line2": "xyz street", "city": "Bangalore",
+    "pin": "560103"} }'
+    );
+
+检索JSON
+--------
+
+你可以使用 ``->`` 和 ``->>`` 操作符来检索 ``JSON`` 列的值：
+
+.. code-block:: shell
+
+    mysql> SELECT emp_no, details->'$.address.pin' pin FROM emp_details;
+    +--------+----------+
+    | emp_no | pin      |
+    +--------+----------+
+    | 1      | "560103" |
+    +--------+----------+
+    1 row in set (0.00 sec)
+
+为了检索没有引号的数据，使用 ``->>`` 操作符：
+
+.. code-block:: shell
+
+    mysql> SELECT emp_no, details->>'$.address.pin' pin FROM emp_details;
+    +--------+--------+
+    | emp_no | pin    |
+    +--------+--------+
+    | 1      | 560103 |
+    +--------+--------+
+    1 row in set (0.00 sec)
+
+JSON函数
+--------
+MySQL 提供了很多函数来处理 ``JSON`` 数据。让我们查看最常用的。
+
+好看的结果视图
+^^^^^^^^^^^^^^
+使用漂亮的格式显示 ``JSON`` 值，使用 JSON_PRETTY() 函数：
+
+    .. code-block:: shell
+
+    mysql> SELECT emp_no, JSON_PRETTY(details) FROM emp_details \G
+    *************************** 1. row ***************************
+    emp_no: 1
+    JSON_PRETTY(details): {
+        "email": "abc@example.com",
+        "phone": "+11800000000",
+        "address": {
+            "pin": "560103",
+            "city": "Bangalore",
+            "line1": "abc",
+            "line2": "xyz street"
+        },
+        "location": "IN"
+    }
+    1 row in set (0.00 sec)
+
+搜索
+----
+您可以使用 ``WHERE`` 子句中的 ``col->>path`` 运算符引用 ``JSON`` 列：
+
+.. code-block:: shell
+
+    mysql> SELECT emp_no FROM emp_details WHERE details->>'$.address.pin'="560103";
+    +--------+
+    | emp_no |
+    +--------+
+    | 1      |
+    +--------+
+    1 row in set (0.00 sec)
+
+您还可以使用 ``JSON_CONTAINS`` 函数来搜索数据。 如果找到数据则返回 ``1`` ，否则返回 ``0`` ：
+
+.. code-block:: shell
+
+    mysql> SELECT JSON_CONTAINS(details->>'$.address.pin', "560103") FROM emp_details;
+
+如何搜索键？ 假设您要检查 ``address.line1`` 是否存在：
+
+.. code-block:: shell
+
+    mysql> SELECT JSON_CONTAINS_PATH(details, 'one', "$.address.line1") FROM emp_details;
+
+这里 ``one`` 指示至少有一个键存在。假设你想要检查 ``address.line1`` 或者 ``address.line2`` 存在：
+
+.. code-block:: shell
+
+    mysql> SELECT JSON_CONTAINS_PATH(details, 'one',"$.address.line1", "$.address.line5") FROM emp_details;
+
+如果你想要检查 ``address.line1`` 和 ``address.line5`` 存在，你可以使用 ``and`` 取代 ``one`` ：
+
+.. code-block:: shell
+
+    SELECT JSON_CONTAINS_PATH(details, 'all',"$.address.line1", "$.address.line5") FROM emp_details;
+
+修改
+----
+你可以使用三个不同的函数 ``JSON_SET()`` ,  ``JSON_INSERT()`` ,  ``JSON_REPLACE()`` 来修改数据。在 MySQL 8 之前，我们需要对整个列进行全面更新，这不是最佳方式：
+
+- JSON_SET：替换现有值并添加不存在的值。假设您要替换员工的 ``pin`` 码并添加昵称的详细信息：
+
+.. code-block:: shell
+
+    mysql> UPDATE
+        emp_details
+    SET
+        details = JSON_SET(details, "$.address.pin", "560100", "$.nickname", "kai")
+    WHERE
+        emp_no = 1;
+    Query OK, 1 row affected (0.03 sec)
+    Rows matched: 1 Changed: 1 Warnings: 0
+
+- JSON_INSERT()：插入值而不替换现有值；假设你需要增加一个新的列，而不是更新现有的值；你可以使用它它：
+
+.. code-block:: shell
+
+    mysql> UPDATE emp_details SET
+    details=JSON_INSERT(details, "$.address.pin", "560132", "$.address.line4", "A Wing") WHERE emp_no = 1;
+    Query OK, 1 row affected (0.00 sec)
+    Rows matched: 1 Changed: 1 Warnings: 0
+
+在这种情况下， ``pin`` 不会更新; 只会添加一个新的 ``address.line4`` 字段。
+
+- JSON_REPLACE()：仅替换现有值；假设你只想替换字段而不是增加新字段：
+
+.. code-block:: shell
+
+    mysql> UPDATE emp_details SET
+    details=JSON_REPLACE(details, "$.address.pin", "560132", "$.address.line5", "Landmark") WHERE emp_no = 1;
+    Query OK, 1 row affected (0.04 sec)
+    Rows matched: 1 Changed: 1 Warnings: 0
+
+在这种情况下，不会添加 ``line5`` 。 只有 ``pin`` 才会更新。
+
+删除
+----
+``JSON_REMOVE`` 从 ``JSON`` 文档中删除数据。
+
+假设您不再需要地址中的 ``line5`` ：
+
+.. code-block:: shell
+
+    mysql> UPDATE emp_details SET
+    details=JSON_REMOVE(details, "$.address.line5") WHERE emp_no = 1;
+    Query OK, 1 row affected (0.04 sec)
+    Rows matched: 1 Changed: 1 Warnings: 0
+
+
+其它函数
+--------
+
+一些其它函数如下：
+
+- ``JSON_KEYS()`` ：获取 ``JSON`` 文档中的所有键(不包括嵌套的)：
+
+.. code-block:: shell
+
+    mysql> SELECT JSON_KEYS(details) FROM emp_details WHERE emp_no = 1;
+    *************************** 1. row ***************************
+    JSON_KEYS(details): ["email", "phone","address", "nickname", "locatation"]
+
+- ``JSON_LENGTH()`` ：给出 ``JSON`` 文档中的元素数量：
+
+.. code-block:: shell
+
+    mysql> SELECT JSON_LENGTH(details) FROM emp_details WHERE emp_no = 1;
+    *************************** 1. row ***************************
+    JSON_LENGTH(details): 5
+
+详情，请参考 https://dev.mysql.com/doc/refman/8.0/en/json-function-reference.html
+
+公用表表达式(CTE)
+=================
+MySQL 8 支持公用表达式，包含非递归和递归。
+
+公用表表达式允许使用命名的临时结果集，通过允许 ``SELECT`` 语句之前的 ``WITH`` 子句和某些其他语句来实现。
+
+CTE 是什么
+----------
+派生表大家都比较熟悉了， ``CTE`` 就是针对派生表来的，可以说是增强的派生表，或者说是派生表的替换。
+
+.. note:: 为什么需要 ``CTE`` ？在同一查询中无法两次引用派生表。 因此，派生表的计算次数是所引用的两次或多次，这表明存在严重的性能问题。使用 ``CTE`` ，子查询仅计算一次。
+
+``CTE`` 相较于派生表有4个明显的优势:
+
+- 更好的可读性:
+
+派生表的形式:
+
+.. code-block:: shell
+
+    SELECT ...FROM t1 LEFT JOIN ((SELECT ... FROM ...) AS dt JOIN t2 ON ...) ON ...
+
+CTE的形式:
+
+.. code-block:: shell
+
+    WITH dt AS (SELECT ... FROM ...)SELECT ...FROM t1 LEFT JOIN (dt JOIN t2 ON ...) ON ...
+
+- 可以被多次引用
+
+派生表不能被引用两次，例如:
+
+.. code-block:: shell
+
+    SELECT ...FROM (SELECT a, b, SUM(c) s FROM t1 GROUP BY a, b) AS d1 JOIN (SELECT a, b, SUM(c) s FROM t1 GROUP BY a, b) AS d2 ON d1.b = d2.a;
+
+而 CTE 可以，例如:
+
+.. code-block:: shell
+
+    WITH d AS (SELECT a, b, SUM(c) s FROM t1 GROUP BY a, b) SELECT ... FROM d AS d1 JOIN d AS d2 ON d1.b = d2.a;
+
+- 可以引用其他的 CTE
+
+派生表不能引用其他派生表，例如:
+
+.. code-block:: shell
+
+    SELECT ...FROM (SELECT ... FROM ...) AS d1, (SELECT ... FROM d1 ...) AS d2 ...ERROR: 1146 (42S02): Table ‘db.d1’ doesn’t exist
+
+``CTE`` 可以引用其他的 ``CTE`` ，例如：
+
+.. code-block:: shell
+
+    WITH d1 AS (SELECT ... FROM ...), d2 AS (SELECT ... FROM d1 ...) SELECT FROM d1, d2 ...
+
+- 性能的提升
+
+派生表是具体化的，每个派生表都是一个具体化的存在，就会产生性能问题，例如更多的空间、耗费更多的时间。
+
+``CTE`` 只会被创建一次，不管被引用了多少次
+
+接下来查看递归和非递归 ``CTE`` ：
+
+非递归CTE
+---------
+CTE 就像一个派生表，但是它的声明不是位于 ``FROM`` 子句，而是在查询块之前。
+
+派生表
+
+.. code-block:: shell
+
+    SELECT... FROM (subquery) AS derived, t1 ...
+
+CTE
+
+.. code-block:: shell
+
+    SELECT... WITH derived AS (subquery) SELECT ... FROM derived, t1 ...
+
+``CTE`` 可以在 ``SELECT/UPDATE/DELETE`` 之前，包括子查询 WITH derived AS (subquery)，例如：
+
+.. code-block:: shell
+
+    DELETE FROM t1 WHERE t1.a IN (SELECT b FROM derived);
+
+假设您想要找出每年相对于前一年的工资增长百分比。如果没有 ``CTE`` ，您需要编写两个子查询，它们本质上是相同。 ``MySQL`` 没有足够的智能来检测它并且子查询被执行两次：
+
+.. code-block:: shell
+
+    mysql> SELECT
+        q1.year,
+        q2.year AS next_year,
+        q1.sum,
+        q2.sum AS next_sum,
+        100*(q2.sum-q1.sum)/q1.sum AS pct
+    FROM
+        (SELECT year(from_date) as year, sum(salary) as sum FROM salaries GROUP BY year) AS q1,
+        (SELECT year(from_date) as year, sum(salary) as sum FROM salaries GROUP BY year) AS q2
+    WHERE q1.year = q2.year-1;
+
+使用非递归 ``CTE`` ，派生查询被执行一次且被重复使用：
+
+.. code-block:: shell
+
+    mysql>
+    WITH CTE AS
+        (SELECT year(from_date) AS year, SUM(salary) AS sum FROM salaries GROUP BY year)
+    SELECT
+        q1.year, q2.year as next_year, q1.sum, q2.sum as next_sum, 100*(q2.sum-q1.sum)/q1.sum as pct
+    FROM
+        CTE AS q1,
+        CTE AS q2
+    WHERE
+        q1.year = q2.year-1;
+
+你可能会注意到，使用 ``CTE`` ，结果是相同的，查询时间提高了 ``50％`` ；可读性很好，可以多次引用。而派生查询不能引用其他派生查询。
+
+递归CTE
+-------
+递归 ``CTE`` 是一个 ``CTE`` ，其子查询引用自己的名称。 ``WITH`` 子句必须以 ``WITH RECURSIVE`` 开头。递归 ``CTE`` 子查询有两个部分，种子查询和递归查询，由 ``UNION [ALL]`` 或 ``UNION DISTINCT`` 分隔。
+
+种子 ``SELECT`` 执行一次以创建初始数据子集；重复执行递归 ``SELECT`` 以返回数据子集，直到获得完整的结果集。当迭代不生成任何新行时，递归停止。这对于挖掘层次结构（父/子或部分/子部分）非常有用：
+
+.. code-block:: shell
+
+    WITH RECURSIVE cte AS
+    (SELECT ... FROM table_name /* seed SELECT */
+    UNION ALL
+    SELECT ... FROM cte, table_name) /* "recursive" SELECT */
+    SELECT ... FROM cte;
+
+假设您要打印 ``1`` 到 ``5`` 之间的所有数字：
+
+.. code-block:: shell
+
+    mysql> WITH RECURSIVE cte (n) AS
+    ( SELECT 1 /* seed query */
+      UNION ALL
+      SELECT n + 1 FROM cte WHERE n < 5 /* recursive query */
+    )
+    SELECT * FROM cte;
+    +---+
+    | n |
+    +---+
+    | 1 |
+    | 2 |
+    | 3 |
+    | 4 |
+    | 5 |
+    +---+
+    5 rows in set (0.00 sec)
+
+在每次迭代中， ``SELECT`` 生成一个行，其值比前一行中的 ``n`` 值大一个。 第一次迭代在初始行集（1）上运行并产生 ``1 + 1 = 2;`` 第二次迭代在第一次迭代的行集（2）上运行并产生 ``2 + 1 = 3;`` 等。这种情况一直持续到递归结束，此时 ``n`` 不再小于 ``5`` 。假设您要进行分层数据遍历，以生成每个员工的管理链（即从 CEO 到员工的路径）的组织结构图。使用递归 ``CTE`` ！
+
+使用 manager_id 创建一个测试表：
+
+.. code-block:: shell
+
+mysql> CREATE TABLE employees_mgr (
+    id INT PRIMARY KEY NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    manager_id INT NULL,
+    INDEX (manager_id),
+    FOREIGN KEY (manager_id) REFERENCES employees_mgr (id)
+);
+
+插入样本数据：
+
+.. code-block:: shell
+
+    mysql> INSERT INTO employees_mgr VALUES
+    (333, "Yasmina", NULL), # Yasmina is the CEO (manager_id is NULL)
+    (198, "John", 333), # John has ID 198 and reports to 333 (Yasmina)
+    (692, "Tarek", 333),
+    (29, "Pedro", 198),
+    (4610, "Sarah", 29),
+    (72, "Pierre", 29),
+    (123, "Adil", 692);
+
+执行递归 ``CTE`` ：
+
+.. code-block:: shell
+
+    mysql> WITH RECURSIVE employee_paths (id, name, path)
+    AS
+    (
+        SELECT id, name, CAST(id AS CHAR(200))
+        FROM employees_mgr
+        WHERE manager_id IS NULL #先找到CEO
+        UNION ALL
+        SELECT e.id, e.name, CONCAT(ep.path, ',', e.id)
+        FROM employee_paths AS ep JOIN employees_mgr AS e
+        ON ep.id = e.manager_id
+    )
+    SELECT * FROM employee_paths ORDER BY path;
+
+产生的结果如下：
+
+    .. code-block:: shell
+
+    +------+---------+-----------------+
+    | id   | name    | path            |
+    +------+---------+-----------------+
+    | 333  | Yasmina | 333             |
+    | 198  | John    | 333,198         |
+    | 29   | Pedro   | 333,198,29      |
+    | 4610 | Sarah   | 333,198,29,4610 |
+    | 72   | Pierre  | 333,198,29,72   |
+    | 692  | Tarek   | 333,692         |
+    | 123  | Adil    | 333,692,123     |
+    +------+---------+-----------------+
+    7 rows in set (0.00 sec)
+
+``WITH RECURSIVE employee_paths (id, name, path) AS`` 是 ``CTE`` 的名称且列为 ``(id, name,
+path)`` 。
+
+``SELECT id, name, CAST(id AS CHAR(200)) FROM employees_mgr WHERE manager_id IS NULL`` 是种子查询，这里查询 ``CEO`` ( ``CEO`` 没有领导)。
+
+``SELECT e.id, e.name, CONCAT(ep.path, ',', e.id) FROM employee_paths AS ep JOIN employees_mgr AS e ON ep.id = e.manager_id`` 是递归查询。
+
+递归查询生成的每一行都会查找直接向前一行生成的员工报告的所有员工。对于每个此类员工，该行包括员工 ``ID`` ，名称和员工管理链。该链是经理的链，最后添加了员工 ``ID`` 。
+
+生成列
+======
+生成的列也称为虚拟列或计算列。生成列的值是根据列定义中包含的表达式计算的。生成的列有两种类型：
+
+- 虚拟列：从表中读取记录时，将立即计算该列；
+- 存储：当在表中写入新记录时，将计算该列，并将该列作为常规列存储在表中；
+
+虚拟生成列比存储生成的列更有用，因为虚拟列不占用任何存储空间。您可以使用触发器模拟存储的生成列的行为。
+
+假设您的应用程序在从 ``employees`` 表中检索数据时使用 ``full_name`` 作为 ``concat('first_name'，''，'last_name')`` 您可以使用虚拟列代替使用表达式，该列可以动态计算 ``full_name`` 。您可以添加另一列，后跟表达式：
+
+.. code-block:: shell
+
+    mysql> CREATE TABLE `employees` (
+        `emp_no` int(11) NOT NULL,
+        `birth_date` date NOT NULL,
+        `first_name` varchar(14) NOT NULL,
+        `last_name` varchar(16) NOT NULL,
+        `gender` enum('M','F') NOT NULL,
+        `hire_date` date NOT NULL,
+        `full_name` VARCHAR(30) AS (CONCAT(first_name,' ',last_name)),
+        PRIMARY KEY (`emp_no`),
+        KEY `name` (`first_name`,`last_name`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+请注意，您应该根据虚拟列修改 ``insert`` 语句。 您可以选择使用完整插入，如下所示：
+
+.. code-block:: shell
+
+    mysql> INSERT INTO employees (emp_no, birth_date,
+    first_name, last_name, gender, hire_date) VALUES
+    (123456, '1987-10-02', 'ABC' , 'XYZ', 'F', '2008-07-28');
+
+如果要在 ``INSERT`` 语句中包含 ``full_name`` ，则只能将其指定为 ``DEFAULT`` 。 所有其他值抛出 ``ERROR 3105(HY000):`` 错误。不允许在 ``employees`` 表中为生成的列 ``full_name`` 指定的值：
+
+.. code-block:: shell
+
+    mysql> INSERT INTO employees (emp_no, birth_date, first_name, last_name, gender, hire_date, full_name) VALUES (123456, '1987-10-02', 'ABC' , 'XYZ', 'F', '2008-07-28', DEFAULT);
+
+您可以直接从 ``employees`` 表中选择 ``full_name`` ：
+
+.. code-block:: shell
+
+    mysql> SELECT * FROM employees WHERE emp_no=123456;
+
+如果您已经创建了表并希望添加新生成的列，请执行 ``ALTER TABLE`` 语句，这将在章节10 表维护中详细介绍：
+
+.. code-block:: shell
+
+    mysql> ALTER TABLE employees ADD hire_date_year YEAR AS (YEAR(hire_date)) VIRTUAL;
+
+更多关于生成列的信息，请参考 https://dev.mysql.com/doc/refman/8.0/en/create-table-generated-columns.html 。您将在第13章“性能调优”中的“使用生成的列添加索引和JSON索引”部分中了解虚拟列的其他用法。
+
+窗口函数(分析函数)
+==================
+通过使用窗口函数，对于查询中的每一行，您可以使用与该行相关的行执行计算。这是通过使用 ``OVER`` 和 ``WINDOW`` 子句完成的。
+
+以下是您可以执行的计算列表：
+
+- CUME_DIST() ： 累积分配值；
+- DENSE_RANK() ： 其分区中当前行的排名，没有间隙；
+- FIRST_VALUE() ： 窗口框架第一行中参数的值；
+- LAG() ： 行中的参数值滞后于分区中的当前行；
+- LAST_VALUE() ： 窗口框架第一行的参数值；
+- LEAD() ： 分区中当前行前导行的参数值；
+- NTH_VALUE() ： 第 ``n`` 行窗口框架的参数值；
+- NTILE() ： 其分区中当前行的存储桶编号；
+- PERCENT_RANK() ： 百分比等级值；
+- RANK() ： 其分区中当前行的等级，带有间隙；
+- ROW_NUMBER() ： 其分区中当前行的编号；
+
+窗口函数可以以各种方式使用。让我们在以下部分中掌握它们中的每一个。要使这些示例起作用，您需要添加 ``hire_date_year`` 虚拟列。
+
+.. code-block:: shell
+
+    mysql> ALTER TABLE employees ADD hire_date_year YEAR AS (YEAR(hire_date)) VIRTUAL;
+
+测试case，简单模拟一个订单表，字段分别是订单号，用户编号，金额，创建时间
+
+.. code-block:: shell
+
+    drop table  if exists order_info
+
+    create table order_info
+    (
+        order_id int primary key,
+        user_no varchar(10),
+        amount int,
+        create_date datetime
+    );
+
+    insert into order_info values (1,'u0001',100,'2018-1-1');
+    insert into order_info values (2,'u0001',300,'2018-1-2');
+    insert into order_info values (3,'u0001',300,'2018-1-2');
+    insert into order_info values (4,'u0001',800,'2018-1-10');
+    insert into order_info values (5,'u0001',900,'2018-1-20');
+
+    insert into order_info values (6,'u0002',500,'2018-1-5');
+    insert into order_info values (7,'u0002',600,'2018-1-6');
+    insert into order_info values (8,'u0002',300,'2018-1-10');
+    insert into order_info values (9,'u0002',800,'2018-1-16');
+    insert into order_info values (10,'u0002',800,'2018-1-22');
+
+行号
+----
+您可以获取每行的行号以对结果进行排名：
+
+.. code-block:: shell
+
+    mysql> SELECT CONCAT(first_name, " ", last_name) AS
+    full_name, salary, ROW_NUMBER() OVER(ORDER BY salary
+    DESC) AS 'Rank' FROM employees JOIN salaries ON
+    salaries.emp_no=employees.emp_no LIMIT 10;
+    +-------------------+--------+------+
+    | full_name         | salary | Rank |
+    +-------------------+--------+------+
+    | Tokuyasu Pesch    | 158220 | 1    |
+    | Tokuyasu Pesch    | 157821 | 2    |
+    | Honesty Mukaidono | 156286 | 3    |
+    | Xiahua Whitcomb   | 155709 | 4    |
+    | Sanjai Luders     | 155513 | 5    |
+    | Tsutomu Alameldin | 155377 | 6    |
+    | Tsutomu Alameldin | 155190 | 7    |
+    | Tsutomu Alameldin | 154888 | 8    |
+    | Tsutomu Alameldin | 154885 | 9    |
+    | Willard Baca      | 154459 | 10   |
+    +-------------------+--------+------+
+    10 rows in set (6.24 sec)
+
+结果分区
+--------
+您可以在 ``OVER`` 子句中对结果进行分区。假设你想找出每年的薪资等级；它可以按如下方式完成：
+
+.. code-block:: shell
+
+    mysql> SELECT hire_date_year, salary, ROW_NUMBER()
+    OVER(PARTITION BY hire_date_year ORDER BY salary
+    DESC) AS 'Rank' FROM employees JOIN salaries ON
+    salaries.emp_no=employees.emp_no ORDER BY salary DESC
+    LIMIT 10;
+    +----------------+--------+------+
+    | hire_date_year | salary | Rank |
+    +----------------+--------+------+
+    | 1985           | 158220 | 1    |
+    | 1985           | 157821 | 2    |
+    | 1986           | 156286 | 1    |
+    | 1985           | 155709 | 3    |
+    | 1987           | 155513 | 1    |
+    | 1985           | 155377 | 4    |
+    | 1985           | 155190 | 5    |
+    | 1985           | 154888 | 6    |
+    | 1985           | 154885 | 7    |
+    | 1985           | 154459 | 8    |
+    +----------------+--------+------+
+    10 rows in set (8.04 sec)
+
+你会注意到 ``1986`` 和 ``1987`` 年的等级改变，而 ``1985`` 年的等级一直连续。
+
+命名窗口
+--------
+你可以命名一个窗口，然后使用多次而不用每次重新定义它：
+
+.. code-block:: shell
+
+    mysql> SELECT hire_date_year, salary, RANK() OVER w
+    AS 'Rank' FROM employees join salaries ON
+    salaries.emp_no=employees.emp_no WINDOW w AS
+    (PARTITION BY hire_date_year ORDER BY salary DESC)
+    ORDER BY salary DESC LIMIT 10;
+    +----------------+--------+------+
+    | hire_date_year | salary | Rank |
+    +----------------+--------+------+
+    | 1985           | 158220 | 1    |
+    | 1985           | 157821 | 2    |
+    | 1986           | 156286 | 1    |
+    | 1985           | 155709 | 3    |
+    | 1987           | 155513 | 1    |
+    | 1985           | 155377 | 4    |
+    | 1985           | 155190 | 5    |
+    | 1985           | 154888 | 6    |
+    | 1985           | 154885 | 7    |
+    | 1985           | 154459 | 8    |
+    +----------------+--------+------+
+    10 rows in set (8.52 sec)
+
+first，last和nth值
+------------------
+您可以在窗口结果中选择第一个，最后一个和第 ``n`` 个值。 如果该行不存在，则返回 ``NULL`` 值。
+
+假设您要从窗口中查找第一个，最后一个和第三个值：
+
+.. code-block:: shell
+
+    mysql> SELECT hire_date_year, salary, RANK() OVER w
+    AS 'Rank',
+    FIRST_VALUE(salary) OVER w AS 'first',
+    NTH_VALUE(salary, 3) OVER w AS 'third',
+    LAST_VALUE(salary) OVER w AS 'last'
+    FROM employees join salaries ON
+    salaries.emp_no=employees.emp_no
+    WINDOW w AS (PARTITION BY hire_date_year ORDER BY
+    salary DESC)
+    ORDER BY salary DESC LIMIT 10;
+
+关于窗口函数的更多信息，请参考 https://mysqlserverteam.com/mysql-8-0-2-introducing-window-functions 和 https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_row-number 。
+
+窗口函数 https://www.cnblogs.com/wy123/archive/2018/03/14/8570011.html
+
+

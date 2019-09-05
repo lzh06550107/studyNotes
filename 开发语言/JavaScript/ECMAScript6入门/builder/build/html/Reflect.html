@@ -1,0 +1,774 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>14. Reflect &mdash; ECMAScript6入门 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="ECMAScript6入门 1.0 文档" href="index.html"/>
+        <link rel="next" title="15. Promise对象" href="Promise对象.html"/>
+        <link rel="prev" title="13. Proxy" href="Proxy.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ECMAScript6入门
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECMAScript6简介.html">2. ECMAScript6简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="let和const命令.html">3. let 和 const 命令</a></li>
+<li class="toctree-l1"><a class="reference internal" href="变量的解构赋值.html">4. 变量的解构赋值</a></li>
+<li class="toctree-l1"><a class="reference internal" href="字符串的扩展.html">5. 字符串的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="正则的扩展.html">6. 正则的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数值的扩展.html">7. 数值的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="函数的扩展.html">8. 函数的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数组的扩展.html">9. 数组的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="对象的扩展.html">10. 对象的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Symbol.html">11. Symbol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Set和Map数据结构.html">12. Set和Map数据结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Proxy.html">13. Proxy</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">14. Reflect</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">14.1. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">14.2. 静态方法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-get-target-name-receiver">14.2.1. Reflect.get(target, name, receiver)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-set-target-name-value-receiver">14.2.2. Reflect.set(target, name, value, receiver)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-has-obj-name">14.2.3. Reflect.has(obj, name)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-deleteproperty-obj-name">14.2.4. Reflect.deleteProperty(obj, name)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-construct-target-args">14.2.5. Reflect.construct(target, args)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-getprototypeof-obj">14.2.6. Reflect.getPrototypeOf(obj)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-setprototypeof-obj-newproto">14.2.7. Reflect.setPrototypeOf(obj, newProto)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-apply-func-thisarg-args">14.2.8. Reflect.apply(func, thisArg, args)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-defineproperty-target-propertykey-attributes">14.2.9. Reflect.defineProperty(target, propertyKey, attributes)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-getownpropertydescriptor-target-propertykey">14.2.10. Reflect.getOwnPropertyDescriptor(target, propertyKey)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-isextensible-target">14.2.11. Reflect.isExtensible (target)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-preventextensions-target">14.2.12. Reflect.preventExtensions(target)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reflect-ownkeys-target">14.2.13. Reflect.ownKeys (target)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#proxy">14.3. 实例：使用 Proxy 实现观察者模式</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Promise对象.html">15. Promise对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterator和for...of循环.html">16. Iterator 和 for…of 循环</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的语法.html">17. Generator函数的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的异步应用.html">18. Generator 函数的异步应用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="async函数.html">19. asyn函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的基本语法.html">20. Class 的基本语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的继承.html">21. Class的继承</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Decorator.html">22. 修饰器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的语法.html">23. Module 的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的加载实现.html">24. Module 的加载实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="编程风格.html">25. 编程风格</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECMAScript6入门</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>14. Reflect</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="reflect">
+<h1>14. Reflect<a class="headerlink" href="#reflect" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>14.1. 概述<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Reflect</span></code> 对象与 <code class="docutils literal"><span class="pre">Proxy</span></code> 对象一样，也是 ES6 为了操作对象而提供的新 <code class="docutils literal"><span class="pre">API</span></code> 。 <code class="docutils literal"><span class="pre">Reflect</span></code> 对象的设计目的有这样几个。</p>
+<ol class="arabic simple">
+<li>将 <code class="docutils literal"><span class="pre">Object</span></code> 对象的一些明显属于语言内部的方法（比如 <code class="docutils literal"><span class="pre">Object.defineProperty</span></code> ），放到 <code class="docutils literal"><span class="pre">Reflect</span></code> 对象上。现阶段，某些方法同时在 <code class="docutils literal"><span class="pre">Object</span></code> 和 <code class="docutils literal"><span class="pre">Reflect</span></code> 对象上部署，未来的新方法将只部署在 <code class="docutils literal"><span class="pre">Reflect</span></code> 对象上。也就是说，从 <code class="docutils literal"><span class="pre">Reflect</span></code> 对象上可以拿到语言内部的方法。</li>
+<li>修改某些 <code class="docutils literal"><span class="pre">Object</span></code> 方法的返回结果，让其变得更合理。比如， <code class="docutils literal"><span class="pre">Object.defineProperty(obj,</span> <span class="pre">name,</span> <span class="pre">desc)</span></code> 在无法定义属性时，会抛出一个错误，而 <code class="docutils literal"><span class="pre">Reflect.defineProperty(obj,</span> <span class="pre">name,</span> <span class="pre">desc)</span></code> 则会返回 <code class="docutils literal"><span class="pre">false</span></code> 。</li>
+</ol>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 老写法</span>
+<span class="k">try</span> <span class="p">{</span>
+  <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">);</span>
+  <span class="c1">// success</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// failure</span>
+<span class="p">}</span>
+
+<span class="c1">// 新写法</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">Reflect</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">))</span> <span class="p">{</span>
+  <span class="c1">// success</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="c1">// failure</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li>让 <code class="docutils literal"><span class="pre">Object</span></code> 操作都变成函数行为。某些 <code class="docutils literal"><span class="pre">Object</span></code> 操作是命令式，比如 <code class="docutils literal"><span class="pre">name</span> <span class="pre">in</span> <span class="pre">obj</span></code> 和 <code class="docutils literal"><span class="pre">delete</span> <span class="pre">obj[name]</span></code> ，而 <code class="docutils literal"><span class="pre">Reflect.has(obj,</span> <span class="pre">name)</span></code> 和 <code class="docutils literal"><span class="pre">Reflect.deleteProperty(obj,</span> <span class="pre">name)</span></code> 让它们变成了函数行为。</li>
+</ol>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 老写法</span>
+<span class="s1">&#39;assign&#39;</span> <span class="k">in</span> <span class="nb">Object</span> <span class="c1">// true</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nb">Object</span><span class="p">,</span> <span class="s1">&#39;assign&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><code class="docutils literal"><span class="pre">Reflect</span></code> 对象的方法与 <code class="docutils literal"><span class="pre">Proxy</span></code> 对象的方法一一对应，只要是 <code class="docutils literal"><span class="pre">Proxy</span></code> 对象的方法，就能在 <code class="docutils literal"><span class="pre">Reflect</span></code> 对象上找到对应的方法。这就让 <code class="docutils literal"><span class="pre">Proxy</span></code> 对象可以方便地调用对应的 <code class="docutils literal"><span class="pre">Reflect</span></code> 方法，完成默认行为，作为修改行为的基础。也就是说，不管 <code class="docutils literal"><span class="pre">Proxy</span></code> 怎么修改默认行为，你总可以在 <code class="docutils literal"><span class="pre">Reflect</span></code> 上获取默认行为。</li>
+</ol>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">Proxy</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">success</span> <span class="o">=</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span><span class="nx">name</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">success</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;property &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; on &#39;</span> <span class="o">+</span> <span class="nx">target</span> <span class="o">+</span> <span class="s1">&#39; set to &#39;</span> <span class="o">+</span> <span class="nx">value</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">success</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">Proxy</span></code> 方法拦截 <code class="docutils literal"><span class="pre">target</span></code> 对象的属性赋值行为。它采用 <code class="docutils literal"><span class="pre">Reflect.set</span></code> 方法将值赋值给对象的属性，确保完成原有的行为，然后再部署额外的功能。</p>
+<p>下面是另一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">loggedObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Proxy</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">get</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="nx">target</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">deleteProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">deleteProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">has</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;has&#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>上面代码中，每一个 <code class="docutils literal"><span class="pre">Proxy</span></code> 对象的拦截操作（ <code class="docutils literal"><span class="pre">get</span></code> 、 <code class="docutils literal"><span class="pre">delete</span></code> 、 <code class="docutils literal"><span class="pre">has</span></code> ），内部都调用对应的 <code class="docutils literal"><span class="pre">Reflect</span></code> 方法，保证原生行为能够正常执行。添加的工作，就是将每一个操作输出一行日志。</p>
+<p>有了 <code class="docutils literal"><span class="pre">Reflect</span></code> 对象以后，很多操作会更易读。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 老写法</span>
+<span class="nb">Function</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">apply</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.75</span><span class="p">])</span> <span class="c1">// 1</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.75</span><span class="p">])</span> <span class="c1">// 1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>14.2. 静态方法<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Reflect</span></code> 对象一共有 13 个静态方法。</p>
+<ul class="simple">
+<li>Reflect.apply(target, thisArg, args)</li>
+<li>Reflect.construct(target, args)</li>
+<li>Reflect.get(target, name, receiver)</li>
+<li>Reflect.set(target, name, value, receiver)</li>
+<li>Reflect.defineProperty(target, name, desc)</li>
+<li>Reflect.deleteProperty(target, name)</li>
+<li>Reflect.has(target, name)</li>
+<li>Reflect.ownKeys(target)</li>
+<li>Reflect.isExtensible(target)</li>
+<li>Reflect.preventExtensions(target)</li>
+<li>Reflect.getOwnPropertyDescriptor(target, name)</li>
+<li>Reflect.getPrototypeOf(target)</li>
+<li>Reflect.setPrototypeOf(target, prototype)</li>
+</ul>
+<p>上面这些方法的作用，大部分与 <code class="docutils literal"><span class="pre">Object</span></code> 对象的同名方法的作用都是相同的，而且它与 <code class="docutils literal"><span class="pre">Proxy</span></code> 对象的方法是一一对应的。下面是对它们的解释。</p>
+<div class="section" id="reflect-get-target-name-receiver">
+<h3>14.2.1. Reflect.get(target, name, receiver)<a class="headerlink" href="#reflect-get-target-name-receiver" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.get</span></code> 方法查找并返回 <code class="docutils literal"><span class="pre">target</span></code> 对象的 <code class="docutils literal"><span class="pre">name</span></code> 属性，如果没有该属性，则返回 <code class="docutils literal"><span class="pre">undefined</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nx">bar</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="nx">get</span> <span class="nx">baz</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">foo</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">bar</span><span class="p">;</span>
+  <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="c1">// 1</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span> <span class="c1">// 2</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">)</span> <span class="c1">// 3</span>
+</pre></div>
+</div>
+<p>如果 <code class="docutils literal"><span class="pre">name</span></code> 属性部署了读取函数（ <code class="docutils literal"><span class="pre">getter</span></code> ），则读取函数的 <code class="docutils literal"><span class="pre">this</span></code> 绑定 <code class="docutils literal"><span class="pre">receiver</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nx">bar</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="nx">get</span> <span class="nx">baz</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">foo</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">bar</span><span class="p">;</span>
+  <span class="p">},</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">myReceiverObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+  <span class="nx">bar</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">,</span> <span class="nx">myReceiverObject</span><span class="p">)</span> <span class="c1">// 8</span>
+</pre></div>
+</div>
+<p>如果第一个参数不是对象， <code class="docutils literal"><span class="pre">Reflect.get</span></code> 方法会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Reflect</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="c1">// 报错</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="c1">// 报错</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reflect-set-target-name-value-receiver">
+<h3>14.2.2. Reflect.set(target, name, value, receiver)<a class="headerlink" href="#reflect-set-target-name-value-receiver" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.set</span></code> 方法设置 <code class="docutils literal"><span class="pre">target</span></code> 对象的 <code class="docutils literal"><span class="pre">name</span></code> 属性等于 <code class="docutils literal"><span class="pre">value</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nx">set</span> <span class="nx">bar</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+  <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="nx">myObject</span><span class="p">.</span><span class="nx">foo</span> <span class="c1">// 1</span>
+
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="nx">myObject</span><span class="p">.</span><span class="nx">foo</span> <span class="c1">// 2</span>
+
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nx">myObject</span><span class="p">.</span><span class="nx">foo</span> <span class="c1">// 3</span>
+</pre></div>
+</div>
+<p>如果 <code class="docutils literal"><span class="pre">name</span></code> 属性设置了赋值函数，则赋值函数的 <code class="docutils literal"><span class="pre">this</span></code> 绑定 <code class="docutils literal"><span class="pre">receiver</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+  <span class="nx">set</span> <span class="nx">bar</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+  <span class="p">},</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">myReceiverObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">myReceiverObject</span><span class="p">);</span>
+<span class="nx">myObject</span><span class="p">.</span><span class="nx">foo</span> <span class="c1">// 4</span>
+<span class="nx">myReceiverObject</span><span class="p">.</span><span class="nx">foo</span> <span class="c1">// 1</span>
+</pre></div>
+</div>
+<p>注意，如果 <code class="docutils literal"><span class="pre">Proxy</span></code> 对象和 <code class="docutils literal"><span class="pre">Reflect</span></code> 对象联合使用，前者拦截赋值操作，后者完成赋值的默认行为，而且传入了 <code class="docutils literal"><span class="pre">receiver</span></code> ，那么 <code class="docutils literal"><span class="pre">Reflect.set</span></code> 会触发 <code class="docutils literal"><span class="pre">Proxy.defineProperty</span></code> 拦截。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">a</span><span class="o">:</span> <span class="s1">&#39;a&#39;</span>
+<span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">handler</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">set</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;set&#39;</span><span class="p">);</span>
+    <span class="nx">Reflect</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="nx">defineProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;defineProperty&#39;</span><span class="p">);</span>
+    <span class="nx">Reflect</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Proxy</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">a</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span><span class="p">;</span>
+<span class="c1">// set</span>
+<span class="c1">// defineProperty</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">Proxy.set</span></code> 拦截里面使用了 <code class="docutils literal"><span class="pre">Reflect.set</span></code> ，而且传入了 <code class="docutils literal"><span class="pre">receiver</span></code> ，导致触发 <code class="docutils literal"><span class="pre">Proxy.defineProperty</span></code> 拦截。这是因为 <code class="docutils literal"><span class="pre">Proxy.set的receiver</span></code> 参数总是指向当前的 <code class="docutils literal"><span class="pre">Proxy</span></code> 实例（即上例的 <code class="docutils literal"><span class="pre">obj</span></code> ），而 <code class="docutils literal"><span class="pre">Reflect.set</span></code> 一旦传入 <code class="docutils literal"><span class="pre">receiver</span></code> ，就会将属性赋值到 <code class="docutils literal"><span class="pre">receiver</span></code> 上面（即 <code class="docutils literal"><span class="pre">obj</span></code> ），导致触发 <code class="docutils literal"><span class="pre">defineProperty</span></code> 拦截。如果 <code class="docutils literal"><span class="pre">Reflect.set</span></code> 没有传入 <code class="docutils literal"><span class="pre">receiver</span></code> ，那么就不会触发 <code class="docutils literal"><span class="pre">defineProperty</span></code> 拦截。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">a</span><span class="o">:</span> <span class="s1">&#39;a&#39;</span>
+<span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">handler</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">set</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;set&#39;</span><span class="p">);</span>
+    <span class="nx">Reflect</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="nx">defineProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;defineProperty&#39;</span><span class="p">);</span>
+    <span class="nx">Reflect</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Proxy</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">a</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span><span class="p">;</span>
+<span class="c1">// set</span>
+</pre></div>
+</div>
+<p>如果第一个参数不是对象， <code class="docutils literal"><span class="pre">Reflect.set</span></code> 会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Reflect</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="p">{})</span> <span class="c1">// 报错</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="p">{})</span> <span class="c1">// 报错</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reflect-has-obj-name">
+<h3>14.2.3. Reflect.has(obj, name)<a class="headerlink" href="#reflect-has-obj-name" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.has</span></code> 方法对应 <code class="docutils literal"><span class="pre">name</span> <span class="pre">in</span> <span class="pre">obj</span></code> 里面的 <code class="docutils literal"><span class="pre">in</span></code> 运算符。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="c1">// 旧写法</span>
+<span class="s1">&#39;foo&#39;</span> <span class="k">in</span> <span class="nx">myObject</span> <span class="c1">// true</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>如果第一个参数不是对象， <code class="docutils literal"><span class="pre">Reflect.has</span></code> 和 <code class="docutils literal"><span class="pre">in</span></code> 运算符都会报错。</p>
+</div>
+<div class="section" id="reflect-deleteproperty-obj-name">
+<h3>14.2.4. Reflect.deleteProperty(obj, name)<a class="headerlink" href="#reflect-deleteproperty-obj-name" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.deleteProperty</span></code> 方法等同于 <code class="docutils literal"><span class="pre">delete</span> <span class="pre">obj[name]</span></code> ，用于删除对象的属性。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">myObj</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">foo</span><span class="o">:</span> <span class="s1">&#39;bar&#39;</span> <span class="p">};</span>
+
+<span class="c1">// 旧写法</span>
+<span class="k">delete</span> <span class="nx">myObj</span><span class="p">.</span><span class="nx">foo</span><span class="p">;</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">deleteProperty</span><span class="p">(</span><span class="nx">myObj</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>该方法返回一个布尔值。如果删除成功，或者被删除的属性不存在，返回 <code class="docutils literal"><span class="pre">true</span></code> ；删除失败，被删除的属性依然存在，返回 <code class="docutils literal"><span class="pre">false</span></code> 。</p>
+</div>
+<div class="section" id="reflect-construct-target-args">
+<h3>14.2.5. Reflect.construct(target, args)<a class="headerlink" href="#reflect-construct-target-args" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.construct</span></code> 方法等同于 <code class="docutils literal"><span class="pre">new</span> <span class="pre">target(...args)</span></code> ，这提供了一种不使用 <code class="docutils literal"><span class="pre">new</span></code> ，来调用构造函数的方法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">Greeting</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// new 的写法</span>
+<span class="kr">const</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Greeting</span><span class="p">(</span><span class="s1">&#39;张三&#39;</span><span class="p">);</span>
+
+<span class="c1">// Reflect.construct 的写法</span>
+<span class="kr">const</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">construct</span><span class="p">(</span><span class="nx">Greeting</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;张三&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reflect-getprototypeof-obj">
+<h3>14.2.6. Reflect.getPrototypeOf(obj)<a class="headerlink" href="#reflect-getprototypeof-obj" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.getPrototypeOf</span></code> 方法用于读取对象的 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性，对应 <code class="docutils literal"><span class="pre">Object.getPrototypeOf(obj)</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">myObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FancyThing</span><span class="p">();</span>
+
+<span class="c1">// 旧写法</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">myObj</span><span class="p">)</span> <span class="o">===</span> <span class="nx">FancyThing</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">myObj</span><span class="p">)</span> <span class="o">===</span> <span class="nx">FancyThing</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Reflect.getPrototypeOf</span></code> 和 <code class="docutils literal"><span class="pre">Object.getPrototypeOf</span></code> 的一个区别是，如果参数不是对象， <code class="docutils literal"><span class="pre">Object.getPrototypeOf</span></code> 会将这个参数转为对象，然后再运行，而 <code class="docutils literal"><span class="pre">Reflect.getPrototypeOf</span></code> 会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// Number {[[PrimitiveValue]]: 0}</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// 报错</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reflect-setprototypeof-obj-newproto">
+<h3>14.2.7. Reflect.setPrototypeOf(obj, newProto)<a class="headerlink" href="#reflect-setprototypeof-obj-newproto" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.setPrototypeOf</span></code> 方法用于设置对象的 <code class="docutils literal"><span class="pre">__proto__</span></code> 属性，返回第一个参数对象，对应 <code class="docutils literal"><span class="pre">Object.setPrototypeOf(obj,</span> <span class="pre">newProto)</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">myObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FancyThing</span><span class="p">();</span>
+
+<span class="c1">// 旧写法</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="nx">myObj</span><span class="p">,</span> <span class="nx">OtherThing</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="nx">myObj</span><span class="p">,</span> <span class="nx">OtherThing</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果第一个参数不是对象， <code class="docutils literal"><span class="pre">Object.setPrototypeOf</span></code> 会返回第一个参数本身，而 <code class="docutils literal"><span class="pre">Reflect.setPrototypeOf</span></code> 会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">Object</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">{})</span>
+<span class="c1">// 1</span>
+
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">{})</span>
+<span class="c1">// TypeError: Reflect.setPrototypeOf called on non-object</span>
+</pre></div>
+</div>
+<p>如果第一个参数是 <code class="docutils literal"><span class="pre">undefined</span></code> 或 <code class="docutils literal"><span class="pre">null</span></code> ， <code class="docutils literal"><span class="pre">Object.setPrototypeOf</span></code> 和 <code class="docutils literal"><span class="pre">Reflect.setPrototypeOf</span></code> 都会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">Object</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">{})</span>
+<span class="c1">// TypeError: Object.setPrototypeOf called on null or undefined</span>
+
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">{})</span>
+<span class="c1">// TypeError: Reflect.setPrototypeOf called on non-object</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reflect-apply-func-thisarg-args">
+<h3>14.2.8. Reflect.apply(func, thisArg, args)<a class="headerlink" href="#reflect-apply-func-thisarg-args" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.apply</span></code> 方法等同于 <code class="docutils literal"><span class="pre">Function.prototype.apply.call(func,</span> <span class="pre">thisArg,</span> <span class="pre">args)</span></code> ，用于绑定 <code class="docutils literal"><span class="pre">this</span></code> 对象后执行给定函数。</p>
+<p>一般来说，如果要绑定一个函数的 <code class="docutils literal"><span class="pre">this</span></code> 对象，可以这样写 <code class="docutils literal"><span class="pre">fn.apply(obj,</span> <span class="pre">args)</span></code> ，但是如果函数定义了自己的 <code class="docutils literal"><span class="pre">apply</span></code> 方法，就只能写成 <code class="docutils literal"><span class="pre">Function.prototype.apply.call(fn,</span> <span class="pre">obj,</span> <span class="pre">args)</span></code> ，采用 <code class="docutils literal"><span class="pre">Reflect</span></code> 对象可以简化这种操作。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">54</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">96</span><span class="p">];</span>
+
+<span class="c1">// 旧写法</span>
+<span class="kr">const</span> <span class="nx">youngest</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nb">Math</span><span class="p">,</span> <span class="nx">ages</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">oldest</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nb">Math</span><span class="p">,</span> <span class="nx">ages</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">type</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">youngest</span><span class="p">);</span>
+
+<span class="c1">// 新写法</span>
+<span class="kr">const</span> <span class="nx">youngest</span> <span class="o">=</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">,</span> <span class="nb">Math</span><span class="p">,</span> <span class="nx">ages</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">oldest</span> <span class="o">=</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">,</span> <span class="nb">Math</span><span class="p">,</span> <span class="nx">ages</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">,</span> <span class="nx">youngest</span><span class="p">,</span> <span class="p">[]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reflect-defineproperty-target-propertykey-attributes">
+<h3>14.2.9. Reflect.defineProperty(target, propertyKey, attributes)<a class="headerlink" href="#reflect-defineproperty-target-propertykey-attributes" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.defineProperty</span></code> 方法基本等同于 <code class="docutils literal"><span class="pre">Object.defineProperty</span></code> ，用来为对象定义属性。未来，后者会被逐渐废除，请从现在开始就使用 <code class="docutils literal"><span class="pre">Reflect.defineProperty</span></code> 代替它。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">MyDate</span><span class="p">()</span> <span class="p">{</span>
+  <span class="cm">/*…*/</span>
+<span class="p">}</span>
+
+<span class="c1">// 旧写法</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">MyDate</span><span class="p">,</span> <span class="s1">&#39;now&#39;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">value</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span>
+<span class="p">});</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">MyDate</span><span class="p">,</span> <span class="s1">&#39;now&#39;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">value</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>如果 <code class="docutils literal"><span class="pre">Reflect.defineProperty</span></code> 的第一个参数不是对象，就会抛出错误，比如 <code class="docutils literal"><span class="pre">Reflect.defineProperty(1,</span> <span class="pre">'foo')</span></code> 。</p>
+<p>这个方法可以与 <code class="docutils literal"><span class="pre">Proxy.defineProperty</span></code> 配合使用。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Proxy</span><span class="p">({},</span> <span class="p">{</span>
+  <span class="nx">defineProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span> <span class="nx">descriptor</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">descriptor</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span> <span class="nx">descriptor</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">p</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span><span class="p">;</span>
+<span class="c1">// {value: &quot;bar&quot;, writable: true, enumerable: true, configurable: true}</span>
+
+<span class="nx">p</span><span class="p">.</span><span class="nx">foo</span> <span class="c1">// &quot;bar&quot;</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">Proxy.defineProperty</span></code> 对属性赋值设置了拦截，然后使用 <code class="docutils literal"><span class="pre">Reflect.defineProperty</span></code> 完成了赋值。</p>
+</div>
+<div class="section" id="reflect-getownpropertydescriptor-target-propertykey">
+<h3>14.2.10. Reflect.getOwnPropertyDescriptor(target, propertyKey)<a class="headerlink" href="#reflect-getownpropertydescriptor-target-propertykey" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.getOwnPropertyDescriptor</span></code> 基本等同于 <code class="docutils literal"><span class="pre">Object.getOwnPropertyDescriptor</span></code> ，用于得到指定属性的描述对象，将来会替代掉后者。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;hidden&#39;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">value</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+<span class="p">});</span>
+
+<span class="c1">// 旧写法</span>
+<span class="kd">var</span> <span class="nx">theDescriptor</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyDescriptor</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;hidden&#39;</span><span class="p">);</span>
+
+<span class="c1">// 新写法</span>
+<span class="kd">var</span> <span class="nx">theDescriptor</span> <span class="o">=</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">getOwnPropertyDescriptor</span><span class="p">(</span><span class="nx">myObject</span><span class="p">,</span> <span class="s1">&#39;hidden&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Reflect.getOwnPropertyDescriptor</span></code> 和 <code class="docutils literal"><span class="pre">Object.getOwnPropertyDescriptor</span></code> 的一个区别是，如果第一个参数不是对象， <code class="docutils literal"><span class="pre">Object.getOwnPropertyDescriptor(1,</span> <span class="pre">'foo')</span></code> 不报错，返回 <code class="docutils literal"><span class="pre">undefined</span></code> ，而 <code class="docutils literal"><span class="pre">Reflect.getOwnPropertyDescriptor(1,</span> <span class="pre">'foo')</span></code> 会抛出错误，表示参数非法。</p>
+</div>
+<div class="section" id="reflect-isextensible-target">
+<h3>14.2.11. Reflect.isExtensible (target)<a class="headerlink" href="#reflect-isextensible-target" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.isExtensible</span></code> 方法对应 <code class="docutils literal"><span class="pre">Object.isExtensible</span></code> ，返回一个布尔值，表示当前对象是否可扩展。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{};</span>
+
+<span class="c1">// 旧写法</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">isExtensible</span><span class="p">(</span><span class="nx">myObject</span><span class="p">)</span> <span class="c1">// true</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">isExtensible</span><span class="p">(</span><span class="nx">myObject</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>如果参数不是对象， <code class="docutils literal"><span class="pre">Object.isExtensible</span></code> 会返回 <code class="docutils literal"><span class="pre">false</span></code> ，因为非对象本来就是不可扩展的，而 <code class="docutils literal"><span class="pre">Reflect.isExtensible</span></code> 会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">Object</span><span class="p">.</span><span class="nx">isExtensible</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// false</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">isExtensible</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// 报错</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reflect-preventextensions-target">
+<h3>14.2.12. Reflect.preventExtensions(target)<a class="headerlink" href="#reflect-preventextensions-target" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.preventExtensions</span></code> 对应 <code class="docutils literal"><span class="pre">Object.preventExtensions</span></code> 方法，用于让一个对象变为不可扩展。它返回一个布尔值，表示是否操作成功。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{};</span>
+
+<span class="c1">// 旧写法</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">preventExtensions</span><span class="p">(</span><span class="nx">myObject</span><span class="p">)</span> <span class="c1">// Object {}</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">preventExtensions</span><span class="p">(</span><span class="nx">myObject</span><span class="p">)</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>如果参数不是对象， <code class="docutils literal"><span class="pre">Object.preventExtensions</span></code> 在 ES5 环境报错，在 ES6 环境返回传入的参数，而 <code class="docutils literal"><span class="pre">Reflect.preventExtensions</span></code> 会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// ES5 环境</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">preventExtensions</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// 报错</span>
+
+<span class="c1">// ES6 环境</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">preventExtensions</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// 1</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">preventExtensions</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// 报错</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reflect-ownkeys-target">
+<h3>14.2.13. Reflect.ownKeys (target)<a class="headerlink" href="#reflect-ownkeys-target" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Reflect.ownKeys</span></code> 方法用于返回对象的所有属性，基本等同于 <code class="docutils literal"><span class="pre">Object.getOwnPropertyNames</span></code> 与 <code class="docutils literal"><span class="pre">Object.getOwnPropertySymbols</span></code> 之和。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nx">bar</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s1">&#39;baz&#39;</span><span class="p">)]</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s1">&#39;bing&#39;</span><span class="p">)]</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="c1">// 旧写法</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyNames</span><span class="p">(</span><span class="nx">myObject</span><span class="p">)</span>
+<span class="c1">// [&#39;foo&#39;, &#39;bar&#39;]</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertySymbols</span><span class="p">(</span><span class="nx">myObject</span><span class="p">)</span>
+<span class="c1">//[Symbol(baz), Symbol(bing)]</span>
+
+<span class="c1">// 新写法</span>
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">ownKeys</span><span class="p">(</span><span class="nx">myObject</span><span class="p">)</span>
+<span class="c1">// [&#39;foo&#39;, &#39;bar&#39;, Symbol(baz), Symbol(bing)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="proxy">
+<h2>14.3. 实例：使用 Proxy 实现观察者模式<a class="headerlink" href="#proxy" title="永久链接至标题">¶</a></h2>
+<p>观察者模式（ <code class="docutils literal"><span class="pre">Observer</span> <span class="pre">mode</span></code> ）指的是函数自动观察数据对象，一旦对象有变化，函数就会自动执行。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">person</span> <span class="o">=</span> <span class="nx">observable</span><span class="p">({</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;张三&#39;</span><span class="p">,</span>
+  <span class="nx">age</span><span class="o">:</span> <span class="mi">20</span>
+<span class="p">});</span>
+
+<span class="kd">function</span> <span class="nx">print</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">person</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">, </span><span class="si">${</span><span class="nx">person</span><span class="p">.</span><span class="nx">age</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">observe</span><span class="p">(</span><span class="nx">print</span><span class="p">);</span>
+<span class="nx">person</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;李四&#39;</span><span class="p">;</span>
+<span class="c1">// 输出</span>
+<span class="c1">// 李四, 20</span>
+</pre></div>
+</div>
+<p>上面代码中，数据对象 <code class="docutils literal"><span class="pre">person</span></code> 是观察目标，函数 <code class="docutils literal"><span class="pre">print</span></code> 是观察者。一旦数据对象发生变化， <code class="docutils literal"><span class="pre">print</span></code> 就会自动执行。</p>
+<p>下面，使用 <code class="docutils literal"><span class="pre">Proxy</span></code> 写一个观察者模式的最简单实现，即实现 <code class="docutils literal"><span class="pre">observable</span></code> 和 <code class="docutils literal"><span class="pre">observe</span></code> 这两个函数。思路是 <code class="docutils literal"><span class="pre">observable</span></code> 函数返回一个原始对象的 <code class="docutils literal"><span class="pre">Proxy</span></code> 代理，拦截赋值操作，触发充当观察者的各个函数。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">queuedObservers</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Set</span><span class="p">();</span>
+
+<span class="kr">const</span> <span class="nx">observe</span> <span class="o">=</span> <span class="nx">fn</span> <span class="p">=&gt;</span> <span class="nx">queuedObservers</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">obj</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="nb">Proxy</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="p">{</span><span class="nx">set</span><span class="p">});</span>
+
+<span class="kd">function</span> <span class="nx">set</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">);</span>
+  <span class="nx">queuedObservers</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">observer</span> <span class="p">=&gt;</span> <span class="nx">observer</span><span class="p">());</span>
+  <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，先定义了一个 <code class="docutils literal"><span class="pre">Set</span></code> 集合，所有观察者函数都放进这个集合。然后， <code class="docutils literal"><span class="pre">observable</span></code> 函数返回原始对象的代理，拦截赋值操作。拦截函数 <code class="docutils literal"><span class="pre">set</span></code> 之中，会自动执行所有观察者。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Promise对象.html" class="btn btn-neutral float-right" title="15. Promise对象" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Proxy.html" class="btn btn-neutral" title="13. Proxy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+
+      });
+
+
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script>
+   
+
+</body>
+</html>

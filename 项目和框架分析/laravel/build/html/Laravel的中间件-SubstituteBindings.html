@@ -1,0 +1,575 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>12. 中间件SubstituteBindings &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="13. 中间件CSRF" href="Laravel的中间件-CSRF.html"/>
+        <link rel="prev" title="11. 中间件" href="Laravel的中间件.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. 中间件SubstituteBindings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">12.1. 前言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">12.2. SubstituteBindings 中间件的使用</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">12.2.1. 数据库模型隐性转化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">12.2.2. 路由显式绑定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">12.3. SubstituteBindings 中间件的源码解析</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">12.3.1. 隐性参数转化源码解析</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bind">12.3.2. bind 显式参数绑定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model">12.3.3. model 显示参数绑定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">12.3.4. 路由参数转化</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>12. 中间件SubstituteBindings</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="substitutebindings">
+<h1>12. 中间件SubstituteBindings<a class="headerlink" href="#substitutebindings" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>12.1. 前言<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>当路由与请求进行正则匹配后，各个路由的参数就获得了它们各自的数值。然而，有些路由参数变量，我们还想要把它转化为特定的对象，这时候就需要中间件的帮助。 <code class="docutils literal"><span class="pre">SubstituteBindings</span></code> 中间件就是一个将路由参数转化为特定对象的组件，它默认可以将特定名称的路由参数转化数据库模型对象，可以转化已绑定的路由参数为把绑定的对象。</p>
+</div>
+<div class="section" id="id2">
+<h2>12.2. SubstituteBindings 中间件的使用<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id3">
+<h3>12.2.1. 数据库模型隐性转化<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>首先我们定义了一个带有路由参数的路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">put</span><span class="p">(</span><span class="s1">&#39;user/{userid}&#39;</span><span class="p">,</span> <span class="s1">&#39;UserController@update&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>然后我们在路由的控制器方法中或者路由闭包函数中定义一个数据库模型类型的参数，这个参数名与路由参数相同：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">update</span><span class="p">(</span><span class="nx">UserModel</span> <span class="nv">$userid</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$userid</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="s1">&#39;taylor&#39;</span><span class="p">;</span>
+        <span class="nv">$userid</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这时，路由的参数会被中间件隐性地转化为 <code class="docutils literal"><span class="pre">UserModel</span></code> ，且模型变量 <code class="docutils literal"><span class="pre">$userid</span></code> 的主键值为参数变量 <code class="docutils literal"><span class="pre">{userid}</span></code> 正则匹配后的数值。</p>
+</div>
+<div class="section" id="id4">
+<h3>12.2.2. 路由显式绑定<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>除了隐式地转化路由参数外，我们还可以给路由参数显示提供绑定。显示绑定有 <code class="docutils literal"><span class="pre">bind</span></code> 、<code class="docutils literal"><span class="pre">model</span></code> 两种方法。</p>
+<ul>
+<li><p class="first">通过 bind 为参数绑定闭包函数</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">testRouteBinding</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$router</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRouter</span><span class="p">();</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/{bar}&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;middleware&#39;</span> <span class="o">=&gt;</span> <span class="nx">SubstituteBindings</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="s1">&#39;uses&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="p">}]);</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+    <span class="p">});</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="s1">&#39;TAYLOR&#39;</span><span class="p">,</span> <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">Request</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;foo/taylor&#39;</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">getContent</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">通过 <code class="docutils literal"><span class="pre">model</span></code> 为参数绑定数据库模型，路由的参数就不需要和控制器方法中的变量名相同，laravel 会利用路由参数的值去调用 <code class="docutils literal"><span class="pre">where</span></code> 方法查找对应记录：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$model</span> <span class="o">=</span> <span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">getRouteKeyName</span><span class="p">(),</span> <span class="nv">$value</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">())</span> <span class="p">{</span>
+     <span class="k">return</span> <span class="nv">$model</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>12.3. SubstituteBindings 中间件的源码解析<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">SubstituteBindings</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nx">Closure</span> <span class="nv">$next</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">router</span><span class="o">-&gt;</span><span class="na">substituteBindings</span><span class="p">(</span><span class="nv">$route</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">());</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">router</span><span class="o">-&gt;</span><span class="na">substituteImplicitBindings</span><span class="p">(</span><span class="nv">$route</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nv">$next</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>从代码来看， <code class="docutils literal"><span class="pre">substituteBindings</span></code> 用于显示的参数转化， <code class="docutils literal"><span class="pre">substituteImplicitBindings</span></code> 用于隐性的参数转化。</p>
+<div class="section" id="id6">
+<h3>12.3.1. 隐性参数转化源码解析<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>进行隐性参数转化，其步骤为：</p>
+<ul class="simple">
+<li>扫描控制器方法或者闭包函数所有的参数，提取出数据库模型类型对象；</li>
+<li>根据模型类型对象的 <code class="docutils literal"><span class="pre">name</span></code> ，找出与模型对象命名相同的路由参数；</li>
+<li>根据模型类型对象的 <code class="docutils literal"><span class="pre">classname</span></code> ，构建数据库模型类型对象，根据路由参数的数值在数据库中执行 <code class="docutils literal"><span class="pre">sql</span></code> 语句查询；</li>
+<li>最后，使用模型对象替换路由参数对应的值；</li>
+</ul>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">public static function resolveForRoute($container, $route)</span>
+<span class="x">{</span>
+<span class="x">    $parameters = $route-&gt;parameters();</span>
+
+<span class="x">    foreach ($route-&gt;signatureParameters(UrlRoutable::class) as $parameter) {</span>
+<span class="x">        if (! $parameterName = static::getParameterName($parameter-&gt;name, $parameters)) {</span>
+<span class="x">            continue;</span>
+<span class="x">        }</span>
+
+<span class="x">        $parameterValue = $parameters[$parameterName];</span>
+
+<span class="x">        if ($parameterValue instanceof UrlRoutable) { // 如果已经是模型对象，则不用处理</span>
+<span class="x">            continue;</span>
+<span class="x">        }</span>
+
+<span class="x">        $instance = $container-&gt;make($parameter-&gt;getClass()-&gt;name);</span>
+
+<span class="x">        if (! $model = $instance-&gt;resolveRouteBinding($parameterValue)) {</span>
+<span class="x">            throw (new ModelNotFoundException)-&gt;setModel(get_class($instance));</span>
+<span class="x">        }</span>
+
+<span class="x">        $route-&gt;setParameter($parameterName, $model);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// 获取指定类型的参数</span>
+<span class="x">public function signatureParameters($subClass = null)</span>
+<span class="x">{</span>
+<span class="x">    return RouteSignatureParameters::fromAction($this-&gt;action, $subClass);</span>
+<span class="x">}</span>
+
+<span class="x">public static function fromAction(array $action, $subClass = null)</span>
+<span class="x">{</span>
+<span class="x">    $parameters = is_string($action[&#39;uses&#39;])</span>
+<span class="x">        ? static::fromClassMethodString($action[&#39;uses&#39;])</span>
+<span class="x">        : (new ReflectionFunction($action[&#39;uses&#39;]))-&gt;getParameters();</span>
+
+<span class="x">    return is_null($subClass) ? $parameters : array_filter($parameters, function ($p) use ($subClass) {</span>
+<span class="x">        return $p-&gt;getClass() &amp;&amp; $p-&gt;getClass()-&gt;isSubclassOf($subClass);</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+
+<span class="x">protected static function getParameterName($name, $parameters)</span>
+<span class="x">{</span>
+<span class="x">    if (array_key_exists($name, $parameters)) {</span>
+<span class="x">        return $name;</span>
+<span class="x">    }</span>
+<span class="x">    // 支持路由参数使用蛇形命名</span>
+<span class="x">    if (array_key_exists($snakedName = Str::snake($name), $parameters)) {</span>
+<span class="x">        return $snakedName;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">public function resolveRouteBinding($value)</span>
+<span class="x">{</span>
+<span class="x">    return $this-&gt;where($this-&gt;getRouteKeyName(), $value)-&gt;first();</span>
+<span class="x">}</span>
+
+<span class="x">public function getRouteKeyName()</span>
+<span class="x">{</span>
+<span class="x">    return $this-&gt;getKeyName(); // 可自定义检索键名</span>
+<span class="x">}</span>
+</pre></div>
+</div>
+<p>值得注意的是，显示参数转化的优先级要高于隐性转化，如果当前参数已经被 <code class="docutils literal"><span class="pre">model</span></code> 函数显示转化，那么该参数并不会进行隐性转化，也就是上面语句 <code class="docutils literal"><span class="pre">if</span> <span class="pre">($parameterValue</span> <span class="pre">instanceof</span> <span class="pre">UrlRoutable)</span> <span class="pre">{</span></code> 的作用。</p>
+</div>
+<div class="section" id="bind">
+<h3>12.3.2. bind 显式参数绑定<a class="headerlink" href="#bind" title="永久链接至标题">¶</a></h3>
+<p>路由的 <code class="docutils literal"><span class="pre">bind</span></code> 功能由 <code class="docutils literal"><span class="pre">Router</span></code> 专门的 <code class="docutils literal"><span class="pre">binders</span></code> 数组负责，这个数组中保存着所有的需要显示转化的路由参数与他们的转化闭包函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">bind</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$binder</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">binders</span><span class="p">[</span><span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="nv">$key</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">RouteBinding</span><span class="o">::</span><span class="na">forCallback</span><span class="p">(</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="p">,</span> <span class="nv">$binder</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">RouteBinding</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">forCallback</span><span class="p">(</span><span class="nv">$container</span><span class="p">,</span> <span class="nv">$binder</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">is_string</span><span class="p">(</span><span class="nv">$binder</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="na">createClassBinding</span><span class="p">(</span><span class="nv">$container</span><span class="p">,</span> <span class="nv">$binder</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$binder</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">createClassBinding</span><span class="p">(</span><span class="nv">$container</span><span class="p">,</span> <span class="nv">$binding</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nv">$route</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$container</span><span class="p">,</span> <span class="nv">$binding</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">list</span><span class="p">(</span><span class="nv">$class</span><span class="p">,</span> <span class="nv">$method</span><span class="p">)</span> <span class="o">=</span> <span class="nx">Str</span><span class="o">::</span><span class="na">parseCallback</span><span class="p">(</span><span class="nv">$binding</span><span class="p">,</span> <span class="s1">&#39;bind&#39;</span><span class="p">);</span>
+
+            <span class="nv">$callable</span> <span class="o">=</span> <span class="p">[</span><span class="nv">$container</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nv">$class</span><span class="p">),</span> <span class="nv">$method</span><span class="p">];</span>
+
+            <span class="k">return</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$callable</span><span class="p">,</span> <span class="nv">$value</span><span class="p">,</span> <span class="nv">$route</span><span class="p">);</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看出， <code class="docutils literal"><span class="pre">bind</span></code> 函数可以绑定闭包、 <code class="docutils literal"><span class="pre">classname&#64;method</span></code> 、 <code class="docutils literal"><span class="pre">classname</span></code> ，如果仅仅绑定了一个类名，那么程序默认调用类中 <code class="docutils literal"><span class="pre">bind</span></code> 方法。</p>
+</div>
+<div class="section" id="model">
+<h3>12.3.3. model 显示参数绑定<a class="headerlink" href="#model" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">model</span></code> 调用 <code class="docutils literal"><span class="pre">bind</span></code> 函数，赋给 <code class="docutils literal"><span class="pre">bind</span></code> 函数一个提前包装好的闭包函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">model</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$class</span><span class="p">,</span> <span class="nx">Closure</span> <span class="nv">$callback</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nx">RouteBinding</span><span class="o">::</span><span class="na">forModel</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="p">,</span> <span class="nv">$class</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">RouteBinding</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">forModel</span><span class="p">(</span><span class="nv">$container</span><span class="p">,</span> <span class="nv">$class</span><span class="p">,</span> <span class="nv">$callback</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$container</span><span class="p">,</span> <span class="nv">$class</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">is_null</span><span class="p">(</span><span class="nv">$value</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nv">$instance</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nv">$class</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nv">$model</span> <span class="o">=</span> <span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">getRouteKeyName</span><span class="p">(),</span> <span class="nv">$value</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nv">$model</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nv">$callback</span> <span class="nx">instanceof</span> <span class="nx">Closure</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$callback</span><span class="p">,</span> <span class="nv">$value</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">throw</span> <span class="p">(</span><span class="k">new</span> <span class="nx">ModelNotFoundException</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">setModel</span><span class="p">(</span><span class="nv">$class</span><span class="p">);</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看出，这个闭包函数与隐性转化很相似，都是首先创建数据库模型对象，再利用路由参数值来查询数据库，返回对象。 <code class="docutils literal"><span class="pre">model</span></code> 还可以提供默认的闭包函数，以供查询不到数据库时调用。</p>
+</div>
+<div class="section" id="id7">
+<h3>12.3.4. 路由参数转化<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>当运行中间件 <code class="docutils literal"><span class="pre">SubstituteBindings</span></code> 时，就会将先前绑定的各个闭包函数执行，并对路由参数进行转化：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">substituteBindings</span><span class="p">(</span><span class="nv">$route</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$route</span><span class="o">-&gt;</span><span class="na">parameters</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">binders</span><span class="p">[</span><span class="nv">$key</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">performBinding</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">,</span> <span class="nv">$route</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$route</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">performBinding</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">,</span> <span class="nv">$route</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">binders</span><span class="p">[</span><span class="nv">$key</span><span class="p">],</span> <span class="nv">$value</span><span class="p">,</span> <span class="nv">$route</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">setParameter</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$value</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">parameters</span><span class="p">();</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">parameters</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$value</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的中间件-CSRF.html" class="btn btn-neutral float-right" title="13. 中间件CSRF" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的中间件.html" class="btn btn-neutral" title="11. 中间件" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

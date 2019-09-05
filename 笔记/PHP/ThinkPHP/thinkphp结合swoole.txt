@@ -1,0 +1,204 @@
+	
+#swoole 与Thinkphp配置结合
+	注意：swoole结合thinkphp因为swoole的缓存原因后面在做thinkphp开发时需要特别注意的是在使用thinkphp时会因为swoole的缓存原因会造成一些麻烦。
+	
+	
+	<?php
+	/**
+	* Created by PhpStorm.
+	* User: baidu
+	* Date: 18/2/28
+	* Time: 上午1:39
+	*/
+	
+	$http = new swoole_http_server("0.0.0.0", 8812);
+	
+	$http->set(
+		[
+			'enable_static_handler' => true,
+			'document_root' => "/home/wwwroot/default/b33joz/thinkphp/public/static/",
+			'worker_num'=>5,
+	]
+	);
+	
+	#载入thinkphp核心文件使swoole支持thinkphp
+	$http->on('WorkerStart',function($server,$worker_id){
+	//定义应用目录  singwa
+	define('APP_PATH',__DIR__.'/../application/');
+	
+	//加载框架里面的文件
+	require __DIR__.'/../ThinkPHP/base.php';
+	});
+	
+	//对swoole请求进行转换	例如 get ,post之类的，因为swoole与thinkphp的请求不一样
+	$http->on('request', function($request, $response) use($http){
+			
+	//因为 thinkphp 和swoole 的请求不一样所以需要在这里做一个转换
+	$_SERVER=[];
+	if(isset($request->server)){
+			foreach($request->server as $k=>$v){
+			$_SERVER[strtoupper($k)]=$v; 
+			}  
+	}
+	
+	if(isset($request->header)){
+			foreach($request->header as $k=>$v){
+			$_SERVER[strtoupper($k)]=$v;
+			}
+	}
+	$_GET=[];
+	if(isset($request->get)){
+			foreach($request->get as $k=>$v){
+			$_GET[$k]=$v;
+			}
+	}
+	$_POST=[];
+	if(isset($request->post)){
+			foreach($request->post as $k=>$v){
+			$_POST[$k]=$v;
+			}
+	}
+	
+	ob_start();
+	
+	//执行应用并响应
+	try{
+	think\Container::get('app',[APP_PATH])->run()->send();
+	}catch(\Exception $e){
+	echo '有错误！！！！！！！！！！';
+	}
+	$res=ob_get_contents();
+	ob_end_clean();
+	$response->cookie("singwa", "xsssss", time() + 1800);
+	$response->end($res);
+	$http->close();
+	});
+	
+	$http->start();
+
+	?>
+
+
+
+
+
+
+
+
+	
+
+
+
+
+	##在 Thinkphp 源码文件中找到 Request.php文件 修改路由缓存
+	
+	
+		路径 ./ThinkPHP/library/think/Request.php
+		
+		找到  pathinfo() 和  path() 方法  然后注释掉 if (is_null($this->pathinfo)) 和if (is_null($this->path)) 
+		
+		
+		
+		
+		/**
+		  * 获取当前请求URL的pathinfo信息（含URL后缀）
+		  * @access public
+		  * @return string
+		  */
+		public function pathinfo()
+		{
+		// if (is_null($this->pathinfo)) {
+				if (isset($_GET[$this->config->get('var_pathinfo')])) {
+					// 判断URL里面是否有兼容模式参数
+					$_SERVER['PATH_INFO'] = $_GET[$this->config->get('var_pathinfo')];
+					unset($_GET[$this->config->get('var_pathinfo')]);
+				} elseif ($this->isCli()) {
+					// CLI模式下 index.php module/controller/action/params/...
+					$_SERVER['PATH_INFO'] = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '';
+				} elseif ('cli-server' == PHP_SAPI) {
+					$_SERVER['PATH_INFO'] = strpos($_SERVER['REQUEST_URI'], '?') ? strstr($_SERVER['REQUEST_URI'], '?', true) : $_SERVER['REQUEST_URI'];
+				}
+	
+				// 分析PATHINFO信息
+				if (!isset($_SERVER['PATH_INFO'])) {
+					foreach ($this->config->get('pathinfo_fetch') as $type) {
+						if (!empty($_SERVER[$type])) {
+							$_SERVER['PATH_INFO'] = (0 === strpos($_SERVER[$type], $_SERVER['SCRIPT_NAME'])) ?
+							substr($_SERVER[$type], strlen($_SERVER['SCRIPT_NAME'])) : $_SERVER[$type];
+							break;
+						}
+					}
+				}
+	
+				$this->pathinfo = empty($_SERVER['PATH_INFO']) || '/' == $_SERVER['PATH_INFO'] ? '' : ltrim($_SERVER['PATH_INFO'], '/');
+		// }
+	
+			return $this->pathinfo;
+		}
+
+
+		
+		
+		/**
+		  * 获取当前请求URL的pathinfo信息(不含URL后缀)
+		  * @access public
+		  * @return string
+		  */
+		public function path()
+		{
+		// if (is_null($this->path)) {
+				$suffix   = $this->config->get('url_html_suffix');
+				$pathinfo = $this->pathinfo();
+				if (false === $suffix) {
+					// 禁止伪静态访问
+					$this->path = $pathinfo;
+				} elseif ($suffix) {
+					// 去除正常的URL后缀
+					$this->path = preg_replace('/\.(' . ltrim($suffix, '.') . ')$/i', '', $pathinfo);
+				} else {
+					// 允许任何后缀访问
+					$this->path = preg_replace('/\.' . $this->ext() . '$/i', '', $pathinfo);
+				}
+		// }
+	
+			return $this->path;
+		}
+
+		##thinkphp 访问 Index 模块 http://192.168.0.106:8812/?s=index/index/singwa
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

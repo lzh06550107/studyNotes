@@ -1,0 +1,2327 @@
+#!/bin/bash
+
+#	1、Shell 是什么
+#	
+#		Shell 是一个命令行解释器，它为用户提供了一个向Linux内核发送请求以便运行程序界面系统级程序，用户
+#	可以用Shell来启动，挂起、停止甚至是编写一些程序。
+#	
+#		Shell 还是一个功能相当强大的编程语言，易编写，易调试，灵活性较强。Shell是解释执行的脚本语言，
+#	在Shell中可以直接调用Linux系统命令。
+#	
+#		Shell 的两种主要语法类型有Bourne和C，这两种语法彼此不兼容。Bourne家族主要包括sh、ksh、Bash、psh、zsh、；
+#	C家族主要包括：csh、tcsh
+#	对于linux来讲主要是Bash 的shell
+	
+	2、echo 输出命令
+	[root@localhost ~]# echo [选项][输出内容]
+#	选项：
+#		-e:	支持反斜线控制的字符转换
+#		\\:	输出\本身
+#		\a: 输出警告音
+#		\b: 退格键，也就是向左删除键
+#		\c: 取消输出行末的换行符。和"-n" 选项一致
+#		\e: ESCAPE键
+#		\f: 换页符
+#		\n: 换行符
+#		\r: 回车键
+#		\t: 制表符，也就是Tab键
+#		\v: 取值制表符 
+#	 \Onnn: 按照八进制ASCLL码表输出字符。其中0为数字零，nnn是3位八进制数
+#	  \xhh: 按照十六禁止ASCLL码表输出字符。其中hh是两位十六进制数
+	  
+	  例：
+	  [root@localhost ~]# echo -e "ab\bc"
+	  #删除左侧字符
+	  
+	  [root@localhost ~]# echo -e "a\tb\tc\nd\te\tf"
+	  #制表符与换行符
+	  [root@localhost ~]# echo -e "\e[1;31m abcd \e[0m" #输出红色abcd字体
+	  [root@localhost ~]# echo -e "\e[1;32m abcd \e[0m" #输出绿色abcd字体
+	  #输出颜色
+	  #30m=黑色，31m=红色，32m=绿色，33m=黄色，
+	  #34m=蓝色，35m=洋红，36m=青色，37m=白色
+	  
+#	  颜色函数
+	  [root@localhost ~]# vim color.sh 
+	  #!/bin/sh
+	  RED_COLOR='\E[1;31m'
+	  GREEN_COLOR='\E[1;32m'
+	  YELLOW_COLOR='\E[1;33m'
+	  BLUE_COLOR='\E[1;34m'
+	  PINK='\E[1;35m'
+	  RES='\E[0m'
+	
+	  usage(){
+	  	if [ $# -ne 2 ];then  
+	  	echo "USAGE:$0 {red|green|yellow}" contents
+	  	exit 1
+	  fi
+	  }
+
+	  color(){
+	  	if [ "$1" = "red" ];then 
+	  	echo -e "${RED_COLOR}$2 $RES"
+	  	elif [ "$1" = "green" ];then 
+	  	echo -e "${GREEN_COLOR}$2 $RES"
+	  	elif [ "$1" = "yellow" ];then
+	  	echo -e "${YELLOW_COLOR}$2 $RES"
+	  	else 
+	  	usage
+	  	fi
+	  }
+
+	  main(){
+	  if [ $# -ne 2 ];then 
+	  	usage 
+	  	fi 
+	  	color $1 $2
+	  }
+	  main $*
+
+	  [root@localhost ~]# sh color.sh red hhhhhh
+	  hhhhhh
+	  
+■ 第一个shell脚本
+	[root@localhost ~]vi hello.sh
+	#!/bin/bash
+	#The first program 
+	#Author:shenchao (E-mail:shenchao@lampbrother.net)
+	
+	echo -e "Mr.Shen Chao is the most honset man in LampBrother"
+	
+	脚本执行
+	赋予执行权限，直接运行
+	chmod 755 hello.sh 
+	./hello.sh 
+	通过Bash 调用执行脚本
+	bash hello.sh
+	
+■ 命令别名
+	[root@localhost ~]# alias 别名='源命令'
+	#设定命令别名
+	例：
+	[root@localhost ~]# alias vi='vim'
+	[root@localhost ~]# alias 
+	#查询命令别名
+		
+#	1  第一顺序执行用绝对路径或相对路径执行的命令
+#	2  第二顺位执行别名
+#	3  第三位执行Bash的内部命令
+#	4  第四顺位执行按照$PATH环境变量定义的目录查找顺序找到的第一个命令。
+	
+	
+■ 让别名永久生效
+	[root@localhost ~]# vi /root/.bashrc
+	# .bashrc
+	
+	# User specific aliases and functions
+	
+	alias rm='rm -i'
+	alias cp='cp -i'
+	alias mv='mv -i'
+
+Bash 常用快捷键
+#	ctrl+A 	把光标移动到命令行开头。如果我们输入的命令过长，响应把光标移动到命令行开头时使用
+#	
+#	ctrl+E 	把光标移动到命令行结尾
+#	
+#	ctrl+C 	强制终止当前的命令
+#	
+#	ctrl+L 	清屏，相当于clear命令。
+#	
+#	ctrl+U 	删除或剪切光标之前的命令。我输入了一行很长的命令，不用使用退格键一个一个字符的删
+#	
+#			除使用这个快捷键会更加方便
+#			
+#	ctrl+K 	删除或剪切光标之后的内容。
+#	
+#	ctrl+Y 	粘贴ctrl+U 或Ctrl+K剪切的内容
+#	
+#	ctrl+R 	在历史命令中搜索，按下Ctrl+R之后，就会出现搜索界面，只要输入搜索内容，就会从历史
+#			命令中搜索。
+#		
+#	ctrl+D 	退出当前终端。
+#	
+#	ctrl+Z 	暂停执行当前脚本或任务
+#	
+#	ctrl+S 	暂停屏幕输出。
+#	
+#	ctrl+Q 	恢复屏幕输出。
+
+
+
+
+
+	1、标准的输入输出
+	+-----------------+-----------------+-----------------+-----------------+
+	|		设备	  |	  设备文件名	|	文件描述	  | 	类型		|
+	+-----------------+-----------------+-----------------+-----------------+
+	|		键盘	  |	  /dev/stdin	|		0		  |    标准输入		|
+	+-----------------+-----------------+-----------------+-----------------+	
+	|		显示器	  |	  /dev/sdtout	|		1		  |    标准输出		|
+	+-----------------+-----------------+-----------------+-----------------+		
+	|		显示器	  |	  /dev/sdterr	|		2		  |   标准错误输出	|
+	+-----------------+-----------------+-----------------+-----------------+		
+	
+	
+	2、输出重定向（把命令的结果保存到文件里）
+	
+	+--------------------+------------------+--------------------------------------------------------------------+
+	|		 类型	     |	  	  符号		|		作用	  													 |
+	+--------------------+------------------+--------------------------------------------------------------------+
+	|  				     |	命令 > 文件		|以覆盖的方式，把命令的正确输出输出到指定的文件或设备当中。		  	 |
+	+   标准输出重定向   +------------------+--------------------------------------------------------------------+
+	|				     |	命令 >> 文件 	|以追加的方式，把命令的正确输出输出到指定的文件或设备当中。			 |
+	+--------------------+------------------+--------------------------------------------------------------------+	
+	|				   	 |  错误命令2>文件 	|以覆盖的方式，把命令的错误输出输出到指定的文件或设备当中。		  	 |
+	+ 标准错误输出重定向 +------------------+--------------------------------------------------------------------+
+	|				   	 |  错误命令2>>文件	|以追加的方式，把命令的错误输出输出到指定的文件或设备当中。  		 |
+	+--------------------+------------------+--------------------------------------------------------------------+	
+	
+	3、输入重定向
+	[root@localhost ~]# wc [选项][文件名]
+	选项：
+		-c 统计字节
+		-w 统计单词数
+		-l 统计行数
+	
+	
+■ 多命令顺序执行
+	+--------------+-----------------+------------------------------------------------+
+	| 多命令执行符 | 	   格式      |					作用						  |
+	+--------------+-----------------+------------------------------------------------+
+	|	;    	   |	命令1;命令2  | 多命令顺序执行，命令之间没有任何逻辑联系		  |
+	+--------------+-----------------+------------------------------------------------+
+	|	&&    	   |	命令1&&命令2 | 逻辑与  当命令1正确执行，则命令2才会执行		  |
+	|			   |				 | 		   当命令1执行不正确，则命令2不会执行	  |
+	+--------------+-----------------+------------------------------------------------+
+	|	||    	   |	命令1||命令2 | 逻辑或  当命令1执行不正确，则命令2才会执行	  |
+	|			   |				 | 		   当命令1正确执行，则命令2不会执行		  |
+	+--------------+-----------------+------------------------------------------------+
+	例子：
+		[root@localhost ~]# ls;date;cd /user;pwd
+		
+		
+		
+#		dd：命令是linux当中进行磁盘负载或者是数据复制但是它不是cp ,cp只能复制文件但是dd可以复制特殊命令特殊文件也能复
+#	制分区甚至整个硬盘不光是复制分区或是硬盘当中的数据还复制我们分区或者硬盘当中的文件系统
+#
+#		[root@localhost ~]# dd if = 输入文件 of=输出文件 bs=字节数 count=个数
+#		选项:
+#			if =输入文件      指定源文件或源设备
+#			of =输出文件 	  指定目标文件或目标设备
+#			bs =字节数		  指定一次输入/输出多少字节，即把这些字节看做一个数据块
+#			count=个数		  指定输入/输出多少个数据块
+	例子 ：
+		/dev/zero 是零
+		[root@localhost ~]# date; dd if=/dev/zero of=/root/testfile bs=1k count=100000;date  ; 把zero做为源文件向目标文件testfile中不停的写，每一次写 1k 总共写 100000
+		
+		[root@localhost ~]# grep [选项] "搜索内容"
+		文件名 
+#		选项：
+#		-i : 忽略大小写
+#		-n : 输出行号
+#		-v : 反向查找
+#		--color=auto 搜索输出关键字用颜色显示
+ 	通配符
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	 通配符	  |		作用																			  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	 	？	  |	匹配一个任意字符																	  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	 	*	  |	匹配0个或任意多个任意字符，也就是可以匹配任何内容									  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	   []	  |	匹配中括号中任意一个字符。例如：[abc]代表移动匹配一个字符，或者是a，或者是b，或者是c。|
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	   [-]	  |	匹配中括号中任意一个字符。-代表一个范围。例如：[a-z]代表匹配一个小写字母。			  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	   [^]	  |	逻辑非，表示匹配不是中括号内的一个字符。例如：[^0-9]代表匹配一个不是数字的字符。	  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	
+# 	Bash中其他特殊符号
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	 符号	  |		作用																			  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	 	''	  |	单引号。在单引号中所有 的特殊符号，如"$"和"'"(反引号)都没有特殊含义					  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	 	""	  |	双引号。在双引号中特殊符号都没有特殊含义，但是"$","'"和"\"是例外，拥有"调用变量的值"，|
+#	|			  | "引用命令"和"转义符"的特殊含义。									  				  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	   ``	  |	反引号。反引号括起来的内容是系统命令，在Bash中会先执行它，和$()作用一样，不过推荐使用 |
+#	|			  |	$()，因为反引号非常容易看错。														  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	   $()	  | 和反引号作用一样，用来引用系统命令。												  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	   #	  |	在shell脚本中，#开头的行代表注释。													  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	   $	  |	用于调用变量的值，如需要调用变量name的值时，需要用$name的方式得到变量的值。			  |
+#	+-------------+---------------------------------------------------------------------------------------+
+#	| 	   \	  |	转义符，跟在\之后的特殊符号将失去特殊含义，变为普通字符。如\$将输出 "$" 符号，而不当做|
+#	|			  | 是变量引用												  							  |		
+#	+-------------+---------------------------------------------------------------------------------------+
+	
+	$()的案例：
+	[root@bogon ~]# abc=$(date)
+	[root@bogon ~]# echo $abc
+	Sun Aug 5 22:30:39 CST 2018
+
+	▣ 设置环境变量
+	export 变量名=变量值
+	
+	env 
+	#查询变量
+	
+	unset 变量名 
+	#删除变量
+	
+	▣  source 命令
+	▣ 系统中的环境变量配置文件
+	/etc/profile
+	/etc/profile.d/*.sh 
+	~/.bash_profile
+	~/.bashrc 
+	/etc/bashrc
+	
+#	环境变量配置文件调用流程
+#	+---------------+     +-------------------+     +---------------+     +---------------+      +---------------+     
+#	| /etc/profile  |---->|  ~/.bash_profile  |---->| 	./bashrc    |---->|  /etc/bashrc  |----> |  命令提示符   |
+#	+---------------+     +-------------------+     +---------------+     +---------------+      +---------------+   
+#		│																	  	 │
+#		│	+-----------------------+ 										     │    	
+#		└─->|  /etc/profile.d/*.sh  |<-------------------------------------------┘		
+#			+-----------------------+   
+#					│
+#					↓
+#			+-------------------------+     +---------------------+
+#			| /etc/profile.d/lang.sh  |---->| /etc/sysconfig/i18n |
+#			+-------------------------+     +---------------------+
+#			
+#			
+#	/etc/profile 的作用
+#		USER 变量：
+#		LOGNAME变量：
+#		MAIL 变量：
+#		PATH 变量：
+#		HOSTNAME 变量:
+#		HISTSIZE 变量： 
+#		umask :
+#		调用/etc/profile.d/*.sh 文件
+#	
+#	
+#	
+
+▣ 定义系统提示符的变量  ps1:
+	
+#	\d : 显示日期，格式为"星期 月 日"
+#	\h : 显示简写主机名。如默认主机名"localhost"
+#	\t : 显示24小时制时间，格式为 "HH:MM:SS"
+#	\T ： 显示12小时时间，格式为 "HH:MM:SS"
+#	\A : 显示24小时制时间，格式为 "HH:MM"
+#	\u : 显示当前用户名
+#	\w : 显示当前所在目录的完整名称
+#	\W : 显示当前所在目录的最后一个目录
+#	\# : 执行的第几给命令
+#	\$ : 提示符。如果是root用户会显示提示符为 "#" ，如果是普通用户会显示提示符为 "$"
+#	
+#	举例：
+#		[root@bogon ~]# PS1='[\u@\t \w]\$'
+#		[root@02:17:07 ~]#PS1='[\u@\@ \h \# \W]\$'
+#		[root@02:18 AM bogon 15 ~]#PS1='[\u@\h \W]\$'
+#		[root@bogon ~]#
+#
+
+■ 位置参数变量
+
+	+----------------+---------------------------------------------------------------------------------------------+
+	|  位置参数变量  |						作		用 					   										   |
+	+----------------+---------------------------------------------------------------------------------------------+
+	|		$n 		 |	n为数字，$0代表命令本身，$1-$9 代表第一到第九个参数，十以上的参数需要用大括号包含，如{10}。|
+	+----------------+---------------------------------------------------------------------------------------------+
+	|		$* 		 |	这个变量代表命令行中所有的参数，$*把所有的参数看成一个整体								   |
+	+----------------+---------------------------------------------------------------------------------------------+
+	|		$@ 		 |	这个变量也代表命令行中所有的参数，不过$@把每个参数区分对待							   	   |
+	+----------------+---------------------------------------------------------------------------------------------+	
+	|		$# 		 |	这个变量代表命令行中所有参数的个数					   	   								   |
+	+----------------+---------------------------------------------------------------------------------------------+	
+	
+■ 参数变量 shell脚本 例1、：
+	[roye@bogon Public]$ vim test.sh
+	#!/bin/bash 
+	
+	echo $0
+	echo $1
+	echo $2
+	echo $3
+	
+	[roye@bogon Public]$ ./test.sh  #当没有任何位置参数传进去时
+	./test.sh		#因为0代表命令本身因此输出 ./test.sh
+	
+	
+	
+	[roye@bogon Public]$ ./test.sh  11 22 33
+	./test.sh
+	11
+	22
+	33
+	[roye@bogon Public]$ 
+	
+	
+■ 参数变量 shell脚本 例2、：
+
+	#!/bin/bash 
+	num1=$1
+	num2=$2
+	sum=$(($num1 + $num2)) 
+	#变量 sum 的和是 num1加num2
+	echo $sum 
+	#打印变量sum的值
+	
+	
+	[roye@bogon Public]$ ./test2.sh  #当没有输入任何值时
+	./test.sh: line 4: + : syntax error: operand expected (error token is "+ ")
+
+
+	[roye@bogon Public]$ ./test2.sh 1 3
+	sum is: 4
+	[roye@bogon Public]$ 
+	
+▣ 参数变量 shell脚本 例3、：	
+	[roye@bogon Public]$ vim test3.sh 
+	#!/bin/bash
+	echo $#
+	echo $*
+	echo $@
+
+	[roye@bogon Public]$ ./test3.sh 33 44 55
+	3
+	33 44 55 	# "$*" 是返回整个参数
+	33 44 55 	# "$@" 是返回整个参数
+▣ $* 与 $@ 的区别
+
+	for i in "$*"
+	#$* 中的所有参数看成是一个整体，所以这个for循环只会循环一次
+	do 
+		echo "The parameters is :$i"
+	done 
+	
+	for y in "$@"
+	#$@ 中的每个参数都看出是独立的，所以"$@"中有几个参数，就会循环几次 
+	do 
+		echo "The parameters$x is :$y"
+		x=$(( $x + 1 ))
+	done 	
+	
+▣  预定义变量	
+	+----------------+------------------------------------------------------------------------------+
+	|   预定义变量	 |			作		用 															|
+	+----------------+------------------------------------------------------------------------------+
+	|				 | 最后一次执行的命令的返回状态，如果这个变量的值为0，证明上一个命令正确执行；  |
+	|		$?		 | 如果这个变量的值为非0（具体是哪个数，由命令自己来决定），则证明上一个命令执  |
+	|				 | 行部正确了。																	|
+	+----------------+------------------------------------------------------------------------------+
+	|		$$		 |当前进程的进程号（PID）														|
+	+----------------+------------------------------------------------------------------------------+	
+	|		$!		 |后台运行的最后一个进程的进程号（PID）											|
+	+----------------+------------------------------------------------------------------------------+
+	
+▣ 接收键盘输入
+
+	[root@localhost ~]# read [选项][变量名]
+#	选项：
+#		-p "提示信息"：在等待read 输入时，输出提示信息
+#		-t 描述	：	read 命令会一直等待用户输入，使用此项可以指定等待时间
+#		-n 字符数：read 命令只接受指定的字符数，就会执行
+#		-s: 隐藏输入的数据，使用于机密信息的输入
+#		
+		
+		
+		#!/bin/bash
+		# Author:shenchao (E-mail:shenchao@lampbrother.net)
+		read -t 30 -p "Please input your name:" name
+		#提示 "请输入姓名" 并等待30秒，把用户的输入保存入变量name中 ；-p 打印 Please input your name: ；这时用户输入的任何值都会保存在 name当中
+		echo "Name is $name"
+		
+		read -s -t30 -p "-Please enter your age:" age 
+		#年龄是隐私，所以我们用"-s" 选项隐藏输入 -t等待30秒 -p 打印 -Please enter your age:
+		
+		echo -e "\n"
+		echo "Age is $age"
+		
+		read -n 1 -t 30 -p "Please select your gender[M/F]:" gender 
+		#使用 "-n 1" 选项只接收一个输入字符就会执行(都不用输入回车)
+		echo -e "\n"
+		echo "Sex is $gender"
+		以下为输出结果
+		
+		[roye@bogon Public]$ ./test.sh
+		Please input your name:nnn
+		Name is :nnn
+		Please enter your age:\n
+		Age is 20
+		Please select your gender[M/F]:m
+		
+		Sex is m
+		[roye@bogon Public]$ 
+
+■ declare 声明变量类型
+	[root@localhost ~]# declare [+/-][选项]变量名 
+#		选项：
+#		-：给变量设定类型属性
+#		+: 取消变量的类型属性
+#		-i: 将变量声明为整数型(integer)
+#		-x: 将变量声明为环境变量
+#		-p: 显示指定变量的被声明的类型
+#		
+#		数值运算---方法1
+		[root@localhost ~]# aa=11
+		[root@localhost ~]# bb=22
+		#给变量aa和bb赋值
+		
+		[root@localhost ~]# declare -i cc=$aa+$bb 
+		
+		
+		[roye@bogon Public]$ aa=11
+		[roye@bogon Public]$ bb=22
+		[roye@bogon Public]$ cc =$aa+$bb  #如果不声明变量类型做运算的话系统将直接报错
+		cc: error: =11+22: No such file or directory
+		cc: fatal error: no input files
+		compilation terminated.
+		
+		[roye@bogon Public]$ declare -i cc=$aa+$bb #-i: 将变量声明为整数型 
+		[roye@bogon Public]$ echo $cc
+		33
+		[roye@bogon Public]$ 
+
+		方法2；"$((运算式))" 或 "$[运算式]" 一样的结果
+		[root@localhost ~]# aa=11
+		[root@localhost ~]# bb=22
+		[root@localhost ~]# ff=$(($aa+$bb)) 
+		[root@localhost ~]# gg=$[$aa+$bb]
+		
+ ▣ 运算符		
+	+----------------+--------------------------+---------------------------------------------------+
+	|     优先级	 |			运算符			|		说明										|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       13	 	 |			-，+			|	单目负、单目正									|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       12	 	 |			!，				|	逻辑非、按位取反或补码							|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       11	 	 |		*，/，%				|	乘、除、取模									|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       10	 	 |			+，-			|	单目负、单目正									|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       9	 	 |			<<，>>			|	按位左移，按位右移								|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       8	 	 |		< =, > =, < , >		|	小于或等于、大于或等于，小于，大于				|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       7	 	 |			== ，!=			|	等于、不等于									|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       6	 	 |			&				|	按位与											|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       5	 	 |			^				|	按位异或										|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       4	 	 |			|				|	按位或											|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       3	 	 |			&&				|	逻辑与											|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       2	 	 |			||				|	逻辑或											|
+	+----------------+--------------------------+---------------------------------------------------+
+	|       	 	 |	=，+=，-				|													|
+	|		1		 |  =，*=，/=，%=，^=，		|	赋值、运算且赋值								|
+	|				 |  |=，<<=，>>=			|													|
+	+----------------+--------------------------+---------------------------------------------------+
+	
+	[root@localhost ~]# aa=$(((11+3)*3/2))
+	#虽然乘和除的优先级高于加，但是通过小括号可以调整运算优先级
+	
+	[root@localhost ~]# bb=$(( 14%3 ))
+	#14 不能被3整除，除数是2
+	
+	[root@localhost ~]# cc=$(( 1&&0 ))
+	#逻辑与运算只有想与的两边都是1，与的结果才是1，否则与的结果是0
+	
+	+----------------+--------------------------+------------------------+------------------------+
+	|  变量置换方式	 |		变量y没有设置		|	 变量y设置为空值	 |		变量y设置值		  |
+	+----------------+--------------------------+------------------------+------------------------+
+	|  x=${y-new}	 |	x=新值					|	x为空				 |	x=$y				  |
+	+----------------+--------------------------+------------------------+------------------------+
+	|  x=${y:-新值}	 |	x=新值					|	x=新值				 |	x=$y				  |
+	+----------------+--------------------------+------------------------+------------------------+
+	|  x=${y+新值}	 |	x为空					|	x=新值				 |	x=新值				  |
+	+----------------+--------------------------+------------------------+------------------------+
+	|  x=${y:+新值}  |	x为空					|	x为空				 |	x=新值				  |
+	+----------------+--------------------------+------------------------+------------------------+
+	|  x=${y=新值}   |	x=新值					|	x为空				 |	x=$y				  |
+	|				 |  y=新值					|   y值不变				 |  y值不变				  |
+	+----------------+--------------------------+------------------------+------------------------+
+	|  x=${y:=新值}	 |	x=新值				    |	x=新值			 	 |  x=$y				  |
+	|				 |  y=新值					|	y=新值				 |  y值不变				  |
+	+----------------+--------------------------+------------------------+------------------------+
+	|  x=${y?新值}   | 新值输出到标准错误输出（	|	x为空				 |	x=$y				  |
+	|				 | 就是屏幕）				|						 |						  |
+	+----------------+--------------------------+------------------------+------------------------+
+	|  x=${y:>新值}  |	新值输出到标准错误输出	| 新值输出到标准错误输出 |	x=$y 				  |
+	+----------------+--------------------------+------------------------+------------------------+
+	
+	例子1：测试 x=${y-新值}
+	
+	[root@localhost ~]# unset y 
+	#删除变量 y
+	
+	[root@localhost ~]# x=${y-new}
+	#进行测试
+	
+	[root@localhost ~]#echo $x 
+	new 
+	#因为变量y不存在，所以x=new 
+	
+	
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+简单的提示输出创建文件
+
+
+
+
+#! /bin/bash
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin 
+export PATH 
+
+# 1. 让使用者输入文件名，并取得 fileuser 这个变量；
+
+echo -e "创建3给含有日期的文件"     # 纯粹显示信息 
+read -p "请输入文件名：" fileuser   # 提示使用者输入 
+
+# 2. 为了避免使用者随意按 Enter ，利用变量功能分析文件名是否有设定？ 
+             
+filename=${fileuser:-"filename"}    # 开始判断有否配置文件名 
+
+# 3. 开始利用 date 指令来取得所需要的文件名了； 
+
+date1=$(date --date='1 days ago' +%Y%m%d)  # 前两天的日期 
+date2=$(date --date='2 days ago' +%Y%m%d)  # 前一天的日期 
+date3=$(date +%Y%m%d)                      # 今天的日期 
+    
+file1=${filename}${date1}
+file2=${filename}${date2}
+file3=${filename}${date3}
+    
+touch "$file1"
+touch "$file2"
+touch "$file3"
+
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+case 语句和if .... elif ....else 语句一样都是多分支条件语句，不过和if多分枝条件语句
+#不同的是，case语句只能判断一种条件关系，而if语句可以判断多种条件关系。
+
+#	case $变量名 in 
+#		"值1")
+#			如果变量值等于1，则执行程序1
+#			;;
+#		"值2")
+#			如果变量的值等于值2，则执行程序2
+#			;;
+#		.....省略其他分枝.....
+#		*)
+#			如果变量的值都不是以上的值，测执行此程序
+#			;;
+#		esac 
+
+	例1、
+	#! /bin/bash
+	PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin 
+	export PATH 
+	
+	ftype="$(file "$1")"
+	case "$ftype" in
+	"$1: Zip archive"*)
+		unzip "$1" ;;
+	"$1: gzip compressed"*)
+		gunzip "$1" ;;
+	"$1: bzip2 compressed"*)
+		bunzip2 "$1" ;;
+	*) echo "File $1 can not be uncompressed with smartzip";;
+	esac
+
+	例2、
+	#! /bin/bash
+	#判断用户输入
+	read -p "Please choose yes/no: "-t 30 cho 
+	case $cho in 
+		"yes")
+			echo "Your choose is yes!"
+			;;
+		"no")
+			echo "Your choose is no!"
+			;;
+		*)
+			echo "Your choose is error!"
+			;;
+	esac 	
+
+	例3、
+	#! /bin/bash
+	
+	echo 'you want to shanghai,please input "1"'
+	echo 'you want to guangzhou,please input "2"'
+	echo 'you want to chengdu,please input "3"'
+	
+	read -t 30 -p "please input your choolse:" cho 
+	
+	case "#cho" in 
+		"1")
+			echo "shanghai de jipiao yijing fashou!"
+			;;
+		"2")
+			echo "guangzhou de jipiao!"
+			;;
+		"3")
+			echo "chengdu de jiipiao!!!"
+			;;
+		*)
+			echo "error 1/2/3"
+			;;
+	esac
+
+
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+shell if  else 操作
+	▣ 多分枝if条件语句
+
+#	if [ 条件判断式1 ]
+#			then 
+#				当条件判断1成立时，执行程序1
+#		elif [ 条件判断式2 ]
+#			then 
+#				当条件判断式2成立时，执行程序2
+#		.......省略更多条件
+#		else 
+#			当所有条件都不成立时，最后执行此程序
+#	fi 
+		
+	
+		
+		
+	例1、
+		#! /bin/bash
+		#"if ..... else " usage 
+		#Using this program to show your system's services.
+		
+		echo "Now,the web services of this Linux system will be detect...."
+		
+		echo 
+		#Detect www service 
+		
+		web=`/usr/bin/pgrep httpd`
+		
+		if [ "$web" ="" ]  #如果 web 变量为空就启动apache 
+		
+		then 
+			echo "The web service is NOT running."
+			/etc/rc.d/init.d/httpd start	
+		else 			  #如果不为空就显示apache正在运行
+			echo "apache is running"
+		fi
+	
+	
+	例2、
+	
+		#! /bin/bash
+		echo "please input a file name:"
+		read file_name
+		if [-d $file_name ] then 	#判断是否为一个目录
+		echo "$file_name is a directory"
+		
+		elif [ -f $file_name ] then #判断是否为一个文件
+			echo "$file_name is a common file "
+			
+		elif [ -c $file_name -o -b $file_name ] then #判断是否为设备文件
+			echo "$file_name is a device file "
+			
+		else 
+			echo "$file_name is an unknown file"
+		fi
+		
+#	流程控制语句，多条件的联合：
+#		-a :逻辑与，仅当两个条件都成立时，结果为真。
+#		-o :逻辑或，两个条件只要有一个成立，结果为真。 
+	
+	例3、
+		#!/bin/sh 
+		if [ $# -ne 2 ]; then        #如果参数的个数不等于2
+		echo "Not enough parameters" #打印出 Not enough parameters
+		exit 0						 #退出
+		fi 
+									#如果参数个数等于2,继续往下执行
+		if [$1 -eq $2 ]; then 		#如果 $1等于$2
+			echo "$1 equals $2"		#打印出$1等于 $2
+		elif [ $1 -lt  $2 ]; then 	#如果 $1 小于 $2 则
+			echo "$1 littler than $2" #打印出 $1小于 $2
+		elif [ $1 -gt $2 ];then 	#如果 $1 大于 $2 则
+			echo "$1 greater than $2" #打印出 $1 大于  $2
+		fi 
+	例4、
+		#! /bin/bash
+		#判断用户输入的是什么文件
+		
+		read -p "Please input a filename:" file 
+		#接收键盘的输入，并赋予变量file 
+		
+		if [ -z "$file" ]
+		#判断file 变量是否为空
+			then 
+				echo "Error,please input a filename" #输出报错
+				exit 1 #退出
+		elif [ ! -e "$file" ]
+		#判断file的值是否存在
+			then 
+			echo "Your input is not a file!"
+			exit 2
+		elif [ -f "$file" ]
+		#判断file的值是否为普通文件
+			then 
+			echo "$file is a regulare file!"
+		elif [ -d "$file" ]
+		#判断file 的值是否为目录文件
+			then 
+			echo "$file is a directory!"
+		else 
+			echo "$file is an other file!"
+		fi 
+		
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+shell 脚本 if 操作
+	if 语句使用fi结尾，和一般语言使用大括号结尾不同
+	[条件判断式]就是使用test命令判断，所以中括号和条件判断式之间必须有空格
+	then 后面跟符合条件之后执行的程序，可以放在[]之后，用 ";" 分割。也可以换行写入，就不需要";"了
+
+文件测试：
+	test -d file  指定文件是否目录
+	test -f file  指定文件是否常规文件
+	test -x file  指定文件是否可执行
+	test -r file  指定文件是否可读
+	test -w file  指定文件是否可写
+	test -a file  指定文件是否存在
+	test -s file  文件的大小是否非0
+
+字符串测试：
+	test str1=str2   测试字符串是否相等
+	test str1!=str2  测试字符串是否不相等
+	test str1 		 测试字符串是否不为空
+	test -n str1 	 测试字符串是否不为空
+	test -z str1 	 测试字符村是否为空
+
+整数测试：
+	test intl -eq int2 		测试整数是否相等
+	test int1 -ge int2 		测试int1 是否 >= int2
+	test int1 -gt int2 		测试int1 是否>int2 
+	test int1 -le int2 		测试int1 是否<=int2 
+	test int1 -lt int2 		测试int1 是否<int2 
+	test int1 -ne int2 		测试整数是否不相等
+
+	if [条件判断式]; then 
+		程序
+	fi 
+	
+	或者 ：
+	if [条件判断式]
+		then 
+		程序
+	fi 
+	
+▣ 例子：判断分区使用率
+	#!/bin/bash
+	#统计跟分区使用率
+	# Author :shenchao (E-mall:shcnchao@lampbrother.net)
+
+	rate=$(df -h |grep "/dev/sda3" | awk '{print $5}' | cut -d "%" -f1)
+	#把跟分区使用率作为变量值赋予变量rate
+	
+	if [ $rate -ge 80 ]  #如果分区的使用率大于80%，表示分区开始占满
+	then 
+		echo "Warning! /dev/sa3 is full!"  
+	fi
+	
+	
+	
+▣ 例子:备份mysql数据库
+	#!/bin/bash
+	#备份mysql数据库
+	#Author : shenchao (E-mall:shcnchao@lampbrother.net)
+	
+	ntpdate asia.pool.ntp.org &> /dev/null
+	
+	#同步系统时间
+	date =$(date+%y%m%d)
+	#把当前系统时间按照 "年月日" 格式赋予变量date
+	size=$(du -sh /var/lib/mysql)
+	#统计mysql 数据库的大小，并把大小赋予size变量
+	
+	
+	if [ -d /tmp/dbbak ] #如果备份目录存在
+		then #则
+			echo "Date :$date!" > /tmp/dbbak/dbinfo.txt 		#把当前的日期输出覆盖到dbinfo.txt文件中
+			echo "Date size : $size " >> /tmp/dbbak/dbinfo.txt 	#把备份文件的大小追加到dbinfo.txt文件中
+			cd /tmp/dbbak 				#进入/dbbak目录
+			tar -zcf mysql-lib-$date.tar.gz   /var/lib/mysql   dbinfo.txt  #压缩dbinfo.txt文件到 /var/lib/mysql目录下
+		&>/dev/nul		#把所有的输出到丢弃到垃圾箱
+			rm -rf /tmp/dbbak/dbinfo.txt 	#删除临时文件
+		else #如果不存在/tmp/dbbak目录
+			mkdir /tmp/dbbak  #则手工创建一个
+			echo "Date: $date!"> /tmp/dbbak/dbinfo.txt 		  #把当前的日期输出覆盖到dbinfo.txt文件中
+			echo "Data size : $size" >> /tmp/dbbak/dbinfo.txt #把备份文件的大小追加到dbinfo.txt文件中
+			cd /tmp/dbbak 					#进入/dbbak目录
+			tar -zcf mysql-lib-$date.tar.gz   /var/lib/mysql dbinfo.txt   #压缩dbinfo.txt文件到 /var/lib/mysql目录下
+		&>/dev/null 	#把所有的输出到丢弃到垃圾箱
+			rm -rf /tmp/dbbak/dbinfo.txt	#删除临时文件
+
+
+
+
+			
+▣ 例子:判断apache是否是启动的	
+		
+	#!/bin/bash
+
+	#Author : shenchao (E-mall:shcnchao@lampbrother.net)
+	port=$(nmap -sT 192.168.1.156 | grep tcp | grep http | awk '{print $2}')
+	#使用nmap命令扫描服务器，并截取apache服务的状态，赋予变量port
+	if [ "$port"=="open" ]
+		then 
+			echo "$(date) httpd is ok! >> /tmp/autostart-acc.log"
+		else 
+			/etc/rc.d/init.d/httpd start &>/dev/null 
+			echo "$(date) restart httpd !!" >> /tmp/autostart-err.log
+		fi 
+	
+	#扫描开启的tcp端口
+	[root@bogon ~]# nmap -sT 192.168.0.104
+	
+	Starting Nmap 6.40 ( http://nmap.org ) at 2018-08-07 23:05 CST
+	Nmap scan report for bogon (192.168.0.104)
+	Host is up (0.00021s latency).
+	Not shown: 996 closed ports
+	PORT     STATE SERVICE
+	22/tcp   open  ssh
+	80/tcp   open  http		#开启的apache
+	111/tcp  open  rpcbind
+	3306/tcp open  mysql	#开启的mysql
+	
+	[root@bogon ~]# nmap -sT 192.168.0.104 | grep tcp | grep http #提取开启的apache
+	80/tcp   open  http
+	Nmap done: 1 IP address (1 host up) scanned in 0.04 seconds	
+	[root@bogon ~]# nmap -sT 192.168.0.104 | grep tcp | grep http | awk '{print $2}'  #在用awk定位提取第二列
+	open
+	
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+ shell for .... done 语句
+ 
+ 
+ 
+格式:for 变量 in 值1 值2 值3 ...
+		 do 
+			程序
+		 done 
+		 
+		 
+		 
+		 
+		 
+例1、
+	#!/bin/sh 
+	for DAY in sunday Monday Tuesday Wednesday Thursday Friday Saturday  #用DAY变量值匹配 星期一到 星期天 
+	do 
+		echo "The day is : $DAY"  #把DAY匹配到的所有星期数然后打印出来
+	done 
+	
+	#执行循环结果如下
+	[root@localhost ~]# sh for 
+	The day is : sunday
+	The day is : Monday
+	The day is : Tuesday
+	The day is : Wednesday
+	The day is : Thursday
+	The day is : Friday
+	The day is : Saturday
+	
+	
+	例2、
+		#!/bin/bash 
+		#打印时间
+		
+		for time in morning noon afternoon evening
+			do 
+				echo "This time is $time!"
+			done 
+	
+	
+	
+	例3、
+		#!/bin/bash
+		#批量解压缩脚本
+		
+		cd /lamp 
+		ls *.tar.gz > ls.log 
+		for i in $(cat ls.log)
+			do 
+				tar -zxf $i &>/dev/null 
+			done 
+		rm -rf /lamp/ls.log
+		
+		
+	例4、
+		#!/bin/bash
+		s=0
+		for ((i=1;i<=100;i=i+1)) #1累加到100
+			do 
+				s=$(( $s+$i ))
+			done 
+		echo "The sum of 1+2+....+100 is:$s"
+	例5、
+		for n in `seq 100` #1累加到100
+		do
+		((sum +=n))
+		done
+		echo $sum
+
+		echo $((100*(100+1)/2)) ##1累加到100
+		
+	例6、批量修改替换
+		for f in `ls test/*.html` #循环test文件夹下的所有以.html结尾的文件
+			do 
+				mv $f `echo $f|sed  s/_finished.html#.jpg#g`  ##把_finished.html 替换为 .jpg
+			done
+	例7、
+		for name in `chkconfig --list|grep 3:on|awk '{print $1}'|grep -v "rsyslog|sshd|sysstat"` #搜索除rsyslog|sshd|sysstat以外的所有开启的服务
+			do 
+				chkconfig $name off	#循环关闭服务
+			done
+ ▣ 语法二
+	for (( 初始值; 循环控制条件;变量变化 ))
+		do 
+			程序   b71412cd
+		done 
+		
+	例1、
+		#!/bin/bash
+		read -p "Please input user name:" -t 30 name 
+		read -p "Please input the number of users:" -t 30 num 
+		read -p "Please input the password of users:" -t 30 pass 
+		
+		if [ !-z "$name" -a !-z "$num" -a !z "$pass" ]
+			then 
+			y=$(echo $num | sed 's/0-9//g')
+				if [ -z "$y" ]
+					then 
+					#for (( i=1;i<=$num;i++ )) 或者下面的样子
+					for (( i=1;i<=$num;i=i+1 ))
+						do 
+							/usr/sbin/useradd $name$i &>/dev/null 
+								echo $pass | /usr/bin/passwd --stdin $name$i &>/dev/null 
+						done 
+				fi 
+		fi 
+	
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+	■ awk 命令应用
+	
+#  awk 条件1 {动作1} 条件2{动作2}....'文件名'
+#	条件(Pattern);
+#		一般使用关系表达式作为条件
+#		x > 10  判断变量x是否大于10
+#		x >=10  大于等于
+#		x <=10  小于等于
+#	动作(Action):
+#		格式化输出
+#		流程控制语句
+	
+	
+	
+	
+		[root@localhost ~]# vi student.txt 
+		ID	Name	PHP 	  Linux		MySQL	Average 
+		1	Liming	82			86		86		87.66	#列与列之间默认是空格作为分割符
+		2	Sc		74			90		87		85.66
+		3	Gao		99			83		93		91.66
+		
+		
+		
+		
+	示例：
+		1、检测系统中UID 为0的用户
+		-F：表示以:号为分隔符
+		awk -F: '$3==0 {print $1}' /etc/passwd
+		
+		2、检测系统中密码为空的用户
+		awk -F:  'length($2)==0 {print $1}' /etc/shadow
+		
+		3、 截取 student.txt 对应的第2列和第6列，printf 表示格式化输出
+		# "\t" 制表符，也就是Tab键 "\n"换行符
+		awk '{printf $2 "\t" $6 "\n"}' student.txt #如果不指定条件就是无论什么条件都执行{printf $2 "\t" $6 "\n"} 动作 ;
+		[root@bogon ~]# awk '{printf $2"\t" $6"\n"}'  student.txt
+		Name	Average
+		Liming	87.66
+		Sc		86.66
+		Gao		91.66
+
+
+
+##awk '{S[$1]++}END{for(k in S) print S[k],k}' access_2010-12-8.log|sort -rn|head
+
+
+		
+#	 cut 字段提取命令 #cut 不能用空格来做分割符
+#	 printf 命令 #在系统linux 中没有print命令的但是在 awk中print和printf确都可以使用；print他会自动在每一行后面自动加换行符而printf则不会
+#	
+#	 awk的功能比cut的功能强大 但是能用到cut的尽量使用cut 只有在空格分割这种cut做不到的事情的时候才使用 awk
+#	 awk 命令 
+#	 sed 命令
+	
+	[root@localhost ~]# cut [选项]文件名
+#	选项：
+#		-f 列号：		提取第几列
+#		-d 分隔符：		按照指定分隔符分割列
+		
+		[root@localhost ~]# vi student.txt 
+		ID	  Name 	gender 	Mark 
+		1	 Liming   M      86		#列与列之间不能是空格而是 Tab 键
+		2    Sc       M      90
+		3	 Gao      M      83 
+		
+	[root@bogon ~]# cut -f 2 student.txt 
+	Name
+	Liming
+	Sc
+	Gao
+	[root@bogon ~]# cut -f 2,4 student.txt 
+	Name	Mark
+	Liming	86
+	Sc	90
+	Gao	83
+
+	[root@bogon ~]# cut -d ":" -f 1,3 /etc/passwd  #查找以":"号为分隔符的第一和第三列
+	root:0
+	bin:1
+	daemon:2
+	adm:3
+	lp:4
+	sync:5
+	shutdown:6
+	halt:7
+	mail:8
+	operator:11
+
+	......
+		
+		
+		
+	[root@bogon ~]# cat  /etc/passwd | grep /bin/bash | grep -v root | cut -d ":" -f 1   #获取/etc/passwd 文件下的内容，grep /bin/bash 提取文件中包含有/bin/bash 的行 ，在grep /bin/bash的结果中在提取 grep -v root 不包含有root的行 ，在grep -v root 的结果中 cut -d ":" -f 1 提取第一列
+	[root@bogon ~]# cat  /etc/passwd | grep /bin/bash | grep -v root | cut -d ":" -f 1 
+	roye
+	[root@bogon ~]# 
+		
+	cut命令的局限
+	[root@bogon ~]# df -h	 #查看分区的使用状况
+	Filesystem               Size  Used Avail Use% Mounted on
+	/dev/mapper/centos-root   17G  7.5G  9.6G  44% /
+	devtmpfs                 905M     0  905M   0% /dev
+	tmpfs                    920M     0  920M   0% /dev/shm
+	tmpfs                    920M  8.8M  911M   1% /run
+	tmpfs                    920M     0  920M   0% /sys/fs/cgroup
+	/dev/sda1               1014M  178M  837M  18% /boot
+	tmpfs                    184M   32K  184M   1% /run/user/1000
+	tmpfs                    184M     0  184M   0% /run/user/0		
+		
+
+	[root@bogon ~]# df -h | grep "sda1"  #查看 sda1  硬盘的使用状况
+	/dev/sda1               1014M  178M  837M  18% /boot
+
+	▣ awk截取系统磁盘的例
+		
+		
+		# "\t" 制表符，也就是Tab键 "\n"换行符
+		df -h | awk '{print $1 "\t" $5 "\t" $6}'
+		[root@bogon ~]# df -h | awk '{print $1 "\t" $5 "\t" $6}' #查看系统磁盘的使用情况截取 1列 5列 6列
+		Filesystem	Use%	Mounted
+		/dev/mapper/centos-root	44%	/
+		devtmpfs	0%	/dev
+		tmpfs	0%	/dev/shm
+		tmpfs	1%	/run
+		tmpfs	0%	/sys/fs/cgroup
+		/dev/sda1	18%	/boot
+		tmpfs	1%	/run/user/1000
+		tmpfs	0%	/run/user/0
+		
+	▣ 可以用来查看 系统磁盘的内存是否大于80%如果大于80%则使用给系统管理员发邮件告诉管理员需要手动清理系统，避免硬盘占满
+	
+	[root@bogon ~]# df -h |grep sda1| awk '{print $5 }'
+	18%
+	[root@bogon ~]# df -h |grep sda1| awk '{print $5 }'|cut -d "%" -f1	# 提取磁盘 sda1 的状态数据信息 根据 grep sda1的结果 提取 sda1第五列的磁盘占用情况百分比，在根据awk '{print $5 }' 的结果提取 磁盘占用的整数数据cut -d "%" -f1
+	18
+	
+	▣ awk BEGIN 的作用
+	#BEGIN 的作用是在执行 {printf $2 "\t" $6 "\n"}之前先执行{printf"This is a transcript\n"}，而且 BEGIN在所有动作执行之前只执行一次
+	[root@bogon ~]# awk 'BEGIN {printf"This is a transcript\n"}{printf $2 "\t" $6 "\n"}' test
+	This is a transcript
+	Name	Average
+	Liming	87.66
+	Sc	86.66
+	Gao	91.66
+	
+		
+
+	▣ awk FS 内置变量
+	
+	[root@bogon ~]# cat /etc/passwd | grep "/bin/bash" | awk 'BEGIN {FS=":"}{printf $1 "\t" $3 "\n"}'
+	root	0
+	roye	1000
+	
+	
+	#如果想着 awk 里指定分割符就需要使用 FS
+	[root@bogon ~]# awk '{FS=":"}{printf $1 "\t" $3 "\n"}' /etc/passwd  #这时如果比加BEGIN 的化由于awk是先读入第一行然后在执行后面的命令，也就是说在指定分割符之前第一行已经读入所以第一行已经来不及了处理了，所以这种情况下需要加 BEGIN 
+	root:x:0:0:root:/root:/bin/bash	
+	bin	1
+	daemon	2
+	adm	3
+	lp	4
+	sync	5
+	shutdown	6
+	halt	7
+	mail	8
+	operator	sed: -e expression #1, char 0: no previous regular expression
+	games	12
+	ftp	14
+	
+	......
+	
+	[root@bogon ~]# awk 'BEGIN {FS=":"}{printf $1 "\t" $3 "\n"}' /etc/passwd #这样第一行才会被处理
+	root	0
+	bin	1
+	daemon	2
+	adm	3
+	lp	4
+	sync	5
+	shutdown	6
+	halt	7
+	mail	8
+	operator	11
+	games	12
+	ftp	14
+	nobody	99
+	
+	......
+	
+	
+	▣ 有 BEGIN 就会有 END ，END 是在所以事情都处理完之后执行
+
+	[root@bogon ~]# awk 'BEGIN {FS=":"}END{print "vvvvvvvvvvvvv"}{printf $1 "\t" $3 "\n"}' /etc/passwd 
+	root	0
+	bin	1
+	daemon	2
+	adm	3
+	lp	4
+	sync	5
+	shutdown	6
+	halt	7
+	mail	8
+	operator	11
+	games	12
+	ftp	14
+	nobody	99
+	systemd-network	192
+	dbus	81
+	polkitd	999
+	abrt	173
+	libstoragemgmt	998
+	rpc	32
+	colord	997
+	saslauth	996
+	rtkit	172
+	pulse	171
+	chrony	995
+	rpcuser	29
+	nfsnobody	65534
+	ntp	38
+	tss	59
+	usbmuxd	113
+	geoclue	994
+	qemu	107
+	radvd	75
+	setroubleshoot	993
+	sssd	992
+	gdm	42
+	gnome-initial-setup	991
+	sshd	74
+	avahi	70
+	postfix	89
+	tcpdump	72
+	roye	1000
+	mysql	1001
+	www	1002
+	vvvvvvvvvvvvv
+
+	▣  关系统运算符
+
+	[root@bogon ~]# cat student.txt  | grep -v Name | awk '$6 >= 87 {printf $2 "\n"}'
+	Liming
+	Gao
+	
+	
+	
+	▣ 例1、
+	userinfo=root:x:0:0:root:/root:/bin/bash 
+	
+		#!bin/sh 
+		#display user's info....
+		/bin/echo "Please input the username"
+		read username  #读用户名
+		/bin/grep $username /etc/passwd > /dev/null 2 > /dev/null  #用户名读取以后先用  grep 判断一下这个用户名 在/etc/passwd 里面的信息，不管是正确的还是错误的都不看
+		if [ $? -eq 0 ] # $? 判断上面这条命令执行的结果是否为 0 ，如果等于0代表这条命令执行成功
+		then 
+			/bin/echo "username is :$username" #显示用户名
+		else 
+			/bin/echo "user $username does not exist" #如果不为0显示错误信息
+			exit 1									  #然后退出
+		fi 
+		
+		
+		
+		/bin/echo 
+		
+		#list /ect/passwd info 
+		userinfo=`/bin/grep ^$username:x /etc/passwd`  #定义 userinfo 的变量  查找 /etc/passwd 文件 以 $username变量用户名开头然后后面跟:x(精确匹配用户如用户名是root 那结果就是 ·root:x:0:0:root:/root:/bin/bash· )
+		userid=`/bin/echo $userinfo | /bin/awk -F : '{print $3}'` #定义 userid 变量 打印 $userinfo 变量信息 用 /bin/awk 提取$userinfo 里的 $3变量（·root:x:0:0:root:/root:/bin/bash· -F :表示以:符号作为分割符 数到第三个就是userid）
+		groupid=`/bin/echo $userinfo | /bin/awk -F : '{print $4}'` #定义 groupid 变量 打印 $userinfo 变量信息 用 /bin/awk 提取$userinfo 里的 $4变量（·root:x:0:0:root:/root:/bin/bash· -F :表示以:符号作为分割符 数到第四个就是 groupid）
+		homedir=`/bin/echo $userinfo | /bin/awk -F : '{print $6}'` #定义 homedir 变量 打印 $userinfo 变量信息 用 /bin/awk 提取$userinfo 里的 $6变量（·root:x:0:0:root:/root:/bin/bash· -F :表示以:符号作为分割符 数到第六个就是 homedir ）
+		shell=`/bin/echo $userinfo | /bin/awk -F : '{print $7}'`   #定义 shell 变量 打印 $userinfo 变量信息 用 /bin/awk 提取$userinfo 里的 $7变量（·root:x:0:0:root:/root:/bin/bash· -F :表示以:符号作为分割符 数到第七个就是 shell）
+		#get group name from GID 
+		grouptmpname =`cat /etc/group | /bin/grep :x:$groupid`  #根据 $groupid 提取这个用户的组
+		groupname=`/bin/echo $grouptmpname | /bin/awk -F : '{print $1}'` #提取组名
+		/bin/echo "user id is : $userid"
+		/bin/echo "default group is : $groupname"
+		/bin/echo "home directory is : $homedir"
+		/bin/echo "shell is : $shell"
+		/bin/echo "group members info:"
+		
+		#get group members 
+		groups=`/usr/bin/groups $username`
+		/bin/echo $groups 
+		/bin/echo 
+		
+		#get login info 
+		userlogin =`/usr/bin/who | /bin/grep $username`
+		if [ "$userlogin" !="" ]
+		then 
+			/bin/echo "$username is online"
+		else 
+			/bin/echo "$username NOT logged in "
+		fi 
+		
+		
+		
+		
+	▣ 例2、
+		#bin/sh 
+		#The script to kill logined user.
+		
+		username ="$1"  
+		/bin/ps aux | /bin/grep $username | /bin/awk `{ print $2 }` > /tmp/temp.pid  #把用户登录进来之后的进程pid都提取出来，然后保存到temp.pid文件例
+		
+		killid =`cat /tmp/temp.pid`  #查看temp.pid 内容然后赋值给 temp.pid 变量
+		
+		for PID in $killid   #用 for循环 把temp.pid 文件的pid都循环出来
+		
+		do 
+			/bin/kill -9 $PID 2 > /dev/null   #杀死循环到的pid
+		done 
+
+	▣ 小案例		
+		[root@bogon ~]# cat test.sh
+		Tom Jones:4424:5/12/66:543354
+		Mary Adams:5346:11/4/63:28765
+		Sally Chang:1654:7/22/54:650000
+		Billy Black:1683:9/23/44:336500	
+		[root@bogon ~]# awk -F: '/Tom Jones/{print $1 $2}' test.sh  #以:为分割符匹配包含“Tom Jones”的行 取$1第一$2第二列
+		Tom Jones4424
+		[root@bogon ~]# awk -F'[ :\t]' '{print $1,$2,$3}' test.sh #以空格和:和\t 为分割符 取出$1第一列$2第二列$3第三列
+		Tom Jones 4424
+		Mary Adams 5346
+		Sally Chang 1654
+		Billy Black 1683
+		[root@bogon ~]# awk '/^(T|S)/' test.sh  	#打印所有以T或S开头的行
+		Tom Jones:4424:5/12/66:543354
+		Sally Chang:1654:7/22/54:650000
+		[root@bogon ~]# awk '/^[TS]/' test.sh 		#打印所有以T或S开头的行
+		Tom Jones:4424:5/12/66:543354
+		Sally Chang:1654:7/22/54:650000
+		[root@bogon ~]# awk '{print $2}' test.sh 	#打印出第二列（不指定分割符默认是空格为分割符）
+		Jones:4424:5/12/66:543354
+		Adams:5346:11/4/63:28765
+		Chang:1654:7/22/54:650000
+		Black:1683:9/23/44:336500
+		[root@bogon ~]# awk '{print NF}' test.sh    #NF 字段的数目值
+		2
+		2
+		2
+		2	
+		[root@bogon ~]# awk '$5 ~/\.[7-9]/' test.sh    #如果某条记录的第五个字段包含一个句点，而且句点后是一或多个7~9之间的数字就打印该记录
+		[root@bogon ~]# awk '$2 !~ /E/{print $1, $2}' test.sh #如果某条记录的第二个字段不包含E，则打印该记录的第一个字段，隔一个空格再打印第2个字段($1,$2)
+		
+		#如果第3个字段以模式Joel开头，则打印该字段，并且在后面跟上字符串" is a nice guy."注意，如果要打印空格，就要把它包括在字符串中。
+		[root@bogon ~]# awk '$3 ~ /^Joel/{print $3 " is a nice guy."}' test.sh 
+		[root@bogon ~]# awk '$8 ~ /[0-9][0-9]$/{print $8}' test.sh #如果第8个字段以两个数字结尾，则打印该字段。
+		
+		#如果记录的第一个字段的值大于第二个字段的值，则把问号后面那个表达式的值赋给max,否则就将冒号后面那个表达式的值赋给max。
+		# if ($1 > $2)
+		#	max=$1
+		# else 
+		#	max=$2
+		[root@bogon ~]# awk '{max=($1 > $2) ? $1 : $2;print max}' test.sh 
+		
+		#awk 将记录的第3个字段($3)与第4个字段($4)的值相乘，如果乘积大于500，则显示该行（假定test.sh是含有输入数据的文件）
+		[root@bogon ~]# awk '$3 * $4 > 500' test.sh 
+		
+		#awk 将显示同时符合这两个条件的行，即该行的第二个字段($2)的值大于5，且小于或等于15.运算符&&要求两个条件都必须为真(假定test.sh是包含输入数据的文件)
+		[root@bogon ~]# awk '$2 > $5 && $2 <= 15' test.sh
+		
+		[root@bogon ~]# awk '$3 == 100 || $4 > 50' test.sh #awk 将显示符合两个条件之一的行，即第三个字段等于100或第4个字段大于50的行。运算符||只要求有一个条件必须为真(假定test.sh是包含输入数据的文件)
+		
+		[root@bogon ~]# awk '/Tom/ ,/Suzanne/' test.sh
+		#说明：
+		#awk 将显示从Tom 首次出现的行到Suzanne首次出现的行这个范围内的所有行，包括两个边界在内。如果没有找到
+		#Suzanne, awk 将继续打印各行直至文件末尾。如果打印完Tom 到 Suzanne 的内容之后，又出现了Tom，awk就又
+		#一次开始显示行，直至找到下一个Suzanne或文件末尾。
+		[root@bogon ~]# awk '$7 < $5 {print $4,$7}' test.sh #如果记录的第七个字段的值小于5，就打印它的第4和第7个字段。
+		[root@bogon ~]# awk '$6 < .9 {print $1,$6}' test.sh #如果记录的第6个字段大于.9，就打印它的第1和第6个字段。
+		[root@bogon ~]# awk '$2 == "NW" || $1 ~ /south/{print $1, $2}' test.sh 
+		#说明：
+		#如果第2个字段($2)等于字符串"NW"或第一个字段($1)包含模式south,则打印第1、第2字段($1,$2)。只要有一个表达式为真，就执行打印操作。
+		#
+		
+		
+		[root@bogon ~]# cat test.sh 
+		Tom	Jones	4424	5/12/66		543354
+		Mary	Adams	5346	11/4/63		28765
+		Sally	Chang	1654	7/22/54		650000
+		Billy	Black	1683	9/23/44		336500		
+		[root@bogon ~]# awk '{name[x++]=$2};END{for(i=0;i<NR;i++) print i,name[i]}' test.sh 
+		0 Jones
+		1 Adams
+		2 Chang
+		3 Black
+		[root@bogon ~]# awk '{id[NR]=$3};END{for(x = 1;x <= NR;x++) print id[x]}' test.sh
+		4424
+		5346
+		1654
+		1683
+		#说明： 
+		#1.数组name 的下标是用户自定义的变量x。运算符++表明这是一个数值数值型的变量。awk将x初始化为0，并且
+		#每次使用x后将其加1（所用的是后递增运算符）。每条记录的第2字段都将赋值给数组name中的相应原始。END
+		#快使用for循环来循环处理数组，将从下标0开始，依次打印数组原始的值。下标只是一个键，所以不必从0开始
+		#。下标可以从任意值开始，数字或字符串都可以。
+		#2.awk变量NR保存当前记录的记录号。本例用NR作为下标，把每条记录的第3个字段赋值给数组中的相应元素。最后，
+		#for循环对数组进行循环处理，打印出保存在数组中的值。
+		#
+	awk 数组定义
+	1、可以用数值作数组索引（下标）
+	array[1]="oldboy"
+	array[2]="oldgirl"
+	
+	2、可以用字符串作数组索引（下标）
+	
+	array_ff['one']="oldboy training"
+	array_ff['two']="welcome"
+	array_ff['three']="tree"
+	
+	打印数组
+	[root@bogon ~]# awk 'BEGIN{array[1]="fff";array[2]="ggg";for(key in array) print key,array[key]}'
+	1 fff
+	2 ggg
+	
+	awk脚本
+	
+	[root@bogon ~]# cat test.sh  #脚本1
+	Tom Jones:4424:5/12/66:543354
+	Mary Adams:5346:11/4/63:28765
+	Sally Chang:1654:7/22/54:650000
+	Billy Black:1683:9/23/44:336500
+	
+	[root@bogon ~]# cat test.bak 	#脚本二
+	/Tom/{print "Tom's brthday is"$3}
+	/Mary/{print NR, $0}
+	/^Sally/{print "Hi Sally." $1 " has a salary of $" $4 "."}
+
+	[root@bogon ~]# awk -F: -f  test.bak  test.sh  #执行脚本一和脚本二
+	Tom's brthday is5/12/66'
+	2 Mary Adams:5346:11/4/63:28765
+	Hi Sally.Sally Chang has a salary of $650000.
+	说明
+		1.如果在输入的文本行中匹配到正则表达式 Tom,则打印字符串"Tom's brthday is'" 和第三个字段($3)的值。
+		2.如果在输入的文本行中匹配到正则表达式 Mary,则该操作块将打印当前记录的编号 NR 和内容。
+		3.如果在输入文本行的开头找到正则表达式Sally,则依次打印字符串"Hi Sally."、第一个字段($1)的值、字符串"has a salary of $" 和第4个字段($4)的值。
+		5.awk 命令后面跟着-F:选项，用于将字段分割符指定为冒号。-f选项后跟的是awk脚本的名称。awk将从文件test.bak中读取指令。最后那个参数test.sh是输入文件的名称。
+	
+	[root@bogon ~]# cat test.sh
+	Tom	Jones	4424	5/12/66		543354
+	Mary	Adams	5346	11/4/63		28765
+	Sally	Chang	1654	7/22/54		650000
+	Billy	Black	1683	9/23/44		336500	
+	[root@bogon ~]# awk '/Tom/' test.sh		#查找包含有“Tom”的行
+	Tom	Jones	4424	5/12/66		543354
+	[root@bogon ~]# awk '$3 < 4000' test.sh #第三列小于4000的行
+	Sally	Chang	1654	7/22/54		650000
+	Billy	Black	1683	9/23/44		336500		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	[root@bogon ~]# vim test.sh
+	#!/bin/awk
+	BEGIN{
+		array[1]="ttttt";
+		array[2]="ggggg";
+		for(key in array)
+		print key,array[key];
+	}
+	
+	[root@bogon ~]# awk -f test.sh
+	1 ttttt
+	2 ggggg
+	[root@bogon ~]# cat -f test.sh
+	1 ttttt
+	2 ggggg
+	#{S[$1]=$2} 以第一列为key 以第二列为值放到数组里
+	[root@bogon ~]# awk '{S[$1]=$2} END{for(k in S) print k,S[k]}' test.sh
+	1 ttttt
+	2 ggggg
+	[root@bogon ~]# cat test.sh 
+	http://www.etiantian.org/index.html
+	http://www.etiantian.org/1.html
+	http://post.etiantian.org/index.html
+	http://mp3.etiantian.org/index.html
+	http://www.etiantian.org/3.html
+	http://post.etiantian.org/2.html
+	
+	[root@bogon ~]# awk -F "/" '{S[$3]=S[$3]+1}END{for(k in S) print k,S[k]} ' test.sh
+	mp3.etiantian.org 1
+	www.etiantian.org 3
+	post.etiantian.org 2
+	[root@bogon ~]# awk -F / '{print $3}' test.sh|sort|uniq -c|sort -r
+	3 www.etiantian.org
+	2 post.etiantian.org
+	1 mp3.etiantian.org		
+		
+	[root@bogon ~]# awk '{S[$1]++}END{for(k in S) print k,S[k]}' accesst.log |sort -rn -k2|head	
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+shell 流程控制之 case 
+
+case .... esac 语句，格式：
+	case 变量 in 
+		字符串1）  命令列表1
+					..
+					,,
+			
+		.....
+		字符串n) 	命令列表n
+					..
+					,,
+	esae
+
+
+例1、
+	#!/bin/sh 
+	echo "***********************************************"
+	echo "please select your operation:"
+	echo " Press 'C' to Copy"
+	echo " Press 'D' to Delete"
+	echo " Press 'B' to Backup"
+	echo "***********************************************"
+	read op 
+	case $op in 
+		  C)
+		  echo "your selection is Copy"
+		  ;;
+		  D)
+		  echo "your selection is Delete"
+		  ;;
+		  B)
+		  echo "your selection is Backup"
+		  ;;
+		  *)
+		  echo "invalide selection"
+	esac 
+
+
+
+
+
+
+
+
+
+
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+shell 流程控制之 while 语句 格式：
+#	while 循环是不定循环，也称作条件循环。只要条件判断式成立，循环就会一直继续，直到条件判断式不成立，循环才会停止。
+#这就和for的固定循环不太一样了。
+
+	while [ 条件判断式 ]
+	do 
+		程序
+	done 
+
+例、
+	#!/bin/bash
+	i=1
+	s=0
+	while [ $i -1e 100 ]
+	#如果变量 i 的值小于100,则执行循环 
+		do 
+			s=$(( $s+$i ))
+			i=$(( $i+1 ))
+		done 
+	echo "The sum is: $s"
+
+	
+	
+例1、
+
+#循环添加用户
+	#!/bin/sh 
+	# Author :Sam < E-mail : samllee@lampbrother.net >
+	#The script to add user 
+	# /etc/passwd info 
+	echo "please input username:"
+	read name 
+	echo "please input number:"
+	read num 
+	n=1
+	while [ $n -le $num ]
+	do 
+		/usr/sbin/useradd $name$n
+		n=`expr $n + 1`
+	done 
+	# /etc/shadow info 
+	echo "please input the password:"
+	read passwd 
+	m=1
+	while [ $m -le $num ]
+	do 
+		echo $passwd | /usr/bin/passwd --stdin $name$m  >	/dev/null
+		m=`expr $m +1 `
+	done 
+例2、
+	exec < access_2010-12-8.log #读入文件数据
+	while read line  #read line 表示一行一行的读取文件内容
+	do 
+		i=echo $line|awk '{print $10}'  #截取第$line行用awk在截取第十个位置
+		expr $i + | &>/dev/null 	    #取消输出
+		if [ $? -ne 0 ];then 			#如果正确执行
+			continue					#继续往下执行
+		fi
+		((sum+i))						#累加
+	done< access_2010-12-8.log
+	[ -n "$sum" ] && echo $sum 			#输出结果
+	
+	
+	▣ until 循环
+		until 循环，和while循环相反，until循环时只要条件判断式部成立则进行循环，并执行循环程序。
+	一旦循环条件成立，则终止循环。
+	
+	
+	until [ 条件判断式 ]
+		do 
+			程序 
+		done 
+		
+	例：
+		#!/bin/bash 
+		
+		i=1
+		s=0
+		until [ $i -gt 100 ]
+		#循环直到变量i的值大于100，就停止循环
+			do 
+				s=$(( $s+$i ))
+				i=$(( $i+1 ))
+			done 
+			
+			echo "The sum is: $s"
+	
+	
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+shell 之 shift 从左到右累加
+ shift 指令：参数左移，每执行一次，参数序列顺次左移一个位置，$#的值减1， 用于分别处理每个参数，移出去的参数不再可用
+ 
+[root@bogon ~]# vim test
+#!/bin/sh 
+if [ $# -le 0 ]
+then 
+	echo "Not enough parameters"
+	exit 0
+fi 
+sum=0
+while [ $# -gt 0 ]
+do 
+	sum=`expr $sum + $1`
+	shift 
+done 
+echo $sum 
+
+[root@bogon ~]# ./test 10 12 50 56  
+128					#10 12 50 56  累加的结果
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+函数应用
+
+
+强调：对于 shell 来说，linux 系统的2000个命令都可以说是 shell 的函数。
+函数的定义：
+	函数名()
+	{
+		命令序列
+	}
+	函数的调用：不带()
+	函数名 参数1 参数2......
+	
+	规范语法格式：
+	function 函数名(){
+	
+		命令序列......
+		return n;
+	}
+	
+	#!/bin/sh 
+	oldboy(){
+		echo "I am oldboy"
+	}
+	oldboy 
+	
+	[root@localhost ~]# ./function.sh
+	I am oldboy
+	
+	带参数的shell函数例子
+	
+	#!/bin/sh
+	[ -f /etc/init.d/functions ]&& . /etc/init.d/functions  # 如果存在/etc/init.d/functions 就加载functions
+	usage(){
+	echo "USAGE:$0 url"  #输入错误提示
+	exit 1
+	}
+	
+	RETVAL=0
+	CheckUrl(){
+	wget -T 10 --spider -t 2 $1 &>/dev/null #-T 10 超过10报错；--spider 爬虫; -t 2:测试2次 ；&后台执行；>/dev/null 不显示输出
+	
+	RETVAL=$?   			  #判断上一个命令是否正确执行
+	if [ $RETVAL -eq 0 ];then #$RETVAL -eq 0 表示上一个命令执行正确
+		action "$1 url" /bin/true 		 #打印正确ok
+	else 
+		action "$1 url" /bin/false  	#打印false 错误
+	fi
+	
+	return $RETVAL
+	}
+	
+	main(){
+	if [ $# -ne 1 ];then #如果参数个数不等于1
+		usage
+	fi
+		CheckUrl $1    #调用 CheckUrl 函数 传入参数
+		RETVAL=$?	   #判断是否正确执行
+		return $RETVAL #返回执行的结果
+	}
+	
+	main $*
+
+	[root@localhost ~]# sh check_url.sh  www.oldboyedu.com
+	www.oldboyedu.com url                                      [  OK  ]
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+shell 正则表达式
+		正则表达式与通配符
+		正则表达式用来在文件中匹配符合条件的字符串，正则是包含匹配。grep、awk、sed等命令可以支持正则表达式。
+		通配符用来匹配符合条件的文件名，通配符是完全匹配。ls、find、cp这些命令不支持正则表达式，所以只能使用shell自己的通配符来进行匹配
+
+		+------------+------------------------------------------------------------+
+		|   元字符 	 |						作			用					  	  |
+		+------------+------------------------------------------------------------+
+		|	  *		 | 前一个字符零次或多次。要匹配 * 字符，请使用 \*。		  	  |
+		+------------+------------------------------------------------------------+
+		|	  .		 | 匹配除换行符 \n 之外的任何单字符。要匹配 . ，请使用 \. 。  |
+		+------------+------------------------------------------------------------+
+		|	  ^		 |  匹配输入字符串的开始位置，除非在方括号表达式中使用，此时它|
+		|			 |	表示不接受该字符集合。要匹配 ^ 字符本身，请使用 \^。	  |
+		+------------+------------------------------------------------------------+
+		|	  $		 | 匹配输入字符串的结尾位置。如果设置了 RegExp 对象的 		  |
+		|			 | Multiline 属性，则 $ 也匹配 '\n' 或 '\r'。要匹配 $ 字符本  |
+		|			 | 身，请使用 \$。		  	  								  |
+		+------------+------------------------------------------------------------+
+		|	  	 	 | 匹配中括号中指定的任意一个字符，只匹配一个字符。例如：	  |
+		|	  []	 | [aoeiu] 匹配任意一个元音字母，[0-9]匹配任意一位数字，[a-z] |
+		|			 | [0-9]匹配小写字和一位数字构成的两位字符。	  	 		  |
+		+------------+------------------------------------------------------------+
+		|	 [^]	 | 匹配除括号的字符以外的任意一个字符，例如：[^0-9]匹配任意一 |
+		|			 | 位非数字字符，[^a-z]表示任意一位非小写字母。				  |
+		+------------+------------------------------------------------------------+
+		|	  \		 | 转义符。用于取消讲特殊符号的含义取消。				  	  |
+		+------------+------------------------------------------------------------+
+		|	 \{n\}	 | 表示其前面的字符恰好出现n次，例如：[0-9]\{4\}匹配4位数字， |
+		|			 | [1][3-8][0-9]\{9\}	匹配手机号码。					  	  |
+		+------------+------------------------------------------------------------+
+		|	\{n,\}	 | 表示其前面的字符出现不小于n次。例如:[0-9]\{2,\}表示两位及以|
+		|			 | 上的数字。											  	  |
+		+------------+------------------------------------------------------------+
+		|   \{n,m\}	 | 表示其前面的字符至少出现n次，最多出现m次。例如：			  |
+		|			 | [a-z]\{6,8\}匹配6到8位的小写字母。						  |
+		+------------+------------------------------------------------------------+
+		
+		[root@localhost ~]#vim test_rule.txt 
+		Mr.Li Ming said:
+		he was the honeat man in LampBrother 
+		123despise him.
+		
+		
+		But since Mr. shen Chao came,
+		he never saaaid those words.
+		5555nice!
+		
+		
+		because,actuaaaally.
+		Mr Shen Chao is the most honest man
+		
+		
+		
+		
+		
+
+	※ “*”前一个字符匹配0次，或任意多次
+		grep "a*" test_rule.txt
+		#匹配所有内容，包括空白行(因为是0次或多次所有匹配到0个a也算数)
+		
+		grep "aa*" test_rule.txt 
+		#匹配至少包含有一个a的行
+		
+		grep "aaa*" test_rule.txt 
+		匹配最少包含两个连续a的字符串
+		
+		grep "aaaaa*" test_rule.txt 
+		#则会匹配最少包含四个个连续a的字符串 
+		
+	※ “.” 匹配除了换行符外任意一个字符
+		grep "s..d" test_rule.txt 
+		#"s..d" 会匹配在s和d这两个字母之间一定有两个字符的单词
+		
+		grep "s.*d" test_rule.txt 
+		#匹配在s和d字母之间有任意字符
+		
+		grep ".*" test_rule.txt 
+		#匹配所有内容
+		
+	※ “^”匹配行首； "$"匹配行尾
+		grep "^M" test_yule.txt 
+		#匹配以大写 "M"开头的行
+		
+		grep "n$" test_rule.txt 
+		#匹配以小写"n"结尾的行
+		
+		grep -n "^$" test_rule.txt 
+		#会匹配空白行
+		
+	※ "[]" 匹配中括号中指定的任意一个字符，只匹配一个字符
+
+		grep "s[ao]id" test_rule.txt 
+		#匹配s和i字母中，要不是a、要不是o
+		
+		grep "[0-9]" test_rule.txt 
+		#匹配任意一个数字
+		
+		grep "^[a-z]" test_rule.txt 
+		#匹配用小写字母开头的行
+		
+	※ "[^]" 匹配除中括号的字符以外的任意一个字符
+		grep "^[^a-z]" test_rule.txt 
+		#匹配不用小写字母开头的行
+		
+		grep "^[^a-zA-Z]" test_rule.txt 
+		#匹配不用字母开头的行
+		
+	※ "\" 转义符
+		grep "\.$" test_rule.txt 
+		#匹配使用"."结尾的行             "
+
+		
+	※ "\{n\}" 表示其前面的字符恰好出现n次 
+		grep "a\{3\}" test_rule.txt 
+		#匹配a字母连续出现三次的字符串
+		grep "[0-9]\{3\}" test_rule.txt 
+		#匹配包含连续的三个数字的字符串
+		
+	※ "\{n,m\}" 匹配其前面的字符至少出现n次，最多出现m次
+		grep "sa\{1,3}i" test_rule.txt 
+		#匹配在字母s和字母i之间有最少一个a，最多3个a
+		
+		
+
+	
+■ sed 命令 
+	sed 是一种几乎包括在所有UNIX 平台(包括 Linux )的轻量级流编辑器。sed 主要是用来将数据进行选取、替换、删除、新增的命令
+
+	[root@localhost ~]# sed [选项][动作] 文件名 
+#	选项 ：
+#		-n :一般sed命令会把所有数据都输出到屏幕，如果加入此选择，则只会把经过sed命令处理行输出到屏幕。
+#		-e :允许对输入数据应用多条sed命令编辑
+#		-i : 用sed的修改结果直接修改读取数据的文件，而不是由屏幕输出
+#		
+#	动作:
+#		a \: 追加，在当前行后添加一行或多行。添加多行时，除最后一行外，每行末尾需要用 "\" 代表数据未完结。
+#		c \: 行替换，用c后面的字符串替换原数据行，替换多行时，除最后一行外，每行末尾需用 "\" 代表数据未完结。
+#		i \: 插入，在当期行前插入一行或多行。插入多行时，除最后一行外，每行末尾需要用 "\" 代表数据未完结。
+#		d : 删除，删除指定的行。
+#		P : 打印，输出指定的行。
+#		s : 字串替换，用一个字符串替换另外一个字符串。格式为 "行范围s/旧字串/新字串/g" (和vim 中 的替换格式类似)。
+
+	▣ 行数据操作
+	[root@localhost ~]# sed '2p' student.txt 
+	#查看文件的第二行
+
+	[root@bogon ~]# sed '2p' student.txt   #把第二行输出了两遍，然后把所有的行输出一便
+	ID	Name	PHP	Linux	MySQL	Average
+	1	Liming	M	86	86	87.66
+	1	Liming	M	86	86	87.66
+	2	Sc	M	90	87	86.66
+	3	Gao	M	83	93	91.66
+	[root@bogon ~]# sed -n '2p' student.txt  # 需要加-n :则只会把经过sed命令处理行输出到屏幕 ;
+	1	Liming	M	86	86	87.66
+
+	[root@bogon ~]# sed '2,4d' student.txt
+	#删除第二行到第四行的数据，但不修改文件本身
+
+
+	[root@bogon ~]# sed '2,4d' student.txt
+	ID	Name	PHP	Linux	MySQL	Average
+	[root@bogon ~]# sed '2,3d' student.txt #没有做真正的删除
+	ID	Name	PHP	Linux	MySQL	Average
+	3	Gao	M	83	93	91.66
+
+	[root@bogon ~]# sed '2a hello' student.txt
+	#在第二行后追加hello 
+	
+	#i表示在第二行之前插入
+	[root@localhost ~]# sed '2i hello \  #\表示 数据没有输入完先输入第一行“hello” 然后输入 “world” 第二行
+	 world' student.txt
+
+	 [root@bogon ~]# sed '2i hello \
+	 >  world' student.txt
+	 ID	Name	PHP	Linux	MySQL	Average
+	 hello 								#先插入
+	 world 							    #在第二行在插入
+	 1	Liming	M	86	86	87.66
+	 2	Sc	M	90	87	86.66
+	 3	Gao	M	83	93	91.66
+	
+	#数据替换
+	 [root@bogon ~]# sed '2c No such person' student.txt  #替换掉了第二行
+	 ID	Name	PHP	Linux	MySQL	Average
+	 No such person
+	 2	Sc	M	90	87	86.66
+	 3	Gao	M	83	93	91.66	 
+	 
+	 #字符串替换
+	 #sed 's/旧字串/新字串/g' 文件名 
+	 #sed '3s/74/99/g' student.txt 
+	 #在第三行中，把74换成99
+	 #sed -i '3s/74/99/g' student.txt
+	 #sed 操作的户籍直接写入文件 
+	 #sed -e 's/Liming//g;s/Gao//g' student.txt
+	 #同时把 "Liming" 和 "Gao" 替换为空
+	 
+	 
+	 -i :真实的把数据替换到文件里
+	[root@bogon ~]# cat test
+	ID	Name	PHP	Linux	MySQL	Average
+	1	Liming	M	86	86	87.66
+	2	Sc	M	90	87	86.66
+	3	Gao	M	83	93	91.66
+	[root@bogon ~]# sed -i '4s/93/55/g' test
+	[root@bogon ~]# cat test
+	ID	Name	PHP	Linux	MySQL	Average
+	1	Liming	M	86	86	87.66
+	2	Sc	M	90	87	86.66
+	3	Gao	M	83	55	91.66	 
+		
+	 #-e 多个条件执行
+	[root@bogon ~]# sed -e 's/Liming//g;s/Gao//g' test
+	ID	Name	PHP	Linux	MySQL	Average
+	1		M	86	86	87.66
+	2	Sc	M	90	87	86.66
+	3		M	83	55	91.66 
+	 
+■ 字符处理命令
+	▣ 排序命令sort 
+	[root@localhost ~]# sort [选项] 文件名 
+#	选项：
+#		-f: 忽略大小写 
+#		-n: 以数值型进行排序，默认使用字符串排序
+#		-r: 反向排序
+#		-t: 指定分割符，默认是分割符是制表符
+#		-k n[,m]: 按照指定的字母范围排序。从第n字段开始，m字段结束(默认到行尾 )
+	 
+	[root@localhost ~]# sort /etc/passwd 
+	#排序用户信息文件
+	
+	[root@localhost ~]# sort -r /etc/passwd 
+	#反响排序
+	 
+	[root@localhost ~]# sort -t ":" -k 3,3 /etc/passwd 
+	#指定分隔符是":" ，用第三字段开头，第三字段结尾排序，就是只用第三字段排序
+	
+	[root@localhost ~]# sort -n -t ":" 3,3 /etc/passwd #加如果按数字顺序培训需要在前面加 -n ;
+	 
+	▣ 统计命令 wc 
+		[root@localhost ~]# wc [选项] 文件名
+		选项:
+		-l:   只统计行数
+		-w:   只统计单词数
+		-m:	  只统计字符数
+		[root@bogon ~]# wc /etc/passwd
+		43   83 2190 /etc/passwd  #这个文件有43行 83个单词 2190个字符
+
+■ 条件判断
+	※ 1、 按照文件类型进行判断
+	+--------------------+----------------------------------------------------------------------+
+	|	   测试选项		 |					作			用										|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -b 文件		 | 判断该文件是否存在，并且是否为块设备文件（是块设备文件为真）			|
+	+--------------------+----------------------------------------------------------------------+	
+	|	   -c 文件		 | 判断该文件是否存在，并且是否为字符设备文件（是字符设备文件为真）		|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -d 文件		 | 判断该文件是否存在，并且是否为目录文件（是目录为真）					|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -e 文件		 | 判断该文件是否存在（存在为真）										|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -f 文件		 | 判断该文件是否存在，并且是否为普通文件（是普通文件为真）				|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -L 文件		 | 判断该文件是否存在，并且是否为符号链接文件（是符号链接文件）			|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -P 文件		 | 判断该文件是否存在，并且是否为管道文件（是管道文件为真）				|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -s 文件		 | 判断该文件是否存在，并且是否为非空（是非空为真）						|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -S 文件		 | 判断该文件是否存在，并且是否为套接字文件（是套接字文件为真）			|
+	+--------------------+----------------------------------------------------------------------+
+	
+	▪ 两种判断格式
+	[root@localhost ~]# test -e /root/install.log #判断 /root/install.log  文件是否存在
+	
+	[root@localhost ~]# [-e /root/install.log]    #判断 /root/install.log  文件是否存在
+	
+	[-d /root] && echo "yes" || echo "no" 
+	#第一个判断命令如果正确执行，则打印 "yes" ，否则打印 "no"
+	
+	[root@localhost ~]# [ -f /root/student.txt ] && echo "yes" || echo "no" #如果 /root/student.txt 文件存在并且是普通文件 打印yes 或者不存在或者不是普通文件打印no
+	yes 
+	[root@localhost ~]# [ -f /root ] && echo "yes" || echo "no"  //root 这个文件虽然存在但是不是普通文件所有返回值是no
+	no 
+	
+	
+	※ 2、 按照文件权限进行判断
+	
+	+--------------------+----------------------------------------------------------------------+
+	|	   测试选项		 |					作			用										|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -r 文件		 | 判断该文件是否存在，并且是否该文件拥有读权限（有读权限为真）			|
+	+--------------------+----------------------------------------------------------------------+	
+	|	   -w 文件		 | 判断该文件是否存在，并且是否该文件拥有写权限（有写权限为真）			|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -x 文件		 | 判断该文件是否存在，并且是否该文件拥有执行权限（有执行权限为真）		|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -u 文件		 | 判断该文件是否存在，并且是否该文件拥有SUID权限（有SUID权限为真）		|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -g 文件		 | 判断该文件是否存在，并且是否该文件拥有SGID权限（有SGID权限为真）		|
+	+--------------------+----------------------------------------------------------------------+
+	|	   -k 文件		 | 判断该文件是否存在，并且是否 该文件拥有SBit权限（有SBit权限为真）	|
+	+--------------------+----------------------------------------------------------------------+
+	
+	[root@localhost ~]# [-w /root/install.log ] && echo yes || echo no  #判断 /root/install.log  文件是否有写权限
+	yes 
+	
+	提示：-w 是不区分所有者有写权限还是所有属组有写权限还是其他人有权限，而是三给分组当中有一个有写权限都为真
+	
+	※ 3、 两个文件之间进行比较
+	
+	+--------------------+----------------------------------------------------------------------+
+	|	   测试选项		 |					作			用										|
+	+--------------------+----------------------------------------------------------------------+
+	|	文件1 -nt 文件2	 | 判断文件1的修改时间是否比文件2的新 （如果新则为真）					|
+	+--------------------+----------------------------------------------------------------------+	
+	|	文件1 -ot 文件2	 | 判断该文件是否存在，并且是否该文件拥有写权限（有写权限为真）			|
+	|		  +			 |																		|
+	+--------------------+----------------------------------------------------------------------+
+	|	文件1 -ef 文件2	 | 判断文件1是否和文件2的Inode号一致，可以理解为两个文件是否为同一个文	|
+	|					 | 件。这个判断用于判断硬链接是很好的方法								|
+	+--------------------+----------------------------------------------------------------------+
+	ln /root/student.txt /tmp/stu.txt #创建一个硬链接
+	
+	[root@localhost ~]# [ /root/student.txt -ef /tmp/xtu.txt ] && echo yes || echo no  #判断两个文件是否为同一个文件（或者说是否为同一个文件的硬链接）
+	yes	
+	
+	※ 4、 两个整数之间比较
+	
+	+--------------------+----------------------------------------------------------------------+
+	|	   测试选项		 |					作			用										|
+	+--------------------+----------------------------------------------------------------------+
+	|	整数1 -eq 整数	 | 判断整数1是否和整数2相等（相等为真）									|
+	|		  2			 |																		|
+	+--------------------+----------------------------------------------------------------------+	
+	|	整数1 -ne 整数	 | 判断整数1是否和整数2不相等（不相等为真）								|
+	|		   2		 |																		|
+	+--------------------+----------------------------------------------------------------------+
+	|	整数1 -gt 整数	 | 判断整数1是否大于整数2（大于为真）									|
+	+--------------------+----------------------------------------------------------------------+	
+	|	整数1 -lt 整数	 | 判断整数1是否小于整数2（小于为真）									|
+	+--------------------+----------------------------------------------------------------------+		
+	|	整数1 -ge 整数	 | 判断整数1是否大于等于整数2（大于等于为真）							|
+	+--------------------+----------------------------------------------------------------------+
+	|	整数1 -le 整数	 | 判断文件1是否小于等于整数2（小于等于为真）							|
+	+--------------------+----------------------------------------------------------------------+	
+
+	[root@bogon ~]# [ 23 -gt 22 ] && echo yes || echo no
+	yes
+
+	
+	※ 5、 字符串的判断
+	
+	+--------------------+----------------------------------------------------------------------+
+	|	   测试选项		 |					作			用										|
+	+--------------------+----------------------------------------------------------------------+
+	|	-z 字符串	 	 | 判断字符串是否为空（为空返回真）										|
+	+--------------------+----------------------------------------------------------------------+
+	|	-n字符串		 | 判断字符串是否非空（非空返回真）										|
+	+--------------------+----------------------------------------------------------------------+
+	| 	字串1 == 字串2   | 判断字符串1是否和字符串2相等（相等返回真）							|
+	+--------------------+----------------------------------------------------------------------+	
+	|	字串1 != 字串2	 | 判断字符串1是否和字符串2不相等（不相等返回真）						|
+	+--------------------+----------------------------------------------------------------------+
+
+	name =sc 
+	#给name 变量赋值
+	[ -z "$name" ]&& echo "yes" || echo "no" 
+	no 
+	#判断name变量是否为空，因为不为空，所以返回no 
+
+	[root@bogon ~]# name=se #判断变量是否有值
+	[root@bogon ~]# [ -z "$name" ] && echo yes || echo no
+	no
+	[root@bogon ~]# [ -z "$namebo" ] && echo yes || echo no
+	yes
+
+	aa=11
+	bb=22
+	#给变量aa和变量bb赋值
+	["$aa"=="bb"]&& echo "yes" || echo "no"
+	no 
+	#判断两个变量的值是否相等，明显不相等，所以返回no
+
+	※ 6、 多重条件判断
+	
+	+--------------------+----------------------------------------------------------------------+
+	|	   测试选项		 |					作			用										|
+	+--------------------+----------------------------------------------------------------------+
+	|	判断1 -a 判断2	 | 逻辑与，判断1和判断2都成立，最终的结果才为真							|
+	+--------------------+----------------------------------------------------------------------+
+	|	判断1 -o 判断2	 | 逻辑或，判断1和判断2有一个成立，最终的结果就为真						|
+	+--------------------+----------------------------------------------------------------------+
+	| 	！判断		  	 | 逻辑非，使原始的判断式取反											|
+	+--------------------+----------------------------------------------------------------------+	
+	
+	aa=11
+	[ -n "$aa" -a "$aa" -gt 23 ] && echo "yes" || echo "no"
+	no 
+	#判断变量aa是否有值，同时判断变量aa的是否大于23
+	#因为变量aa的值不大于23，所以虽然第一个判断值为真，返回的结果也是假
+	
+	aa=24
+	[ -n "$aa" -a "$aa" -gt 23 ] && echo "yes" || echo "no"
+	yes
+	
+	
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
+	
+shell 数组	
+	
+	数组介绍:
+#			平时定义 a=1;b=2;c=3,变量如果多了，再一个一个定义很费劲，并且取变量的也费劲。
+#		简单的说，数组就是各种数据类型的元素按一定顺序排列的集合。
+#		
+#			数组就是把有限个元素或数据用一个名字命名，然后用编号区分他们的变量的集合。这个名字成为数组名，编号成为数组下标。
+#		组成数组的各个变量成为数组的分量，也称为数组的元素，有时也称为下标变量。
+#		
+#			如果有过用它语言编程的经历，那么想必会熟悉数组的概念。由于有了数组，可以细想用相同名字引用一系列变量，并且数组（索引）
+#		来识别它们。在许多场合，使用数组可以缩短简化程序开发，因为可以利用索引值设计一个循环，高效处理多种情况。
+#		http://baike.baidu.com/view/209670.html
+#			
+		[root@bogon ~]# array=(1 2 3)  		#数组的定义
+		[root@bogon ~]# echo ${#array[*]}   #获取数组的长度
+		3
+		[root@bogon ~]# echo ${#array[@]}   #获取数组的长度
+		3
+		[root@bogon ~]# echo ${array[0]}	#打印数组的第一个值
+		1
+		[root@bogon ~]# echo ${array[1]}	#打印数组的第二个值
+		2
+		[root@bogon ~]# echo ${array[*]}	#打印数组内的所有值
+		1 2 3
+		[root@bogon ~]# echo ${array[@]}	#打印数组内的所有值
+		1 2 3
+		[root@bogon ~]# array[3]=4			#给数组添加值	
+		[root@bogon ~]# echo ${array[*]}	#查看值是否添加成功
+		1 2 3 4
+		[root@bogon ~]# unset array[0]		#删除数组值
+		[root@bogon ~]# echo ${array[*]}	#查看删除是否成功
+		2 3 4
+		[root@bogon ~]# array=($(ls)) 		#把命令结果放到数组里
+		[root@bogon ~]# echo ${array[*]}	#打印命令结果
+		a.log anaconda-ks.cfg check_url.sh databases_backup_20180630163704 databases_backup_20180630181456 databases_backup_20180630190356 databases_backup_20180630204624 databases_backup_20180630220200 dead.letter initial-setup-ks.cfg lnmp-install.log test.bak test.lua test.sh testfile
+#!/bin/sh		
+
+#定义数组
+array=(
+	10.0.0.1
+	10.0.0.2
+	10.0.0.3
+)
+	
+for ip in ${array[*]}
+do 
+	echo $ip  #打印出ip
+	sleep 2   #每两秒执行一次
+done 
+
+
+for((i=0;i<$(#array[@]));i==)
+do 
+	echo ${array[i]} #循环打印出ip
+done
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
+
+uniq 命令:
+uniq - report or omit repeated lines 
+一、介绍
+uniq 对指定的ASCII文件或标准输入进行唯一性检查，以判断文本文件中重复出现的行。常用于系统排查及日志分析。
+二、命令格式
+引用uniq [options][file][file2]
+uniq从已经排序好的文本文件file1中删除重复的行，输出到标注输出或file2。常作为过滤器，配合管道使用。
+在使用uniq命令前，必须确保操作的文本文件已经过sort排序。若不带参数运行uniq，将删除重复的行。
+结论：uniq只能对相邻的相同行内容去重。因此，在去重之前先用sort进行排序，目的是让相同的内容相邻，好实现完全去重。
+常用参数
+-c, --count*****
+	在每行旁边显示该行重复出现的次数
+-d,--repeated
+	仅显示重复出现的行，2次或2次以上的行
+-D,--all-repeated[=method]
+	指定的格式打印所有重复的行。格式仅使用于长选项参数，可使用none（默认）
+	prepend,separate三个,效果见后面。以空行进行区分。
+	
+-f n, --skip-fields=n 
+	前n个字段与每个字段前的空白一起被忽略。
+	一个字段（fields）是一个非常空格、非制表符的字符串，彼此由制表符和空格隔开（字段从1开始编号）。与-n相同，n为
+	字段数。
+-i,--ignore-case 
+	在判断重复行时，忽略大小写区别
+-s n,--skip-chars=n
+	前n个字符被忽略，之前的字符被跳过（字符从1开始编号）。与+n相同，n为字符数。
+-u， --unique
+	仅显示出现一次的行
+-w n, --check-chars=n
+	仅比较每行前面n个字符
+--help 
+	显示帮助信息
+	
+测试数据
+10.0.0.9
+10.0.0.8
+10.0.0.7
+10.0.0.7
+10.0.0.8
+10.0.0.8
+10.0.0.9
+
+#只对相邻的相同行内容去重
+[root@bogon ~]# uniq us
+10.0.0.9
+10.0.0.8
+10.0.0.7
+10.0.0.8
+10.0.0.9
+#可通过sort配合完全去重：让重复的行相邻
+[root@bogon ~]# sort us
+10.0.0.7
+10.0.0.7
+10.0.0.8
+10.0.0.8
+10.0.0.8
+10.0.0.9
+10.0.0.9
+[root@bogon ~]# sort us|uniq #uniq配合sort去重
+10.0.0.7
+10.0.0.8
+10.0.0.9
+[root@bogon ~]# sort -u us #-u就是uniq
+10.0.0.7
+10.0.0.8
+10.0.0.9
+[root@bogon ~]# sort  us|uniq -c #去重，-c统计
+2 10.0.0.7
+3 10.0.0.8
+2 10.0.0.9
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

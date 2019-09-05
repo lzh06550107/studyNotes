@@ -1,0 +1,709 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>43. 辅助函数-字符串函数 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="44. 辅助函数-数组和对象函数" href="Laravel的辅助函数-数组和对象操作.html"/>
+        <link rel="prev" title="42. 文件存储" href="Laravel的文件存储.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">43. 辅助函数-字符串函数</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">43.1. 字符串操作</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">43.1.1. 字符串生成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">43.1.2. 字符串修改</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">43.1.3. 字符串匹配</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">43.1.4. 字符串替换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">43.1.5. 字符串变换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">43.1.6. 字符串本地翻译</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>43. 辅助函数-字符串函数</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1><a class="toc-backref" href="#id11">43. 辅助函数-字符串函数</a><a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id12">43.1. 字符串操作</a><a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="contents topic" id="id3">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id11">辅助函数-字符串函数</a><ul>
+<li><a class="reference internal" href="#id2" id="id12">字符串操作</a><ul>
+<li><a class="reference internal" href="#id4" id="id13">字符串生成</a><ul>
+<li><a class="reference internal" href="#str-random" id="id14">str_random：函数生成一个指定长度的随机字符串</a></li>
+<li><a class="reference internal" href="#str-ordereduuid-uuid" id="id15">Str::orderedUuid：方法高效生成一个可储存在索引数据库列中的 「第一时间」 UUID</a></li>
+<li><a class="reference internal" href="#str-uuid-uuid-4" id="id16">Str::uuid：方法生成一个 UUID（版本 4）</a></li>
+<li><a class="reference internal" href="#str-slug-url-slug" id="id17">str_slug：函数根据给定的字符串生成一个 URL 友好的「slug」</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id5" id="id18">字符串修改</a><ul>
+<li><a class="reference internal" href="#str-start" id="id19">str_start：函数将给定值的单个实例添加到字符串（如果它尚未以值开始）</a></li>
+<li><a class="reference internal" href="#str-finish" id="id20">str_finish：函数将给定字符串以给定值结尾返回（如果它尚未以给定值结尾）</a></li>
+<li><a class="reference internal" href="#str-limit" id="id21">str_limit：函数按给定的长度截断给定的字符串</a></li>
+<li><a class="reference internal" href="#str-plural" id="id22">str_plural：函数将字符串转换为复数形式</a></li>
+<li><a class="reference internal" href="#str-singular" id="id23">str_singular：函数将字符串转换为单数形式</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6" id="id24">字符串匹配</a><ul>
+<li><a class="reference internal" href="#str-contains" id="id25">str_contains：函数判断给定的字符串是否包含给定的值</a></li>
+<li><a class="reference internal" href="#str-is" id="id26">str_is：函数判断给定的字符串是否匹配给定的模式</a></li>
+<li><a class="reference internal" href="#starts-with" id="id27">starts_with：函数判断给定的字符串的开头是否是指定值</a></li>
+<li><a class="reference internal" href="#ends-with" id="id28">ends_with：函数判断给定的字符串是否以给定的值结尾</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id7" id="id29">字符串替换</a><ul>
+<li><a class="reference internal" href="#preg-replace-array" id="id30">preg_replace_array：函数使用数组顺序替换字符串中的给定模式</a></li>
+<li><a class="reference internal" href="#str-replace-array" id="id31">str_replace_array：函数使用数组顺序替换字符串中的给定值</a></li>
+<li><a class="reference internal" href="#str-replace-first" id="id32">str_replace_first：函数替换字符串中给定值的第一个匹配项</a></li>
+<li><a class="reference internal" href="#str-replace-last" id="id33">str_replace_last：函数替换字符串中最后一次出现的给定值</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id8" id="id34">字符串变换</a><ul>
+<li><a class="reference internal" href="#camel-case" id="id35">camel_case：函数将给定的值符传转换为「驼峰命名」</a></li>
+<li><a class="reference internal" href="#kebab-case" id="id36">kebab_case：函数将给定的字符串转换为「短横线命名」</a></li>
+<li><a class="reference internal" href="#snake-case" id="id37">snake_case：函数将给定的字符串转换为「蛇形命名」</a></li>
+<li><a class="reference internal" href="#studly-case" id="id38">studly_case：函数将给定的字符串转换为「变种驼峰命名」</a></li>
+<li><a class="reference internal" href="#title-case" id="id39">title_case：函数将给定的字符串转换为「首字母大写」</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id9" id="id40">字符串本地翻译</a><ul>
+<li><a class="reference internal" href="#id10" id="id41"><code class="docutils literal"><span class="pre">__</span></code> ：函数使用你的 本地化文件来翻译给定的翻译字符串或翻译键</a></li>
+<li><a class="reference internal" href="#class-basename" id="id42">class_basename：返回给定类删除命名空间的类名</a></li>
+<li><a class="reference internal" href="#e-double-encode-false-php-htmlspecialchars" id="id43">e：函数将 double_encode 选项设置为 false 来运行 PHP 的 htmlspecialchars 函数</a></li>
+<li><a class="reference internal" href="#trans" id="id44">trans：函数使用你的 本地化文件 来翻译给定的翻译字符串或翻译键</a></li>
+<li><a class="reference internal" href="#str-before" id="id45">str_before：函数返回字符串中给定值之前的所有内容</a></li>
+<li><a class="reference internal" href="#str-after" id="id46">str_after：函数返回字符串中指定值之后的所有内容</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3><a class="toc-backref" href="#id13">43.1.1. 字符串生成</a><a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<div class="section" id="str-random">
+<h4><a class="toc-backref" href="#id14">43.1.1.1. str_random：函数生成一个指定长度的随机字符串</a><a class="headerlink" href="#str-random" title="永久链接至标题">¶</a></h4>
+<p>这个函数数用 PHP 的 <code class="docutils literal"><span class="pre">random_bytes</span></code> 函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$random</span> <span class="o">=</span> <span class="nx">str_random</span><span class="p">(</span><span class="mi">40</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-ordereduuid-uuid">
+<h4><a class="toc-backref" href="#id15">43.1.1.2. Str::orderedUuid：方法高效生成一个可储存在索引数据库列中的 「第一时间」 UUID</a><a class="headerlink" href="#str-ordereduuid-uuid" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>&lt;?php</dt>
+<dd><p class="first">use IlluminateSupportStr;</p>
+<p class="last">return (string) Str::orderedUuid();</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="str-uuid-uuid-4">
+<h4><a class="toc-backref" href="#id16">43.1.1.3. Str::uuid：方法生成一个 UUID（版本 4）</a><a class="headerlink" href="#str-uuid-uuid-4" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Str</span><span class="p">;</span>
+
+<span class="k">return</span> <span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="nx">Str</span><span class="o">::</span><span class="na">uuid</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-slug-url-slug">
+<h4><a class="toc-backref" href="#id17">43.1.1.4. str_slug：函数根据给定的字符串生成一个 URL 友好的「slug」</a><a class="headerlink" href="#str-slug-url-slug" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$slug</span> <span class="o">=</span> <span class="nx">str_slug</span><span class="p">(</span><span class="s1">&#39;Laravel 5 Framework&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">);</span>
+
+<span class="c1">// laravel-5-framework</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3><a class="toc-backref" href="#id18">43.1.2. 字符串修改</a><a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<div class="section" id="str-start">
+<h4><a class="toc-backref" href="#id19">43.1.2.1. str_start：函数将给定值的单个实例添加到字符串（如果它尚未以值开始）</a><a class="headerlink" href="#str-start" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$adjusted</span> <span class="o">=</span> <span class="nx">str_start</span><span class="p">(</span><span class="s1">&#39;this/string&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span>
+
+<span class="c1">// /this/string</span>
+
+<span class="nv">$adjusted</span> <span class="o">=</span> <span class="nx">str_start</span><span class="p">(</span><span class="s1">&#39;/this/string/&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span>
+
+<span class="c1">// /this/string</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-finish">
+<h4><a class="toc-backref" href="#id20">43.1.2.2. str_finish：函数将给定字符串以给定值结尾返回（如果它尚未以给定值结尾）</a><a class="headerlink" href="#str-finish" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$adjusted</span> <span class="o">=</span> <span class="nx">str_finish</span><span class="p">(</span><span class="s1">&#39;this/string&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span>
+
+<span class="c1">// this/string/</span>
+
+<span class="nv">$adjusted</span> <span class="o">=</span> <span class="nx">str_finish</span><span class="p">(</span><span class="s1">&#39;this/string/&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span>
+
+<span class="c1">// this/string/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-limit">
+<h4><a class="toc-backref" href="#id21">43.1.2.3. str_limit：函数按给定的长度截断给定的字符串</a><a class="headerlink" href="#str-limit" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$truncated</span> <span class="o">=</span> <span class="nx">str_limit</span><span class="p">(</span><span class="s1">&#39;The quick brown fox jumps over the lazy dog&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+
+<span class="c1">// The quick brown fox...</span>
+</pre></div>
+</div>
+<p>你也可以传递第三个参数来改变将被追加到最后的字符串：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$truncated</span> <span class="o">=</span> <span class="nx">str_limit</span><span class="p">(</span><span class="s1">&#39;The quick brown fox jumps over the lazy dog&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39; (...)&#39;</span><span class="p">);</span>
+
+<span class="c1">// The quick brown fox (...)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-plural">
+<h4><a class="toc-backref" href="#id22">43.1.2.4. str_plural：函数将字符串转换为复数形式</a><a class="headerlink" href="#str-plural" title="永久链接至标题">¶</a></h4>
+<p>这个函数目前仅支持英文：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$plural</span> <span class="o">=</span> <span class="nx">str_plural</span><span class="p">(</span><span class="s1">&#39;car&#39;</span><span class="p">);</span>
+
+<span class="c1">// cars</span>
+
+<span class="nv">$plural</span> <span class="o">=</span> <span class="nx">str_plural</span><span class="p">(</span><span class="s1">&#39;child&#39;</span><span class="p">);</span>
+
+<span class="c1">// children</span>
+</pre></div>
+</div>
+<p>你可以提供一个整数作为函数的第二个参数来检索字符串的单数或复数形式：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$plural</span> <span class="o">=</span> <span class="nx">str_plural</span><span class="p">(</span><span class="s1">&#39;child&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+<span class="c1">// children</span>
+
+<span class="nv">$plural</span> <span class="o">=</span> <span class="nx">str_plural</span><span class="p">(</span><span class="s1">&#39;child&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="c1">// child</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-singular">
+<h4><a class="toc-backref" href="#id23">43.1.2.5. str_singular：函数将字符串转换为单数形式</a><a class="headerlink" href="#str-singular" title="永久链接至标题">¶</a></h4>
+<p>这个函数目前仅支持英文：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$singular</span> <span class="o">=</span> <span class="nx">str_singular</span><span class="p">(</span><span class="s1">&#39;cars&#39;</span><span class="p">);</span>
+
+<span class="c1">// car</span>
+
+<span class="nv">$singular</span> <span class="o">=</span> <span class="nx">str_singular</span><span class="p">(</span><span class="s1">&#39;children&#39;</span><span class="p">);</span>
+
+<span class="c1">// child</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3><a class="toc-backref" href="#id24">43.1.3. 字符串匹配</a><a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<div class="section" id="str-contains">
+<h4><a class="toc-backref" href="#id25">43.1.3.1. str_contains：函数判断给定的字符串是否包含给定的值</a><a class="headerlink" href="#str-contains" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$contains</span> <span class="o">=</span> <span class="nx">str_contains</span><span class="p">(</span><span class="s1">&#39;This is my name&#39;</span><span class="p">,</span> <span class="s1">&#39;my&#39;</span><span class="p">);</span>
+
+<span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-is">
+<h4><a class="toc-backref" href="#id26">43.1.3.2. str_is：函数判断给定的字符串是否匹配给定的模式</a><a class="headerlink" href="#str-is" title="永久链接至标题">¶</a></h4>
+<p>星号（ <code class="docutils literal"><span class="pre">*</span></code> ）可以用来表示通配符：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$matches</span> <span class="o">=</span> <span class="nx">str_is</span><span class="p">(</span><span class="s1">&#39;foo*&#39;</span><span class="p">,</span> <span class="s1">&#39;foobar&#39;</span><span class="p">);</span>
+
+<span class="c1">// true</span>
+
+<span class="nv">$matches</span> <span class="o">=</span> <span class="nx">str_is</span><span class="p">(</span><span class="s1">&#39;baz*&#39;</span><span class="p">,</span> <span class="s1">&#39;foobar&#39;</span><span class="p">);</span>
+
+<span class="c1">// false</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="starts-with">
+<h4><a class="toc-backref" href="#id27">43.1.3.3. starts_with：函数判断给定的字符串的开头是否是指定值</a><a class="headerlink" href="#starts-with" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">starts_with</span><span class="p">(</span><span class="s1">&#39;This is my name&#39;</span><span class="p">,</span> <span class="s1">&#39;This&#39;</span><span class="p">);</span>
+
+<span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ends-with">
+<h4><a class="toc-backref" href="#id28">43.1.3.4. ends_with：函数判断给定的字符串是否以给定的值结尾</a><a class="headerlink" href="#ends-with" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">ends_with</span><span class="p">(</span><span class="s1">&#39;This is my name&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">);</span>
+
+<span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3><a class="toc-backref" href="#id29">43.1.4. 字符串替换</a><a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<div class="section" id="preg-replace-array">
+<h4><a class="toc-backref" href="#id30">43.1.4.1. preg_replace_array：函数使用数组顺序替换字符串中的给定模式</a><a class="headerlink" href="#preg-replace-array" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$string</span> <span class="o">=</span> <span class="s1">&#39;The event will take place between :start and :end&#39;</span><span class="p">;</span>
+
+<span class="nv">$replaced</span> <span class="o">=</span> <span class="nx">preg_replace_array</span><span class="p">(</span><span class="s1">&#39;/:[a-z_]+/&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;8:30&#39;</span><span class="p">,</span> <span class="s1">&#39;9:00&#39;</span><span class="p">],</span> <span class="nv">$string</span><span class="p">);</span>
+
+<span class="c1">// 活动将在 8:30 至 9:00 之间进行</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-replace-array">
+<h4><a class="toc-backref" href="#id31">43.1.4.2. str_replace_array：函数使用数组顺序替换字符串中的给定值</a><a class="headerlink" href="#str-replace-array" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$string</span> <span class="o">=</span> <span class="s1">&#39;该活动将于 ? 至 ? 之间举行&#39;</span><span class="p">;</span>
+
+<span class="nv">$replaced</span> <span class="o">=</span> <span class="nx">str_replace_array</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;8:30&#39;</span><span class="p">,</span> <span class="s1">&#39;9:00&#39;</span><span class="p">],</span> <span class="nv">$string</span><span class="p">);</span>
+
+<span class="c1">// 该活动将于 8:30 至 9:00 之间举行</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-replace-first">
+<h4><a class="toc-backref" href="#id32">43.1.4.3. str_replace_first：函数替换字符串中给定值的第一个匹配项</a><a class="headerlink" href="#str-replace-first" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$replaced</span> <span class="o">=</span> <span class="nx">str_replace_first</span><span class="p">(</span><span class="s1">&#39;the&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;the quick brown fox jumps over the lazy dog&#39;</span><span class="p">);</span>
+
+<span class="c1">// a quick brown fox jumps over the lazy dog</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-replace-last">
+<h4><a class="toc-backref" href="#id33">43.1.4.4. str_replace_last：函数替换字符串中最后一次出现的给定值</a><a class="headerlink" href="#str-replace-last" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$replaced</span> <span class="o">=</span> <span class="nx">str_replace_last</span><span class="p">(</span><span class="s1">&#39;the&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;the quick brown fox jumps over the lazy dog&#39;</span><span class="p">);</span>
+
+<span class="c1">// the quick brown fox jumps over a lazy dog</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3><a class="toc-backref" href="#id34">43.1.5. 字符串变换</a><a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<div class="section" id="camel-case">
+<h4><a class="toc-backref" href="#id35">43.1.5.1. camel_case：函数将给定的值符传转换为「驼峰命名」</a><a class="headerlink" href="#camel-case" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$converted</span> <span class="o">=</span> <span class="nx">camel_case</span><span class="p">(</span><span class="s1">&#39;foo_bar&#39;</span><span class="p">);</span>
+
+<span class="c1">// fooBar</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="kebab-case">
+<h4><a class="toc-backref" href="#id36">43.1.5.2. kebab_case：函数将给定的字符串转换为「短横线命名」</a><a class="headerlink" href="#kebab-case" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$converted</span> <span class="o">=</span> <span class="nx">kebab_case</span><span class="p">(</span><span class="s1">&#39;fooBar&#39;</span><span class="p">);</span>
+
+<span class="c1">// foo-bar</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="snake-case">
+<h4><a class="toc-backref" href="#id37">43.1.5.3. snake_case：函数将给定的字符串转换为「蛇形命名」</a><a class="headerlink" href="#snake-case" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$converted</span> <span class="o">=</span> <span class="nx">snake_case</span><span class="p">(</span><span class="s1">&#39;fooBar&#39;</span><span class="p">);</span>
+
+<span class="c1">// foo_bar</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="studly-case">
+<h4><a class="toc-backref" href="#id38">43.1.5.4. studly_case：函数将给定的字符串转换为「变种驼峰命名」</a><a class="headerlink" href="#studly-case" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$converted</span> <span class="o">=</span> <span class="nx">studly_case</span><span class="p">(</span><span class="s1">&#39;foo_bar&#39;</span><span class="p">);</span>
+
+<span class="c1">// FooBar</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="title-case">
+<h4><a class="toc-backref" href="#id39">43.1.5.5. title_case：函数将给定的字符串转换为「首字母大写」</a><a class="headerlink" href="#title-case" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$converted</span> <span class="o">=</span> <span class="nx">title_case</span><span class="p">(</span><span class="s1">&#39;a nice title uses the correct case&#39;</span><span class="p">);</span>
+
+<span class="c1">// A Nice Title Uses The Correct Case</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3><a class="toc-backref" href="#id40">43.1.6. 字符串本地翻译</a><a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id10">
+<h4><a class="toc-backref" href="#id41">43.1.6.1. <code class="docutils literal"><span class="pre">__</span></code> ：函数使用你的 本地化文件来翻译给定的翻译字符串或翻译键</a><a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">echo</span> <span class="nx">__</span><span class="p">(</span><span class="s1">&#39;Welcome to our application&#39;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">__</span><span class="p">(</span><span class="s1">&#39;messages.welcome&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果指定的翻译字符串或键不存在，则 <code class="docutils literal"><span class="pre">__</span></code> 函数会简单地返回给定的值。所以，按照上面的例子，如果翻译键 <code class="docutils literal"><span class="pre">messages.welcome</span></code> 不存在， <code class="docutils literal"><span class="pre">__</span></code> 方法会将其直接返回。</p>
+</div>
+<div class="section" id="class-basename">
+<h4><a class="toc-backref" href="#id42">43.1.6.2. class_basename：返回给定类删除命名空间的类名</a><a class="headerlink" href="#class-basename" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$class</span> <span class="o">=</span> <span class="nx">class_basename</span><span class="p">(</span><span class="s1">&#39;Foo\Bar\Baz&#39;</span><span class="p">);</span>
+
+<span class="c1">// Baz</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="e-double-encode-false-php-htmlspecialchars">
+<h4><a class="toc-backref" href="#id43">43.1.6.3. e：函数将 double_encode 选项设置为 false 来运行 PHP 的 htmlspecialchars 函数</a><a class="headerlink" href="#e-double-encode-false-php-htmlspecialchars" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="nx">e</span><span class="p">(</span><span class="s1">&#39;&lt;html&gt;foo&lt;/html&gt;&#39;</span><span class="p">);</span>
+
+<span class="c1">// &lt;html&gt;foo&lt;/html&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="trans">
+<h4><a class="toc-backref" href="#id44">43.1.6.4. trans：函数使用你的 本地化文件 来翻译给定的翻译字符串或翻译键</a><a class="headerlink" href="#trans" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="nx">trans</span><span class="p">(</span><span class="s1">&#39;messages.welcome&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果指定的翻译键不存在，则 <code class="docutils literal"><span class="pre">trans</span></code> 方法会简单地返回给定的键。所以，就上面的例子而言，如果翻译键不存在， <code class="docutils literal"><span class="pre">trans</span></code> 方法会返回 <code class="docutils literal"><span class="pre">messages.welcome</span></code> 。</p>
+<p>trans_choice：函数根据词形变化来翻译给定的翻译键</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="nx">trans_choice</span><span class="p">(</span><span class="s1">&#39;messages.notifications&#39;</span><span class="p">,</span> <span class="nv">$unreadCount</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果指定的翻译键不存在， <code class="docutils literal"><span class="pre">trans_choice</span></code> 方法会简单地返回给定的键。所以，按照上面的例子，如果翻译键不存在， <code class="docutils literal"><span class="pre">trans_choice</span></code> 方法会返回 <code class="docutils literal"><span class="pre">messages.notifications</span></code> 。</p>
+</div>
+<div class="section" id="str-before">
+<h4><a class="toc-backref" href="#id45">43.1.6.5. str_before：函数返回字符串中给定值之前的所有内容</a><a class="headerlink" href="#str-before" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$slice</span> <span class="o">=</span> <span class="nx">str_before</span><span class="p">(</span><span class="s1">&#39;This is my name&#39;</span><span class="p">,</span> <span class="s1">&#39;my name&#39;</span><span class="p">);</span>
+
+<span class="c1">// &#39;This is &#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-after">
+<h4><a class="toc-backref" href="#id46">43.1.6.6. str_after：函数返回字符串中指定值之后的所有内容</a><a class="headerlink" href="#str-after" title="永久链接至标题">¶</a></h4>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$slice</span> <span class="o">=</span> <span class="nx">str_after</span><span class="p">(</span><span class="s1">&#39;This is my name&#39;</span><span class="p">,</span> <span class="s1">&#39;This is&#39;</span><span class="p">);</span>
+
+<span class="c1">// &#39; my name&#39;</span>
+</pre></div>
+</div>
+<p>你也可以传递一个值的数组来判断给定的字符串是否包含任何值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$contains</span> <span class="o">=</span> <span class="nx">str_contains</span><span class="p">(</span><span class="s1">&#39;This is my name&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;my&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">]);</span>
+
+<span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的辅助函数-数组和对象操作.html" class="btn btn-neutral float-right" title="44. 辅助函数-数组和对象函数" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的文件存储.html" class="btn btn-neutral" title="42. 文件存储" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

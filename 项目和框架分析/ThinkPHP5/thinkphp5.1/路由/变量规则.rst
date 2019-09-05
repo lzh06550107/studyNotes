@@ -1,0 +1,82 @@
+****
+变量规则
+****
+
+变量规则
+========
+
+.. note:: 系统默认的变量规则设置是 ``\w+`` ，只会匹配字母、数字和下划线字符，并不会匹配特殊符号和中文，需要定义变量规则或者调整默认变量规则。
+
+``V5.1.14+`` 版本开始，可以在 ``app.php`` 配置文件中自定义默认的变量规则：
+
+.. code-block:: shell
+
+    'default_route_pattern'	=>	'[\w\-]+',
+
+支持在规则路由中为变量用正则的方式指定变量规则，弥补了动态变量无法限制具体的类型问题，并且支持全局规则设置。使用方式如下：
+
+局部变量规则
+-----------
+局部变量规则，仅在当前路由有效：
+
+.. code-block:: php
+
+	// 定义GET请求路由规则 并设置name变量规则
+	Route::get('new/:name', 'News/read')
+	    ->pattern(['name' => '\w+']);
+
+.. note:: 不需要开头添加 ``^`` 或者在最后添加 ``$`` ，也不支持模式修饰符，系统会自动添加。
+
+全局变量规则
+-----------
+设置全局变量规则，全部路由有效：
+
+.. code-block:: php
+
+	// 设置name变量规则（采用正则定义）
+	Route::pattern('name', '\w+');
+	// 支持批量添加
+	Route::pattern([
+	    'name' => '\w+',
+	    'id'   => '\d+',
+	]);
+
+
+组合变量规则
+===========
+如果你的路由规则比较特殊，可以在路由定义的时候使用组合变量。
+
+例如：
+
+.. code-block:: php
+
+	Route::get('item-<name>-<id>', 'product/detail')
+    ->pattern(['name' => '\w+', 'id' => '\d+']);
+
+组合变量的优势是路由规则中没有固定的分隔符，可以随意组合需要的变量规则和分割符，例如路由规则改成如下一样可以支持：
+
+.. code-block:: php
+
+	Route::get('item<name><id>', 'product/detail')
+	    ->pattern(['name' => '[a-zA-Z]+', 'id' => '\d+']);
+	Route::get('item@<name>-<id>', 'product/detail')
+	    ->pattern(['name' => '\w+', 'id' => '\d+']);
+
+使用组合变量的情况下如果需要使用可选变量，则可以使用下面的方式：
+
+.. code-block:: php
+
+	Route::get('item-<name><id?>', 'product/detail')
+    ->pattern(['name' => '[a-zA-Z]+', 'id' => '\d+']);
+
+``V5.1.6+`` 版本开始，路由规则中的变量定义更加灵活，整个路由规则就是一个组合变量设计，例如你可以直接使用下面的路由定义：
+
+.. code-block:: php
+
+    Route::get('item/:name-:id', 'product/detail')
+    ->pattern(['name' => '\w+', 'id' => '\d+']);
+
+.. note:: ``5.1.6+`` 版本以上，推荐统一使用 ``<var>`` 变量方式，效率更高。
+
+
+

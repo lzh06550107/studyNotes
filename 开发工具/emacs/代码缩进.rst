@@ -1,0 +1,40 @@
+****
+代码缩进
+****
+
+``emacs`` 的初学者首先应该用到的就是语法高亮和代码缩进配置了，代码缩进的配置一般来讲是使用 ``cc-mode`` 。
+
+首先要说几个关于缩进的概念， ``cc-mode`` 关于缩进有几个部分：
+
+全局的基本设置：
+
+- c-basic-offset ：设置缩进的基本单位， 2 字符， 4 字符等。
+- tab-width ：设置一个 tab 键的缩进字符。
+- c-default-style ：在没有相关匹配的 style 时默认调用的 style 。
+
+cc-mode 中可以设置自己的 style ，缩进风格就是在此设置，然后 style 配置完成之后应该将你的 style 加入到对应的 hook 中，所谓 hook 就是对应于不同语言的不同的缩进"钩子"。 cc-mode 中常用的有两种，一个是 c-initialization-hook ，另一个是 c-mode-common-hook 。这两个 hook 都是全局的，而对应于不同的语言会有不同的特殊 hook ，如下：
+
+- c-mode-hook
+- c++-mode-hook
+- objc-mode-hook
+- java-mode-hook
+- idl-mode-hook
+- pike-mode-hook
+- awk-mode-hook
+
+名字显而易见，不同的语言有着不同的 hook 。
+
+ ``cc-mode`` 进行代码缩进的原理就是对程序语言进行一定的语义分析，然后对语言中不同的标签可以进行不同的缩进设置，这些缩进标签就对应于 ``c-offsets-alisit`` 。对于代码缩进的多少， ``cc-mode`` 有如下规定：
+
+One of the symbols +, -, ++, --, *, or /
+
+These special symbols describe a relative offset in multiples of c-basic-offset:
+By defining a style's indentation in terms of c-basic-offset, you can change the amount of whitespace given to an indentation level while maintaining the same basic shape of your code. Here are the values that the special symbols correspond to:
+
+- ``+`` ：c-basic-offset times 1 
+- ``-`` ：c-basic-offset times -1 
+- ``++`` ：c-basic-offset times 2 
+- ``--`` ：c-basic-offset times -2 
+- ``*`` ：c-basic-offset times 0.5 
+
+https://blog.csdn.net/feidouqwer/article/details/7294139

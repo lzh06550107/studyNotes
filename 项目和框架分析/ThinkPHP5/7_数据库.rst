@@ -1,0 +1,2866 @@
+******
+数据库
+******
+
+新版的数据库进行了重构，主要特性包括：
+
+- 类拆分为Connection（连接器）/Query（查询器）/Builder（SQL生成器）
+- 新的查询语法
+- 闭包查询和闭包事务
+- Query对象查询
+- 链式操作
+- 数据分批处理
+- 数据库SQL执行监听
+
+连接数据库
+==========
+
+.. note:: ThinkPHP内置了抽象数据库访问层，把不同的数据库操作封装起来，我们只需要使用公共的Db类进行操作，而无需针对不同的数据库写不同的代码和底层实现，Db类会自动调用相应的数据库驱动来处理。采用PDO方式，目前包含了Mysql、SqlServer、PgSQL、Sqlite等数据库的支持。
+
+如果应用需要使用数据库，必须配置数据库连接信息，数据库的配置文件有多种定义方式。
+
+配置文件定义
+------------
+常用的配置方式是在应用目录或者模块目录下面的 ``database.php`` 中添加下面的配置参数：
+
+.. code-block:: php
+
+    return [
+        // 数据库类型
+        'type'        => 'mysql',
+        // 数据库连接DSN配置
+        'dsn'         => '',
+        // 服务器地址
+        'hostname'    => '127.0.0.1',
+        // 数据库名
+        'database'    => 'thinkphp',
+        // 数据库用户名
+        'username'    => 'root',
+        // 数据库密码
+        'password'    => '',
+        // 数据库连接端口
+        'hostport'    => '',
+        // 数据库连接参数
+        'params'      => [],
+        // 数据库编码默认采用utf8
+        'charset'     => 'utf8',
+        // 数据库表前缀
+        'prefix'      => 'think_',
+        // 数据库调试模式
+        'debug'       => false,
+        // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
+        'deploy'      => 0,
+        // 数据库读写是否分离 主从式有效
+        'rw_separate' => false,
+        // 读写分离后 主服务器数量
+        'master_num'  => 1,
+        // 指定从服务器序号
+        'slave_no'    => '',
+        // 是否严格检查字段是否存在
+        'fields_strict'  => true,
+    ];
+
+``type`` 参数支持命名空间完整定义，不带命名空间定义的话，默认采用 ``\think\db\connector`` 作为命名空间，如果使用应用自己扩展的数据库驱动，可以配置为：
+
+.. code-block:: php
+
+    // 数据库类型
+    'type'        => '\org\db\Mysql',
+
+表示数据库的连接器采用 ``\org\db\Mysql`` 类作为数据库连接驱动，而不是默认的 ``\think\db\connector\Mysql`` 。
+
+每个模块可以设置独立的数据库连接参数，并且相同的配置参数可以无需重复设置，例如我们可以在 ``admin`` 模块的 ``database.php`` 配置文件中定义：
+
+.. code-block:: php
+
+    return [
+        // 服务器地址
+        'hostname'    => '192.168.1.100',
+        // 数据库名
+        'database'    => 'admin',
+    ];
+
+表示 ``admin`` 模块的数据库地址改成 ``192.168.1.100`` ，数据库名改成 ``admin`` ，其它的连接参数和应用的 ``database.php`` 中的配置一样。
+
+V5.0.6+ 版本开始，支持 ``Mysql`` 的断线重连机制，默认关闭，需要的话，是数据库配置文件中添加：
+
+.. code-block:: php
+
+    // 开启断线重连
+    'break_reconnect' => true,
+
+连接参数
+^^^^^^^^
+可以针对不同的连接需要添加数据库的连接参数（具体的连接参数可以参考PHP手册），内置采用的参数包括如下：
+
+.. code-block:: php
+
+    PDO::ATTR_CASE              => PDO::CASE_NATURAL,
+    PDO::ATTR_ERRMODE           => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_ORACLE_NULLS      => PDO::NULL_NATURAL,
+    PDO::ATTR_STRINGIFY_FETCHES => false,
+    PDO::ATTR_EMULATE_PREPARES  => false,
+
+在 ``database`` 中设置的 ``params`` 参数中的连接配置将会和内置的设置参数合并，如果需要使用长连接，并且返回数据库的小写列名，可以采用下面的方式定义：
+
+.. code-block:: php
+
+    'params' => [
+        \PDO::ATTR_PERSISTENT   => true,
+        \PDO::ATTR_CASE         => \PDO::CASE_LOWER,
+    ],
+
+.. note:: 你可以在 ``params`` 里面配置任何 ``PDO`` 支持的连接参数。
+
+方法配置
+--------
+我们可以在调用 ``Db`` 类的时候动态定义连接信息，例如：
+
+.. code-block:: php
+
+    Db::connect([
+        // 数据库类型
+        'type'        => 'mysql',
+        // 数据库连接DSN配置
+        'dsn'         => '',
+        // 服务器地址
+        'hostname'    => '127.0.0.1',
+        // 数据库名
+        'database'    => 'thinkphp',
+        // 数据库用户名
+        'username'    => 'root',
+        // 数据库密码
+        'password'    => '',
+        // 数据库连接端口
+        'hostport'    => '',
+        // 数据库连接参数
+        'params'      => [],
+        // 数据库编码默认采用utf8
+        'charset'     => 'utf8',
+        // 数据库表前缀
+        'prefix'      => 'think_',
+    ]);
+
+或者使用字符串方式：
+
+.. code-block:: php
+
+    Db::connect('mysql://root:1234@127.0.0.1:3306/thinkphp#utf8');
+
+字符串连接的定义格式为：
+
+**数据库类型://用户名:密码@数据库地址:数据库端口/数据库名#字符集**
+
+注意：字符串方式可能无法定义某些参数，例如前缀和连接参数。
+
+如果我们已经在应用配置文件（注意这里不是数据库配置文件）中配置了额外的数据库连接信息，例如：
+
+.. code-block:: php
+
+    //数据库配置1
+    'db_config1' => [
+        // 数据库类型
+        'type'        => 'mysql',
+        // 服务器地址
+        'hostname'    => '127.0.0.1',
+        // 数据库名
+        'database'    => 'thinkphp',
+        // 数据库用户名
+        'username'    => 'root',
+        // 数据库密码
+        'password'    => '',
+        // 数据库编码默认采用utf8
+        'charset'     => 'utf8',
+        // 数据库表前缀
+        'prefix'      => 'think_',
+    ],
+    //数据库配置2
+    'db_config2' => 'mysql://root:1234@localhost:3306/thinkphp#utf8';
+
+我们可以改成
+
+.. code-block:: php
+
+    Db::connect('db_config1');
+    Db::connect('db_config2');
+
+模型类定义
+----------
+如果在某个模型类里面定义了 ``connection`` 属性的话，则该模型操作的时候会自动连接给定的数据库连接，而不是配置文件中设置的默认连接信息，通常用于某些数据表位于当前数据库连接之外的其它数据库，例如：
+
+.. code-block:: php
+
+    //在模型里单独设置数据库连接信息
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        protected $connection = [
+            // 数据库类型
+            'type'        => 'mysql',
+            // 数据库连接DSN配置
+            'dsn'         => '',
+            // 服务器地址
+            'hostname'    => '127.0.0.1',
+            // 数据库名
+            'database'    => 'thinkphp',
+            // 数据库用户名
+            'username'    => 'root',
+            // 数据库密码
+            'password'    => '',
+            // 数据库连接端口
+            'hostport'    => '',
+            // 数据库连接参数
+            'params'      => [],
+            // 数据库编码默认采用utf8
+            'charset'     => 'utf8',
+            // 数据库表前缀
+            'prefix'      => 'think_',
+        ];
+    }
+
+也可以采用DSN字符串方式定义，例如：
+
+.. code-block:: php
+
+    //在模型里单独设置数据库连接信息
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        //或者使用字符串定义
+        protected $connection = 'mysql://root:1234@127.0.0.1:3306/thinkphp#utf8';
+    }
+
+并且支持直接使用数据库连接的配置名称，例如：
+
+.. code-block:: php
+
+    //在模型里单独设置数据库连接信息
+    namespace app\index\model;
+
+    use think\Model;
+
+    class User extends Model
+    {
+        // 直接使用配置参数名
+        protected $connection = 'db_config1';
+    }
+
+.. note:: 需要注意的是， ``ThinkPHP`` 的数据库连接是惰性的，所以并不是在实例化的时候就连接数据库，而是在有实际的数据操作的时候才会去连接数据库。
+
+配置参数参考
+------------
+下面是默认支持的数据库连接信息：
+
++----------------+----------------------------------------------------------+----------------+
+| 参数名         | 描述                                                     | 默认值         |
++================+==========================================================+================+
+| type           | 数据库类型                                               | 无             |
++----------------+----------------------------------------------------------+----------------+
+| hostname       | 数据库地址                                               | 127.0.0.1      |
++----------------+----------------------------------------------------------+----------------+
+| database       | 数据库名称                                               | 无             |
++----------------+----------------------------------------------------------+----------------+
+| username       | 数据库用户名                                             | 无             |
++----------------+----------------------------------------------------------+----------------+
+| password       | 数据库密码                                               | 无             |
++----------------+----------------------------------------------------------+----------------+
+| hostport       | 数据库端口号                                             | 无             |
++----------------+----------------------------------------------------------+----------------+
+| dsn            | 数据库连接dsn信息                                        | 无             |
++----------------+----------------------------------------------------------+----------------+
+| params         | 数据库连接参数                                           | 空             |
++----------------+----------------------------------------------------------+----------------+
+| charset        | 数据库编码                                               | utf8           |
++----------------+----------------------------------------------------------+----------------+
+| prefix         | 数据库的表前缀                                           | 无             |
++----------------+----------------------------------------------------------+----------------+
+| debug          | 是否调试模式                                             | false          |
++----------------+----------------------------------------------------------+----------------+
+| deploy         | 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器) | 0              |
++----------------+----------------------------------------------------------+----------------+
+| rw_separate    | 数据库读写是否分离 主从式有效                            | false          |
++----------------+----------------------------------------------------------+----------------+
+| master_num     | 读写分离后 主服务器数量                                  | 1              |
++----------------+----------------------------------------------------------+----------------+
+| slave_no       | 指定从服务器序号                                         | 无             |
++----------------+----------------------------------------------------------+----------------+
+| fields_strict  | 是否严格检查字段是否存在                                 | true           |
++----------------+----------------------------------------------------------+----------------+
+| resultset_type | 数据集返回类型                                           | array          |
++----------------+----------------------------------------------------------+----------------+
+| auto_timestamp | 自动写入时间戳字段                                       | false          |
++----------------+----------------------------------------------------------+----------------+
+| sql_explain    | 是否需要进行SQL性能分析 开启调试有效                     | false          |
++----------------+----------------------------------------------------------+----------------+
+| query          | 指定查询对象                                             | think\db\Query |
++----------------+----------------------------------------------------------+----------------+
+| builder        | 指定数据库Builder对象                                    | 无             |
++----------------+----------------------------------------------------------+----------------+
+
+常用数据库连接参数（params）可以参考 `PHP在线手册 <http://php.net/manual/zh/pdo.constants.php>`_ 中的以 ``PDO::ATTR_`` 开头的常量。
+
+.. warning:: 如果是使用 ``pgsql`` 数据库驱动的话，请先导入 ``thinkphp/library/think/db/connector/pgsql.sql`` 文件到数据库执行。
+
+基本使用(原生查询)
+==================
+配置了数据库连接信息后，我们就可以直接使用数据库运行原生SQL操作了，支持 ``query`` （查询操作）和 ``execute`` （写入操作）方法，并且支持参数绑定。
+
+.. code-block:: php
+
+    Db::query('select * from think_user where id=?',[8]);
+    Db::execute('insert into think_user (id, name) values (?, ?)',[8,'thinkphp']);
+
+也支持命名占位符绑定，例如：
+
+.. code-block:: php
+
+    Db::query('select * from think_user where id=:id',['id'=>8]);
+    Db::execute('insert into think_user (id, name) values (:id, :name)',['id'=>8,'name'=>'thinkphp']);
+
+可以使用多个数据库连接，使用
+
+.. code-block:: php
+
+    Db::connect($config)->query('select * from think_user where id=:id',['id'=>8]);
+
+``$config`` 是一个单独的数据库配置，支持数组和字符串，也可以是一个数据库连接的配置参数名。
+
+查询构造器
+==========
+
+查询数据
+--------
+基本查询
+^^^^^^^^
+查询一个数据使用：
+
+.. code-block:: php
+
+    // table方法必须指定完整的数据表名
+    Db::table('think_user')->where('id',1)->find();
+
+.. note:: ``find`` 方法查询结果不存在，返回 ``null``
+
+查询数据集使用：
+
+.. code-block:: php
+
+    Db::table('think_user')->where('status',1)->select();
+
+.. note:: ``select`` 方法查询结果不存在，返回空数组
+
+如果设置了数据表前缀参数的话，可以使用
+
+.. code-block:: php
+
+    Db::name('user')->where('id',1)->find();
+    Db::name('user')->where('status',1)->select();
+
+.. note:: 如果你的数据表没有使用表前缀功能，那么 ``name`` 和 ``table`` 方法的一样的效果。
+
+在 ``find`` 和 ``select`` 方法之前可以使用所有的链式操作方法。
+
+.. note:: 默认情况下， ``find`` 和 ``select`` 方法返回的都是数组。
+
+主从查询
+""""""""
+如果你使用了分布式数据库，那么默认情况下查询操作都是在从数据库中进行，如果你在一些特殊的情况下需要从主库读取数据，可以使用：
+
+.. code-block:: php
+
+    $data = ['foo' => 'bar', 'bar' => 'foo'];
+    Db::table('think_user')->insert($data);
+    Db::name('user')->master()->where('id',1)->find();
+
+V5.0.19+ 版本开始，支持一旦某个表写入了数据，那么当前请求的后续查询操作都可以自动从主库读取。
+
+你需要在数据库配置文件中增加下面的配置参数：
+
+.. code-block:: php
+
+    // 从主库读取数据
+    'read_master'   =>  true,
+
+如果你只需要对某个表进行操作，可以使用 ``readMaster`` 方法。
+
+.. code-block:: php
+
+    $data = ['foo' => 'bar', 'bar' => 'foo'];
+    Db::table('think_user')
+        ->readMaster()
+        ->insert($data);
+    // 后续所有关于该数据表的查询都会走主库
+
+也可以让后续所有数据表的查询都走主库
+
+.. code-block:: php
+
+    $data = ['foo' => 'bar', 'bar' => 'foo'];
+    Db::table('think_user')
+        ->readMaster(true)
+        ->insert($data);
+    // 后续所有数据表的查询都会走主库
+
+助手函数
+""""""""
+系统提供了一个 ``db`` 助手函数，可以更方便的查询：
+
+.. code-block:: php
+
+    db('user')->where('id',1)->find();
+    db('user')->where('status',1)->select();
+
+.. warning:: 注意：使用 ``db`` 助手函数默认每次都会重新连接数据库，而使用 ``Db::name`` 或者 ``Db::table`` 方法的话都是单例的。 ``db`` 函数如果需要采用相同的链接，可以传入第三个参数，例如：
+
+.. code-block:: php
+
+    db('user',[],false)->where('id',1)->find();
+    db('user',[],false)->where('status',1)->select();
+
+上面的方式会使用同一个数据库连接，第二个参数为数据库的连接参数，留空表示采用数据库配置文件的配置。
+
++-------+--------------------------------+
+| 版本  | 调整功能                       |
++=======+================================+
+| 5.0.9 | db助手函数默认不再强制重新连接 |
++-------+--------------------------------+
+
+使用Query对象或闭包查询
+^^^^^^^^^^^^^^^^^^^^^^^
+或者使用查询对象进行查询，例如：
+
+.. code-block:: php
+
+    $query = new \think\db\Query();
+    $query->table('think_user')->where('status',1);
+    Db::find($query);
+    Db::select($query);
+
+或者直接使用闭包函数查询，例如：
+
+.. code-block:: php
+
+    Db::select(function($query){
+        $query->table('think_user')->where('status',1);
+    });
+
+值和列查询
+^^^^^^^^^^
+查询某个字段的值可以用
+
+.. code-block:: php
+
+    // 返回某个字段的值
+    Db::table('think_user')->where('id',1)->value('name');
+
+.. note:: ``value`` 方法查询结果不存在，返回 ``null``
+
+查询某一列的值可以用
+
+.. code-block:: php
+
+    // 返回数组
+    Db::table('think_user')->where('status',1)->column('name');
+    // 指定索引
+    Db::table('think_user')->where('status',1)->column('name','id');
+    Db::table('think_user')->where('status',1)->column('id,name'); // 同tp3的getField
+
+.. note:: ``column`` 方法查询结果不存在，返回空数组
+
+数据集分批处理
+^^^^^^^^^^^^^^
+如果你需要处理成千上百条数据库记录，可以考虑使用 ``chunk`` 方法，该方法一次获取结果集的一小块，然后填充每一小块数据到要处理的闭包，该方法在编写处理大量数据库记录的时候非常有用。
+
+比如，我们可以全部用户表数据进行分批处理，每次处理 100 个用户记录：
+
+.. code-block:: php
+
+    Db::table('think_user')->chunk(100, function($users) {
+        foreach ($users as $user) {
+            //
+        }
+    });
+    // 或者交给回调方法myUserIterator处理
+    Db::table('think_user')->chunk(100, 'myUserIterator');
+
+你可以通过从闭包函数中返回 ``false`` 来中止对数据集的处理：
+
+.. code-block:: php
+
+    Db::table('think_user')->chunk(100, function($users) {
+        // 处理结果集...
+        return false;
+    });
+
+也支持在 ``chunk`` 方法之前调用其它的查询方法，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->where('score','>',80)->chunk(100, function($users) {
+        foreach ($users as $user) {
+            //
+        }
+    });
+
+``chunk`` 方法的处理默认是根据主键查询，支持指定字段，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->chunk(100, function($users) {
+        // 处理结果集...
+        return false;
+    },'create_time');
+
+.. note:: V5.0.11 版本开始， ``chunk`` 方法支持指定处理数据的顺序。
+
+.. code-block:: php
+
+    Db::table('think_user')->chunk(100, function($users) {
+        // 处理结果集...
+        return false;
+    },'create_time', 'desc');
+
+JSON类型数据查询（mysql V5.0.1）
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    // 查询JSON类型字段 （info字段为json类型）
+    Db::table('think_user')->where('info$.email','thinkphp@qq.com')->find();
+
+添加数据
+--------
+
++--------+----------------------------------+
+| 版本   | 调整功能                         |
++========+==================================+
+| 5.0.10 | insertAll方法支持replace参数     |
++--------+----------------------------------+
+| 5.0.5  | 添加data/inc/dec/exp方法设置数据 |
++--------+----------------------------------+
+
+添加一条数据
+^^^^^^^^^^^^
+使用 ``Db`` 类的 ``insert`` 方法向数据库提交数据
+
+.. code-block:: php
+
+    $data = ['foo' => 'bar', 'bar' => 'foo'];
+    Db::table('think_user')->insert($data);
+
+如果你在 ``database.php`` 配置文件中配置了数据库前缀( ``prefix`` )，那么可以直接使用 ``Db`` 类的 ``name`` 方法提交数据。
+
+.. code-block:: php
+
+    Db::name('user')->insert($data);
+
+.. note:: ``insert`` 方法添加数据成功返回添加成功的条数， ``insert`` 正常情况返回 1 。
+
+添加数据后如果需要返回新增数据的自增主键，可以使用 ``getLastInsID`` 方法：
+
+.. code-block:: php
+
+    Db::name('user')->insert($data);
+    $userId = Db::name('user')->getLastInsID();
+
+或者直接使用 ``insertGetId`` 方法新增数据并返回主键值：
+
+.. code-block:: php
+
+    Db::name('user')->insertGetId($data);
+
+.. note:: ``insertGetId`` 方法添加数据成功返回添加数据的自增主键
+
+添加多条数据
+^^^^^^^^^^^^
+添加多条数据直接向 ``Db`` 类的 ``insertAll`` 方法传入需要添加的数据即可
+
+.. code-block:: php
+
+    $data = [
+        ['foo' => 'bar', 'bar' => 'foo'],
+        ['foo' => 'bar1', 'bar' => 'foo1'],
+        ['foo' => 'bar2', 'bar' => 'foo2']
+    ];
+    Db::name('user')->insertAll($data);
+
+.. note:: ``insertAll`` 方法添加数据成功返回添加成功的条数
+
+助手函数
+""""""""
+
+.. code-block:: php
+
+    // 添加单条数据
+    db('user')->insert($data);
+
+    // 添加多条数据
+    db('user')->insertAll($list);
+
+快捷更新
+""""""""
+V5.0.5+ 以上版本封装的快捷更新方法 ``data`` ，可以配合 ``insert`` 使用。
+
+下面举个例子说明用法：
+
+.. code-block:: php
+
+    Db::table('data')
+        ->data(['name'=>'tp','score'=>1000])
+        ->insert();
+
+更新数据
+--------
+
++-------+----------------------------------+
+| 版本  | 调整功能                         |
++=======+==================================+
+| 5.0.5 | 添加data/inc/dec/exp方法设置数据 |
++-------+----------------------------------+
+
+更新数据表中的数据
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    Db::table('think_user')->where('id', 1)->update(['name' => 'thinkphp']);
+
+如果数据中包含主键，可以直接使用：
+
+.. code-block:: php
+
+    Db::table('think_user')->update(['name' => 'thinkphp','id'=>1]);
+
+.. note:: ``update`` 方法返回影响数据的条数，没修改任何数据返回 0 。
+
+如果要更新的数据需要使用 ``SQL`` 函数或者其它字段，可以使用下面的方式：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('id', 1)
+        ->update([
+            'login_time'  => ['exp','now()'],
+            'login_times' => ['exp','login_times+1'],
+        ]);
+
+.. warning:: V5.0.18+ 版本开始是数组中使用 ``exp`` 查询和更新的话，必须改成下面的方式：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('id', 1)
+        ->update([
+            'login_time'  => Db::raw('now()'),
+            'login_times' => Db::raw('login_times+1'),
+        ]);
+
+更新某个字段的值
+^^^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    Db::table('think_user')->where('id',1)->setField('name', 'thinkphp');
+
+.. note:: ``setField`` 方法返回影响数据的条数，没修改任何数据字段返回 0
+
+自增或自减一个字段的值
+^^^^^^^^^^^^^^^^^^^^^^
+``setInc/setDec`` 如不加第二个参数，默认值为 1 。
+
+.. code-block:: php
+
+    // score 字段加 1
+    Db::table('think_user')->where('id', 1)->setInc('score');
+    // score 字段加 5
+    Db::table('think_user')->where('id', 1)->setInc('score', 5);
+    // score 字段减 1
+    Db::table('think_user')->where('id', 1)->setDec('score');
+    // score 字段减 5
+    Db::table('think_user')->where('id', 1)->setDec('score', 5);
+
+延迟更新
+^^^^^^^^
+``setInc/setDec`` 支持延时更新，如果需要延时更新则传入第三个参数。下例中延时10秒，给score字段增加1
+
+.. code-block:: php
+
+    Db::table('think_user')->where('id', 1)->setInc('score', 1, 10);
+
+.. note:: ``setInc/setDec`` 方法返回影响数据的条数
+
+助手函数
+^^^^^^^^
+
+.. code-block:: php
+
+    // 更新数据表中的数据
+    db('user')->where('id',1)->update(['name' => 'thinkphp']);
+    // 更新某个字段的值
+    db('user')->where('id',1)->setField('name','thinkphp');
+    // 自增 score 字段
+    db('user')->where('id', 1)->setInc('score');
+    // 自减 score 字段
+    db('user')->where('id', 1)->setDec('score');
+
+快捷更新（V5.0.5+）
+^^^^^^^^^^^^^^^^^^^
+V5.0.5+ 以上版本封装的 ``data`` 、 ``inc`` 、 ``dec`` 和 ``exp`` 方法属于链式操作方法，可以配合 ``update`` 使用（官方推荐用法）。
+
+下面举个例子说明用法：
+
+.. code-block:: php
+
+    Db::table('data')
+        ->where('id',1)
+        ->inc('read')
+        ->dec('score',3)
+        ->exp('name','UPPER(name)')
+        ->update();
+
+删除数据
+--------
+
+删除数据表中的数据
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    // 根据主键删除
+    Db::table('think_user')->delete(1);
+    Db::table('think_user')->delete([1,2,3]);
+
+    // 条件删除
+    Db::table('think_user')->where('id',1)->delete();
+    Db::table('think_user')->where('id','<',10)->delete();
+
+.. note:: ``delete`` 方法返回影响数据的条数，没有删除返回 0
+
+助手函数
+^^^^^^^^^
+
+.. code-block:: php
+
+    // 根据主键删除
+    db('user')->delete(1);
+    // 条件删除
+    db('user')->where('id',1)->delete();
+
+查询方法
+--------
+where方法
+^^^^^^^^^
+可以使用 ``where`` 方法进行 ``AND`` 条件查询：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('name','like','%thinkphp')
+        ->where('status',1)
+        ->find();
+
+多字段相同条件的 ``AND`` 查询可以简化为如下方式：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('name&title','like','%thinkphp')
+        ->find();
+
+whereOr方法
+^^^^^^^^^^^^
+使用 ``whereOr`` 方法进行 ``OR`` 查询：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('name','like','%thinkphp')
+        ->whereOr('title','like','%thinkphp')
+        ->find();
+
+多字段相同条件的 ``OR`` 查询可以简化为如下方式：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('name|title','like','%thinkphp')
+        ->find();
+
+混合查询
+^^^^^^^^
+``where`` 方法和 ``whereOr`` 方法在复杂的查询条件中经常需要配合一起混合使用，下面举个例子：
+
+.. code-block:: php
+
+    $result = Db::table('think_user')->where(function ($query) {
+        $query->where('id', 1)->whereor('id', 2);
+    })->whereOr(function ($query) {
+        $query->where('name', 'like', 'think')->whereOr('name', 'like', 'thinkphp');
+    })->select();
+
+生成的 ``sql`` 语句类似于下面：
+
+.. code-block:: sql
+
+    SELECT * FROM `think_user` WHERE  (  `id` = 1 OR `id` = 2 ) OR (  `name` LIKE 'think' OR `name` LIKE 'thinkphp' )
+
+.. note:: 注意闭包查询里面的顺序，而且第一个查询方法用where或者whereOr是没有区别的。
+
+getTableInfo方法
+^^^^^^^^^^^^^^^^
+使用 ``getTableInfo`` 可以获取表信息，信息类型 包括 fields,type,bind,pk，以数组的形式展示，可以指定某个信息进行获取
+
+.. code-block:: php
+
+    // 获取`think_user`表所有信息
+    Db::getTableInfo('think_user');
+    // 获取`think_user`表所有字段
+    Db::getTableInfo('think_user', 'fields');
+    // 获取`think_user`表所有字段的类型
+    Db::getTableInfo('think_user', 'type');
+    // 获取`think_user`表的主键
+    Db::getTableInfo('think_user', 'pk');
+
+查询条件语法
+------------
+
+查询表达式
+^^^^^^^^^^
+
++-------+----------------------------------+
+| 版本  | 新增功能                         |
++=======+==================================+
+| 5.0.9 | 比较运算增加闭包子查询支持       |
++-------+----------------------------------+
+| 5.0.4 | 支持对同一个字段多次调用查询方法 |
++-------+----------------------------------+
+
+查询表达式支持大部分的 ``SQL`` 查询语法，也是 ``ThinkPHP`` 查询语言的精髓，查询表达式的使用格式：
+
+.. code-block:: shell
+
+    where('字段名','表达式','查询条件');
+    whereOr('字段名','表达式','查询条件');
+
+表达式不分大小写，支持的查询表达式有下面几种，分别表示的含义是：
+
++-----------------+--------------------------+
+| 表达式          | 含义                     |
++=================+==========================+
+| EQ、=           | 等于（=）                |
++-----------------+--------------------------+
+| NEQ、<>         | 不等于（<>）             |
++-----------------+--------------------------+
+| GT、>           | 大于（>）                |
++-----------------+--------------------------+
+| EGT、>=         | 大于等于（>=）           |
++-----------------+--------------------------+
+| LT、<           | 小于（<）                |
++-----------------+--------------------------+
+| ELT、<=         | 小于等于（<=）           |
++-----------------+--------------------------+
+| LIKE            | 模糊查询                 |
++-----------------+--------------------------+
+| [NOT] BETWEEN   | （不在）区间查询         |
++-----------------+--------------------------+
+| [NOT] IN        | （不在）IN 查询          |
++-----------------+--------------------------+
+| [NOT] NULL      | 查询字段是否（不）是NULL |
++-----------------+--------------------------+
+| [NOT] EXISTS    | EXISTS查询               |
++-----------------+--------------------------+
+| EXP             | 表达式查询，支持SQL语法  |
++-----------------+--------------------------+
+| > time          | 时间比较                 |
++-----------------+--------------------------+
+| < time          | 时间比较                 |
++-----------------+--------------------------+
+| between time    | 时间比较                 |
++-----------------+--------------------------+
+| notbetween time | 时间比较                 |
++-----------------+--------------------------+
+
+表达式查询的用法示例如下：
+
+EQ ：等于（=）
+^^^^^^^^^^^^^
+
+例如：
+
+.. code-block:: php
+
+    where('id','eq',100);
+    where('id','=',100);
+
+和下面的查询等效
+
+.. code-block:: php
+
+    where('id',100);
+
+表示的查询条件就是 ``id = 100``
+
+NEQ： 不等于（<>）
+^^^^^^^^^^^^^^^^^
+
+例如：
+
+.. code-block:: php
+
+    where('id','neq',100);
+    where('id','<>',100);
+
+表示的查询条件就是 ``id <> 100``
+
+GT：大于（>）
+^^^^^^^^^^^^
+例如：
+
+.. code-block:: php
+
+    where('id','gt',100);
+    where('id','>',100);
+
+表示的查询条件就是 ``id > 100``
+
+EGT：大于等于（>=）
+^^^^^^^^^^^^^^^^^^
+例如：
+
+.. code-block:: php
+
+    where('id','egt',100);
+    where('id','>=',100);
+
+表示的查询条件就是 ``id >= 100``
+
+LT：小于（<）
+^^^^^^^^^^^^
+例如：
+
+.. code-block:: php
+
+    where('id','lt',100);
+    where('id','<',100);
+
+表示的查询条件就是 ``id < 100``
+
+ELT： 小于等于（<=）
+^^^^^^^^^^^^^^^^^^^
+例如：
+
+.. code-block:: php
+
+    where('id','elt',100);
+    where('id','<=',100);
+
+表示的查询条件就是 ``id <= 100``
+
+[NOT] LIKE： 同sql的LIKE
+^^^^^^^^^^^^^^^^^^^^^^^^
+例如：
+
+.. code-block:: php
+
+    where('name','like','thinkphp%');
+
+查询条件就变成 ``name like 'thinkphp%'``
+
+V5.0.5+ 版本开始， ``like`` 查询支持使用数组
+
+.. code-block:: php
+
+    where('name','like',['%think','php%'],'OR');
+
+[NOT] BETWEEN ：同sql的[not] between
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+查询条件支持字符串或者数组，例如：
+
+.. code-block:: php
+
+    where('id','between','1,8');
+
+和下面的等效：
+
+.. code-block:: php
+
+    where('id','between',[1,8]);
+
+查询条件就变成 ``id BETWEEN 1 AND 8``
+
+[NOT] IN： 同sql的[not] in
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+查询条件支持字符串或者数组，例如：
+
+.. code-block:: php
+
+    where('id','not in','1,5,8');
+
+和下面的等效：
+
+.. code-block:: php
+
+    where('id','not in',[1,5,8]);
+
+查询条件就变成 ``id NOT IN (1,5, 8)``
+
+.. note:: ``[NOT] IN`` 查询支持使用闭包方式
+
+[NOT] NULL
+^^^^^^^^^^^
+查询字段是否（不）是 ``Null`` ，例如：
+
+.. code-block:: php
+
+    where('name', null);
+    where('title','null');
+    where('name','not null');
+
+如果你需要查询一个字段的值为字符串 ``null`` 或者 ``not null`` ，应该使用：
+
+.. code-block:: php
+
+    where('title','=', 'null');
+    where('name','=', 'not null');
+
+EXP：表达式
+^^^^^^^^^^^
+支持更复杂的查询情况 例如：
+
+.. code-block:: php
+
+    where('id','in','1,3,8');
+
+可以改成：
+
+.. code-block:: php
+
+    where('id','exp',' IN (1,3,8) ');
+
+``exp`` 查询的条件不会被当成字符串，所以后面的查询条件可以使用任何 ``SQL`` 支持的语法，包括使用函数和字段名称。
+
+链式操作
+--------
+数据库提供的链式操作方法，可以有效的提高数据存取的代码清晰度和开发效率，并且支持所有的 ``CURD`` 操作。
+
+使用也比较简单，假如我们现在要查询一个User表的满足状态为1的前10条记录，并希望按照用户的创建时间排序 ，代码如下：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('status',1)
+        ->order('create_time')
+        ->limit(10)
+        ->select();
+
+这里的 ``where`` 、 ``order`` 和 ``limit`` 方法就被称之为链式操作方法，除了 ``select`` 方法必须放到最后一个外（因为 ``select`` 方法并不是链式操作方法），链式操作的方法调用顺序没有先后，例如，下面的代码和上面的等效：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->order('create_time')
+        ->limit(10)
+        ->where('status',1)
+        ->select();
+
+其实不仅仅是查询方法可以使用连贯操作，包括所有的 ``CURD`` 方法都可以使用，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('id',1)
+        ->field('id,name,email')
+        ->find();
+    Db::table('think_user')
+        ->where('status',1)
+        ->where('id',1)
+        ->delete();
+
+链式操作在完成查询后会自动清空链式操作的所有传值。简而言之，链式操作的结果不会带入后面的其它查询。
+
+系统支持的链式操作方法有：
+
++----------------+--------------------------------------+--------------------+
+| 连贯操作       | 作用                                 | 支持的参数类型     |
++================+======================================+====================+
+| ``where*``     | 用于AND查询                          | 字符串、数组和对象 |
++----------------+--------------------------------------+--------------------+
+| ``whereOr* ``  | 用于OR查询                           | 字符串、数组和对象 |
++----------------+--------------------------------------+--------------------+
+| ``wheretime*`` | 用于时间日期的快捷查询               | 字符串             |
++----------------+--------------------------------------+--------------------+
+| table          | 用于定义要操作的数据表名称           | 字符串和数组       |
++----------------+--------------------------------------+--------------------+
+| alias          | 用于给当前数据表定义别名             | 字符串             |
++----------------+--------------------------------------+--------------------+
+| ``field*``     | 用于定义要查询的字段（支持字段排除） | 字符串和数组       |
++----------------+--------------------------------------+--------------------+
+| ``order*``     | 用于对结果排序                       | 字符串和数组       |
++----------------+--------------------------------------+--------------------+
+| limit          | 用于限制查询结果数量                 | 字符串和数字       |
++----------------+--------------------------------------+--------------------+
+| page           | 用于查询分页（内部会转换成limit）    | 字符串和数字       |
++----------------+--------------------------------------+--------------------+
+| group          | 用于对查询的group支持                | 字符串             |
++----------------+--------------------------------------+--------------------+
+| having         | 用于对查询的having支持               | 字符串             |
++----------------+--------------------------------------+--------------------+
+| ``join*``      | 用于对查询的join支持                 | 字符串和数组       |
++----------------+--------------------------------------+--------------------+
+| ``union*``     | 用于对查询的union支持                | 字符串、数组和对象 |
++----------------+--------------------------------------+--------------------+
+| ``view*``      | 用于视图查询                         | 字符串、数组       |
++----------------+--------------------------------------+--------------------+
+| distinct       | 用于查询的distinct支持               | 布尔值             |
++----------------+--------------------------------------+--------------------+
+| lock           | 用于数据库的锁机制                   | 布尔值             |
++----------------+--------------------------------------+--------------------+
+| cache          | 用于查询缓存                         | 支持多个参数       |
++----------------+--------------------------------------+--------------------+
+| ``relation*``  | 用于关联查询                         | 字符串             |
++----------------+--------------------------------------+--------------------+
+| ``with*``      | 用于关联预载入                       | 字符串、数组       |
++----------------+--------------------------------------+--------------------+
+| ``bind*``      | 用于数据绑定操作                     | 数组或多个参数     |
++----------------+--------------------------------------+--------------------+
+| comment        | 用于SQL注释                          | 字符串             |
++----------------+--------------------------------------+--------------------+
+| force          | 用于数据集的强制索引                 | 字符串             |
++----------------+--------------------------------------+--------------------+
+| master         | 用于设置主服务器读取数据             | 布尔值             |
++----------------+--------------------------------------+--------------------+
+| strict         | 用于设置是否严格检测字段名是否存在   | 布尔值             |
++----------------+--------------------------------------+--------------------+
+| sequence       | 用于设置Pgsql的自增序列名            | 字符串             |
++----------------+--------------------------------------+--------------------+
+| failException  | 用于设置没有查询到数据是否抛出异常   | 布尔值             |
++----------------+--------------------------------------+--------------------+
+| partition      | 用于设置分表信息                     | 数组 字符串        |
++----------------+--------------------------------------+--------------------+
+
+.. note:: 所有的连贯操作都返回当前的模型实例对象（this），其中带 ``*`` 标识的表示支持多次调用。
+
+where
+^^^^^^
+``where`` 方法的用法是 ThinkPHP 查询语言的精髓，也是 ThinkPHP ORM 的重要组成部分和亮点所在，可以完成包括普通查询、表达式查询、快捷查询、区间查询、组合查询在内的查询操作。 ``where`` 方法的参数支持字符串和数组，虽然也可以使用对象但并不建议。
+
+表达式查询
+""""""""""
+新版的表达式查询采用全新的方式，查询表达式的使用格式：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('id','>',1)
+        ->where('name','thinkphp')
+        ->select();
+
+更多的表达式查询语法，可以参考 `查询语法 <https://www.kancloud.cn/manual/thinkphp5/135182>`_ 部分。
+
+数组条件
+""""""""
+可以通过数组方式批量设置查询条件。
+
+普通查询
+++++++++
+最简单的数组查询方式如下：
+
+.. code-block:: php
+
+    $map['name'] = 'thinkphp';
+    $map['status'] = 1;
+    // 把查询条件传入查询方法
+    Db::table('think_user')->where($map)->select();
+
+    // 助手函数
+    db('user')->where($map)->select();
+
+最后生成的SQL语句是
+
+.. code-block:: sql
+
+    SELECT * FROM think_user WHERE `name`='thinkphp' AND status=1
+
+表达式查询
+++++++++++
+可以在数组条件中使用查询表达式，例如：
+
+.. code-block:: php
+
+    $map['id']  = ['>',1];
+    $map['mail']  = ['like','%thinkphp@qq.com%'];
+    Db::table('think_user')->where($map)->select();
+
+字符串条件
+""""""""""
+使用字符串条件直接查询和操作，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->where('type=1 AND status=1')->select();
+
+最后生成的SQL语句是
+
+.. code-block:: sql
+
+    SELECT * FROM think_user WHERE type=1 AND status=1
+
+使用字符串条件的时候，建议配合预处理机制，确保更加安全，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->where("id=:id and username=:name")->bind(['id'=>[1,\PDO::PARAM_INT],'name'=>'thinkphp'])->select();
+
+table
+^^^^^^
+``table`` 方法主要用于指定操作的数据表。
+
+用法
+一般情况下，操作模型的时候系统能够自动识别当前对应的数据表，所以，使用 ``table`` 方法的情况通常是为了：
+
+1. 切换操作的数据表；
+2. 对多表进行操作；
+
+例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->where('status>1')->select();
+
+也可以在 ``table`` 方法中指定数据库，例如：
+
+.. code-block:: php
+
+    Db::table('db_name.think_user')->where('status>1')->select();
+
+``table`` 方法指定的数据表需要完整的表名，但可以采用下面的方式简化数据表前缀的传入，例如：
+
+.. code-block:: php
+
+    Db::table('__USER__')->where('status>1')->select();
+
+会自动获取当前模型对应的数据表前缀来生成 ``think_user`` 数据表名称。
+
+需要注意的是 ``table`` 方法不会改变数据库的连接，所以你要确保当前连接的用户有权限操作相应的数据库和数据表。 切换数据表后，系统会自动重新获取切换后的数据表的字段缓存信息。
+
+如果需要对多表进行操作，可以这样使用：
+
+.. code-block:: php
+
+    Db::field('user.name,role.title')
+    ->table('think_user user,think_role role')
+    ->limit(10)->select();
+
+为了尽量避免和 ``mysql`` 的关键字冲突，可以建议使用数组方式定义，例如：
+
+.. code-block:: php
+
+    Db::field('user.name,role.title')
+    ->table(['think_user'=>'user','think_role'=>'role'])
+    ->limit(10)->select();
+
+使用数组方式定义的优势是可以避免因为表名和关键字冲突而出错的情况。
+
+alias
+^^^^^
+``alias`` 用于设置当前数据表的别名，便于使用其他的连贯操作例如 ``join`` 方法等。
+
+示例：
+
+.. code-block:: php
+
+    Db::table('think_user')->alias('a')->join('__DEPT__ b ','b.user_id= a.id')->select();
+
+最终生成的 SQL 语句类似于：
+
+.. code-block:: sql
+
+    SELECT * FROM think_user a INNER JOIN think_dept b ON b.user_id= a.id
+
+v5.0.2+ 版本开始，可以传入数组批量设置数据表以及别名，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->alias(['think_user'=>'user','think_dept'=>'dept'])->join('think_dept','dept.user_id= user.id')->select();
+
+最终生成的SQL语句类似于：
+
+.. code-block:: sql
+
+    SELECT * FROM think_user user INNER JOIN think_dept dept ON dept.user_id= user.id
+
+field
+^^^^^
+``field`` 方法属于模型的连贯操作方法之一，主要目的是标识要返回或者操作的字段，可以用于查询和写入操作。
+
+用于查询
+""""""""
+指定字段
++++++++++
+在查询操作中 ``field`` 方法是使用最频繁的。
+
+.. code-block:: php
+
+    Db::table('think_user')->field('id,title,content')->select();
+
+这里使用 ``field`` 方法指定了查询的结果集中包含 ``id,title,content`` 三个字段的值。执行的 SQL 相当于：
+
+.. code-block:: sql
+
+    SELECT id,title,content FROM table
+
+可以给某个字段设置别名，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->field('id,nickname as name')->select();
+
+执行的 SQL 语句相当于：
+
+.. code-block:: sql
+
+    SELECT id,nickname as name FROM table
+
+使用SQL函数
++++++++++++
+可以在 ``field`` 方法中直接使用函数，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->field('id,SUM(score)')->select();
+
+执行的 SQL 相当于：
+
+.. code-block:: sql
+
+    SELECT id,SUM(score) FROM table
+
+.. note:: 除了 ``select`` 方法之外，所有的查询方法，包括 ``find`` 等都可以使用 ``field`` 方法。
+
+使用数组参数
+++++++++++++
+``field`` 方法的参数可以支持数组，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->field(['id','title','content'])->select();
+
+最终执行的 SQL 和前面用字符串方式是等效的。
+
+数组方式的定义可以为某些字段定义别名，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->field(['id','nickname'=>'name'])->select();
+
+执行的SQL相当于：
+
+.. code-block:: sql
+
+    SELECT id,nickname as name FROM table
+
+对于一些更复杂的字段要求，数组的优势则更加明显，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->field(['id','concat(name,"-",id)'=>'truename','LEFT(title,7)'=>'sub_title'])->select();
+
+执行的SQL相当于：
+
+.. code-block:: sql
+
+    SELECT id,concat(name,'-',id) as truename,LEFT(title,7) as sub_title FROM table
+
+获取所有字段
+++++++++++++
+如果有一个表有非常多的字段，需要获取所有的字段（这个也许很简单，因为不调用 field 方法或者直接使用空的 field 方法都能做到）：
+
+.. code-block:: php
+
+    Db::table('think_user')->select();
+    Db::table('think_user')->field('*')->select();
+
+上面的用法是等效的，都相当于执行SQL：
+
+.. code-block:: sql
+
+    SELECT * FROM table
+
+但是这并不是我说的获取所有字段，而是显式的调用所有字段（对于对性能要求比较高的系统，这个要求并不过分，起码是一个比较好的习惯），下面的用法可以完成预期的作用：
+
+.. code-block:: php
+
+    Db::table('think_user')->field(true)->select();
+
+``field(true)`` 的用法会显式的获取数据表的所有字段列表，哪怕你的数据表有100个字段。
+
+字段排除
+++++++++
+如果我希望获取排除数据表中的 ``content`` 字段（文本字段的值非常耗内存）之外的所有字段值，我们就可以使用 ``field`` 方法的排除功能，例如下面的方式就可以实现所说的功能：
+
+.. code-block:: php
+
+    Db::table('think_user')->field('content',true)->select();
+
+则表示获取除了 ``content`` 之外的所有字段，要排除更多的字段也可以：
+
+.. code-block:: php
+
+    Db::table('think_user')->field('user_id,content',true)->select();
+    //或者用
+    Db::table('think_user')->field(['user_id','content'],true)->select();
+
+.. note:: 注意的是 字段排除功能不支持跨表和 ``join`` 操作。
+
+用于写入
+""""""""
+除了查询操作之外， ``field`` 方法还有一个非常重要的安全功能-- **字段合法性检测** 。 ``field`` 方法结合数据库的写入方法使用就可以完成表单提交的字段合法性检测，如果我们在表单提交的处理方法中使用了：
+
+.. code-block:: php
+
+    Db::table('think_user')->field('title,email,content')->insert($data);
+
+即表示表单中的合法字段只有 ``title`` , ``email`` 和 ``content`` 字段，无论用户通过什么手段更改或者添加了浏览器的提交字段，都会直接屏蔽。因为，其他是所有字段我们都不希望由用户提交来决定，你可以通过自动完成功能定义额外的字段写入。
+
+.. warning:: 在开启数据表字段严格检查的情况下，提交了非法字段会抛出异常，可以在数据库设置文件中设置：
+
+.. note::
+
+.. code-block:: php
+
+    // 关闭严格字段检查
+    'fields_strict' =>  false,
+
+V5.0.17+ 版本开始，系统还提供了 ``fieldRaw`` 方法，用于更安全的指定字段，尤其是使用了 SQL 函数的情况。
+
+.. code-block:: php
+
+    Db::table('think_user')->fieldRaw('title,email,content,max(score) as max_score')->insert($data);
+
+order
+^^^^^
+``order`` 方法属于模型的连贯操作方法之一，用于对操作的结果排序。
+
+用法如下：
+
+.. code-block:: php
+
+    Db::table('think_user')->where('status=1')->order('id desc')->limit(5)->select();
+
+注意：连贯操作方法没有顺序，可以在 ``select`` 方法调用之前随便改变调用顺序。
+
+支持对多个字段的排序，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->where('status=1')->order('id desc,status')->limit(5)->select();
+
+.. note:: 如果没有指定 ``desc`` 或者 ``asc`` 排序规则的话，默认为 ``asc`` 。
+
+如果你的字段和 mysql 关键字有冲突，那么建议采用数组方式调用，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->where('status=1')->order(['order','id'=>'desc'])->limit(5)->select();
+
+.. warning:: V5.0.17+ 版本开始，当你的 ``order`` 排序中使用了 SQL 函数的时候，请使用 ``orderRaw`` 方法替代 ``order`` ，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->where('status=1')->orderRaw('rand()')->limit(5)->select();
+
+limit
+^^^^^^
+``limit`` 方法也是模型类的连贯操作方法之一，主要用于指定查询和操作的数量，特别在分页查询的时候使用较多。ThinkPHP 的 ``limit`` 方法可以兼容所有的数据库驱动类的。
+
+限制结果数量
+""""""""""""
+例如获取满足要求的10个用户，如下调用即可：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('status=1')
+        ->field('id,name')
+        ->limit(10)
+        ->select();
+
+``limit`` 方法也可以用于写操作，例如更新满足要求的3条数据：
+
+.. code-block:: php
+
+    Db::table('think_user')
+    ->where('score=100')
+    ->limit(3)
+    ->update(['level'=>'A']);
+
+分页查询
+""""""""
+用于文章分页查询是 ``limit`` 方法比较常用的场合，例如：
+
+.. code-block:: php
+
+    Db::table('think_article')->limit('10,25')->select();
+
+表示查询文章数据，从第10行开始的25条数据（可能还取决于 ``where`` 条件和 ``order`` 排序的影响 这个暂且不提）。
+
+你也可以这样使用，作用是一样的：
+
+.. code-block:: php
+
+    Db::table('think_article')->limit(10,25)->select();
+
+对于大数据表，尽量使用 ``limit`` 限制查询结果，否则会导致很大的内存开销和性能问题。
+
+page
+^^^^^
+``page`` 方法也是模型的连贯操作方法之一，是完全为分页查询而诞生的一个人性化操作方法。
+
+我们在前面已经了解了关于 ``limit`` 方法用于分页查询的情况，而 ``page`` 方法则是更人性化的进行分页查询的方法，例如还是以文章列表分页为例来说，如果使用 ``limit`` 方法，我们要查询第一页和第二页（假设我们每页输出10条数据）写法如下：
+
+.. code-block:: php
+
+    // 查询第一页数据
+    Db::table('think_article')->limit('0,10')->select();
+    // 查询第二页数据
+    Db::table('think_article')->limit('10,10')->select();
+
+虽然利用扩展类库中的分页类 ``Page`` 可以自动计算出每个分页的 ``limit`` 参数，但是如果要自己写就比较费力了，如果用 ``page`` 方法来写则简单多了，例如：
+
+.. code-block:: php
+
+    // 查询第一页数据
+    Db::table('think_article')->page('1,10')->select();
+    // 查询第二页数据
+    Db::table('think_article')->page('2,10')->select();
+
+显而易见的是，使用 ``page`` 方法你不需要计算每个分页数据的起始位置， ``page`` 方法内部会自动计算。
+
+和 ``limit`` 方法一样， ``page`` 方法也支持2个参数的写法，例如：
+
+.. code-block:: php
+
+    Db::table('think_article')->page(1,10)->select();
+    // 和下面的用法等效
+    Db::table('think_article')->page('1,10')->select();
+
+``page`` 方法还可以和 ``limit`` 方法配合使用，例如：
+
+.. code-block:: php
+
+    Db::table('think_article')->limit(25)->page(3)->select();
+
+当 ``page`` 方法只有一个值传入的时候，表示第几页，而 ``limit`` 方法则用于设置每页显示的数量，也就是说上面的写法等同于：
+
+.. code-block:: php
+
+    Db::table('think_article')->page('3,25')->select();
+
+group
+^^^^^
+``GROUP`` 方法也是连贯操作方法之一，通常用于结合合计函数，根据一个或多个列对结果集进行分组 。
+
+``group`` 方法只有一个参数，并且只能使用字符串。
+
+例如，我们都查询结果按照用户 ``id`` 进行分组统计：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->field('user_id,username,max(score)')
+        ->group('user_id')
+        ->select();
+
+生成的SQL语句是：
+
+.. code-block:: sql
+
+    SELECT user_id,username,max(score) FROM think_score GROUP BY user_id
+
+也支持对多个字段进行分组，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->field('user_id,test_time,username,max(score)')
+        ->group('user_id,test_time')
+        ->select();
+
+生成的SQL语句是：
+
+.. code-block:: sql
+
+    SELECT user_id,test_time,username,max(score) FROM think_score GROUP BY user_id,test_time
+
+having
+^^^^^^
+``HAVING`` 方法也是连贯操作之一，用于配合 ``group`` 方法完成从分组的结果中筛选（通常是聚合条件）数据。
+
+``having`` 方法只有一个参数，并且只能使用字符串，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->field('username,max(score)')
+        ->group('user_id')
+        ->having('count(test_time)>3')
+        ->select();
+
+生成的SQL语句是：
+
+.. code-block:: sql
+
+    SELECT username,max(score) FROM think_score GROUP BY user_id HAVING count(test_time)>3
+
+join
+^^^^
+``join`` 通常有下面几种类型，不同类型的 ``join`` 操作会影响返回的数据结果。
+
+- INNER JOIN: 等同于 JOIN（默认的JOIN类型）,如果表中有至少一个匹配，则返回行
+- LEFT JOIN: 即使右表中没有匹配，也从左表返回所有的行
+- RIGHT JOIN: 即使左表中没有匹配，也从右表返回所有的行
+- FULL JOIN: 只要其中一个表中存在匹配，就返回行
+
+说明
+""""
+
+.. code-block:: php
+
+    object join ( mixed join [, mixed $condition = null [, string $type = 'INNER']] )
+
+``JOIN`` 方法也是连贯操作方法之一，用于根据两个或多个表中的列之间的关系，从这些表中查询数据。
+
+参数
+
+- join 要关联的（完整）表名以及别名
+
+支持三种写法：
+
+.. code-block:: shell
+
+    写法1：[ '完整表名或者子查询'=>'别名' ]
+    写法2：'完整表名 别名'
+    写法3：'不带数据表前缀的表名'
+
+- condition 关联条件。可以为字符串或数组， 为数组时每一个元素都是一个关联条件。
+- type 关联类型。可以为: ``INNER`` 、 ``LEFT`` 、 ``RIGHT`` 、 ``FULL`` ，不区分大小写，默认为 ``INNER`` 。
+- 返回值 模型对象
+
+举例
+""""
+
+.. code-block:: php
+
+    Db::table('think_artist')
+    ->alias('a')
+    ->join('think_work w','a.id = w.artist_id')
+    ->join('think_card c','a.card_id = c.id')
+    ->select();
+
+    Db::table('think_artist')
+    ->alias('a')
+    ->join('__WORK__ w','a.id = w.artist_id')
+    ->join('__CARD__ c','a.card_id = c.id')
+    ->select();
+
+    $join = [
+        ['think_work w','a.id=w.artist_id'],
+        ['think_card c','a.card_id=c.id'],
+    ];
+    Db::table('think_user')->alias('a')->join($join)->select();
+
+以上三种写法的效果一样， ``__WORK__`` 和 ``__CARD__`` 在最终解析的时候会转换为 ``think_work`` 和 ``think_card`` 。注意:'_表名_'这种方式中间的表名需要用大写
+
+如果不想使用别名，后面的条件就要使用表全名，可以使用下面这种方式
+
+.. code-block:: php
+
+    Db::table('think_user')->join('__WORK__','__ARTIST__.id = __WORK__.artist_id')->select();
+
+默认采用 ``INNER JOIN`` 方式，如果需要用其他的 ``JOIN`` 方式，可以改成
+
+.. code-block:: php
+
+    Db::table('think_user')->alias('a')->join('word w','a.id = w.artist_id','RIGHT')->select();
+
+表名也可以是一个子查询
+
+.. code-block:: php
+
+    $subsql = Db::table('think_work')->where(['status'=>1])->field('artist_id,count(id) count')->group('artist_id')->buildSql();
+    Db::table('think_user')->alias('a')->join([$subsql=> 'w'], 'a.artist_id = w.artist_id')->select();
+
+因 ``buildSql`` 返回的语句带有 ``()`` ，所以这里不需要在两端再加上 ``()`` 。
+
+
+union
+^^^^^
+``UNION`` 操作用于合并两个或多个 ``SELECT`` 语句的结果集。
+
+使用示例：
+
+.. code-block:: php
+
+    Db::field('name')
+          ->table('think_user_0')
+          ->union('SELECT name FROM think_user_1')
+          ->union('SELECT name FROM think_user_2')
+          ->select();
+
+闭包用法：
+
+.. code-block:: php
+
+    Db::field('name')
+          ->table('think_user_0')
+          ->union(function($query){
+            $query->field('name')->table('think_user_1');
+            })
+          ->union(function($query){
+            $query->field('name')->table('think_user_2');
+            })
+          ->select();
+
+或者
+
+.. code-block:: php
+
+    Db::field('name')
+          ->table('think_user_0')
+          ->union(['SELECT name FROM think_user_1','SELECT name FROM think_user_2'])
+          ->select();
+
+支持 UNION ALL 操作，例如：
+
+.. code-block:: php
+
+    Db::field('name')
+          ->table('think_user_0')
+          ->union('SELECT name FROM think_user_1',true)
+          ->union('SELECT name FROM think_user_2',true)
+          ->select();
+
+或者
+
+.. code-block:: php
+
+    Db::field('name')
+          ->table('think_user_0')
+          ->union(['SELECT name FROM think_user_1','SELECT name FROM think_user_2'],true)
+          ->select();
+
+每个 ``union`` 方法相当于一个独立的 ``SELECT`` 语句。
+
+.. note:: 注意： ``UNION`` 内部的 ``SELECT`` 语句必须拥有相同数量的列。列也必须拥有相似的数据类型。同时，每条 ``SELECT`` 语句中的列的顺序必须相同。
+
+distinct
+^^^^^^^^
+
+``DISTINCT`` 方法用于返回唯一不同的值 。
+
+例如数据库表中有以下数据
+
+.. image:: ./images/DISTINCT.jpg
+
+以下代码会返回 ``user_login`` 字段不同的数据
+
+.. code-block:: php
+
+    Db::table('think_user')->distinct(true)->field('user_login')->select();
+
+生成的SQL语句是： ``SELECT DISTINCT user_login FROM think_user``
+
+返回以下数组
+
+.. code-block:: php
+
+    array(2) {
+      [0] => array(1) {
+        ["user_login"] => string(7) "chunice"
+      }
+      [1] => array(1) {
+        ["user_login"] => string(5) "admin"
+      }
+    }
+
+``distinct`` 方法的参数是一个布尔值。
+
+lock
+^^^^
+``Lock`` 方法是用于数据库的锁机制，如果在查询或者执行操作的时候使用：
+
+.. code-block:: php
+
+    Db::name('user')->where('id',1)->lock(true)->find();
+
+就会自动在生成的 SQL 语句最后加上 ``FOR UPDATE`` 或者 ``FOR UPDATE NOWAIT`` （Oracle数据库）。
+
+``lock`` 方法支持传入字符串用于一些特殊的锁定要求，例如：
+
+.. code-block:: php
+
+    Db::name('user')->where('id',1)->lock('lock in share mode')->find();
+
+cache
+^^^^^
+``cache`` 方法用于查询缓存操作，也是连贯操作方法之一。
+
+``cache`` 可以用于 ``select`` 、 ``find`` 、 ``value`` 和 ``column`` 方法，以及其衍生方法，使用 ``cache`` 方法后，在缓存有效期之内不会再次进行数据库查询操作，而是直接获取缓存中的数据，关于数据缓存的类型和设置可以参考缓存部分。
+
+下面举例说明，例如，我们对 ``find`` 方法使用 ``cache`` 方法如下：
+
+.. code-block:: php
+
+    Db::table('think_user')->where('id=5')->cache(true)->find();
+
+第一次查询结果会被缓存，第二次查询相同的数据的时候就会直接返回缓存中的内容，而不需要再次进行数据库查询操作。
+
+默认情况下， 缓存有效期是由默认的缓存配置参数决定的，但 ``cache`` 方法可以单独指定，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->cache(true,60)->find();
+    // 或者使用下面的方式 是等效的
+    Db::table('think_user')->cache(60)->find();
+
+表示对查询结果的缓存有效期60秒。
+
+``cache`` 方法可以指定缓存标识：
+
+.. code-block:: php
+
+    Db::table('think_user')->cache('key',60)->find();
+
+.. note:: 指定查询缓存的标识可以使得查询缓存更有效率。
+
+这样，在外部就可以通过 ``\think\Cache`` 类直接获取查询缓存的数据，例如：
+
+.. code-block:: php
+
+    $result = Db::table('think_user')->cache('key',60)->find();
+    $data = \think\Cache::get('key');
+
+``cache`` 方法支持设置缓存标签，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->cache('key',60,'tagName')->find();
+
+缓存自动更新
+""""""""""""
+这里的缓存自动更新是指一旦数据更新或者删除后会自动清理缓存（下次获取的时候会自动重新缓存）。
+
+当你删除或者更新数据的时候，可以使用 ``cache`` 方法手动更新（清除）缓存，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->cache('user_data')->select([1,3,5]);
+    Db::table('think_user')->cache('user_data')->update(['id'=>1,'name'=>'thinkphp']);
+    Db::table('think_user')->cache('user_data')->select([1,5]);
+
+最后查询的数据不会受第一条查询缓存的影响，确保查询和更新或者删除使用相同的缓存标识才能自动清除缓存。
+
+如果使用 ``find`` 方法并且使用主键查询的情况，不需要指定缓存标识，会自动清理缓存，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->cache(true)->find(1);
+    Db::table('think_user')->update(['id'=>1,'name'=>'thinkphp']);
+    Db::table('think_user')->cache(true)->find(1);
+
+最后查询的数据会是更新后的数据。
+
+comment
+^^^^^^^
+``COMMENT`` 方法 用于在生成的 ``SQL`` 语句中添加注释内容，例如：
+
+.. code-block:: php
+
+    Db::table('think_score')->comment('查询考试前十名分数')
+        ->field('username,score')
+        ->limit(10)
+        ->order('score desc')
+        ->select();
+
+最终生成的SQL语句是：
+
+.. code-block:: sql
+
+    SELECT username,score FROM think_score ORDER BY score desc LIMIT 10 /* 查询考试前十名分数 */
+
+fetchSql
+^^^^^^^^
+``fetchSql`` 用于直接返回 SQL 而不是执行查询，适用于任何的 CURD 操作方法。 例如：
+
+.. code-block:: php
+
+    $result = Db::table('think_user')->fetchSql(true)->find(1);
+
+输出 ``result`` 结果为：  ``SELECT * FROM think_user where id = 1``
+
+force
+^^^^^
+``force`` 方法用于数据集的强制索引操作，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')->force('user')->select();
+
+对查询强制使用 ``user`` 索引， ``user`` 必须是数据表实际创建的索引名称。
+
+bind
+^^^^
+``bind`` 方法用于手动参数绑定，大多数情况，无需进行手动绑定，系统会在查询和写入数据的时候自动使用参数绑定。
+
+``bind`` 方法用法如下：
+
+.. code-block:: php
+
+    // 用于查询
+    Db::table('think_user')
+    ->where('id',':id')
+    ->where('name',':name')
+    ->bind(['id'=>[10,\PDO::PARAM_INT],'name'=>'thinkphp'])
+    ->select();
+
+    // 用于写入
+    Db::table('think_user')
+    ->bind(['id'=>[10,\PDO::PARAM_INT],'email'=>'thinkphp@qq.com','name'=>'thinkphp'])
+    ->where('id',':id')
+    ->update(['name'=>':name','email'=>':email']);
+
+partition
+^^^^^^^^^
+``partition`` 方法用于是数据库水平分表
+
+.. code-block:: php
+
+    partition($data, $field, $rule);
+    // $data 分表字段的数据
+    // $field 分表字段的名称
+    // $rule 分表规则
+
+**注意：不要使用任何 SQL 语句中会出现的关键字当表名、字段名，例如 order 等。会导致数据模型拼装 SQL 语句语法错误。**
+
+partition 方法用法如下：
+
+.. code-block:: php
+
+    // 用于写入
+    $data = [
+        'user_id'   => 110,
+        'user_name' => 'think'
+    ];
+
+    $rule = [
+        'type' => 'mod', // 分表方式
+        'num'  => 10     // 分表数量
+    ];
+
+    Db::name('log')
+        ->partition(['user_id' => 110], "user_id", $rule)
+        ->insert($data);
+
+    // 用于查询
+    Db::name('log')
+        ->partition(['user_id' => 110], "user_id", $rule)
+        ->where(['user_id' => 110])
+        ->select();
+
+strict
+^^^^^^
+``strict`` 方法用于设置是否严格检查字段名，用法如下：
+
+.. code-block:: php
+
+    // 关闭字段严格检查
+    Db::name('user')
+        ->strict(false)
+        ->insert($data);
+
+注意，系统默认值是由数据库配置参数 ``fields_strict`` 决定，因此修改数据库配置参数可以进行全局的严格检查配置，如下：
+
+.. code-block:: php
+
+    // 关闭严格检查字段是否存在
+    'fields_strict'  => false,
+
+.. note:: 如果开启字段严格检查的话，在更新和写入数据库的时候，一旦存在非数据表字段的值，则会抛出异常。
+
+failException
+^^^^^^^^^^^^^
+``failException`` 设置查询数据为空时是否需要抛出异常，如果不传入任何参数，默认为开启，用于 ``select`` 和 ``find`` 方法，例如：
+
+.. code-block:: php
+
+    // 数据不存在的话直接抛出异常
+    Db::name('blog')
+        ->where(['status' => 1])
+        ->failException()
+        ->select();
+    // 数据不存在返回空数组 不抛异常
+    Db::name('blog')
+        ->where(['status' => 1])
+        ->failException(false)
+        ->select();
+
+或者可以使用更方便的查空报错
+
+.. code-block:: php
+
+    // 查询多条
+    Db::name('blog')
+        ->where(['status' => 1])
+        ->selectOrFail();
+
+    // 查询单条
+    Db::name('blog')
+        ->where(['status' => 1])
+        ->findOrFail();
+
+sequence
+^^^^^^^^
+``sequence`` 方法用于 ``pgsql`` 数据库指定自增序列名，其它数据库不必使用，用法为：
+
+.. code-block:: php
+
+    Db::name('user')->sequence('id')->insert(['name'=>'thinkphp']);
+
+聚合查询
+--------
+
++--------+----------------------------------------------------+
+| 版本   | 功能调整                                           |
++========+====================================================+
+| 5.0.14 | max和min方法增加第二个参数用于设置是否强制转换数字 |
++--------+----------------------------------------------------+
+
+在应用中我们经常会用到一些统计数据，例如当前所有（或者满足某些条件）的用户数、所有用户的最大积分、用户的平均成绩等等， ThinkPHP 为这些统计操作提供了一系列的内置方法，包括：
+
++-------+------------------------------------------+
+| 方法  | 说明                                     |
++=======+==========================================+
+| count | 统计数量，参数是要统计的字段名（可选）   |
++-------+------------------------------------------+
+| max   | 获取最大值，参数是要统计的字段名（必须） |
++-------+------------------------------------------+
+| min   | 获取最小值，参数是要统计的字段名（必须） |
++-------+------------------------------------------+
+| avg   | 获取平均值，参数是要统计的字段名（必须） |
++-------+------------------------------------------+
+| sum   | 获取总分，参数是要统计的字段名（必须）   |
++-------+------------------------------------------+
+
+用法示例：
+
+获取用户数：
+
+.. code-block:: php
+
+    Db::table('think_user')->count();
+    // 助手函数
+    db('user')->count();
+
+或者根据字段统计：
+
+.. code-block:: php
+
+    Db::table('think_user')->count('id');
+    // 助手函数
+    db('user')->count('id');
+
+获取用户的最大积分：
+
+.. code-block:: php
+
+    Db::table('think_user')->max('score');
+    // 助手函数
+    db('user')->max('score');
+
+获取积分大于 ``0`` 的用户的最小积分：
+
+.. code-block:: php
+
+    Db::table('think_user')->where('score>0')->min('score');
+    // 助手函数
+    db('user')->where('score>0')->min('score');
+
+获取用户的平均积分：
+
+.. code-block:: php
+
+    Db::table('think_user')->avg('score');
+    // 助手函数
+    db('user')->avg('score');
+
+统计用户的总成绩：
+
+.. code-block:: php
+
+    Db::table('think_user')->sum('score');
+    // 助手函数
+    db('user')->sum('score');
+
+时间查询
+--------
+时间比较
+^^^^^^^^
+使用where方法
+"""""""""""""
+``where`` 方法支持时间比较，例如：
+
+.. code-block:: php
+
+    // 大于某个时间
+    where('create_time','> time','2016-1-1');
+    // 小于某个时间
+    where('create_time','<= time','2016-1-1');
+    // 时间区间查询
+    where('create_time','between time',['2015-1-1','2016-1-1']);
+
+第三个参数可以传入任何有效的时间表达式，会自动识别你的时间字段类型，支持的时间类型包括 ``timestamps`` 、 ``datetime`` 、 ``date`` 和 ``int`` 。
+
+使用whereTime方法
+"""""""""""""""""
+``whereTime`` 方法提供了日期和时间字段的快捷查询，示例如下：
+
+.. code-block:: php
+
+    // 大于某个时间
+    Db::table('think_user')->whereTime('birthday', '>=', '1970-10-1')->select();
+    // 小于某个时间
+    Db::table('think_user')->whereTime('birthday', '<', '2000-10-1')->select();
+    // 时间区间查询
+    Db::table('think_user')->whereTime('birthday', 'between', ['1970-10-1', '2000-10-1'])->select();
+    // 不在某个时间区间
+    Db::table('think_user')->whereTime('birthday', 'not between', ['1970-10-1', '2000-10-1'])->select();
+
+时间表达式
+^^^^^^^^^^^
+还提供了更方便的时间表达式查询，例如：
+
+.. code-block:: php
+
+    // 获取今天的博客
+    Db::table('think_blog') ->whereTime('create_time', 'today')->select();
+    // 获取昨天的博客
+    Db::table('think_blog')->whereTime('create_time', 'yesterday')->select();
+    // 获取本周的博客
+    Db::table('think_blog')->whereTime('create_time', 'week')->select();
+    // 获取上周的博客
+    Db::table('think_blog')->whereTime('create_time', 'last week')->select();
+    // 获取本月的博客
+    Db::table('think_blog')->whereTime('create_time', 'month')->select();
+    // 获取上月的博客
+    Db::table('think_blog')->whereTime('create_time', 'last month')->select();
+    // 获取今年的博客
+    Db::table('think_blog')->whereTime('create_time', 'year')->select();
+    // 获取去年的博客
+    Db::table('think_blog')->whereTime('create_time', 'last year')->select();
+
+如果查询当天、本周、本月和今年的时间，还可以简化为：
+
+.. code-block:: php
+
+    // 获取今天的博客
+    Db::table('think_blog')->whereTime('create_time', 'd')->select();
+    // 获取本周的博客
+    Db::table('think_blog')->whereTime('create_time', 'w')->select();
+    // 获取本月的博客
+    Db::table('think_blog')->whereTime('create_time', 'm')->select();
+    // 获取今年的博客
+    Db::table('think_blog')->whereTime('create_time', 'y') ->select();
+
+V5.0.5+ 版本开始，还可以使用下面的方式进行时间查询
+
+.. code-block:: php
+
+    // 查询两个小时内的博客
+    Db::table('think_blog')->whereTime('create_time','-2 hours')->select();
+
+高级查询
+--------
+快捷查询
+^^^^^^^^
+快捷查询方式是一种多字段相同查询条件的简化写法，可以进一步简化查询条件的写法，在多个字段之间用 ``|`` 分割表示 ``OR`` 查询，用 ``&`` 分割表示 ``AND`` 查询，可以实现下面的查询，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('name|title','like','thinkphp%')
+        ->where('create_time&update_time','>',0)
+        ->find();
+
+生成的查询SQL是：
+
+.. code-block:: sql
+
+    SELECT * FROM `think_user` WHERE ( `name` LIKE 'thinkphp%' OR `title` LIKE 'thinkphp%' ) AND ( `create_time` > 0 AND `update_time` > 0 ) LIMIT 1
+
+.. note:: 快捷查询支持所有的查询表达式。
+
+区间查询
+^^^^^^^^
+区间查询是一种同一字段多个查询条件的简化写法，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('name',['like','thinkphp%'],['like','%thinkphp'])
+        ->where('id',['>',0],['<>',10],'or')
+        ->find();
+
+生成的SQL语句为：
+
+.. code-block:: sql
+
+    SELECT * FROM `think_user` WHERE ( `name` LIKE 'thinkphp%' AND `name` LIKE '%thinkphp' ) AND ( `id` > 0 OR `id` <> 10 ) LIMIT 1
+
+.. note:: 区间查询的查询条件必须使用数组定义方式，支持所有的查询表达式。
+
+下面的查询方式是错误的：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('name',['like','thinkphp%'],['like','%thinkphp'])
+        ->where('id',5,['<>',10],'or')
+        ->find();
+
+批量查询
+^^^^^^^^
+可以进行多个条件的批量条件查询定义，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where([
+            'name'  =>  ['like','thinkphp%'],
+            'title' =>  ['like','%thinkphp'],
+            'id'    =>  ['>',0],
+            'status'=>  1
+        ])->select();
+
+生成的SQL语句为：
+
+.. code-block:: sql
+
+    SELECT * FROM `think_user` WHERE `name` LIKE 'thinkphp%' AND `title` LIKE '%thinkphp' AND `id` > 0 AND `status` = '1'
+
+闭包查询
+^^^^^^^^
+
+.. code-block:: php
+
+    Db::table('think_user')->select(function($query){
+        $query->where('name','thinkphp')
+            ->whereOr('id','>',10);
+    });
+
+生成的SQL语句为：
+
+.. code-block:: sql
+
+    SELECT * FROM `think_user` WHERE `name` = 'thinkphp' OR `id` > 10
+
+使用Query对象查询
+^^^^^^^^^^^^^^^^^
+也可以事先封装 ``Query`` 对象，并传入 ``select`` 方法，例如：
+
+.. code-block:: php
+
+    $query = new \think\db\Query;
+    $query->name('user')
+        ->where('name','like','%think%')
+        ->where('id','>',10)
+        ->limit(10);
+    Db::select($query);
+
+.. note:: 如果使用 ``Query`` 对象的话， ``select`` 方法之前调用的任何的链式操作都是无效。
+
+混合查询
+^^^^^^^^
+可以结合前面提到的所有方式进行混合查询，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('name',['like','thinkphp%'],['like','%thinkphp'])
+        ->where(function($query){
+            $query->where('id',['<',10],['>',100],'or');
+        })
+        ->select();
+
+生成的SQL语句是：
+
+.. code-block:: sql
+
+    SELECT * FROM `think_user` WHERE ( `name` LIKE 'thinkphp%' AND `name` LIKE '%thinkphp' ) AND ( `id` < 10 or `id` > 100 )
+
+字符串条件查询
+^^^^^^^^^^^^^^
+对于一些实在复杂的查询，也可以直接使用原生 SQL 语句进行查询，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('id > 0 AND name LIKE "thinkphp%"')
+        ->select();
+
+为了安全起见，我们可以对字符串查询条件使用参数绑定，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('id > :id AND name LIKE :name ',['id'=>0, 'name'=>'thinkphp%'])
+        ->select();
+
+V5.0.4+ 开始， ThinkPHP 支持对同一个字段多次调用查询条件，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+        ->where('name','like','%think%')
+        ->where('name','like','%php%')
+        ->where('id','in',[1,5,80,50])
+        ->where('id','>',10)
+        ->find();
+
+快捷方法（V5.0.5+）
+^^^^^^^^^^^^^^^^^^^
+V5.0.5+ 版本开始新增了一系列快捷方法，用于简化查询，包括：
+
++-----------------+----------------------+
+| 方法            | 作用                 |
++=================+======================+
+| whereNull       | 查询字段是否为Null   |
++-----------------+----------------------+
+| whereNotNull    | 查询字段是否不为Null |
++-----------------+----------------------+
+| whereIn         | 字段IN查询           |
++-----------------+----------------------+
+| whereNotIn      | 字段NOT IN查询       |
++-----------------+----------------------+
+| whereBetween    | 字段BETWEEN查询      |
++-----------------+----------------------+
+| whereNotBetween | 字段NOT BETWEEN查询  |
++-----------------+----------------------+
+| whereLike       | 字段LIKE查询         |
++-----------------+----------------------+
+| whereNotLike    | 字段NOT LIKE查询     |
++-----------------+----------------------+
+| whereExists     | EXISTS条件查询       |
++-----------------+----------------------+
+| whereNotExists  | NOT EXISTS条件查询   |
++-----------------+----------------------+
+| whereExp        | 表达式查询           |
++-----------------+----------------------+
+
+视图查询
+--------
+视图查询可以实现不依赖数据库视图的多表查询，并不需要数据库支持视图，例如：
+
+.. code-block:: php
+
+    Db::view('User','id,name')
+        ->view('Profile','truename,phone,email','Profile.user_id=User.id')
+        ->view('Score','score','Score.user_id=Profile.id')
+        ->where('score','>',80)
+        ->select();
+
+生成的SQL语句类似于：
+
+.. code-block:: sql
+
+    SELECT User.id,User.name,Profile.truename,Profile.phone,Profile.email,Score.score FROM think_user User INNER JOIN think_profile Profile ON Profile.user_id=User.id INNER JOIN think_socre Score ON Score.user_id=Profile.id WHERE Score.score > 80
+
+.. note:: 注意，视图查询无需调用 ``table`` 和 ``join`` 方法，并且在调用 ``where`` 和 ``order`` 方法的时候只需要使用字段名而不需要加表名。
+
+默认使用 ``INNER join`` 查询，如果需要更改，可以使用：
+
+.. code-block:: php
+
+    Db::view('User','id,name')
+        ->view('Profile','truename,phone,email','Profile.user_id=User.id','LEFT')
+        ->view('Score','score','Score.user_id=Profile.id','RIGHT')
+        ->where('score','>',80)
+        ->select();
+
+生成的SQL语句类似于：
+
+.. code-block:: sql
+
+    SELECT User.id,User.name,Profile.truename,Profile.phone,Profile.email,Score.score FROM think_user User LEFT JOIN think_profile Profile ON Profile.user_id=User.id RIGHT JOIN think_socre Score ON Score.user_id=Profile.id WHERE Score.score > 80
+
+可以使用别名：
+
+.. code-block:: sql
+
+    Db::view('User',['id'=>'uid','name'=>'account'])
+        ->view('Profile','truename,phone,email','Profile.user_id=User.id')
+        ->view('Score','score','Score.user_id=Profile.id')
+        ->where('score','>',80)
+        ->select();
+
+生成的SQL语句变成：
+
+.. code-block:: sql
+
+    SELECT User.id AS uid,User.name AS account,Profile.truename,Profile.phone,Profile.email,Score.score FROM think_user User INNER JOIN think_profile Profile ON Profile.user_id=User.id INNER JOIN think_socre Score ON Score.user_id=Profile.id WHERE Score.score > 80
+
+可以使用数组的方式定义表名以及别名，例如：
+
+.. code-block:: php
+
+    Db::view(['think_user'=>'member'],['id'=>'uid','name'=>'account'])
+        ->view('Profile','truename,phone,email','Profile.user_id=member.id')
+        ->view('Score','score','Score.user_id=Profile.id')
+        ->where('score','>',80)
+        ->select();
+
+生成的SQL语句变成：
+
+.. code-block:: sql
+
+    SELECT member.id AS uid,member.name AS account,Profile.truename,Profile.phone,Profile.email,Score.score FROM think_user member INNER JOIN think_profile Profile ON Profile.user_id=member.id INNER JOIN think_socre Score ON Score.user_id=Profile.id WHERE Score.score > 80
+
+子查询
+------
+首先构造子查询 ``SQL`` ，可以使用下面三种的方式来构建子查询。
+
+使用select方法
+^^^^^^^^^^^^^^^
+当 ``select`` 方法的参数为 ``false`` 的时候，表示不进行查询只是返回构建 ``SQL`` ，例如：
+
+.. code-block:: php
+
+    $subQuery = Db::table('think_user')
+        ->field('id,name')
+        ->where('id','>',10)
+        ->select(false);
+
+生成的 ``subQuery`` 结果为：
+
+.. code-block:: sql
+
+    SELECT `id`,`name` FROM `think_user` WHERE `id` > 10
+
+使用fetchSql方法
+^^^^^^^^^^^^^^^^
+``fetchSql`` 方法表示不进行查询而只是返回构建的 ``SQL`` 语句，并且不仅仅支持 ``select`` ，而是支持所有的 ``CURD`` 查询。
+
+.. code-block:: php
+
+    $subQuery = Db::table('think_user')
+        ->field('id,name')
+        ->where('id','>',10)
+        ->fetchSql(true)
+        ->select();
+
+生成的 ``subQuery`` 结果为：
+
+.. code-block:: sql
+
+    SELECT `id`,`name` FROM `think_user` WHERE `id` > 10
+
+使用buildSql构造子查询
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    $subQuery = Db::table('think_user')
+        ->field('id,name')
+        ->where('id','>',10)
+        ->buildSql();
+
+生成的 ``subQuery`` 结果为：
+
+.. code-block:: sql
+
+    ( SELECT `id`,`name` FROM `think_user` WHERE `id` > 10 )
+
+调用 ``buildSql`` 方法后不会进行实际的查询操作，而只是生成该次查询的 ``SQL`` 语句（为了避免混淆，会在 ``SQL`` 两边加上括号），然后我们直接在后续的查询中直接调用。
+
+.. note:: 需要注意的是，使用前两种方法需要自行添加‘括号’。
+
+然后使用子查询构造新的查询：
+
+.. code-block:: php
+
+    Db::table($subQuery.' a')
+        ->where('a.name','like','thinkphp')
+        ->order('id','desc')
+        ->select();
+
+生成的SQL语句为：
+
+.. code-block:: sql
+
+    SELECT * FROM ( SELECT `id`,`name` FROM `think_user` WHERE `id` > 10 ) a WHERE a.name LIKE 'thinkphp' ORDER BY `id` desc
+
+使用闭包构造子查询
+^^^^^^^^^^^^^^^^^^
+``IN/NOT IN`` 和 ``EXISTS/NOT EXISTS`` 之类的查询可以直接使用闭包作为子查询，例如：
+
+.. code-block:: php
+
+    Db::table('think_user')
+    ->where('id','IN',function($query){
+        $query->table('think_profile')->where('status',1)->field('id');
+    })->select();
+
+生成的SQL语句是：
+
+.. code-block:: php
+
+    SELECT * FROM `think_user` WHERE `id` IN ( SELECT `id` FROM `think_profile` WHERE `status` = 1 )
+
+.. code-block:: php
+
+    Db::table('think_user')
+    ->where(function($query){
+        $query->table('think_profile')->where('status',1);
+    },'exists')
+    ->find();
+
+生成的SQL语句为
+
+.. code-block:: sql
+
+    SELECT * FROM `think_user` WHERE EXISTS ( SELECT * FROM `think_profile` WHERE `status` = 1 )
+
+.. note:: V5.0.9+ 版本开始，比较运算也支持使用闭包子查询
+
+原生查询
+--------
+``Db`` 类支持原生 ``SQL`` 查询操作，主要包括下面两个方法：
+
+query方法
+^^^^^^^^^^
+``query`` 方法用于执行SQL查询操作，如果数据非法或者查询错误则返回 ``false`` ，否则返回查询结果数据集（同 ``select`` 方法）。
+
+使用示例：
+
+.. code-block:: php
+
+    Db::query("select * from think_user where status=1");
+
+.. note:: 如果你当前采用了分布式数据库，并且设置了读写分离的话， ``query`` 方法始终是在读服务器执行，因此 ``query`` 方法对应的都是读操作，而不管你的 SQL 语句是什么。
+
+execute方法
+^^^^^^^^^^^
+``execute`` 用于更新和写入数据的 ``sql`` 操作，如果数据非法或者查询错误则返回 ``false`` ，否则返回影响的记录数。
+
+.. code-block:: php
+
+    Db::execute("update think_user set name='thinkphp' where status=1");
+
+.. note:: 如果你当前采用了分布式数据库，并且设置了读写分离的话，execute方法始终是在写服务器执行，因此execute方法对应的都是写操作，而不管你的SQL语句是什么。
+
+参数绑定
+^^^^^^^^
+支持在原生查询的时候使用参数绑定，包括问号占位符或者命名占位符，例如：
+
+.. code-block:: php
+
+    Db::query("select * from think_user where id=? AND status=?",[8,1]);
+    // 命名绑定
+    Db::execute("update think_user set name=:name where status=:status",['name'=>'thinkphp','status'=>1]);
+
+查询事件
+========
+查询事件（V5.0.4+）
+------------------
+从 5.0.4+ 版本开始，增加了数据库的 CURD 操作事件支持，包括：
+
++---------------+----------------------+
+| 事件          | 描述                 |
++===============+======================+
+| before_select | select查询前回调     |
++---------------+----------------------+
+| before_find   | find查询前回调       |
++---------------+----------------------+
+| after_insert  | insert操作成功后回调 |
++---------------+----------------------+
+| after_update  | update操作成功后回调 |
++---------------+----------------------+
+| after_delete  | delete操作成功后回调 |
++---------------+----------------------+
+
+查询事件仅支持 ``find`` 、 ``select`` 、 ``insert`` 、 ``update`` 和 ``delete`` 方法。
+
+注册事件
+--------
+使用下面的方法注册数据库查询事件
+
+.. code-block:: php
+
+    Query::event('after_insert','callback');
+    Query::event('before_select',function($options,$query){
+        // 事件处理
+        return $result;
+    });
+
+事务操作
+========
+使用事务处理的话，需要数据库引擎支持事务处理。比如 ``MySQL`` 的 ``MyISAM`` 不支持事务处理，需要使用 ``InnoDB`` 引擎。
+
+使用 ``transaction`` 方法操作数据库事务，当发生异常会自动回滚，例如：
+
+自动控制事务处理
+----------------
+
+.. code-block:: php
+
+    Db::transaction(function(){
+        Db::table('think_user')->find(1);
+        Db::table('think_user')->delete(1);
+    });
+
+手动控制事务
+------------
+
+.. code-block:: php
+
+    // 启动事务
+    Db::startTrans();
+    try{
+        Db::table('think_user')->find(1);
+        Db::table('think_user')->delete(1);
+        // 提交事务
+        Db::commit();
+    } catch (\Exception $e) {
+        // 回滚事务
+        Db::rollback();
+    }
+
+.. note:: 注意在事务操作的时候，确保你的数据库连接是相同的。
+
+监听SQL
+=======
+如果开启数据库的调试模式的话，你可以对数据库执行的任何 SQL 操作进行监听，使用如下方法：
+
+.. code-block:: php
+
+    Db::listen(function($sql, $time, $explain){
+        // 记录SQL
+        echo $sql. ' ['.$time.'s]';
+        // 查看性能分析结果
+        dump($explain);
+    });
+
+.. note:: 默认如果没有注册任何监听操作的话，这些SQL执行会被根据不同的日志类型记录到日志中。
+
+V5.0.19+ 版本开始， ``listen`` 方法增加 ``master`` 参数用于标记当前的主从查询。
+
+.. code-block:: php
+
+    Db::listen(function ($sql, $time, $explain, $master) {
+        // 记录SQL
+        echo $sql . ' [' . $time . 's] ' . ($master ? 'master' : 'slave');
+        // 查看性能分析结果
+        dump($explain);
+    });
+
+存储过程
+========
+5.0 支持存储过程，如果我们定义了一个数据库存储过程 ``sp_query`` ，可以使用下面的方式调用：
+
+.. code-block:: php
+
+    $result = Db::query('call sp_query(8)');
+
+返回的是一个二维数组，也可以使用参数绑定，例如：
+
+.. code-block:: php
+
+    $result = Db::query('call sp_query(?)',[8]);
+    // 或者命名绑定
+    $result = Db::query('call sp_query(:id)',['id'=>8]);
+
+数据集
+======
+
++-------+------------------------------+
+| 版本  | 功能调整                     |
++=======+==============================+
+| 5.0.5 | 原生查询不支持返回数据集对象 |
++-------+------------------------------+
+
+数据库的查询结果也就是数据集，默认的配置下，数据集的类型是一个二维数组，我们可以配置成数据集类，就可以支持对数据集更多的对象化操作，需要使用数据集类功能，可以配置数据库的 ``resultset_type`` 参数如下：
+
+.. code-block:: php
+
+    return [
+        // 数据库类型
+        'type'        => 'mysql',
+        // 数据库连接DSN配置
+        'dsn'         => '',
+        // 服务器地址
+        'hostname'    => '127.0.0.1',
+        // 数据库名
+        'database'    => 'thinkphp',
+        // 数据库用户名
+        'username'    => 'root',
+        // 数据库密码
+        'password'    => '',
+        // 数据库连接端口
+        'hostport'    => '',
+        // 数据库连接参数
+        'params'      => [],
+        // 数据库编码默认采用utf8
+        'charset'     => 'utf8',
+        // 数据库表前缀
+        'prefix'      => 'think_',
+        // 数据集返回类型
+        'resultset_type' => 'collection',
+    ];
+
+返回的数据集对象是 ``think\Collection`` ，提供了和数组无差别用法，并且另外封装了一些额外的方法。
+
+可以直接使用数组的方式操作数据集对象，例如：
+
+.. code-block:: php
+
+    // 获取数据集
+    $users = Db::name('user')->select();
+    // 直接操作第一个元素
+    $item  = $users[0];
+    // 获取数据集记录数
+    $count = count($users);
+    // 遍历数据集
+    foreach($users as $user){
+        echo $user['name'];
+        echo $user['id'];
+    }
+
+需要注意的是，如果要判断数据集是否为空，不能直接使用 ``empty`` 判断，而必须使用数据集对象的 ``isEmpty`` 方法判断，例如：
+
+.. code-block:: php
+
+    $users = Db::name('user')->select();
+    if($users->isEmpty()){
+        echo '数据集为空';
+    }
+
+``Collection`` 类包含了下列主要方法：
+
++-----------+------------------------------------------+
+| 方法      | 描述                                     |
++===========+==========================================+
+| isEmpty   | 是否为空                                 |
++-----------+------------------------------------------+
+| toArray   | 转换为数组                               |
++-----------+------------------------------------------+
+| all       | 所有数据                                 |
++-----------+------------------------------------------+
+| merge     | 合并其它数据                             |
++-----------+------------------------------------------+
+| diff      | 比较数组，返回差集                       |
++-----------+------------------------------------------+
+| flip      | 交换数据中的键和值                       |
++-----------+------------------------------------------+
+| intersect | 比较数组，返回交集                       |
++-----------+------------------------------------------+
+| keys      | 返回数据中的所有键名                     |
++-----------+------------------------------------------+
+| pop       | 删除数据中的最后一个元素                 |
++-----------+------------------------------------------+
+| shift     | 删除数据中的第一个元素                   |
++-----------+------------------------------------------+
+| unshift   | 在数据开头插入一个元素                   |
++-----------+------------------------------------------+
+| reduce    | 通过使用用户自定义函数，以字符串返回数组 |
++-----------+------------------------------------------+
+| reverse   | 数据倒序重排                             |
++-----------+------------------------------------------+
+| chunk     | 数据分隔为多个数据块                     |
++-----------+------------------------------------------+
+| each      | 给数据的每个元素执行回调                 |
++-----------+------------------------------------------+
+| filter    | 用回调函数过滤数据中的元素               |
++-----------+------------------------------------------+
+| column    | 返回数据中的指定列                       |
++-----------+------------------------------------------+
+| sort      | 对数据排序                               |
++-----------+------------------------------------------+
+| shuffle   | 将数据打乱                               |
++-----------+------------------------------------------+
+| slice     | 截取数据中的一部分                       |
++-----------+------------------------------------------+
+
+分布式数据库
+============
+ThinkPHP 内置了分布式数据库的支持，包括主从式数据库的读写分离，但是分布式数据库必须是相同的数据库类型。
+
+配置 ``database.deploy`` 为 1 可以采用分布式数据库支持。如果采用分布式数据库，定义数据库配置信息的方式如下：
+
+.. code-block:: php
+
+    //分布式数据库配置定义
+    return [
+        // 启用分布式数据库
+        'deploy'    =>  1,
+        // 数据库类型
+        'type'        => 'mysql',
+        // 服务器地址
+        'hostname'    => '192.168.1.1,192.168.1.2',
+        // 数据库名
+        'database'    => 'demo',
+        // 数据库用户名
+        'username'    => 'root',
+        // 数据库密码
+        'password'    => '',
+        // 数据库连接端口
+        'hostport'    => '',
+    ]
+
+连接的数据库个数取决于 ``hostname`` 定义的数量，所以即使是两个相同的 ``IP`` 也需要重复定义，但是其他的参数如果存在相同的可以不用重复定义，例如：
+
+.. code-block:: php
+
+    'hostport'=>'3306,3306'
+
+和
+
+.. code-block:: php
+
+    'hostport'=>'3306'
+
+等效。
+
+.. code-block:: php
+
+    'username'=>'user1',
+    'password'=>'pwd1',
+
+和
+
+.. code-block:: php
+
+    'username'=>'user1,user1',
+    'password'=>'pwd1,pwd1',
+
+等效。
+
+还可以设置分布式数据库的读写是否分离，默认的情况下读写不分离，也就是每台服务器都可以进行读写操作，对于主从式数据库而言，需要设置读写分离，通过下面的设置就可以：
+
+.. code-block:: php
+
+    'rw_separate' => true,
+
+在读写分离的情况下，默认第一个数据库配置是主服务器的配置信息，负责写入数据，如果设置了 ``master_num`` 参数，则可以支持多个主服务器写入。其它的都是从数据库的配置信息，负责读取数据，数量不限制。每次连接从服务器并且进行读取操作的时候，系统会随机进行在从服务器中选择。
+
+还可以设置 ``slave_no`` 指定某个服务器进行读操作。
+
+.. note:: 如果从数据库连接错误，会自动切换到主数据库连接。
+
+调用模型的 ``CURD`` 操作的话，系统会自动判断当前执行的方法的读操作还是写操作，如果你用的是原生 ``SQL`` ，那么需要注意系统的默认规则： 写操作必须用模型的 ``execute`` 方法，读操作必须用模型的 ``query`` 方法，否则会发生主从读写错乱的情况。
+
+.. note:: 注意：主从数据库的数据同步工作不在框架实现，需要数据库考虑自身的同步或者复制机制。

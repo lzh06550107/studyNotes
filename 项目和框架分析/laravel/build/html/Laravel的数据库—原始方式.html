@@ -1,0 +1,589 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>52. 数据库-原始操作 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="53. 数据库-查询构建器" href="Laravel的数据库—查询构造器.html"/>
+        <link rel="prev" title="&lt;no title&gt;" href="Laravel的数据库—服务的注册与启动.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">52. 数据库-原始操作</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">52.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">52.2. 配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sqlite">52.2.1. SQLite 配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">52.2.2. 读和写连接分离</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">52.2.3. 使用多个数据库连接</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#sql">52.3. 运行原生 SQL 查询</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#select">52.3.1. 运行 Select 查询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">52.3.2. 运行插入语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">52.3.3. 运行更新语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">52.3.4. 运行删除语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">52.3.5. 运行普通语句</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">52.4. 监听查询事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">52.5. 数据库事务</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id13">52.5.1. 处理死锁</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">52.5.2. 手动使用事务</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>52. 数据库-原始操作</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>52. 数据库-原始操作<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>52.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Laravel 能使用原生 <code class="docutils literal"><span class="pre">SQL</span></code> 、查询构造器 和 <code class="docutils literal"><span class="pre">Eloquent</span> <span class="pre">ORM</span></code> 在各种数据库后台与数据库进行非常简单的交互。当前 Laravel 支持四种数据库:</p>
+<ul class="simple">
+<li>MySQL</li>
+<li>Postgres</li>
+<li>SQLite</li>
+<li>SQL Server</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>52.2. 配置<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>数据库的配置文件放置在 <code class="docutils literal"><span class="pre">config/database.php</span></code> 文件中，你可以在此定义所有的数据库连接，并指定默认使用的连接。此文件内提供了大部分 Laravel 能支持的数据库配置示例。</p>
+<p>默认情况下， Laravel 的示例 环境配置 使用了 Laravel Homestead（这是一种小型虚拟机，能让你很方便地在本地进行 Laravel 的开发）。你可以根据本地数据库的需要修改这个配置。</p>
+<div class="section" id="sqlite">
+<h3>52.2.1. SQLite 配置<a class="headerlink" href="#sqlite" title="永久链接至标题">¶</a></h3>
+<p>使用类似 <code class="docutils literal"><span class="pre">touch</span> <span class="pre">database/database.sqlite</span></code> 之类命令创建一个新的 <code class="docutils literal"><span class="pre">SQLite</span></code> 数据库之后，可以使用数据库的绝对路径配置 <strong>环境变量</strong> 来指向这个新创建的数据库：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nv">DB_CONNECTION</span><span class="o">=</span>sqlite
+<span class="nv">DB_DATABASE</span><span class="o">=</span>/absolute/path/to/database.sqlite
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>52.2.2. 读和写连接分离<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>有时候你希望 <code class="docutils literal"><span class="pre">SELECT</span></code> 语句使用一个数据库连接，而 <code class="docutils literal"><span class="pre">INSERT</span></code> 、 <code class="docutils literal"><span class="pre">UPDATE</span></code> 和 <code class="docutils literal"><span class="pre">DELETE</span></code> 语句使用另一个数据库连接。在 Laravel 中这就像小菜一碟，无论你是使用原生查询，查询构造器 或者 Eloquent ORM 它都能轻松实现。</p>
+<p>想了解数据库读写分离如何配置, 让我们看看这个例子：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="s1">&#39;mysql&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;read&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;192.168.1.1&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;write&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;196.168.1.2&#39;</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;sticky&#39;</span>    <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span>
+    <span class="s1">&#39;driver&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;mysql&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;database&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;database&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;username&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;password&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;charset&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf8mb4&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;collation&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf8mb4_unicode_ci&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;prefix&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<p>注意在上边的例子中，配置数组中增加了 3 个键： <code class="docutils literal"><span class="pre">read</span></code> ， <code class="docutils literal"><span class="pre">write</span></code> 和 <code class="docutils literal"><span class="pre">sticky</span></code> 。 <code class="docutils literal"><span class="pre">read</span></code> 和 <code class="docutils literal"><span class="pre">write</span></code> 都包含一个键为 <code class="docutils literal"><span class="pre">host</span></code> 的数组。而 <code class="docutils literal"><span class="pre">read</span></code> 和 <code class="docutils literal"><span class="pre">write</span></code> 的其它数据库配置都在键为 <code class="docutils literal"><span class="pre">mysql</span></code> 的主数组中：</p>
+<p>如果你希望重写主数组的某个配置项，只需要将它放入 <code class="docutils literal"><span class="pre">read</span></code> 和 <code class="docutils literal"><span class="pre">write</span></code> 的数组中即可。 所以，这个例子中： <code class="docutils literal"><span class="pre">192.168.1.1</span></code> 将用作「读」连接的主机， 而 <code class="docutils literal"><span class="pre">192.168.1.2</span></code> 将作为「写」连接的主机。这两个连接会共享 <code class="docutils literal"><span class="pre">mysql</span></code> 主数组的各项配置，如数据库的凭据，前缀，字符编码 等。</p>
+<div class="section" id="sticky">
+<h4>52.2.2.1. sticky 选项<a class="headerlink" href="#sticky" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">sticky</span></code> 是一个 可选 值，它可用于立即读取在当前请求周期内已写入数据库的记录(因为主从复制有延迟)。若 <code class="docutils literal"><span class="pre">sticky</span></code> 被启用，并且当前请求周期内执行过「写」操作，那么任何「读」操作都将使用「写」连接。这样可确保同一周期内写入的数据在同一周期内都可以被立即读取。它是否启用，取决于应用程序的需求。</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>52.2.3. 使用多个数据库连接<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>当使用多个数据库连接时，你可以通过 <code class="docutils literal"><span class="pre">DB</span></code> facade 的 <code class="docutils literal"><span class="pre">connection</span></code> 方法访问每一个连接。将 <code class="docutils literal"><span class="pre">name</span></code> 作为 <code class="docutils literal"><span class="pre">connection</span></code> 方法的参数传递，即可使用 <code class="docutils literal"><span class="pre">config/database.php</span></code> 配置文件中对应名称的连接：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">connection</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="o">...</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你也可以在一个连接的实例上使用 <code class="docutils literal"><span class="pre">getPdo</span></code> 方法 访问底层的 <code class="docutils literal"><span class="pre">PDO</span></code> 实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$pdo</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">connection</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getPdo</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sql">
+<h2>52.3. 运行原生 SQL 查询<a class="headerlink" href="#sql" title="永久链接至标题">¶</a></h2>
+<p>配置好数据库连接后，可以使用 <code class="docutils literal"><span class="pre">DB</span></code> Facade 运行查询。 <code class="docutils literal"><span class="pre">DB</span></code> Facade 为每种类型的查询提供了方法： <code class="docutils literal"><span class="pre">select</span></code> 、 <code class="docutils literal"><span class="pre">update</span></code> 、 <code class="docutils literal"><span class="pre">insert</span></code> 、 <code class="docutils literal"><span class="pre">delete</span></code> 和 <code class="docutils literal"><span class="pre">statement</span></code> 。</p>
+<div class="section" id="select">
+<h3>52.3.1. 运行 Select 查询<a class="headerlink" href="#select" title="永久链接至标题">¶</a></h3>
+<p>你可以使用 <code class="docutils literal"><span class="pre">DB</span></code> Facade 的 <code class="docutils literal"><span class="pre">select</span></code> 方法来运行基础的查询语句：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\DB</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 显示所有应用程序的用户列表</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;select * from users where active = ?&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;user.index&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;users&#39;</span> <span class="o">=&gt;</span> <span class="nv">$users</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>传递给 <code class="docutils literal"><span class="pre">select</span></code> 方法的第一个参数是一个原生的 <code class="docutils literal"><span class="pre">SQL</span></code> 查询，而第二个参数则是需要绑定到查询中的参数值。 通常，这些值用于约束 <code class="docutils literal"><span class="pre">where</span></code> 语句。参数绑定用于防止 <code class="docutils literal"><span class="pre">SQL</span></code> 注入。</p>
+<p><code class="docutils literal"><span class="pre">select</span></code> 方法将始终返回一个数组，数组中的每个结果都是一个 <code class="docutils literal"><span class="pre">StdClass</span></code> 对象，可以像下面这样访问结果值。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id6">
+<h4>52.3.1.1. 使用命名绑定<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<p>除了使用 <code class="docutils literal"><span class="pre">?</span></code> 来表示参数绑定外，你也可以使用命名绑定来执行一个查询：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$results</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;select * from users where id = :id&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>52.3.2. 运行插入语句<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>可以使用 <code class="docutils literal"><span class="pre">DB</span></code> Facade 的 <code class="docutils literal"><span class="pre">insert</span></code> 方法来执行 <code class="docutils literal"><span class="pre">insert</span></code> 语句。与 <code class="docutils literal"><span class="pre">select</span></code> 一样，该方法将原生 <code class="docutils literal"><span class="pre">SQL</span></code> 查询作为其第一个参数，并将绑定数据作为第二个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">insert</span><span class="p">(</span><span class="s1">&#39;insert into users (id, name) values (?, ?)&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Dayle&#39;</span><span class="p">]);</span> <span class="c1">// 需要测试返回值？？</span>
+</pre></div>
+</div>
+<p>新增成功则返回 <code class="docutils literal"><span class="pre">true</span></code> 。</p>
+</div>
+<div class="section" id="id8">
+<h3>52.3.3. 运行更新语句<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">update</span></code> 方法用于更新数据库中现有的记录。该方法返回受该语句影响的行数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$affected</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">update</span><span class="p">(</span><span class="s1">&#39;update users set votes = 100 where name = ?&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;John&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>52.3.4. 运行删除语句<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">delete</span></code> 方法用于从数据库中删除记录。与 <code class="docutils literal"><span class="pre">update</span></code> 一样，返回受该语句影响的行数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$deleted</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">delete</span><span class="p">(</span><span class="s1">&#39;delete from users&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>52.3.5. 运行普通语句<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>有些数据库语句不会有任何返回值。对于这些语句，你可以使用 <code class="docutils literal"><span class="pre">DB</span></code> Facade 的 <code class="docutils literal"><span class="pre">statement</span></code> 方法来运行：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">statement</span><span class="p">(</span><span class="s1">&#39;drop table users&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>执行成功，返回 <code class="docutils literal"><span class="pre">true</span></code> 。</p>
+</div>
+</div>
+<div class="section" id="id11">
+<h2>52.4. 监听查询事件<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
+<p>如果你想监控程序执行的每一个 <code class="docutils literal"><span class="pre">SQL</span></code> 查询，你可以使用 <code class="docutils literal"><span class="pre">listen</span></code> 方法。这个方法对于记录查询或调试非常有用。你可以在 服务提供器 中注册你的查询监听器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\DB</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\ServiceProvider</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">AppServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 启动应用服务</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">DB</span><span class="o">::</span><span class="na">listen</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// $query-&gt;sql</span>
+            <span class="c1">// $query-&gt;bindings</span>
+            <span class="c1">// $query-&gt;time</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 注册服务提供器</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h2>52.5. 数据库事务<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h2>
+<p>你可以使用 <code class="docutils literal"><span class="pre">DB</span></code> facade 的 <code class="docutils literal"><span class="pre">transaction</span></code> 方法在数据库事务中运行一组操作。如果在事务 <code class="docutils literal"><span class="pre">Closure</span></code> 中出现一个异常，那么事务将回滚。如果 <code class="docutils literal"><span class="pre">Closure</span></code> 执行成功，事务将自动提交。你不需要担心在使用 <code class="docutils literal"><span class="pre">transaction</span></code> 方法时手动回滚或提交：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">transaction</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">([</span><span class="s1">&#39;votes&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">]);</span>
+
+    <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;posts&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">delete</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="id13">
+<h3>52.5.1. 处理死锁<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">transaction</span></code> 方法接受一个可选的第二参数，该参数表示事务发生死锁时重试的次数。 一旦这些尝试用尽，就会抛出一个异常：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">transaction</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">([</span><span class="s1">&#39;votes&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">]);</span>
+
+    <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;posts&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">delete</span><span class="p">();</span>
+<span class="p">},</span> <span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>52.5.2. 手动使用事务<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>如果您想要手工开始一个事务，并且对回滚和提交有完全的控制，那么您可以在 <code class="docutils literal"><span class="pre">DB</span></code> facade 上使用 <code class="docutils literal"><span class="pre">beginTransaction</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">beginTransaction</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>你可以使用 <code class="docutils literal"><span class="pre">rollBack</span></code> 方法回滚事务：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">rollBack</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>最后，你可以使用 <code class="docutils literal"><span class="pre">commit</span></code> 方法提交事务：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">commit</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last"><code class="docutils literal"><span class="pre">DB</span></code> facade 的事务方法同样适用于 查询构造器 和 Eloquent ORM。</p>
+</div>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">beginTransaction</span><span class="p">();</span> <span class="c1">//开启事务</span>
+<span class="k">try</span> <span class="p">{</span>
+    <span class="c1">//这里省略了业务逻辑代码</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$isSuccess</span><span class="p">){</span>
+        <span class="nx">DB</span><span class="o">::</span><span class="na">commit</span><span class="p">();</span>   <span class="c1">//成功，提交事务</span>
+    <span class="p">}</span>
+    <span class="c1">//思考-&gt;如果事务开启不提交会发生什么后果？？？</span>
+<span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">\Illuminate\Database\QueryException</span> <span class="nv">$ex</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">DB</span><span class="o">::</span><span class="na">rollback</span><span class="p">();</span> <span class="c1">//失败，回滚事务</span>
+    <span class="k">echo</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">echo</span> <span class="s1">&#39;success&#39;</span><span class="p">;</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">beginTransaction</span><span class="p">();</span> <span class="c1">//事务开始</span>
+<span class="k">try</span> <span class="p">{</span>
+       <span class="c1">//代码区</span>
+
+    <span class="nx">DB</span><span class="o">::</span><span class="na">commit</span><span class="p">();</span> <span class="c1">//提交事务</span>
+<span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">\Illuminate\Database\QueryException</span> <span class="nv">$ex</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">DB</span><span class="o">::</span><span class="na">rollback</span><span class="p">();</span> <span class="c1">//回滚事务</span>
+
+    <span class="c1">//异常处理</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的数据库—查询构造器.html" class="btn btn-neutral float-right" title="53. 数据库-查询构建器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的数据库—服务的注册与启动.html" class="btn btn-neutral" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

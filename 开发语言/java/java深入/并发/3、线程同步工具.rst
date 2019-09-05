@@ -1,0 +1,1104 @@
+******
+线程同步工具
+******
+
+介绍
+====
+在第二章基本的线程同步中，我们学习了同步和临界区的内容。基本上，当多个并发任务共享一个资源时就称为同步，例如：一个对象或者一个对象的属性。访问这个资源的代码块称为：临界区。
+
+如果机制没有使用恰当，那么可能会导致错误的结果，或者数据不一致，又或者出现异常情况。所以必须采取 java 语言提供的某个恰当的同步机制来避免这些问题。
+
+在第二章，基本的线程同步中，我们学会了以下2个同步机制：
+
+- 关键词同步
+- Lock接口和它的实现类们： ``ReentrantLock`` ， ``ReentrantReadWriteLock.ReadLock`` 和 ``ReentrantReadWriteLock.WriteLock``
+
+在此章节，我们将学习怎样使用高等级的机制来达到多线程的同步。这些高等级机制有：
+
+- ``Semaphores`` : 控制访问多个共享资源的计数器。此机制是并发编程的最基本的工具之一，而且大部分编程语言都会提供此机制。
+- ``CountDownLatch`` :  ``CountDownLatch`` 类是 Java 语言提供的一个机制，它允许线程等待多个操作的完结。
+- ``CyclicBarrier`` :  ``CyclicBarrier`` 类是又一个 java 语言提供的机制，它允许多个线程在同一个点同步。
+- ``Phaser`` : ``Phaser`` 类是又一个 java 语言提供的机制，它控制并发任务分成段落来执行。全部的线程在继续执行下一个段之前必须等到之前的段执行结束。这是 Java 7 API 的一个新特性。
+- ``Exchanger`` : ``Exchanger`` 类也是 java 语言提供的又一个机制，它提供 2 个线程间的数据交换点。
+
+``Semaphores`` 是最基本的同步机制可以用来在任何问题中保护任何临界区。其他的机制只有在之前描述的那些有特殊特点的应用中使用。请根据你的应用的特点来选择适当的机制。
+
+这章有7个教你如何使用以上描述的机制的指南。
+
+
+控制并发访问一个资源
+===================
+这个指南，你将学习怎样使用 Java 语言提供的 ``Semaphore`` 机制。 ``Semaphore`` 是一个控制访问多个共享资源的计数器。
+
+``Semaphore`` 的内容是由 Edsger Dijkstra 引入并在 THEOS 操作系统上第一次使用。
+
+当一个线程想要访问某个共享资源，首先，它必须获得 ``semaphore`` 。如果 ``semaphore`` 的内部计数器的值大于 ``0`` ，那么 ``semaphore`` 减少计数器的值并允许访问共享的资源。计数器的值大于 ``0`` 表示，有可以自由使用的资源，所以线程可以访问并使用它们。
+
+另一种情况，如果 ``semaphore`` 的计数器的值等于 ``0`` ，那么 ``semaphore`` 让线程进入休眠状态一直到计数器大于 ``0`` 。计数器的值等于 ``0`` 表示全部的共享资源都正被线程们使用，所以此线程想要访问就必须等到某个资源成为自由的。
+
+当线程使用完共享资源时，他必须放出 ``semaphore`` 为了让其他线程可以访问共享资源。这个操作会增加 ``semaphore`` 的内部计数器的值。
+
+在这个指南里，你将学习如何使用 ``Semaphore`` 类来实现一种比较特殊的 ``semaphores`` 种类，称为 binary semaphores 。这个 ``semaphores`` 种类保护访问唯一的共享资源，所以 ``semaphore`` 的内部计数器的值只能是 1 或者 0 。为了展示如何使用它，你将要实现一个 ``PrintQueue`` 类来让并发任务打印它们的任务。这个 ``PrintQueue`` 类会受到 binary semaphore 的保护，所以每次只能有一个线程可以打印。
+
+.. code-block:: java
+
+	// 1.  创建一个会实现print queue的类名为 PrintQueue。
+	public class PrintQueue {
+		// 2. 声明一个对象为Semaphore，称它为semaphore
+		private final Semaphore semaphore;
+		private final SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS");
+
+		// 3. 实现类的构造函数并初始能保护print quere的访问的semaphore对象的值
+		public PrintQueue() {
+			semaphore = new Semaphore(1);
+		}
+
+		// 4. 实现Implement the printJob()方法，此方法可以模拟打印文档，并接收document对象作为参数
+		public void printJob(Object document) {
+			String name = Thread.currentThread().getName();
+			try {
+				// 5. 在这方法内，首先，你必须调用acquire()方法获得demaphore。这个方法会抛出 InterruptedException异常，使用必须包含处理这个异常的代码
+				semaphore.acquire();
+
+				// 6. 然后，实现能随机等待一段时间的模拟打印文档的
+				long duration = (long) (Math.random() * 10);
+				System.out.printf("%s: PrintQueue: Printing a Job during %d seconds\n", name,  duration);
+
+				TimeUnit.SECONDS.sleep(duration);
+				// 7. 最后，释放semaphore通过调用semaphore的relaser()方法
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				semaphore.release();
+			}
+		}
+	}
+
+	// 8. 创建一个名为Job的类并一定实现Runnable 接口。这个类实现把文档传送到打印机的任务
+	public class Job implements Runnable {
+		// 9. 声明一个对象为PrintQueue，名为printQueue
+		private PrintQueue printQueue;
+		// 10. 实现类的构造函数，初始化这个类里的PrintQueue对象
+		public Job(PrintQueue printQueue) {
+			this.printQueue = printQueue;
+		}
+
+		// 11. 实现方法run()
+		@Override
+		public void run() {
+			// 12. 首先， 此方法写信息到操控台表明任务已经开始执行了
+			System.out.printf("%s: Going to print a job\n", Thread.currentThread().getName());
+			// 13. 然后，调用PrintQueue 对象的printJob()方法
+			printQueue.printJob(new Object());
+			// 14. 最后， 此方法写信息到操控台表明它已经结束运行了
+			System.out.printf("%s: The document has been printed\n", Thread.currentThread().getName());
+		}
+	}
+
+	// 15. 实现例子的main类，创建名为 Main的类并实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 16. 创建PrintQueue对象名为printQueue
+			PrintQueue printQueue = new PrintQueue();
+
+			// 17. 创建10个threads。每个线程会执行一个发送文档到print queue的Job对象
+			Thread thread[] = new Thread[10];
+			for (int i = 0; i < 10; i++) {
+				thread[i] = new Thread(new Job(printQueue), "Thread " + i);
+			}
+
+			// 18. 最后，开始这10个线程
+			for (int i = 0; i < 10; i++) {
+				thread[i].start();
+			}
+		}
+	}
+
+这个例子的关键是 ``PrintQueue`` 类的 ``printJob()`` 方法。此方法展示了3个你必须遵守的步骤当你使用 ``semaphore`` 来实现临界区时，并保护共享资源的访问：
+
+1. 首先， 你要调用 ``acquire()`` 方法获得 ``semaphore`` 。
+2. 然后， 对共享资源做出必要的操作。
+3. 最后， 调用 ``release()`` 方法来释放 ``semaphore`` 。
+
+另一个重点是 ``PrintQueue`` 类的构造方法和初始化 ``Semaphore`` 对象。你传递值 1 作为此构造方法的参数，那么你就创建了一个 binary semaphore 。初始值为 1 ，就保护了访问一个共享资源，在例子中是 print queue 。
+
+当你开始10个 ``threads`` 时，那么第一个获得 ``semaphore`` 的得到临界区的访问权。剩下的线程都会被 ``semaphore`` 阻塞直到那个获得 ``semaphore`` 的线程释放它。当这情况发生， ``semaphore`` 在等待的线程中选择一个并给予它访问临界区的访问权。全部的任务都会打印文档，只是一个接一个的执行。
+
+``Semaphore`` 类有另2个版本的 ``acquire()`` 方法：
+
+- ``acquireUninterruptibly()`` ： ``acquire()`` 方法是当 ``semaphore`` 的内部计数器的值为 0 时，阻塞线程直到 ``semaphore`` 被释放。在阻塞期间，线程可能会被中断，然后此方法抛出 ``InterruptedException`` 异常。而此版本的 ``acquire`` 方法会忽略线程的中断而且不会抛出任何异常。
+- ``tryAcquire()`` ： 此方法会尝试获取 ``semaphore`` 。如果成功，返回 ``true`` 。如果不成功，返回 ``false`` 值，并不会被阻塞和等待 ``semaphore`` 的释放。接下来是你的任务用返回的值执行正确的行动。
+
+Semaphores的公平性
+-----------------
+``fairness`` 的内容是指全 java 语言的所有类中，那些可以阻塞多个线程并等待同步资源释放的类（例如， ``semaphore`` )。默认情况下是非公平模式。在这个模式中，当同步资源释放，就会从等待的线程中任意选择一个获得资源，但是这种选择没有任何标准。而公平模式可以改变这个行为并强制选择等待最久时间的线程。
+
+随着其他类的出现， ``Semaphore`` 类的构造函数容许第二个参数。这个参数必需是 ``Boolean`` 值。如果你给的是 ``false`` 值，那么创建的 ``semaphore`` 就会在非公平模式下运行。如果你不使用这个参数，是跟给 ``false`` 值一样的结果。如果你给的是 ``true`` 值，那么你创建的 ``semaphore`` 就会在公平模式下运行。
+
+
+控制并发访问多个资源
+===================
+在并发访问资源的控制中，你学习了信号量（ ``semaphores`` ）的基本知识。
+
+在上个指南，你实现了使用 binary semaphores 的例子。那种 ``semaphores`` 是用来保护访问一个共享资源的，或者说一个代码片段每次只能被一个线程执行。但是 ``semaphores`` 也可以用来保护多个资源的副本，也就是说当你有一个代码片段每次可以被多个线程执行。
+
+在这个指南中，你将学习怎样使用 ``semaphore`` 来保护多个资源副本。你将实现的例子会有一个 ``print queue`` 但可以在 3 个不同的打印机上打印文件。
+
+.. code-block:: java
+
+	public class PrintQueue {
+
+		private Semaphore semaphore;
+
+		// 1.  如我们之前提到的，你将实现semaphores来修改print queue例子。打开PrintQueue类并声明一个boolean array名为 freePrinters。这个array储存空闲的等待打印任务的和正在打印文档的printers。
+		private boolean freePrinters[];
+
+		// 2.  接着，声明一个名为lockPrinters的Lock对象。将要使用这个对象来保护freePrinters array的访问
+		private Lock lockPrinters;
+
+		private final SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS");
+
+		// 3. 修改类的构造函数并初始化新声明的对象们。freePrinters array 有3个元素，全部初始为真值。semaphore用3作为它的初始值
+		public PrintQueue() {
+			semaphore = new Semaphore(3);
+			freePrinters = new boolean[3];
+			for (int i = 0; i < 3; i++) {
+				freePrinters[i] = true; // 开始初始化打印机为空闲
+			}
+			lockPrinters = new ReentrantLock();
+		}
+
+		// 4. 修改printJob()方法。它接收一个称为document的对象为唯一参数
+		public void printJob(Object document) {
+			String name = Thread.currentThread().getName();
+			try {
+				// 5. 首先，调用acquire()方法获得semaphore的访问。由于此方法会抛出 InterruptedException异常，所以必须加入处理它的代码
+				semaphore.acquire();
+
+				System.out.println(name + "开始在" + sdf.format(new Date()) + "打印");
+
+				// 6. 接着使用私有方法 getPrinter()来获得被安排打印任务的打印机的号码
+				int assignedPrinter = getPrinter();
+
+				// 7. 然后， 随机等待一段时间来实现模拟打印文档的行
+				Long duration = (long) (Math.random() * 10);
+				System.out.printf("%s: PrintQueue: Printing a Job in Printer %d during %d seconds\n", name, assignedPrinter, duration);
+				TimeUnit.SECONDS.sleep(duration);
+
+				// 8. 最后，调用release() 方法来解放semaphore并标记打印机为空闲，通过在对应的freePrinters array引索内分配真值
+				freePrinters[assignedPrinter] = true;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				System.out.println(name + "打印结束于" + sdf.format(new Date()) + "\r\n");
+				semaphore.release();
+			}
+		}
+
+		// 9. 实现 getPrinter() 方法。它是一个私有方法，返回一个int值，并不接收任何参数
+		private int getPrinter() {
+			// 10. 首先，声明一个int变量来保存printer的引索值
+			int ret = -1;
+			// 11. 然后， 获得lockPrinters对象 object 的访问
+			try {
+				lockPrinters.lock();
+				// 12. 然后，在freePrinters array内找到第一个真值并在一个变量中保存这个引索值。修改值为false，因为等会这个打印机就会被使用
+				for (int i = 0; i < freePrinters.length; i++) {
+					if (freePrinters[i]) {
+						ret = i;
+						freePrinters[i] = false;
+						break;
+					}
+				}
+				// 13. 最后，解放lockPrinters对象并返回引索对象为真值
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				lockPrinters.unlock();
+			}
+			//14. Job 和 Core 类不做任何改变
+			return ret;
+		}
+	}
+
+	public class Job implements Runnable {
+
+		private PrintQueue printQueue;
+
+		public Job(PrintQueue printQueue) {
+			this.printQueue = printQueue;
+		}
+
+		@Override
+		public void run() {
+			System.out.printf("%s: Going to print a job\n", Thread.currentThread().getName());
+			printQueue.printJob(new Object());
+			System.out.printf("%s: The document has been printed\n", Thread.currentThread().getName());
+		}
+	}
+
+	public class Main {
+
+		public static void main(String args[]) {
+
+			PrintQueue printQueue = new PrintQueue();
+
+			Thread thread[] = new Thread[12];
+			for (int i = 0; i < 12; i++) {
+				thread[i] = new Thread(new Job(printQueue), "Thread " + i);
+			}
+
+			for (int i = 0; i < 12; i++) {
+				thread[i].start();
+			}
+		}
+	}
+
+在例子中的 ``PrintQueue`` 类的关键是： ``Semaphore`` 对象创建的构造方法是使用 3 作为参数的。这个例子中，前 3 个调用 ``acquire()`` 方法的线程会获得临界区的访问权，其余的都会被阻塞 。当一个线程结束临界区的访问并解放 ``semaphore`` 时，另外的线程才可能获得访问权。
+
+在这个临界区，线程获得被分配打印的打印机的引索值。每个文档都被安排到第一个空闲的打印机打印。
+
+``acquire()`` ， ``acquireUninterruptibly()`` ， ``tryAcquire()`` 和 ``release()`` 方法有一个外加的包含一个 ``int`` 参数的版本。这个参数表示线程想要获取或者释放 ``semaphore`` 的许可数。也可以这样说，这个线程想要删除或者添加到 ``semaphore`` 的内部计数器的单位数量。在这个例子中 ``acquire()`` ， ``acquireUninterruptibly()`` 和 ``tryAcquire()`` 方法, 如果计数器的值小于许可值，那么线程就会被阻塞直到计数器到达或者大于许可值。
+
+等待多个并发事件完成
+===================
+Java 并发 API 提供这样的类，它允许1个或者多个线程一直等待，直到一组操作执行完成。这个类就是 ``CountDownLatch`` 类。它初始一个整数值，此值是线程将要等待的操作数。当某个线程为了想要执行这些操作而等待时， 它要使用 ``await()`` 方法。此方法让线程进入休眠直到操作完成。当某个操作结束，它使用 ``countDown()`` 方法来减少 ``CountDownLatch`` 类的内部计数器。当计数器到达 0 时，这个类会唤醒全部使用 ``await()`` 方法休眠的线程们。
+
+在这个指南，你将学习如果使用 ``CountDownLatch`` 类来实现 ``videoconference`` 系统。 ``videoconference`` 系统将等待全部参与者到达后才会开始。
+
+.. code-block:: java
+
+	// 1.  创建一个类名为 Videoconference 并特别实现 Runnable 接口。这个类将实现 video-conference 系统
+	public class Videoconference implements Runnable {
+
+		//2.  声明 CountDownLatch 对象名为 controller
+		private final CountDownLatch controller;
+
+		//3.   实现类的构造函数，初始 CountDownLatch 属性。Videoconference 类接收将要等待的参与者的量为参数
+		public Videoconference(int number) {
+			controller = new CountDownLatch(number);
+		}
+
+		//4.   实现 arrive() 方法。每次有参与者到达都会调用此方法。它接收String类型的参数名为 name
+		public void arrive(String name) {
+			// 5.  首先，它输出某某参数已经到达
+			System.out.printf("%s has arrived.\n", name);
+			// 6.  然后，调用CountDownLatch对象的 countDown() 方法
+			controller.countDown();
+			// 7.  最后，使用CountDownLatch对象的 getCount() 方法输出另一条关于还未确定到达的参与者数
+			System.out.printf("VideoConference: Waiting for %d participants.\n", controller.getCount());
+		}
+
+		// 8.  实现video-conference 系统的主方法。它是每个Runnable都必须有的 run() 方法
+		@Override
+		public void run() {
+			// 9.  首先，使用 getCount() 方法来输出这次video conference的参与值的数量信息
+			System.out.printf("VideoConference: Initialization: %d participants.\n\n", controller.getCount());
+
+			try {
+				// 10. 然后， 使用 await() 方法来等待全部的参与者。由于此法会抛出 InterruptedException 异常，所以要包含处理代码
+				controller.await();
+
+				// 11. 最后，输出信息表明全部参与者已经到达
+				System.out.printf("\r\nVideoConference: All the participants have come\n");
+				System.out.printf("VideoConference: Let's start...\n");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	//12. 创建 Participant 类并实现 Runnable 接口。这个类表示每个video conference的参与者
+	public class Participant implements Runnable {
+		//13. 声明一个私有 Videoconference 属性名为 conference
+		private Videoconference conference;
+
+		//14. 声明一个私有 String 属性名为 name
+		private String name;
+
+		//15. 实现类的构造函数，初始化那2个属性
+		public Participant(Videoconference conference, String name) {
+			this.conference = conference;
+			this.name = name;
+		}
+
+		//16. 实现参与者的run() 方法
+		@Override
+		public void run() {
+			//17.  首先，让线程随机休眠一段时间
+			Long duration = (long) (Math.random() * 10);
+
+			try {
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			//18. 然后，使用Videoconference 对象的arrive() 方法来表明参与者的到达
+			conference.arrive(name);
+		}
+	}
+
+	//19. 最后，实现例子的 main 类通过创建一个名为 Main 的类并为其添加 main() 方法
+	public class Main {
+		public static void main(String[] args) {
+			// 20. 创建 Videoconference 对象名为 conference，将等待10个参与者
+			Videoconference conference = new Videoconference(10);
+
+			// 21. 创建 Thread 来运行这个 Videoconference 对象并开始运行
+			Thread threadConference = new Thread(conference);
+			threadConference.start();
+
+			// 22. 创建 10个 Participant 对象，为每个对象各创建一个 Thread 对象来运行他们，开始运行全部的线程
+			for (int i = 0; i < 10; i++) {
+				Participant p = new Participant(conference, "Participant " + i);
+				Thread t = new Thread(p);
+				t.start();
+			}
+		}
+	}
+
+``CountDownLatch`` 类有3个基本元素：
+
+1. 初始值决定 ``CountDownLatch`` 类需要等待的事件的数量。
+2. ``await()`` 方法, 被等待全部事件终结的线程调用。
+3. ``countDown()`` 方法，事件在结束执行后调用。
+
+当创建 ``CountDownLatch`` 对象时，对象使用构造函数的参数来初始化内部计数器。每次调用 ``countDown()`` 方法, ``CountDownLatch`` 对象内部计数器减一。当内部计数器达到 0 时， CountDownLatch 对象唤醒全部使用 await() 方法睡眠的线程们。
+
+不可能重新初始化或者修改 ``CountDownLatch`` 对象的内部计数器的值。一旦计数器的值初始后，唯一可以修改它的方法就是之前用的 ``countDown()`` 方法。当计数器到达 ``0`` 时， 再次调用 ``await()`` 方法会立刻返回，接下来任何 ``countDown()`` 方法的调用都将不会造成任何影响。
+
+此方法与其他同步方法有这些不同：
+
+``CountDownLatch`` 机制不是用来保护共享资源或者临界区。它是用来同步一个或者多个执行多个任务的线程。它只能使用一次。像之前解说的，一旦 ``CountDownLatch`` 的计数器到达 ``0`` ，任何对它的方法的调用都是无效的。如果你想再次同步，你必须创建新的对象。
+
+``CountDownLatch`` 类有另一种版本的 ``await()`` 方法，它是：
+
+- await(long time, TimeUnit unit): 此方法会休眠直到被中断； ``CountDownLatch`` 内部计数器到达 0 或者特定的时间过去了。 ``TimeUnit`` 类包含了: ``DAYS`` ， ``HOURS`` ， ``MICROSECONDS`` ， ``MILLISECONDS`` ， ``MINUTES`` ， ``NANOSECONDS`` 和 ``SECONDS`` 。
+
+在一个相同点同步任务
+===================
+Java 并发 API 提供了可以允许 2 个或多个线程在在一个确定点的同步应用。它是 ``CyclicBarrier`` 类。此类与在此章节的等待多个并发事件完成指南中的 ``CountDownLatch`` 类相似，但是它有一些特殊性让它成为更强大的类。
+
+``CyclicBarrier`` 类有一个整数初始值，此值表示将在同一点同步的线程数量。当其中一个线程到达确定点，它会调用 ``await()`` 方法来等待其他线程。当线程调用这个方法， ``CyclicBarrier`` 阻塞线程进入休眠直到其它线程到达。当最后一个线程调用 ``CyclicBarrier`` 类的 ``await()`` 方法，它唤醒所有等待的线程并继续执行它们的任务。
+
+``CyclicBarrier`` 类有个有趣的优势是，你可以传递一个外加的 ``Runnable`` 对象作为初始参数，并且当全部线程都到达同一个点时， ``CyclicBarrier`` 类 会把这个对象当做线程来执行。此特点让这个类在使用 ``divide`` 和 ``conquer`` 编程技术时，可以充分发挥任务的并行性，
+
+在这个指南，你将学习如何使用 ``CyclicBarrier`` 类来让一组线程在一个确定点同步。你也将使用 ``Runnable`` 对象，它将会在全部线程都到达确定点后被执行。在这个例子里，你将在数字矩阵中查找一个数字。矩阵会被分成多个子集（使用 ``divide`` 和 ``conquer`` 技术），所以每个线程会在一个子集中查找那个数字。一旦全部行程运行结束，会有一个最终任务来统一他们的结果。
+
+.. code-block:: java
+
+	//1.  我们从实现2个辅助类开始。首先，创建一个类名为 MatrixMock。此类随机生成一个在1-10之间的 数字矩阵，我们将从中查找数字
+	public class MatrixMock {
+
+		//2.  声明私有 int matrix，名为 data
+		private int data[][];
+
+		//3.  实现类的构造函数。此构造函数将接收矩阵的行数，行的长度，和我们将要查找的数字作为参数。3个参数全部int 类型
+		public MatrixMock(int size, int length, int number) {
+			int counter = 0;	//4.   初始化构造函数将使用的变量和对象
+			data = new int[size][length];
+			Random random = new Random();
+			// 5.  用随机数字填充矩阵。每生成一个数字就与要查找的数字对比，如果相等，就增加counter值
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < length; j++) {
+					data[i][j] = random.nextInt(10);
+					if (data[i][j] == number) {
+						counter++;
+					}
+				}
+			}
+			//6.   最后，在操控台打印一条信息，表示查找的数字在生成的矩阵里的出现次数。此信息是用来检查线程们获得的正确结果的
+			System.out.printf("Mock: There are %d ocurrences of number in generated data.\n", counter, number);
+		}
+
+		//7.  实现 getRow() 方法。此方法接收一个 int为参数，是矩阵的行数。返回行数如果存在，否则返回null
+		public int[] getRow(int row) {
+			if ((row >= 0) && (row < data.length)) {
+				return data[row];
+			}
+			return null;
+		}
+	}
+
+	//8.   现在，实现一个类名为 Results。此类会在array内保存被查找的数字在矩阵的每行里出现的次数
+	public class Results {
+
+		//9.   声明私有 int array 名为 data
+		private int data[];
+
+		//10. 实现类的构造函数。此构造函数接收一个表明array元素量的整数作为参数
+		public Results(int size) {
+			data = new int[size];
+		}
+
+		//11. 实现 setData() 方法。此方法接收array的某个位置和一个值作为参数，然后把array的那个位置设定为那个值
+		public void setData(int position, int value) {
+			data[position] = value;
+		}
+
+		//12. 实现 getData() 方法。此方法返回结果 array
+		public int[] getData() {
+			return data;
+		}
+	}
+
+	//13. 现在你有了辅助类，是时候来实现线程了。首先，实现 Searcher 类。这个类会在随机数字的矩阵中的特定的行里查找数字。创建一个类名为Searcher 并一定实现  Runnable 接口
+	public class Searcher implements Runnable {
+
+		//14. 声明2个私有int属性名为 firstRow 和 lastRow。这2个属性是用来确定将要用的子集的行
+		private int firstRow;
+		private int lastRow;
+
+		//15. 声明一个私有 MatrixMock 属性，名为 mock
+		private MatrixMock mock;
+
+		//16. 声明一个私有 Results 属性，名为 results
+		private Results results;
+
+		//17.  声明一个私有 int 属性名为 number，用来储存我们要查找的数字
+		private int number;
+
+		//18. 声明一个 CyclicBarrier 对象，名为 barrier
+		private final CyclicBarrier barrier;
+
+		//19. 实现类的构造函数，并初始化之前声明的全部属性
+		public Searcher(int firstRow, int lastRow, MatrixMock mock, Results results, int number, CyclicBarrier barrier) {
+			this.firstRow = firstRow;
+			this.lastRow = lastRow;
+			this.mock = mock;
+			this.results = results;
+			this.number = number;
+			this.barrier = barrier;
+		}
+
+		//20. 实现 run() 方法，用来查找数字。它使用内部变量，名为counter，用来储存数字在每行出现的次数
+		@Override
+		public void run() {
+			int counter;
+			//21. 在操控台打印一条信息表明被分配到这个对象的行
+			System.out.printf("%s: Processing lines from %d to %d.\n", Thread.currentThread().getName(), firstRow, lastRow);
+			//22. 处理分配给这个线程的全部行。对于每行，记录正在查找的数字出现的次数，并在相对于的 Results 对象中保存此数据
+			for (int i = firstRow; i < lastRow; i++) {
+				int row[] = mock.getRow(i);	// ȡ��һ��
+				counter = 0;
+				for (int j = 0; j < row.length; j++) {
+					if (row[j] == number) {
+						counter++;
+					}
+				}
+
+				results.setData(i, counter);
+			}
+			//23. 打印信息到操控台表明此对象已经结束搜索
+			System.out.printf("%s: Lines processed.\n", Thread.currentThread().getName());
+
+			try {
+				barrier.await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (BrokenBarrierException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	//25. 现在，实现一个类来计算数字在这个矩阵里出现的总数。它使用储存了矩阵中每行里数字出现次数的 Results 对象来进行运算。创建一个类，名为 Grouper 并一定实现 Runnable 接口
+	public class Grouper implements Runnable {
+
+		//26. 声明一个私有 Results 属性，名为 results
+		private Results results;
+		//27.  实现类的构造函数，并初始化 Results 属性
+		public Grouper(Results results) {
+			this.results = results;
+		}
+
+		//28.实现 run() 方法，用来计算结果array里数字出现次数的总和
+		@Override
+		public void run() {
+			//29. 声明一个 int 变量并写在操控台写一条信息表明开始处理了
+			int finalResult = 0;
+			System.out.printf("Grouper: Processing results...\n");
+			//30. 使用 results 对象的 getData() 方法来获得每行数字出现的次数。然后，处理array的全部元素，把每个元素的值加给 finalResult 变量
+			int data[] = results.getData();
+			for (int number : data) {
+				finalResult += number;
+			}
+			//31. 在操控台打印结果
+			System.out.printf("Grouper: Total result: %d.\n", finalResult);
+		}
+	}
+
+	//32. 最后， 实现例子的 main 类，通过创建一个类，名为 Main 并为其添加 main() 方法
+	public class Main {
+
+		public static void main(String[] args) {
+
+			//33. 声明并初始5个常熟来储存应用的参数
+			final int ROWS = 10000;
+			final int NUMBERS = 1000;
+			final int SEARCH = 5;
+			final int LINES_PARTICIPANT = 2000;
+			//34. Create a MatrixMock 对象，名为 mock. 它将有 10,000 行，每行1000个元素。现在，你要查找的数字是5
+			MatrixMock mock = new MatrixMock(ROWS, NUMBERS, SEARCH);
+
+			//35. 创建 Results 对象，名为 results。它将有 10,000 元素
+			Results results = new Results(ROWS);
+
+			//36. 创建 Grouper 对象，名为 grouper
+			Grouper grouper = new Grouper(results);
+
+			//37.  创建 CyclicBarrier 对象，名为 barrier。此对象会等待5个线程。当此线程结束后，它会执行前面创建的 Grouper 对象
+			final int PARTICIPANTS = 5;
+			CyclicBarrier barrier = new CyclicBarrier(PARTICIPANTS, grouper);
+
+			//38. 创建5个 Searcher 对象，5个执行他们的线程，并开始这5个线程
+			Searcher searchers[] = new Searcher[PARTICIPANTS];
+			for (int i = 0; i < PARTICIPANTS; i++) {
+				searchers[i] = new Searcher(i * LINES_PARTICIPANT, (i * LINES_PARTICIPANT) + LINES_PARTICIPANT, mock,
+						results, 5, barrier);
+				Thread thread = new Thread(searchers[i]);
+				thread.start();
+			}
+			System.out.printf("Main: The main thread has finished.\n");
+		}
+	}
+
+例子中解决的问题比较简单。我们有一个很大的随机的整数矩阵，然后你想知道这矩阵里面某个数字出现的次数。为了更好的执行，我们使用了 ``divide`` 和 ``conquer`` 技术。我们 ``divide`` 矩阵成 5 个子集，然后在每个子集里使用一个线程来查找数字。这些线程是 ``Searcher`` 类的对象。
+
+我们使用 ``CyclicBarrier`` 对象来同步 5 个线程的完成，并执行 ``Grouper`` 任务处理个别结果，最后计算最终结果。
+
+如我们之前提到的， ``CyclicBarrier`` 类有一个内部计数器控制到达同步点的线程数量。每次线程到达同步点，它调用 ``await()`` 方法告知 ``CyclicBarrier`` 对象到达同步点了。 ``CyclicBarrier`` 把线程放入睡眠状态直到全部的线程都到达他们的同步点。
+
+当全部的线程都到达他们的同步点， ``CyclicBarrier`` 对象叫醒全部正在 ``await()`` 方法中等待的线程们，然后，选择性的，为 ``CyclicBarrier`` 的构造函数传递的 ``Runnable`` 对象（例子里，是 ``Grouper`` 对象）创建新的线程执行外加任务。
+
+``CyclicBarrier`` 类有另一个版本的 ``await()`` 方法:
+
+- ``await(long time, TimeUnit unit)`` : 线程会一直休眠直到被中断；内部计数器到达 ``0`` ，或者特定的时间过去了。 ``TimeUnit`` 类有多种常量： ``DAYS`` ， ``HOURS`` ， ``MICROSECONDS`` ， ``MILLISECONDS`` ， ``MINUTES`` ， ``NANOSECONDS`` 和 ``SECONDS`` 。
+
+此类也提供了 ``getNumberWaiting()`` 方法，返回被 ``await()`` 方法阻塞的线程数，还有 ``getParties()`` 方法，返回将与 ``CyclicBarrier`` 同步的任务数。
+
+重置 CyclicBarrier 对象
+-----------------------
+``CyclicBarrier`` 类与 ``CountDownLatch`` 有一些共同点，但是也有一些不同。最主要的不同是， ``CyclicBarrier`` 对象可以重置到它的初始状态，重新分配新的值给内部计数器，即使它已经被初始过了。
+
+可以使用 ``CyclicBarrier`` 的 ``reset()`` 方法来进行重置操作。当这个方法被调用后，全部的正在 ``await()`` 方法里等待的线程接收到一个 ``BrokenBarrierException`` 异常。此异常在例子中已经用打印 stack trace 处理了，但是在一个更复制的应用，它可以执行一些其他操作，例如重新开始执行或者在中断点恢复操作。
+
+破坏 CyclicBarrier 对象
+-----------------------
+``CyclicBarrier`` 对象可能处于一个特殊的状态，称为 ``broken`` 。当多个线程正在 ``await()`` 方法中等待时，其中一个被中断了，此线程会收到 ``InterruptedException`` 异常，但是其他正在等待的线程将收到 ``BrokenBarrierException`` 异常，并且 ``CyclicBarrier`` 会被置于 ``broken`` 状态中。
+
+``CyclicBarrier`` 类提供了 ``isBroken()`` 方法，如果对象在 ``broken`` 状态，返回 ``true`` ，否则返回 ``false`` 。
+
+
+运行并发阶段性任务
+=================
+Java 并发 API 提供的一个非常复杂且强大的功能是，能够使用 ``Phaser`` 类运行阶段性的并发任务。当某些并发任务是分成多个步骤来执行时，那么此机制是非常有用的。 ``Phaser`` 类提供的机制是在每个步骤的结尾同步线程，所以除非全部线程完成第一个步骤，否则线程不能开始进行第二步。
+
+相对于其他同步应用，我们必须初始化 ``Phaser`` 类与这次同步操作有关的任务数，我们可以通过增加或者减少来不断的改变这个数。
+
+在这个指南，你将学习如果使用 ``Phaser`` 类来同步3个并发任务。这3个任务会在3个不同的文件夹和它们的子文件夹中搜索扩展名是 ``.log`` 并在24小时内修改过的文件。这个任务被分成3个步骤：
+
+1. 在指定的文件夹和子文件夹中获得文件扩展名为 ``.log`` 的文件列表。
+2. 过滤第一步的列表中修改超过24小时的文件。
+3. 在操控台打印结果。
+
+在步骤1和步骤2的结尾我们要检查列表是否为空。如果为空，那么线程直接结束运行并从 ``phaser`` 类中淘汰。
+
+.. code-block:: java
+
+	//1.   创建一个类名为FileSearch并一定实现Runnable 接口。这个类实现的操作是在文件夹和其子文件夹中搜索确定的扩展名并在24小时内修改的文件
+	public class FileSearch implements Runnable {
+
+		// 2. 声明一个私有 String 属性来储存搜索开始的时候的文件夹
+		private String initPath;
+
+		// 3. 声明另一个私有 String 属性来储存我们要寻找的文件的扩展名
+		private String end;
+
+		// 4. 声明一个私有 List 属性来储存我们找到的符合条件的文件的路径
+		private List<String> results;
+
+		// 5. 最后，声明一个私有 Phaser 属性来控制任务的不同phaser的同步
+		private Phaser phaser;
+
+		// 6. 实现类的构造函数，初始化类的属性们。它接收初始文件夹的路径，文件的扩展名，和phaser 作为参数
+		public FileSearch(String initPath, String end, Phaser phaser) {
+			this.initPath = initPath;
+			this.end = end;
+			this.phaser = phaser;
+			results = new ArrayList<>();
+		}
+
+		// 现在，来实现 run() 方法，使用之前描述的辅助方法来执行，并使用Phaser对象控制phases间的改变。首先，调用phaser对象的arriveAndAwaitAdvance() 方法。直到使用线程被创建完成，搜索行为才会开始。
+		@Override
+		public void run() {
+			// 等待指定数量的线程到达
+			phaser.arriveAndAwaitAdvance();
+			// 然后，写信息到操控台表明搜索任务开始
+			System.out.printf("%s: Starting.\n", Thread.currentThread().getName());
+			// 查看 initPath 属性储存的文件夹名字并使用 directoryProcess()
+			// 方法在文件夹和其子文件夹内查找带特殊扩展名的文件
+			File file = new File(initPath);
+			if (file.isDirectory()) {
+				directoryProcess(file);
+			}
+
+			// 使用 checkResults() 方法检查是否有结果。如果没有任何结果，结束线程的执行并返回keyword
+			if (!checkResults()) {
+				return;
+			}
+
+			// 使用filterResults() 方法过滤结果list
+			filterResults();
+
+			// 再次使用checkResults() 方法检查是否有结果。如果没有，结束线程的执行并返回keyword
+			if (!checkResults()) {
+				return;
+			}
+
+			// 使用 showInfo() 方法打印最终的结果list到操控台，撤销线程的登记，并打印信息表明线程的终结
+			showInfo();
+			phaser.arriveAndDeregister();
+			System.out.printf("%s: Work completed.\n", Thread.currentThread().getName());
+		}
+
+		// 7. 现在，你必须实现一些要给run() 方法用的辅助方法。第一个是 directoryProcess()
+		// 方法。它接收File对象作为参数并处理全部的文件和子文件夹。对于每个文件夹，此方法会递归调用并传递文件夹作为参数。对于每个文件，此方法会调用fileProcess()方法
+		private void directoryProcess(File file) {
+			File[] list = file.listFiles();
+			if (list != null) {
+				for (int i = 0; i < list.length; i++) {
+					if (list[i].isDirectory()) {
+						directoryProcess(list[i]);
+					} else {
+						fileProcess(list[i]);
+					}
+				}
+			}
+		}
+
+	    // 8. 现在，实现 fileProcess() 方法。它接收 File
+		// 对象作为参数并检查它的扩展名是否是我们正在查找的。如果是，此方法会把文件的绝对路径写入结果列表内
+		private void fileProcess(File file) {
+			if (file.getName().endsWith(end)) {
+				results.add(file.getAbsolutePath());
+			}
+		}
+
+		// 9. 现在，实现 filterResults()
+		// 方法。不接收任何参数。它过滤在第一阶段获得的文件列表，并删除修改超过24小时的文件。首先，创建一个新的空list并获得当前时间
+		private void filterResults() {
+			List<String> newResults = new ArrayList<>();
+			long actualDate = new Date().getTime();
+			// 10. 然后，浏览结果list里的所有元素。对于每个路径，为文件创建File对象
+			for (int i = 0; i < results.size(); i++) {
+				File file = new File(results.get(i));
+				long fileDate = file.lastModified();
+
+				// 11. 然后， 对比与真实日期对比，如果相差小于一天，把文件的路径加入到新的结果列表
+				if (actualDate - fileDate < TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)) {
+					newResults.add(results.get(i));
+				}
+			}
+			// 12. 最后，把旧的结果改为新的
+			results = newResults;
+		}
+
+		// 最好一个辅助方法是 showInfo() 方法，打印results list 的元素到操控台
+		private void showInfo() {
+			for (int i = 0; i < results.size(); i++) {
+				File file = new File(results.get(i));
+				System.out.printf("%s: %s\n", Thread.currentThread().getName(), file.getAbsolutePath());
+			}
+
+			phaser.arriveAndAwaitAdvance();
+		}
+
+		// 现在，实现 checkResults() 方法。此方法在第一个和第二个phase的结尾被调用，并检查结果是否为空。此方法不接收任何参数
+		private boolean checkResults() {
+			// 首先，检查结果List的大小。如果为0，对象写信息到操控台表明情况，然后调用Phaser对象的
+			// arriveAndDeregister() 方法通知此线程已经结束actual phase，并离开phased操作
+			if (results.isEmpty()) {
+				System.out.printf("%s: Phase %d: 0 results.\n", Thread.currentThread().getName(), phaser.getPhase());
+				System.out.printf("%s: Phase %d: End.\n", Thread.currentThread().getName(), phaser.getPhase());
+				phaser.arriveAndDeregister();
+				return false;
+				// 15. 另一种情况，如果结果list有元素，那么对象写信息到操控台表明情况，调用 Phaser对象懂得
+				// arriveAndAwaitAdvance() 方法并通知 actual phase，它会被阻塞直到phased
+				// 操作的全部参与线程结束actual phase。
+			} else {
+				System.out.printf("%s: Phase %d: %d results.\n", Thread.currentThread().getName(), phaser.getPhase(), results.size());
+
+				phaser.arriveAndAwaitAdvance();
+				return true;
+			}
+		}
+	}
+
+	// 24. 现在，实现例子的main 类通过创建类名为 Main 并为其添加 main() 方法
+	public class Main {
+		public static void main(String[] args) {
+			// 25. 创建 含3个参与者的 Phaser 对象
+			Phaser phaser = new Phaser(3);
+
+			// 26. 创建3个 FileSearch 对象，每个在不同的初始文件夹里搜索.log扩展名的文件
+			FileSearch system = new FileSearch("C:\\Windows", "log", phaser);
+			FileSearch apps = new FileSearch("C:\\Program Files", "log", phaser);
+			FileSearch documents = new FileSearch("C:\\Documents And Settings", "log", phaser);
+			// 27. 创建并开始一个线程来执行第一个 FileSearch 对象
+			Thread systemThread = new Thread(system, "System");
+			systemThread.start();
+			// 28. 创建并开始一个线程来执行第二个 FileSearch 对象
+			Thread appsThread = new Thread(apps, "Apps");
+			appsThread.start();
+			// 29. 创建并开始一个线程来执行第三个 FileSearch 对象
+			Thread documentsThread = new Thread(documents, "Documents");
+			documentsThread.start();
+
+			// 30. 等待3个线程们的终结
+			try {
+				systemThread.join();
+				appsThread.join();
+				documentsThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 31. 使用isFinalized()方法把Phaser对象的结束标志值写入操控台
+			System.out.printf("Terminated: %s\n", phaser.isTerminated());
+		}
+	}
+
+这程序开始创建的 ``Phaser`` 对象是用来在每个 ``phase`` 的末端控制线程的同步。 ``Phaser`` 的构造函数接收参与者的数量作为参数。在这里， ``Phaser`` 有3个参与者。这个数表示 ``Phaser`` 改变阶段并叫醒正在休眠的线程之前执行 ``arriveAndAwaitAdvance()`` 方法的线程数。
+
+一旦 ``Phaser`` 被创建，我们运行 3 个线程分别执行 3 个不同的 ``FileSearch`` 对象。
+
+在例子里，我们使用 Windows 系统的路径。如果你使用的是其他操作系统，那么修改成适应你的环境的路径。
+
+``FileSearch`` 对象的 ``run()`` 方法中的第一个指令是调用 ``Phaser`` 对象的 ``arriveAndAwaitAdvance()`` 方法。像之前提到的， ``Phaser`` 知道我们要同步的线程的数量。当某个线程调用此方法， ``Phaser`` 减少结束当前阶段的线程数，并让这个线程进入休眠直到全部其余线程结束当前阶段。在 ``run()`` 方法前面调用此方法，没有任何 ``FileSearch`` 线程可以开始他们的工作，直到全部线程被创建。
+
+在 phase 1 和 phase 2 的末端，我们检查该阶段 是否生成有元素的结果list，或者它没有生成结果且list为空。在第一个情况， ``checkResults()`` 方法之前提的调用 ``arriveAndAwaitAdvance()`` 。在第二个情况，如果 ``list`` 为空，那就没有必要让线程继续了，就直接返回吧。但是你必须通知 ``phaser`` ，将会少一个参与者。为了这个，我们使用 ``arriveAndDeregister()`` 。它通知 ``phaser`` 线程结束了当前阶段 ， 但是它将不会继续参见后面的阶段 ，所以请 ``phaser`` 不要再等待它了。
+
+在 phase3 的结尾实现了 ``showInfo()`` 方法, 调用了 ``phaser`` 的 ``arriveAndAwaitAdvance()`` 方法。这个调用，保证了全部线程在同一时间结束。当此方法结束执行，有一个调用 phaser 的 ``arriveAndDeregister()`` 方法。这个调用，我们撤销了对 ``phaser`` 线程的注册，所以当全部线程结束时， ``phaser`` 有 0 个参与者。
+
+最后， ``main()`` 方法等待 3 个线程的完成并调用 ``phaser`` 的 ``isTerminated()`` 方法。当 ``phaser`` 有 0 个参与者时，它进入 ``termination`` 状态，此状态与此调用将会打印 ``true`` 到操控台。
+
+``Phaser`` 对象可能是在这两种状态中：
+
+- ``Active`` : 当 ``Phaser`` 接受新的参与者注册，它进入这个状态，并且在每个阶段的末端同步。 在此状态， ``Phaser`` 像在这个指南里解释的那样工作。此状态不在 Java 并发 API 中。
+- ``Termination`` : 默认状态，当 ``Phaser`` 里全部的参与者都取消注册，它进入这个状态，所以这时 ``Phaser`` 有 0 个参与者。更具体的说，当 ``onAdvance()`` 方法返回真值时， ``Phaser`` 是在这个状态里。如果你覆盖该方法，你可以改变它的默认行为。当 ``Phaser`` 在这个状态，同步方法 ``arriveAndAwaitAdvance()`` 会立刻返回，不会做任何同步。
+
+``Phaser`` 类的一个显著特点是你不需要控制任何与 ``phaser`` 相关的方法的异常。不像其他同步应用，线程们在 ``phaser`` 休眠不会响应任何中断也不会抛出 ``InterruptedException`` 异常。只有一个例外。
+
+``Phaser`` 类还提供了其他相关方法来改变阶段。他们是：
+
+- ``arrive()`` ： 此方法示意 ``phaser`` 某个参与者已经结束当前阶段 了，但是他应该等待其他的参与者才能继续执行。小心使用此法，因为它并不能与其他线程同步。
+- ``awaitAdvance(int phase)`` ： 如果我们传递的参数值等于 phaser 的 actual phase，此方法让当前线程进入睡眠直到 ``phaser`` 的全部参与者结束当前的阶段。如果参数值与 ``phaser`` 的 actual phase 不等，那么立刻返回。
+- ``awaitAdvanceInterruptibly(int phaser)`` ： 此方法等同与之前的方法，只是在线程正在此方法中休眠而被中断时候，它会抛出 ``InterruptedException`` 异常。
+
+Phaser的参与者的注册
+-------------------
+当你创建一个 ``Phaser`` 对象，你表明了参与者的数量。但是 ``Phaser`` 类还有2种方法来增加参与者的数量。他们是：
+
+- ``register()`` : 此方法为 ``Phaser`` 添加一个新的参与者。这个新加入者会被认为是还未到达 actual phase。
+- ``bulkRegister(int Parties)`` : 此方法为 ``Phaser`` 添加一个特定数量的参与者。这些新加入的参与都会被认为是还未到达 actual phase 。
+``Phaser`` 类提供的唯一一个减少参与者数量的方法是 ``arriveAndDeregister()`` 方法，它通知 ``phaser`` 线程已经结束了 actual phase ，而且他不想继续 ``phased`` 的操作了。
+
+强制终止 Phaser
+---------------
+当 ``phaser`` 有 0 个参与者，它进入一个称为 ``Termination`` 的状态。 ``Phaser`` 类提供 ``forceTermination()`` 来改变 ``phaser`` 的状态，让它直接进入 ``Termination`` 状态，不在乎已经在 ``phaser`` 中注册的参与者的数量。此机制可能会很有用在一个参与者出现异常的情况下来强制结束 ``phaser`` 。
+
+当 ``phaser`` 在 ``Termination`` 状态， ``awaitAdvance()`` 和 ``arriveAndAwaitAdvance()`` 方法立刻返回一个负值，而不是一般情况下的正值如果你知道你的 ``phaser`` 可能终止了，那么你可以用这些方法来确认他是否真的终止了。
+
+
+控制并发阶段性任务的改变
+=======================
+``Phaser`` 类提供每次 ``phaser`` 改变阶段都会执行的方法。它是 ``onAdvance()`` 方法。它接收 2 个参数：当前阶段数和注册的参与者数；它返回 ``Boolean`` 值，如果 ``phaser`` 继续它的执行，则为 ``false`` ；否则为真，即 ``phaser`` 结束运行并进入 ``termination`` 状态。
+
+如果注册参与者为 0 ，此方法的默认的实现值为真，要不然就是 ``false`` 。如果你扩展 ``Phaser`` 类并覆盖此方法，那么你可以修改它的行为。通常，当你要从一个阶段到另一个，来执行一些行动时，你会对这么做感兴趣的。
+
+在这个指南，你将学习如何控制 ``phaser`` 的 ``phase`` 的改变，通过实现自定义版本的 ``Phaser`` 类并覆盖 ``onAdvance()`` 方法来执行一些每个 ``phase`` 都会改变的行动。你将要实现一个模拟测验，有些学生要完成他们的练习。全部的学生都必须完成同一个练习才能继续下一个练习。
+
+.. code-block:: java
+
+	//1.   创建一个类，名为 MyPhaser，并特别的扩展 Phaser 类
+	public class MyPhaser extends Phaser {
+
+	// 2. 覆盖 onAdvance() 方法。根据 phase 的属性的值，我们将调用不同的辅助方法。如果 phase 等于 0，调用studentsArrived() 方法；又如果 phase 等于 1，调用 finishFirstExercise() 方法；又如果 phase等于 2，调用 finishSecondExercise() 方法；再如果 phase 等于 3，调用 finishExam()方法。否则，返回真值，表示phaser已经终结
+		@Override
+		protected boolean onAdvance(int phase, int registeredParties) {
+			switch (phase) {
+				case 0 :
+					return studentsArrived();
+				case 1:
+					return finishFirstExercise();
+				case 2:
+					return finishSecondExercise();
+				case 3:
+					return finishExam();
+				default:
+					return true;
+			}
+		}
+
+		// 3. 实现辅助方法 studentsArrived()。它在操控台写2条信息，并返回false值来表明phaser将继续执行
+		private boolean studentsArrived() {
+			System.out.printf("Phaser: The exam are going to start. The students are ready.\n");
+			System.out.printf("Phaser: We have %d students.\n",getRegisteredParties());
+			return false;
+		}
+
+		// 4. 实现辅助方法 finishFirstExercise()。它在操控台写2条信息，并返回false值来表明phaser将继续执行
+		private boolean finishFirstExercise() {
+			System.out.printf("Phaser: All the students has finished the first exercise.\n");
+			System.out.printf("Phaser: It's turn for the second one.\n");
+			return false;
+		}
+
+		// 5. 实现辅助方法 finishSecondExercise()。它在操控台写2条信息，并返回false值来表明phaser将继续执行
+		private boolean finishSecondExercise() {
+			System.out.printf("Phaser: All the students has finished the second exercise.\n");
+			System.out.printf("Phaser: It's turn for the third one.\n");
+			return false;
+		}
+
+		// 6. 实现辅助方法 finishExam()。它在操控台写2条信息，并返回false值来表明phaser将继续执行
+		private boolean finishExam() {
+			System.out.printf("Phaser: All the students has finished the exam.\n");
+			System.out.printf("Phaser: Thank you for your time.\n");
+			return true;
+		}
+	}
+
+	// 7. 创建一个类，名为 Student，并一定实现 Runnable 接口。这个类将模拟测验的学生
+	public class Student implements Runnable {
+		// 8. 声明 a Phaser 对象，名为 phaser
+		private Phaser phaser;
+		// 9. 实现类的构造函数，初始 Phaser 对象
+		public Student(Phaser phaser) {
+			this.phaser = phaser;
+		}
+
+		// 10. 实现 run() 方法，模拟真实测验
+		@Override
+		public void run() {
+			// 11. 首先，方法写一条信息到操控台表明学生到达考场并调用 phaser 的 arriveAndAwaitAdvance()方法来等待其他线程们
+			System.out.printf("%s: Has arrived to do the exam. %s\n", Thread.currentThread().getName(), new Date());
+			phaser.arriveAndAwaitAdvance();
+
+			// 12. 然后，写信息到操控台，调用私有 doExercise1() 方法模拟第一场测验，写另一条信息到操控台并调用 phaser的 arriveAndAwaitAdvance() 方法来等待其他学生结束第一场测验
+			System.out.printf("%s: Is going to do the first exercise. %s\n", Thread.currentThread().getName(), new Date());
+			doExercise1();
+			System.out.printf("%s: Has done the first exercise. %s\n", Thread.currentThread().getName(), new Date());
+			phaser.arriveAndAwaitAdvance();
+
+			// 13. 为第二场和第三场实现相同的代码
+			System.out.printf("%s: Is going to do the second exercise. %s\n", Thread.currentThread().getName(), new Date());
+			doExercise2();
+			System.out.printf("%s: Has done the second exercise. %s\n", Thread.currentThread().getName(), new Date());
+			phaser.arriveAndAwaitAdvance();
+
+			System.out.printf("%s: Is going to do the third exercise. %s\n", Thread.currentThread().getName(), new Date());
+			doExercise3();
+			System.out.printf("%s: Has finished the exam. %s\n", Thread.currentThread().getName(), new Date());
+			phaser.arriveAndAwaitAdvance();
+		}
+
+		// 14. 实现辅助方法 doExercise1()。此方法让线程随机休眠一段时间
+		private void doExercise1() {
+			try {
+				Long duration = (long) (Math.random() * 10);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// 15. 实现辅助方法 doExercise2()。此方法让线程随机休眠一段时间
+		private void doExercise2() {
+			try {
+				Long duration = (long) (Math.random() * 10);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// 16. 实现辅助方法 doExercise3()。此方法让线程随机休眠一段时间
+		private void doExercise3() {
+			try {
+				Long duration = (long) (Math.random() * 10);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	//17.  实现例子的main类，创建名为Main的类并添加main() 方法
+	public class Main {
+		public static void main(String[] args) {
+			// 18. 创建 MyPhaser对象
+			MyPhaser phaser = new MyPhaser();
+
+			// 19. 创建5个 Student 对象并使用register()方法在phaser中注册他们
+			Student[] students = new Student[5];
+			for (int i = 0; i < students.length; i++) {
+				students[i] = new Student(phaser);
+				phaser.register(); // 增加一个参与线程
+			}
+
+			// 20. 创建5个线程来运行students并开始它们
+			Thread threads[] = new Thread[students.length];
+			for (int i = 0; i < students.length; i++) {
+				threads[i] = new Thread(students[i], "Student " + i);
+				threads[i].start();
+			}
+
+			// 21. 等待5个线程的终结
+			for (int i = 0; i < threads.length; i++) {
+				try {
+					threads[i].join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			// 22. 调用isTerminated()方法来写一条信息表明phaser是在termination状态
+			System.out.printf("Main: The phaser has finished: %s.\n", phaser.isTerminated());
+		}
+	}
+
+这个练习模拟了有 3 个测验的真实测试。全部的学生必须都完成同一个测试才能开始下一个测试。为了实现这个必须使用同步，我们使用了 ``Phaser`` 类，但是你实现了你自己的 ``phaser`` 通过扩展原来的类，并覆盖 ``onAdvance()`` 方法.
+
+在阶段改变之前和在唤醒 ``arriveAndAwaitAdvance()`` 方法中休眠的全部线程们之前，此方法被 ``phaser`` 调用。这个方法接收当前阶段数作为参数， 0 是第一个 ``phase`` ，还有注册的参与者数。最有用的参数是 actual phase 。如果你要基于不同的当前阶段执行不同的操作，那么你必须使用选择性结构（ ``if/else`` 或 ``switch`` ）来选择你想执行的操作。例子里，我们使用了 ``switch`` 结构来为每个阶段的改变选择不同的方法。
+
+``onAdvance()`` 方法返回 ``Boolean`` 值表明 ``phaser`` 终结与否。如果返回 ``false`` 值，表示它还没有终结，那么线程将继续执行其它阶段。如果 ``phaser`` 返回真值，那么 ``phaser`` 将叫醒全部待定的线程们，并且转移 ``phaser`` 到 ``terminated`` 状态，所以之后的任何对 ``phaser`` 的方法的调用都会被立刻返回，还有 ``isTerminated()`` 方法将返回真值。
+
+在核心类，当你创建 ``MyPhaser`` 对象，在 ``phaser`` 中你不用表示参与者的数量。你为每个 ``Student`` 对象调用了 ``register()`` 方法创建了 ``phaser`` 的参与者的注册。这个调用不会在 ``Student`` 对象或者执行它的线程与 ``phaser`` 之间这个建立任何关系。说真的， ``phaser`` 的参与者数就是个数字而已。 ``phaser`` 与参与者之间没有任何关系。
+
+
+在并发任务间交换数据
+===================
+Java 并发 API 提供了一种允许 2 个并发任务间相互交换数据的同步应用。更具体的说， ``Exchanger`` 类允许在 2 个线程间定义同步点，当 2 个线程到达这个点，他们相互交换数据类型，使用第一个线程的数据类型变成第二个的，然后第二个线程的数据类型变成第一个的。
+
+这个类在遇到类似生产者和消费者问题时，是非常有用的。来一个非常经典的并发问题：你有相同的数据 ``buffer`` ，一个或多个数据生产者，和一个或多个数据消费者。只是 ``Exchange`` 类只能同步2个线程，所以你只能在你的生产者和消费者问题中只有一个生产者和一个消费者时使用这个类。
+
+在这个指南，你将学习如何使用 ``Exchanger`` 类来解决只有一个生产者和一个消费者的生产者和消费者问题。
+
+.. code-block:: java
+
+	//1. 首先，从实现producer开始吧。创建一个类名为Producer并一定实现 Runnable 接口
+	public class Producer implements Runnable {
+		// 2. 声明 List<String>对象，名为 buffer。这是等下要被相互交换的数据类型
+		private List<String> buffer;
+
+		// 3. 声明 Exchanger<List<String>>; 对象，名为exchanger。这个 exchanger 对象是用来同步producer和consumer的
+		private final Exchanger<List<String>> exchanger;
+
+		// 4. 实现类的构造函数，初始化这2个属性
+		public Producer(List<String> buffer, Exchanger<List<String>> exchanger) {
+			this.buffer = buffer;
+			this.exchanger = exchanger;
+		}
+
+		// 5. 实现 run() 方法. 在方法内，实现10次交换
+		@Override
+		public void run() {
+			int cycle = 1;
+
+			for (int i = 0; i < 10; i++) {
+				System.out.printf("Producer: Cycle %d\n", cycle);
+
+				// 6. 在每次循环中，加10个字符串到buffer
+				for (int j = 0; j < 10; j++) {
+					String message = "Event " + ((i * 10) + j);
+					System.out.printf("Producer: %s\n", message);
+					buffer.add(message); // 生产数据
+				}
+
+				// 7. 调用 exchange() 方法来与consumer交换数据。此方法可能会抛出InterruptedException 异常, 加上处理代码
+				try {
+					buffer = exchanger.exchange(buffer);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				System.out.printf("Producer: %d\n", buffer.size());
+				cycle++;
+			}
+		}
+	}
+
+	//8. 现在, 来实现consumer。创建一个类名为Consumer并一定实现 Runnable 接口
+	public class Consumer implements Runnable {
+		// 9. 声明名为buffer的 List<String>对象。这个对象类型是用来相互交换的
+		private List<String> buffer;
+		// 10. 声明一个名为exchanger的 Exchanger<List<String>> 对象。用来同步 producer和consumer
+		private final Exchanger<List<String>> exchanger;
+
+		// 11. 实现类的构造函数，并初始化2个属性
+		public Consumer(List<String> buffer, Exchanger<List<String>> exchanger) {
+			this.buffer = buffer;
+			this.exchanger = exchanger;
+		}
+
+		// 12. 实现 run() 方法。在方法内，实现10次交换
+		@Override
+		public void run() {
+			int cycle = 1;
+
+			for (int i = 0; i < 10; i++) {
+				System.out.printf("Consumer: Cycle %d\n", cycle);
+
+				// 13. 在每次循环，首先调用exchange()方法来与producer同步。Consumer需要消耗数据。此方法可能会抛出InterruptedException异常, 加上处理代码
+				try {
+					buffer = exchanger.exchange(buffer); // 获取生产者的数据
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				System.out.printf("Consumer: %d\n", buffer.size());
+				// 14. 把producer发来的在buffer里的10字符串写到操控台并从buffer内删除，留空。System.out.println("Consumer: " + buffer.size());
+				for (int j = 0; j < 10; j++) {
+					String message = buffer.get(0);
+					System.out.printf("Consumer: %s\n", message);
+					buffer.remove(0);
+				}
+				cycle++;
+			}
+		}
+	}
+
+	//15.现在，实现例子的主类通过创建一个类，名为Main并加入 main() 方法
+	public class Main {
+
+		public static void main(String[] args) {
+			// 16. 创建2个buffers。分别给producer和consumer使用
+			List<String> buffer1 = new ArrayList<>();
+			List<String> buffer2 = new ArrayList<>();
+			// 17. 创建Exchanger对象，用来同步producer和consumer
+			Exchanger<List<String>> exchanger = new Exchanger<>();
+
+			// 18. 创建Producer对象和Consumer对象
+			Producer producer = new Producer(buffer1, exchanger);
+			Consumer consumer = new Consumer(buffer2, exchanger);
+
+			// 19. 创建线程来执行producer和consumer并开始线程
+			Thread threadProducer = new Thread(producer);
+			Thread threadConsumer = new Thread(consumer);
+
+			threadProducer.start();
+			threadConsumer.start();
+		}
+	}
+
+消费者开始时是空白的 ``buffer`` ，然后调用 ``Exchanger`` 来与生产者同步。因为它需要数据来消耗。生产者也是从空白的 ``buffer`` 开始，然后创建 10 个字符串，保存到 ``buffer`` ，并使用 ``exchanger`` 与消费者同步。
+
+在这儿， 2 个线程(生产者和消费者线程)都是在 ``Exchanger`` 里并交换了数据类型，所以当消费者从 ``exchange()`` 方法返回时，它有 10 个字符串在 ``buffer`` 内。当生产者从 ``exchange()`` 方法返回时，它有空白的 ``buffer`` 来重新写入。这样的操作会重复 10 遍。
+
+如你执行例子，你会发现生产者和消费者是如何并发的执行任务和在每个步骤它们是如何交换 ``buffers`` 的。与其他同步工具一样会发生这种情况，第一个调用 ``exchange()`` 方法会进入休眠直到其它线程的达到。
+
+``Exchanger`` 类有另外一个版本的exchange方法：
+
+- ``exchange(V data, long time, TimeUnit unit)`` ： ``V`` 是声明 ``Phaser`` 的参数种类(例子里是 ``List`` )。 此线程会休眠直到另一个线程到达并中断它，或者特定的时间过去了。 ``TimeUnit`` 类有多种常量：DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, 和 SECONDS。
+

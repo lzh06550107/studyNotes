@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. ECMAScript6简介 &mdash; ECMAScript6入门 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="ECMAScript6入门 1.0 文档" href="index.html"/>
+        <link rel="next" title="3. let 和 const 命令" href="let和const命令.html"/>
+        <link rel="prev" title="1. 前言" href="前言.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ECMAScript6入门
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. ECMAScript6简介</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#ecmascript-javascript">2.1. ECMAScript 和 JavaScript 的关系</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#es6-ecmascript-2015">2.2. ES6 与 ECMAScript 2015 的关系</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">2.3. 语法提案的批准流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ecmascript">2.4. ECMAScript 的历史</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2.5. 部署进度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#babel">2.6. Babel 转码器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#babelrc">2.6.1. 配置文件.babelrc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#babel-cli">2.6.2. 命令行转码babel-cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#babel-node">2.6.3. babel-node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#babel-register">2.6.4. babel-register</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#babel-core">2.6.5. babel-core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#babel-polyfill">2.6.6. babel-polyfill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">2.6.7. 浏览器环境</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">2.6.8. 在线转换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">2.6.9. 与其他工具的配合</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#traceur">2.7. Traceur 转码器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">2.7.1. 直接插入网页</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">2.7.2. 在线转换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">2.7.3. 命令行转换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node">2.7.4. Node 环境的用法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="let和const命令.html">3. let 和 const 命令</a></li>
+<li class="toctree-l1"><a class="reference internal" href="变量的解构赋值.html">4. 变量的解构赋值</a></li>
+<li class="toctree-l1"><a class="reference internal" href="字符串的扩展.html">5. 字符串的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="正则的扩展.html">6. 正则的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数值的扩展.html">7. 数值的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="函数的扩展.html">8. 函数的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数组的扩展.html">9. 数组的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="对象的扩展.html">10. 对象的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Symbol.html">11. Symbol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Set和Map数据结构.html">12. Set和Map数据结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Proxy.html">13. Proxy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Reflect.html">14. Reflect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Promise对象.html">15. Promise对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterator和for...of循环.html">16. Iterator 和 for…of 循环</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的语法.html">17. Generator函数的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的异步应用.html">18. Generator 函数的异步应用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="async函数.html">19. asyn函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的基本语法.html">20. Class 的基本语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的继承.html">21. Class的继承</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Decorator.html">22. 修饰器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的语法.html">23. Module 的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的加载实现.html">24. Module 的加载实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="编程风格.html">25. 编程风格</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECMAScript6入门</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>2. ECMAScript6简介</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ecmascript6">
+<h1>2. ECMAScript6简介<a class="headerlink" href="#ecmascript6" title="永久链接至标题">¶</a></h1>
+<p><code class="docutils literal"><span class="pre">ECMAScript</span> <span class="pre">6.0</span></code> （以下简称 <code class="docutils literal"><span class="pre">ES6</span></code> ）是 <code class="docutils literal"><span class="pre">JavaScript</span></code> 语言的下一代标准，已经在 2015 年 6 月正式发布了。它的目标，是使得 <code class="docutils literal"><span class="pre">JavaScript</span></code> 语言可以用来编写复杂的大型应用程序，成为企业级开发语言。</p>
+<div class="section" id="ecmascript-javascript">
+<h2>2.1. ECMAScript 和 JavaScript 的关系<a class="headerlink" href="#ecmascript-javascript" title="永久链接至标题">¶</a></h2>
+<p>一个常见的问题是， <code class="docutils literal"><span class="pre">ECMAScript</span></code> 和 <code class="docutils literal"><span class="pre">JavaScript</span></code> 到底是什么关系？</p>
+<p>要讲清楚这个问题，需要回顾历史。1996 年 11 月， <code class="docutils literal"><span class="pre">JavaScript</span></code> 的创造者 <code class="docutils literal"><span class="pre">Netscape</span></code> 公司，决定将 <code class="docutils literal"><span class="pre">JavaScript</span></code> 提交给标准化组织 <code class="docutils literal"><span class="pre">ECMA</span></code> ，希望这种语言能够成为国际标准。次年， <code class="docutils literal"><span class="pre">ECMA</span></code> 发布 <code class="docutils literal"><span class="pre">262</span></code> 号标准文件（ <code class="docutils literal"><span class="pre">ECMA-262</span></code> ）的第一版，规定了浏览器脚本语言的标准，并将这种语言称为 <code class="docutils literal"><span class="pre">ECMAScript</span></code> ，这个版本就是 <code class="docutils literal"><span class="pre">1.0</span></code> 版。</p>
+<p>该标准从一开始就是针对 <code class="docutils literal"><span class="pre">JavaScript</span></code> 语言制定的，但是之所以不叫 <code class="docutils literal"><span class="pre">JavaScript</span></code> ，有两个原因。一是商标， <code class="docutils literal"><span class="pre">Java</span></code> 是 <code class="docutils literal"><span class="pre">Sun</span></code> 公司的商标，根据授权协议，只有 <code class="docutils literal"><span class="pre">Netscape</span></code> 公司可以合法地使用 <code class="docutils literal"><span class="pre">JavaScript</span></code> 这个名字，且 <code class="docutils literal"><span class="pre">JavaScript</span></code> 本身也已经被 <code class="docutils literal"><span class="pre">Netscape</span></code> 公司注册为商标。二是想体现这门语言的制定者是 <code class="docutils literal"><span class="pre">ECMA</span></code> ，不是 <code class="docutils literal"><span class="pre">Netscape</span></code> ，这样有利于保证这门语言的开放性和中立性。</p>
+<p>因此， <code class="docutils literal"><span class="pre">ECMAScript</span></code> 和 <code class="docutils literal"><span class="pre">JavaScript</span></code> 的关系是，前者是后者的规格，后者是前者的一种实现（另外的 <code class="docutils literal"><span class="pre">ECMAScript</span></code> 方言还有 <code class="docutils literal"><span class="pre">Jscript</span></code> 和 <code class="docutils literal"><span class="pre">ActionScript</span></code> ）。日常场合，这两个词是可以互换的。</p>
+</div>
+<div class="section" id="es6-ecmascript-2015">
+<h2>2.2. ES6 与 ECMAScript 2015 的关系<a class="headerlink" href="#es6-ecmascript-2015" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">ECMAScript</span> <span class="pre">2015</span></code> （简称 <code class="docutils literal"><span class="pre">ES2015</span></code> ）这个词，也是经常可以看到的。它与 <code class="docutils literal"><span class="pre">ES6</span></code> 是什么关系呢？</p>
+<p>2011 年， <code class="docutils literal"><span class="pre">ECMAScript</span> <span class="pre">5.1</span></code> 版发布后，就开始制定 <code class="docutils literal"><span class="pre">6.0</span></code> 版了。因此， <code class="docutils literal"><span class="pre">ES6</span></code> 这个词的原意，就是指 <code class="docutils literal"><span class="pre">JavaScript</span></code> 语言的下一个版本。</p>
+<p>但是，因为这个版本引入的语法功能太多，而且制定过程当中，还有很多组织和个人不断提交新功能。事情很快就变得清楚了，不可能在一个版本里面包括所有将要引入的功能。常规的做法是先发布 <code class="docutils literal"><span class="pre">6.0</span></code> 版，过一段时间再发 <code class="docutils literal"><span class="pre">6.1</span></code> 版，然后是 <code class="docutils literal"><span class="pre">6.2</span></code> 版、 <code class="docutils literal"><span class="pre">6.3</span></code> 版等等。</p>
+<p>但是，标准的制定者不想这样做。他们想让标准的升级成为常规流程：任何人在任何时候，都可以向标准委员会提交新语法的提案，然后标准委员会每个月开一次会，评估这些提案是否可以接受，需要哪些改进。如果经过多次会议以后，一个提案足够成熟了，就可以正式进入标准了。这就是说，标准的版本升级成为了一个不断滚动的流程，每个月都会有变动。</p>
+<p>标准委员会最终决定，标准在每年的 <code class="docutils literal"><span class="pre">6</span></code> 月份正式发布一次，作为当年的正式版本。接下来的时间，就在这个版本的基础上做改动，直到下一年的 <code class="docutils literal"><span class="pre">6</span></code> 月份，草案就自然变成了新一年的版本。这样一来，就不需要以前的版本号了，只要用年份标记就可以了。</p>
+<p><code class="docutils literal"><span class="pre">ES6</span></code> 的第一个版本，就这样在 2015 年 6 月发布了，正式名称就是《ECMAScript 2015 标准》（简称 <code class="docutils literal"><span class="pre">ES2015</span></code> ）。2016 年 6 月，小幅修订的《ECMAScript 2016 标准》（简称 <code class="docutils literal"><span class="pre">ES2016</span></code> ）如期发布，这个版本可以看作是 <code class="docutils literal"><span class="pre">ES6.1</span></code> 版，因为两者的差异非常小（只新增了数组实例的 <code class="docutils literal"><span class="pre">includes</span></code> 方法和指数运算符），基本上是同一个标准。根据计划，2017 年 6 月发布 <code class="docutils literal"><span class="pre">ES2017</span></code> 标准。</p>
+<p>因此，ES6 既是一个历史名词，也是一个泛指，含义是 5.1 版以后的 <code class="docutils literal"><span class="pre">JavaScript</span></code>  的下一代标准，涵盖了 <code class="docutils literal"><span class="pre">ES2015</span></code> 、 <code class="docutils literal"><span class="pre">ES2016</span></code> 、 <code class="docutils literal"><span class="pre">ES2017</span></code> 等等，而 <code class="docutils literal"><span class="pre">ES2015</span></code>  则是正式名称，特指该年发布的正式版本的语言标准。本书中提到 <code class="docutils literal"><span class="pre">ES6</span></code> 的地方，一般是指 <code class="docutils literal"><span class="pre">ES2015</span></code> 标准，但有时也是泛指“下一代 <code class="docutils literal"><span class="pre">JavaScript</span></code> 语言”。</p>
+</div>
+<div class="section" id="id1">
+<h2>2.3. 语法提案的批准流程<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>任何人都可以向标准委员会（又称 <code class="docutils literal"><span class="pre">TC39</span></code> 委员会）提案，要求修改语言标准。</p>
+<p>一种新的语法从提案到变成正式标准，需要经历五个阶段。每个阶段的变动都需要由 <code class="docutils literal"><span class="pre">TC39</span></code> 委员会批准。</p>
+<ul class="simple">
+<li>Stage 0 - Strawman（展示阶段）</li>
+<li>Stage 1 - Proposal（征求意见阶段）</li>
+<li>Stage 2 - Draft（草案阶段）</li>
+<li>Stage 3 - Candidate（候选人阶段）</li>
+<li>Stage 4 - Finished（定案阶段）</li>
+</ul>
+<p>一个提案只要能进入 <code class="docutils literal"><span class="pre">Stage</span> <span class="pre">2</span></code> ，就差不多肯定会包括在以后的正式标准里面。 <code class="docutils literal"><span class="pre">ECMAScript</span></code> 当前的所有提案，可以在 <code class="docutils literal"><span class="pre">TC39</span></code> 的官方网站 <code class="docutils literal"><span class="pre">Github.com/tc39/ecma262</span></code> 查看。</p>
+<p>本书的写作目标之一，是跟踪 <code class="docutils literal"><span class="pre">ECMAScript</span></code> 语言的最新进展，介绍 <code class="docutils literal"><span class="pre">5.1</span></code> 版本以后所有的新语法。对于那些明确或很有希望，将要列入标准的新语法，都将予以介绍。</p>
+</div>
+<div class="section" id="ecmascript">
+<h2>2.4. ECMAScript 的历史<a class="headerlink" href="#ecmascript" title="永久链接至标题">¶</a></h2>
+<p>ES6 从开始制定到最后发布，整整用了 15 年。</p>
+<p>前面提到，ECMAScript 1.0 是 1997 年发布的，接下来的两年，连续发布了 ECMAScript 2.0（1998 年 6 月）和 ECMAScript 3.0（1999 年 12 月）。3.0 版是一个巨大的成功，在业界得到广泛支持，成为通行标准，奠定了 JavaScript 语言的基本语法，以后的版本完全继承。直到今天，初学者一开始学习 JavaScript，其实就是在学 3.0 版的语法。</p>
+<p>2000 年，ECMAScript 4.0 开始酝酿。这个版本最后没有通过，但是它的大部分内容被 ES6 继承了。因此，ES6 制定的起点其实是 2000 年。</p>
+<p>为什么 ES4 没有通过呢？因为这个版本太激进了，对 ES3 做了彻底升级，导致标准委员会的一些成员不愿意接受。ECMA 的第 39 号技术专家委员会（Technical Committee 39，简称 TC39）负责制订 ECMAScript 标准，成员包括 Microsoft、Mozilla、Google 等大公司。</p>
+<p>2007 年 10 月，ECMAScript 4.0 版草案发布，本来预计次年 8 月发布正式版本。但是，各方对于是否通过这个标准，发生了严重分歧。以 Yahoo、Microsoft、Google 为首的大公司，反对 JavaScript 的大幅升级，主张小幅改动；以 JavaScript 创造者 Brendan Eich 为首的 Mozilla 公司，则坚持当前的草案。</p>
+<p>2008 年 7 月，由于对于下一个版本应该包括哪些功能，各方分歧太大，争论过于激烈，ECMA 开会决定，中止 ECMAScript 4.0 的开发，将其中涉及现有功能改善的一小部分，发布为 ECMAScript 3.1，而将其他激进的设想扩大范围，放入以后的版本，由于会议的气氛，该版本的项目代号起名为 Harmony（和谐）。会后不久，ECMAScript 3.1 就改名为 ECMAScript 5。</p>
+<p>2009 年 12 月，ECMAScript 5.0 版正式发布。Harmony 项目则一分为二，一些较为可行的设想定名为 JavaScript.next 继续开发，后来演变成 ECMAScript 6；一些不是很成熟的设想，则被视为 JavaScript.next.next，在更远的将来再考虑推出。TC39 委员会的总体考虑是，ES5 与 ES3 基本保持兼容，较大的语法修正和新功能加入，将由 JavaScript.next 完成。当时，JavaScript.next 指的是 ES6，第六版发布以后，就指 ES7。TC39 的判断是，ES5 会在 2013 年的年中成为 JavaScript 开发的主流标准，并在此后五年中一直保持这个位置。</p>
+<p>2011 年 6 月，ECMAscript 5.1 版发布，并且成为 ISO 国际标准（ISO/IEC 16262:2011）。</p>
+<p>2013 年 3 月，ECMAScript 6 草案冻结，不再添加新功能。新的功能设想将被放到 ECMAScript 7。</p>
+<p>2013 年 12 月，ECMAScript 6 草案发布。然后是 12 个月的讨论期，听取各方反馈。</p>
+<p>2015 年 6 月，ECMAScript 6 正式通过，成为国际标准。从 2000 年算起，这时已经过去了 15 年。</p>
+</div>
+<div class="section" id="id2">
+<h2>2.5. 部署进度<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>各大浏览器的最新版本，对 <code class="docutils literal"><span class="pre">ES6</span></code> 的支持可以查看 <a class="reference external" href="https://kangax.github.io/es5-compat-table/es6/">kangax.github.io/es5-compat-table/es6/</a> 。随着时间的推移，支持度已经越来越高了，超过 <code class="docutils literal"><span class="pre">90%</span></code> 的 <code class="docutils literal"><span class="pre">ES6</span></code> 语法特性都实现了。</p>
+<p><code class="docutils literal"><span class="pre">Node</span></code> 是 <code class="docutils literal"><span class="pre">JavaScript</span></code> 的服务器运行环境（ <code class="docutils literal"><span class="pre">runtime</span></code> ）。它对 <code class="docutils literal"><span class="pre">ES6</span></code> 的支持度更高。除了那些默认打开的功能，还有一些语法功能已经实现了，但是默认没有打开。使用下面的命令，可以查看 <code class="docutils literal"><span class="pre">Node</span></code> 已经实现的 <code class="docutils literal"><span class="pre">ES6</span></code> 特性。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ node --v8-options <span class="p">|</span> grep harmony
+</pre></div>
+</div>
+<p>上面命令的输出结果，会因为版本的不同而有所不同。</p>
+<p>我写了一个工具 <a class="reference external" href="https://github.com/ruanyf/es-checker">ES-Checker</a> ，用来检查各种运行环境对 <code class="docutils literal"><span class="pre">ES6</span></code> 的支持情况。访问 <a class="reference external" href="http://ruanyf.github.io/es-checker">ruanyf.github.io/es-checker</a> ，可以看到您的浏览器支持 <code class="docutils literal"><span class="pre">ES6</span></code> 的程度。运行下面的命令，可以查看你正在使用的 <code class="docutils literal"><span class="pre">Node</span></code> 环境对 <code class="docutils literal"><span class="pre">ES6</span></code> 的支持程度。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install -g es-checker
+$ es-checker
+
+<span class="o">=========================================</span>
+Passes <span class="m">24</span> feature Dectations
+Your runtime supports <span class="m">57</span>% of ECMAScript <span class="nv">6</span>
+<span class="o">=========================================</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="babel">
+<h2>2.6. Babel 转码器<a class="headerlink" href="#babel" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Babel</span></code> 是一个广泛使用的 <code class="docutils literal"><span class="pre">ES6</span></code> 转码器，可以将 <code class="docutils literal"><span class="pre">ES6</span></code> 代码转为 <code class="docutils literal"><span class="pre">ES5</span></code> 代码，从而在现有环境执行。这意味着，你可以用 <code class="docutils literal"><span class="pre">ES6</span></code> 的方式编写程序，又不用担心现有环境是否支持。下面是一个例子。</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="c1">// 转码前</span>
+<span class="nx">input</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">item</span> <span class="p">=&gt;</span> <span class="nx">item</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="c1">// 转码后</span>
+<span class="nx">input</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">item</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>上面的原始代码用了箭头函数， <code class="docutils literal"><span class="pre">Babel</span></code> 将其转为普通函数，就能在不支持箭头函数的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 环境执行了。</p>
+<div class="section" id="babelrc">
+<h3>2.6.1. 配置文件.babelrc<a class="headerlink" href="#babelrc" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Babel</span></code> 的配置文件是 <code class="docutils literal"><span class="pre">.babelrc</span></code> ，存放在项目的根目录下。使用 <code class="docutils literal"><span class="pre">Babel</span></code> 的第一步，就是配置这个文件。</p>
+<p>该文件用来设置转码规则和插件，基本格式如下。</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;presets&quot;</span><span class="p">:</span> <span class="p">[],</span>
+  <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">presets</span></code> 字段设定转码规则，官方提供以下的规则集，你可以根据需要安装。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="c1"># 最新转码规则</span>
+$ npm install --save-dev babel-preset-latest
+
+<span class="c1"># react 转码规则</span>
+$ npm install --save-dev babel-preset-react
+
+<span class="c1"># 不同阶段语法提案的转码规则（共有4个阶段），选装一个</span>
+$ npm install --save-dev babel-preset-stage-0
+$ npm install --save-dev babel-preset-stage-1
+$ npm install --save-dev babel-preset-stage-2
+$ npm install --save-dev babel-preset-stage-3
+</pre></div>
+</div>
+<p>然后，将这些规则加入 <code class="docutils literal"><span class="pre">.babelrc</span></code> 。</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;presets&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;react&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;stage-2&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>注意，以下所有 <code class="docutils literal"><span class="pre">Babel</span></code> 工具和模块的使用，都必须先写好 <code class="docutils literal"><span class="pre">.babelrc</span></code> 。</p>
+</div>
+<div class="section" id="babel-cli">
+<h3>2.6.2. 命令行转码babel-cli<a class="headerlink" href="#babel-cli" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Babel</span></code> 提供 <code class="docutils literal"><span class="pre">babel-cli</span></code> 工具，用于命令行转码。</p>
+<p>它的安装命令如下。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install --global babel-cli
+</pre></div>
+</div>
+<p>基本用法如下。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="c1"># 转码结果输出到标准输出</span>
+$ babel example.js
+
+<span class="c1"># 转码结果写入一个文件</span>
+<span class="c1"># --out-file 或 -o 参数指定输出文件</span>
+$ babel example.js --out-file compiled.js
+<span class="c1"># 或者</span>
+$ babel example.js -o compiled.js
+
+<span class="c1"># 整个目录转码</span>
+<span class="c1"># --out-dir 或 -d 参数指定输出目录</span>
+$ babel src --out-dir lib
+<span class="c1"># 或者</span>
+$ babel src -d lib
+
+<span class="c1"># -s 参数生成source map文件</span>
+$ babel src -d lib -s
+</pre></div>
+</div>
+<p>上面代码是在全局环境下，进行 <code class="docutils literal"><span class="pre">Babel</span></code> 转码。这意味着，如果项目要运行，全局环境必须有 <code class="docutils literal"><span class="pre">Babel</span></code> ，也就是说项目产生了对环境的依赖。另一方面，这样做也无法支持不同项目使用不同版本的 <code class="docutils literal"><span class="pre">Babel</span></code> 。</p>
+<p>一个解决办法是将 <code class="docutils literal"><span class="pre">babel-cli</span></code> 安装在项目之中。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="c1"># 安装</span>
+$ npm install --save-dev babel-cli
+</pre></div>
+</div>
+<p>然后，改写 <code class="docutils literal"><span class="pre">package.json</span></code> 。</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  // ...
+  &quot;devDependencies&quot;: {
+    &quot;babel-cli&quot;: &quot;^6.0.0&quot;
+  },
+  &quot;scripts&quot;: {
+    &quot;build&quot;: &quot;babel src -d lib&quot;
+  },
+}
+</pre></div>
+</div>
+<p>转码的时候，就执行下面的命令。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm run build
+</pre></div>
+</div>
+</div>
+<div class="section" id="babel-node">
+<h3>2.6.3. babel-node<a class="headerlink" href="#babel-node" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">babel-cli</span></code> 工具自带一个 <code class="docutils literal"><span class="pre">babel-node</span></code> 命令，提供一个支持 <code class="docutils literal"><span class="pre">ES6</span></code> 的 <code class="docutils literal"><span class="pre">REPL</span></code> 环境。它支持 <code class="docutils literal"><span class="pre">Node</span></code> 的 <code class="docutils literal"><span class="pre">REPL</span></code> 环境的所有功能，而且可以直接运行 <code class="docutils literal"><span class="pre">ES6</span></code> 代码。</p>
+<p>它不用单独安装，而是随 <code class="docutils literal"><span class="pre">babel-cli</span></code> 一起安装。然后，执行 <code class="docutils literal"><span class="pre">babel-node</span></code> 就进入 <code class="docutils literal"><span class="pre">REPL</span></code> 环境。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ babel-node
+&gt; <span class="o">(</span><span class="nv">x</span> <span class="o">=</span>&gt; x * <span class="m">2</span><span class="o">)(</span><span class="m">1</span><span class="o">)</span>
+<span class="m">2</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">babel-node</span></code> 命令可以直接运行 <code class="docutils literal"><span class="pre">ES6</span></code>  脚本。将上面的代码放入脚本文件 <code class="docutils literal"><span class="pre">es6.js</span></code> ，然后直接运行。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ babel-node es6.js
+<span class="m">2</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">babel-node</span></code> 也可以安装在项目中。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install --save-dev babel-cli
+</pre></div>
+</div>
+<p>然后，改写 <code class="docutils literal"><span class="pre">package.json</span></code> 。</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;script-name&quot;</span><span class="p">:</span> <span class="s2">&quot;babel-node script.js&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="babel-register">
+<h3>2.6.4. babel-register<a class="headerlink" href="#babel-register" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">babel-register</span></code> 模块改写 <code class="docutils literal"><span class="pre">require</span></code> 命令，为它加上一个钩子。此后，每当使用 <code class="docutils literal"><span class="pre">require</span></code> 加载 <code class="docutils literal"><span class="pre">.js</span></code> 、 <code class="docutils literal"><span class="pre">.jsx</span></code> 、 <code class="docutils literal"><span class="pre">.es</span></code> 和 <code class="docutils literal"><span class="pre">.es6</span></code> 后缀名的文件，就会先用 <code class="docutils literal"><span class="pre">Babel</span></code> 进行转码。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install --save-dev babel-register
+</pre></div>
+</div>
+<p>使用时，必须首先加载 <code class="docutils literal"><span class="pre">babel-register</span></code> 。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>require<span class="o">(</span><span class="s2">&quot;babel-register&quot;</span><span class="o">)</span><span class="p">;</span>
+require<span class="o">(</span><span class="s2">&quot;./index.js&quot;</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>然后，就不需要手动对 <code class="docutils literal"><span class="pre">index.js</span></code> 转码了。</p>
+<p>需要注意的是， <code class="docutils literal"><span class="pre">babel-register</span></code> 只会对 <code class="docutils literal"><span class="pre">require</span></code> 命令加载的文件转码，而不会对当前文件转码。另外，由于它是实时转码，所以只适合在开发环境使用。</p>
+</div>
+<div class="section" id="babel-core">
+<h3>2.6.5. babel-core<a class="headerlink" href="#babel-core" title="永久链接至标题">¶</a></h3>
+<p>如果某些代码需要调用 <code class="docutils literal"><span class="pre">Babel</span></code> 的 <code class="docutils literal"><span class="pre">API</span></code> 进行转码，就要使用 <code class="docutils literal"><span class="pre">babel-core</span></code> 模块。</p>
+<p>安装命令如下。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install babel-core --save
+</pre></div>
+</div>
+<p>然后，在项目中就可以调用 <code class="docutils literal"><span class="pre">babel-core</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">babel</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;babel-core&#39;</span><span class="p">);</span>
+
+<span class="c1">// 字符串转码</span>
+<span class="nx">babel</span><span class="p">.</span><span class="nx">transform</span><span class="p">(</span><span class="s1">&#39;code();&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+<span class="c1">// =&gt; { code, map, ast }</span>
+
+<span class="c1">// 文件转码（异步）</span>
+<span class="nx">babel</span><span class="p">.</span><span class="nx">transformFile</span><span class="p">(</span><span class="s1">&#39;filename.js&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">result</span><span class="p">;</span> <span class="c1">// =&gt; { code, map, ast }</span>
+<span class="p">});</span>
+
+<span class="c1">// 文件转码（同步）</span>
+<span class="nx">babel</span><span class="p">.</span><span class="nx">transformFileSync</span><span class="p">(</span><span class="s1">&#39;filename.js&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+<span class="c1">// =&gt; { code, map, ast }</span>
+
+<span class="c1">// Babel AST转码</span>
+<span class="nx">babel</span><span class="p">.</span><span class="nx">transformFromAst</span><span class="p">(</span><span class="nx">ast</span><span class="p">,</span> <span class="nx">code</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+<span class="c1">// =&gt; { code, map, ast }</span>
+</pre></div>
+</div>
+<p>配置对象 <code class="docutils literal"><span class="pre">options</span></code> ，可以参看官方文档 <a class="reference external" href="http://babeljs.io/docs/usage/options/">http://babeljs.io/docs/usage/options/</a> 。</p>
+<p>下面是一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">es6Code</span> <span class="o">=</span> <span class="s1">&#39;let x = n =&gt; n + 1&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">es5Code</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;babel-core&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">transform</span><span class="p">(</span><span class="nx">es6Code</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">presets</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;latest&#39;</span><span class="p">]</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">code</span><span class="p">;</span>
+<span class="c1">// &#39;&quot;use strict&quot;;\n\nvar x = function x(n) {\n  return n + 1;\n};&#39;</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">transform</span></code> 方法的第一个参数是一个字符串，表示需要被转换的 <code class="docutils literal"><span class="pre">ES6</span></code> 代码，第二个参数是转换的配置对象。</p>
+</div>
+<div class="section" id="babel-polyfill">
+<h3>2.6.6. babel-polyfill<a class="headerlink" href="#babel-polyfill" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Babel</span></code> 默认只转换新的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 句法（ <code class="docutils literal"><span class="pre">syntax</span></code> ），而不转换新的 <code class="docutils literal"><span class="pre">API</span></code> ，比如 <code class="docutils literal"><span class="pre">Iterator</span></code> 、 <code class="docutils literal"><span class="pre">Generator</span></code> 、 <code class="docutils literal"><span class="pre">Set</span></code> 、 <code class="docutils literal"><span class="pre">Maps</span></code> 、 <code class="docutils literal"><span class="pre">Proxy</span></code> 、 <code class="docutils literal"><span class="pre">Reflect</span></code> 、 <code class="docutils literal"><span class="pre">Symbol</span></code> 、 <code class="docutils literal"><span class="pre">Promise</span></code> 等全局对象，以及一些定义在全局对象上的方法（比如 <code class="docutils literal"><span class="pre">Object.assign</span></code> ）都不会转码。</p>
+<p>举例来说， <code class="docutils literal"><span class="pre">ES6</span></code> 在 <code class="docutils literal"><span class="pre">Array</span></code> 对象上新增了 <code class="docutils literal"><span class="pre">Array.from</span></code> 方法。 <code class="docutils literal"><span class="pre">Babel</span></code> 就不会转码这个方法。如果想让这个方法运行，必须使用 <code class="docutils literal"><span class="pre">babel-polyfill</span></code> ，为当前环境提供一个垫片。</p>
+<p>安装命令如下。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install --save babel-polyfill
+</pre></div>
+</div>
+<p>然后，在脚本头部，加入如下一行代码。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">import</span> <span class="s1">&#39;babel-polyfill&#39;</span><span class="p">;</span>
+<span class="c1">// 或者</span>
+<span class="nx">require</span><span class="p">(</span><span class="s1">&#39;babel-polyfill&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Babel</span></code> 默认不转码的 <code class="docutils literal"><span class="pre">API</span></code> 非常多，详细清单可以查看 <code class="docutils literal"><span class="pre">babel-plugin-transform-runtime</span></code> 模块的 <a class="reference external" href="https://github.com/babel/babel/blob/master/packages/babel-plugin-transform-runtime/src/definitions.js">definitions.js</a> 文件。</p>
+</div>
+<div class="section" id="id3">
+<h3>2.6.7. 浏览器环境<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Babel</span></code> 也可以用于浏览器环境。但是，从 <code class="docutils literal"><span class="pre">Babel</span> <span class="pre">6.0</span></code> 开始，不再直接提供浏览器版本，而是要用构建工具构建出来。如果你没有或不想使用构建工具，可以使用 <code class="docutils literal"><span class="pre">babel-standalone</span></code> 模块提供的浏览器版本，将其插入网页。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.4.4/babel.min.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/babel&quot;</span><span class="p">&gt;</span>
+<span class="c1">// Your ES6 code</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">网页实时将 <code class="docutils literal"><span class="pre">ES6</span></code> 代码转为 <code class="docutils literal"><span class="pre">ES5</span></code> ，对性能会有影响。生产环境需要加载已经转码完成的脚本。</p>
+</div>
+<p>下面是如何将代码打包成浏览器可以使用的脚本，以 <code class="docutils literal"><span class="pre">Babel</span></code> 配合 <code class="docutils literal"><span class="pre">Browserify</span></code> 为例。首先，安装 <code class="docutils literal"><span class="pre">babelify</span></code> 模块。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install --save-dev babelify babel-preset-latest
+</pre></div>
+</div>
+<p>然后，再用命令行转换 <code class="docutils literal"><span class="pre">ES6</span></code> 脚本。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$  browserify script.js -o bundle.js -t <span class="o">[</span> babelify --presets <span class="o">[</span> latest <span class="o">]</span> <span class="o">]</span>
+</pre></div>
+</div>
+<p>上面代码将 <code class="docutils literal"><span class="pre">ES6</span></code> 脚本 <code class="docutils literal"><span class="pre">script.js</span></code> ，转为 <code class="docutils literal"><span class="pre">bundle.js</span></code> ，浏览器直接加载后者就可以了。</p>
+<p>在 <code class="docutils literal"><span class="pre">package.json</span></code> 设置下面的代码，就不用每次命令行都输入参数了。</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;browserify&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;transform&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="s2">&quot;babelify&quot;</span><span class="p">,</span> <span class="p">{</span> <span class="nt">&quot;presets&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;latest&quot;</span><span class="p">]</span> <span class="p">}]]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>2.6.8. 在线转换<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Babel</span></code> 提供一个 <a class="reference external" href="https://babeljs.io/repl/">REPL 在线编译器</a> ，可以在线将 <code class="docutils literal"><span class="pre">ES6</span></code> 代码转为 <code class="docutils literal"><span class="pre">ES5</span></code> 代码。转换后的代码，可以直接作为 <code class="docutils literal"><span class="pre">ES5</span></code> 代码插入网页运行。</p>
+</div>
+<div class="section" id="id5">
+<h3>2.6.9. 与其他工具的配合<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>许多工具需要 <code class="docutils literal"><span class="pre">Babel</span></code> 进行前置转码，这里举两个例子： <code class="docutils literal"><span class="pre">ESLint</span></code> 和 <code class="docutils literal"><span class="pre">Mocha</span></code> 。</p>
+<p><code class="docutils literal"><span class="pre">ESLint</span></code> 用于静态检查代码的语法和风格，安装命令如下。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install --save-dev eslint babel-eslint
+</pre></div>
+</div>
+<p>然后，在项目根目录下，新建一个配置文件 <code class="docutils literal"><span class="pre">.eslintrc</span></code> ，在其中加入 <code class="docutils literal"><span class="pre">parser</span></code> 字段。</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  &quot;parser&quot;: &quot;babel-eslint&quot;,
+  &quot;rules&quot;: {
+    ...
+  }
+}
+</pre></div>
+</div>
+<p>再在 <code class="docutils literal"><span class="pre">package.json</span></code> 之中，加入相应的 <code class="docutils literal"><span class="pre">scripts</span></code> 脚本。</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;my-module&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;lint&quot;</span><span class="p">:</span> <span class="s2">&quot;eslint my-files.js&quot;</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;devDependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;babel-eslint&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;eslint&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Mocha</span></code> 则是一个测试框架，如果需要执行使用 <code class="docutils literal"><span class="pre">ES6</span></code> 语法的测试脚本，可以修改 <code class="docutils literal"><span class="pre">package.json</span></code> 的 <code class="docutils literal"><span class="pre">scripts.test</span></code> 。</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>&quot;scripts&quot;: {
+  &quot;test&quot;: &quot;mocha --ui qunit --compilers js:babel-core/register&quot;
+}
+</pre></div>
+</div>
+<p>上面命令中， <code class="docutils literal"><span class="pre">--compilers</span></code> 参数指定脚本的转码器，规定后缀名为 <code class="docutils literal"><span class="pre">js</span></code> 的文件，都需要使用 <code class="docutils literal"><span class="pre">babel-core/register</span></code> 先转码。</p>
+</div>
+</div>
+<div class="section" id="traceur">
+<h2>2.7. Traceur 转码器<a class="headerlink" href="#traceur" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Google</span></code> 公司的 <code class="docutils literal"><span class="pre">Traceur</span></code> 转码器，也可以将 <code class="docutils literal"><span class="pre">ES6</span></code> 代码转为 <code class="docutils literal"><span class="pre">ES5</span></code> 代码。</p>
+<div class="section" id="id6">
+<h3>2.7.1. 直接插入网页<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Traceur</span></code> 允许将 <code class="docutils literal"><span class="pre">ES6</span></code> 代码直接插入网页。首先，必须在网页头部加载 <code class="docutils literal"><span class="pre">Traceur</span></code> 库文件。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://google.github.io/traceur-compiler/bin/traceur.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://google.github.io/traceur-compiler/bin/BrowserSystem.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://google.github.io/traceur-compiler/src/bootstrap.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;module&quot;</span><span class="p">&gt;</span>
+  <span class="kr">import</span> <span class="s1">&#39;./Greeter.js&#39;</span><span class="p">;</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>上面代码中，一共有 4 个 <code class="docutils literal"><span class="pre">script</span></code> 标签。第一个是加载 <code class="docutils literal"><span class="pre">Traceur</span></code> 的库文件，第二个和第三个是将这个库文件用于浏览器环境，第四个则是加载用户脚本，这个脚本里面可以使用 <code class="docutils literal"><span class="pre">ES6</span></code> 代码。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">第四个 <code class="docutils literal"><span class="pre">script</span></code> 标签的 <code class="docutils literal"><span class="pre">type</span></code> 属性的值是 <code class="docutils literal"><span class="pre">module</span></code> ，而不是 <code class="docutils literal"><span class="pre">text/javascript</span></code> 。这是 <code class="docutils literal"><span class="pre">Traceur</span></code> 编译器识别 <code class="docutils literal"><span class="pre">ES6</span></code> 代码的标志，编译器会自动将所有 <code class="docutils literal"><span class="pre">type=module</span></code> 的代码编译为 <code class="docutils literal"><span class="pre">ES5</span></code> ，然后再交给浏览器执行。</p>
+</div>
+<p>除了引用外部 <code class="docutils literal"><span class="pre">ES6</span></code> 脚本，也可以直接在网页中放置 <code class="docutils literal"><span class="pre">ES6</span></code> 代码。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;module&quot;</span><span class="p">&gt;</span>
+  <span class="kr">class</span> <span class="nx">Calc</span> <span class="p">{</span>
+    <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Calc constructor&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Calc</span><span class="p">();</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">));</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>正常情况下，上面代码会在控制台打印出9。</p>
+<p>如果想对 <code class="docutils literal"><span class="pre">Traceur</span></code> 的行为有精确控制，可以采用下面参数配置的写法。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+  <span class="c1">// Create the System object</span>
+  <span class="nb">window</span><span class="p">.</span><span class="nx">System</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">traceur</span><span class="p">.</span><span class="nx">runtime</span><span class="p">.</span><span class="nx">BrowserTraceurLoader</span><span class="p">();</span>
+  <span class="c1">// Set some experimental options</span>
+  <span class="kd">var</span> <span class="nx">metadata</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">traceurOptions</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">experimental</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">properTailCalls</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">symbols</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">arrayComprehension</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">asyncFunctions</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">asyncGenerators</span><span class="o">:</span> <span class="nx">exponentiation</span><span class="p">,</span>
+      <span class="nx">forOn</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">generatorComprehension</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+  <span class="c1">// Load your module</span>
+  <span class="nx">System</span><span class="p">.</span><span class="kr">import</span><span class="p">(</span><span class="s1">&#39;./myModule.js&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">metadata</span><span class="o">:</span> <span class="nx">metadata</span><span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Import failed&#39;</span><span class="p">,</span> <span class="nx">ex</span><span class="p">.</span><span class="nx">stack</span> <span class="o">||</span> <span class="nx">ex</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>上面代码中，首先生成 <code class="docutils literal"><span class="pre">Traceur</span></code> 的全局对象 <code class="docutils literal"><span class="pre">window.System</span></code> ，然后 <code class="docutils literal"><span class="pre">System.import</span></code> 方法可以用来加载 <code class="docutils literal"><span class="pre">ES6</span></code> 。加载的时候，需要传入一个配置对象 <code class="docutils literal"><span class="pre">metadata</span></code> ，该对象的 <code class="docutils literal"><span class="pre">traceurOptions</span></code> 属性可以配置支持 <code class="docutils literal"><span class="pre">ES6</span></code> 功能。如果设为 <code class="docutils literal"><span class="pre">experimental:</span> <span class="pre">true</span></code> ，就表示除了 <code class="docutils literal"><span class="pre">ES6</span></code> 以外，还支持一些实验性的新功能。</p>
+</div>
+<div class="section" id="id7">
+<h3>2.7.2. 在线转换<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Traceur</span></code> 也提供一个在线编译器，可以在线将 <code class="docutils literal"><span class="pre">ES6</span></code> 代码转为 <code class="docutils literal"><span class="pre">ES5</span></code> 代码。转换后的代码，可以直接作为 <code class="docutils literal"><span class="pre">ES5</span></code> 代码插入网页运行。</p>
+<p>上面的例子转为 <code class="docutils literal"><span class="pre">ES5</span></code> 代码运行，就是下面这个样子。</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://google.github.io/traceur-compiler/bin/traceur.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://google.github.io/traceur-compiler/bin/BrowserSystem.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://google.github.io/traceur-compiler/src/bootstrap.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="nx">$traceurRuntime</span><span class="p">.</span><span class="nx">ModuleStore</span><span class="p">.</span><span class="nx">getAnonymousModule</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">Calc</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Calc</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Calc constructor&#39;</span><span class="p">);</span>
+  <span class="p">};</span>
+
+  <span class="p">(</span><span class="nx">$traceurRuntime</span><span class="p">.</span><span class="nx">createClass</span><span class="p">)(</span><span class="nx">Calc</span><span class="p">,</span> <span class="p">{</span><span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+  <span class="p">}},</span> <span class="p">{});</span>
+
+  <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Calc</span><span class="p">();</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">));</span>
+  <span class="k">return</span> <span class="p">{};</span>
+<span class="p">});</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>2.7.3. 命令行转换<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>作为命令行工具使用时， <code class="docutils literal"><span class="pre">Traceur</span></code> 是一个 <code class="docutils literal"><span class="pre">Node</span></code> 的模块，首先需要用 <code class="docutils literal"><span class="pre">npm</span></code> 安装。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install -g traceur
+</pre></div>
+</div>
+<p>安装成功后，就可以在命令行下使用 <code class="docutils literal"><span class="pre">Traceur</span></code> 了。</p>
+<p><code class="docutils literal"><span class="pre">Traceur</span></code> 直接运行 <code class="docutils literal"><span class="pre">ES6</span></code> 脚本文件，会在标准输出显示运行结果，以前面的 <code class="docutils literal"><span class="pre">calc.js</span></code> 为例。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ traceur calc.js
+Calc constructor
+<span class="m">9</span>
+</pre></div>
+</div>
+<p>如果要将 <code class="docutils literal"><span class="pre">ES6</span></code> 脚本转为 <code class="docutils literal"><span class="pre">ES5</span></code> 保存，要采用下面的写法。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ traceur --script calc.es6.js --out calc.es5.js
+</pre></div>
+</div>
+<p>上面代码的 <code class="docutils literal"><span class="pre">--script</span></code> 选项表示指定输入文件， <code class="docutils literal"><span class="pre">--out</span></code> 选项表示指定输出文件。</p>
+<p>为了防止有些特性编译不成功，最好加上 <code class="docutils literal"><span class="pre">--experimental</span></code> 选项。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ traceur --script calc.es6.js --out calc.es5.js --experimental
+</pre></div>
+</div>
+<p>命令行下转换生成的文件，就可以直接放到浏览器中运行。</p>
+</div>
+<div class="section" id="node">
+<h3>2.7.4. Node 环境的用法<a class="headerlink" href="#node" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Traceur</span></code> 的 <code class="docutils literal"><span class="pre">Node</span></code> 用法如下（假定已安装 <code class="docutils literal"><span class="pre">traceur</span></code> 模块）。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">traceur</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;traceur&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+
+<span class="c1">// 将 ES6 脚本转为字符串</span>
+<span class="kd">var</span> <span class="nx">contents</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="s1">&#39;es6-file.js&#39;</span><span class="p">).</span><span class="nx">toString</span><span class="p">();</span>
+
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">traceur</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">contents</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">filename</span><span class="o">:</span> <span class="s1">&#39;es6-file.js&#39;</span><span class="p">,</span>
+  <span class="nx">sourceMap</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="c1">// 其他设置</span>
+  <span class="nx">modules</span><span class="o">:</span> <span class="s1">&#39;commonjs&#39;</span>
+<span class="p">});</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">error</span><span class="p">)</span>
+  <span class="k">throw</span> <span class="nx">result</span><span class="p">.</span><span class="nx">error</span><span class="p">;</span>
+
+<span class="c1">// result 对象的 js 属性就是转换后的 ES5 代码</span>
+<span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="s1">&#39;out.js&#39;</span><span class="p">,</span> <span class="nx">result</span><span class="p">.</span><span class="nx">js</span><span class="p">);</span>
+<span class="c1">// sourceMap 属性对应 map 文件</span>
+<span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="s1">&#39;out.js.map&#39;</span><span class="p">,</span> <span class="nx">result</span><span class="p">.</span><span class="nx">sourceMap</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="let和const命令.html" class="btn btn-neutral float-right" title="3. let 和 const 命令" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="前言.html" class="btn btn-neutral" title="1. 前言" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+
+      });
+
+
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script>
+   
+
+</body>
+</html>

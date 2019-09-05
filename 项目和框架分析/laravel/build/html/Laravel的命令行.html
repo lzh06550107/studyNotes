@@ -1,0 +1,821 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>35. 命令行 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="36. 广播" href="Laravel的广播系统.html"/>
+        <link rel="prev" title="34. Laravel用户授权系统" href="Laravel的用户授权系统.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">35. 命令行</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">35.1. 简介</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#laravel-repl">35.1.1. Laravel REPL</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">35.2. 编写命令</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">35.2.1. 生成命令</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">35.2.2. 命令结构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">35.2.3. 闭包命令</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">35.3. 定义输入期望</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">35.3.1. 参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">35.3.2. 选项</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">35.3.3. 输入数组</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">35.3.4. 输入说明</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#i-o">35.4. I/O 命令</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id16">35.4.1. 检索输入</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">35.4.2. 交互式输入</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id24">35.5. 注册命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id25">35.6. 程序调用命令</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id26">35.6.1. 传递数组值</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27">35.6.2. 传递布尔值</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28">35.6.3. 命令的互相调用</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>35. 命令行</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>35. 命令行<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>35.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Artisan</span></code> 是 Laravel 自带的命令行接口，它提供了许多实用的命令来帮助你构建 Laravel 应用。要查看所有可用的 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令的列表，可以使用 <code class="docutils literal"><span class="pre">list</span></code> 命令，该命令位于 <code class="docutils literal"><span class="pre">symfony\console\Command\ListCommand.php</span></code> 文件：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan list
+</pre></div>
+</div>
+<p>每个命令包含了「帮助」界面，它会显示并概述命令的可用参数及选项。只需要在命令前面加上 <code class="docutils literal"><span class="pre">help</span></code> 即可查看命令帮助界面，该命令位于 <code class="docutils literal"><span class="pre">Symfony\Component\Console\Command\HelpCommand</span></code> 文件：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan <span class="nb">help</span> migrate
+<span class="c1">#或者</span>
+php artisan migrate -h
+</pre></div>
+</div>
+<div class="section" id="laravel-repl">
+<h3>35.1.1. Laravel REPL<a class="headerlink" href="#laravel-repl" title="永久链接至标题">¶</a></h3>
+<p>所有 Laravel 应用都包含了 <code class="docutils literal"><span class="pre">Tinker</span></code> ，一个基于 <a class="reference external" href="https://github.com/bobthecow/psysh">PsySH</a> 包提供支持的 <code class="docutils literal"><span class="pre">REPL</span></code> 。 <code class="docutils literal"><span class="pre">Tinker</span></code> 让你可以在命令行中与你整个的 Laravel 应用进行交互，包括 <code class="docutils literal"><span class="pre">Eloquent</span> <span class="pre">ORM</span></code> 、任务、事件等等。运行 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">tinker</span></code> 进入 <code class="docutils literal"><span class="pre">Tinker</span></code> 环境：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan tinker
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>35.2. 编写命令<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>除 <code class="docutils literal"><span class="pre">Artisan</span></code> 提供的命令外，您还可以构建自己的自定义命令。 命令通常存储在 <code class="docutils literal"><span class="pre">app/Console/Commands</span></code> 目录中；不过，只要您的命令可以由 Composer 加载，您就可以自由选择自己的存储位置。</p>
+<div class="section" id="id4">
+<h3>35.2.1. 生成命令<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>要创建一个新的命令，可以使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">make:command</span></code> 。这个命令会在 <code class="docutils literal"><span class="pre">app/Console/Commands</span></code> 目录中创建一个新的命令类。 不必担心应用中不存在这个目录，因为它会在你第一次运行 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">make:command</span></code> 时创建。生成的命令会包括所有命令中默认存在的属性和方法：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:command SendEmails
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>35.2.2. 命令结构<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>命令生成后，应先填写类的 <code class="docutils literal"><span class="pre">signature</span></code> 和 <code class="docutils literal"><span class="pre">description</span></code> 属性，这会在使用 <code class="docutils literal"><span class="pre">list</span></code> 命令的时候显示出来。执行命令时会调用 <code class="docutils literal"><span class="pre">handle</span></code> 方法，你可以在这个方法中放置命令逻辑。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">为了更好的代码复用，最好保持你的控制台代码轻量并让它们延迟到应用服务中完成。在下面的例子中，请注意，我们注入了一个服务类来完成发送邮件的。</p>
+</div>
+<p>让我们看一个简单的例子。注意，我们可以在 <code class="docutils literal"><span class="pre">Command</span></code> 的构造函数中注入我们需要的任何依赖项。Laravel 服务容器 将会自动注入所有在构造函数中的带类型约束的依赖：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Console\Commands</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\DripEmailer</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Console\Command</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SendEmails</span> <span class="k">extends</span> <span class="nx">Command</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 控制台命令 signature 的名称。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var string</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$signature</span> <span class="o">=</span> <span class="s1">&#39;email:send {user}&#39;</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 控制台命令说明。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var string</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$description</span> <span class="o">=</span> <span class="s1">&#39;Send drip e-mails to a user&#39;</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 邮件服务的 drip 属性。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var DripEmailer</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$drip</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 创建一个新的命令实例。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  DripEmailer  $drip</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">DripEmailer</span> <span class="nv">$drip</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">();</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">drip</span> <span class="o">=</span> <span class="nv">$drip</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 执行控制台命令。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return mixed</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">drip</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nx">User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">argument</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">)));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>35.2.3. 闭包命令<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>基于闭包的命令提供一个用类替代定义控制台命令的方法。同样的，路由闭包是控制器的一种替代方法，而命令闭包可以视为命令类的替代方法。在 <code class="docutils literal"><span class="pre">app/Console/Kernel.php</span></code> 文件的 <code class="docutils literal"><span class="pre">commands</span></code> 方法中， Laravel 加载了 <code class="docutils literal"><span class="pre">routes/console.php</span></code> 文件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 注册应用的基于闭包的命令。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">commands</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">require</span> <span class="nx">base_path</span><span class="p">(</span><span class="s1">&#39;routes/console.php&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>虽然这个文件没有定义 <code class="docutils literal"><span class="pre">HTTP</span></code> 路由，它也将基于控制台的入口点（路由）定义到应用中。在这个文件中，你可以使用 <code class="docutils literal"><span class="pre">Artisan::command</span></code> 方法定义所有基于闭包的路由。 <code class="docutils literal"><span class="pre">command</span></code> 方法接收两个参数：命令签名 和一个接收命令参数和选项的闭包：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Artisan</span><span class="o">::</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;build {project}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$project</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">info</span><span class="p">(</span><span class="s2">&quot;Building </span><span class="si">{</span><span class="nv">$project</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>闭包绑定底层的命令实例，因此你可以完全访问通常可以在完整命令类中访问的所有辅助方法。</p>
+<div class="section" id="id7">
+<h4>35.2.3.1. 类型提示依赖<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<p>除了接收命令的参数和选项外，命令闭包也可以使用类型提示从 服务容器 中解析你想要的其他依赖关系：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">App\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\DripEmailer</span><span class="p">;</span>
+
+<span class="nx">Artisan</span><span class="o">::</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;email:send {user}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">DripEmailer</span> <span class="nv">$drip</span><span class="p">,</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$drip</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nx">User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="nv">$user</span><span class="p">));</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h4>35.2.3.2. 闭包命令描述<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<p>当基于命令定义一个闭包的时候，你应当使用 <code class="docutils literal"><span class="pre">describe</span></code> 方法来给命令添加一个描述。这个描述会在你执行 <code class="docutils literal"><span class="pre">php</span> <span class="pre">artisan</span> <span class="pre">list</span></code> 命令或 <code class="docutils literal"><span class="pre">php</span> <span class="pre">artisan</span> <span class="pre">help</span></code> 命令时显示。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Artisan</span><span class="o">::</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;build {project}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$project</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">info</span><span class="p">(</span><span class="s2">&quot;Building </span><span class="si">{</span><span class="nv">$project</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">);</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">describe</span><span class="p">(</span><span class="s1">&#39;Build the project&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>35.3. 定义输入期望<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>在编写控制台命令时，通常是通过参数和选项来收集用户输入。Laravel 可以非常方便地在你的命令里用 <code class="docutils literal"><span class="pre">signature</span></code> 属性来定义你期望用户输入的内容。 <code class="docutils literal"><span class="pre">signature</span></code> 属性允许你使用单一且可读性非常高的、类似路由的语法定义命令的名称、参数和选项。</p>
+<div class="section" id="id10">
+<h3>35.3.1. 参数<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>所有用户提供的参数及选项都被包含在花括号中。在下面的例子中，这个命令定义了一个必须的参数： <code class="docutils literal"><span class="pre">user</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 控制台命令 signature 的名称。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var string</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="nv">$signature</span> <span class="o">=</span> <span class="s1">&#39;email:send {user}&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>你也可以创建可选参数，并定义参数的默认值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 可选参数...</span>
+<span class="nx">email</span><span class="o">:</span><span class="nx">send</span> <span class="p">{</span><span class="nx">user</span><span class="o">?</span><span class="p">}</span>
+
+<span class="c1">// 带有默认值的可选参数...</span>
+<span class="nx">email</span><span class="o">:</span><span class="nx">send</span> <span class="p">{</span><span class="nx">user</span><span class="o">=</span><span class="nx">foo</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>35.3.2. 选项<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>选项，如参数，是用户输入的另一种格式。当命令行指定选项时，它们以两个连字符( <code class="docutils literal"><span class="pre">--</span></code> )作为前缀。有两种类型的选项：接收值和不接收值。不接收值的选项作为布尔值的「开关」。让我们看一下这种类型的选项的例子：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 控制台命令 `signature`　的名称。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var string</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="nv">$signature</span> <span class="o">=</span> <span class="s1">&#39;email:send {user} {--queue}&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>在这个例子中，可以在调用 <code class="docutils literal"><span class="pre">Artisan</span></code> 时指定 <code class="docutils literal"><span class="pre">--queue</span></code> 开关。如果 <code class="docutils literal"><span class="pre">--queue</span></code> 开关被传递， 该选项的值为 <code class="docutils literal"><span class="pre">true</span></code> ，否则为 <code class="docutils literal"><span class="pre">false</span></code> ：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan email:send <span class="m">1</span> --queue
+</pre></div>
+</div>
+<div class="section" id="id12">
+<h4>35.3.2.1. 带值的选项<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
+<p>接下来，我们来看一个带值的选项。如果用户必须为选项指定一个值，需要用一个等号 <code class="docutils literal"><span class="pre">=</span></code> 作为选项名称的后缀：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 控制台命令 signature 的名称。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var string</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="nv">$signature</span> <span class="o">=</span> <span class="s1">&#39;email:send {user} {--queue=}&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>在这个例子中， 用户可以传递该选项的值，如下所示：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan email:send <span class="m">1</span> --queue<span class="o">=</span>default
+</pre></div>
+</div>
+<p>你可以通过在选项名称后面指定默认值来设定选项的默认值。如果用户没有传递选项值，将使用设定的默认值：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>email:send <span class="o">{</span>user<span class="o">}</span> <span class="o">{</span>--queue<span class="o">=</span>default<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h4>35.3.2.2. 选项简写<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
+<p>要在定义选项时指定简写，你可以在选项名称前指定它，并且使用 <code class="docutils literal"><span class="pre">|</span></code> 分隔符将简写与完整选项名称分隔开：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>email:send <span class="o">{</span>user<span class="o">}</span> <span class="o">{</span>--Q<span class="p">|</span>queue<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>35.3.3. 输入数组<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>如果你想定义参数或选项你可以使用 <code class="docutils literal"><span class="pre">*</span></code> 符号来期望输入数组。首先，我们先看一个指定数组参数的实例：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>email:send <span class="o">{</span>user*<span class="o">}</span>
+</pre></div>
+</div>
+<p>调用此方法时，可以传递 <code class="docutils literal"><span class="pre">user</span></code> 参数给命令行。例如，以下命令会设置 <code class="docutils literal"><span class="pre">user</span></code> 的值为 <code class="docutils literal"><span class="pre">['foo',</span> <span class="pre">'bar']</span></code> ：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan email:send foo bar
+</pre></div>
+</div>
+<p>在定义期望数组输入的选项时，传递给命令的每个选项值都应以选项名称为前缀：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>email:send <span class="o">{</span>user<span class="o">}</span> <span class="o">{</span>--id<span class="o">=</span>*<span class="o">}</span>
+
+php artisan email:send --id<span class="o">=</span><span class="m">1</span> --id<span class="o">=</span><span class="m">2</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id15">
+<h3>35.3.4. 输入说明<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p>你可以通过冒号为参数和选项添加说明。如果你需要一点额外的空间来定义你的命令，可以随意分开在多个行里：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 控制台命令和 signature 属性</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var string</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="nv">$signature</span> <span class="o">=</span> <span class="s1">&#39;email:send</span>
+<span class="s1">                        {user : The ID of the user}</span>
+<span class="s1">                        {--queue= : Whether the job should be queued}&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="i-o">
+<h2>35.4. I/O 命令<a class="headerlink" href="#i-o" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id16">
+<h3>35.4.1. 检索输入<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<p>在执行命令时，显然你需要访问命令的参数和选项的值。此时，你可以使用 <code class="docutils literal"><span class="pre">argument</span></code> 和 <code class="docutils literal"><span class="pre">option</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 执行控制台命令</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return mixed</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$userId</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">argument</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">);</span>
+
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果你需要将所有参数以 <code class="docutils literal"><span class="pre">array</span></code> 检索，可以调用 <code class="docutils literal"><span class="pre">arguments</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$arguments</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">arguments</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">option</span></code> 方法可以非常容易的检索参数选项。要将所有选项作为 <code class="docutils literal"><span class="pre">array</span></code> 检索，可以使用 <code class="docutils literal"><span class="pre">options</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 检索一个特定的选项...</span>
+<span class="nv">$queueName</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">option</span><span class="p">(</span><span class="s1">&#39;queue&#39;</span><span class="p">);</span>
+
+<span class="c1">// 检索所有选项...</span>
+<span class="nv">$options</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>如果参数或选项不存在，则返回 <code class="docutils literal"><span class="pre">null</span></code> 。</p>
+</div>
+<div class="section" id="id17">
+<h3>35.4.2. 交互式输入<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h3>
+<p>除了显示输出外，你还可以要求用户在执行命令时提供输入。 <code class="docutils literal"><span class="pre">ask</span></code> 方法将提示用户给定问题，接收他们的输入，然后将用户的输入返回到你的命令：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 执行控制台命令。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return mixed</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$name</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">ask</span><span class="p">(</span><span class="s1">&#39;What is your name?&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">secret</span></code> 方法和 <code class="docutils literal"><span class="pre">ask</span></code> 方法类似，但用户输入的内容在他们输入控制台时是不可见的。这个方法适用于需要用户输入像密码这样的敏感信息的情况：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$password</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">secret</span><span class="p">(</span><span class="s1">&#39;What is the password?&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id18">
+<h4>35.4.2.1. 请求确认<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
+<p>如果你要用户提供一些简单的确认信息，你可以使用 <code class="docutils literal"><span class="pre">confirm</span></code> 方法。默认情况下，该方法将返回 <code class="docutils literal"><span class="pre">false</span></code> 。但是，如果用户根据提示输入 <code class="docutils literal"><span class="pre">y</span></code> 或者 <code class="docutils literal"><span class="pre">yes</span></code> 则会返回 <code class="docutils literal"><span class="pre">true</span></code> 。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">confirm</span><span class="p">(</span><span class="s1">&#39;Do you wish to continue?&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h4>35.4.2.2. 自动补全<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h4>
+<p>anticipate 方法可用于为可能的选择提供自动补全功能。不管提示的内容是什么，用户仍然可以选择任何回答：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">anticipate</span><span class="p">(</span><span class="s1">&#39;What is your name?&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Taylor&#39;</span><span class="p">,</span> <span class="s1">&#39;Dayle&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id20">
+<h4>35.4.2.3. 多重选择<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h4>
+<p>如果你要给用户提供预定义的一组选择，可以使用 <code class="docutils literal"><span class="pre">choice</span></code> 方法。如果用户未选择任何选项，你可以返回设置的默认值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">choice</span><span class="p">(</span><span class="s1">&#39;What is your name?&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Taylor&#39;</span><span class="p">,</span> <span class="s1">&#39;Dayle&#39;</span><span class="p">],</span> <span class="nv">$defaultIndex</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id21">
+<h4>35.4.2.4. 编写输出<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h4>
+<p>可以使用 <code class="docutils literal"><span class="pre">line</span></code> 、 <code class="docutils literal"><span class="pre">info</span></code>  、 <code class="docutils literal"><span class="pre">comment</span></code> 、 <code class="docutils literal"><span class="pre">question</span></code> 和 <code class="docutils literal"><span class="pre">error</span></code> 方法来将输出发送到终端。每个方法都有适当的 <code class="docutils literal"><span class="pre">ANSI</span></code> 颜色来作为表明其目的。例如，如果我们要向用户展示普通信息，通常来说，最好使用 <code class="docutils literal"><span class="pre">info</span></code> 方法，它会在控制台将输出的内容显示为绿色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 执行控制台命令。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return mixed</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">info</span><span class="p">(</span><span class="s1">&#39;Display this on the screen&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>显示错误信息， 使用 <code class="docutils literal"><span class="pre">error</span></code> 方法。 错误信息通常显示为红色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">error</span><span class="p">(</span><span class="s1">&#39;Something went wrong!&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果你想在控制台显示无色的输出，请使用 <code class="docutils literal"><span class="pre">line</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">line</span><span class="p">(</span><span class="s1">&#39;Display this on the screen&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id22">
+<h4>35.4.2.5. 表格布局<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h4>
+<p>对于多行列数据的格式化输出， <code class="docutils literal"><span class="pre">table</span></code> 方法处理起来更轻松。基于传入的表头和行数据，它会动态计算宽高：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Email&#39;</span><span class="p">];</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">all</span><span class="p">([</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">toArray</span><span class="p">();</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="nv">$headers</span><span class="p">,</span> <span class="nv">$users</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id23">
+<h4>35.4.2.6. 进度条<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h4>
+<p>对于耗时任务，提示进度非常有必要。使用 <code class="docutils literal"><span class="pre">output</span></code> 对象就可以创建、加载以及停止进度条。首先，定义好任务总步数，然后，在每次任务执行时加载进度条：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">all</span><span class="p">();</span>
+
+<span class="nv">$bar</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">createProgressBar</span><span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$users</span><span class="p">));</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">performTask</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+
+    <span class="nv">$bar</span><span class="o">-&gt;</span><span class="na">advance</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="nv">$bar</span><span class="o">-&gt;</span><span class="na">finish</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>参阅 <a class="reference external" href="https://symfony.com/doc/2.7/components/console/helpers/progressbar.html">Symfony 进度条组件文档</a> 获取更多高级用法。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id24">
+<h2>35.5. 注册命令<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">app/Console/Commands</span></code> 目录下的命令都会被注册，这是由于控制台内核的 <code class="docutils literal"><span class="pre">commands</span></code> 方法调用了 <code class="docutils literal"><span class="pre">load</span></code> 。实际上，可随意调用 <code class="docutils literal"><span class="pre">load</span></code> 来扫描其他目录下的 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 注册应用的命令</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">commands</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/Commands&#39;</span><span class="p">);</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/MoreCommands&#39;</span><span class="p">);</span>
+
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>也可以在 <code class="docutils literal"><span class="pre">app/Console/Kernel.php</span></code> 文件的 <code class="docutils literal"><span class="pre">$commands</span></code> 属性中手动注册命令的类名。 <code class="docutils literal"><span class="pre">Artisan</span></code> 启动时，这个属性列出的命令都将由 服务容器 解析并通过 <code class="docutils literal"><span class="pre">Artisan</span></code> 进行注册：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="nv">$commands</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nx">Commands\SendEmails</span><span class="o">::</span><span class="na">class</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id25">
+<h2>35.6. 程序调用命令<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h2>
+<p>有时需要在 <code class="docutils literal"><span class="pre">CLI</span></code> 之外执行 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令，例如，在路由或控制器里触发 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令。要实现调用，可以使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 门面的 <code class="docutils literal"><span class="pre">call</span></code> 方法。 <code class="docutils literal"><span class="pre">call</span></code> 方法的第一个参数接受命令名，第二个参数接受数组形式的命令参数。退出码将返回：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/foo&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$exitCode</span> <span class="o">=</span> <span class="nx">Artisan</span><span class="o">::</span><span class="na">call</span><span class="p">(</span><span class="s1">&#39;email:send&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;--queue&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;default&#39;</span>
+    <span class="p">]);</span>
+
+    <span class="c1">//</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Artisan</span></code> 门面的 <code class="docutils literal"><span class="pre">queue</span></code> 方法可以将 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令队列化，交由 队列工作进程 进行后台处理。使用此方法之前，务必配置好队列以及运行队列监听器：</p>
+<p>可以指定 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令派发的连接或任务：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Artisan</span><span class="o">::</span><span class="na">queue</span><span class="p">(</span><span class="s1">&#39;email:send&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;--queue&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;default&#39;</span>
+<span class="p">])</span><span class="o">-&gt;</span><span class="na">onConnection</span><span class="p">(</span><span class="s1">&#39;redis&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">onQueue</span><span class="p">(</span><span class="s1">&#39;commands&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id26">
+<h3>35.6.1. 传递数组值<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h3>
+<p>如果定义了接受数组的选项，可以直接传递数组到该选项：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/foo&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$exitCode</span> <span class="o">=</span> <span class="nx">Artisan</span><span class="o">::</span><span class="na">call</span><span class="p">(</span><span class="s1">&#39;email:send&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;--id&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">13</span><span class="p">]</span>
+    <span class="p">]);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id27">
+<h3>35.6.2. 传递布尔值<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h3>
+<p>需要指定没有选项值的选项时，例如， <code class="docutils literal"><span class="pre">migrate:refresh</span></code> 命令的 <code class="docutils literal"><span class="pre">--force</span></code> 选项，就可以传入 <code class="docutils literal"><span class="pre">true</span></code> 或 <code class="docutils literal"><span class="pre">false</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$exitCode</span> <span class="o">=</span> <span class="nx">Artisan</span><span class="o">::</span><span class="na">call</span><span class="p">(</span><span class="s1">&#39;migrate:refresh&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s1">&#39;--force&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id28">
+<h3>35.6.3. 命令的互相调用<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">call</span></code> 方法可以实现调用其它 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令。 <code class="docutils literal"><span class="pre">call</span></code> 方法接受命令名和数组形式的选项：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 执行控制台命令</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return mixed</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">call</span><span class="p">(</span><span class="s1">&#39;email:send&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;--queue&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;default&#39;</span>
+    <span class="p">]);</span>
+
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果要抑制控制台命令的所有输出，可以使用 <code class="docutils literal"><span class="pre">callSilent</span></code> 方法。 <code class="docutils literal"><span class="pre">callSilent</span></code> 的使用方法同 <code class="docutils literal"><span class="pre">call</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">callSilent</span><span class="p">(</span><span class="s1">&#39;email:send&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;--queue&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;default&#39;</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的广播系统.html" class="btn btn-neutral float-right" title="36. 广播" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的用户授权系统.html" class="btn btn-neutral" title="34. Laravel用户授权系统" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,588 @@
+****
+模板标签
+****
+
+.. contents:: 目录
+   :depth: 4
+
+渲染视图
+========
+调用系统模板文件
+---------------
+在任何 ``php`` 代码中可以使用 ``template()`` 函数来渲染一个视图文件。例如：
+
+.. code-block:: php
+
+	<?php
+	$setting = $_W['setting'];
+	//将渲染web/themes/default/user/login.html文件
+	template('user/login');
+
+``app`` 端与 ``web`` 端类似，只不过是起始目录为 ``/app/themes/default/xxx/yyyy.html``
+
+调用模块中的模板文件
+-------------------
+同生成 ``URL`` 函数一样，微擎也同样为模块封装了单独的模板调用函数，例如：
+
+.. code-block:: php
+
+	<?php
+	class We7_demoModuleSite extends WeModuleSite {
+		public function doMobileIndex1() {
+			global $_W, $_GPC;
+			$title = '支付测试';
+			//将渲染模块目录下的app端的模板文件
+			// addons/we7_demo/template/mobile/index1.html
+			include $this->template('index1');
+		}
+
+		public function doWebManage() {
+			global $_W, $_GPC;
+			//将渲染模块目录下的web端的模板文件
+			// addons/we7_demo/template/manage1.html
+			include $this->template('manage1');
+		}
+	}
+
+模块中的 ``template`` 函数，分为 ``app`` 端与 ``web`` 端的调用，开发时请大家注意各自的目录。
+
+模板标签
+========
+模板标签的解析定义在 ``(web|app)/common/template.func.php`` 文件的 ``template_parse()`` 方法中。
+
+输出变量
+--------
+
+源码：
+
+.. code-block:: php
+
+	/*把{$variable}替换为<?php echo $variable;?>*/
+	$str = preg_replace('/{(\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)}/', '<?php echo $1;?>', $str);
+
+	/*把{$variable['fans']['nickname'] }替换为<?php echo $variable['fans']['nickname'];?>*/
+	$str = preg_replace('/{(\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff\[\]\'\"\$]*)}/', '<?php echo $1;?>', $str);
+
+``{$foo}`` 输出标签是由一对花括号做为定界符的，不支持输出数组，相当于 ``php`` 中的 ``echo`` 。
+
+.. code-block:: php
+
+	<div class="user-head ellipsis">{$_W['fans']['nickname']} :</div>
+	// 相当于
+	<div class="user-head ellipsis"><?php echo $_W['fans']['nickname']; ?> :</div>
+
+输出常量
+--------
+
+源码：
+
+.. code-block:: php
+
+    /*把常量{CONSTANT}替换为<?php echo CONSTANT;?>*/
+	$str = preg_replace('/{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)}/s', '<?php echo $1;?>', $str);
+
+所以，常量可以直接使用 ``{CONSTANT}`` 输出值。
+
+判断语句
+--------
+
+源码：
+
+.. code-block:: php
+
+	/*把{if  $condition}替换为 <? php if($condition)?>*/
+	$str = preg_replace('/{if\s+(.+?)}/', '<?php if($1) { ?>', $str);
+
+	/*把{else}替换为 <?php } else { ?>*/
+	$str = preg_replace('/{else}/', '<?php } else { ?>', $str);
+
+	/*把{else if $condition}替换为<?php } else if($condition) { ?> */
+	$str = preg_replace('/{else ?if\s+(.+?)}/', '<?php } else if($1) { ?>', $str);
+
+	/*把{/if}替换为<?php } ?>*/
+	$str = preg_replace('/{\/if}/', '<?php } ?>', $str);
+
+.. code-block:: shell
+
+	{if condition}
+	{elseif condition}
+	{else}
+	{/if}
+
+条件选择分支。
+
+如果 ``$do`` 等于 ``record`` 则显示下面的卡券领取记录，否则显示查看卡券。
+
+.. code-block:: html
+
+	{if $do == 'record'}
+		<li class="active"><a href="javascript:;">卡券领取记录</a></li>
+	{else}
+		<li class="active"><a href="javascript:;">查看卡券</a></li>
+	{/if}
+
+``if`` 和 ``elseif`` 配合使用。
+
+.. code-block:: html
+
+	{if $dca['status'] == 1}
+	    <span class="label label-success">未使用</span>
+	{elseif $dca['status'] == 2}
+	    <span class="label label-warning">已失效</span>
+	{elseif $dca['status'] == 3}
+	    <span class="label label-danger">已核销</span>
+	{elseif $dca['status'] == 4}
+	    <span class="label label-default">已删除</span>
+	{else}
+	    <span class="label label-default">全部</span>
+	{/if}
+
+
+循环语句
+--------
+
+源码：
+
+.. code-block:: php
+
+	/*把{loop $items $item}替换为<?php if(is_array($items)) { foreach($items as $item) { ?>*/
+	$str = preg_replace('/{loop\s+(\S+)\s+(\S+)}/', '<?php if(is_array($1)) { foreach($1 as $2) { ?>', $str);
+
+	/*把{loop $items $index $item}替换为<?php if(is_array($items)) { foreach($items as $index => $item) { ?>*/
+	$str = preg_replace('/{loop\s+(\S+)\s+(\S+)\s+(\S+)}/', '<?php if(is_array($1)) { foreach($1 as $2 => $3) { ?>', $str);
+
+	/*把{/loop}替换为<?php } } ?>*/
+	$str = preg_replace('/{\/loop}/', '<?php } } ?>', $str);
+
+.. code-block:: shell
+
+	{loop $result $value}
+	{/loop}
+
+	{loop $result $key $value}
+	{/loop}
+
+循环遍历语句，相当于 ``PHP`` 中的：
+
+.. code-block:: php
+
+	foreach ($result as $value) {
+
+	}
+
+	foreach ($result as $key => $value) {
+
+	}
+
+参数：
+
+- ``$result`` ：数组变量；
+- ``$key`` ：可以是任何名称，将存储数组中每一成员的键值；
+- ``$value`` ：可以是任何名称，将存储数组中每一成员的值；
+
+循环一个数组用 ``loop`` 标签，与 ``php`` 中的 ``foreach`` 函数类似，第一个参数为数组，第二个参数为数组的索引，第三个参数为数组每项的值，只要标签成对匹配，模板中的标签是可以嵌套使用的。
+
+.. code-block:: php
+
+	{loop $list $index $item}
+	<tr>
+	    <td>{$index}（显示数组的索引）：</td>
+	    <td>{$item['user']['nickname']}</td>
+	    <td>
+	    {if $item['follow'] == '1'}
+	        <span class="label label-success">已关注 </span>
+	    {elseif $item['unfollowtime'] <> '0'}
+	        <span class="label label-warning" >取消关注 </span>
+	    {else}
+	        <span class="label label-danger">未关注 </span>
+	    {/if}
+	    </td>
+	</tr>
+	{/loop}
+
+php语句
+-------
+
+源码：
+
+.. code-block:: php
+
+	/*把{php expression}替换为 <? php expression ?>*/
+	$str = preg_replace('/{php\s+(.+?)}/', '<?php $1?>', $str);
+
+``{php expression}`` 运行一个 ``PHP`` 原生代码，不支持多行 ``php`` 语句。
+
+参数 ``expression`` 符合 ``PHP`` 语法的表达式。
+
+.. code-block:: php
+
+	<span class="help-block">{ php echo date('Y-m-d H:i:s', $row['followtime'])}</span>
+
+当然，我们可以直接在模板页面里使用 ``php`` 代码。
+
+.. code-block:: php
+
+    // 在模板中直接写php代码
+    <?php echo date('Y-m-d H:i:s', $row['followtime']) ?>
+
+源码：
+
+.. code-block:: shell
+
+	/*把 <?php code ?>替换为？？*/
+	$str = preg_replace_callback('/<\?php([^\?]+)\?>/s', "template_addquote", $str);
+
+	function template_addquote($matchs) {
+		$code = "<?php {$matchs[1]}?>";
+		// 匹配[test]但不匹配[test]['test']这样的表达式，它会把[test]替换为['test']
+		$code = preg_replace('/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\](?![a-zA-Z0-9_\-\.\x7f-\xff\[\]]*[\'"])/s', "['$1']", $code);
+	    // 把\"替换为"，即去掉双引号的转义字符
+		return str_replace('\\\"', '\"', $code);
+	}
+
+引用模板
+-------
+
+源码：
+
+.. code-block:: php
+
+	// 把{template  content}替换为
+	$str = preg_replace('/{template\s+(.+?)}/', '<?php (!empty($this) && $this instanceof WeModuleSite || '.intval($inmodule).') ? (include $this->template($1, TEMPLATE_INCLUDEPATH)) : (include template($1, TEMPLATE_INCLUDEPATH));?>', $str);
+
+上面 ``php`` 代码表示如果在模块中或者指定 ``$inmodule`` 为 ``true`` ，则执行 ``include $this->template($1, TEMPLATE_INCLUDEPATH)`` ；如果不在模块中，则替换为 ``include template($1, TEMPLATE_INCLUDEPATH)`` 。
+
+``{template '$templatename'}`` 引用一个模板文件。参数 ``$templatename`` 模板名称或是路径+模板名称。
+
+在模板中如果需要引用其它模板文件可以使用以下的方法：
+
+.. code-block:: html
+
+	//模块中的使用方法，不需要添加目录信息
+	{template 'header'}
+
+	//系统的模板引用的方法，需要添加目录信息
+	{template 'common/header-base'}
+
+
+创建URL
+-------
+
+源码：
+
+.. code-block:: php
+
+	/*把{url 'extension/service/display'}替换为<?php echo url('extension/service/display');?>*/
+	$str = preg_replace('/{url\s+(\S+)}/', '<?php echo url($1);?>', $str);
+
+	/*把{url 'home/welcome/ext' array('m' => $module['name'])}替换为<?php echo url('home/welcome/ext',array('m' => $module['name']));?>*/
+	$str = preg_replace('/{url\s+(\S+)\s+(array\(.+?\))}/', '<?php echo url($1, $2);?>', $str);
+
+``{url 'controller/action/do' (array)querystring}`` 创建一个微擎 ``URL`` 。
+
+参数：
+
+- ``controller`` 控制器名称， ``URL`` 中的 ``c=`` 值；
+- ``action`` URL 中的 ``a=`` 值；
+- ``do`` URL 中的 ``do=`` 值；
+- ``querystring`` URL 中后面的 ``querystring`` 参数；
+
+定义 ``URL`` 时，与在 ``php`` 文件中的创建方法一样，具体使用如下：
+
+.. code-block:: html
+
+	<a href="{url 'extension/service/display'}" class="tile img-rounded"><i class="fa fa-glass"></i><span>常用服务</span></a>
+
+	// array('m' => $module['name']) 为数组形式的查询参数
+	<a href="{url 'home/welcome/ext' array('m' => $module['name'])}">模块 - {$module['title']}</a>
+
+此标签并没有为模块 ``$this→createMobileUrl('xx')`` 函数提供封装，在模块中的模板中请按以下方法创建：
+
+.. code-block:: html
+
+    <a href="{php echo $this->createMobileUrl('order')}"></a>
+
+转义附件URL
+----------
+
+源码：
+
+.. code-block:: php
+
+	/*把{media $imageurl}替换为<?php echo tomedia($imageurl);?>*/
+	$str = preg_replace('/{media\s+(\S+)}/', '<?php echo tomedia($1);?>', $str);
+
+``{media imageurl}`` 转换一个图片地址为绝对地址。
+
+参数 ``imageurl`` 图片地址，可以是相对也可以绝对。
+
+微擎系统支持远程附件，如果你有用到图片或是附件请转义一下地址，具体使用如下：
+
+.. code-block:: html
+
+    <i style="background:url({media $nav['icon']}) no-repeat;"></i>
+
+输出花括号
+---------
+
+源码：
+
+.. code-block:: php
+
+	//输出花括号
+	$str = str_replace('{##', '{', $str);
+	$str = str_replace('##}', '}', $str);
+
+``{##string##}`` 会输出为 ``{string}`` 。
+
+因为模板标签定界符是一对花括号，所以当你想输出一对花括号本身时可以使用以下方法：
+
+.. code-block:: html
+
+    {##$order##}
+
+则此花括号和变量不会被转义。
+
+
+
+
+数据调用(只能App端使用)
+=====================
+数据调用模板标签只能在 **前台页面** 使用。
+
+源码：
+
+.. code-block:: php
+
+	/*{data func="site_navs" index="" item="" assign="result" return="true" limit="10" module="we7_demo}*/
+	$str = preg_replace_callback('/{data\s+(.+?)}/s', "moduledata", $str);
+	$str = preg_replace('/{\/data}/', '<?php } } ?>', $str);
+
+如果是直接在模板页面显示数据，调用方式如下：
+
+.. code-block:: html
+
+	{data func="site_navs" index="" item="" assign="result" return="false" limit="10" module="we7_demo}
+		//循环体
+	{/data}
+
+	//模板解析结果：
+	<?php  $result = modulefunc('we7_demo', 'site_navs', array (
+	  'func' => 'site_navs',
+	  'index' => 'iteration',
+	  'item' => 'item',
+	  'assign' => 'result',
+	  'return' => 'false',
+	  'limit' => '10',
+	  'module' => 'we7_demo',
+	  'multiid' => 2,
+	  'uniacid' => 2,
+	  'acid' => 0,
+	));
+	if(is_array($result)) {
+		$i=0;
+		foreach($result as $i => $item) {
+			$i++;
+			$item['iteration'] = $i; // 这里把索引放到$item变量中
+	?>
+		//循环体
+	<?php
+		}
+	}
+	?>
+
+如果是在模板页面赋值返回结果给某个变量，调用方式如下：
+
+.. code-block:: html
+
+    {data func="site_navs" index="" item="" assign="result" return="true" limit="10" module="we7_demo}
+
+	//模板解析结果：
+	<?php  $result = modulefunc('we7_demo', 'site_navs', array (
+	  'func' => 'site_navs',
+	  'index' => 'iteration',
+	  'item' => 'item',
+	  'assign' => 'result',
+	  'return' => 'true',
+	  'limit' => '10',
+	  'module' => 'we7_demo',
+	  'multiid' => 2,
+	  'uniacid' => 2,
+	  'acid' => 0,
+	));
+	?>
+
+参数：
+
+- ``func`` ：调用函数；此处函数为系统定义+自定义，系统定义函数在 ``app/common/template.php`` 中；而自定义函数在模块的 ``model.php`` 文件中；
+- ``item`` ：默认为 ``row`` ，使用： ``$row`` 。指定循环体中数组值的变量，在循环体中可以过用此变量输出值；
+- ``index`` ：默认为 ``iteration`` ，使用： ``$row['iteration']`` 。指定循环体中的索引参数，如果指定过 ``item`` 参数，则 ``{item}['{index}']`` ；
+- ``assign`` ：指定该标签得到数据后，存入的变量名称。如果为空则存到与 ``func`` 同名的变量中，方便在下方的代码中使用；
+- ``return`` ：默认为 ``false`` ，为 ``false`` 时，获取到数据后直接循环输出，为 ``true`` 时，获取到数据后作为变量返回；
+- ``limit`` ：默认为 ``10`` ，指定获取数据的条数；
+- ``module`` ：如果模块中有扩展标签 ``func`` 则通过此参数传递模块名称；
+
+**注意：上面这些参数是通用参数，对于具体的函数可能还有额外的参数可以传递。**
+
+系统函数
+-------
+
+调用微站导航
+^^^^^^^^^^^
+参数：
+
+- ``section`` ：区域位置，指定位置的导航；
+- ``multiid`` ：微站id，没有指定则获取统一帐号默认微站id；
+
+获取当前微站的导航
+
+.. code-block:: html
+
+	{data func="site_navs" item="row"}
+	    {$row['html']}
+	{/data}
+
+获取当前微站第二个位置的导航
+
+.. code-block:: html
+
+	{data func="site_navs" section="1" item="row"}
+	    第$row['iteration']个：{$row['html']}
+	{/data}
+
+调用幻灯片
+^^^^^^^^^
+
+参数：
+
+- ``limit`` ：从第几个记录开始获取；
+- ``multiid`` ：微站id，没有指定则获取统一帐号默认微站id；
+
+.. code-block:: html
+
+	{data func="site_slide_search" item="row" limit="4"}
+	    <li>Name： {$row['thumb']}</li>
+	{/data}
+
+	// app_slide和site_slide_search一样
+	{data func="app_slide" item="row" limit="4"}
+	    <li>Name： {$row['thumb']}</li>
+	{/data}
+
+调用文章列表
+^^^^^^^^^^^
+
+参数：
+
+- ``limit`` ：页面记录数，分页大小；
+- ``cid`` ：分类id；
+- ``multiid`` ：站点id；
+- ``iscommend`` ：是否是推荐；
+- ``ishot`` ：是否是头条；
+- ``assign`` ：指定该标签得到数据后，存入的变量名称。如果为空则存到与 ``func`` 同名的变量中，方便在下方的代码中使用；
+- ``return`` ：默认为 ``false`` ，为 ``false`` 时，获取到数据后直接循环输出，为 ``true`` 时，获取到数据后作为变量返回；
+- ``$result['list']`` ：文章记录；
+- ``$result['pager']`` ：分页；
+
+.. code-block:: html
+
+	// 方式一
+	{data func="site_article" cid=$cid return="false" assign="result" index="i"}
+		<li>
+		    <div class="info">
+		        <h3>{$result['list'][i]['title']}</h3>
+		        <p class="text">{$result['list'][i]['description']}</p>
+		    </div>
+		    <div class="pic">
+		        <img src="{php echo tomedia($result['list'][i]['thumb'])}">
+		    </div>
+		</li>
+	{/data}
+
+	// 方式二
+	{data func="site_article" cid=$cid return="true" assign="result"}
+	{loop $result['list'] $row}
+		<li>
+		    <div class="info">
+		        <h3>{$row['title']}</h3>
+		        <p class="text">{$row['description']}</p>
+		    </div>
+		    <div class="pic">
+		        <img src="{php echo tomedia($row['thumb'])}">
+		    </div>
+		</li>
+	{/loop}
+
+调用分类列表
+^^^^^^^^^^^
+
+参数：
+
+- ``parentid`` ：父分类 ``id`` ， ``parentid`` 指定获取某个分类的子类。 ``parentid`` 为0是则获取所有的父分类，默认是获取全部分类；
+
+.. code-block:: html
+
+	<div class="category">
+	    {data func="site_category" parentid="$cid"}
+	    <a href="{$row['linkurl']}">{$row['name']}</a>
+	    {/data}
+	</div>
+
+调用快捷菜单
+^^^^^^^^^^^
+该函数无参数。
+
+.. code-block:: html
+
+	// 直接会输出菜单html
+	{data func="site_quickmenu"}{/data}
+
+
+模块自定义函数
+-------------
+在具体模块的 ``model.php`` 文件中可以定义函数，然后通过 ``{data XXX}{/data}`` 模板标签来调用。
+
+
+调用其它模块钩子
+===============
+钩子标签。
+
+源码：
+
+.. code-block:: php
+
+	//模块嵌入点，把{hook content}替换为
+	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "template_modulehook_parser", $str);
+
+	/*把{/hook} 替换为<?php ; ?>*/
+	$str = preg_replace('/{\/hook}/', '<?php ; ?>', $str);
+
+``{hook func="test" module="we7_testhook" pagesize="15"}{/hook}`` 此标签除了 ``func`` 和 ``module`` 是必填的参数外，其余参数可由开发者自定义，会原样传入到嵌入点的函数中。它通过 ``params['参数名称']`` 来访问。
+
+.. note:: 使用该模板标签，需要对应的模块 ``hook.php`` 中文件定义对应的函数。
+
+
+常用变量
+========
+模板中提供了一些占位的变量，开发时根据需要可以在代码中定义这些变量，下面将说明有哪些变量。
+
+页面标题
+--------
+
+.. code-block:: php
+
+    $_W['page']['title'] = '定义此变量将会改变页面标题栏显示的内容';
+
+
+微信分享内容
+-----------
+
+.. code-block:: php
+
+	<?php
+	$_share = array(
+	    'title'   => ?,
+	    'link'    => ?,
+	    'imgUrl'  => ?,
+	    'content' => ?
+	);

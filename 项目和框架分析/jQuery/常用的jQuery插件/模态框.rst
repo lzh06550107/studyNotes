@@ -1,0 +1,129 @@
+******
+模态框
+******
+
+Nifty Modal Window Effects
+===========================
+
+简介
+----
+Nifty Modal Window Effects 为我们提供了多种弹出效果的模态框，通过CSS3实现。
+
+用法
+----
+
+模态窗口的结构由主包装器和内容分区组成。为了使用它，首先我们将下面元素添加到 ``body`` 中。
+
+.. code-block:: html
+
+	<!--模块框-->
+	<div class="md-modal md-effect-1" id="modal-1">
+		<div class="md-content">
+			<h3>Modal Dialog</h3>
+			<div>
+				<p>This is a modal window. You can do the following things with it:</p>
+				<ul>
+					<li><strong>Read:</strong> Modal windows will probably tell you something important so don't forget to read what it says.</li>
+					<li><strong>Look:</strong> modal windows enjoy a certain kind of attention; just look at it and appreciate its presence.</li>
+					<li><strong>Close:</strong> click on the button below to close the modal.</li>
+				</ul>
+				<button class="md-close">Close me!</button>
+			</div>
+		</div>
+	</div>
+
+	...
+	<!--遮罩-->
+	<div class="md-overlay"></div>
+
+主包装器用作容器，只需显示或隐藏（具有可见性，使用 ``md-show`` 类），内部内容将具有变换。遮罩层放在模态之后，因此我们可以使用它控制显示：
+
+.. code-block:: css
+
+	.md-modal {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		width: 50%;
+		max-width: 630px;
+		min-width: 320px;
+		height: auto;
+		z-index: 2000;
+		visibility: hidden;
+		backface-visibility: hidden;
+		transform: translateX(-50%) translateY(-50%);
+	}
+
+	.md-show {
+		visibility: visible;
+	}
+
+	.md-overlay {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		visibility: hidden;
+		top: 0;
+		left: 0;
+		z-index: 1000;
+		opacity: 0;
+		background: rgba(143,27,15,0.8);
+		transition: all 0.3s;
+	}
+
+	.md-show ~ .md-overlay {
+		opacity: 1;
+		visibility: visible;
+	}
+
+对于某些效果，我们还会在 ``html`` 元素中添加一个类。我们希望这能够在 body 和内容上创建一些3D效果。请注意，我们假设页面的所有内容（模态框和遮罩层除外）都包含在容器中：
+
+.. code-block:: css
+
+	.md-perspective,
+	.md-perspective body {
+		height: 100%;
+		overflow: hidden;
+	}
+
+	.md-perspective body  {
+		background: #222;
+		perspective: 600px;
+	}
+
+	.container {
+		background: #e74c3c;
+		min-height: 100%;
+	}
+
+为了能够控制每个效果，我们使用一个额外的效果类来定义我们想要的特定模态窗口的变换类型。所有定义的默认动画效果在 ``component.css`` 文件中，用户可以自由选择。单个效果的示例如下：
+
+.. code-block:: css
+
+	/* Effect 5: newspaper */
+	.md-show.md-effect-5 ~ .md-overlay {
+		background: rgba(0,127,108,0.8);
+	}
+
+	.md-effect-5 .md-content {
+		transform: scale(0) rotate(720deg);
+		opacity: 0;
+		transition: all 0.5s;
+	}
+
+	.md-show.md-effect-5 .md-content {
+		transform: scale(1) rotate(0deg);
+		opacity: 1;
+	}
+
+触发按钮必须具有 ``data-attribute`` ，该属性保存对我们要显示的模式框的引用：
+
+.. code-block:: html
+
+    <button class="md-trigger" data-modal="modal-5">Newspaper</button>
+
+md-trigger 表示为触发器，data-modal指示打开的模态框标识。
+
+对于特殊视图情况，我们还将 md-setperspective 类添加到触发按钮。
+
+使用 ``JavaScript`` 打开模态框时，我们可以在单击按钮时将类 md-show 添加到相应的模式中，如果有必要，将 md-perspective 类添加到 html 元素。

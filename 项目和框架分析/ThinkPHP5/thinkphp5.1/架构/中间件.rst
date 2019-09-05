@@ -1,0 +1,401 @@
+***
+中间件
+***
+
+.. note:: 从 ``5.1.6+`` 版本开始，正式引入中间件的支持。
+
+中间件主要用于拦截或过滤应用的 ``HTTP`` 请求，并进行必要的业务处理。
+
+
+定义中间件
+==========
+
+可以通过命令行指令快速生成中间件
+
+.. code-block:: shell
+
+    php think make:middleware Check
+
+这个指令会 ``application/http/middleware`` 目录下面生成一个 ``Check`` 中间件。
+
+.. code-block:: php
+
+	<?php
+
+	namespace app\http\middleware;
+
+	class Check
+	{
+	    public function handle($request, \Closure $next)
+	    {
+	        if ($request->param('name') == 'think') {
+	            return redirect('index/think');
+	        }
+
+	        return $next($request);
+	    }
+	}
+
+中间件的入口执行方法必须是 ``handle`` 方法，而且第一个参数是 ``Request`` 对象，第二个参数是一个闭包。
+
+.. note:: 中间件 ``handle`` 方法的返回值必须是一个 ``Response`` 对象。
+
+在这个中间件中我们判断当前请求的 ``name`` 参数等于 ``think`` 的时候进行重定向处理。否则，请求将进一步传递到应用中。要让请求继续传递到应用程序中，只需使用 ``$request`` 作为参数去调用回调函数 ``$next`` 。
+
+.. note:: 在某些需求下，可以使用第三个参数传入额外的参数。
+
+.. code-block:: php
+
+	<?php
+
+	namespace app\http\middleware;
+
+	class Check
+	{
+	    public function handle($request, \Closure $next, $name)
+	    {
+	        if ($name == 'think') {
+	            return redirect('index/think');
+	        }
+
+	        return $next($request);
+	    }
+	}
+
+
+前置/后置中间件
+==============
+中间件是在请求具体的操作之前还是之后执行，完全取决于中间件的定义本身。
+
+下面是一个前置行为的中间件
+
+.. code-block:: php
+
+	<?php
+
+	namespace app\http\middleware;
+
+	class Before
+	{
+	    public function handle($request, \Closure $next)
+	    {
+	        // 添加中间件执行代码
+
+	        return $next($request);
+	    }
+	}
+
+下面是一个后置行为的中间件
+
+.. code-block:: php
+
+	<?php
+
+	namespace app\http\middleware;
+
+	class After
+	{
+	    public function handle($request, \Closure $next)
+	    {
+			$response = $next($request);
+
+	        // 添加中间件执行代码
+
+	        return $response;
+	    }
+	}
+
+来个比较实际的例子，我们需要判断当前浏览器环境是在微信或支付宝
+
+.. code-block:: php
+
+	namespace app\http\middleware;
+
+	/**
+	 * 访问环境检查，是否是微信或支付宝等
+	 */
+	class InAppCheck
+	{
+	    public function handle($request, \Closure $next)
+	    {
+	        if (preg_match('~micromessenger~i', $request->header('user-agent'))) {
+	            $request->InApp = 'WeChat';
+	        } else if (preg_match('~alipay~i', $request->header('user-agent'))) {
+	            $request->InApp = 'Alipay';
+	        }
+	        return $next($request);
+	    }
+	}
+
+然后在你的移动版的 ``module`` 里添加一个 ``middleware.php`` 文件，例如： ``/path/application/mobile/middleware.php``
+
+.. code-block:: php
+
+	return [
+	    app\http\middleware\InAppCheck::class,
+	];
+
+然后在你的 ``controller`` 中可以通过 ``$this->request->InApp`` 获取相关的值。
+
+注册中间件
+==========
+路由中间件
+----------
+最常用的中间件注册方式是注册路由中间件
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+		->middleware('Auth');
+
+或者使用完整的中间件类名
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+		->middleware(app\http\middleware\Auth::class);
+
+支持注册多个中间件
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+		->middleware(['Auth', 'Check']);
+
+
+``V5.1.7+`` 版本，你可以直接在应用配置目录下的 ``middleware.php`` 中先预定义中间件（其实就是增加别名标识），例如：
+
+.. code-block:: php
+
+	return [
+		'auth'	=>	app\http\middleware\Auth::class,
+	    'check'	=>	app\http\middleware\Check::class
+	];
+
+然后直接在路由中使用中间件别名注册
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+		->middleware(['auth', 'check']);
+
+``V5.1.8+`` 版本开始，可以支持使用别名定义一组中间件，例如：
+
+.. code-block:: php
+
+	return [
+		'check'	=>	[
+	    	app\http\middleware\Auth::class,
+	   		app\http\middleware\Check::class
+	    ],
+	];
+
+然后，直接使用下面的方式注册中间件
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+		->middleware('check');
+
+支持对路由分组注册中间件
+
+.. code-block:: php
+
+	Route::group('hello', function(){
+		Route::rule('hello/:name','hello');
+	})->middleware('Auth');
+
+``V5.1.8+`` 版本开始支持对某个域名注册中间件
+
+.. code-block:: php
+
+	Route::domain('admin', function(){
+		// 注册域名下的路由规则
+	})->middleware('Auth');
+
+如果需要传入额外参数给中间件，可以使用
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+		->middleware('Auth:admin');
+
+如果使用的是常量方式定义，可以在第二个参数传入中间件参数。
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+		->middleware(Auth::class, 'admin');
+
+如果需要定义多个中间件，使用数组方式
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+		->middleware([Auth::class, 'Check']);
+
+可以统一传入同一个额外参数
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+		->middleware([Auth::class, 'Check'], 'admin');
+
+或者单独指定中间件参数。
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+		->middleware(['Auth:admin', 'Check:editor']);
+
+使用闭包定义中间件
+------------------
+你不一定要使用中间件类，在某些简单的场合你可以使用闭包定义中间件，但闭包函数必须返回 ``Response`` 对象实例。
+
+.. code-block:: php
+
+	Route::group('hello', function(){
+		Route::rule('hello/:name','hello');
+	})->middleware(function($request,\Closure $next){
+	    if ($request->param('name') == 'think') {
+	        return redirect('index/think');
+	    }
+	    
+		return $next($request);
+	});
+
+
+中间件作用范围
+=============
+
+全局中间件
+----------
+你可以在应用目录下面定义 ``middleware.php`` 文件，使用下面的方式：
+
+.. code-block:: php
+
+	<?php
+
+	return [
+		\app\http\middleware\Auth::class,
+	    'Check',
+	    'Hello',
+	];
+
+中间件的注册应该使用完整的类名，如果没有指定命名空间则使用 ``app\http\middleware`` 作为命名空间。
+
+全局中间件的执行顺序就是定义顺序。可以在定义全局中间件的时候传入中间件参数，支持两种方式传入。
+
+.. code-block:: php
+
+	<?php
+
+	return [
+		[\app\http\middleware\Auth::class, 'admin'],
+	    'Check',
+	    'Hello:thinkphp',
+	];
+
+上面的定义表示 给 ``Auth`` 中间件传入 ``admin`` 参数，给 ``Hello`` 中间件传入 ``thinkphp`` 参数。
+
+全局中间件在App容器初始化后，会自动加载。位于 ``\think\App::init`` 方法中。
+
+模块中间件
+----------
+``V5.1.8+`` 版本开始，支持模块中间件定义，你可以直接在模块目录下面增加 ``middleware.php`` 文件，定义方式和应用中间件定义一样，只是只会在该模块下面生效。
+
+模块中间件在模块初始化后，会自动加载。位于 ``\think\route\dispatch\Module::init`` 方法中。
+
+控制器中间件
+-----------
+
+``V5.1.17+`` 版本开始，支持为控制器定义中间件。首先你的控制器需要继承系统的 ``think\Controller`` 类，然后在控制器中定义 ``middleware`` 属性，例如：
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\controller;
+
+	use think\Controller;
+
+	class Index extends Controller
+	{
+	    protected $middleware = ['Auth'];
+
+	    public function index()
+	    {
+	        return 'index';
+	    }
+
+	    public function hello()
+	    {
+	        return 'hello';
+	    }
+	}
+
+当执行 ``index`` 控制器的时候就会调用 ``Auth`` 中间件，一样支持使用完整的命名空间定义。
+
+如果需要设置控制器中间的生效操作，可以如下定义：
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\controller;
+
+	use think\Controller;
+
+	class Index extends Controller
+	{
+	    protected $middleware = [ 
+	    	'Auth' 	=> ['except' 	=> ['hello'] ],
+	        'Hello' => ['only' 		=> ['hello'] ],
+	    ];
+
+	    public function index()
+	    {
+	        return 'index';
+	    }
+
+	    public function hello()
+	    {
+	        return 'hello';
+	    }
+	}
+
+控制器中间件在控制器实例化时，会自动加载。
+
+位于 ``\think\Controller::registerMiddleware`` 函数中。
+
+
+中间件向控制器传参
+=================
+可以通过给请求对象赋值的方式传参给控制器（或者其它地方），例如
+
+.. code-block:: php
+
+	<?php
+
+	namespace app\http\middleware;
+
+	class Hello
+	{
+	    public function handle($request, \Closure $next)
+	    {
+	        $request->hello = 'ThinkPHP';
+	        
+	        return $next($request);
+	    }
+	}
+
+.. note:: 注意，传递的变量名称不要和 ``param`` 变量有冲突。
+
+然后在控制器的方法里面可以直接使用
+
+.. code-block:: php
+
+	public function index(Request $request)
+	{
+		return $request->hello; // ThinkPHP
+	}
+
+实现原理：通过 ``\think\Request::__set`` 和 ``\think\Request::__get`` 方法实现。

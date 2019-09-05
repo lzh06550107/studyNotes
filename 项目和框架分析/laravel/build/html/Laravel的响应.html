@@ -1,0 +1,631 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>17. 响应 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="18. 视图" href="Laravel的视图.html"/>
+        <link rel="prev" title="16. 控制器方法的参数构建与运行" href="Laravel的控制器—控制器方法的参数构建与运行.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">17. 响应</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">17.1. 创建响应</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">17.1.1. 字符串</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">17.1.2. 数组</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">17.1.3. 响应对象</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">17.2. 重定向</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">17.2.1. 重定向至命名路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">17.2.2. 重定向至控制器行为</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">17.2.3. 重定向到外部域</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#session">17.2.4. 重定向并使用闪存的 Session 数据</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">17.3. 其他响应类型</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id13">17.3.1. 视图响应</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json">17.3.2. JSON 响应</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">17.3.3. 文件下载</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">17.3.4. 文件响应</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">17.4. 响应宏</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>17. 响应</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>17. 响应<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>17.1. 创建响应<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id3">
+<h3>17.1.1. 字符串<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>所有路由和控制器 都会返回一个响应并发送给用户的浏览器。Laravel 提供了几种不同的方式来返回响应。最基本的响应就是从路由或控制器返回一个字符串。框架会自动将字符串转换为一个完整的 <code class="docutils literal"><span class="pre">HTTP</span></code> 响应：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>17.1.2. 数组<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>除了从路由和控制器返回字符串之外，还可以返回数组。框架会自动将数组转为 <code class="docutils literal"><span class="pre">JSON</span></code> 响应。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">你还可以从路由或控制器中直接返回 <a class="reference external" href="https://laravel-china.org/docs/laravel/5.6/eloquent-collections">Eloquent 集合</a>  ，它们会自动转为 JSON 响应。</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>17.1.3. 响应对象<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>一般来说，你不会只从路由行为返回简单的字符串或数组。你也许会返回完整的 <code class="docutils literal"><span class="pre">Illuminate\Http\Response</span></code> 实例或视图。</p>
+<p>返回完整的 <code class="docutils literal"><span class="pre">Response</span></code> 实例允许你自定义响应的 <code class="docutils literal"><span class="pre">HTTP</span></code> 状态码和响应头信息。 <code class="docutils literal"><span class="pre">Response</span></code> 实例继承自 <code class="docutils literal"><span class="pre">Symfony\Component\HttpFoundation\Response</span></code> 类，该类提供了各种构建 <code class="docutils literal"><span class="pre">HTTP</span></code> 响应的方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">response</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+                  <span class="o">-&gt;</span><span class="na">header</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="id6">
+<h4>17.1.3.1. 为响应增加头信息<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<p>大部分的响应方法都是可链式调用的，使得创建响应实例的过程更具可读性。例如，你可以在响应返回给用户前使用 <code class="docutils literal"><span class="pre">header</span></code> 方法为其添加一系列的头信息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">(</span><span class="nv">$content</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">header</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="nv">$type</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">header</span><span class="p">(</span><span class="s1">&#39;X-Header-One&#39;</span><span class="p">,</span> <span class="s1">&#39;Header Value&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">header</span><span class="p">(</span><span class="s1">&#39;X-Header-Two&#39;</span><span class="p">,</span> <span class="s1">&#39;Header Value&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>或者，你可以使用 <code class="docutils literal"><span class="pre">withHeaders</span></code> 方法来指定要添加到响应的头信息数组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">(</span><span class="nv">$content</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">withHeaders</span><span class="p">([</span>
+                <span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="nv">$type</span><span class="p">,</span>
+                <span class="s1">&#39;X-Header-One&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Header Value&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;X-Header-Two&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Header Value&#39;</span><span class="p">,</span>
+            <span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cookie">
+<h4>17.1.3.2. 为响应增加 Cookie<a class="headerlink" href="#cookie" title="永久链接至标题">¶</a></h4>
+<p>你可以使用响应上的 <code class="docutils literal"><span class="pre">cookie</span></code> 方法轻松地将为响应增加 <code class="docutils literal"><span class="pre">Cookies</span></code> 。例如，你可以像这样使用 <code class="docutils literal"><span class="pre">cookie</span></code> 方法生成一个 <code class="docutils literal"><span class="pre">cookie</span></code> 并轻松地将其附加到响应上：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">(</span><span class="nv">$content</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">header</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="nv">$type</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">cookie</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">cookie</span></code> 方法还接受一些不太频繁使用的参数。通常，这些参数与原生 PHP 的 <code class="docutils literal"><span class="pre">setcookie</span></code> 方法的参数有着相同的目的和含义：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">-&gt;</span><span class="na">cookie</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$value</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">,</span> <span class="nv">$path</span><span class="p">,</span> <span class="nv">$domain</span><span class="p">,</span> <span class="nv">$secure</span><span class="p">,</span> <span class="nv">$httpOnly</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>或者，您可以使用 <code class="docutils literal"><span class="pre">Cookie</span> <span class="pre">Facade</span></code> 「排队」， <code class="docutils literal"><span class="pre">Cookie</span></code> 以附加到应用程序的传出响应。 <code class="docutils literal"><span class="pre">queue</span></code> 方法接受一个 <code class="docutils literal"><span class="pre">Cookie</span></code> 实例或创建 <code class="docutils literal"><span class="pre">Cookie</span></code> 实例所需的参数。 这些 <code class="docutils literal"><span class="pre">cookie</span></code> 在发送到浏览器之前会附加到传出响应中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cookie</span><span class="o">::</span><span class="na">queue</span><span class="p">(</span><span class="nx">Cookie</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">));</span>
+
+<span class="nx">Cookie</span><span class="o">::</span><span class="na">queue</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="cookies">
+<h5>17.1.3.2.1. Cookies 和 加密<a class="headerlink" href="#cookies" title="永久链接至标题">¶</a></h5>
+<p>默认情况下，Laravel 生成的所有 <code class="docutils literal"><span class="pre">Cookie</span></code> 都是经过加密和签名，因此不能被客户端修改或读取。 如果你想要应用程序生成的部分 <code class="docutils literal"><span class="pre">Cookie</span></code> 不被加密，那么可以使用在 app/Http/<code class="docutils literal"><span class="pre">Middleware</span></code> 目录中 <code class="docutils literal"><span class="pre">App\Http\Middleware\EncryptCookies</span></code> 中间件的 <code class="docutils literal"><span class="pre">$except</span></code> 属性：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 不需要加密的 Cookie 名称。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var array</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="nv">$except</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;cookie_name&#39;</span><span class="p">,</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>17.2. 重定向<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>重定向响应是 <code class="docutils literal"><span class="pre">Illuminate\Http\RedirectResponse</span></code> 类的实例，并且包含用户需要重定向至另一个 <code class="docutils literal"><span class="pre">URL</span></code> 所需的头信息。Laravel 提供了几种方法用于生成 <code class="docutils literal"><span class="pre">RedirectResponse</span></code> 实例。其中最简单的方法是使用全局辅助函数 <code class="docutils literal"><span class="pre">redirect</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;dashboard&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;home/dashboard&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>有时候你可能希望将用户重定向到之前的位置，比如提交的表单无效时。这时你可以使用全局辅助函数 <code class="docutils literal"><span class="pre">back</span></code> 来执行此操作。由于这个功能利用了 <code class="docutils literal"><span class="pre">Session</span></code> ，请确保调用 <code class="docutils literal"><span class="pre">back</span></code> 函数的路由使用 <code class="docutils literal"><span class="pre">web</span></code> 中间件组或所有 <code class="docutils literal"><span class="pre">Session</span></code> 中间件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;user/profile&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Validate the request...</span>
+
+    <span class="k">return</span> <span class="nx">back</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">withInput</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="id8">
+<h3>17.2.1. 重定向至命名路由<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>当你不带参数调用辅助函数 <code class="docutils literal"><span class="pre">redirect</span></code> 时，会返回 <code class="docutils literal"><span class="pre">Illuminate\Routing\Redirector</span></code> 实例。这个实例允许你调用 <code class="docutils literal"><span class="pre">Redirector</span></code> 上的任何方法。例如为命名路由生成 <code class="docutils literal"><span class="pre">RedirectResponse</span></code> ，可以使用 <code class="docutils literal"><span class="pre">route</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果你的路由有参数，你可以把它们作为 <code class="docutils literal"><span class="pre">route</span></code> 方法的第二个参数来传递：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 对于具有以下 URI 的路由: profile/{id}</span>
+
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">]);</span>
+</pre></div>
+</div>
+<div class="section" id="id9">
+<h4>17.2.1.1. 通过 Eloquent 模型填充参数<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<p>如果你要重定向到使用从 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型填充「ID」参数的路由，可以简单地传递模型本身。 <code class="docutils literal"><span class="pre">ID</span></code> 会被自动提取：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 对于此路由: profile/{id}</span>
+
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nv">$user</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>如果要自定义路由参数中的值，那么应该覆盖 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型里面的 <code class="docutils literal"><span class="pre">getRouteKey</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取模型的路由键.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return mixed</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getRouteKey</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">slug</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>17.2.2. 重定向至控制器行为<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>你可能需要生成重定向到 控制器行为 的响应。为此，你要将控制器和行为名称传递给 <code class="docutils literal"><span class="pre">action</span></code> 方法来实现。另外，你不一定要为控制器指定完整的命名空间，因为 Laravel 的 <code class="docutils literal"><span class="pre">RouteServiceProvider</span></code> 会自动设置基本的控制器命名空间：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">(</span><span class="s1">&#39;HomeController@index&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果你的控制器路由需要参数，你可以将它们作为第二个参数传递给 <code class="docutils literal"><span class="pre">action</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">(</span>
+    <span class="s1">&#39;UserController@profile&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">]</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>17.2.3. 重定向到外部域<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>有时您可能需要重定向到应用程序之外的域名。 您可以通过调用 <code class="docutils literal"><span class="pre">away</span></code> 方法来实现，它会创建一个 <code class="docutils literal"><span class="pre">RedirectResponse</span></code> 而不需要任何额外的 <code class="docutils literal"><span class="pre">URL</span></code> 编码，验证或认证：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">away</span><span class="p">(</span><span class="s1">&#39;https://www.google.com&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="session">
+<h3>17.2.4. 重定向并使用闪存的 Session 数据<a class="headerlink" href="#session" title="永久链接至标题">¶</a></h3>
+<p>通常，重定向到新的 <code class="docutils literal"><span class="pre">URL</span></code> 的同时会将 数据闪存到 <code class="docutils literal"><span class="pre">Session</span></code> 。并且成功执行将信息闪存到 <code class="docutils literal"><span class="pre">Seesion</span></code> 后才算完成此操作。方便起见，你可以创建一个 <code class="docutils literal"><span class="pre">RedirectResponse</span></code> 的实例并链式调用 <code class="docutils literal"><span class="pre">with</span></code> 方法将数据闪存在 <code class="docutils literal"><span class="pre">Session</span></code> 中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;user/profile&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 更新用户的信息...</span>
+
+    <span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;dashboard&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;Profile updated!&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>用户重定向后，你可以从 <code class="docutils literal"><span class="pre">session</span></code> 中读取闪存的信息。例如，使用 <code class="docutils literal"><span class="pre">Blade</span></code> 语法:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nx">session</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">))</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;alert alert-success&quot;</span><span class="o">&gt;</span>
+        <span class="p">{{</span> <span class="nx">session</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="p">}}</span>
+    <span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="k">endif</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id12">
+<h2>17.3. 其他响应类型<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h2>
+<p>使用辅助函数 <code class="docutils literal"><span class="pre">response</span></code> 可以用来生成其他类型的响应实例。当不带参数调用辅助函数 <code class="docutils literal"><span class="pre">response</span></code> 时，会返回 <code class="docutils literal"><span class="pre">Illuminate\Contracts\Routing\ResponseFactory</span></code> 契约 的实例。 契约提供了几种辅助生成响应的方法。</p>
+<div class="section" id="id13">
+<h3>17.3.1. 视图响应<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p>如果你需要控制响应的状态和标题，还需要返回 视图 作为响应的内容，则应使用 <code class="docutils literal"><span class="pre">view</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">header</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>当然，如果你不需要传递自定义 <code class="docutils literal"><span class="pre">HTTP</span></code> 状态码或者自定义头信息，则应该使用全局辅助函数 <code class="docutils literal"><span class="pre">view</span></code> 。</p>
+</div>
+<div class="section" id="json">
+<h3>17.3.2. JSON 响应<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">json</span></code> 方法会自动把 <code class="docutils literal"><span class="pre">Content-Type</span></code> 响应头信息设置为 <code class="docutils literal"><span class="pre">application/json</span></code> ，并使用 PHP 函数 <code class="docutils literal"><span class="pre">json_encode</span></code> 将给定的数组转换为 <code class="docutils literal"><span class="pre">JSON</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span>
+    <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Abigail&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;state&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;CA&#39;</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+<p>如果要创建一个 <code class="docutils literal"><span class="pre">JSONP</span></code> 响应，你可以使用 <code class="docutils literal"><span class="pre">json</span></code> 方法并与 <code class="docutils literal"><span class="pre">withCallback</span></code> 方法配合使用：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Abigail&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;CA&#39;</span><span class="p">])</span>
+            <span class="o">-&gt;</span><span class="na">withCallback</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">(</span><span class="s1">&#39;callback&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>17.3.3. 文件下载<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">download</span></code> 方法可以用来生成强制用户浏览器下载指定路径文件的响应。 <code class="docutils literal"><span class="pre">download</span></code> 方法的第二个参数接受一个文件名，它将作为用户下载的时所看见的文件名。最后，你可以传递一个 <code class="docutils literal"><span class="pre">HTTP</span></code> 响应头数组最为该方法的第三个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">download</span><span class="p">(</span><span class="nv">$pathToFile</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">download</span><span class="p">(</span><span class="nv">$pathToFile</span><span class="p">,</span> <span class="nv">$name</span><span class="p">,</span> <span class="nv">$headers</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">download</span><span class="p">(</span><span class="nv">$pathToFile</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">deleteFileAfterSend</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">管理文件下载的扩展包 Symfony HttpFoundation，要求下载文件名必须是 <code class="docutils literal"><span class="pre">ASCII</span></code> 编码的。</p>
+</div>
+<div class="section" id="id15">
+<h4>17.3.3.1. 流式下载<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h4>
+<p>有时，您可能希望将给定操作的字符串响应转换为可下载的响应，而无需将操作的内容写入磁盘。 你可以在这个场景中使用 <code class="docutils literal"><span class="pre">streamDownload</span></code> 方法。 此方法接受回调，文件名和可选的标题数组作为其参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">streamDownload</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">GitHub</span><span class="o">::</span><span class="na">api</span><span class="p">(</span><span class="s1">&#39;repo&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">contents</span><span class="p">()</span>
+                <span class="o">-&gt;</span><span class="na">readme</span><span class="p">(</span><span class="s1">&#39;laravel&#39;</span><span class="p">,</span> <span class="s1">&#39;laravel&#39;</span><span class="p">)[</span><span class="s1">&#39;contents&#39;</span><span class="p">];</span>
+<span class="p">},</span> <span class="s1">&#39;laravel-readme.md&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id16">
+<h3>17.3.4. 文件响应<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">file</span></code> 方法可以直接在用户浏览器中显示文件（不是发起下载），例如图像或者 <code class="docutils literal"><span class="pre">PDF</span></code> 。此方法接受文件的路径作为其第一个参数和头信息数组作为其第二个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">file</span><span class="p">(</span><span class="nv">$pathToFile</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">file</span><span class="p">(</span><span class="nv">$pathToFile</span><span class="p">,</span> <span class="nv">$headers</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id17">
+<h2>17.4. 响应宏<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
+<p>如果要定义可以在各种路由和控制器中重复使用的自定义响应，可以在 Response Facade 上使用 <code class="docutils literal"><span class="pre">macro</span></code> 方法。例如，你可以在 服务提供器 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法中这样写：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\ServiceProvider</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Response</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ResponseMacroServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 注册应用程序的响应宏。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Response</span><span class="o">::</span><span class="na">macro</span><span class="p">(</span><span class="s1">&#39;caps&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Response</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nb">strtoupper</span><span class="p">(</span><span class="nv">$value</span><span class="p">));</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">macro</span></code> 函数接受一个名称作为其第一个参数，闭包作为第二个参数。当宏名称从 <code class="docutils literal"><span class="pre">ResponseFactory</span></code> 实现或者辅助函数 <code class="docutils literal"><span class="pre">response</span></code> 调用时，其闭包函数才会被执行：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">caps</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的视图.html" class="btn btn-neutral float-right" title="18. 视图" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的控制器—控制器方法的参数构建与运行.html" class="btn btn-neutral" title="16. 控制器方法的参数构建与运行" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

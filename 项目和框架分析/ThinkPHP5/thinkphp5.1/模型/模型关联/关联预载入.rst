@@ -1,0 +1,143 @@
+*****
+关联预载入
+*****
+
+关联预载入
+==========
+关联查询的预查询载入功能，主要解决了 ``N+1`` 次查询的问题，例如下面的查询如果有 ``3`` 个记录，会执行 ``4`` 次查询：
+
+.. code-block:: php
+
+$list = User::all([1,2,3]);
+foreach($list as $user){
+    // 获取用户关联的profile模型数据
+    dump($user->profile);
+}
+
+如果使用关联预查询功能，就可以变成2次查询（对于一对一关联来说，如果使用 ``JOIN`` 方式只有一次查询），有效提高性能。
+
+.. code-block:: php
+
+	$list = User::with('profile')->select([1,2,3]);
+	foreach($list as $user){
+	    // 获取用户关联的profile模型数据
+	    dump($user->profile);
+	}
+
+
+支持预载入多个关联，例如：
+
+.. code-block:: php
+
+    $list = User::with('profile,book')->select([1,2,3]);
+
+.. note:: ``with`` 方法只能调用一次，请不要多次调用，如果需要对多个关联模型预载入使用数组即可。
+
+也可以支持嵌套预载入，例如：
+
+.. code-block:: php
+
+	$list = User::with('profile.phone')->select([1,2,3]);
+	foreach($list as $user){
+	    // 获取用户关联的phone模型
+	    dump($user->profile->phone);
+	}
+
+支持使用数组方式定义嵌套预载入，例如下面的预载入要同时获取用户的 ``Profile`` 关联模型的 ``Phone`` 、 ``Job`` 和 ``Img`` 子关联模型数据：
+
+.. code-block:: php
+
+	$list = User::with(['profile'=>['phone','job','img']])->select([1,2,3]);
+	foreach($list as $user){
+	    // 获取用户关联
+	    dump($user->profile->phone);
+	    dump($user->profile->job);    
+	    dump($user->profile->img);    
+	}
+
+可以在模型的 ``get`` 和 ``all`` 方法中使用预载入，在第二个参数中传入预载入信息即可。例如下面的用法和使用 ``with`` 方法加 ``select`` 方法是等效的：
+
+.. code-block:: php
+
+    $list = User::all([1,2,3],'profile,book');
+
+如果要指定属性查询，可以使用：
+
+.. code-block:: php
+
+$list = User::field('id,name')->with(['profile'=>function($query){
+	$query->field('user_id,email,phone'); // 一定要包含关联键 user_id
+}])->select([1,2,3]);
+
+foreach($list as $user){
+    // 获取用户关联的profile模型数据
+    dump($user->profile);
+}
+
+.. note:: 记得指定属性的时候一定要包含关联键。
+
+关联预载入名称是关联方法名，支持传入方法名的小写和下划线定义方式，例如如果关联方法名是 ``userProfile`` 和 ``userBook`` 的话：
+
+.. code-block:: php
+
+    $list = User::with('userProfile,userBook')->select([1,2,3]);
+
+等效于：
+
+.. code-block:: php
+
+    $list = User::with('user_profile,user_book')->select([1,2,3]);
+
+一对一关联预载入支持两种方式： ``JOIN`` 方式（一次查询）和 ``IN`` 方式（两次查询，默认方式），如果要使用 ``JOIN`` 方式关联预载入，在关联定义方法中添加
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\model;
+
+	use think\Model;
+
+	class User extends Model
+	{
+	    public function profile()
+	    {
+	    	// 设置预载入查询方式为JOIN方式
+	        return $this->hasOne('Profile')->setEagerlyType(0);
+	    }
+	}
+
+使用 ``JOIN`` 方式查询的话 关联定义的时候不能使用 ``field`` 方法指定字段，只能在预载入查询的时候使用 ``withField`` 方法指定字段，例如：
+
+.. code-block:: php
+
+	$list = User::with(['profile' => function($query){
+		$query->withField('truename,email');
+	}])->select([1,2,3]);
+
+.. note:: ``V5.1.22+`` 版本开始，推荐使用 ``withJoin`` 方法进行关联预载入代替使用 ``setEagerlyType`` 方法定义 ``JOIN`` 方式。
+
+.. code-block:: php
+
+	$list = User::withJoin(['profile' => function($query){
+		$query->withField('truename,email');
+	}])->select([1,2,3]);
+
+延迟预载入
+==========
+有些情况下，需要根据查询出来的数据来决定是否需要使用关联预载入，当然关联查询本身就能解决这个问题，因为关联查询是惰性的，不过用预载入的理由也很明显，性能具有优势。
+
+延迟预载入仅针对多个数据的查询，因为单个数据的查询用延迟预载入和关联惰性查询没有任何区别，所以不需要使用延迟预载入。
+
+如果你的数据集查询返回的是数据集对象，可以使用调用数据集对象的 ``load`` 实现延迟预载入：
+
+.. code-block:: php
+
+	// 查询数据集
+	$list = User::all([1,2,3]);
+	// 延迟预载入
+	$list->load('cards');
+	foreach($list as $user){
+	    // 获取用户关联的card模型数据
+	    dump($user->cards);
+	}
+

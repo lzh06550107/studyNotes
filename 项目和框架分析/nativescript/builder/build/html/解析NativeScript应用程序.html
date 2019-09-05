@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. 解析NativeScript应用程序 &mdash; nativescript 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="nativescript 1.0 文档" href="index.html"/>
+        <link rel="prev" title="3. 你的第一个App" href="你的第一个App.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> nativescript
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="为什么使用NativeScript.html">2. 为什么使用NativeScript</a></li>
+<li class="toctree-l1"><a class="reference internal" href="你的第一个App.html">3. 你的第一个App</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. 解析NativeScript应用程序</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">4.1. 探索NativeScript应用程序的结构</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">4.1.1. 根应用程序文件夹和文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node-modules">4.1.2. node_modules文件夹</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#platforms">4.1.3. platforms文件夹</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#app">4.1.4. app文件夹</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">4.2. 了解应用启动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">4.3. 样式指南和应用程序组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">4.4. 总结</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">nativescript</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>4. 解析NativeScript应用程序</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/解析NativeScript应用程序.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nativescript">
+<h1>4. 解析NativeScript应用程序<a class="headerlink" href="#nativescript" title="永久链接至标题">¶</a></h1>
+<p>本章涵盖</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序的结构；</li>
+<li><code class="docutils literal"><span class="pre">NativeScript</span></code> 运行时如何加载应用程序的第一页；</li>
+<li>您如何使用约定来定位不同的移动平台；</li>
+<li>如何组织 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序代码；</li>
+</ul>
+<p>在第2章中，您学习了如何使用 <code class="docutils literal"><span class="pre">NativeScript</span> <span class="pre">CLI</span></code> 创建您的第一个跨平台应用程序，如何进一步使用 <code class="docutils literal"><span class="pre">CLI</span></code> 将 <code class="docutils literal"><span class="pre">Android</span></code> 和 <code class="docutils literal"><span class="pre">iOS</span></code> 平台添加到应用程序，以及如何通过在模拟器中运行应用程序来测试您的应用程序。在本章中，我们将深入研究 <code class="docutils literal"><span class="pre">NativeScript</span> <span class="pre">CLI</span></code> 脚手架的应用程序结构。</p>
+<p><code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序的结构非常重要，因为 <code class="docutils literal"><span class="pre">NativeScript</span></code> 是开发移动应用程序的自定义框架。自定义框架框架要求您以某种方式编写代码，名称文件和组织应用程序组件；如果你不遵循 <code class="docutils literal"><span class="pre">NativeScript</span></code> 的规则，你的应用程序将无法运行。在这一点上，使用自定义框架可能听起来很痛苦和令人沮丧。毕竟，你为什么限制遵循这样的特定规则？别担心，我已经收到了回复。 <code class="docutils literal"><span class="pre">NativeScript</span></code> 的规则（也称为约定）很容易理解，并且使得在 <code class="docutils literal"><span class="pre">Android</span></code> 和 <code class="docutils literal"><span class="pre">iOS</span></code> 上工作的应用程序更简单，而不是更复杂。</p>
+<div class="section" id="id1">
+<h2>4.1. 探索NativeScript应用程序的结构<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>所有 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序都有一个通用结构，当您使用 <code class="docutils literal"><span class="pre">CLI</span></code> 命令 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">create</span> <span class="pre">&lt;app</span> <span class="pre">name&gt;</span></code> 创建应用程序时自动生成该结构。例如，要创建一个名为 <code class="docutils literal"><span class="pre">myapp</span></code> 的新应用程序，请运行 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">create</span> <span class="pre">myapp</span></code> 命令。图3.1显示了由此产生的脚手架应用程序结构。</p>
+<img alt="_images/3-1.png" src="_images/3-1.png" />
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">在我们探索 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序的结构时，请记住，应该单独保留一些文件和文件夹不动。您不应该直接修改这些文件和文件夹。起初，这可能令人困惑，你可能不知道哪些文件和文件夹不应该直接修改，所以让我们建立一个基本规则。</p>
+</div>
+<p>除非它们存在于名为 <code class="docutils literal"><span class="pre">app</span></code> 的文件夹下，否则不要手动更改文件或文件夹。 <code class="docutils literal"><span class="pre">app</span></code> 文件夹是你的游乐场。所有其他文件和文件夹应该被视为受限制（现在）。当您继续阅读本书时，我们会向您提供此规则的例外情况。例外情况存在例外时，我们一定会向您发出通知，解释为什么我要求您打破这一基本规则并作出例外。 如果您了解并遵循这一基本规则，您将可以更轻松地学习 <code class="docutils literal"><span class="pre">NativeScript</span></code> 。回顾一下，如果它在应用程序文件夹中，则可以更改它; 否则，请放手！</p>
+<div class="section" id="id2">
+<h3>4.1.1. 根应用程序文件夹和文件<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序结构中有几个组件以文件和文件夹的树状分层结构组织（图3.2）。 在根目录下是一个文件夹，其中包含您的应用程序的名称，如运行 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">create</span> <span class="pre">&lt;app</span> <span class="pre">name&gt;</span></code> 命令时指定的那样。 您和 <code class="docutils literal"><span class="pre">NativeScript</span> <span class="pre">CLI</span></code> 使用此文件夹中包含的所有文件和文件夹来创建 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序。 图3.2显示了使用 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">create</span> <span class="pre">myapp</span></code> 命令创建的 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序的文件和文件夹结构。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">package.json</span></code> 文件（列表3.1）是根应用程序文件夹中的唯一文件，用于描述应用程序的特征以及应用程序所依赖的依赖关系。由于该文件只是一个 <code class="docutils literal"><span class="pre">JSON</span></code> 格式的文本文件，所以查看和编辑起来很容易。</p>
+</div>
+<p>让我们仔细看看默认的 <code class="docutils literal"><span class="pre">package.json</span></code> 文件来理解每个部分的用途。</p>
+<p>清单3.1 package.json文件内容</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  &quot;description&quot;: &quot;NativeScript Application&quot;, //提供您的应用程序，功能和用途的简要说明
+  &quot;license&quot;: &quot;SEE LICENSE IN &lt;your-license-filename&gt;&quot;, //将开发人员与您的许可证文件进行协作，描述其他人有权参与，修改，更改和重新分发您的应用程序代码的权利（可选）
+  &quot;readme&quot;: &quot;NativeScript Application&quot;, //将其他人指向您的应用程序的自述文件
+  &quot;repository&quot;: &quot;&lt;fill-your-repository-here&gt;&quot;, //您的应用公有或私有代码库的位置（可选）
+  &quot;nativescript&quot;: { //特定于NativeScript的部分，包含适用于您的应用的标识符，由Android和iOS平台用于唯一标识您的应用
+    &quot;id&quot;: &quot;org.nativescript.myapp&quot;
+  },
+  &quot;dependencies&quot;: { //列出您的应用所依赖的外部库和库版本，由npm使用
+    &quot;nativescript-theme-core&quot;: &quot;~1.0.2&quot;,
+    &quot;tns-core-modules&quot;: &quot;3.1.0&quot;
+  }
+}
+</pre></div>
+</div>
+<p>您可能熟悉 <code class="docutils literal"><span class="pre">package.json</span></code> 文件，该文件由 <code class="docutils literal"><span class="pre">npm</span></code> 和由 <code class="docutils literal"><span class="pre">npm</span></code> 维护和安装的 <code class="docutils literal"><span class="pre">npm</span></code> 模块使用，用于描述捆绑代码并确定该程序包依赖的依赖关系。尽管 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序在技术上不是 <code class="docutils literal"><span class="pre">npm</span></code> 模块，但 <code class="docutils literal"><span class="pre">NativeScript</span></code> 已采用 <code class="docutils literal"><span class="pre">package.json</span></code> 文件来充当与 <code class="docutils literal"><span class="pre">npm</span></code> 模块的 <code class="docutils literal"><span class="pre">package.json</span> <span class="pre">``文件类似的角色。该文件是</span> <span class="pre">``NativeScript</span></code> 项目的核心，因为它是描述应用程序的权威来源。描述，许可证，自述文件和存储库字段共同为其他人提供了他们在查看您的代码或与您合作时可能会有帮助的信息。虽然前四个字段为其他人提供了有关您的应用的上下文信息，但本地脚本和依赖关系部分更重要。</p>
+<p><code class="docutils literal"><span class="pre">nativescript</span></code> 部分有一个关键字段 <code class="docutils literal"><span class="pre">id</span></code> 。 <code class="docutils literal"><span class="pre">id</span></code> 字段包含以反向域名表示法格式化的唯一标识符。 <code class="docutils literal"><span class="pre">NativeScript</span></code> 在构建应用程序时使用此唯一标识符，并将其从 <code class="docutils literal"><span class="pre">package.json</span></code> 中的此位置直接复制到 <code class="docutils literal"><span class="pre">Android</span></code> 和 <code class="docutils literal"><span class="pre">iOS</span></code> 的本机应用程序文件中。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">反向域名表示法与网站的域名相似。以 <a class="reference external" href="http://brosteins.com">http://brosteins.com</a> 为例。Brosteins.com 是域名，com.brosteins 是颠倒的域名表示法。</p>
+</div>
+<p>需要注意的是，您创建的每个应用都应该有一个唯一的标识符。没有官方规则阻止您使用任何唯一标识符（除了唯一标识符），但建议您使用对您的应用程序有意义且包含您有权使用的相关域名的唯一标识符。例如，我们为我的儿子 <code class="docutils literal"><span class="pre">My</span> <span class="pre">Robot</span></code> 创建了一个 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序，并使用 <code class="docutils literal"><span class="pre">com.brosteins.myrobot</span></code> 的唯一标识符（列表3.2）。</p>
+<p>清单3.2 Brosteins My Robot应用程序唯一标识符，如package.json文件中所示</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  ...
+  “nativescript”: { //我们选择了com.brosteins.myrobot的反向域名，因为我们拥有该域名，并且该应用的名称是My Robot
+     “id”: “com.brosteins.myrobot”
+  }
+  ...
+}
+</pre></div>
+</div>
+<p>重要的 <code class="docutils literal"><span class="pre">package.json</span></code> 文件的第二部分是依赖关系部分。本节规定了 <code class="docutils literal"><span class="pre">npm</span></code> 模块规范，这意味着 <code class="docutils literal"><span class="pre">npm</span></code> 使用它来标识应用程序使用的其他 <code class="docutils literal"><span class="pre">npm</span></code> 模块的名称。在创建应用程序时， <code class="docutils literal"><span class="pre">nativescript-theme-core</span></code> 和 <code class="docutils literal"><span class="pre">tns-core-modules</span></code> 模块作为依赖项添加（列表3.3）。</p>
+<p>清单3.3包含在package.json中的tns-code-modules依赖项</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  ...
+  &quot;dependencies&quot;: {
+    &quot;nativescript-theme-core&quot;: &quot;~1.0.2&quot;,
+    &quot;tns-core-modules&quot;: &quot;3.1.0&quot;
+  }
+}
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果您不知道 <code class="docutils literal"><span class="pre">nativescript-theme-core</span></code> 和 <code class="docutils literal"><span class="pre">tns-core-modules</span></code> 模块的用处，请不要担心：浏览完整本书中您将会了解它们。目前，您需要知道 <code class="docutils literal"><span class="pre">NativeScript</span></code> 需要它们来制作应用程序。</p>
+</div>
+</div>
+<div class="section" id="node-modules">
+<h3>4.1.2. node_modules文件夹<a class="headerlink" href="#node-modules" title="永久链接至标题">¶</a></h3>
+<p>我们要研究的应用程序的根文件夹下的第一个文件夹是 <code class="docutils literal"><span class="pre">node_modules</span></code> 文件夹。该文件夹与我们刚刚查看的 <code class="docutils literal"><span class="pre">package.json</span></code> 文件密切相关，因为它包含应用程序的 <code class="docutils literal"><span class="pre">npm</span></code> 包依赖项的本地副本，即 <code class="docutils literal"><span class="pre">package.json</span></code> 文件中所述。</p>
+<img alt="_images/3-2.png" src="_images/3-2.png" />
+<p>在您的应用开发生命周期中， <code class="docutils literal"><span class="pre">node_modules</span></code> 文件夹是一个您会看到很多的文件夹; 但你不会直接与它进行交互。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">在本书中，我将使用 <code class="docutils literal"><span class="pre">npm</span></code> 添加新包，这将导致 <code class="docutils literal"><span class="pre">node_modules</span></code> 文件夹的内容发生更改。 这没关系，因为我没有直接更改文件夹的内容。</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">您可能注意到 <code class="docutils literal"><span class="pre">tns-core-modules-widgets</span></code> 模块也包含在 <code class="docutils literal"><span class="pre">node_modules</span></code> 文件夹中。这是 <code class="docutils literal"><span class="pre">tns-core-modules</span></code> 模块的依赖关系，并未明确列出在 <code class="docutils literal"><span class="pre">package.json</span></code> 文件中。</p>
+</div>
+</div>
+<div class="section" id="platforms">
+<h3>4.1.3. platforms文件夹<a class="headerlink" href="#platforms" title="永久链接至标题">¶</a></h3>
+<p>应用程序根文件夹下的第二个文件夹是 <code class="docutils literal"><span class="pre">platforms</span></code> 文件夹。该文件夹对您的 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用至关重要; 但是，当您创建应用程序时，该文件夹是空的。</p>
+<p>平台文件夹对您的应用程序至关重要，因为它包含构建原生 <code class="docutils literal"><span class="pre">Android</span></code> 和 <code class="docutils literal"><span class="pre">iOS</span></code> 应用程序所需的特定于平台的文件，文件夹和资源。虽然平台文件夹是在创建应用程序时创建的（使用 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">create</span> <span class="pre">&lt;app</span> <span class="pre">name&gt;</span></code> CLI命令），但在使用 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">platform</span> <span class="pre">add</span> <span class="pre">ios</span></code> 或者 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">platform</span> <span class="pre">add</span> <span class="pre">android</span></code> CLI命令之前，不会创建平台子文件。当 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">platform</span> <span class="pre">add</span> <span class="pre">&lt;ios</span> <span class="pre">或</span> <span class="pre">android&gt;</span></code> 命令运行时，将在 <code class="docutils literal"><span class="pre">platform</span></code> 文件夹内创建一个 <code class="docutils literal"><span class="pre">android</span></code> 或 <code class="docutils literal"><span class="pre">ios</span></code> 子文件夹。图3.5和图3.6显示了运行 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">platform</span> <span class="pre">add</span> <span class="pre">&lt;ios</span> <span class="pre">或</span> <span class="pre">android&gt;</span></code> 命令以及在 <code class="docutils literal"><span class="pre">platforms</span></code> 文件夹中创建的结果子文件夹。</p>
+<img alt="_images/3-3.png" src="_images/3-3.png" />
+<p>像 <code class="docutils literal"><span class="pre">node_modules</span></code> 文件夹一样， <code class="docutils literal"><span class="pre">platforms</span></code> 文件夹是 <code class="docutils literal"><span class="pre">NativeScript</span></code> 为您自动生成和维护的。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">一般来说， <code class="docutils literal"><span class="pre">platforms</span></code> 文件夹是不干涉的，但未来的章节将向您介绍可能需要修改平台文件夹中的文件的情况。</p>
+</div>
+</div>
+<div class="section" id="app">
+<h3>4.1.4. app文件夹<a class="headerlink" href="#app" title="永久链接至标题">¶</a></h3>
+<p>最后，应用程序文件夹。到目前为止，我们一直在密切关注组成 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序的所有支持文件和文件夹，但是我们没有看过您要编写的代码。您将从第1章中回忆起 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序由用 <code class="docutils literal"><span class="pre">XML</span></code> 编写的用户界面标记， <code class="docutils literal"><span class="pre">CSS</span></code> 样式和用 <code class="docutils literal"><span class="pre">JavaScript</span></code> 编写的业务逻辑支持。但这些文件在哪里？</p>
+<img alt="_images/3-4.png" src="_images/3-4.png" />
+<p>应用程序文件夹是您将大部分时间用于开发 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序的地方，因为它包含了所有的 <code class="docutils literal"><span class="pre">XML</span></code> ， <code class="docutils literal"><span class="pre">CSS</span></code> 和 <code class="docutils literal"><span class="pre">JavaScript</span></code> 代码。实际上，除了对 <code class="docutils literal"><span class="pre">package.json</span></code> 文件进行一些小修改之外，我在开发和测试应用程序时通常会忘记应用程序文件夹外的文件和文件夹。</p>
+<p>在应用程序文件夹内部，您会找到 <code class="docutils literal"><span class="pre">App_Resources</span></code> 文件夹，几个名为 <code class="docutils literal"><span class="pre">app.&lt;extension&gt;</span></code> ， <code class="docutils literal"><span class="pre">bundle-config.js</span></code> ， <code class="docutils literal"><span class="pre">main-page.&lt;extension&gt;</span></code> ， <code class="docutils literal"><span class="pre">main-view-model.js</span></code> ，另一个 <code class="docutils literal"><span class="pre">package.json</span></code> 的文件，和一个名为 <code class="docutils literal"><span class="pre">references.d.ts</span></code> 的文件。</p>
+<img alt="_images/3-5.png" src="_images/3-5.png" />
+<p>我们先看一下 <code class="docutils literal"><span class="pre">App_Resources</span></code> 文件夹。</p>
+<div class="section" id="app-resources">
+<h4>4.1.4.1. App_Resources<a class="headerlink" href="#app-resources" title="永久链接至标题">¶</a></h4>
+<p>尽管尝试将移动开发平台功能合并为一组通用命令， <code class="docutils literal"><span class="pre">APIs</span></code> 和用户界面元素，但没有任何跨平台的移动环境可以100％地填补每个移动平台之间的差距。 <code class="docutils literal"><span class="pre">NativeScript</span></code> 已经非常接近，但 <code class="docutils literal"><span class="pre">Android</span></code> 和 <code class="docutils literal"><span class="pre">iOS</span></code> 开发的某些方面存在根本不同。例如，屏幕分辨率和每英寸点数（ <code class="docutils literal"><span class="pre">DPI</span></code> ）在运行 <code class="docutils literal"><span class="pre">Android</span></code> 和 <code class="docutils literal"><span class="pre">iOS</span></code> 的硬件设备之间会有很大差异。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">屏幕分辨率是屏幕上像素数的度量，通常以宽度x高度的形式进行描述。例如，屏幕分辨率为640x480意味着屏幕宽度为640像素，高度为480像素。</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">每英寸点数（ <code class="docutils literal"><span class="pre">DPI</span></code> ）是网点密度的度量，并且通常用于印刷行业来描述出现在印刷书籍或杂志的平方英寸中的印刷点的数量。 当提到屏幕时，“点”的概念经常与“像素”混淆。屏幕具有像素，而不是点; 因此，它们的密度是以每英寸像素（ <code class="docutils literal"><span class="pre">PPI</span></code> ）的像素来衡量的。尽管新闻部和生产者价格指数在技术上有所不同，但大多数人并没有区分这两者。 事实上， <code class="docutils literal"><span class="pre">Android</span></code> 平台更喜欢 <code class="docutils literal"><span class="pre">DPI</span></code> 与 <code class="docutils literal"><span class="pre">PPI</span></code> 的术语。通过这本书，我们将使用术语 <code class="docutils literal"><span class="pre">DPI</span></code> 。</p>
+</div>
+<p><code class="docutils literal"><span class="pre">NativeScript</span></code> 通过在 <code class="docutils literal"><span class="pre">App_Resources</span></code> 文件夹中放置特定于平台的自定义来补偿 <code class="docutils literal"><span class="pre">Android</span></code> 和 <code class="docutils literal"><span class="pre">iOS</span></code> 之间的差距。在文件夹下面，您可以找到适用于 <code class="docutils literal"><span class="pre">Android</span></code> 和 <code class="docutils literal"><span class="pre">iOS</span></code> 平台的特定文件夹。</p>
+<img alt="_images/3-6.png" src="_images/3-6.png" />
+<p>特定于平台的文件夹包含只有其平台关心的文件： <code class="docutils literal"><span class="pre">Android</span></code> 文件夹包含 <code class="docutils literal"><span class="pre">Android</span></code> 平台所需的文件， <code class="docutils literal"><span class="pre">iOS</span></code> 文件夹包含 <code class="docutils literal"><span class="pre">iOS</span></code> 平台所需的文件。现在了解 <code class="docutils literal"><span class="pre">Android</span></code> 和 <code class="docutils literal"><span class="pre">iOS</span></code> 文件夹中的内容并不重要。在本章后面和本书的后面，我将更详细地解释 <code class="docutils literal"><span class="pre">App_Resources</span></code> 文件夹的内容。</p>
+<p>需要注意的一个细节是 <code class="docutils literal"><span class="pre">platforms</span></code> 和 <code class="docutils literal"><span class="pre">App_Resources</span></code> 文件夹之间的相似性。正如您将在本章前面所记得的那样，这些平台文件夹还包含特定于平台的文件和文件夹。在某种程度上，这两个文件夹是相似的，但由于许多原因，它们也不同。这两个文件夹之间最重要的区别是您将直接和手动更改 <code class="docutils literal"><span class="pre">App_Resources</span></code> 文件夹中的文件，但 <code class="docutils literal"><span class="pre">platforms</span></code> 文件夹不是。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">记住基本规则：编辑应用程序文件夹下的文件和文件夹是安全的。 由于 <code class="docutils literal"><span class="pre">App_Resource</span></code> 位于应用程序文件夹下方，因此可以安全地进行更改。</p>
+</div>
+<p>现在了解您正在进行哪些更改并不重要，但了解 <code class="docutils literal"><span class="pre">App_Resources</span></code> 中特定于平台的文件如何为应用程序提供帮助很重要。在对 <code class="docutils literal"><span class="pre">App_Resources</span></code> 文件夹下的文件进行特定于平台的更改后，您将运行 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">prepare</span> <span class="pre">&lt;android或ios&gt;</span></code> CLI命令。该命令从 <code class="docutils literal"><span class="pre">App_Resources</span></code> 文件夹中读取特定于平台的更改，然后将更改合并到 <code class="docutils literal"><span class="pre">platforms</span></code> 文件夹中的本地项目文件中（图3.10）</p>
+<img alt="_images/3-7.png" src="_images/3-7.png" />
+</div>
+<div class="section" id="references-d-ts">
+<h4>4.1.4.2. REFERENCES.D.TS<a class="headerlink" href="#references-d-ts" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">references.d.ts</span></code> 文件是某些集成开发环境（IDE）和编辑器使用的特殊文件，可为您提供类似 <code class="docutils literal"><span class="pre">IntelliSense</span></code> (智能感知)的功能。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">智能感知是一种内置于许多 IDE 和文本编辑器中的技术，可以在输入代码时为“代码补全”提供自动化建议。 这些建议通常通过您正在输入的文本旁边或附近的弹出窗口显示给您。</p>
+</div>
+<p>从技术上讲，该文件与您的 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序无关，只有在您使用 <code class="docutils literal"><span class="pre">TypeScript</span></code> 而不是 <code class="docutils literal"><span class="pre">JavaScript</span></code> 编写 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序时才会影响您。我们不会详细介绍 <code class="docutils literal"><span class="pre">reference.d.ts</span></code> 文件（或其内容）。 现在，只需忽略 <code class="docutils literal"><span class="pre">references.d.ts</span></code> 文件。但是，如果您好奇，不想忽视它，或有兴趣了解更多关于 <code class="docutils literal"><span class="pre">TypeScript</span></code> 的知识，请查看本章后面的 <code class="docutils literal"><span class="pre">TypeScript</span></code> 摘要。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">TypeScript</span></code> 是一种编程语言，特别是 <code class="docutils literal"><span class="pre">JavaScript</span></code> 的超集，增加了强类型和基于类的面向对象功能。 <code class="docutils literal"><span class="pre">JavaScript</span></code> 虚拟机本身不能理解 <code class="docutils literal"><span class="pre">TypeScript</span></code> ，因此 <code class="docutils literal"><span class="pre">TypeScript</span></code> 在运行之前被转换（或转换）为 <code class="docutils literal"><span class="pre">JavaScript</span></code> 。</p>
+</div>
+</div>
+<div class="section" id="bundle-config-js">
+<h4>4.1.4.3. BUNDLE-CONFIG.JS<a class="headerlink" href="#bundle-config-js" title="永久链接至标题">¶</a></h4>
+<p>该文件用于配置 <code class="docutils literal"><span class="pre">webpack</span></code> （如果它已安装到您的应用程序中）。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">Webpack</span></code> 是一个模块打包器，这意味着它可以将各种 <code class="docutils literal"><span class="pre">JavaScript</span></code> 模块分布在多个文件中，并将它们打包（或打包）为单一的压缩格式和优化格式。</p>
+</div>
+<p>如果你是一个 <code class="docutils literal"><span class="pre">web</span></code> 开发者，你可能听说过 <code class="docutils literal"><span class="pre">webpack</span></code> 。我们认为 <code class="docutils literal"><span class="pre">bundle-config.js</span></code> 文件很重要，并且您可以在 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序中使用 <code class="docutils literal"><span class="pre">webpack</span></code> 来使它们更小，更高效并且加载速度更快。但是，在 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序中配置和使用 <code class="docutils literal"><span class="pre">webpack</span></code> 是一个更高级的话题，我们不打算介绍。如果您有兴趣了解更多信息，请参阅 <a class="reference external" href="https://www.nativescript.org/blog/improving-app-startup-time-on-android-withwebpack-v8-heap-snapshot">https://www.nativescript.org/blog/improving-app-startup-time-on-android-withwebpack-v8-heap-snapshot</a> 。</p>
+</div>
+<div class="section" id="main-view-model-js">
+<h4>4.1.4.4. MAIN-VIEW-MODEL.JS<a class="headerlink" href="#main-view-model-js" title="永久链接至标题">¶</a></h4>
+<p>我们将在 <code class="docutils literal"><span class="pre">app</span></code> 文件夹中检查的第二个文件是 <code class="docutils literal"><span class="pre">main-view-model.js</span></code> 文件。正如您可以通过文件扩展名所分辨的那样，该文件是一个 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件。在 <code class="docutils literal"><span class="pre">NativeScript</span></code> 中， <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件通常包含应用程序和业务逻辑代码。在这本书中，现在深入探讨 <code class="docutils literal"><span class="pre">main-view-model.js</span></code> 文件的内容和功能还为时过早，但不要担心，因为我们将在后面的章节中介绍它。现在，知道它包含我们将要检查的下两个文件所使用的应用程序代码是非常重要的： <code class="docutils literal"><span class="pre">main-page.xml</span></code> 和 <code class="docutils literal"><span class="pre">main-page.js</span></code> 文件。</p>
+</div>
+<div class="section" id="main-page-xml-and-main-page-js">
+<h4>4.1.4.5. MAIN-PAGE.XML AND MAIN-PAGE.JS<a class="headerlink" href="#main-page-xml-and-main-page-js" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">app</span></code> 文件夹中的第三组文件是 <code class="docutils literal"><span class="pre">main-page.xml</span></code> 和 <code class="docutils literal"><span class="pre">main-page.js</span></code> 。正如您可以通过文件名所告知的那样， <code class="docutils literal"><span class="pre">main-page.xml</span></code> 是一个描述应用程序中页面的用户界面的 <code class="docutils literal"><span class="pre">XML</span></code> 文件， <code class="docutils literal"><span class="pre">mainpage.js</span></code> 包含页面的相应业务逻辑。这两个页面一起形成一个内聚单元，代表一个单独的页面，由于文件名称而被命名为主页面。在本章的后面，您将进一步了解页面的概念以及如何以类似方式命名的文件非常重要。现在，您可以将 <code class="docutils literal"><span class="pre">NativeScript</span></code> 页面看作类似于 <code class="docutils literal"><span class="pre">HTML</span></code> 页面的页面。</p>
+</div>
+<div class="section" id="package-json">
+<h4>4.1.4.6. PACKAGE.JSON<a class="headerlink" href="#package-json" title="永久链接至标题">¶</a></h4>
+<p>应用程序文件夹中的第四个文件是另一个 <code class="docutils literal"><span class="pre">package.json</span></code> 文件。这个 <code class="docutils literal"><span class="pre">package.json</span></code> 文件与 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序根目录中的 <code class="docutils literal"><span class="pre">package.json</span></code> 文件类似。您会记得， root <code class="docutils literal"><span class="pre">package.json</span></code> 文件用于描述应用程序构建和运行所需的整体应用程序和依赖关系。这个 <code class="docutils literal"><span class="pre">package.json</span></code> 文件是相似的，但它并不描述整个应用程序，而是描述应用程序文件夹的配置和内容。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">您可能会发现 <code class="docutils literal"><span class="pre">app</span></code> 文件夹中存在 <code class="docutils literal"><span class="pre">package.json</span></code> 文件很奇怪。毕竟，您已经在应用的根文件夹中看到了一个 <code class="docutils literal"><span class="pre">package.json</span></code> 文件；但它存在的原因是： <code class="docutils literal"><span class="pre">app</span></code> 文件夹的内容实际上是一个 <code class="docutils literal"><span class="pre">npm</span></code> 包。当创建 <code class="docutils literal"><span class="pre">npm</span></code> 包时，作者需要包含一个描述包的 <code class="docutils literal"><span class="pre">package.json</span></code> 文件。因此，由于 <code class="docutils literal"><span class="pre">app</span></code> 文件夹的内容来自 <code class="docutils literal"><span class="pre">npm</span></code> 包，因此它包含一个 <code class="docutils literal"><span class="pre">package.json</span></code> 文件。 谜团已揭开。</p>
+</div>
+<p>在本章的前面，您已经看到了 <code class="docutils literal"><span class="pre">CLI</span></code> 的 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">create</span></code> 命令如何创建脚手架来支持 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序的文件和文件夹结构，但是如果要在脚手架过程中间暂停 <code class="docutils literal"><span class="pre">CLI</span></code> ，则会注意到应用程序文件夹是空的。这是因为应用程序创建过程中，应用程序文件夹的内容是从 <code class="docutils literal"><span class="pre">npm</span></code> 包动态添加的。更具体地说，当 <code class="docutils literal"><span class="pre">tns</span> <span class="pre">create</span></code> 命令运行时， <code class="docutils literal"><span class="pre">CLI</span></code> 以静默方式运行 <code class="docutils literal"><span class="pre">npm</span></code> ，并将 <code class="docutils literal"><span class="pre">tns-template-hello-world</span></code> npm 软件包安装到临时目录中，并将该软件包的内容合并到应用程序文件夹中。</p>
+<img alt="_images/3-8.png" src="_images/3-8.png" />
+<p>由于 <code class="docutils literal"><span class="pre">NativeScript</span></code> 是开源的并在 <code class="docutils literal"><span class="pre">GitHub</span></code> 上开发，因此您可以公开查看位于 <a class="reference external" href="https://github.com/NativeScript/template-hello-world">https://github.com/NativeScript/template-hello-world</a> 的“Hello World”模板的内容。当您浏览到此 URL 时，您会看到仓库的内容与脚手架应用程序文件夹完全相同。</p>
+<p>尽管 <code class="docutils literal"><span class="pre">app</span></code> 文件夹的内容来自 <code class="docutils literal"><span class="pre">npm</span></code> 包，该包需要 <code class="docutils literal"><span class="pre">package.json</span></code> 文件存在，但 <code class="docutils literal"><span class="pre">NativeScript</span></code> 使用该文件不仅仅是对原始 <code class="docutils literal"><span class="pre">npm</span></code> 包的描述。让我们仔细查看 <code class="docutils literal"><span class="pre">package.json</span></code> 文件的内容，并区分哪些配置是 <code class="docutils literal"><span class="pre">npm</span></code> 的要求和哪些是 <code class="docutils literal"><span class="pre">NativeScript</span></code> 配置值的要求。您应该特别注意 <code class="docutils literal"><span class="pre">NativeScript</span></code> 配置值，因为我们将在后面的章节中更详细地回顾它们。</p>
+<p>清单3.4 app\package.json文件的内容</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  &quot;android&quot;: { //好的，您可以忽略此设置，但如果您有兴趣，可以使用NativeScript设置来配置V8 JavaScript虚拟机在Android上的运行方式。 不要改变！
+    &quot;v8Flags&quot;: &quot;--expose_gc&quot;
+  },
+  &quot;main&quot;: &quot;app.js&quot;, //用于应用程序主入口点的NativeScript设置。 记下这个设置！
+  &quot;name&quot;: &quot;tns-template-hello-world&quot;,
+  &quot;version&quot;: &quot;3.1.0&quot; //npm所需的值; 可以忽略，因为你不需要改变它们
+}
+</pre></div>
+</div>
+<p>在之前的清单中，您可以看到 <code class="docutils literal"><span class="pre">package.json</span></code> 文件中的许多特定于 <code class="docutils literal"><span class="pre">npm</span></code> 的键/值对。你可以忽略这些对。 <code class="docutils literal"><span class="pre">Android</span></code> 对是特定于 <code class="docutils literal"><span class="pre">NativeScript</span></code> 的设置，但它们由 <code class="docutils literal"><span class="pre">NativeScript</span></code> 在内部使用，不应更改。你也可以忽略它。 事实上，对你来说只有一对真正重要的东西： <code class="docutils literal"><span class="pre">main</span></code> ，它具有 <code class="docutils literal"><span class="pre">app.js</span></code> 值。</p>
+<p><code class="docutils literal"><span class="pre">NativeScript</span></code> 使用 <code class="docutils literal"><span class="pre">main</span></code> 键/值对来识别您的应用的主要入口点。默认情况下，它设置为 <code class="docutils literal"><span class="pre">app.js</span></code> ，告知 <code class="docutils literal"><span class="pre">NativeScript</span></code> 运行时在应用程序启动时加载并执行 <code class="docutils literal"><span class="pre">app.js</span></code> 文件中的代码。</p>
+</div>
+<div class="section" id="app-css-and-app-js">
+<h4>4.1.4.7. APP.CSS AND APP.JS<a class="headerlink" href="#app-css-and-app-js" title="永久链接至标题">¶</a></h4>
+<p>位于 <code class="docutils literal"><span class="pre">app</span></code> 文件夹中的第五组也是最后一组文件是 <code class="docutils literal"><span class="pre">app.css</span></code> 和 <code class="docutils literal"><span class="pre">app.js</span></code> 文件。 <code class="docutils literal"><span class="pre">app.css</span></code> 文件包含全局 <code class="docutils literal"><span class="pre">UI</span></code> 样式，它在应用程序启动时由 <code class="docutils literal"><span class="pre">NativeScript</span></code> 运行时加载。您将在未来的章节中了解 <code class="docutils literal"><span class="pre">UI</span></code> 样式。现在，请记住 <code class="docutils literal"><span class="pre">app.css</span></code> 文件包含全局样式，并在应用程序运行时加载。</p>
+<p><code class="docutils literal"><span class="pre">app.js</span> <span class="pre">``文件是应用程序启动时运行的第一个代码。由于</span> <span class="pre">``package.json</span></code> 文件的 <code class="docutils literal"><span class="pre">main</span></code> 设置，因此 <code class="docutils literal"><span class="pre">NativeScript</span></code> 知道启动 <code class="docutils literal"><span class="pre">app.js</span></code> 文件。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">Bootstrapping</span></code> 是将最少量的初始化代码加载到系统中以便于进一步加载和执行主应用程序代码的行为。 在许多系统中，引导进程指向内存中的特定位置，代码行或函数名称首先运行。</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">在 <code class="docutils literal"><span class="pre">NativeScript</span></code> 中，通过指定包含代码的主代码文件（默认为app.js文件）来引导您的代码。</p>
+</div>
+<p>仅说引导过程中运行 app.js 文件是不够的，因为它启动了您编写的应用程序代码。你可能会问在 app.js 文件中发生了什么，以加载和显示你的应用程序的“主页”？ 我们来看看 app.js 文件的内容。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">application</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;application&quot;</span><span class="p">);</span>
+<span class="nx">application</span><span class="p">.</span><span class="nx">start</span><span class="p">({</span> <span class="nx">moduleName</span><span class="o">:</span> <span class="s2">&quot;main-page&quot;</span> <span class="p">});</span>
+</pre></div>
+</div>
+<p>app.js 文件里面只有两行代码。 第一行加载并获取对应用程序模块的引用。简而言之，应用程序模块是一组方法和对象，允许您控制全局应用程序行为，例如启动应用程序。您将在后面的章节中学习 <code class="docutils literal"><span class="pre">NativeScript</span></code> 模块，所以如果您还没有完全理解第一行代码，那也可以。第二行代码告诉 <code class="docutils literal"><span class="pre">NativeScript</span></code> 通过加载并显示一个名为 <code class="docutils literal"><span class="pre">main-page</span></code> 的模块来启动您的应用程序。我们希望将此模块视为您应用的主页，因为它是您在应用中看到的第一个用户界面页面。 每个应用程序都会有一个 <code class="docutils literal"><span class="pre">app.js</span></code> 文件（至少）有这两行代码 - 没有它们，您的应用程序将不会加载并显示主页。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>4.2. 了解应用启动<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>正如您已了解 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序的基本结构，您已经看到了可导致您的应用程序启动并加载应用程序第一页的各个组件。了解各个组件是好的，但让我们看看所有这些组件如何协同工作来编排应用程序启动。为了理解 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序启动，让我们看看您熟悉的一些东西：一个 <code class="docutils literal"><span class="pre">HTML</span></code> 应用程序。想象一下，您已经创建了一个您想要在 <a class="reference external" href="http://brosteins.com">http://brosteins.com</a> 上托管的 <code class="docutils literal"><span class="pre">HTML</span></code> 应用程序。你的应用程序包含一个文件： <code class="docutils literal"><span class="pre">index.html</span></code> 。当您将应用程序发布到 <code class="docutils literal"><span class="pre">Web</span></code> 服务器时，您将 <a class="reference external" href="http://brosteins.com">http://brosteins.com</a> 的默认主页配置为 <code class="docutils literal"><span class="pre">index.html</span></code> 文件，因此用户在浏览到 <a class="reference external" href="http://brosteins.com">http://brosteins.com</a> 时会自动查看 <code class="docutils literal"><span class="pre">index.html</span></code> 。 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序就像您的 <code class="docutils literal"><span class="pre">HTML</span></code> 应用程序一样工作 - 将应用程序文件放入应用程序文件夹，配置起始页面，以及在运行应用程序时， <code class="docutils literal"><span class="pre">NativeScript</span></code> 运行时读取您的配置并加载应用程序的主页（图3.13）。</p>
+<img alt="_images/3-9.png" src="_images/3-9.png" />
+<p>在 <code class="docutils literal"><span class="pre">HTML</span></code> 应用程序中，当您将 <code class="docutils literal"><span class="pre">Web</span></code> 浏览器指向应用程序的 <code class="docutils literal"><span class="pre">URL</span></code> 时， <code class="docutils literal"><span class="pre">Web</span></code> 服务器将读取其配置以确定主页（index.html）并将主页返回到 <code class="docutils literal"><span class="pre">Web</span></code> 浏览器。当运行 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序时， <code class="docutils literal"><span class="pre">NativeScript</span></code> 运行时从 <code class="docutils literal"><span class="pre">package.json</span></code> 文件中读取其配置，查看主键/值对以确定要用作主引导程序代码的文件。默认情况下， <code class="docutils literal"><span class="pre">NativeScript</span></code> 引导 <code class="docutils literal"><span class="pre">app.js</span></code> 文件，执行代码以告诉您的应用程序启动并加载页面（这是主页面）。</p>
+<p>在您学习 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序如何加载您的主页时，您可能已经注意到主页配置指向一个名为 <code class="docutils literal"><span class="pre">main-page</span></code> 的页面，该页面实际上并不是 <code class="docutils literal"><span class="pre">app</span></code> 目录中的文件。 <code class="docutils literal"><span class="pre">Main-page.xml</span></code> 和 <code class="docutils literal"><span class="pre">main-page.js</span></code> 是文件，但没有扩展名的主页有什么优势？当您告诉 <code class="docutils literal"><span class="pre">NativeScript</span></code> 查找主页（不带扩展名）时，它会自动假定有一个名为 <code class="docutils literal"><span class="pre">main-page.xml</span></code> 的文件。我们再看一下 <code class="docutils literal"><span class="pre">app.js</span></code> 文件的第二行： <code class="docutils literal"><span class="pre">application.start({</span> <span class="pre">moduleName:</span> <span class="pre">&quot;main-page&quot;</span> <span class="pre">});</span></code></p>
+<p>通过指向名为 <code class="docutils literal"><span class="pre">main-page</span></code> 的页面来启动应用程序，该页面被假定为名为 <code class="docutils literal"><span class="pre">main-page.xml</span></code> 的文件。 你以前学过类似命名的文件，比如 <code class="docutils literal"><span class="pre">main-page.xml</span></code> 和 <code class="docutils literal"><span class="pre">main-page.js</span></code> ，它们一起形成一个内聚单元。 现在，我们将这个凝聚力单位称为页面。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">一个页面是一组类似名称的 <code class="docutils literal"><span class="pre">XML</span></code> ， <code class="docutils literal"><span class="pre">CSS</span></code> 和 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件，可以通过忽略文件扩展名来引用它们。例如， <code class="docutils literal"><span class="pre">main-page.xml</span></code> ， <code class="docutils literal"><span class="pre">main-page.css</span></code> 和 <code class="docutils literal"><span class="pre">main-page.js</span></code> 可以统称为名为 <code class="docutils literal"><span class="pre">main-page</span></code> 的页面。</p>
+</div>
+<p>当您的 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序运行并被告知加载名为 <code class="docutils literal"><span class="pre">main-page</span></code> 的页面时， <code class="docutils literal"><span class="pre">NativeScript</span></code> 运行时知道（按惯例）搜索三个名为 <code class="docutils literal"><span class="pre">main-page</span></code> 的文件： <code class="docutils literal"><span class="pre">XML</span></code> 文件， <code class="docutils literal"><span class="pre">CSS</span></code> 文件和 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件。</p>
+<p>用户界面和业务逻辑文件的相似名称不是错误或偶然的。事实上，我们偶然发现了 <code class="docutils literal"><span class="pre">NativeScript</span></code> 的一个基本原则：约定。这种文件命名约定是 <code class="docutils literal"><span class="pre">NativeScript</span></code> 如何工作的关键，也是早期学习的重要概念。</p>
+<p><code class="docutils literal"><span class="pre">NativeScript</span></code> 中有许多其他的约定可以很容易地使用，但是现在进入它们会使你分散学习 <code class="docutils literal"><span class="pre">NativeScript</span></code> 注意力。我们将在本书中涉及到这些约定，但我们也将它们放在附录C中。如果您想现在了解它们，请随时脱离第3章，并在完成后返回此处。</p>
+</div>
+<div class="section" id="id4">
+<h2>4.3. 样式指南和应用程序组织<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>您还没有学到的是， <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序是从一组页面构建而成的。当使用 <code class="docutils literal"><span class="pre">NativeScript</span></code> CLI 创建应用程序时，`` main-page`` 页面会置于 <code class="docutils literal"><span class="pre">app</span></code> 文件夹的根目录中。除了最初加载 <code class="docutils literal"><span class="pre">main-page</span></code> 页面的 <code class="docutils literal"><span class="pre">app.js</span></code> 文件放置在 <code class="docutils literal"><span class="pre">app</span></code> 文件夹的根目录之外，这个位置没有什么特别之处：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">application</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;application&quot;</span><span class="p">);</span>
+<span class="nx">application</span><span class="p">.</span><span class="nx">start</span><span class="p">({</span> <span class="nx">moduleName</span><span class="o">:</span> <span class="s2">&quot;main-page&quot;</span> <span class="p">});</span>
+</pre></div>
+</div>
+<p>随着您的应用程序的增长，您可能会首先在 <code class="docutils literal"><span class="pre">app</span></code> 文件夹的根目录中放置其他页面，但这可能很快变得困难。想象一下包含25个不同页面的应用程序，每个页面都有一个 <code class="docutils literal"><span class="pre">XML</span></code> ， <code class="docutils literal"><span class="pre">CSS</span></code> 和 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件。75个文件浏览需要滚动。我们会争辩说，要滚动的内容太多了，所以您需要考虑从一开始就组织应用的页面。</p>
+<p>尽管在您的应用中没有正确或错误的方式来组织页面，但我们将分享一些有用的提示，以便让您的 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用更易于管理。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">将每组页面文件分组在与该页面具有相同名称的文件夹中。</p>
+</div>
+<p>假设你的应用程序有一个 <code class="docutils literal"><span class="pre">contact-us</span></code> 页面（图3.15）。</p>
+<img alt="_images/3-10.png" src="_images/3-10.png" />
+<p>您可以看到 <code class="docutils literal"><span class="pre">contact-us</span></code> 页面文件( <code class="docutils literal"><span class="pre">contact-us.xml</span></code> ， <code class="docutils literal"><span class="pre">contact-us.css</span></code> 和 <code class="docutils literal"><span class="pre">contact-us.js</span></code> )位于名为 <code class="docutils literal"><span class="pre">contact-us</span></code> 的文件夹内。此页面组织可帮助将类似文件和相关文件放在一起。尽管使用这种组织技术可以更容易地查找，查找和管理应用程序的文件，但它会产生巨大的差异，并且可以让您无需滚动浏览应用程序文件夹根目录中的数百个文件。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">通过将相关页面文件夹放入其他文件夹，按功能或功能区域将相关页面组合在一起。应用程序页面和文件的结构/形式应与您的应用程序的功能相匹配；在软件开发中，这通常被称为“形式遵循功能”。</p>
+</div>
+<p>我们的最终建议是敏捷。不要束缚于组织应用程序页面的特定方式，从不打算改变它们。事实上，你应该改变应用程序的组织方式，因为它们的功能会随着功能的变化而变化。记住什么是重要的。不要只是创建一个惊人的应用程序，而是通过查看结构和代码，创建易于维护并易于他人理解的应用程序。不要花费过多的时间来组织您的应用程序，再次，请不要在早期解雇组织。如果你让你的应用程序的结构看起来很吸引人，那么从长远来看，你会感谢你自己。</p>
+<p>现在您已经学会了如何构建应用程序并将页面组织到文件夹中，您将在下一章继续学习页面。您将学习如何在页面内构建用户界面代码，以及如何在页面之间导航。</p>
+</div>
+<div class="section" id="id5">
+<h2>4.4. 总结<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>在本章中，您了解到：</p>
+<ul class="simple">
+<li>所有 <code class="docutils literal"><span class="pre">NativeScript</span></code> 应用程序都具有名为 <code class="docutils literal"><span class="pre">platforms</span></code> ， <code class="docutils literal"><span class="pre">node_modules</span></code> 和 <code class="docutils literal"><span class="pre">app</span></code> 文件夹的文件夹。</li>
+<li>您不应该直接修改 <code class="docutils literal"><span class="pre">node_modules</span></code> 和 <code class="docutils literal"><span class="pre">platforms</span></code> 文件夹的内容。</li>
+<li><code class="docutils literal"><span class="pre">app</span></code> 文件夹包含您开发的所有应用程序的代码。</li>
+<li>页面由类似命名的用户界面（XML），样式（CSS）和业务逻辑代码文件（JavaScript）组成。</li>
+<li>组织应用程序代码时，应将页面文件放入与页面名称相同的文件夹中。</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="你的第一个App.html" class="btn btn-neutral" title="3. 你的第一个App" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lz.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

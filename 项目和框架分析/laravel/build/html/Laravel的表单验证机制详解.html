@@ -1,0 +1,816 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>22. 表单验证机制详解 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="23. 日志" href="Laravel的日志.html"/>
+        <link rel="prev" title="21. Session原理分析" href="Laravel的Session原理分析.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">22. 表单验证机制详解</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">22.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">22.2. 快速验证</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">22.2.1. 定义路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">22.2.2. 创建控制器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">22.2.3. 编写验证逻辑</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">22.2.4. 显示验证错误信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">22.2.5. 关于可选字段的注意事项</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">22.3. 表单验证请求</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id12">22.3.1. 创建表单请求</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">22.3.2. 添加表单请求后钩子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">22.3.3. 授权表单请求</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">22.3.4. 自定义错误信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">22.3.5. 自定义字段名称</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">22.4. 手动创建验证器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id18">22.4.1. 自动重定向</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">22.4.2. 命名错误包</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">22.4.3. 验证后钩子</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">22.5. 处理错误消息</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id22">22.5.1. 查看特定字段的第一个错误消息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23">22.5.2. 查看特定字段的所有错误消息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24">22.5.3. 查看所有字段的错误消息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">22.5.4. 判断特定字段是否含有错误消息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">22.5.5. 自定义错误消息</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>22. 表单验证机制详解</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>22. 表单验证机制详解<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>22.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Laravel 提供了几种不同的方法来验证传入应用程序的数据。默认情况下， Laravel 的控制器基类使用 <code class="docutils literal"><span class="pre">ValidatesRequests</span> <span class="pre">Trait</span></code> ，它提供了一种方便的方法使用各种强大的验证规则来验证传入的 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求。</p>
+</div>
+<div class="section" id="id3">
+<h2>22.2. 快速验证<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>要了解 Laravel 强大的验证功能，让我们看一个验证表单并将错误消息显示回给用户的完整示例。</p>
+<div class="section" id="id4">
+<h3>22.2.1. 定义路由<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>首先，假设我们在 <code class="docutils literal"><span class="pre">routes/web.php</span></code> 文件中定义了以下路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;post/create&#39;</span><span class="p">,</span> <span class="s1">&#39;PostController@create&#39;</span><span class="p">);</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;PostController@store&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>当然， <code class="docutils literal"><span class="pre">GET</span></code> 路由会显示一个供用户创建一个新的博客帖子的表单，而 <code class="docutils literal"><span class="pre">POST</span></code> 路由会将新的博客文章存储在数据库中。</p>
+</div>
+<div class="section" id="id5">
+<h3>22.2.2. 创建控制器<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>接下来，让我们看看处理这些路由的简单控制器。 现在我们将 <code class="docutils literal"><span class="pre">store</span></code> 方法留空：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">PostController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 显示创建博客文章的表单。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">create</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;post.create&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 保存一个新的博客文章。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  Request  $request</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">store</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// 验证并存储博客文章...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>22.2.3. 编写验证逻辑<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>现在我们准备开始在 <code class="docutils literal"><span class="pre">store</span></code> 方法中编写逻辑来验证新的博客文章。为此，我们将使用 <code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 对象提供的 <code class="docutils literal"><span class="pre">validate</span></code> 方法 。如果验证通过，你的代码就可以正常的运行。但是如果验证失败，就会抛出异常，并自动将对应的错误响应返回给用户。在典型的 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求的情况下，会生成一个重定向响应，而对于 <code class="docutils literal"><span class="pre">AJAX</span></code> 请求则会发送 <code class="docutils literal"><span class="pre">JSON</span></code> 响应。</p>
+<p>让我们接着回到 <code class="docutils literal"><span class="pre">store</span></code> 方法来深入理解 <code class="docutils literal"><span class="pre">validate</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 保存一篇新的博客文章。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  Request  $request</span>
+<span class="sd"> * @return Response</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">store</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$validatedData</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">([</span>
+        <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|unique:posts|max:255&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;body&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span>
+    <span class="p">]);</span>
+
+    <span class="c1">// 文章内容是符合规则的，存入数据库...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如你所见，我们将所需的验证规则传递至 <code class="docutils literal"><span class="pre">validate</span></code> 方法中。另外再提醒一次，如果验证失败，会自动生成一个对应的响应。如果验证通过，那我们的控制器将会继续正常运行。</p>
+<div class="section" id="id7">
+<h4>22.2.3.1. 第一个验证失败后停止<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<p>有时，你希望在某个属性第一次验证失败后停止运行验证规则。为了达到这个目的，附加 <code class="docutils literal"><span class="pre">bail</span></code> 规则到该属性：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">([</span>
+    <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;bail|required|unique:posts|max:255&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;body&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+<p>在这个例子里，如果 <code class="docutils literal"><span class="pre">title</span></code> 字段没有通过 <code class="docutils literal"><span class="pre">unique</span></code> ，那么不会检查 <code class="docutils literal"><span class="pre">max</span></code> 规则。规则会按照分配的顺序来验证。</p>
+</div>
+<div class="section" id="id8">
+<h4>22.2.3.2. 关于数组数据的注意事项<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<p>如果你的 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求包含一个 「嵌套」 参数（即数组），那你可以在验证规则中通过 「点」 语法来指定这些参数。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">([</span>
+    <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|unique:posts|max:255&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;author.name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;author.description&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>22.2.4. 显示验证错误信息<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>如果传入的请求参数未通过给定的验证规则呢？正如前面所提到的，Laravel 会自动把用户重定向到之前的位置。另外，所有的验证错误信息会被自动 闪存到 <code class="docutils literal"><span class="pre">session</span></code> 。</p>
+<p>重申一次，我们不必在 <code class="docutils literal"><span class="pre">GET</span></code> 路由中将错误消息显式绑定到视图。因为 Lavarel 会检查在 <code class="docutils literal"><span class="pre">Session</span></code> 数据中的错误信息，并自动将其绑定到视图（如果这个视图文件存在）。而其中的变量 <code class="docutils literal"><span class="pre">$errors</span></code> 是 <code class="docutils literal"><span class="pre">Illuminate\Support\MessageBag</span></code> 的一个实例。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last"><code class="docutils literal"><span class="pre">$errors</span></code> 变量被 <code class="docutils literal"><span class="pre">Web</span></code> 中间件组提供的 <code class="docutils literal"><span class="pre">Illuminate\View\Middleware\ShareErrorsFromSession</span></code> 中间件绑定到视图。 当这个中间件被应用后，在你的视图中就可以获取到 <code class="docutils literal"><span class="pre">$error</span></code> 变量, 可以使一直假定 <code class="docutils literal"><span class="pre">$errors</span></code> 变量存在并且可以安全地使用。</p>
+</div>
+<p>所以，在我们的例子中，当验证失败的时候，用户将会被重定向到控制器的 <code class="docutils literal"><span class="pre">create</span></code> 方法，让我们在视图中显示错误信息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;!--</span> <span class="o">/</span><span class="nx">resources</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span><span class="nx">post</span><span class="o">/</span><span class="nx">create</span><span class="o">.</span><span class="nx">blade</span><span class="o">.</span><span class="nx">php</span> <span class="o">--&gt;</span>
+
+<span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">创建文章</span><span class="o">&lt;/</span><span class="nx">h1</span><span class="o">&gt;</span>
+
+<span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$errors</span><span class="o">-&gt;</span><span class="na">any</span><span class="p">())</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;alert alert-danger&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+            <span class="o">@</span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$errors</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$error</span><span class="p">)</span>
+                <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nv">$error</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+            <span class="o">@</span><span class="k">endforeach</span>
+        <span class="o">&lt;/</span><span class="nx">ul</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="k">endif</span>
+
+<span class="o">&lt;!--</span> <span class="nx">创建文章表单</span> <span class="o">--&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>22.2.5. 关于可选字段的注意事项<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>默认情况下，Laravel 在你应用的全局中间件堆栈中包含在 <code class="docutils literal"><span class="pre">App\Http\Kernel</span></code> 类中的 <code class="docutils literal"><span class="pre">TrimStrings</span></code> 和 <code class="docutils literal"><span class="pre">ConvertEmptyStringsToNull</span></code> 中间件。因此，如果你不希望验证程序将 <code class="docutils literal"><span class="pre">null</span></code> 值视为无效的，那就将「可选」的请求字段标记为 <code class="docutils literal"><span class="pre">nullable</span></code> 。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">([</span>
+    <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|unique:posts|max:255&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;body&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;publish_at&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;nullable|date&#39;</span><span class="p">,</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+<p>在这个例子里，我们指定 <code class="docutils literal"><span class="pre">publish_at</span></code> 字段可以为 <code class="docutils literal"><span class="pre">null</span></code> 或者一个有效的日期格式。如果 <code class="docutils literal"><span class="pre">nullable</span></code> 的修饰词没有被添加到规则定义中，验证器会认为 <code class="docutils literal"><span class="pre">null</span></code> 是一个无效的日期格式。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>AJAX 请求 &amp; 验证</p>
+<p class="last">在这个例子中，我们使用传统的表单将数据发送到应用程序。但实际情况中，很多程序都会使用 <code class="docutils literal"><span class="pre">AJAX</span></code> 来发送请求。当我们对 <code class="docutils literal"><span class="pre">AJAX</span></code> 的请求中使用 <code class="docutils literal"><span class="pre">validate</span></code> 方法时， Laravel 并不会生成一个重定向响应，而是会生成一个包含所有验证错误信息的 <code class="docutils literal"><span class="pre">JSON</span></code> 响应。这个 <code class="docutils literal"><span class="pre">JSON</span></code> 响应会包含一个 <code class="docutils literal"><span class="pre">HTTP</span></code> 状态码 <code class="docutils literal"><span class="pre">422</span></code> 被发送出去。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id11">
+<h2>22.3. 表单验证请求<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id12">
+<h3>22.3.1. 创建表单请求<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>面对更复杂的验证情境中，你可以创建一个「表单请求」来处理更为复杂的逻辑。表单请求是包含验证逻辑的自定义请求类。可使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">make:request</span></code> 来创建表单请求类：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:request StoreBlogPost
+</pre></div>
+</div>
+<p>新生成的类保存在 <code class="docutils literal"><span class="pre">app/Http/Requests</span></code> 目录下。如果这个目录不存在，运行 <code class="docutils literal"><span class="pre">make:request</span></code> 命令时它会被创建出来。让我们添加一些验证规则到 <code class="docutils literal"><span class="pre">rules</span></code> 方法中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取适用于请求的验证规则。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return array</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">rules</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|unique:posts|max:255&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;body&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>验证规则是如何运行的呢？你所需要做的就是在控制器方法中类型提示传入的请求。在调用控制器方法之前验证传入的表单请求，这意味着你不需要在控制器中写任何验证逻辑：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 保存传入的博客文章。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  StoreBlogPost  $request</span>
+<span class="sd"> * @return Response</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">store</span><span class="p">(</span><span class="nx">StoreBlogPost</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 传入请求有效...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果验证失败，就会生成一个让用户返回到先前的位置的重定向响应。这些错误也会被闪存到 <code class="docutils literal"><span class="pre">Session</span></code> 中，以便这些错误都可以在页面中显示出来。如果传入的请求是 <code class="docutils literal"><span class="pre">AJAX</span></code> ，会向用户返回具有 <code class="docutils literal"><span class="pre">422</span></code> 状态代码和验证错误信息的 <code class="docutils literal"><span class="pre">JSON</span></code> 数据的 <code class="docutils literal"><span class="pre">HTTP</span></code> 响应。</p>
+</div>
+<div class="section" id="id13">
+<h3>22.3.2. 添加表单请求后钩子<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p>如果你想在表单请求「之后」添加钩子，可以使用 <code class="docutils literal"><span class="pre">withValidator</span></code> 方法。这个方法接收一个完整的验证构造器，允许你在验证结果返回之前调用任何方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> *  配置验证器实例。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  \Illuminate\Validation\Validator  $validator</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">withValidator</span><span class="p">(</span><span class="nv">$validator</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$validator</span><span class="o">-&gt;</span><span class="na">after</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$validator</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">somethingElseIsInvalid</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nv">$validator</span><span class="o">-&gt;</span><span class="na">errors</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;field&#39;</span><span class="p">,</span> <span class="s1">&#39;Something is wrong with this field!&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>22.3.3. 授权表单请求<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>表单请求类内也包含了 <code class="docutils literal"><span class="pre">authorize</span></code> 方法。在这个方法中，你可以检查经过身份验证的用户确定其是否具有更新给定资源的权限。比方说，你可以判断用户是否拥有更新文章评论的权限：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 判断用户是否有权限做出此请求。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return bool</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">authorize</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$comment</span> <span class="o">=</span> <span class="nx">Comment</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">));</span>
+
+    <span class="k">return</span> <span class="nv">$comment</span> <span class="o">&amp;&amp;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">can</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="nv">$comment</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>由于所有的表单请求都是继承了 Laravel 中的请求基类，所以我们可以使用 <code class="docutils literal"><span class="pre">user</span></code> 方法去获取当前认证登录的用户。同时请注意上述例子中对 <code class="docutils literal"><span class="pre">route</span></code> 方法的调用。这个方法允许你在被调用的路由上获取其定义的 <code class="docutils literal"><span class="pre">URI</span></code> 参数，譬如下面例子中的 <code class="docutils literal"><span class="pre">{comment}</span></code> 参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;comment/{comment}&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果 <code class="docutils literal"><span class="pre">authorize</span></code> 方法返回 <code class="docutils literal"><span class="pre">false</span></code> ，则会自动返回一个包含 <code class="docutils literal"><span class="pre">403</span></code> 状态码的 <code class="docutils literal"><span class="pre">HTTP</span></code> 响应，也不会运行控制器的方法。</p>
+<p>如果你打算在应用程序的其它部分也能处理授权逻辑，只需从 <code class="docutils literal"><span class="pre">authorize</span></code> 方法返回 <code class="docutils literal"><span class="pre">true</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 判断用户是否有权限进行此请求。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return bool</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">authorize</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id15">
+<h3>22.3.4. 自定义错误信息<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p>你可以通过重写表单请求的 <code class="docutils literal"><span class="pre">messages</span></code> 方法来自定义错误消息。此方法应该如下所示返回属性/规则对数组及其对应错误消息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取已定义的验证规则的错误消息。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return array</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">messages</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s1">&#39;title.required&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;A :attribute is required&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;body.required&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;A :attribute is required&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>错误消息中可以使用属性占位符，占位符代表属性显示格式：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">:attribute</span></code> 属性名称全部小写；</li>
+<li><code class="docutils literal"><span class="pre">:ATTRIBUTE</span></code> 属性名称全部大写；</li>
+<li><code class="docutils literal"><span class="pre">:Attribute</span></code> 属性名称首字母大写；</li>
+</ul>
+</div>
+<div class="section" id="id16">
+<h3>22.3.5. 自定义字段名称<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<p>你可以通过重写表单请求的 attributes 方法来自定义错误字段名称。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">attributes</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s2">&quot;title&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;anotherTitle&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;body&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;anotherBody&quot;</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>此外，我们还可以在语言文件中自定义错误字段名称。 参考下面的 <a class="reference internal" href="#id29">在语言文件中指定自定义属性</a></p>
+</div>
+</div>
+<div class="section" id="id17">
+<h2>22.4. 手动创建验证器<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
+<p>如果你不想要使用请求上使用 <code class="docutils literal"><span class="pre">validate</span></code> 方法，你可以通过 validator <code class="docutils literal"><span class="pre">Validator</span></code> facade 手动创建一个验证器实例。用 Facade 上的 <code class="docutils literal"><span class="pre">make</span></code> 方法生成一个新的验证器实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Validator</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">PostController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 保存一篇新的博客文章。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  Request  $request</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">store</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$validator</span> <span class="o">=</span> <span class="nx">Validator</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">(),</span> <span class="p">[</span>
+            <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|unique:posts|max:255&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;body&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span>
+        <span class="p">]);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$validator</span><span class="o">-&gt;</span><span class="na">fails</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;post/create&#39;</span><span class="p">)</span>
+                        <span class="o">-&gt;</span><span class="na">withErrors</span><span class="p">(</span><span class="nv">$validator</span><span class="p">)</span>
+                        <span class="o">-&gt;</span><span class="na">withInput</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="c1">// 保存文章...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>传给 <code class="docutils literal"><span class="pre">make</span></code> 方法的第一个参数是要验证的数据。第二个参数则是该数据的验证规则。</p>
+<p>如果请求没有通过验证，则可以使用 <code class="docutils literal"><span class="pre">withErrors</span></code> 方法把错误消息闪存到 <code class="docutils literal"><span class="pre">Session</span></code> 。使用这个方法进行重定向之后， <code class="docutils literal"><span class="pre">$errors</span></code> 变量会自动与视图中共享，你可以将这些消息显示给用户。 <code class="docutils literal"><span class="pre">withErrors</span></code> 方法接收验证器、 <code class="docutils literal"><span class="pre">MessageBag</span></code> 或 PHP <code class="docutils literal"><span class="pre">array</span></code> 。</p>
+<div class="section" id="id18">
+<h3>22.4.1. 自动重定向<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
+<p>如果你想手动创建验证器实例，又想利用请求中 <code class="docutils literal"><span class="pre">validates</span></code> 方法提供的自动重定向，那么你可以在现有的验证器实例上调用 <code class="docutils literal"><span class="pre">validate</span></code> 方法。如果验证失败，用户会自动重定向，如果是 <code class="docutils literal"><span class="pre">AJAX</span></code> 请求，将会返回 <code class="docutils literal"><span class="pre">JSON</span></code> 格式的响应：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Validator</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">(),</span> <span class="p">[</span>
+    <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|unique:posts|max:255&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;body&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span>
+<span class="p">])</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h3>22.4.2. 命名错误包<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p>如果你一个页面中有多个表单，你可以命名错误信息的 <code class="docutils literal"><span class="pre">MessageBag</span></code> 来检索特定表单的错误消息。只需给 <code class="docutils literal"><span class="pre">withErrors</span></code> 方法传递一个名字作为第二个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;register&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">withErrors</span><span class="p">(</span><span class="nv">$validator</span><span class="p">,</span> <span class="s1">&#39;login&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>然后你能从 <code class="docutils literal"><span class="pre">$errors</span></code> 变量中获取命名的 <code class="docutils literal"><span class="pre">MessageBag</span></code> 实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">{{</span> <span class="nv">$errors</span><span class="o">-&gt;</span><span class="na">login</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span> <span class="p">}}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id20">
+<h3>22.4.3. 验证后钩子<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<p>验证器还允许你添加在验证完成之后运行的回调函数。以便你进行进一步的验证，甚至是在消息集合中添加更多的错误消息。使用它只需在验证实例上使用 <code class="docutils literal"><span class="pre">after</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$validator</span> <span class="o">=</span> <span class="nx">Validator</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="o">...</span><span class="p">);</span>
+
+<span class="nv">$validator</span><span class="o">-&gt;</span><span class="na">after</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$validator</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">somethingElseIsInvalid</span><span class="p">())</span> <span class="p">{</span>
+        <span class="nv">$validator</span><span class="o">-&gt;</span><span class="na">errors</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;field&#39;</span><span class="p">,</span> <span class="s1">&#39;Something is wrong with this field!&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$validator</span><span class="o">-&gt;</span><span class="na">fails</span><span class="p">())</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id21">
+<h2>22.5. 处理错误消息<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h2>
+<p>在 <code class="docutils literal"><span class="pre">Validator</span></code> 实例上调用 <code class="docutils literal"><span class="pre">errors</span></code> 方法后，会得到一个 <code class="docutils literal"><span class="pre">Illuminate\Support\MessageBag</span></code> 实例，该实例具有各种方便的处理错误消息的方法。 <code class="docutils literal"><span class="pre">$errors</span></code> 变量是自动提供给所有视图的 <code class="docutils literal"><span class="pre">MessageBag</span></code> 类的一个实例。</p>
+<div class="section" id="id22">
+<h3>22.5.1. 查看特定字段的第一个错误消息<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h3>
+<p>如果要查看特定字段的第一个错误消息，可以使用 <code class="docutils literal"><span class="pre">first</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$errors</span> <span class="o">=</span> <span class="nv">$validator</span><span class="o">-&gt;</span><span class="na">errors</span><span class="p">();</span>
+
+<span class="k">echo</span> <span class="nv">$errors</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id23">
+<h3>22.5.2. 查看特定字段的所有错误消息<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h3>
+<p>如果你想以数组的形式获取指定字段的所有错误消息，则可以使用 <code class="docutils literal"><span class="pre">get</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$errors</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$message</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果要验证表单的数组字段，你可以使用 <code class="docutils literal"><span class="pre">*</span></code> 来获取每个数组元素的所有错误消息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$errors</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;attachments.*&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$message</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id24">
+<h3>22.5.3. 查看所有字段的错误消息<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h3>
+<p>如果你想要得到所有字段的错误消息，可以使用 <code class="docutils literal"><span class="pre">all</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$errors</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$message</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id25">
+<h3>22.5.4. 判断特定字段是否含有错误消息<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h3>
+<p>可以使用 <code class="docutils literal"><span class="pre">has</span></code> 方法来检测一个给定的字段是否存在错误消息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$errors</span><span class="o">-&gt;</span><span class="na">has</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id26">
+<h3>22.5.5. 自定义错误消息<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h3>
+<p>如果有需要的话，你也可以自定义错误消息取代默认值进行验证。有几种方法可以指定自定义消息。首先，你可以将自定义消息作为第三个参数传递给 <code class="docutils literal"><span class="pre">Validator::make</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$messages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;required&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;The :attribute field is required.&#39;</span><span class="p">,</span>
+<span class="p">];</span>
+
+<span class="nv">$validator</span> <span class="o">=</span> <span class="nx">Validator</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nv">$input</span><span class="p">,</span> <span class="nv">$rules</span><span class="p">,</span> <span class="nv">$messages</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>在这个例子中，<code class="docutils literal"><span class="pre">:attribute</span></code> 占位符会被验证字段的实际名称取代。除此之外，你还可以在验证消息中使用其它占位符。例如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$messages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;same&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;The :attribute and :other must match.&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;size&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;The :attribute must be exactly :size.&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;between&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;The :attribute value :input is not between :min - :max.&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;in&#39;</span>      <span class="o">=&gt;</span> <span class="s1">&#39;The :attribute must be one of the following types: :values&#39;</span><span class="p">,</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<div class="section" id="id27">
+<h4>22.5.5.1. 为给定属性指定自定义消息<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h4>
+<p>有时候你可能只想为特定的字段自定义错误消息。只需在属性名称后使用「点」语法来指定验证的规则即可：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$messages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;email.required&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;We need to know your e-mail address!&#39;</span><span class="p">,</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id28">
+<h4>22.5.5.2. 在语言文件中指定自定义消息<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h4>
+<p>现实中大多数情况下，我们可能不仅仅只是将自定义消息传递给 <code class="docutils literal"><span class="pre">Validator</span></code> ，而是想要会使用不同的语言文件来指定自定义消息。实现它需要在 <code class="docutils literal"><span class="pre">resources/lang/xx/validation.php</span></code> 语言文件中将定制的消息添加到 <code class="docutils literal"><span class="pre">custom</span></code> 数组。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;custom&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;required&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;We need to know your e-mail address!&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id29">
+<h4>22.5.5.3. 在语言文件中指定自定义属性<a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h4>
+<p>如果要使用自定义属性名称替换验证消息的 <code class="docutils literal"><span class="pre">:attribute</span></code> 部分，就在 <code class="docutils literal"><span class="pre">resources/lang/xx/validation.php</span></code> 语言文件的 <code class="docutils literal"><span class="pre">attributes</span></code> 数组中指定自定义名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;attributes&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;email address&#39;</span><span class="p">,</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的日志.html" class="btn btn-neutral float-right" title="23. 日志" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的Session原理分析.html" class="btn btn-neutral" title="21. Session原理分析" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

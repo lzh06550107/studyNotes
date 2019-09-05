@@ -1,0 +1,1429 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>61. Eloquent关联 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="62. Eloquent修改器" href="Laravel的数据库—Eloquent修改器.html"/>
+        <link rel="prev" title="60. Eloquent" href="Laravel的数据库—Eloquent.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">61. Eloquent关联</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">61.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">61.2. 定义关联</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">61.2.1. 一对一</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">61.2.2. 一对多</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">61.2.3. 多对多</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">61.2.4. 远程一对多</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">61.2.5. 一对多多态关联</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">61.2.6. 多对多多态关联</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id25">61.3. 查询关联</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vs">61.3.1. 关联方法 Vs 动态属性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">61.3.2. 基于存在的关联查询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27">61.3.3. 基于不存在的关联查询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28">61.3.4. 关联数据计数</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id29">61.4. 预加载</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id30">61.4.1. 预加载多个关联</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id31">61.4.2. 嵌套预加载</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id32">61.4.3. 预加载特定的列</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id33">61.4.4. 约束预加载</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id34">61.4.5. 延迟预加载</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id35">61.5. 插入 &amp; 更新关联模型</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id36">61.5.1. 保存方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id37">61.5.2. 新增方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#belongsto">61.5.3. 更新 belongsTo 关联</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id38">61.5.4. 多对多关联</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id44">61.6. 更新父级时间戳</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>61. Eloquent关联</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="eloquent">
+<h1>61. Eloquent关联<a class="headerlink" href="#eloquent" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>61.1. 简介<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>数据库表通常相互关联。 例如，一篇博客文章可能有许多评论，或者一个订单对应一个下单用户。 <code class="docutils literal"><span class="pre">Eloquent</span></code> 让这些关联的管理和使用变得简单，并支持多种类型的关联：</p>
+<ul class="simple">
+<li>一对一</li>
+<li>一对多</li>
+<li>多对多</li>
+<li>远程一对多</li>
+<li>多态关联</li>
+<li>多对多多态关联</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>61.2. 定义关联<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Eloquent</span></code> 关联在 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型类中以方法的形式呈现。如同 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型本身，关联也可以作为强大的 查询语句构造器 使用，提供了强大的链式调用和查询功能。例如，我们可以在 <code class="docutils literal"><span class="pre">posts</span></code> 关联的链式调用中附加一个约束条件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">posts</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;active&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>不过，在深入使用关联之前，让我们先学习如何定义每种关联类型。</p>
+<div class="section" id="id3">
+<h3>61.2.1. 一对一<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>一对一关联是最基本的关联关系。例如，一个 <code class="docutils literal"><span class="pre">User</span></code> 模型可能关联一个 <code class="docutils literal"><span class="pre">Phone</span></code> 模型。为了定义这个关联，我们要在 <code class="docutils literal"><span class="pre">User</span></code> 模型中写一个 <code class="docutils literal"><span class="pre">phone</span></code> 方法，在 <code class="docutils literal"><span class="pre">phone</span></code> 方法内部调用 <code class="docutils literal"><span class="pre">hasOne</span></code> 方法并返回其结果：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获取与用户关联的电话号码记录。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">phone</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasOne</span><span class="p">(</span><span class="s1">&#39;App\Phone&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">hasOne</span></code> 方法的第一个参数是关联模型的类名。一旦定义了模型关联，我们就可以使用 <code class="docutils literal"><span class="pre">Eloquent</span></code> 动态属性获得相关的记录。动态属性允许你访问关系方法就像访问模型中定义的属性一样：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$phone</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">phone</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Eloquent</span></code> 会基于模型名决定外键名称。在这个列子中， 会自动假设 <code class="docutils literal"><span class="pre">Phone</span></code> 模型有一个 <code class="docutils literal"><span class="pre">user_id</span></code> 的外键。如果你想覆盖这个约定，可以传递第二个参数给 <code class="docutils literal"><span class="pre">has_one</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasOne</span><span class="p">(</span><span class="s1">&#39;App\Phone&#39;</span><span class="p">,</span> <span class="s1">&#39;foreign_key&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>另外， <code class="docutils literal"><span class="pre">Eloquent</span></code> 假设外键的值是与父级 <code class="docutils literal"><span class="pre">id</span></code> （或自定义 <code class="docutils literal"><span class="pre">$primaryKey</span></code> ）列的值相匹配的 。换句话说， <code class="docutils literal"><span class="pre">Eloquent</span></code> 将会在 <code class="docutils literal"><span class="pre">Phone</span></code> 记录的 <code class="docutils literal"><span class="pre">user_id</span></code> 列中查找与用户表的 <code class="docutils literal"><span class="pre">id</span></code> 列相匹配的值。 如果您希望该关联使用 <code class="docutils literal"><span class="pre">id</span></code> 以外的自定义键名，则可以给 <code class="docutils literal"><span class="pre">hasOne</span></code> 方法传递第三个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasOne</span><span class="p">(</span><span class="s1">&#39;App\Phone&#39;</span><span class="p">,</span> <span class="s1">&#39;foreign_key&#39;</span><span class="p">,</span> <span class="s1">&#39;local_key&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id4">
+<h4>61.2.1.1. 定义反向关联<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
+<p>我们已经能从 <code class="docutils literal"><span class="pre">User</span></code> 模型访问到 <code class="docutils literal"><span class="pre">Phone</span></code> 模型了。现在，让我们再在 <code class="docutils literal"><span class="pre">Phone</span></code> 模型上定义一个关联，这个关联能让我们访问到拥有该电话的 <code class="docutils literal"><span class="pre">User</span></code> 模型。我们可以使用与 <code class="docutils literal"><span class="pre">hasOne</span></code> 方法对应的 <code class="docutils literal"><span class="pre">belongsTo</span></code> 方法来定义反向关联：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Phone</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得拥有此电话的用户。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">user</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\User&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在上面的例子中， <code class="docutils literal"><span class="pre">Eloquent</span></code> 会尝试匹配 <code class="docutils literal"><span class="pre">Phone</span></code> 模型上的 <code class="docutils literal"><span class="pre">user_id</span></code> 至 <code class="docutils literal"><span class="pre">User</span></code> 模型上的 <code class="docutils literal"><span class="pre">id</span></code> 。它是通过检查关系方法的名称并使用 <code class="docutils literal"><span class="pre">_id</span></code> 作为后缀名来确定默认外键名称的。但是，如果 <code class="docutils literal"><span class="pre">Phone</span></code> 模型的外键不是 <code class="docutils literal"><span class="pre">user_id</span></code> ，那么可以将自定义键名作为第二个参数传递给 <code class="docutils literal"><span class="pre">belongsTo</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获得拥有此电话的用户。</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">user</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\User&#39;</span><span class="p">,</span> <span class="s1">&#39;foreign_key&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果父级模型没有使用 <code class="docutils literal"><span class="pre">id</span></code> 作为主键，或者是希望用不同的字段来连接子级模型，则可以通过给 <code class="docutils literal"><span class="pre">belongsTo</span></code> 方法传递第三个参数的形式指定父级数据表的自定义键：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获得拥有此电话的用户。</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">user</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\User&#39;</span><span class="p">,</span> <span class="s1">&#39;foreign_key&#39;</span><span class="p">,</span> <span class="s1">&#39;other_key&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h4>61.2.1.2. 默认模型<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">belongsTo</span></code> 关联允许定义默认模型，这适应于当关联结果返回的是 <code class="docutils literal"><span class="pre">null</span></code> 的情况。这种设计模式通常称为 空对象模式，为您免去了额外的条件判断代码。在下面的例子中， <code class="docutils literal"><span class="pre">user</span></code> 关联如果没有找到文章的作者，就会返回一个空的 <code class="docutils literal"><span class="pre">App\User</span></code> 模型。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获得此文章的作者。</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">user</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\User&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">withDefault</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>您也可以通过传递数组或闭包给 <code class="docutils literal"><span class="pre">withDefault</span></code> 方法，已填充默认模型的属性：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获得此文章的作者。</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">user</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\User&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">withDefault</span><span class="p">([</span>
+        <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;游客&#39;</span><span class="p">,</span>
+    <span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 获得此文章的作者。</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">user</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\User&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">withDefault</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="s1">&#39;游客&#39;</span><span class="p">;</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>61.2.2. 一对多<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>「一对多」关联用于定义单个模型拥有任意数量的其它关联模型。例如，一篇博客文章可能会有无限多条评论。就像其它的 <code class="docutils literal"><span class="pre">Eloquent</span></code> 关联一样，一对多关联的定义也是在 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型中写一个方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Post</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得此博客文章的评论。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">comments</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasMany</span><span class="p">(</span><span class="s1">&#39;App\Comment&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>记住， <code class="docutils literal"><span class="pre">Eloquent</span></code> 会自动确定 <code class="docutils literal"><span class="pre">Comment</span></code> 模型上正确的外键字段。按照约定， <code class="docutils literal"><span class="pre">Eloquent</span></code> 使用父级模型名的「snake case」形式、加上 <code class="docutils literal"><span class="pre">_id</span></code> 后缀名作为外键字段。对应到上面的场景，就是 <code class="docutils literal"><span class="pre">Eloquent</span></code> 假定 <code class="docutils literal"><span class="pre">Comment</span></code> 模型对应到 <code class="docutils literal"><span class="pre">Post</span></code> 模型上的那个外键字段是 <code class="docutils literal"><span class="pre">post_id</span></code> 。</p>
+<p>关联关系定义好后，我们就可以通过访问 <code class="docutils literal"><span class="pre">comments</span></code> 属性获得评论集合。记住，因为 <code class="docutils literal"><span class="pre">Eloquent</span></code> 提供了「动态属性」，所以我们可以像在访问模型中定义的属性一样，访问关联方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$comments</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">comments</span><span class="p">;</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$comments</span> <span class="k">as</span> <span class="nv">$comment</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当然，由于所有的关联还可以作为查询语句构造器使用，因此你可以使用链式调用的方式、在 <code class="docutils literal"><span class="pre">comments</span></code> 方法上添加额外的约束条件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$comments</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">comments</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>和 <code class="docutils literal"><span class="pre">hasOne</span></code> 方法一样，您也可以在使用 <code class="docutils literal"><span class="pre">hasMany</span></code> 方法的时候，通过传递额外参数来覆盖默认使用的外键与本地键。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasMany</span><span class="p">(</span><span class="s1">&#39;App\Comment&#39;</span><span class="p">,</span> <span class="s1">&#39;foreign_key&#39;</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasMany</span><span class="p">(</span><span class="s1">&#39;App\Comment&#39;</span><span class="p">,</span> <span class="s1">&#39;foreign_key&#39;</span><span class="p">,</span> <span class="s1">&#39;local_key&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id7">
+<h4>61.2.2.1. 一对多（反向）<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<p>现在，我们已经能获得一篇文章的所有评论，接着再定义一个通过评论获得所属文章的关联。这个关联是 <code class="docutils literal"><span class="pre">hasMany</span></code> 关联的反向关联，在子级模型中使用 <code class="docutils literal"><span class="pre">belongsTo</span></code> 方法定义它：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Comment</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得此评论所属的文章。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">post</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\Post&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>关联关系定义好后，我们就可以在 <code class="docutils literal"><span class="pre">Comment</span></code> 模型上使用 <code class="docutils literal"><span class="pre">post</span></code> 「动态属性」获得 <code class="docutils literal"><span class="pre">Post</span></code> 模型了。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$comment</span> <span class="o">=</span> <span class="nx">App\Comment</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$comment</span><span class="o">-&gt;</span><span class="na">post</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>在上面的例子中， <code class="docutils literal"><span class="pre">Eloquent</span></code> 会尝试用 <code class="docutils literal"><span class="pre">Comment</span></code> 模型的 <code class="docutils literal"><span class="pre">post_id</span></code> 与 <code class="docutils literal"><span class="pre">Post</span></code> 模型的 <code class="docutils literal"><span class="pre">id</span></code> 进行匹配。默认外键名是 <code class="docutils literal"><span class="pre">Eloquent</span></code> 依据关联名、并在关联名后加上 <code class="docutils literal"><span class="pre">_id</span></code> 后缀确定的。当然，如果 <code class="docutils literal"><span class="pre">Comment</span></code> 模型的外键不是 <code class="docutils literal"><span class="pre">post_id</span></code> ，那么可以将自定义键名作为第二个参数传递给 <code class="docutils literal"><span class="pre">belongsTo</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获得此评论所属的文章。</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">post</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\Post&#39;</span><span class="p">,</span> <span class="s1">&#39;foreign_key&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果父级模型没有使用 <code class="docutils literal"><span class="pre">id</span></code> 作为主键，或者是希望用不同的字段来连接子级模型，则可以通过给 <code class="docutils literal"><span class="pre">belongsTo</span></code> 方法传递第三个参数的形式指定父级数据表的自定义键：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Get the post that owns the comment.</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">post</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\Post&#39;</span><span class="p">,</span> <span class="s1">&#39;foreign_key&#39;</span><span class="p">,</span> <span class="s1">&#39;other_key&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h4>61.2.2.2. 默认模型<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="id9">
+<h3>61.2.3. 多对多<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>多对多关联 比 <code class="docutils literal"><span class="pre">hasOne</span></code> 和 <code class="docutils literal"><span class="pre">hasMany</span></code> 关联稍复杂些。 举一个关联例子，一个用户拥有很多种角色，同时这些角色也被其他用户共享。例如，许多用户都可以有「管理员」这个角色。要定于这种关联，需要用到这三个数据库表： <code class="docutils literal"><span class="pre">users</span></code> 、 <code class="docutils literal"><span class="pre">roles</span></code> 、 和 <code class="docutils literal"><span class="pre">role_user</span></code> 。 <code class="docutils literal"><span class="pre">role_user</span></code> 表 的命名是由关联的两个模型名按照字母顺序而来的，并且包含了 <code class="docutils literal"><span class="pre">user_id</span></code> 和 <code class="docutils literal"><span class="pre">role_id</span></code> 字段。</p>
+<p>多对多关联通过写方法定义，在这个方法的内部调用 <code class="docutils literal"><span class="pre">belongsToMany</span></code> 方法并返回其结果。例如，我们在 <code class="docutils literal"><span class="pre">User</span></code> 模型中定义 <code class="docutils literal"><span class="pre">roles</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得用户的角色。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">roles</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsToMany</span><span class="p">(</span><span class="s1">&#39;App\Role&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>关联被定义好之后，你就可以通过 <code class="docutils literal"><span class="pre">roles</span></code> 动态属性获取用户的角色了：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span> <span class="k">as</span> <span class="nv">$role</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当然，像其它所有的关联类型一样，你可以调用 <code class="docutils literal"><span class="pre">roles</span></code> 方法，利用链式调用对查询语句添加约束条件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$roles</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>如前所述， 为了确定关联连接表表名， <code class="docutils literal"><span class="pre">Eloquent</span></code> 会按照字母顺序合并两个关联模型的名称。当然，你也可以不使用这种约定，传参给 <code class="docutils literal"><span class="pre">belongsToMany</span></code> 方法的第二个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsToMany</span><span class="p">(</span><span class="s1">&#39;App\Role&#39;</span><span class="p">,</span> <span class="s1">&#39;role_user&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>除了自定义连接表表名外，你还可以通过给 <code class="docutils literal"><span class="pre">belongsToMany</span></code> 方法传递其它参数来自定义连接表的键名。第三个参数是定义此关联的模型在连接表里的外键名，第四个参数是另一个模型在连接表里的外键名：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsToMany</span><span class="p">(</span><span class="s1">&#39;App\Role&#39;</span><span class="p">,</span> <span class="s1">&#39;role_user&#39;</span><span class="p">,</span> <span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;role_id&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id10">
+<h4>61.2.3.1. 定义反向关联<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<p>定义多对多关联的反向关联，您只要在对方模型里再次调用 <code class="docutils literal"><span class="pre">belongsToMany</span></code> 方法就可以了。让我们接着以用户角色为例，在 <code class="docutils literal"><span class="pre">Role</span></code> 模型中定义一个 <code class="docutils literal"><span class="pre">users</span></code> 方法。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Role</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得此角色下的用户。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">users</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsToMany</span><span class="p">(</span><span class="s1">&#39;App\User&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如你所见，除了引入的模型变为 <code class="docutils literal"><span class="pre">App\User</span></code> 外，其它与在 <code class="docutils literal"><span class="pre">User</span></code> 模型中定义的完全一样。由于我们重用了 <code class="docutils literal"><span class="pre">belongsToMany</span></code> 方法，自定义连接表表名和自定义连接表里的键的字段名称在这里同样适用。</p>
+</div>
+<div class="section" id="id11">
+<h4>61.2.3.2. 获取中间表字段<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+<p>您已经学到，多对多关联需要有一个中间表支持， <code class="docutils literal"><span class="pre">Eloquent</span></code> 提供了一些有用的方法来和这张表进行交互。例如，假设我们的 <code class="docutils literal"><span class="pre">User</span></code> 对象关联了许多的 <code class="docutils literal"><span class="pre">Role</span></code> 对象。在获得这些关联对象后，可以使用模型的 <code class="docutils literal"><span class="pre">pivot</span></code> 属性访问中间表数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span> <span class="k">as</span> <span class="nv">$role</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$role</span><span class="o">-&gt;</span><span class="na">pivot</span><span class="o">-&gt;</span><span class="na">created_at</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>需要注意的是，我们取得的每个 <code class="docutils literal"><span class="pre">Role</span></code> 模型对象，都会被自动赋予 <code class="docutils literal"><span class="pre">pivot</span></code> 属性，它代表中间表的一个模型对象，能像其它的 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型一样使用。</p>
+<p>默认情况下， <code class="docutils literal"><span class="pre">pivot</span></code> 对象只包含两个关联模型的键。如果中间表里还有额外字段，则必须在定义关联时明确指出：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsToMany</span><span class="p">(</span><span class="s1">&#39;App\Role&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">withPivot</span><span class="p">(</span><span class="s1">&#39;column1&#39;</span><span class="p">,</span> <span class="s1">&#39;column2&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果您想让中间表自动维护 <code class="docutils literal"><span class="pre">created_at</span></code> 和 <code class="docutils literal"><span class="pre">updated_at</span></code> 时间戳，那么在定义关联时加上 <code class="docutils literal"><span class="pre">withTimestamps</span></code> 方法即可。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsToMany</span><span class="p">(</span><span class="s1">&#39;App\Role&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">withTimestamps</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pivot">
+<h4>61.2.3.3. 自定义 pivot 属性名称<a class="headerlink" href="#pivot" title="永久链接至标题">¶</a></h4>
+<p>如前所述，来自中间表的属性可以使用 <code class="docutils literal"><span class="pre">pivot</span></code> 属性在模型上访问。 但是，你可以自由定制此属性的名称，以更好地反映其在应用中的用途。</p>
+<p>例如，如果你的应用中包含可能订阅播客的用户，则用户与播客之间可能存在多对多关系。 如果是这种情况，你可能希望将中间表访问器重命名为 <code class="docutils literal"><span class="pre">subscription</span></code> 而不是 <code class="docutils literal"><span class="pre">pivot</span></code> 。 这可以在定义关系时使用 <code class="docutils literal"><span class="pre">as</span></code> 方法完成：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsToMany</span><span class="p">(</span><span class="s1">&#39;App\Podcast&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">as</span><span class="p">(</span><span class="s1">&#39;subscription&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">withTimestamps</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>一旦定义完成，你可以使用自定义名称访问中间表数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;podcasts&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span><span class="o">-&gt;</span><span class="na">flatMap</span><span class="o">-&gt;</span><span class="na">podcasts</span> <span class="k">as</span> <span class="nv">$podcast</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$podcast</span><span class="o">-&gt;</span><span class="na">subscription</span><span class="o">-&gt;</span><span class="na">created_at</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h4>61.2.3.4. 通过中间表列过滤关系<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
+<p>在定义关系时，你还可以使用 <code class="docutils literal"><span class="pre">wherePivot</span></code> 和 <code class="docutils literal"><span class="pre">wherePivotIn</span></code> 方法来过滤 <code class="docutils literal"><span class="pre">belongsToMany</span></code> 返回的结果：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsToMany</span><span class="p">(</span><span class="s1">&#39;App\Role&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">wherePivot</span><span class="p">(</span><span class="s1">&#39;approved&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsToMany</span><span class="p">(</span><span class="s1">&#39;App\Role&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">wherePivotIn</span><span class="p">(</span><span class="s1">&#39;priority&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h4>61.2.3.5. 定义自定义中间表模型<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
+<p>如果你想定义一个自定义模型来表示关联关系中的中间表，可以在定义关联时调用 <code class="docutils literal"><span class="pre">using</span></code> 方法。所有自定义中间表模型都必须扩展自 <code class="docutils literal"><span class="pre">Illuminate\Database\Eloquent\Relations\Pivot</span></code> 类。例如，我们在写 <code class="docutils literal"><span class="pre">Role</span></code> 模型的关联时，使用自定义中间表模型 <code class="docutils literal"><span class="pre">UserRole</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Role</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得此角色下的用户。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">users</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsToMany</span><span class="p">(</span><span class="s1">&#39;App\User&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">using</span><span class="p">(</span><span class="s1">&#39;App\UserRole&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当定义 <code class="docutils literal"><span class="pre">UserRole</span></code> 模型时，我们要扩展 <code class="docutils literal"><span class="pre">Pivot</span></code> 类：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Relations\Pivot</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserRole</span> <span class="k">extends</span> <span class="nx">Pivot</span>
+<span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>61.2.4. 远程一对多<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>「远程一对多」关联提供了方便、简短的方式通过中间的关联来获得远层的关联。例如，一个 <code class="docutils literal"><span class="pre">Country</span></code> 模型可以通过中间的 <code class="docutils literal"><span class="pre">User</span></code> 模型获得多个 <code class="docutils literal"><span class="pre">Post</span></code> 模型。在这个例子中，您可以轻易地收集给定国家的所有博客文章。让我们来看看定义这种关联所需的数据表：</p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">countries</span>
+    <span class="na">id - integer</span>
+    <span class="na">name - string</span>
+
+<span class="na">users</span>
+    <span class="na">id - integer</span>
+    <span class="na">country_id - integer</span>
+    <span class="na">name - string</span>
+
+<span class="na">posts</span>
+    <span class="na">id - integer</span>
+    <span class="na">user_id - integer</span>
+    <span class="na">title - string</span>
+</pre></div>
+</div>
+<p>虽然 <code class="docutils literal"><span class="pre">posts</span></code> 表中不包含 <code class="docutils literal"><span class="pre">country_id</span></code> 字段，但 <code class="docutils literal"><span class="pre">hasManyThrough</span></code> 关联能让我们通过 <code class="docutils literal"><span class="pre">$country-&gt;posts</span></code> 访问到一个国家下所有的用户文章。为了完成这个查询， <code class="docutils literal"><span class="pre">Eloquent</span></code> 会先检查中间表 <code class="docutils literal"><span class="pre">users</span></code> 的 <code class="docutils literal"><span class="pre">country_id</span></code> 字段，找到所有匹配的用户 <code class="docutils literal"><span class="pre">ID</span></code> 后，使用这些 <code class="docutils literal"><span class="pre">ID</span></code> ，在 <code class="docutils literal"><span class="pre">posts</span></code> 表中完成查找。</p>
+<p>现在，我们已经知道了定义这种关联所需的数据表结构，接下来，让我们在 <code class="docutils literal"><span class="pre">Country</span></code> 模型中定义它：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Country</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得某个国家下所有的用户文章。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">posts</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasManyThrough</span><span class="p">(</span><span class="s1">&#39;App\Post&#39;</span><span class="p">,</span> <span class="s1">&#39;App\User&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">hasManyThrough</span></code> 方法的第一个参数是我们最终希望访问的模型名称，而第二个参数是中间模型的名称。</p>
+<p>当执行关联查询时，通常会使用 <code class="docutils literal"><span class="pre">Eloquent</span></code> 约定的外键名。如果您想要自定义关联的键，可以通过给 <code class="docutils literal"><span class="pre">hasManyThrough</span></code> 方法传递第三个和第四个参数实现，第三个参数表示中间模型的外键名，第四个参数表示最终模型的外键名。第五个参数表示本地键名，而第六个参数表示中间模型的本地键名：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">Country</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">posts</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasManyThrough</span><span class="p">(</span>
+            <span class="s1">&#39;App\Post&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;App\User&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;country_id&#39;</span><span class="p">,</span> <span class="c1">// 用户表外键...</span>
+            <span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="c1">// 文章表外键...</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="c1">// 国家表本地键...</span>
+            <span class="s1">&#39;id&#39;</span> <span class="c1">// 用户表本地键...</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id15">
+<h3>61.2.5. 一对多多态关联<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id16">
+<h4>61.2.5.1. 数据表结构<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
+<p>多态关联允许一个模型在单个关联上属于多个其他模型。例如，想象一下使用您应用的用户可以「评论」文章和视频。使用多态关联，您可以用一个 comments 表同时满足这两个使用场景。让我们来看看构建这种关联所需的数据表结构：</p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">posts</span>
+    <span class="na">id - integer</span>
+    <span class="na">title - string</span>
+    <span class="na">body - text</span>
+
+<span class="na">videos</span>
+    <span class="na">id - integer</span>
+    <span class="na">title - string</span>
+    <span class="na">url - string</span>
+
+<span class="na">comments</span>
+    <span class="na">id - integer</span>
+    <span class="na">body - text</span>
+    <span class="na">commentable_id - integer</span>
+    <span class="na">commentable_type - string</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">comments</span></code> 表中有两个需要注意的重要字段 <code class="docutils literal"><span class="pre">commentable_id</span></code> 和 <code class="docutils literal"><span class="pre">commentable_type</span></code> 。 <code class="docutils literal"><span class="pre">commentable_id</span></code> 用来保存文章或者视频的 <code class="docutils literal"><span class="pre">ID</span></code> 值，而 <code class="docutils literal"><span class="pre">commentable_type</span></code> 用来保存所属模型的类名。 <code class="docutils literal"><span class="pre">commentable_type</span></code> 是在我们访问 <code class="docutils literal"><span class="pre">commentable</span></code> 关联时， 让 <code class="docutils literal"><span class="pre">ORM</span></code> 确定所属的模型是哪个「类型」。</p>
+</div>
+<div class="section" id="id17">
+<h4>61.2.5.2. 模型结构<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h4>
+<p>接下来，我们来看看创建这种关联所需的模型定义：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Comment</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得拥有此评论的模型。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">commentable</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">morphTo</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Post</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得此文章的所有评论。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">comments</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">morphMany</span><span class="p">(</span><span class="s1">&#39;App\Comment&#39;</span><span class="p">,</span> <span class="s1">&#39;commentable&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Video</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得此视频的所有评论。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">comments</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">morphMany</span><span class="p">(</span><span class="s1">&#39;App\Comment&#39;</span><span class="p">,</span> <span class="s1">&#39;commentable&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id18">
+<h4>61.2.5.3. 获取多态关联<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
+<p>一旦您的数据库表准备好、模型定义完成后，就可以通过模型来访问关联了。例如，我们只要简单地使用 <code class="docutils literal"><span class="pre">comments</span></code> 动态属性，就可以获得某篇文章下的所有评论：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$post</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$post</span><span class="o">-&gt;</span><span class="na">comments</span> <span class="k">as</span> <span class="nv">$comment</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>您也可以在多态模型上，通过访问调用了 <code class="docutils literal"><span class="pre">morphTo</span></code> 的关联方法获得多态关联的拥有者。在当前场景中，就是 <code class="docutils literal"><span class="pre">Comment</span></code> 模型的 <code class="docutils literal"><span class="pre">commentable</span></code> 方法。所以，我们可以使用动态属性来访问这个方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$comment</span> <span class="o">=</span> <span class="nx">App\Comment</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$commentable</span> <span class="o">=</span> <span class="nv">$comment</span><span class="o">-&gt;</span><span class="na">commentable</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Comment</span></code> 模型的 <code class="docutils literal"><span class="pre">commentable</span></code> 关联会返回 <code class="docutils literal"><span class="pre">Post</span></code> 或者 <code class="docutils literal"><span class="pre">Video</span></code> 实例，这取决于评论所属的模型类型。</p>
+</div>
+<div class="section" id="id19">
+<h4>61.2.5.4. 自定义多态关联的类型字段<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h4>
+<p>默认，Laravel 会使用完全限定类名作为关联模型保存在多态模型上的类型字段值。比如，在上面的例子中， <code class="docutils literal"><span class="pre">Comment</span></code> 属于 <code class="docutils literal"><span class="pre">Post</span></code> 或者 <code class="docutils literal"><span class="pre">Video</span></code> ，那么 <code class="docutils literal"><span class="pre">commentable_type</span></code> 的默认值对应地就是 <code class="docutils literal"><span class="pre">App\Post</span></code> 和 <code class="docutils literal"><span class="pre">App\Video</span></code> 。但是，您可能希望将数据库与程序内部结构解耦。那样的话，你可以定义一个「多态映射表」来指示 <code class="docutils literal"><span class="pre">Eloquent</span></code> 使用每个模型自定义类型字段名而不是类名：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Relations\Relation</span><span class="p">;</span>
+
+<span class="nx">Relation</span><span class="o">::</span><span class="na">morphMap</span><span class="p">([</span>
+    <span class="s1">&#39;posts&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;App\Post&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;videos&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;App\Video&#39;</span><span class="p">,</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+<p>您可以在 <code class="docutils literal"><span class="pre">AppServiceProvider</span></code> 中的 <code class="docutils literal"><span class="pre">boot</span></code> 函数中使用 <code class="docutils literal"><span class="pre">Relation::morphMap</span></code> 方法注册「多态映射表」，或者使用一个独立的服务提供者注册。</p>
+</div>
+</div>
+<div class="section" id="id20">
+<h3>61.2.6. 多对多多态关联<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id21">
+<h4>61.2.6.1. 数据表结构<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h4>
+<p>除了传统的多态关联，您也可以定义「多对多」的多态关联。例如， <code class="docutils literal"><span class="pre">Post</span></code> 模型和 <code class="docutils literal"><span class="pre">Video</span></code> 模型可以共享一个多态关联至 <code class="docutils literal"><span class="pre">Tag</span></code> 模型。 使用多对多多态关联可以让您在文章和视频中共享唯一的标签列表。首先，我们来看看数据表结构：</p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">posts</span>
+    <span class="na">id - integer</span>
+    <span class="na">name - string</span>
+
+<span class="na">videos</span>
+    <span class="na">id - integer</span>
+    <span class="na">name - string</span>
+
+<span class="na">tags</span>
+    <span class="na">id - integer</span>
+    <span class="na">name - string</span>
+
+<span class="na">taggables</span>
+    <span class="na">tag_id - integer</span>
+    <span class="na">taggable_id - integer</span>
+    <span class="na">taggable_type - string</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id22">
+<h4>61.2.6.2. 模型结构<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h4>
+<p>接下来，我们准备在模型上定义关联关系。 <code class="docutils literal"><span class="pre">Post</span></code> 和 <code class="docutils literal"><span class="pre">Video</span></code> 两个模型都有一个 <code class="docutils literal"><span class="pre">tags</span></code> 方法，方法内部都调用了 <code class="docutils literal"><span class="pre">Eloquent</span></code> 类自身的 <code class="docutils literal"><span class="pre">morphToMany</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Post</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得此文章的所有标签。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">tags</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">morphToMany</span><span class="p">(</span><span class="s1">&#39;App\Tag&#39;</span><span class="p">,</span> <span class="s1">&#39;taggable&#39;</span><span class="p">);</span> <span class="c1">//中间表名</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id23">
+<h4>61.2.6.3. 定义反向关联<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h4>
+<p>接下里，在 <code class="docutils literal"><span class="pre">Tag</span></code> 模型中，您应该为每个关联模型定义一个方法。在这个例子里，我们要定义一个 <code class="docutils literal"><span class="pre">posts</span></code> 方法和一个 <code class="docutils literal"><span class="pre">videos</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Tag</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得此标签下所有的文章。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">posts</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">morphedByMany</span><span class="p">(</span><span class="s1">&#39;App\Post&#39;</span><span class="p">,</span> <span class="s1">&#39;taggable&#39;</span><span class="p">);</span><span class="c1">//中间表名</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     *  获得此标签下所有的视频。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">videos</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">morphedByMany</span><span class="p">(</span><span class="s1">&#39;App\Video&#39;</span><span class="p">,</span> <span class="s1">&#39;taggable&#39;</span><span class="p">);</span><span class="c1">//中间表名</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id24">
+<h4>61.2.6.4. 获取关联<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h4>
+<p>一旦您的数据库表准备好、模型定义完成后，就可以通过模型来访问关联了。例如，我们只要简单地使用 <code class="docutils literal"><span class="pre">tags</span></code> 动态属性，就可以获得某篇文章下的所有标签：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$post</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$post</span><span class="o">-&gt;</span><span class="na">tags</span> <span class="k">as</span> <span class="nv">$tag</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>您也可以在多态模型上，通过访问调用了 <code class="docutils literal"><span class="pre">morphedByMany</span></code> 的关联方法获得多态关联的拥有者。在当前场景中，就是 <code class="docutils literal"><span class="pre">Tag</span></code> 模型上的 <code class="docutils literal"><span class="pre">posts</span></code> 方法和 <code class="docutils literal"><span class="pre">videos</span></code> 方法。所以，我们可以使用动态属性来访问这两个方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$tag</span> <span class="o">=</span> <span class="nx">App\Tag</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$tag</span><span class="o">-&gt;</span><span class="na">videos</span> <span class="k">as</span> <span class="nv">$video</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id25">
+<h2>61.3. 查询关联<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h2>
+<p>由于所有类型的关联都通过方法定义，您可以调用这些方法来获取关联实例，而不需要实际运行关联的查询。此外，所有类型的关联都可以作为 查询语句构造器 使用，让你在向数据库执行 <code class="docutils literal"><span class="pre">SQL</span></code> 语句前，使用链式调用的方式添加约束条件。</p>
+<p>例如，假设一个博客系统，其中 <code class="docutils literal"><span class="pre">User</span></code> 模型有许多关联的 <code class="docutils literal"><span class="pre">Post</span></code> 模型：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获得此用户所有的文章。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">posts</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasMany</span><span class="p">(</span><span class="s1">&#39;App\Post&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>您也可以像这样在 <code class="docutils literal"><span class="pre">posts</span></code> 关联上添加额外约束条件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">posts</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;active&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>您可以在关联上使用任何 查询语句构造器 的方法，所以，欢迎查阅查询语句构造器的相关文档以便了解您可以使用哪些方法。</p>
+<div class="section" id="vs">
+<h3>61.3.1. 关联方法 Vs 动态属性<a class="headerlink" href="#vs" title="永久链接至标题">¶</a></h3>
+<p>如果您不需要给 <code class="docutils literal"><span class="pre">Eloquent</span></code> 关联查询添加额外约束条件，你可以简单的像访问属性一样访问关联。例如，我们刚刚的 <code class="docutils literal"><span class="pre">User</span></code> 和 <code class="docutils literal"><span class="pre">Post</span></code> 模型例子中，我们可以这样访问所有用户的文章：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">posts</span> <span class="k">as</span> <span class="nv">$post</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>动态属性是「懒加载」的，意味着它们的关联数据只在实际被访问时才被加载。因此，开发者经常使用 预加载 提前加载他们之后会用到的关联数据。预加载有效减少了 <code class="docutils literal"><span class="pre">SQL</span></code> 语句请求数，避免了重复执行一个模型关联加载数据、发送 <code class="docutils literal"><span class="pre">SQL</span></code> 请求带来的性能问题。</p>
+</div>
+<div class="section" id="id26">
+<h3>61.3.2. 基于存在的关联查询<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h3>
+<p>当获取模型记录时，您可能希望根据存在的关联对结果进行限制。例如，您想获得至少有一条评论的所有博客文章。为了实现这个功能，您可以给 <code class="docutils literal"><span class="pre">has</span></code> 或者是 <code class="docutils literal"><span class="pre">orHas</span></code> 方法传递关联名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 获得所有至少有一条评论的文章...</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">has</span><span class="p">(</span><span class="s1">&#39;comments&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>您也可以指定一个运算符和数目，进一步自定义查询：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 获得所有有三条或三条以上评论的文章...</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">has</span><span class="p">(</span><span class="s1">&#39;comments&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>也可以使用「点」符号构造嵌套的的 <code class="docutils literal"><span class="pre">has</span></code> 语句。例如，您可以获得所有至少有一条获赞评论的文章：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 获得所有至少有一条获赞评论的文章...</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">has</span><span class="p">(</span><span class="s1">&#39;comments.votes&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>如果您需要更高级的用法，可以使用 <code class="docutils literal"><span class="pre">whereHas</span></code> 和 <code class="docutils literal"><span class="pre">orWhereHas</span></code> 方法在 <code class="docutils literal"><span class="pre">has</span></code> 查询里设置「where」条件。此方法可以让你增加自定义条件至关联约束中，例如对评论内容进行检查：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 获得所有至少有一条评论内容满足 foo% 条件的文章</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">whereHas</span><span class="p">(</span><span class="s1">&#39;comments&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;like&#39;</span><span class="p">,</span> <span class="s1">&#39;foo%&#39;</span><span class="p">);</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id27">
+<h3>61.3.3. 基于不存在的关联查询<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h3>
+<p>当获取模型记录时，您可能希望根据不存在的关联对结果进行限制。例如，您想获得 没有 任何评论的所有博客文章。为了实现这个功能，您可以给 <code class="docutils literal"><span class="pre">doesntHave</span></code> 或者 <code class="docutils literal"><span class="pre">orDoesntHave</span></code> 方法传递关联名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">doesntHave</span><span class="p">(</span><span class="s1">&#39;comments&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>如果您需要更高级的用法，可以使用 <code class="docutils literal"><span class="pre">whereDoesntHave</span></code> 或者 <code class="docutils literal"><span class="pre">orWhereDoesntHave</span></code> 方法在 <code class="docutils literal"><span class="pre">doesntHave</span></code> 查询里设置「where」条件。此方法可以让你增加自定义条件至关联约束中，例如对评论内容进行检查：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">whereDoesntHave</span><span class="p">(</span><span class="s1">&#39;comments&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;like&#39;</span><span class="p">,</span> <span class="s1">&#39;foo%&#39;</span><span class="p">);</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id28">
+<h3>61.3.4. 关联数据计数<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h3>
+<p>如果您只想统计结果数而不需要加载实际数据，那么可以使用 <code class="docutils literal"><span class="pre">withCount</span></code> 方法，此方法会在您的结果集模型中添加一个 <code class="docutils literal"><span class="pre">{关联名}_count</span></code> 字段。例如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">withCount</span><span class="p">(</span><span class="s1">&#39;comments&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$posts</span> <span class="k">as</span> <span class="nv">$post</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$post</span><span class="o">-&gt;</span><span class="na">comments_count</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>您可以为多个关联数据「计数」，并为其查询添加约束条件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">withCount</span><span class="p">([</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;comments&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;like&#39;</span><span class="p">,</span> <span class="s1">&#39;foo%&#39;</span><span class="p">);</span>
+<span class="p">}])</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="k">echo</span> <span class="nv">$posts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">votes_count</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nv">$posts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">comments_count</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>您也可以为关联数据计数结果起别名，允许在同一个关联上多次计数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">withCount</span><span class="p">([</span>
+    <span class="s1">&#39;comments&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;comments as pending_comments_count&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;approved&#39;</span><span class="p">,</span> <span class="k">false</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">])</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="k">echo</span> <span class="nv">$posts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">comments_count</span><span class="p">;</span>
+
+<span class="k">echo</span> <span class="nv">$posts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">pending_comments_count</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id29">
+<h2>61.4. 预加载<a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h2>
+<p>当作为属性访问模型关联时，关联的数据是「懒加载」。意味着关联的数据在你第一次访问该属性的时候才会加载。不过，当你查询父模型时， <code class="docutils literal"><span class="pre">Eloquent</span></code> 可以「预加载」关联数据。 预加载避免了 <code class="docutils literal"><span class="pre">N</span> <span class="pre">+</span> <span class="pre">1</span></code> 次查询的问题。举例说明一个 <code class="docutils literal"><span class="pre">N</span> <span class="pre">+</span> <span class="pre">1</span></code> 查询问题，考虑 <code class="docutils literal"><span class="pre">Book</span></code> 模型跟 <code class="docutils literal"><span class="pre">Author</span></code> 关联的情况：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Book</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 获取书的作者</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">author</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\Author&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在，我们来获取所有书籍和书作者的数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$books</span> <span class="o">=</span> <span class="nx">App\Book</span><span class="o">::</span><span class="na">all</span><span class="p">();</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$books</span> <span class="k">as</span> <span class="nv">$book</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="na">author</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这个循环将会执行一次从表中获取所有的书籍数据，然后每本书查询一次获取作者数据。所以，如果我们有 <code class="docutils literal"><span class="pre">25</span></code> 本书，这个循环就会执行 <code class="docutils literal"><span class="pre">26</span></code> 次： <code class="docutils literal"><span class="pre">1</span></code> 次获得所有书的数据，另外的 <code class="docutils literal"><span class="pre">25</span></code> 次查询获取每本书的作者数据。</p>
+<p>幸好，我们可以使用预加载让查询次数减少到 <code class="docutils literal"><span class="pre">2</span></code> 次。查询时，你可以使用 <code class="docutils literal"><span class="pre">with</span></code> 方法指定哪些关联应该被预加载：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$books</span> <span class="o">=</span> <span class="nx">App\Book</span><span class="o">::</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$books</span> <span class="k">as</span> <span class="nv">$book</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="na">author</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这个操作，只执行了两次查询：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">select</span> <span class="o">*</span> <span class="nx">from</span> <span class="nx">books</span>
+
+<span class="nx">select</span> <span class="o">*</span> <span class="nx">from</span> <span class="nx">authors</span> <span class="nx">where</span> <span class="nx">id</span> <span class="nx">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id30">
+<h3>61.4.1. 预加载多个关联<a class="headerlink" href="#id30" title="永久链接至标题">¶</a></h3>
+<p>有时，你可能需要在一次操作中预加载多个不同的关联。只需要给 <code class="docutils literal"><span class="pre">with</span></code> 方法传额外的参数就能实现：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$books</span> <span class="o">=</span> <span class="nx">App\Book</span><span class="o">::</span><span class="na">with</span><span class="p">([</span><span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;publisher&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id31">
+<h3>61.4.2. 嵌套预加载<a class="headerlink" href="#id31" title="永久链接至标题">¶</a></h3>
+<p>预加载嵌套关联，可以使用「点」语法。例如，在一个 <code class="docutils literal"><span class="pre">Eloquent</span></code> 声明中，预加载所有书籍的作者和这些作者的个人联系信息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$books</span> <span class="o">=</span> <span class="nx">App\Book</span><span class="o">::</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;author.contacts&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id32">
+<h3>61.4.3. 预加载特定的列<a class="headerlink" href="#id32" title="永久链接至标题">¶</a></h3>
+<p>你可能不是总需要从关联中获取每一列。出于这个原因， <code class="docutils literal"><span class="pre">Eloquent</span></code> 允许你在关联中指定你想要查询的列：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">App\Book</span><span class="o">::</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;author:id,name&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">使用这个方法时，在你想获取的列中应始终有 <code class="docutils literal"><span class="pre">id</span></code> 列。</p>
+</div>
+</div>
+<div class="section" id="id33">
+<h3>61.4.4. 约束预加载<a class="headerlink" href="#id33" title="永久链接至标题">¶</a></h3>
+<p>有时，在使用预加载时，又需要在预加载上指定额外的查询约束。如下例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">with</span><span class="p">([</span><span class="s1">&#39;posts&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;like&#39;</span><span class="p">,</span> <span class="s1">&#39;%first%&#39;</span><span class="p">);</span>
+<span class="p">}])</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>上例中， <code class="docutils literal"><span class="pre">Eloquent</span></code> 仅预加载 <code class="docutils literal"><span class="pre">title</span></code> 列含有 <code class="docutils literal"><span class="pre">first</span></code> 的帖子。当然，可以调用 查询构造器 的其他方法，进一步自定义预加载操作：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">with</span><span class="p">([</span><span class="s1">&#39;posts&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">);</span>
+<span class="p">}])</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id34">
+<h3>61.4.5. 延迟预加载<a class="headerlink" href="#id34" title="永久链接至标题">¶</a></h3>
+<p>有时，需要在检索出来的模型上进行预加载。这对动态决定是否预加载就非常实用：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$books</span> <span class="o">=</span> <span class="nx">App\Book</span><span class="o">::</span><span class="na">all</span><span class="p">();</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$someCondition</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$books</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;publisher&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果需要在预加载上添加额外的查询约束，可以传入一个数组，关联为键，接受查询实例的闭包为值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$books</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">([</span><span class="s1">&#39;author&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;published_date&#39;</span><span class="p">,</span> <span class="s1">&#39;asc&#39;</span><span class="p">);</span>
+<span class="p">}]);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">loadMissing</span></code> 方法可以仅在未加载关联时进行加载：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">format</span><span class="p">(</span><span class="nx">Book</span> <span class="nv">$book</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$book</span><span class="o">-&gt;</span><span class="na">loadMissing</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">,</span>
+        <span class="s1">&#39;author&#39;</span> <span class="o">=&gt;</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="na">author</span><span class="o">-&gt;</span><span class="na">name</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id35">
+<h2>61.5. 插入 &amp; 更新关联模型<a class="headerlink" href="#id35" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id36">
+<h3>61.5.1. 保存方法<a class="headerlink" href="#id36" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Eloquent</span></code> 为新模型添加关联提供了便捷的方法。例如，也许你需要添加一个新的 <code class="docutils literal"><span class="pre">Comment</span></code> 到一个 <code class="docutils literal"><span class="pre">Post</span></code> 模型中。你不用在 <code class="docutils literal"><span class="pre">Comment</span></code> 中手动设置 <code class="docutils literal"><span class="pre">post_id</span></code> 属性, 就可以直接使用关联模型的 <code class="docutils literal"><span class="pre">save</span></code> 方法将 <code class="docutils literal"><span class="pre">Comment</span></code> 直接插入：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$comment</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">App\Comment</span><span class="p">([</span><span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;A new comment.&#39;</span><span class="p">]);</span>
+
+<span class="nv">$post</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$post</span><span class="o">-&gt;</span><span class="na">comments</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">(</span><span class="nv">$comment</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>需要注意的是，我们并没有使用动态属性的方式访问 <code class="docutils literal"><span class="pre">comments</span></code> 关联。相反，我们调用 <code class="docutils literal"><span class="pre">comments</span></code> 方法来获得关联实例。 <code class="docutils literal"><span class="pre">save</span></code> 方法将自动添加适当的 <code class="docutils literal"><span class="pre">post_id</span></code> 值到 <code class="docutils literal"><span class="pre">Comment</span></code> 模型中。</p>
+<p>如果你需要保存多个关联模型，你可以使用 <code class="docutils literal"><span class="pre">saveMany</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$post</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$post</span><span class="o">-&gt;</span><span class="na">comments</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">saveMany</span><span class="p">([</span>
+    <span class="k">new</span> <span class="nx">App\Comment</span><span class="p">([</span><span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;A new comment.&#39;</span><span class="p">]),</span>
+    <span class="k">new</span> <span class="nx">App\Comment</span><span class="p">([</span><span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Another comment.&#39;</span><span class="p">]),</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id37">
+<h3>61.5.2. 新增方法<a class="headerlink" href="#id37" title="永久链接至标题">¶</a></h3>
+<p>除了 <code class="docutils literal"><span class="pre">save</span></code> 和 <code class="docutils literal"><span class="pre">saveMany</span></code> 方法外，你还可以使用 <code class="docutils literal"><span class="pre">create</span></code> 方法。它接受一个属性数组，同时会创建模型并插入到数据库中。 还有， <code class="docutils literal"><span class="pre">save</span></code> 方法和 <code class="docutils literal"><span class="pre">create</span></code> 方法的不同之处在于， <code class="docutils literal"><span class="pre">save</span></code> 方法接受一个完整的 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型实例，而 <code class="docutils literal"><span class="pre">create</span></code> 则接受普通的 <code class="docutils literal"><span class="pre">PHP</span></code> 数组:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$post</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$comment</span> <span class="o">=</span> <span class="nv">$post</span><span class="o">-&gt;</span><span class="na">comments</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">([</span>
+    <span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;A new comment.&#39;</span><span class="p">,</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">在使用 <code class="docutils literal"><span class="pre">create</span></code> 方法前，请务必确保查看过本文档的 批量赋值 章节。</p>
+</div>
+<p>你还可以使用 <code class="docutils literal"><span class="pre">createMany</span></code> 方法去创建多个关联模型：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$post</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$post</span><span class="o">-&gt;</span><span class="na">comments</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">createMany</span><span class="p">([</span>
+    <span class="p">[</span>
+        <span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;A new comment.&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Another new comment.&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="belongsto">
+<h3>61.5.3. 更新 belongsTo 关联<a class="headerlink" href="#belongsto" title="永久链接至标题">¶</a></h3>
+<p>当更新 <code class="docutils literal"><span class="pre">belongsTo</span></code> 关联时，可以使用 <code class="docutils literal"><span class="pre">associate</span></code> 方法。此方法将会在子模型中设置外键：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$account</span> <span class="o">=</span> <span class="nx">App\Account</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">account</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">associate</span><span class="p">(</span><span class="nv">$account</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>当移除 <code class="docutils literal"><span class="pre">belongsTo</span></code> 关联时，可以使用 <code class="docutils literal"><span class="pre">dissociate</span></code> 方法。此方法会将关联外键设置为 <code class="docutils literal"><span class="pre">null</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">account</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">dissociate</span><span class="p">();</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id38">
+<h3>61.5.4. 多对多关联<a class="headerlink" href="#id38" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id39">
+<h4>61.5.4.1. 附加 / 分离<a class="headerlink" href="#id39" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">Eloquent</span></code> 也提供了一些额外的辅助方法，使相关模型的使用更加方便。例如，我们假设一个用户可以拥有多个角色，并且每个角色都可以被多个用户共享。给某个用户附加一个角色是通过向中间表插入一条记录实现的，可以使用 <code class="docutils literal"><span class="pre">attach</span></code> 方法完成该操作：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="nv">$roleId</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>在将关系附加到模型时，还可以传递一组要插入到中间表中的附加数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="nv">$roleId</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;expires&#39;</span> <span class="o">=&gt;</span> <span class="nv">$expires</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>当然，有时也需要移除用户的角色。可以使用 <code class="docutils literal"><span class="pre">detach</span></code> 移除多对多关联记录。 <code class="docutils literal"><span class="pre">detach</span></code> 方法将会移除中间表对应的记录；但是这 <code class="docutils literal"><span class="pre">2</span></code> 个模型都将会保留在数据库中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 移除用户的一个角色...</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">detach</span><span class="p">(</span><span class="nv">$roleId</span><span class="p">);</span>
+
+<span class="c1">// 移除用户的所有角色...</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">detach</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>为了方便， <code class="docutils literal"><span class="pre">attach</span></code> 和 <code class="docutils literal"><span class="pre">detach</span></code> 也允许传递一个 <code class="docutils literal"><span class="pre">ID</span></code> 数组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">detach</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">attach</span><span class="p">([</span>
+    <span class="mi">1</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;expires&#39;</span> <span class="o">=&gt;</span> <span class="nv">$expires</span><span class="p">],</span>
+    <span class="mi">2</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;expires&#39;</span> <span class="o">=&gt;</span> <span class="nv">$expires</span><span class="p">]</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id40">
+<h4>61.5.4.2. 同步关联<a class="headerlink" href="#id40" title="永久链接至标题">¶</a></h4>
+<p>你也可以使用 <code class="docutils literal"><span class="pre">sync</span></code> 方法构建多对多关联。 <code class="docutils literal"><span class="pre">sync</span></code> 方法接收一个 <code class="docutils literal"><span class="pre">ID</span></code> 数组以替换中间表的记录。中间表记录中，所有未在 <code class="docutils literal"><span class="pre">ID</span></code> 数组中的记录都将会被移除。所以该操作结束后，只有给出数组的 <code class="docutils literal"><span class="pre">ID</span></code> 会被保留在中间表中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">sync</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>你也可以通过 <code class="docutils literal"><span class="pre">ID</span></code> 传递额外的附加数据到中间表：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">sync</span><span class="p">([</span><span class="mi">1</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;expires&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>如果你不想移除现有的 <code class="docutils literal"><span class="pre">ID</span></code> ，可以使用 <code class="docutils literal"><span class="pre">syncWithoutDetaching</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">syncWithoutDetaching</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id41">
+<h4>61.5.4.3. 切换关联<a class="headerlink" href="#id41" title="永久链接至标题">¶</a></h4>
+<p>多对多关联也提供了 <code class="docutils literal"><span class="pre">toggle</span></code> 方法用于「切换」给定 <code class="docutils literal"><span class="pre">ID</span></code> 数组的附加状态。 如果给定的 <code class="docutils literal"><span class="pre">ID</span></code> 已被附加在中间表中，那么它将会被移除，同样，如果如果给定的 <code class="docutils literal"><span class="pre">ID</span></code> 已被移除，它将会被附加：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">toggle</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id42">
+<h4>61.5.4.4. 在中间表上保存额外的数据<a class="headerlink" href="#id42" title="永久链接至标题">¶</a></h4>
+<p>当处理多对多关联时， <code class="docutils literal"><span class="pre">save</span></code> 方法接收一个额外的数据数组作为第二个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">(</span><span class="nv">$role</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;expires&#39;</span> <span class="o">=&gt;</span> <span class="nv">$expires</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id43">
+<h4>61.5.4.5. 更新中间表记录<a class="headerlink" href="#id43" title="永久链接至标题">¶</a></h4>
+<p>如果你需要在中间表中更新一条已存在的记录，可以使用 <code class="docutils literal"><span class="pre">updateExistingPivot</span></code> 。此方法接收中间表的外键与要更新的数据数组进行更新：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">updateExistingPivot</span><span class="p">(</span><span class="nv">$roleId</span><span class="p">,</span> <span class="nv">$attributes</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id44">
+<h2>61.6. 更新父级时间戳<a class="headerlink" href="#id44" title="永久链接至标题">¶</a></h2>
+<p>当一个模型属 <code class="docutils literal"><span class="pre">belongsTo</span></code> 或者 <code class="docutils literal"><span class="pre">belongsToMany</span></code> 另一个模型时， 例如 <code class="docutils literal"><span class="pre">Comment</span></code> 属于 <code class="docutils literal"><span class="pre">Post</span></code> ，有时更新子模型导致更新父模型时间戳非常有用。例如，当 <code class="docutils literal"><span class="pre">Comment</span></code> 模型被更新时，您要自动「触发」父级 <code class="docutils literal"><span class="pre">Post</span></code> 模型的 <code class="docutils literal"><span class="pre">updated_at</span></code> 时间戳的更新。 <code class="docutils literal"><span class="pre">Eloquent</span></code> 让它变得简单。只要在子模型加一个包含关联名称的 <code class="docutils literal"><span class="pre">touches</span></code> 属性即可：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Comment</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 要触发的所有关联关系。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$touches</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;post&#39;</span><span class="p">];</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 评论所属文章。</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">post</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongsTo</span><span class="p">(</span><span class="s1">&#39;App\Post&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在，当你更新一个 <code class="docutils literal"><span class="pre">Comment</span></code> 时，对应父级 <code class="docutils literal"><span class="pre">Post</span></code> 模型的 <code class="docutils literal"><span class="pre">updated_at</span></code> 字段也会被同时更新，使其更方便得知何时让一个 <code class="docutils literal"><span class="pre">Post</span></code> 模型的缓存失效：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$comment</span> <span class="o">=</span> <span class="nx">App\Comment</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$comment</span><span class="o">-&gt;</span><span class="na">text</span> <span class="o">=</span> <span class="s1">&#39;Edit to this comment!&#39;</span><span class="p">;</span>
+
+<span class="nv">$comment</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的数据库—Eloquent修改器.html" class="btn btn-neutral float-right" title="62. Eloquent修改器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的数据库—Eloquent.html" class="btn btn-neutral" title="60. Eloquent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

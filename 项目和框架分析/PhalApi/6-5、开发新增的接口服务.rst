@@ -1,0 +1,514 @@
+*********
+开发新增的接口服务
+*********
+完成了既有接口服务的重写任务后，下一步将要进行的是开发新增的接口服务。下面，介绍的是在开发新接口服务过程中所遇到的难题，以及解决的思路和方案。
+
+有趣的体重数据
+=============
+在 Faimly 2.0 项目中，需要新增的功能业务线是母婴营养称。而在母婴营养称中，比较有趣的是用户通过家里的电子称上报的体重数据。这份体重数据是整个业务的数据基础，因此它的重要性很高。在开发与体重数据相关的接口服务时，不仅要考虑到功能性的要求，还要满足非功能性的要求。
+
+.. image:: ./images/ch-6-weight.png
+
+图6-7 体重上报与列表设计稿
+
+如图6-7所示，用户可以通过家里的电子称获得体重数据后，经过蓝牙传递给移动 ``App`` ，最后点击“保存数据”即可上传体重数据。然后可以在移动 ``App`` 中查看自己的休重历史记录，并获得相应的营养建议。考虑到这份基础数据有着可预见性的增长，因为用户每时每刻都有可能在测量上传体重数据，所以我们对其进行了分表设计，并分为 512 张数据库表，为区分与原来系统间的数据库表，新业务所用的数据库表使用前缀 ``scale_`` ，表名为： ``sweight`` ，即分表分别是： ``scale_sweight_0`` 、 ``scale_sweight_1`` 、 ``scale_sweight_2`` 、 ``scale_sweight_3`` 、……、 ``scale_sweight_511`` 。体重表的基础表字段如下：
+
+.. code-block:: sql
+
+  -- Family-2.0$ vim ./Data/sweight.sql
+  `user_id` bigint(20) DEFAULT NULL,
+  `weight` int(7) DEFAULT '0' COMMENT '体重（单位用g）',
+  `report_date` int(11) DEFAULT '0' COMMENT '体重上报时间戳',
+  `type` tinyint(2) DEFAULT '0' COMMENT '体重阶段：0普通人/产前，1孕妇，2抱婴（产后）',
+  `baby_position` tinyint(4) DEFAULT '0' COMMENT '宝宝的位置，1老大，2老二，3老三（为0时表示不是宝宝的体重）',
+  `report_short_date` varchar(8) DEFAULT '' COMMENT '短的日期，格式如：20150501',
+  `cur_day_position` smallint(3) DEFAULT '1' COMMENT '当天上报第几次上报',
+
+再来稍微看一下在上传体重数据时，是怎样的一个过程。下面是上传体重接口服务对应的 ``Api`` 接口层的代码片段。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Scale/Api/Device/Scale.php
+	class Api_Device_Scale extends PhalApi_Api {
+
+	    public function getRules() {
+	        return array(
+	            'uploadWeight' => array(
+	                'weight' => array('name' => 'weight', 'type' => 'int', 'min' => 0, 'max' => 250000, 'default' => 0, 'require' => true),
+	                'type' => array('name' => 'type', 'type' => 'enum', 'range' => array(0, 1, 2), 'default' => 0, 'require' => true),
+	                'babyPosition' => array('name' => 'baby_position', 'type' => 'int', 'default' => 0, 'require' => false),
+	                'babyWeight' => array('name' => 'baby_weight', 'type' => 'int', 'min' => 0, 'max' => 250000, 'default' => 0, 'require' => false),
+	            ),
+	        );
+	    }
+	}
+
+上面配置的参数规则中， ``weight`` 表示待上服的体重数据。再来看下实现代码。
+
+.. code-block:: php
+
+    public function uploadWeight() {
+        $rs = array('code' => Common_Def::CODE_OK, 'msg' => '');
+
+        if ($this->type != 2 && $this->babyPosition != 0) {
+            throw new PhalApi_Exception_BadRequest(T('baby position is not 0'));
+        }
+
+        DI()->userLite->check(true);
+
+        $domain = new Domain_SWeight();
+        $domain->addWeight($this->userId, $this->weight, $this->type, $this->babyPosition, $this->babyWeight);
+
+        if ($this->type == 1) {
+            // 设置最新的体重（type为1时，表示孕妇的，妈妈的数据是存在 smother 表里；type为2时，妈妈的数据是存在 suser 表里）
+            $motherDomain = new Domain_SMotherInfo();
+            $motherDomain->initDefaultUserDataIfNoUserData($this->userId);
+            if ($this->weight > 0) {
+                $motherDomain->freeUpdate($this->userId, array('newest_weight' => $this->weight));
+            }
+        } else {
+            // 设置最新的体重（type为1时，表示孕妇的，妈妈的数据是存在 smother 表里；type为2时，妈妈的数据是存在 suser 表里）
+            $commonDomain = new Domain_SInfo();
+            $commonDomain->initDefaultUserDataIfNoUserData($this->userId);
+            if ($this->weight > 0) {
+                $commonDomain->freeUpdate($this->userId, array('newest_weight' => $this->weight));
+            }
+        }
+
+        if ($this->type == 2) {
+            // 设置宝宝最新的体重
+            $babyDomain = new Domain_SBabyInfo();
+            $babyDomain->initDefaultUserDataIfNoUserData($this->userId, $this->babyPosition);
+            if ($this->babyWeight > 0) {
+                $babyDomain->freeUpdate($this->userId, $this->babyPosition, array('newest_weight' => $this->babyWeight));
+            }
+        }
+
+        return $rs;
+    }
+
+通过区分不同的体重类型，然后将体重数据保存到相应的位置，并且会用户初次上传体重数据时，进行前置的初始化操作。至此，我们就完成了体重这一基础数据的服务构建。接下来，是基于这份数据而衍生出来更复杂的业务。
+
+
+善于解决复杂问题的设计模式
+========================
+在前面，我们介绍了如何通过 ``ADM`` 分层模式有效地消化复杂的领域业务。这对于一般性的复杂业务是可行的，但对于特定的复杂业务，则需要适当地采用设计模式，方能有效进行解决。那何谓特定的复杂业务呢？这里的定义比较笼统，可以理解成设计模式所解决的重复性问题，也可以理解成是业务系统中比较关键、变化较多、规则繁重的区域。以 Family 2.0 系统中的推送为例，有两大类推送服务，一类是周期固定的主动推送，如每日推送、每周推送和每月推送；另一类是特定场景下的触发推送，如新注册用户推送。最终总结得出，需要的推送接口服务有以下这些：
+
+- 周营养计划推送
+- 月计划推送
+- 孕妇欢迎语推送
+- 产后妈妈首次推送
+- 针对宝宝的月推送
+- 周报推送
+- 孕妇周营养计划推送
+
+更具有挑战性的是，每种推送的实现逻辑都异常复杂，但又存在一定程度上的相似性。当时，最初我看到产品整理的推送需求，是非常惊讶的。因为里面的规则非常细致，在惊叹产品经理有如此缜密思维的同时，我也在思考如何清晰地把这些规则准确无误去表达出来。第一时间想到的就是，对于如此复杂的领域问题，应该采用设计模式来解决。经过综合评估，模板方法是最为贴切的选择。
+
+为了验证最终实现的效果，以及提高我们的关注点。先来编写一个单元测试用例。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Scale/Tests/Domain/Domain_SPush_Week_Test.php
+	class PhpUnderControl_DomainSPushWeek_Test extends PHPUnit_Framework_TestCase
+	{
+	    public $domainSPushWeek;
+
+	    protected function setUp()
+	    {
+	        parent::setUp();
+
+	        $this->domainSPushWeek = new Domain_SPush_Week();
+	    }
+
+	    public function testPush() {
+	        DI()->notorm->spush_record->where('user_id', 187)->where("type like '%week%'")->delete();
+
+	        $UUID = 'AAAD56B5460339234A4A2492680171A88818B96B8D8DA687FB';
+	        $rs = $this->domainSPushWeek->push($UUID);
+
+	        $this->assertSame(0, $rs);
+	    }
+	}
+
+上面是针对每周推送领域业务类的测试用例，先是清除了测试数据，然后重新进行推送，并验证返回的结果值为 ``0`` 。状态码为 ``0`` 表示成功，非 ``0`` 表示不同的失败原因。
+
+每周推送领域业务类是一个具体的实现类，在这之前，我们需要实现公共推送领域业务基类。这个基类是实现扩展其他不同种类推送的关键，并且也是需要采用 **模板方法** 的设计。它维护了公共通用的流程步骤，但又允许实现子类进行定制和扩展。经过不断的努力和重构优化，并在单元测试驱动的指导下，最终此推送基类的实现代码如下：
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Scale/Domain/SPushBase.php
+	abstract class Domain_SPushBase {
+	    /**
+	     * 统一的推送模板方法
+	     */
+	    public function push($UUID) {
+	        $userId = Domain_User_Helper::UUID2UserId($UUID);
+
+	        if ($userId <= 0) {
+	            return 1;
+	        }
+
+	        $domainMotherInfo = new Domain_SMotherInfo();
+	        $infoEx = $domainMotherInfo->getInfoEx($userId);
+	        $infoEx['user_id'] = $userId;
+
+	        if (empty($infoEx)) {
+	            return 1;
+	        }
+
+	        //过滤不符合条件的用户
+	        if (!$this->varidateInfo($infoEx)) {
+	            return 2;
+	        }
+
+	        //过滤已有纪录的用户，以防重复推送
+	        $domainPushReocrd = new Domain_SPush_Record();
+	        if ($domainPushReocrd->hasPushBefore($userId, $this->getPushRecordType($infoEx))) {
+	            return 3;
+	        }
+
+	        //找到绑定的称
+	        $domainDevice = new Domain_Device_User();
+	        $deviceList = $domainDevice->getList($userId, Model_Device::DEVICE_TYPE_SCALE);
+	        if (empty($deviceList) || empty($deviceList[0]['binded_groups'][0]['group_id'])) {
+	            DI()->logger->error('no device or no group for user when push week', array('userId' => $userId));
+	            return 5;
+	        }
+	        $toPushWeekGroupId = $deviceList[0]['binded_groups'][0]['group_id']; //取第一个家庭组
+
+	        //动态图片
+	        $isPostFeed = $this->postFeed($userId, $infoEx, $toPushWeekGroupId);
+
+	        if (!$isPostFeed) {
+	            return 6;
+	        }
+
+	        //推送纪录
+	        $domainPushReocrd->takeRecord($userId, $this->getPushRecordType($infoEx));
+
+	        return 0;
+	    }
+	}
+
+从上面的 ``Domain_SPushBase::push($UUID)`` 接口签名可以看出，可以针对特定的用户进行不同种类的推送。在推送的过程中，会进行一系列的检测、判断和操作，例如用户是否满足条件，是否已被推送，是否绑定了相关的称设备，进行具体的推送，最后记录推送的情况。如果这些未能进行统一控制，而是由每个业务类重复实现，不仅会导致代码上的重复，而且也难以保持业务流程上的一致性，从而缺乏对业务规则的统一管理。
+
+``Domain_SPushBase`` 是一个抽象类，它有两个重要的抽象方法，分别是发布动态 ``Domain_SPushBase::postFeed($userId, $infoEx, $toPushWeekGroupId)`` 和获取推送纪录类型 ``Domain_SPushBase::getPushRecordType($infoEx)`` 。在实现具体的领域业务子类时，只需要实现这两个抽象方法即可。
+
+.. code-block:: php
+
+	abstract class Domain_SPushBase {
+	    /**
+	     * 验证用户是否满足推送的业务要求
+	     */
+	    protected function varidateInfo($infoEx) {
+	        return true;
+	    }
+
+	    /**
+	     * 发布动态
+	     */
+	    abstract protected function postFeed($userId, $infoEx, $toPushWeekGroupId);
+
+	    /**
+	     * 推送纪录类型
+	     */
+	    abstract protected function getPushRecordType($infoEx);
+	}
+
+注意到，在此推送基类里，还有一个可重载的方法，即验证用户是否满足推送的业务要求的类方法 ``Domain_SPushBase::varidateInfo($infoEx)`` ，这一步是用于检测是否需要向用户进行推送。默认情况是满足条件。
+
+认识了推送基类后，再回来看下如何在继承此基类的情况下，快速完成特定每周营养计划推送的业务逻辑。最终推送的信息，其展示效果如图6-8的设计稿所示。
+
+.. image:: ./images/feed_week_recipe.jpg
+
+图6-8 每周营养食谱设计稿
+
+按照基类在模板方法下定义的流程步骤，首先需要实现检测判断用户是否满足推送每周营养计划的条件。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Scale/Domain/SPush/Week.php
+	<?php
+	class Domain_SPush_Week extends Domain_SPushBase {
+	    /**
+	     * 验证用户是否满足推送的业务要求
+	     */
+	    protected function varidateInfo($infoEx) {
+	        if ($infoEx['gender'] != Domain_SInfo::GENDER_FEMALE) {
+	            return false;
+	        }
+	        if ($infoEx['type'] != Domain_SInfo::TYPE_PREGNANT) {
+	            return false;
+	        }
+
+	        ... ...
+
+	        if ($infoEx['expect_born_date'] <= 0 || $infoEx['expect_born_date'] < $_SERVER['REQUEST_TIME']) {
+	            return false;
+	        }
+	        if ($infoEx['weight_before_born'] <= 0) {
+	            return false;
+	        }
+
+	        return true;
+	    }
+	}
+
+由于推送的目标用户人群是孕妇，因此在前面判断了是否为女性，且为孕妇。中间省略部分的代码，进行了更多信息的合法性检测，避免对错误或不齐全的用户进行错误的推送。最后，还判断了预产期等数据的有效性。
+
+接下来，就是关键的发布动态这一推送实现过程。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Scale/Domain/SPush/Week.php
+    /**
+     * 发布动态
+     */
+    protected function postFeed($userId, $infoEx, $toPushWeekGroupId) {
+        $weekth = $this->getWeekth($infoEx);
+        $weekCfg = DI()->config->get('push.week');
+
+        //体重与文案
+        $nextWeekNeedCAL = 0;
+        $nextWeekContent = '';
+
+        $lastWeekWeight = $this->getLastWeekWeight($userId);
+        if ($lastWeekWeight <= 0) {
+            //上周无秤重
+            ... ...
+        } else {
+            //上周有秤重
+            ... ...
+        }
+
+        //选择一个合适的食谱
+        $domainNutritionRecipe = new Domain_Nutrition_SRecipe();
+        $recipeId = $domainNutritionRecipe->extractRandomOneByCalorie($nextWeekNeedCAL);
+
+        if ($recipeId <= 0) {
+            return false;
+        }
+
+        $domainFeed = new Domain_Feed();
+        $postUserId = DI()->config->get('app.NPC.week_push.userId');
+        $typeStruct = json_encode(
+            array(
+                'content_type' => $weekCfg['content_type'],
+                'recipe_id' => $recipeId,
+                'week_num' => $weekth,
+                'url' => sprintf($weekCfg['jump_url'], $recipeId, $weekth),
+            )
+        );
+        $feedId = $domainFeed->postBaseFeed($postUserId, $toPushWeekGroupId, $nextWeekContent, 0, 0, 'web', $typeStruct);
+
+        //动态图片
+        if (!empty($weekCfg['pics']) && is_array($weekCfg['pics'])) {
+            $domainFeed->attachFeedPics($feedId, $weekCfg['pics']);
+        }
+
+        return true;
+    }
+
+上面是精简后的实现代码片段。这段代码比较有意思，因为它的过程也是有规律可循的。在最前面，先获取当前用户的周数以及相关的配置信息，随后获取用户上周的体重历史数据。根据上面的体重情况，算出 ``CAL`` 后，便来到了核心的部分：选择一个合适的食谱。如果这时没有合适的食谱，那么返回 ``FALSE`` 表示失败。如果有合适的食谱，那么就进行推送操作。这时，准备好待推送的数据后，委托给 ``Domain_Feed`` 动态领域业务类进行发布，并且如果有动态图片资源的话，则附上相关的图片。最终用户就可以看到类似图6-8这样的推送效果了！
+
+``Domain_SPushBase`` 抽象类有两个抽象方法，现在我们实现了其中一个，另外一个则是非常简单的。它主要的作用是用于辅助纪录对于各种推送，每个用户推送的情况，避免重复推送。因此需要一个唯一的标识来作区分。以下是每周营养计划推送中的实现代码。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Scale/Domain/SPush/Week.php
+    /**
+     * 推送纪录类型
+     */
+    protected function getPushRecordType($infoEx) {
+        return sprintf('week_%s', $this->getWeekth($infoEx));
+    }
+
+每周营养计划推送是固定周期的推送，让我们再来看一个触发推送的示例。例如，当准妈妈第一次使用营养称时，为了指供新人指引以及表示欢迎，可以进行一次场景推送。因为此场景推送的实现比较简单，以下是全部实现的代码片段。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Scale/Domain/SPush/SpecialSceneWelcome.php
+	<?php
+	class Domain_SPush_SpecialSceneWelcome extends Domain_SPushBase {
+
+	    protected function varidateInfo($infoEx) {
+	        return $infoEx['type'] == Domain_SInfo::TYPE_PREGNANT;
+	    }
+
+	    protected function postFeed($userId, $infoEx, $toPushWeekGroupId) {
+	        $specialCfg = DI()->config->get('push.special_scene.6');
+
+	        $domainFeed = new Domain_Feed();
+	        $postUserId = DI()->config->get('app.NPC.special_scene.userId');
+	        $typeStruct = json_encode(
+	            array(
+	                'content_type' => 6,
+	                'url' => $specialCfg['jump_url'],
+	            )
+	        );
+	        $content = $specialCfg['content'];
+	        $feedId = $domainFeed->postBaseFeed($postUserId, $toPushWeekGroupId, $content, 0, 0, 'web', $typeStruct);
+
+	        if ($feedId > 0 && !empty($specialCfg['pics']) && is_array($specialCfg['pics'])) {
+	            $domainFeed->attachFeedPics($feedId, $specialCfg['pics']);
+	        }
+
+	        return $feedId > 0;
+	    }
+
+	    protected function getPushRecordType($infoEx) {
+	        return 'ss_welcome';
+	    }
+	}
+
+可以看到，虽然是不同的推送实现，但其实现是类似的，特别在发布动态过程中，也是先获取配置信息，委托给 ``Domain_Feed`` 领域业务类进行动态的发布，最后返回是否成功推送的布尔值。这样既有利于不同功能的快速开发，因为可以重用通用的功能，又可以达到风险隔离、封装变化，即各个业务线独立变化，互不干扰。我觉得，这是一种好的设计，而且事实上它也工作得非常好。
+
+如何测试耗时的计划任务
+====================
+在本小节中，我们先是研究了如何收集用户上报的体重数据，接着学习了如何使用模板方法设计模式进行不同场景下的推送操作。现在，我们有了体重这一基础数据，也实现了推送功能。那么，接下来的问题是，我们该如何调度执行这些推送操作呢？显然，推送有两大类，一类是定时的推送，如每日、每周、每月推送；一类是触发的推送，如欢迎新用户。既然推送的时机随时都有可能发生，而且是属于耗时的操作，更为重要的是，不管用户是否上线使用 ``App`` ，都应该能为其进行推送。因此，一个不错的方案就是通过后台异步的计划任务对推送进行调度。如前面所述，我们使用了 ``Task计划任务扩展类库`` 。假设 ``Task`` 已经安装部署完毕，下面重点来看下如何实现具体的调度业务。
+
+在开始编写计划任务之前，有一些事情是需要明确的。提前考虑到这些问题，可以避免错误的设计，同时提高开发的效率。首先，调用上面开发好的推送接口，是通过远程接口服务调度，还是直接本地调度？其次，也是比较关键的问题，就是待消费的 ``MQ`` 数据从哪里来，又存在哪里？
+
+上面第一个问题，比较容易解决，把计划任务的接口服务放在我们上面所说的 ``Task`` 项目中，并且通过本地的方式进行调度。因此也就不需要对外提供访问入口。注意这里的 ``Task`` 项目目录不是指扩展类库的 ``Task`` 目录。剩下第二个问题，则需要一步步编写代码实现了。例如，对于每周营养计划的推送，首先要从数据库的用户表中筛选出候选用户，然后可以把候选用户放进内存数组 ``MQ`` 中，最后进行消费。
+
+``Task`` 扩展类库有一个通用的触发器，但基于我们现在特定的业务场景，由于已经可以确定使用本地调度、内存数组 ``MQ`` 和特定的接口服务，所以可以自定义实现更能与当前业务场景的触发器。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Task/TMyTrigger/PushBase.php
+	<?php
+	abstract class TMyTrigger_PushBase implements Task_Progress_Trigger {
+	    public function fire($params) {
+	        //取全部待推送的用户
+	        $suser = $this->getWaitTOPushUserORM();
+
+	        $mq = new Task_MQ_Array();
+	        $runner = new Task_Runner_Local($mq);
+	        $service = $this->getService();
+
+	        $num = 0;
+
+	        while (($row = $suser->fetch())) {
+	            $num ++;
+
+	            $UUID = Domain_User_Helper::userId2UUID($row['user_id']);
+	            $mq->add($service, array('other_UUID' => $UUID, 'app_key' => '***', 'sign' => '***'));
+
+	            $rs = $runner->go($service);
+	        }
+
+	        return $num;
+	    }
+
+	    /**
+	     * 取全部待推送的用户
+	     * @return NotORM
+	     */
+	    abstract protected function getWaitTOPushUserORM();
+
+	    /**
+	     * 取服务名称
+	     */
+	    abstract protected function getService();
+	}
+
+上面是一个抽象触发器基类，它封装了具体的调度过程。具体实现子类只需要实现获取全部待推送的用户，以及获取服务名称这两个抽象方法即可。
+
+下面是每周营养推送的具体实现。主要是实现了筛选初步符合每周推送的用户， 以及指定待执行的接口服务名称。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Task/TMyTrigger/WeekPush.php
+	<?php
+	class TMyTrigger_WeekPush extends TMyTrigger_PushBase {
+	    protected function getWaitTOPushUserORM() {
+	        return DI()->notorm->suser
+	            ->select('user_id')
+	            ->where('type', 1)
+	            ->where('height > ?', 0)
+	            ->where('weight > ?', 0);
+	    }
+
+	    protected function getService() {
+	        return 'Nutrition_SWeek.Push';
+	    }
+	}
+
+这里待执行的接口服务是 ``Nutrition_SWeek.Push`` ，那这个接口服务又在哪呢？还记得前面实现的每周推送领域业务类 ``Domain_SPush_Week`` 吗？其实此接口服务就是 ``Domain_SPush_Week`` 对应的上层接口类。打开这个接口类的文件，可以看到它需要一个 ``other_UUID`` 必须参数，以及在实现时调用了 ``Domain_SPush_Week`` 领域业务类。正如我们所预料的那样。以下是相应的代码片段。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Scale/Api/Nutrition/SWeek.php
+	<?php
+	class Api_Nutrition_SWeek extends PhalApi_Api {
+	    public function getRules() {
+	        return array(
+	            '*' => array(
+	                'otherUUID' => array('name' => 'other_UUID', 'require' => true, 'min' => 50, 'max' => 50,),
+	            ),
+	        );
+	    }
+
+	    public function push() {
+	        $rs = array('code' => Common_Def::CODE_OK, 'msg' => '');
+
+	        $domain = new Domain_SPush_Week();
+	        $rs['code'] = $domain->push($this->otherUUID);
+
+	        return $rs;
+	    }
+	}
+
+至此，就可以把整个业务流程打通了。那就是说，到此为止，我们已经初步实现了母婴营养称中核心的业务功能。也许这时，你可能觉得已经完成了重要的业务功能，可以暂且休息或者请年假出去旅游了。但也正如你看见的，从用户上报体重数据，到最后推送营养计划，这个过程涉及的业务众多，流程链路长，那么我们如何保证整个系统的稳定性和正确性呢？一个毫无疑问的回答是，单元测试。前面没有过多介绍单元测试，并不是暗示在这里不需要单元测试。恰恰相反，这里更需要单元测试，特别对于计划任务。没有介绍单元测试，是因为避免过多分散读者的注意力，并且已经假设读者对单元测试已经能熟悉应用。
+
+但对于耗时的计划任务又应该如何快速测试呢？在测试时，并不能每次都对全部的用户进行推送。假设推送一次需要 1 秒，那么推送 1200 个用户，就需要 20 分钟。每次执行单元测试都需要 20 分钟，那简直是在浪费程序员的时间！还记得我们的 F.I.R.S.T 原则吗？其中一个原则就是要快速。因此，哪怕是进行计划任务的单元测试，我们也要保证它的快速性。对此，我曾有切身的体会。在我曾经刚入职的时候，有一项开发任务就是修改某个计划任务，追加对某个字段的处理。需求很简单，我也很快就修改好了。但由于当时的项目没有单元测试，本地也无法进行自测，需要提交代码并发布到回归环境后方能验证。你知道，人总会有犯错的时候。我第一次修改的代码有问题，得到测试人员的反馈后我进行了调整。再次提交代码，发布到回归环境，并经过漫长的等待（等待计划任务执行到我所编写修改的代码区域）后，被再次告知我遗漏了另一外的修改，那时已经等待了一个多小时……就这样，往来多次调整修改，因为反馈周期长，导致最终项目发布延迟。 ``QA`` 负责人都已经不耐烦地大叫道：“谁改的代码？怎么还不行？！”。如果你是那时的我，肯定会这么想：“要是有立即反馈的单元测试就好了”。而要想针对计划任务编写快速反馈的单元测试，需要掌握一些技巧。
+
+首先，我们要保证单个执行过程的正确性。在上面的每周营养计划推送的场景中，单个执行过程其实就是指 ``Nutrition_SWeek.Push`` 接口服务在业务上的正确性。对于接口类的测试，我们前面已经介绍，这里不再赘述。关键是对计划任务调度过程的验证，也就是第二个重要的技巧。如果前面对一个用户进行推送这单个执行过程是正确的，并得到了充分的测试和验证，那么我们就有理由相信，对于 10 个、 100 个、乃至 100 万个用户进行推送都是能正常工作的。因此，在验证计划任务调度的过程时，我们可以把具体的执行过程进行模拟，不是真正进行推送操作，而是模拟推送。这样，便可大大减少执行的时间，提高单元测试反馈的速度。此外，只需关注对调度过程的验证即可。
+
+例如，对于每周营养计划的触发器类，可以通过重载方法指定一个模拟的接口服务，从而达到模拟单个执行过程的目的。可先定义一个模板的推送接口服务，它什么都不做，只是返回一个模板的结果，如：
+
+.. code-block:: php
+
+	class Api_Nutrition_Mock extends PhalAPi_Api {
+	    public function push() {
+	        return array('code' => Common_Def::CODE_OK, 'msg' => '');
+	    }
+	}
+
+随后，在继承 ``TMyTrigger_WeekPush`` 的子类中，返回该模板的接口服务名称，如：
+
+.. code-block:: php
+
+	class TMyTrigger_WeekPush_Mock extends TMyTrigger_WeekPush {
+	    protected function getService() {
+	        return 'Nutrition_Mock.Push';
+	    }
+	}
+
+最后，在进行单元测试时，便可利用此模拟的触发器类的对象进行测试验证，而不用再担心会存在耗时的执行过程，更不用担心会有什么副作用（在测试时向用户进行推送，而造成骚扰），因为一切都是模拟的。下面是使用替身进行测试的代码片段。
+
+.. code-block:: php
+
+	class PhpUnderControl_TaskMyTriggerWeekPush_Test extends PHPUnit_Framework_TestCase
+	{
+	    public $taskMyTriggerWeekPush;
+
+	    protected function setUp()
+	    {
+	        parent::setUp();
+	        $this->taskMyTriggerWeekPush = new TMyTrigger_WeekPush_Mock();
+	    }
+
+	    /**
+	     * @group testFire
+	     */
+	    public function testFire()
+	    {
+	        $params = '';
+	        $rs = $this->taskMyTriggerWeekPush->fire($params);
+	        $this->assertGreaterThan(0, $rs);
+	    }
+	}
+
+最后，小结一下。在开发接口服务的过程中，你会发现，很多时候都是像这里的案例一样，开发环节是一环扣一环，环环相扣的。如果前面设计不合理，就会导致后面也跟着错误的实现。通常情况下，会定义基础的业务数据，明确需要哪些类型的数据。在对实体的属性有了一定了解后，便可以基于业务需求和规则开发相应的接口服务。这些接口服务运行一段时间后，会产生上述基础业务数据。而这些基础数据又会催生更多的数据，例如对每周的体重进行分析从而给出营养周报和计划。这时，除了需要实现第二批接口服务外，对于耗时的接口服务的调度还要辅以计划任务来管理。好的框架应该能支持这些功能的开发，但我觉得，更为重要的是，框架应该引导开发人员进行这样有序的开发。即能在原来的基础上，进行迭代开发，新的功能与原有的功能可以很好的一起工作，相互促进。每当在项目中添加一个类，这个新的类都是以帮助系统中的其他类为目的的，而不是以干扰、抑制甚至破坏其他类为目的。不管这是有意识的，还是无意识的。 ``PhalApi`` 框架，我认为，很好地做到了这一点：引导软件开发工程师进行有序地开发。
+

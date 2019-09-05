@@ -1,0 +1,91 @@
+**
+前言
+**
+
+https://paragonie.com/book/pecl-libsodium
+
+在 PHP 项目中使用 Libsodium
+===========================
+使用 ``libsodium PHP`` 扩展进行现代，安全和快速加密的开发指南。
+
+应用加密中您不应该需要博士水平才能构建安全的 ``Web`` 应用程序。进入 ``libsodium`` ，它允许开发人员开发快速，安全和可靠的应用程序，而甚至无需知道流密码是什么。
+
+读完这本简短的电子手册后，您应该......
+
+- 知道 ``libsodium`` 是什么，它具有什么特性，以及如何安装它（库和 ``PECL`` 的 ``PHP`` ​​扩展）；
+- 一般了解哪种密码学工具可用于特定场景；
+- 能够编写使用 ``libsodium`` 的产品质量代码；
+
+第1章、解释 ``libsodium`` 是什么，介绍一些基本概念，并指导您安装 ``libsodium`` 和 ``PHP`` 扩展。
+
+第2章、旨在成为 ``libsodium`` 公开的所有函数和常量的有用参考页面。
+
+第3-9章、介绍了 ``libsodium`` 提供的各种功能，目的是什么，以及如何使用它们。
+
+第10章、包含“配方”：使用 ``libsodium`` 来满足项目需求的代码示例。
+
+.. code-block:: text
+
+    openssl
+    ciphers = {
+    'aes-128-cfb': (16, 16, OpenSSLStreamCrypto),
+    'aes-192-cfb': (24, 16, OpenSSLStreamCrypto),
+    'aes-256-cfb': (32, 16, OpenSSLStreamCrypto),
+    'aes-128-gcm': (16, 16, OpenSSLAeadCrypto),
+    'aes-192-gcm': (24, 24, OpenSSLAeadCrypto),
+    'aes-256-gcm': (32, 32, OpenSSLAeadCrypto),
+    'aes-128-ocb': (16, 16, OpenSSLStreamCrypto),
+    'aes-192-ocb': (24, 16, OpenSSLStreamCrypto),
+    'aes-256-ocb': (32, 16, OpenSSLStreamCrypto),
+    'aes-128-ctr': (16, 16, OpenSSLStreamCrypto),
+    'aes-192-ctr': (24, 16, OpenSSLStreamCrypto),
+    'aes-256-ctr': (32, 16, OpenSSLStreamCrypto),
+    'aes-128-cfb8': (16, 16, OpenSSLStreamCrypto),
+    'aes-192-cfb8': (24, 16, OpenSSLStreamCrypto),
+    'aes-256-cfb8': (32, 16, OpenSSLStreamCrypto),
+    'aes-128-cfb1': (16, 16, OpenSSLStreamCrypto),
+    'aes-192-cfb1': (24, 16, OpenSSLStreamCrypto),
+    'aes-256-cfb1': (32, 16, OpenSSLStreamCrypto),
+    'bf-cfb': (16, 8, OpenSSLStreamCrypto),
+    'camellia-128-cfb': (16, 16, OpenSSLStreamCrypto),
+    'camellia-192-cfb': (24, 16, OpenSSLStreamCrypto),
+    'camellia-256-cfb': (32, 16, OpenSSLStreamCrypto),
+    'cast5-cfb': (16, 8, OpenSSLStreamCrypto),
+    'des-cfb': (8, 8, OpenSSLStreamCrypto),
+    'idea-cfb': (16, 8, OpenSSLStreamCrypto),
+    'rc2-cfb': (16, 8, OpenSSLStreamCrypto),
+    'rc4': (16, 0, OpenSSLStreamCrypto),
+    'seed-cfb': (16, 16, OpenSSLStreamCrypto),
+    }
+
+    sodium:
+
+    ciphers = {
+    'salsa20': (32, 8, SodiumCrypto),
+    'chacha20': (32, 8, SodiumCrypto),
+    'chacha20-ietf': (32, 12, SodiumCrypto),
+    'chacha20-poly1305': (32, 32, SodiumAeadCrypto),
+    'chacha20-ietf-poly1305': (32, 32, SodiumAeadCrypto),
+    'xchacha20-ietf-poly1305': (32, 32, SodiumAeadCrypto),
+    'sodium:aes-256-gcm': (32, 32, SodiumAeadCrypto),
+    }
+
+    mbedtls:
+
+    ciphers = {
+    'mbedtls:aes-128-cfb128': (16, 16, MbedTLSStreamCrypto),
+    'mbedtls:aes-192-cfb128': (24, 16, MbedTLSStreamCrypto),
+    'mbedtls:aes-256-cfb128': (32, 16, MbedTLSStreamCrypto),
+    'mbedtls:aes-128-gcm': (16, 16, MbedTLSAeadCrypto),
+    'mbedtls:aes-192-gcm': (24, 24, MbedTLSAeadCrypto),
+    'mbedtls:aes-256-gcm': (32, 32, MbedTLSAeadCrypto),
+    'mbedtls:aes-128-ctr': (16, 16, MbedTLSStreamCrypto),
+    'mbedtls:aes-192-ctr': (24, 16, MbedTLSStreamCrypto),
+    'mbedtls:aes-256-ctr': (32, 16, MbedTLSStreamCrypto),
+    'mbedtls:camellia-128-cfb128': (16, 16, MbedTLSStreamCrypto),
+    'mbedtls:camellia-192-cfb128': (24, 16, MbedTLSStreamCrypto),
+    'mbedtls:camellia-256-cfb128': (32, 16, MbedTLSStreamCrypto),
+    'mbedtls:salsa20': (32, 8, MbedTLSStreamCrypto),
+    'mbedtls:chacha20': (32, 8, MbedTLSStreamCrypto),
+    'mbedtls:chacha20-ietf': (32, 12, MbedTLSStreamCrypto),
+    }

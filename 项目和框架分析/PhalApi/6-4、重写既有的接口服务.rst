@@ -1,0 +1,324 @@
+*********
+重写既有的接口服务
+*********
+需要重写的接口服务有很多，这里不能一一列出。但我会把在这个重写过程中，如何有效使用 ``PhalApi`` 所提供的特性、设计模式、扩展类库和方法技巧这些经验与大家分享。
+
+
+数据库分表
+==========
+Family 2.0 项目的数据库名为： ``familyv2`` ，并约定统一的表前缀为 ``fami`` 。考虑到 Family 2.0 项目数据量大，为方便后期的数据库服务器水平扩容，我们对数据量大且不需要进行关联查询的表进行了分表配置。例如，对于动态的评论内容，其评论表 ``fami_feed_comments`` 数据量大，只需要与用户动态关联，而评论与评论间不需要进行关联查询，因此适合采用分表策略。此时，首先配置的是数据表路由规则。
+
+.. code-block:: php
+
+	// $ vim ./Config/dbs.php
+    'tables' => array(
+        ... ...
+        // 评论表 － 100张分表
+        'feed_comments' => array(
+            'prefix' => 'fami_',
+            'key' => 'id',
+            'map' => array(
+                array('db' => 'db_A'),
+                array('start' => 0, 'end' => 99, 'db' => 'db_A'),
+            ),
+        ),
+    ),
+
+虽然目前 100 张分表都使用了 ``db_A`` 这一数据库实例，但通过这种配置，可以在需要的时候进行相应的调整。
+
+接下来，准备存放评论表的基本字段的 ``sql`` 文件。注意不需要添加主键 ``id`` 和扩展数据 ``ext_data`` 这两个字段。即：
+
+.. code-block:: sql
+
+	-- $ vim ./Data/feed_comments.sql
+
+    `feed_id` bigint(20) DEFAULT '0',
+    `user_id` bigint(20) DEFAULT '0' COMMENT '发布评论的用户ID',
+    `message` text COMMENT '评论内容',
+    `to_comment_id` bigint(20) DEFAULT '0' COMMENT '针对评论的回复，为0时表示对动态>评论',
+    `to_user_id` bigint(20) DEFAULT '0' COMMENT '被评论者的用户id',
+    `dateline` int(11) DEFAULT '0' COMMENT '评论的时间戳',
+
+随后，可以使用 ``phalapi-buildsql`` 脚本命令为此评论表生成创建这 100 个分表的 ``SQL`` 语句，执行此命令，传递相应的参数，以及生成输出的 ``SQL`` 语句为：
+
+.. code-block:: shell
+
+	$ Family-2.0$ ./PhalApi/phalapi-buildsqls ./Config/dbs.php feed_comments
+
+	CREATE TABLE `fami_feed_comments_0` (
+	    `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+	    `feed_id` bigint(20) DEFAULT '0',
+	    `user_id` bigint(20) DEFAULT '0' COMMENT '发布评论的用户ID',
+	    `message` text COMMENT '评论内容',
+	    `to_comment_id` bigint(20) DEFAULT '0' COMMENT '针对评论的回复，为0时表示对动态评论',
+	    `to_user_id` bigint(20) DEFAULT '0' COMMENT '被评论者的用户id',
+	    `dateline` int(11) DEFAULT '0' COMMENT '评论的时间戳',
+	    `ext_data` text COMMENT 'json data here',
+	     PRIMARY KEY (`id`)
+	 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	CREATE TABLE `fami_feed_comments_1` ... ...
+	CREATE TABLE `fami_feed_comments_2` ... ...
+	CREATE TABLE `fami_feed_comments_3` ... ...
+	 .. ...
+	CREATE TABLE `fami_feed_comments_99` ... ...
+
+检验没问题后，可重定向保存到临时文件，如 ``/tmp/fami_feed_comments.sql`` ，再导入到数据库。
+
+完成配置和创建好数据库分表后，接下就是评论数据模型 ``Model`` 类的实现。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Fami/Model/FeedComments.php
+	<?php
+	class Model_FeedComments extends PhalApi_Model_NotORM {
+	    const TABLE_NUM = 100;
+
+	    protected function getTableName($id = null) {
+	        $tableName = 'feed_comments';
+	        if ($id !== null) {
+	            $tableName .= '_' . ($id % self::TABLE_NUM);
+	        }
+	        return $tableName;
+	    }
+	}
+
+其他需要使用分表的情况也可以类似这样配置和实现。在项目初期，就确定好哪些数据库表需要分表是大有裨益的。程序是数据结构加算法，可想而知，数据在系统项目中所处的重要位置。有什么样的数据结构，就决定了怎样的算法。同样，有什么的存储方式，就影响了如何编写程序的代码。
+
+下面是评论领域业务类的相关代码片段，这些代码展示了在分表的情况下，如何编写代码。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Fami/Domain/Feed/Comment.php
+    /**
+     * 分表存储 + 刷新评论数量
+     */
+    protected function commonComment($newData) {
+        $model = new Model_FeedComments();
+        $id = $model->insert($newData, $newData['feed_id']);
+
+        //刷新评论数量
+        $domain = new Domain_Feed();
+        $domain->refreshCommentNum($newData['feed_id']);
+
+        return intval($id);
+    }
+
+细心的读者可以发现，在调用 ``insert`` 方法进行添加数据时，会添加第二个参数 ``$newData['feed_id']`` 。此参数表示是动态 ``ID`` 字段，用于进行分表的依据。并且注意到在为动态添加评论内容后，需要刷新动态的评论总数量，以便缓存耗时但每次查询结果都一样的值。
+
+
+用特征草图分解“万能类”
+=====================
+在有一定历史的旧系统中，最为常见的是什么都做的“万能类”。这些类，往往没有明确的职责，而是当有新的功能代码时不加思考，为图方便就直接加在里面，久而久之，就慢慢变成了一个“万能类”。在它里面的方法，大部分都是静态方法，并且在一定程序上有所关联，看起来更像是糅合了多个协作类的全部接口功能。
+
+对于“万能类”，在重写或者平时重构过程中，应该将其进行分解，使之更符合单一职责原则。那么问题是，面对臃肿，成千上万行的代码，我们应该怎么有序地进行分解？在我曾经入职的一家公司，我的上级跟我说过：最终结果和方式、过程，同样重要。下面来看下，使用什么方式，如何分解“万能类”。
+
+先来介绍一个有用的工具，它虽然简单，但非常实用。它的名字叫特征草图，出自某本技术书籍。它的使用过程是这样的：打开需要分解的类，准备笔和草稿纸，以成员属性为矩形，成员函数为椭圆，并用实线的单向箭头表示依赖使用关系，最后便可得到此类的特征草图。下面是一个简单示例类：
+
+.. code-block:: php
+
+	<?php
+	class Person {
+	    protected $name;
+	    protected $money = 0;
+
+	    public function __construct($name) {
+	        $this->name = $name;
+	    }
+
+	    public function getName() {
+	        return $this->name;
+	    }
+
+	    public function earn($money) {
+	        $this->money += $money;
+	    }
+
+	    public function getMoney($money) {
+	        return $this->money;
+	    }
+	}
+
+``Person`` 是一个表示人员的类，它有两个成员属性，分别是表示名字的 ``$name`` 和表示所持有的金钱 ``$money`` 。对于名字，有简单的 ``getter`` 方法，而对于金钱，除了简单的 ``getter`` 方法外，还有赚钱的成员函数。根据绘画特征草图的方法，可以得到图6-4。
+
+.. image:: ./images/ch-6-person-draw.png
+
+图6-4 Person类的特征草图
+
+通过手动绘画类的特征草图，不仅操作简单，而且可以清晰地发现成员函数和成员属性在逻辑上的依赖关系。例如在上面的 ``Person`` 类中，可以分解为两个类，一个类只负责人员基本信息，而另一个类则只负责赚钱。
+
+当然，实际中根据历史遗留系统中的“万能类”画出来的特征草图并没有那么简单，但也能从中发现一些端倪。一个经验法则是，通常在特征草图中会存在一个汇点，以此汇点为切入点画一条直线，便可把原来庞大的类一分为二。你发现的汇点越多，最终分解的类就越清晰。那么汇点是什么呢？它往往是某个成员函数，并且是承上启下的一个关键节点，类似两个逻辑世界的通道。如图6-5，灰色的椭圆节点即为汇点，虚线表示可以把上、下两组成员函数和成员属性分解到两个类中。
+
+.. image:: ./images/ch-6-hui-dian.png
+
+图6-5 带有汇点的特征草图
+
+那汇点本身这一成员函数应该划分在哪个拆分类里呢？汇点箭头以下的部分，使用抽取子类的重构方法，可以得到一个分解后的类。通常汇点应通过提取子函数的重构方法迁移到分解后的新类中，而在原来的成员函数里，使用委托，调用新的类方法。
+
+如此，通过使用特征草图作为参考依据，结合恰当的重构方法，便可对臃肿的类进行很好的分解，最终得到职责更单一，更内聚的类。
+
+
+消化复杂的领域业务
+=================
+Family 2.0 一个很重要的业务是加入家庭圈。图6-6的交互设计图展示了从创建家庭圈到加入家庭圈这一过程。具体的场景可描述为：用启根据四位数字的家庭号和密码，可加入指定已创建的家庭圈。这一过程因为有着各种规则，蕴含着领域业务，因此在开发实现上是有一定复杂度的。下面，一起来看下如何消化复杂的领域业务。
+
+.. image:: ./images/ch-6-group-join.jpg
+
+图6-6 加入家庭圈的操作流程
+
+为了更加了解这其中细致的业务规则，让我们来看下当时为加入家庭圈这一接口服务所写的测试用例。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Fami/Tests/Api/Group/Api_Group_Member_Test.php
+    public function testJoinGroup()
+    {
+        DI()->notorm->group_member->where('user_id', 110)->delete();
+
+        // Step 1. 构建请求URL
+        $url = 'app_key=mini&client=ios&version=1.0.0&service=Group_Member.JoinGroup&sign=8c3b4&__debug__=1&UUID=A3D779AF491F86ECFCD22F05CD6A9D1C9F8719CFE4BCEA06B0&group_num=1763&group_pwd=1111';
+
+        // Step 2. 执行请求
+        $rs = PhalApi_Helper_TestRunner::go($url);
+
+        // Step 3. 验证
+        $this->assertNotEmpty($rs);
+        $this->assertArrayHasKey('code', $rs);
+        $this->assertArrayHasKey('group_id', $rs);
+
+        $this->assertEquals(0, $rs['code']);
+        $this->assertGreaterThan(0, $rs['group_id']);
+
+        // 不能再次加入
+        $rs = PhalApi_Helper_TestRunner::go($url);
+        $this->assertEquals(3, $rs['code']);
+
+        // 家庭圈密码错误
+        $url = 'app_key=mini&client=ios&version=1.0.0&service=Group_Member.JoinGroup&sign=8c3b4&__debug__=1&UUID=A3D779AF491F86ECFCD22F05CD6A9D1C9F8719CFE4BCEA06B0&group_num=1763&group_pwd=1112';
+        $rs = PhalApi_Helper_TestRunner::go($url);
+        $this->assertEquals(2, $rs['code']);
+
+        // 家庭圈不存在
+        $url = 'app_key=mini&client=ios&version=1.0.0&service=Group_Member.JoinGroup&sign=8c3b4&__debug__=1&UUID=A3D779AF491F86ECFCD22F05CD6A9D1C9F8719CFE4BCEA06B0&group_num=4444&group_pwd=1111';
+        $rs = PhalApi_Helper_TestRunner::go($url);
+        $this->assertEquals(1, $rs['code']);
+    }
+
+上面的测试用例不是特别好的写法，因为它里面同时测试了几个场景。但通过这些测试场景，可以看到，我们验证了一个 ``ID`` 为 ``110`` 的用户，凭家庭圈密码 ``1111`` 加入了家庭号为 ``1763`` 的家庭圈这一 ``Happy Path`` 。此外，验证了不能重复加入同一个家庭圈、以及家庭圈密码错误、家庭圈不存在这些异常的场景。
+
+有了明确业务规则的单元测试作指引，接下来遵循 ``ADM`` 分层模式，便可进行逐步分解，最后得到井然有序、易于理解、可测试的代码。以下是加入家庭圈 ``Api`` 接口层的实现代码片段。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Fami/Api/Group/Member.php
+	class Api_Group_Member extends PhalApi_Api {
+
+	    public function getRules() {
+	        return array(
+	            'joinGroup' => array(
+	                'groupNum' => array('name' => 'group_num', 'require' => true, 'min' => 4),
+	                'groupPwd' => array('name' => 'group_pwd', 'require' => true, 'min' => 4),
+	                'deviceType' => array('name' => 'device_type', 'type' => 'enum', 'range' => array('all', 'cube', 'scale'), 'default' => 'all'),
+	            ),
+	        );
+	    }
+
+	    public function joinGroup() {
+	        $rs = array('code' => Common_Def::CODE_OK, 'group_id' => 0, 'msg' => '');
+
+	        DI()->userLite->check(true);
+
+	        //step 1. check
+	        $domain = new Domain_Group();
+	        $groupId = $domain->getGroupIdByGroupNum($this->groupNum);
+	        $rs['group_id'] = $groupId;
+	        if ($groupId <= 0) {
+	            $rs['code'] = 1;
+	            $rs['msg'] = T('group {number} not exists', array('number' => $this->groupNum));
+	            return $rs;
+	        }
+
+	        //step 2. check pwd
+	        if (!$domain->checkPassword($groupId, $this->groupPwd)) {
+	            $rs['code'] = 2;
+	            $rs['msg'] = T('group passwrod wrong');
+	            return $rs;
+	        }
+
+	        //step 3. check has joined
+	        $memberDomain = new Domain_Group_Member();
+	        if ($memberDomain->hasJoined($this->userId, $groupId, $this->deviceType)) {
+	            $rs['code'] = 3;
+	            $rs['msg'] = T('has joined the group memeber');
+	            return $rs;
+	        }
+
+	        //step 4. join
+	        $memberDomain->joinGroup($this->userId, $groupId);
+
+	        $rs['group_id'] = $groupId;
+	        return $rs;
+	    }
+
+代码虽然有点长，但并不影响它的阅读性以及可理解性。在 ``Api_Group_Member::getRules()`` 成员函数中，配置了接口服务所需要的参数，分别是用户的UUID、四位数的家庭号和四位数的家庭密码、设备类型。接下来，是加入家庭圈的实现代码。在 ``Api_Group_Member::joinGroup()`` 中，最前面通过 ``User`` 扩展类库进行了登录态的检测。然后便是加入家庭圈的业务流程，第一步先检测待加入的家庭号是否合法；第二步校对家庭圈密码；第三步判断是否已加入；最好第四步进行加入操作。可以看到，很明显地，前面三步都是查询操作，而最后一步属于命令式操作，即会产生副作用。这也是符合命令查询职责分离模式原则的。而这些操作，也是在同一个高度的层次，对业务规则进行了很好的表达。至于具体内部的业务实现规则，可以再深入到对应的领域业务类，看下它又是如何表达和实现规则的。
+
+例如，对于负责家庭圈成员的 ``Domain_Group_Member`` 领域业务类。一如我们所期望的，在判断用户是否已加入家庭圈的实现代码中，果然依赖了来自 ``Model`` 层的数据。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Fami/Domain/Group/Member.php
+	class Domain_Group_Member {
+
+	    public function hasJoined($userId, $groupId, $detectDeviceType = 'all', $deleteState = Domain_Group_Helper::GROUP_NOT_DELETE) {
+	        $model = new Model_GroupMember();
+	        return $model->hasJoined($userId, $groupId, $detectDeviceType, $deleteState);
+	    }
+	}
+
+这对于项目开发来说，是一件很棒的事情！因为遵循 ``ADM`` 分层模式的代码具有可预测性，不管是哪位开发人员来实现，最后产出的代码都是和我们共同所期待的结构是一致的。这样，则可以大大降低了代码的维护成本。再来看下在 ``Domain_Group_Member`` 领域业务类中加入家庭圈的实现代码， 下面代码是否和你想象的相差无几？
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Fami/Domain/Group/Member.php
+	class Domain_Group_Member {
+
+	    public function joinGroup($userId, $groupId) {
+	        if ($userId <= 0 || $groupId <= 0) {
+	            return false;
+	        }
+
+	        $newData = array();
+	        $newData['user_id'] = $userId;
+	        $newData['group_id'] = $groupId;
+
+	        $model = new Model_GroupMember();
+	        $id = $model->insert($newData);
+
+	        return $id > 0 ? true : false;
+	    }
+	}
+
+最后，稍微看一下对应 ``Model`` 层的实现代码片段。
+
+.. code-block:: php
+
+	// Family-2.0$ vim ./Apps/Fami/Model/GroupMember.php
+	class Model_GroupMember extends PhalApi_Model_NotORM {
+
+	    protected function getTableName($id = null) {
+	        return 'group_member';
+	    }
+
+	    public function hasJoined($userId, $groupId, $detectDeviceType = 'all', $deleteState = Domain_Group_Helper::GROUP_NOT_DELETE) {
+	        $num = $this->getORM()
+	            ->where('user_id', $userId)
+	            ->where('group_id', $groupId)
+	            ->count('id');
+
+	        return $num > 0 ? true : false;
+	    }
+	}
+
+就这样，通过层层分解，我们再一次优雅地消化了复杂的领域业务，以一种可预测、职责划分明确的方式完成了代码的编写，功能的开发。当然，每个接口服务所布面临的领域业务不尽相同，这里只是作为一个示例，希望能给大家提供一些启发性。
+
+

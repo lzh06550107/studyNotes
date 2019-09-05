@@ -1,0 +1,1 @@
+https://docs.phpcomposer.com/articles/custom-installers.html

@@ -1,0 +1,842 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Bouncer——授权系统 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="../genindex.html"/>
+        <link rel="search" title="搜索" href="../search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Bouncer——授权系统</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bouncer">
+<h1>Bouncer——授权系统<a class="headerlink" href="#bouncer" title="永久链接至标题">¶</a></h1>
+<p><a class="reference external" href="https://github.com/JosephSilber/bouncer">github地址</a></p>
+<p><code class="docutils literal"><span class="pre">Bouncer</span></code> 是一个优雅的，框架无关的方式并使用 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型来管理的任何应用程序的角色和能力的插件。</p>
+<div class="section" id="id1">
+<h2>介绍<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Bouncer</span></code> 是一个优雅的，以框架无关的方式使用 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型来管理任何应用程序的角色和能力。具有表达性和流畅的语法，它尽可能少侵入代码：在需要时使用它，当你不需要时忽略它。</p>
+<p><code class="docutils literal"><span class="pre">Bouncer</span></code> 与您在自己的应用程序中硬编码的其它权限很好地协同工作。你的代码总是优先：如果你的代码允许一个动作， <code class="docutils literal"><span class="pre">Bouncer</span></code> 不会干涉。</p>
+<p>一旦安装，你可以简单地告诉 <code class="docutils literal"><span class="pre">Bouncer</span></code> 你想在 <code class="docutils literal"><span class="pre">Gate</span></code> 允许什么：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// Give a user the ability to create posts</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;create&#39;</span><span class="p">,</span> <span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+
+<span class="c1">// Alternatively, do it through a role</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;create&#39;</span><span class="p">,</span> <span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">assign</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+
+<span class="c1">// You can also grant an ability only to a specific model</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;edit&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>当你在 <code class="docutils literal"><span class="pre">Gate</span></code> 检查能力时，首先会询问 <code class="docutils literal"><span class="pre">Bouncer</span></code> 。如果他看到已经授予当前用户的能力（无论是直接还是通过角色），他都会通过授权。</p>
+</div>
+<div class="section" id="id2">
+<h2>安装<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="laravel-bouncer">
+<h3>在 <code class="docutils literal"><span class="pre">Laravel</span></code> 应用中安装 <code class="docutils literal"><span class="pre">Bouncer</span></code><a class="headerlink" href="#laravel-bouncer" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">composer</span></code> 安装 <code class="docutils literal"><span class="pre">Bouncer</span></code></p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ composer require silber/bouncer v1.0.0-rc.1
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">在 <code class="docutils literal"><span class="pre">Laravel</span></code> 5.5中， 服务提供器和别名会自动注册。如果你正在使用该版本，直接跳到第3步。</p>
+</div>
+<ol class="arabic">
+<li><p class="first">在 <code class="docutils literal"><span class="pre">providers</span></code> 数组中增加如下新项：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">Silber\Bouncer\BouncerServiceProvider::class,</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">在 <code class="docutils literal"><span class="pre">aliases</span></code> 数组中增加如下新项：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">&#39;Bouncer&#39; =&gt; Silber\Bouncer\BouncerFacade::class,</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">在用户模型中增加 <code class="docutils literal"><span class="pre">Bouncer</span></code> 的 <code class="docutils literal"><span class="pre">trait</span></code>:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">use Silber\Bouncer\Database\HasRolesAndAbilities;</span>
+
+<span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    use HasRolesAndAbilities;</span>
+<span class="x">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">现在，为了运行 <code class="docutils literal"><span class="pre">Bouncer</span></code> 的迁移，首先在 <code class="docutils literal"><span class="pre">migrations</span></code> 中生成迁移文件，可以通过如下命令来生成：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan vendor:publish --tag<span class="o">=</span><span class="s2">&quot;bouncer.migrations&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">最后，运行迁移：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan migrate
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="id3">
+<h3>在非 <code class="docutils literal"><span class="pre">Laravel</span></code> 应用中安装 <code class="docutils literal"><span class="pre">Bouncer</span></code><a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<ol class="arabic">
+<li><p class="first">使用 <code class="docutils literal"><span class="pre">composer</span></code> 安装 <code class="docutils literal"><span class="pre">Bouncer</span></code></p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ composer require silber/bouncer v1.0.0-rc.1
+</pre></div>
+</div>
+</li>
+<li><p class="first">使用 <a class="reference external" href="https://github.com/illuminate/database/blob/master/README.md">the Eloquent Capsule component</a>  配置数据库：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Capsule\Manager</span> <span class="k">as</span> <span class="nx">Capsule</span><span class="p">;</span>
+
+<span class="nv">$capsule</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Capsule</span><span class="p">;</span>
+
+<span class="nv">$capsule</span><span class="o">-&gt;</span><span class="na">addConnection</span><span class="p">([</span><span class="cm">/* connection config */</span><span class="p">]);</span>
+
+<span class="nv">$capsule</span><span class="o">-&gt;</span><span class="na">setAsGlobal</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>详情请参考 <a class="reference external" href="https://github.com/illuminate/database/blob/master/README.md">the Eloquent Capsule 文档</a></p>
+</li>
+<li><p class="first">通过如下方法来运行迁移：</p>
+<ol class="loweralpha simple">
+<li>使用 <a class="reference external" href="https://github.com/michaeldyrynda/vagabond">vagabond</a> 在 <code class="docutils literal"><span class="pre">Laravel</span></code> 应用之外来运行 <code class="docutils literal"><span class="pre">Laravel</span></code> 迁移；</li>
+<li>可选地，你可以在你的数据库中直接运行原始的SQL语句；</li>
+</ol>
+</li>
+<li><p class="first">增加 <code class="docutils literal"><span class="pre">Bouncer</span></code> 的 <code class="docutils literal"><span class="pre">trait</span></code> 到你的用户模型中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Silber\Bouncer\Database\HasRolesAndAbilities</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">HasRolesAndAbilities</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">创建一个 <code class="docutils literal"><span class="pre">Bouncer</span></code> 实例</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Silber\Bouncer\Bouncer</span><span class="p">;</span>
+
+<span class="nv">$bouncer</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">create</span><span class="p">();</span>
+
+<span class="c1">// If you are in a request with a current user</span>
+<span class="c1">// that you&#39;d wish to check permissions for,</span>
+<span class="c1">// pass that user to the &quot;create&quot; method:</span>
+<span class="nv">$bouncer</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果在应用中使用依赖注入，你可以在容器中注册 <code class="docutils literal"><span class="pre">Bouncer</span></code> 实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Silber\Bouncer\Bouncer</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Container\Container</span><span class="p">;</span>
+
+<span class="nx">Container</span><span class="o">::</span><span class="na">getInstance</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">singleton</span><span class="p">(</span><span class="nx">Bouncer</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">create</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>现在，你可以注入 <code class="docutils literal"><span class="pre">Bouncer</span></code> 到任何需要的类中。</p>
+<p><code class="docutils literal"><span class="pre">create</span></code> 方法创建一个具有合理默认值的 <code class="docutils literal"><span class="pre">Bouncer</span></code> 实例。要完全定制它，请使用 <code class="docutils literal"><span class="pre">make</span></code> 方法获取工厂实例。调用工厂的 <code class="docutils literal"><span class="pre">create()</span></code> 来创建 <code class="docutils literal"><span class="pre">Bouncer</span></code> 实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Silber\Bouncer\Bouncer</span><span class="p">;</span>
+
+<span class="nv">$bouncer</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">make</span><span class="p">()</span>
+         <span class="o">-&gt;</span><span class="na">withCache</span><span class="p">(</span><span class="nv">$customCacheInstance</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="na">create</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">设置整个应用程序将哪个模型用作用户模型：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$bouncer</span><span class="o">-&gt;</span><span class="na">useUserModel</span><span class="p">(</span><span class="nx">User</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>详情请参考下面的配置部分。</p>
+</li>
+</ol>
+</div>
+<div class="section" id="id4">
+<h3>开启缓存<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>默认情况下，为当前请求缓存 <code class="docutils literal"><span class="pre">Bouncer</span></code> 的查询。为了获得更好的性能，您可能需要启用跨请求缓存。</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>使用<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>向用户添加角色和能力变得非常简单。你不必事先创建角色或能力。只需传递角色/能力的名称，如果不存在， <code class="docutils literal"><span class="pre">Bouncer</span></code> 会创建它。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">下面的例子都使用 <code class="docutils literal"><span class="pre">Bouncer</span></code> 门面。如果您不使用门面，您可以将 <a href="#id6"><span class="problematic" id="id7">``</span></a>silberbouncerbouncer的实例注入您的类中。</p>
+</div>
+<div class="section" id="id8">
+<h3>创建角色和权限<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>让我们创建一个 <code class="docutils literal"><span class="pre">admin</span></code> 和赋给它一个 <code class="docutils literal"><span class="pre">ban-users</span></code> 能力：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>就这样而已。在幕后， <code class="docutils literal"><span class="pre">Bouncer</span></code> 会为你创造一个 <code class="docutils literal"><span class="pre">Role</span></code> 和 <code class="docutils literal"><span class="pre">Ability</span></code> 模型。</p>
+<p>如果你想要给角色/能力增加额外的属性，如，可读的标题，你可以使用 <code class="docutils literal"><span class="pre">Bouncer</span></code> 类的 <code class="docutils literal"><span class="pre">role</span></code> 和 <code class="docutils literal"><span class="pre">ability</span></code> 方法来手动创建它们：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$admin</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">role</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">([</span>
+    <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Administrator&#39;</span><span class="p">,</span>
+<span class="p">]);</span>
+
+<span class="nv">$ban</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">ability</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">([</span>
+    <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;ban-users&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Ban users&#39;</span><span class="p">,</span>
+<span class="p">]);</span>
+
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$admin</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="nv">$ban</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>给用户分配角色<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>现在将 <code class="docutils literal"><span class="pre">admin</span></code> 角色授予用户，只需告诉 <code class="docutils literal"><span class="pre">Bouncer</span></code> 应该为给定用户分配 <code class="docutils literal"><span class="pre">admin</span></code> 角色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">assign</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>可选地，你可以直接在用户对象上调用 <code class="docutils literal"><span class="pre">assign</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">assign</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>直接分配权限给用户<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>有时你可能想直接给用户一个能力，而不使用角色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>这里也可以直接从用户那里完成相同的操作：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">allow</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>限制能力在具体的模型<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>有时您可能想限制能力在某种特定模型类型。只需将模型名称作为第二个参数传递即可：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;edit&#39;</span><span class="p">,</span> <span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果您想限制能力在某个特定模型实例，请改用实际模型：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;edit&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>允许一个用户或者角色拥有一个模型<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">toOwn</span></code> 方法允许用户管理他们自己的模型：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toOwn</span><span class="p">(</span><span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>现在，当在 <code class="docutils literal"><span class="pre">Gate</span></code> 检查用户是否可以对给定帖子执行动作时，帖子的 <code class="docutils literal"><span class="pre">user_id</span></code> 将与登录用户的 <code class="docutils literal"><span class="pre">id</span></code> （可以被定制）进行比较。如果他们匹配， <code class="docutils literal"><span class="pre">Gate</span></code> 将允许行动。</p>
+<p>上述将授予用户“拥有”模型的​​所有能力。您可以通过调用 <code class="docutils literal"><span class="pre">to</span></code> 方法来限制它的能力：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toOwn</span><span class="p">(</span><span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;view&#39;</span><span class="p">);</span>
+
+<span class="c1">// Or pass it an array of abilities:</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toOwn</span><span class="p">(</span><span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">([</span><span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="s1">&#39;update&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>您还可以允许用户在您的应用程序中拥有所有类型的模型：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toOwnEverything</span><span class="p">();</span>
+
+<span class="c1">// And to restrict ownership to a given ability</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toOwnEverything</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;view&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h3>收回一个用户角色<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Bouncer</span></code> 还可以从用户收回以前分配的角色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">retract</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>或者直接在用户实例操作：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">retract</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>移除一个能力<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Bouncer</span></code> 也可以移除先前授予用户的能力：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">disallow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>或者直接在用户实例操作：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">disallow</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果用户具有允许他们 <code class="docutils literal"><span class="pre">ban-users</span></code> 能力的 的角色，他们仍然具有该能力。要禁止它，要么从角色中删除角色，要么从用户角色撤回角色。</p>
+</div>
+<p>如果该能力是通过角色获得的，则告诉 <code class="docutils literal"><span class="pre">Bouncer</span></code> 将能力从角色中移除：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">disallow</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>为了移除特定模型类型的能力，请将其名称作为第二个参数传入：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">disallow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">如果用户有 <code class="docutils literal"><span class="pre">delete</span></code> 能力在特定的 <code class="docutils literal"><span class="pre">$</span> <span class="pre">post</span></code> 实例，则上面的代码不会删除该能力。你将不得不单独移除该能力——通过传递实际的 <code class="docutils literal"><span class="pre">$</span> <span class="pre">post</span></code> 作为第二个参数——如下所示。</p>
+</div>
+<p>要删除特定模型实例的功能，请改用实际模型：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">disallow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">disallow</span></code> 方法仅删除先前赋予此用户/角色的能力。如果你想不允许一个更普遍的能力允许的子集，使用禁止方法。</p>
+</div>
+</div>
+<div class="section" id="id15">
+<h3>禁用一个能力<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Bouncer</span></code> 也可以让你禁止一个给定的能力，进行更细致的控制。有时您可能希望授予用户/角色涵盖各种操作的能力，但是会限制这些操作的一小部分。</p>
+<p>例子如下：</p>
+<ul>
+<li><p class="first">您可能允许用户通常查看所有文档，但不应允许查看一个特定高度机密的文档：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="nx">Document</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">forbid</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="nv">$classifiedDocument</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">您可能希望允许 <code class="docutils literal"><span class="pre">superadmins</span></code> 在您的应用中执行所有操作，包括添加/删除用户。那么你可能拥有一个 <code class="docutils literal"><span class="pre">admin</span></code> 角色，除了管理用户之外，他还可以做所有事情。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="s1">&#39;superadmin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">everything</span><span class="p">();</span>
+
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">everything</span><span class="p">();</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">forbid</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toManage</span><span class="p">(</span><span class="nx">User</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">您可能希望偶尔禁止用户，取消所有能力。然而，实际上移除他们所有的角色和能力意味着，当禁令被取消时，我们必须弄清楚他们原来的角色和能力是什么。</p>
+<p>使用禁止能力意味着他们可以保留他们现有的所有角色和能力，但仍然没有获得任何授权。我们可以通过创建一个特殊的禁止一切的禁止角色来实现这一点：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">forbid</span><span class="p">(</span><span class="s1">&#39;banned&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">everything</span><span class="p">();</span>
+<span class="c1">// 然后，我们想要禁止一个用户，可以给它们赋予 banned 角色</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">assign</span><span class="p">(</span><span class="s1">&#39;banned&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+<span class="c1">// 为了移除禁令，我们简单地去除用户的角色</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">retract</span><span class="p">(</span><span class="s1">&#39;banned&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>正如您所看到的， <code class="docutils literal"><span class="pre">Bouncer</span></code> 的禁止能力可以让您对应用中的权限进行精细控制。</p>
+</div>
+<div class="section" id="id16">
+<h3>去除禁用权限<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<p>要移除禁止的能力，请使用 <code class="docutils literal"><span class="pre">unforbid</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">unforbid</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="nv">$classifiedDocument</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">这将消除任何以前禁止的能力。如果这个用户/角色授予的不同常规能力尚未允许，它将不会自动允许该能力。</p>
+</div>
+</div>
+<div class="section" id="id17">
+<h3>检查用户的角色<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">一般来说，你不需要直接检查角色。最好让角色具备某些能力，然后检查这些能力。如果你需要的是非常一般的，你可以创造非常广泛的能力。例如， <code class="docutils literal"><span class="pre">access-dashboard</span></code> 功能总是比直接检查 <code class="docutils literal"><span class="pre">admin</span></code> 或 <code class="docutils literal"><span class="pre">editor</span></code> 角色更好。对于您确实想要检查角色的罕见场合，该功能在此处可用。</p>
+</div>
+<p><code class="docutils literal"><span class="pre">Bouncer</span></code> 可以检查用户是否有特定的角色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">a</span><span class="p">(</span><span class="s1">&#39;moderator&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果您要检查的角色是从元音开始，那么您可能需要使用别名方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">an</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>相反，您还可以检查用户是否没有特定的角色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">notA</span><span class="p">(</span><span class="s1">&#39;moderator&#39;</span><span class="p">);</span>
+
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">notAn</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你可以检查一个用户是否有许多角色之一：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">a</span><span class="p">(</span><span class="s1">&#39;moderator&#39;</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>您还可以检查用户是否具有所有给定的角色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">,</span> <span class="s1">&#39;moderator&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>您还可以检查用户是否没有任何给定的角色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">notAn</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">,</span> <span class="s1">&#39;moderator&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>这些检查也可以直接在用户上完成：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isAn</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isA</span><span class="p">(</span><span class="s1">&#39;subscriber&#39;</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isNotAn</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isNotA</span><span class="p">(</span><span class="s1">&#39;subscriber&#39;</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isAll</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">,</span> <span class="s1">&#39;moderator&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id18">
+<h3>获取一个用户的所有角色<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
+<p>您可以直接从用户模型获取用户的所有角色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$roles</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getRoles</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h3>获取一个用户的所有能力<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p>您可以直接从用户模型获取用户的所有能力：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$abilities</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getAbilities</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>这将返回用户能力的集合，包括通过他们的角色授予用户的任何能力。</p>
+</div>
+<div class="section" id="id20">
+<h3>授权用户<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<p>授权用户直接在 <code class="docutils literal"><span class="pre">laravel</span></code> 的 <code class="docutils literal"><span class="pre">Gate</span></code> 或用户模型（ <code class="docutils literal"><span class="pre">$user-&gt;can($ability)</span></code> ）上处理。</p>
+<p>为了方便起见，<code class="docutils literal"><span class="pre">Bouncer</span></code> 类提供了这些直通方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">can</span><span class="p">(</span><span class="nv">$ability</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">cannot</span><span class="p">(</span><span class="nv">$ability</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">authorize</span><span class="p">(</span><span class="nv">$ability</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>它们直接调用了 <code class="docutils literal"><span class="pre">Gate</span></code> 类。</p>
+</div>
+<div class="section" id="blade">
+<h3>Blade指令<a class="headerlink" href="#blade" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Bouncer</span></code> 不添加自己的 <code class="docutils literal"><span class="pre">Blade</span></code> 指令。因为 <code class="docutils literal"><span class="pre">Bouncer</span></code> 直接与 <code class="docutils literal"><span class="pre">laravel</span></code> 的 <code class="docutils literal"><span class="pre">Gate</span></code> 合作，只需简单地使用 <code class="docutils literal"><span class="pre">&#64;can</span></code> 指令来检查当前用户的能力：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>@can (&#39;update&#39;, $post)
+    <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{{ route(&#39;post.update&#39;, $post) }}&quot;</span><span class="p">&gt;</span>Edit Post<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+@endcan
+</pre></div>
+</div>
+<p>由于通常不建议直接检查角色，因此 <code class="docutils literal"><span class="pre">Bouncer</span></code> 无法为此提供单独的指令。如果你仍然坚持检查角色，你可以使用一般的 <code class="docutils literal"><span class="pre">&#64;if</span></code> 指令来做到这一点：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>@if ($user-&gt;isAn(&#39;admin&#39;))
+    //
+@endif
+</pre></div>
+</div>
+</div>
+<div class="section" id="id21">
+<h3>刷新缓存<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h3>
+<p>所有由 <code class="docutils literal"><span class="pre">Bouncer</span></code> 执行的查询都将为当前请求缓存。如果启用交叉请求缓存，则缓存将持续存到不同的请求中。</p>
+<p><strong>当启用交叉缓存且改变用户角色/能力时，由你负责使用如下方法刷新缓存。</strong></p>
+<p>只要你需要，你可以完全刷新 <code class="docutils literal"><span class="pre">Bouncer</span></code> 的缓存：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">refresh</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果缓存标签可用，则使用缓存标记完全刷新所有用户的缓存。并非所有缓存驱动程序都支持此功能请参阅 <code class="docutils literal"><span class="pre">laravel</span></code> 的文档以查看您的驱动程序是否支持缓存标记。如果您的驱动程序不支持缓存标记，则调用刷新可能会稍微慢一点(具体依赖系统中的用户数量)。</p>
+</div>
+<p>或者，您可以仅为特定用户刷新缓存：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">refreshFor</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id22">
+<h2>备忘单<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h2>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// Adding abilities for users</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;edit&#39;</span><span class="p">,</span> <span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">everything</span><span class="p">();</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toManage</span><span class="p">(</span><span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toManage</span><span class="p">(</span><span class="nv">$post</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;view&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">everything</span><span class="p">();</span>
+
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toOwn</span><span class="p">(</span><span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toOwnEverything</span><span class="p">();</span>
+
+<span class="c1">// Removing abilities uses the same syntax, e.g.</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">disallow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">disallow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toManage</span><span class="p">(</span><span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">disallow</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">toOwn</span><span class="p">(</span><span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+
+<span class="c1">// Adding &amp; removing abilities for roles</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">disallow</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+
+<span class="c1">// You can also forbid specific abilities with the same syntax...</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">forbid</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+
+<span class="c1">// And also remove a forbidden ability with the same syntax...</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">unforbid</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+
+<span class="c1">// Re-sync a user&#39;s abilities</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">sync</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">abilities</span><span class="p">(</span><span class="nv">$abilities</span><span class="p">);</span>
+
+<span class="c1">// Assigning &amp; retracting roles from users</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">assign</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">retract</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+
+<span class="c1">// Re-sync a user&#39;s roles</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">sync</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">(</span><span class="nv">$roles</span><span class="p">);</span>
+
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">can</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">can</span><span class="p">(</span><span class="s1">&#39;edit&#39;</span><span class="p">,</span> <span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">can</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">cannot</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">cannot</span><span class="p">(</span><span class="s1">&#39;edit&#39;</span><span class="p">,</span> <span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">cannot</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">a</span><span class="p">(</span><span class="s1">&#39;subscriber&#39;</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">an</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">notA</span><span class="p">(</span><span class="s1">&#39;subscriber&#39;</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">notAn</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">a</span><span class="p">(</span><span class="s1">&#39;moderator&#39;</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nx">Bouncer</span><span class="o">::</span><span class="na">is</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">(</span><span class="s1">&#39;moderator&#39;</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
+
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">cache</span><span class="p">();</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">dontCache</span><span class="p">();</span>
+
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">refresh</span><span class="p">();</span>
+<span class="nx">Bouncer</span><span class="o">::</span><span class="na">refreshFor</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+
+<span class="c1">///有些功能也可以直接在用户模型上使用：</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">allow</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">allow</span><span class="p">(</span><span class="s1">&#39;edit&#39;</span><span class="p">,</span> <span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">allow</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">disallow</span><span class="p">(</span><span class="s1">&#39;ban-users&#39;</span><span class="p">);</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">disallow</span><span class="p">(</span><span class="s1">&#39;edit&#39;</span><span class="p">,</span> <span class="nx">Post</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">disallow</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="nv">$post</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">assign</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">retract</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isAn</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isAn</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">,</span> <span class="s1">&#39;moderator&#39;</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isAll</span><span class="p">(</span><span class="s1">&#39;moderator&#39;</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
+<span class="nv">$boolean</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isNotAn</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;moderator&#39;</span><span class="p">);</span>
+
+<span class="nv">$abilities</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getAbilities</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

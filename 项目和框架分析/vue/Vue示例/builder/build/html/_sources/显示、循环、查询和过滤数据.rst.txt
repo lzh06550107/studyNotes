@@ -1,0 +1,975 @@
+**************************
+显示、循环、查询和过滤数据
+**************************
+
+在第1章 ``Vue.js`` 入门中，我们介绍了 ``Vue`` 中的 ``data`` ， ``computed`` 和 ``method`` 对象以及如何显示静态数据值。在本章中，我们将介绍：
+
+- 在 ``Vue`` 中使用 ``v-if`` ， ``v-else`` 和 ``v-for`` 显示列表和更复杂的数据；
+- 使用表单元素过滤列表；
+- 根据数据应用条件 ``CSS`` 类；
+
+我们要使用的数据是由 ``JSON`` 生成器服务(http://www.json-generator.com/)随机生成的。 这个网站允许我们获得虚拟数据来练习。以下模板用于生成我们将要使用的数据。 将以下内容复制到左侧以生成相同格式的数据，以使属性与代码示例匹配，如下所示：
+
+.. code-block:: json
+
+    [
+      '{{repeat(5)}}',
+      {
+        index: '{{index()}}',
+        guid: '{{guid()}}',
+        isActive: '{{bool()}}',
+        balance: '{{floating(1000, 4000, 2, "00.00")}}',
+        name: '{{firstName()}} {{surname()}}',
+        email: '{{email()}}',
+        registered: '{{date(new Date(2014, 0, 1), new Date(), "YYYYMM-ddThh:mm:ss")}}'
+      }
+    ]
+
+在开始构建我们的简单应用程序并显示用户之前，我们将介绍 ``Vue`` 的更多功能以及视图中可用的 ``HTML`` 特定属性。范围从动态渲染内容到循环数组。
+
+HTML声明
+========
+``Vue`` 允许您使用 ``HTML`` 标记和属性来控制和更改应用程序的视图。 这涉及动态设置属性，如 ``alt`` 和 ``href`` 。 它还允许您根据应用程序中的数据渲染标签和组件。 这些属性以 ``v`` 开头，如本书开头所述，在渲染过程中将会从生成的 ``HTML`` 中移除。 在我们开始输出和过滤我们的数据之前，我们将运行一些常见的声明。
+
+v-html
+------
+``v-html`` 指令允许您输出内容而不使用胡须风格的大括号语法。 如果您的输出包含 ``HTML`` 标签，也可以使用它 - 它会将渲染输出为 ``HTML`` 而不是纯文本。 ``HTML`` 属性的值是数据键或计算的函数名称的值：
+
+视图：
+
+在 ``app`` 空间的视图中，在一个元素中添加 ``v-html`` 属性:
+
+.. code-block:: html
+
+    <div id="app">
+        <div v-html="message"></div>
+    </div>
+
+JavaScript：
+
+在脚本中，设置 ``message`` 变量的值为包含一些 ``HTML`` 元素的字符串：
+
+.. code-block:: js
+
+    const app = new Vue({
+        el: '#app',
+        data: {
+            message: '<h1>Hello!</h1>'
+        }
+    });
+
+您应该尽量避免将 ``HTML`` 添加到您的 ``Vue`` 实例中，因为它开始混淆了我们 ``MVVM`` 结构的 ``ViewModel`` 和 ``Model`` 中的视图。 在内部输出无效的 ``HTML`` 标签也有危险。您应该只将 ``v-html`` 与您信任的数据一起使用，因为将它与外部 ``API`` 一起使用可能是一个安全问题，因为它可以让 ``API`` 控制您的应用程序。 潜在的恶意 ``API`` 可以使用 ``v-html`` 注入不需要的内容和 ``HTML`` 。 只能将 ``v-html`` 用于完全信任的数据。
+
+声明性渲染
+==========
+通过使用 ``v-bind:attribute`` ，可以在 ``Vue`` 中使用动态填充常规 ``HTML`` 属性，例如 ``<img>`` 标签的 ``src`` 。 这使您可以使用 ``Vue`` 应用程序中的数据填充任何存在的属性。这可能是图片来源或元素 ``ID`` 。
+
+通过您希望填充的属性前面添加 ``v-bind:`` 来使用绑定选项。 例如，如果您希望使用名为 ``imageSource`` 的数据键的值填充图像源，则需要执行以下操作：
+
+视图：
+
+在你的 ``app`` 视图空间中，创建一个 ``img`` 标签，将该标签的 ``v-bind:src`` 属性值赋值为 ``imageSource`` 。
+
+.. code-block:: html
+
+    <div id="app">
+        <img v-bind:src="imageSource">
+    </div>
+
+JavaScript：
+
+在你的 ``Vue`` 脚本中创建一个 ``imageSource`` 变量。该变量的值为你希望的图片路径：
+
+.. code-block:: js
+
+    const app = new Vue({
+        el: '#app',
+        data: {
+            imageSource: 'http://via.placeholder.com/350x150'
+        }
+    });
+
+``v-bind:attribute`` 具有一个简写形式 ``:attribute`` ，例如， ``v-bind:src`` 变为 ``:src`` 。
+
+条件渲染
+========
+使用自定义 ``HTML`` 声明， ``Vue`` 允许您根据数据属性或 ``JavaScript`` 声明有条件地渲染元素和内容。 这些包括 ``v-if`` ，当声明为真时用于显示容器，以及 ``v-else`` 用于当声明为假时显示容器。
+
+v-if
+-----
+最基本的例子就是 ``v-if`` 指令 - 根据一个值或函数确定是否应该显示块。
+
+在视图内创建一个带有单个 ``div`` 的 ``Vue`` 实例，并将数据关键字 ``isVisible`` 设置为 ``false`` 。
+
+视图：
+
+视图代码如下所示：
+
+.. code-block:: html
+
+    <div id="app">
+        <div>Now you see me</div>
+    </div>
+
+JavaScript：
+
+在脚本中，初始化 ``Vue`` 然后创建一个 ``isVisible`` 数据属性：
+
+.. code-block:: js
+
+    const app = new Vue({
+        el: '#app',
+        data: {
+            isVisible: false
+        }
+    });
+
+现在， ``Vue`` 应用可以根据 ``isVisible`` 的值在 ``HMTL`` 元素中使用 ``v-if`` 指令来显示元素的内容。
+
+.. code-block:: html
+
+    <div id="app">
+        <div v-if="isVisible">Now you see me</div>
+    </div>
+
+按保存后，您的文本应该消失。这是因为标签正在根据当前为 ``false`` 的值进行有条件渲染。 如果你打开你的 ``JavaScript`` 控制台并运行下面的代码，你的元素应该重新出现：
+
+.. code-block:: js
+
+    app.isVisible = true
+
+``v-if`` 指令不仅仅只能使用 ``Boolean`` 值。你可以检查数据属性是否等于指定的字符串：
+
+.. code-block:: html
+
+    <div v-if="selected == 'yes'">Now you see me</div>
+
+例如，前面的代码检查选定的数据属性是否等于 ``yes`` 的值。 ``v-if`` 属性接受 ``JavaScript`` 运算符，因此可以检查不等于，大于或小于。
+
+你的逻辑开始从你的 ``ViewModel`` 开始蔓延到你的 ``View`` 中， 这是很危险的。 为了解决这个问题，该属性同样可以接受函数作为一个值。该方法可以根据需要尽可能复杂，但如果您希望显示代码，最终必须返回 ``true`` ，否则返回 ``false`` 。 请记住，如果函数返回的值不是假值（如 ``0`` 或 ``false`` ），则结果将被解释为 ``true`` 。这看起来像这样：
+
+.. code-block:: html
+
+    <div v-if="isSelected">Now you see me</div>
+
+然后你的方法将会是这样：
+
+.. code-block:: js
+
+    isSelected() {
+        return selected == 'yes';
+    }
+
+如果您不希望完全删除该元素且仅仅隐藏该元素，则有更合适的指令 ``v-show`` 。 这适用于 ``CSS`` 显示属性，而不是操纵 ``DOM`` - 本章后面会介绍 ``v-show`` 。
+
+v-else
+------
+``v-else`` 允许您基于 ``v-if`` 语句的相反来渲染替代元素。如果结果为真，则会显示第一个元素; 否则，包含 ``v-else`` 的元素将会渲染。
+
+具有 ``v-else`` 的元素需要直接紧跟包含 ``v-if`` 的元素； 否则，你的应用程序会抛出一个错误。
+
+``v-else`` 没有值且放置在元素标签中。
+
+.. code-block:: html
+
+    <div id="app">
+        <div v-if="isVisible">
+            Now you see me
+        </div>
+        <div v-else>
+            Now you don't
+        </div>
+    </div>
+
+将前面的 ``HTML`` 添加到您的应用空间将仅显示其中一个 ``<div>`` 元素 - 在您的控制台中切换值，就像我们先前所做的那样会显示另一个容器。 如果你想链接你的条件，你也可以使用 ``v-else-if`` 。 ``v-else-if`` 的一个例子如下：
+
+.. code-block:: html
+
+    <div id="app">
+        <div v-if="isVisible">
+            Now you see me
+        </div>
+        <div v-else-if="otherVisible">
+            You might see me
+        </div>
+        <div v-else>
+            Now you don't
+        </div>
+    </div>
+
+如果 ``isVisible`` 变量等于 ``false`` ，但 ``otherVisible`` 变量等于 ``true`` 则 ``You might see me`` 将显示。
+
+应该谨慎使用 ``v-else`` ，因为可能会模棱两可，并可能导致误报情况。
+
+v-for来显示数据
+===============
+下一个HTML声明意味着我们可以开始显示我们的数据并将这些数据的属性进行实践。 由于我们的数据是一个数组，我们需要遍历它才能显示每个元素。 为此，我们将使用 ``v-for``指令。
+
+生成你的 ``JSON`` 并将其分配给一个名为 ``people`` 的变量。 在这些例子中，生成的 ``JSON`` 将以 ``[...]`` 形式在代码块中显示。 你的 ``Vue`` 应用应该如下所示：
+
+.. code-block:: js
+
+    const app = new Vue({
+        el: '#app',
+        data: {
+            people: [...]
+        }
+    });
+
+我们现在需要开始在视图中将每个人的姓名显示为项目符号列表。 这是 ``v-for`` 指令的数据来源：
+
+.. code-block:: html
+
+    <div id="app">
+        <ul>
+            <li v-for="person in people">
+                {{ person }}
+            </li>
+        </ul>
+    </div>
+
+``v-for`` 循环遍历 ``JSON`` 列表并为每个条目临时分配它 ``person`` 变量。 然后我们可以输出变量的值或属性。
+
+``v-for`` 循环需要应用于要重复使用的 ``HTML`` 元素，这种情况下，是 ``<li>`` 。 如果您没有包装元素或不希望使用 ``HTML`` 你可以使用 ``Vue <template>`` 元素。 这些会在运行时被移除，同时创建一个容器供您输出数据：
+
+.. code-block:: html
+
+    <div id="app">
+        <ul>
+            <template v-for="person in people">
+                <li>
+                    {{ person }}
+                </li>
+            </template>
+        </ul>
+    </div>
+
+模板标签也会隐藏内容，直到应用程序初始化完成，如果您的网络速度较慢或您的 ``JavaScript`` 需要一段时间才能触发，这可能会很方便。
+
+仅仅是将 ``{{person}}`` 输出到视图，将会创建一串很长的信息，对我们没有任何用处。更新输出 ``person`` 对象的 ``name`` 属性：
+
+.. code-block:: html
+
+    <li v-for="person in people">
+        {{ person.name }}
+    </li>
+
+在浏览器中查看结果应该会显示用户名称的列表。 更新 ``HTML`` 以在表格中列出用户姓名，电子邮件地址和余额。 将 ``v-for`` 应用于 ``<tr>`` 元素：
+
+.. code-block:: html
+
+    <table>
+        <tr v-for="person in people">
+            <td>{{ person.name }}</td>
+            <td>{{ person.email }}</td>
+            <td>{{ person.balance }}</td>
+            <td>{{ person.registered }}</td>
+        </tr>
+    </table>
+
+给表格添加一个额外的单元格。 如果它们处于活动状态，将显示活动状态，如果不活动，则使用 ``person`` 对象上的 ``isActive`` 属性显示活动状态。这可以通过两种方式实现 - 使用 ``v-if`` 指令或使用三元 ``if`` 。 三元 ``if`` 是可以放在视图的大括号内的 ``if`` 语句。 如果我们想使用 ``HTML`` 元素来应用某些样式，我们将使用 ``v-if`` 。
+
+如果我们使用三元 ``if`` ，那么单元格将如下所示：
+
+.. code-block:: html
+
+    <td>{{ (person.isActive) ? 'Active' : 'Inactive' }}</td>
+
+如果我们选择使用 ``v-else`` 和 ``v-if`` 选项，允许我们使用想使用的 ``HTML`` ，它将如下所示：
+
+.. code-block:: html
+
+    <td>
+        <span class="positive" v-if="person.isActive">Active</span>
+        <span class="negative" v-else>Inactive</span>
+    </td>
+
+这个活动元素是 ``Vue`` 组件理想的完美例子 - 我们将在第3章“优化我们的应用程序和使用组件显示数据”中介绍。 作为更符合我们 ``MVVM`` 方法的替代方案，我们可以创建一个方法，它返回状态文本。 **这将清理我们的视图并将逻辑移动到我们的应用程序** ：
+
+.. code-block:: html
+
+    <td>{{ activeStatus(person) }}</td>
+
+然后我们的方法将执行与我们的视图相同的逻辑：
+
+.. code-block:: js
+
+    activeStatus(person) {
+        return (person.isActive) ? 'Active' : 'Inactive';
+    }
+
+使用v-bind创建链接
+==================
+下一步是链接电子邮件地址，以便查看人员列表的用户可点击。 在这种情况下，我们需要通过在电子邮件地址之前添加 ``mailto:`` 来连接字符串。
+
+第一个直觉应该是这样做：
+
+.. code-block:: html
+
+    <a href="mailto:{{person.email}}">{{ person.email }}</a>
+
+但 ``Vue``  **不允许在属性内插值** 。相反，我们必须在 ``href`` 属性上使用 ``v-bind`` 指令。这将该属性转换为 ``JavaScript`` 变量，因此任何原始文本都必须用引号引起来，并与所需的变量连接起来：
+
+.. code-block:: html
+
+    <a v-bind:href="'mailto:' + person.email">{{ person.email }}</a>
+
+注意添加 ``v-bind:`` ，单引号和连接 ``+`` 标识符。
+
+格式化余额
+==========
+在继续过滤用户之前，请添加一种方法来正确格式化余额，在数据对象中预先定义货币符号并确保小数点后有两个数字。为了实现这一点，我们可以调整在第1章 ``Vue.js`` 入门中的方法。我们的 ``Vue`` 应用程序现在应该如下所示：
+
+.. code-block:: js
+
+    const app = new Vue({
+        el: '#app',
+        data: {
+            people: [...],
+            currency: '$'
+        },
+        methods: {
+            activeStatus(person) {
+                return (person.isActive) ? 'Active' : 'Inactive';
+            },
+            formatBalance(balance) {
+                return this.currency + balance.toFixed(2);
+            }
+        }
+    });
+
+我们可以在我们的视图中使用这种新方法：
+
+.. code-block:: html
+
+    <td>{{ formatBalance(person.balance) }}</td>
+
+格式化注册日期
+==============
+数据中的注册日期字段是计算机友好的，这对于阅读不是非常人性化。 创建一个名为 ``formatDate`` 的新方法，该方法接受一个参数 - 类似于之前的 ``formatBalance`` 方法。
+
+如果您想完全自定义您的日期显示，那么可以使用几个库，例如 ``moment.js`` ，这些库可以为您提供更多的灵活性，以便处理任何基于日期和时间的数据。 对于这种方法，我们将使用本地 ``JavaScript`` 函数 ``LocaleString()`` ：
+
+.. code-block:: js
+
+    formatDate(date) {
+        let registered = new Date(date);
+        return registered.toLocaleString('en-US');
+    }
+
+使用注册日期，我们将它传递给本地 ``Date()`` 函数，以便 ``JavaScript`` 知道将该字符串解释为日期。一旦存储在已注册的变量中，我们用 ``toLocaleString()`` 函数将该对象作为字符串返回。该函数接受大量选项（如MDN中所述）来自定义日期的输出。 现在，我们将它传递给我们希望显示的区域并使用对应位置的默认值。 我们现在可以在视图中使用我们的方法：
+
+.. code-block:: html
+
+    <td>{{ formatDate(person.registered) }}</td>
+
+过滤我们的数据
+==============
+随着我们的数据被列出，现在我们要建立过滤能力。 这将允许用户选择要过滤的字段和该字段输入文本作为查询。 ``Vue`` 应用程序将随着用户输入过滤行。为此，我们要将某些表单输入绑定到数据对象中的各个值，创建一个新方法并在表行中使用新指令； ``v-show`` 。
+
+构建表单
+========
+首先在视图中创建 ``HTML`` 。为每个要过滤的字段创建一个 ``<select>`` 框，一个用于查询的 ``<input>`` 和一对单选按钮 - 我们将使用它们过滤活动用户和非活动用户。确保每个 ``<option>`` 的 ``value`` 属性反映用户数据中的键 - 这将节省所需的代码并使选择框的用途更加明显。
+
+考虑到用户体验，您需要过滤的数据不需要显示，以便我们的过滤工作。 如果表格行显示非过滤数据是否有意义？ 创建将用于过滤的表单：
+
+.. code-block:: html
+
+    <form>
+        <label for="fiterField">
+            Field:
+            <select id="filterField">
+                <option value="">Disable filters</option>
+                <option value="isActive">Active user</option>
+                <option value="name">Name</option>
+                <option value="email">Email</option>
+                <option value="balance">Balance</option>
+                <option value="registered">Date registered</option>
+            </select>
+        </label>
+        <label for="filterQuery">
+            Query: <input type="text" id="filterQuery">
+        </label>
+        <span>
+            Active:
+            <label for="userStateActive">
+            Yes: <input type="radio" value="true" id="userStateActive"  selected>
+            </label>
+            <label for="userStateInactive">
+            No: <input type="radio" value="false" id="userStateInactive">
+        </label>
+        </span>
+    </form>
+
+此表单包括一个选择框(用于选择一个过滤字段)，一个允许用户输入查询以过滤的输入框，以及一对单选按钮，用于当我们希望由活动用户和非活动用户过滤时。想象中的用户流程是这样的：用户将选择他们希望过滤数据的字段，并输入他们的查询或选择单选按钮。 当在选择框中选择 ``isActive`` （活动用户）选项时，单选按钮将被显示，并且输入框将被隐藏。 我们确保默认情况下选择第一个单选按钮。
+
+过滤输入不需要包含在表单中也可以工作; 然而，即使在 ``JavaScript`` 应用程序中，保留语义 ``HTML`` 也是一种很好的做法。
+
+构建 inputs
+-----------
+要将输入绑定到可通过 ``Vue`` 实例访问的变量，需要将 ``HTML`` 属性添加到字段并将相应的键添加到 ``data`` 对象。 在 ``data`` 对象中为每个字段创建一个变量，以便我们可以将表单元素绑定到它们：
+
+.. code-block:: js
+
+    data: {
+        people: [...],
+            currency: '$',
+            filterField: '',
+            filterQuery: '',
+            filterUserState: ''
+    }
+
+数据对象现在有三个附加键： ``filterField`` ，它将用于存储下拉列表的值; ``filterQuery`` ，输入到文本框中的数据的占位符; 和 ``filterUserState`` ，它允许我们存储单选按钮复选框。
+
+现在有数据键可以使用，我们可以将表单元素绑定到它们。使用数据键的值将 ``v-model=""`` 属性应用于每个表单字段。
+
+例子如下：
+
+.. code-block:: html
+
+    <input type="text" id="filterQuery" v-model="filterQuery">
+
+确保两个单选按钮具有完全相同的 ``v-model=""`` 属性：这样可以更新相同的值。 要验证它是否有效，现在可以获取字段的值并输出数据变量。
+
+尝试输出 ``filterField`` 或 ``filterQuery`` 并更改字段。
+
+.. code-block:: html
+
+    {{ filterField }}
+
+有一件事你可能会注意到，如果你输出的 ``filterUserState`` 变量看起来是在工作，但是，它没有得到所需的实际结果。变量的输出将在值属性中设置为 ``true`` 和 ``false`` (值为字符串，不是 ``Boolean`` 类型值)。
+
+仔细观察，这些值实际上是字符串，而不是布尔值。一个布尔值是一个硬编码的 ``true`` 或 ``false`` ， ``1`` 或 ``0`` ，你可以很容易地比较，而一个字符串需要精确检查硬编码的字符串。 这可以通过输出它的 ``typeof`` 类型变量来验证：
+
+.. code-block:: js
+
+    {{ typeof filterUserState }}
+
+这可以通过使用 ``vbind:value`` 属性绑定单选按钮的值来解决。 该属性允许您为 ``Vue`` 指定值以进行解释，并且可以接受布尔值，字符串值或对象值。现在，我们传递给它 ``true`` 和 ``false`` ，就像我们已经使用标准的 ``value`` 属性一样，但是 ``Vue`` 会把它解释为布尔值：
+
+.. code-block:: html
+
+    <span>
+        Active:
+        <label for="userStateActive">
+        Yes: <input type="radio" v-bind:value="true" id="userStateActive" v-model="filterUserState" selected>
+        </label>
+        <label for="userStateInactive">
+        No: <input type="radio" v-bind:value="false" id="userStateInactive" v-model="filterUserState">
+    </label>
+    </span>
+
+下一步是基于过滤器来显示和隐藏表行。
+
+显示和隐藏Vue内容
+-----------------
+除了用于显示和隐藏内容的 ``v-if`` 外，还可以使用 ``v-show=""`` 指令。 ``v-show`` 与 ``v-if`` 非常相似; 它们都被添加到 ``HTML`` 包装器中，并且都可以接受相同的参数，包括一个函数。两者之间的区别在于 ``v-if`` 会更改标记，根据需要删除和添加 ``HTML`` 元素，而 ``v-show`` 则与渲染元素无关，而是使用内联 ``CSS`` 样式来隐藏和显示元素。 ``v-if`` 更适合于运行时渲染或不常见的用户交互，因为它可能会重构整个页面。 当很多元素快速进入和退出视图时， ``v-show`` 是有利的，例如，过滤时！
+
+当在方法中使用 ``v-show`` 时，函数只需返回 ``true`` 或 ``false`` 。该函数没有使用它的位置的概念，所以我们需要传递当前正在渲染的 ``person`` 来计算它是否应该显示。
+
+在 ``Vue`` 实例上创建一个名为 ``filterRow()`` 方法，将其设置为 ``true`` ：
+
+.. code-block:: js
+
+    filterRow(person) {
+        return true;
+    }
+
+该函数接受一个参数，这个参数是我们通过 ``HTML`` 传入的 ``person`` 。 在您的视图中，在传递 ``person`` 对象时，将 ``v-show`` 属性添加到 ``filterRow`` 作为值的 ``<tr>`` 元素中：
+
+.. code-block:: html
+
+    <table>
+        <tr v-for="person in people" v-show="filterRow(person)">
+            <td>{{ person.name }}</td>
+
+作为一个简单的测试，将 ``isActive`` 值返回给此 ``person`` 。 这应该立即过滤掉任何不活动的人，因为他们的值将返回 ``false`` ：
+
+.. code-block:: js
+
+    filterRow(person) {
+        return person.isActive;
+    }
+
+过滤我们的内容
+--------------
+现在，在我们视图中我们可以控制 ``person`` 行和一些过滤器控件，我们需要让我们的过滤器工作。 我们已经通过我们的 ``isActive`` 键进行过滤，因此单选按钮将首先被使用。 对于单选按钮值和我们将过滤的关键字，我们已经具有布尔值形式的值。 为了使这个过滤器正常工作，我们需要将 ``isActive`` 键与单选按钮的值进行比较。
+
+- 如果 ``filterUserState`` 值为 ``true`` ，那么当 ``isActive`` 为 ``true`` 时，向用户显示；
+- 如果 ``filterUserState`` 值为 ``false`` ，则仅显示其 ``isActive`` 值为 ``false`` 的用户。
+
+通过比较两个变量，可以将其写入一行：
+
+.. code-block:: js
+
+    filterRow(person) {
+        return (this.filterUserState === person.isActive);
+    }
+
+在加载页面时，不会显示用户，因为 ``filterUserState`` 键设置的值既不是 ``true`` 也不是 ``false`` 。点击其中一个单选按钮将显示相应的用户。
+
+只有在下拉菜单中选择了活动用户选项时，才让过滤器工作：
+
+.. code-block:: js
+
+    filterRow(person) {
+        let result = true;
+        if(this.filterField === 'isActive') {
+            result = this.filterUserState === person.isActive;
+        }
+        return result;
+    }
+
+此代码将变量默认设置为 ``true`` 。 然后我们可以立即返回变量，我们的行将显示。然而，在返回之前，它会检查选择框的值，如果是所需的值，则会通过我们的单选按钮进行过滤。由于我们的选择框绑定到了 ``filterField`` 值和单选按钮绑定到 ``filterUserState`` 变量，因此在我们与应用程序交互时它们会更新。 尝试选择选择框中的活动用户选项并更改单选按钮。
+
+下一步是在未选择活动用户选项时使用输入查询框。我们还希望我们的查询是模糊搜索 - 例如，匹配包含搜索查询的单词而不是完全匹配。我们也希望它不区分大小写：
+
+.. code-block:: js
+
+    filterRow(person) {
+        let result = true;
+        if(this.filterField) {
+            if(this.filterField === 'isActive') {
+                result = this.filterUserState === person.isActive;
+            } else {
+                let query = this.filterQuery.toLowerCase(),
+                    field = person[this.filterField].toString().toLowerCase();
+                result = field.includes(query);
+            }
+        }
+        return result;
+    }
+
+为了工作，我们必须添加一些东西来添加到这个方法中。第一步是检查我们的选择字段是否有开始过滤的值。由于我们选择字段中的第一个选项的 ``value=""`` ，这等同于 ``false`` 。如果是这种情况，该方法返回默认值 ``true`` 。
+
+如果它确实有值，那么它会转到我们最初的 ``if`` 语句。这将检查特定值以查看它是否与 ``isActive`` 匹配 - 如果是，它会运行我们之前编写的代码。如果没有，我们开始我们的其它过滤。建立一个新的查询变量，它将输入的值转换为小写。
+
+第二个变量是我们要过滤的数据。这将使用选择框的值（该人员的字段键）来提取要过滤的值。此值将转换为字符串（在日期或余额的情况下），转换为小写字母并存储为字段变量。最后，我们使用 ``includes`` 函数来检查该字段是否包含输入的查询。如果是这样，我们返回 ``true`` ，并显示行；如果不是，该行则隐藏。
+
+我们可以解决的下一个问题是使用数字进行过滤。用户输入确切余额并不直观 - 更自然的搜索方式是查找低于或超过一定数量的余额的用户，例如 ``<2000`` 。
+
+只是在 ``balance`` 字段时才应用这种类型的过滤。我们可以采用以下两种方法 - 我们可以检查字段名称是否是 ``balance`` ，类似于我们如何检查 ``isActive`` 字段，或者我们可以检查我们过滤的数据类型。
+
+检查字段名称更简单。我们可以在我们的方法中做一个 ``else if()`` ，或者甚至迁移到 ``switch`` 语句，以便于阅读和扩展。然而，检查字段类型的替代方法更具可扩展性。这意味着我们可以用更多数字字段扩展数据集，而不必扩展或更改我们的代码。但是，这确实意味着我们的代码中会有更多的 ``if`` 语句。
+
+我们首先要做的是改变我们的存储方法，因为我们不希望小写字段或查询：
+
+.. code-block:: js
+
+    if(this.filterField === 'isActive') {
+        result = this.filterUserState === person.isActive;
+    } else {
+        let query = this.filterQuery,
+            field = person[this.filterField];
+    }
+
+下一步是确定字段变量中数据的类型。这可以通过再次使用 ``typeof`` 运算符来建立。 这可以在 ``if`` 语句中使用，以检查字段的类型是否是数字：
+
+.. code-block:: js
+
+    if(this.filterField === 'isActive') {
+        result = this.filterUserState === person.isActive;
+    } else {
+        let query = this.filterQuery,
+            field = person[this.filterField];
+        if(typeof field === 'number') {
+            // Is a number
+        } else {
+            // Is not a number
+            field = field.toLowerCase();
+            result = field.includes(query.toLowerCase());
+        }
+    }
+
+一旦我们的检查完成，我们可以默认回到我们原来的查询代码。 如果选择选项不是 ``isActive`` ，并且正在过滤的数据不是数字，它将使用此代码段。如果是这种情况，那么它将小写字段，并查看它是否包含在像以前那样转换为小写字母时在查询框中写入的内容。
+
+下一阶段是实际将我们的数字数据与查询框中写入的数据进行比较。 为此，我们将使用原生 ``JavaScript eval`` 函数。
+
+``eval`` 函数可能是一个潜在的危险函数，如果没有一些严格的输入消毒检查，再加上它比替代品的性能低，就不应该在生产代码中使用。 它以本地 ``JavaScript`` 的形式运行所有内容，因此可能会被滥用。但是，由于我们正在将这个应用程序用于虚拟应用程序，因此我们将重点放在 ``Vue`` 本身上，而不是创建一个完全基于 ``Web`` 的应用程序，所以这样做很好。 您可以在24种方式中阅读更多关于 ``eval`` 的信息：
+
+.. code-block:: js
+
+    if(this.filterField === 'isActive') {
+        result = this.filterUserState === person.isActive;
+    } else {
+        let query = this.filterQuery,
+            field = person[this.filterField];
+        if(typeof field === 'number') {
+            result = eval(field + query); // query字段中包含大于、等于或小于符号
+        } else {
+            field = field.toLowerCase();
+            result = field.includes(query.toLowerCase());
+        }
+    }
+
+这会将字段和查询传递给 ``eval()`` 函数，并将结果（ ``true`` 或 ``false`` ）传递给结果变量，以确定行的可见性。 ``eval`` 函数逐字地评估表达式并确定它是真是假。 下面是一个例子：
+
+.. code-block:: js
+
+    eval(500 > 300); // true
+    eval(500 < 400); // false
+    eval(500 - 500); // false
+
+在这个例子中，数字 ``500`` 是我们的字段，或在这个具体的例子中是 ``balance`` 。之后的任何事情都是我们用户写的。您的过滤代码现在已准备就绪。尝试从下拉菜单中选择余额并筛选余额高于 ``2000`` 的用户。
+
+在继续之前，我们需要添加一些错误检查。如果您的 ``JavaScript`` 控制台处于打开状态，当您键入第一个更大或更小时，您可能已经注意到了一个错误。这是因为 ``eval`` 函数无法计算 ``X>``（其中 ``X`` 是余额）。你可能也想用货币键入 ``$2000`` ，并意识到这是行不通的。这是因为货币是在渲染视图时应用的，而我们在渲染之前过滤数据。
+
+为了解决这两个错误，我们必须删除查询中键入的任何货币符号，并在 ``eval`` 函数调用之前测试。使用原生 JavaScript ``replace()`` 函数删除货币符号。如果更改，则使用应用中存储的货币符号，而不是对当前使用的货币符号进行硬编码。
+
+.. code-block:: js
+
+    if(typeof field == 'number') {
+        query = query.replace(this.currency, '');
+        result = eval(field + query);
+    }
+
+我们现在需要测试 ``eval`` 函数，以便它不会在按下每个按键时发生错误。 为此，我们使用 ``try ... catch`` 语句：
+
+.. code-block:: js
+
+    if(typeof field == 'number') {
+        query = query.replace(this.currency, '');
+        try {
+            result = eval(field + query);
+        } catch(e) {}
+    }
+
+由于我们不想在输入错误时输出任何内容，因此我们可以将 ``catch`` 语句留空。 我们可以在这里放入 ``field.includes`` （查询）语句，所以它回落到默认功能。 我们完整的 ``filterRow()`` 方法现在看起来像这样：
+
+.. code-block:: js
+
+    filterRow(person) {
+        let result = true;
+        if(this.filterField) {
+            if(this.filterField === 'isActive') {
+                result = this.filterUserState === person.isActive;
+            } else {
+                let query = this.filterQuery,
+                    field = person[this.filterField];
+                if(typeof field === 'number') {
+                    query = query.replace(this.currency, '');
+                    try {
+                        result = eval(field + query);
+                    } catch (e) {}
+                } else {
+                    field = field.toLowerCase();
+                    result = field.includes(query.toLowerCase());
+                }
+            }
+        }
+        return result;
+    }
+
+过滤我们的过滤器
+----------------
+现在我们有了我们的过滤器，当我们的下拉列表中选择了 ``isActive`` 选项时，我们只需要显示单选按钮。使用我们学到的知识，这应该是相对直接的。
+
+创建一个检查选择框值的新方法，并在我们的下拉列表中选择活动用户时返回 ``true`` ：
+
+.. code-block:: js
+
+    isActiveFilterSelected() {
+        return (this.filterField === 'isActive');
+    }
+
+我们现在可以对输入和单选按钮使用 ``v-show`` ，在查询框中反转效果：
+
+.. code-block:: html
+
+    <label for="filterQuery" v-show="!isActiveFilterSelected()">
+        Query: <input type="text" id="filterQuery">
+    </label>
+    <span v-show="isActiveFilterSelected()">
+        Active:
+        <label for="userStateActive">
+        Yes: <input type="radio" v-bind:value="true" id="userStateActive" v-model="filterUserState" selected>
+        </label>
+        <label for="userStateInactive">
+        No: <input type="radio" v-bind:value="false" id="userStateInactive" v-model="filterUserState">
+    </label>
+    </span>
+
+在输入字段调用方法之前记下感叹号。 这意味着不是，并且有效地颠倒了函数的结果，例如不正确与错误相同，反之亦然。
+
+为了改善用户体验，我们还可以在显示输入框之前检查过滤器是否处于活动状态。 这可以通过在我们的 ``v-show`` 属性中包含辅助检查来添加：
+
+.. code-block:: js
+
+    <label for="filterQuery" v-show="this.filterField && !isActiveFilterSelected()">
+        Query: <input type="text" id="filterQuery" v-model="filterQuery">
+    </label>
+
+现在检查 ``filterField`` 是否有值，并且选择框未设置为 ``isActive`` 。 确保您也将该条件添加到单选按钮。
+
+进一步增强用户体验将确保在选择 ``isActive`` 选项时所有用户不会消失。 目前这是因为默认设置为一个字符串，该字符串与字段的真值或假值不匹配。
+在过滤此字段之前，我们应该检查 ``filterUserState`` 变量是 ``true`` 还是 ``false`` ，即布尔值。我们可以再次使用 ``typeof`` 来做到这一点：
+
+.. code-block:: js
+
+    if(this.filterField === 'isActive') {
+        result = (typeof this.filterUserState === 'boolean') ? (this.filterUserState === person.isActive) : true;
+    }
+
+我们使用三元运算符来检查要过滤的结果是布尔值。 如果是，那就过滤一下吧。 如果不是那么就简单地显示该行。
+
+改变CSS类
+---------
+和任何 ``HTML`` 属性一样， ``Vue`` 能够操作 ``CSS`` 类。 与 ``Vue`` 中的所有内容一样，这可以通过无数种方式完成，从对象本身的属性到使用方法。 如果用户处于活动状态，我们将开始添加一个类。
+
+绑定 ``CSS`` 类与其他属性相似。 该值需要一个可以从视图中计算逻辑的对象，或者将其抽象到我们的 ``Vue`` 实例中。 这完全取决于操作的复杂性。
+
+首先，如果用户处于活动状态，让我们向包含 ``isActive`` 变量的单元添加一个类：
+
+.. code-block:: html
+
+    <td v-bind:class="{ active: person.isActive }">
+        {{ activeStatus(person) }}
+    </td>
+
+在类属性前面附加 ``v-bind:`` 让 ``Vue`` 知道需要处理该属性。该值为一个对象，该对象使用 ``CSS`` 类作为键，条件遍历作为值。如果 ``person.isActive`` 变量等于 ``true`` 时，单元格切换为 ``active`` 类。如果不是活跃用户，则切换为 ``inactive`` 类。
+
+.. code-block:: html
+
+    <td v-bind:class="{ active: person.isActive, inactive:!person.isActive }">
+        {{ activeStatus(person) }}
+    </td>
+
+如果你想基于一个条件来切换两个类，可以在类属性值中使用三元运算符：
+
+.. code-block:: html
+
+    <td v-bind:class="person.isActive ? 'active' : 'inactive'">
+        {{ activeStatus(person) }}
+    </td>
+
+.. note:: 使用单引号包围类名称。
+
+上面导致代码逻辑开始进入视图中，这不是最佳实践。我们可以在 ``Vue`` 实例中创建一个新的方法来抽取逻辑。
+
+.. code-block:: js
+
+    activeClass(person) {
+        return person.isActive ? 'active' : 'inactive';
+    }
+
+现在，我们可以在视图中调用该方法：
+
+.. code-block:: html
+
+    <td v-bind:class="activeClass(person)">
+        {{ activeStatus(person) }}
+    </td>
+
+这是一个相当简单的执行；让我们尝试一个稍微复杂一点。 我们希望根据 ``balance`` 值为该单元添加一个条件类。如果他们的余额低于 ``$2000`` ，我们将添加一个 ``error`` 类。如果它介于 ``$2000`` 和 ``$3000`` 之间，将会应用一个 ``warning`` 类，如果它超过 ``$3000`` ，则会添加一个 ``success`` 。
+
+除 ``error`` ， ``warning`` 和 ``success`` 课程外，如果余额超过500美元，将增加 ``increasing`` 类。 例如，2,600美元的余额将同时得到 ``warning`` 和 ``increasing`` 类，而2,400美元只能获得 ``warning`` 类。
+
+由于这包含逻辑，我们将在我们的实例中创建一个使用方法。 创建一个 ``balanceClass`` 方法，并将其绑定到包含余额的单元格的 ``HTML class`` 属性。 首先，我们将添加 ``error`` ， ``warning`` 和 ``success`` 类。
+
+.. code-block:: js
+
+    <td v-bind:class="balanceClass(person)">
+        {{ formatBalance(person.balance) }}
+    </td>
+
+在这个方法中，我们需要访问传入的 person 的 balance 属性，然后返回我们想要增加的类名称。现在，我们先返回固定的结果来验证它工作：
+
+.. code-block:: js
+
+    balanceClass(person) {
+        return 'warning';
+    }
+
+现在，我们需要计算我们的余额。因此将其与我们的标准进行比较不会涉及任何转化：
+
+.. code-block:: js
+
+    balanceClass(person) {
+        let balanceLevel = 'success';
+        if(person.balance < 2000) {
+            balanceLevel = 'error';
+        } else if (person.balance < 3000) {
+            balanceLevel = 'warning';
+        }
+        return balanceLevel;
+    }
+
+在前面的方法中，默认情况下类输出设置为 ``success`` ，因为我们只需要在输出小于3000时更改输出。第一个 ``if`` 检查余额是否低于第一个阈值 - 如果是，它将设置输出为 ``error`` 。 如果不是，则尝试第二个条件，即检查余额是否低于3000。如果成功，则应用的类将变为 ``warning`` 。最后，它输出所选的类，它直接应用于元素。
+
+我们现在需要考虑如何才能增加 ``increasing`` 类。 为了将它与现有的 ``balanceLevel`` 类一起输出，我们需要将单个变量的输出转换为数组。 要验证这是否有效，请将额外的类硬编码为输出：
+
+.. code-block:: js
+
+    balanceClass(person) {
+        let balanceLevel = 'success';
+        if(person.balance < 2000) {
+            balanceLevel = 'error';
+        } else if (person.balance < 3000) {
+            balanceLevel = 'warning';
+        }
+        return [balanceLevel, 'increasing'];
+    }
+
+该函数给元素增加了两个类。转换字符串为一个变量然后默认设置为 ``false`` 。当传入数组一个 ``false`` 时， ``Vue`` 不会输出任何东西。
+
+为了解决该问题，我们需要根据余额来计算是否需要 ``increasing`` 类。如果余额大于500，则我们需要 ``increasing`` 类：
+
+.. code-block:: js
+
+    let increasing = false,
+        balance = person.balance / 1000;
+    if(Math.round(balance) == Math.ceil(balance)) { // 四舍五入与大于传入参数的最小整数比较
+        increasing = 'increasing';
+    }
+
+最初，我们设置 ``increasing`` 变量为 ``false`` 默认值。然后把余额除以1000。比较余额四舍五入与大于传入参数的最小整数比较。
+
+如果相等， ``increasing`` 变量设置为我们需要的类。然后和 ``banbanceLevel`` 变量一起传入到数组中。完整的方法如下所示：
+
+.. code-block:: js
+
+    balanceClass(person) {
+        let balanceLevel = 'success';
+        if(person.balance < 2000) {
+            balanceLevel = 'error';
+        } else if (person.balance < 3000) {
+            balanceLevel = 'warning';
+        } l
+        et increasing = false,
+            balance = person.balance / 1000;
+        if(Math.round(balance) == Math.ceil(balance)) {
+            increasing = 'increasing';
+        }
+        return [balanceLevel, increasing];
+    }
+
+过滤和自定义类
+--------------
+我们现在有一个完全成熟的用户列表/注册表，它根据标准对所选字段和自定义 ``CSS`` 类进行过滤。回顾一下，下面是我们的视图：
+
+.. code-block:: html
+
+    <div id="app">
+        <form>
+            <label for="fiterField">
+                Field:
+                <select id="filterField" v-model="filterField">
+                    <option value="">Disable filters</option>
+                    <option value="isActive">Active user</option>
+                    <option value="name">Name</option>
+                    <option value="email">Email</option>
+                    <option value="balance">Balance</option>
+                    <option value="registered">Date registered</option>
+                </select>
+            </label>
+            <label for="filterQuery" v-show="this.filterField && !isActiveFilterSelected()">
+                Query:
+                <input type="text" id="filterQuery" v-model="filterQuery">
+            </label>
+            <span v-show="isActiveFilterSelected()">
+                Active:
+                <label for="userStateActive">
+                Yes:
+                <input type="radio" v-bind:value="true" id="userStateActive" vmodel="filterUserState">
+                </label>
+                <label for="userStateInactive">
+                No:
+                <input type="radio" v-bind:value="false" id="userStateInactive" v-model="filterUserState">
+                </label>
+            </span>
+        </form>
+        <table>
+            <tr v-for="person in people" v-show="filterRow(person)">
+                <td>{{ person.name }}</td>
+                <td>
+                    <a v-bind:href="'mailto:' + person.email">{{ person.email }}
+                    </a>
+                </td>
+                <td v-bind:class="balanceClass(person)">
+                    {{ formatBalance(person.balance) }}
+                </td>
+                <td>{{ formatDate(person.registered) }}</td>
+                <td v-bind:class="activeClass(person)">
+                    {{ activeStatus(person) }}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+我们的 ``Vue`` 应用程序的 ``JavaScript`` 应该如下所示：
+
+.. code-block:: js
+
+    const app = new Vue({
+        el: '#app',
+        data: {
+            people: [...],
+            currency: '$',
+            filterField: '',
+            filterQuery: '',
+            filterUserState: ''
+        },
+        methods: {
+            activeStatus(person) {
+                return (person.isActive) ? 'Active' : 'Inactive';
+            },
+            activeClass(person) {
+                return person.isActive ? 'active' : 'inactive';
+            },
+            balanceClass(person) {
+                let balanceLevel = 'success';
+                if(person.balance < 2000) {
+                    balanceLevel = 'error';
+                } else if (person.balance < 3000) {
+                    balanceLevel = 'warning';
+                }
+                let increasing = false,
+                    balance = person.balance / 1000;
+                if(Math.round(balance) == Math.ceil(balance)) {
+                    increasing = 'increasing';
+                }
+                return [balanceLevel, increasing];
+            },
+            formatBalance(balance) {
+                return this.currency + balance.toFixed(2);
+            },
+            formatDate(date) {
+                let registered = new Date(date);
+                return registered.toLocaleString('en-US');
+            },
+            filterRow(person) {
+                let result = true;
+                if(this.filterField) {
+                    if(this.filterField === 'isActive') {
+                        result = (typeof this.filterUserState === 'boolean') ?
+                            (this.filterUserState === person.isActive) : true;
+                    } else {
+                        let query = this.filterQuery,
+                            field = person[this.filterField];
+                        if(typeof field === 'number') {
+                            query.replace(this.currency, '');
+                            try {
+                                result = eval(field + query);
+                            } catch(e) {}
+                        } else {
+                            field = field.toLowerCase();
+                            result = field.includes(query.toLowerCase());
+                        }
+                    }
+                }
+                return result;
+            },
+            isActiveFilterSelected() {
+                return (this.filterField === 'isActive');
+            }
+        }
+    });
+
+总结
+====
+在本章中，我们研究了 ``Vue HTML`` 声明，有条件地渲染 ``HTML`` 并在需要时显示替代方案。我们也将我们所了解的方法付诸实践。最后，我们为我们的表建立了过滤组件，允许我们显示活跃和非活跃用户，查找具有特定名称和电子邮件的用户，并根据余额过滤出行。
+
+现在我们已经在我们的应用中获得了一个很好的切入点，这是一个很好的机会来看看我们的代码，看看它是否可以通过某种方式进行优化。通过优化，我的意思是减少重复，尽可能简化代码，并将逻辑抽象为更小，可读和可重用的块。
+
+在第3章“优化我们的应用程序并使用组件显示数据”中，我们将优化代码并查看 ``Vue`` 组件，以此将逻辑分离为不同的段。
+

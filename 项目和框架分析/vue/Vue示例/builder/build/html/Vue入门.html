@@ -1,0 +1,548 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. Vue入门 &mdash; Vue示例 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="Vue示例 1.0 文档" href="index.html"/>
+        <link rel="next" title="3. 显示、循环、查询和过滤数据" href="显示、循环、查询和过滤数据.html"/>
+        <link rel="prev" title="1. 前言" href="前言.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Vue示例
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Vue入门</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2.1. 创建工作区</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">2.2. 应用空间</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">2.3. Vue库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">2.4. 初始化Vue并显示第一个消息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#computed">2.5. computed值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#methods">2.6. Methods和可重用函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">2.7. 总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="显示、循环、查询和过滤数据.html">3. 显示、循环、查询和过滤数据</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Vue示例</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>2. Vue入门</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Vue入门.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vue">
+<h1><a class="toc-backref" href="#id7">2. Vue入门</a><a class="headerlink" href="#vue" title="永久链接至标题">¶</a></h1>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#vue" id="id7">Vue入门</a><ul>
+<li><a class="reference internal" href="#id2" id="id8">创建工作区</a></li>
+<li><a class="reference internal" href="#id3" id="id9">应用空间</a></li>
+<li><a class="reference internal" href="#id4" id="id10">Vue库</a></li>
+<li><a class="reference internal" href="#id5" id="id11">初始化Vue并显示第一个消息</a></li>
+<li><a class="reference internal" href="#computed" id="id12">computed值</a></li>
+<li><a class="reference internal" href="#methods" id="id13">Methods和可重用函数</a></li>
+<li><a class="reference internal" href="#id6" id="id14">总结</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> （发音 <code class="docutils literal"><span class="pre">view</span></code> ）是为构建交互式用户界面而创建的非常强大的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 库。尽管能够处理大型单页面应用程序，但 <code class="docutils literal"><span class="pre">Vue</span></code> 也非常适合为小型个人使用案例提供框架。它的小文件大小意味着它可以集成到现有的生态系统中，而不会增加大量的代码。</p>
+<p>它内置了简单 <code class="docutils literal"><span class="pre">API</span></code> ，与其他竞争对手( <code class="docutils literal"><span class="pre">React</span></code> 和 <code class="docutils literal"><span class="pre">Angular</span></code> )比较起来更容易。虽然它借用了这些库的一些逻辑和方法，但它已经满足了开发人员需要，即更简单的库来构建应用程序。</p>
+<p>与 <code class="docutils literal"><span class="pre">React</span></code> 或 <code class="docutils literal"><span class="pre">Angular</span></code> 不同， <code class="docutils literal"><span class="pre">Vue</span></code> 的好处之一就是它生成的干净的 <code class="docutils literal"><span class="pre">HTML</span></code> 输出。其他 <code class="docutils literal"><span class="pre">JavaScript</span></code> 库倾向于将在 <code class="docutils literal"><span class="pre">HTML</span></code> 代码中各处带有额外的属性和 <code class="docutils literal"><span class="pre">class</span></code> ，而 <code class="docutils literal"><span class="pre">Vue</span></code> 将这些移除以产生干净的语义输出。</p>
+<p>在本书的第一部分中，我们将构建一个使用 <code class="docutils literal"><span class="pre">JSON</span></code> 字符串作为显示数据的应用程序。然后，我们将着眼于过滤和操作数据，然后再继续研究构建可重用组件，以减少代码中的重复。</p>
+<p>在本章中，我们将看看：</p>
+<ul class="simple">
+<li>如何通过包含 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件来开始使用 <code class="docutils literal"><span class="pre">Vue</span></code> ；</li>
+<li>如何初始化您的第一个 <code class="docutils literal"><span class="pre">Vue</span></code> 实例和查看数据对象；</li>
+<li>检查 <code class="docutils literal"><span class="pre">computed</span></code> 的函数和属性；</li>
+<li>了解 <code class="docutils literal"><span class="pre">Vue</span></code> 方法；</li>
+</ul>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id8">2.1. 创建工作区</a><a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>要使用 <code class="docutils literal"><span class="pre">Vue</span></code> ，我们首先需要在我们的 <code class="docutils literal"><span class="pre">HTML</span></code> 中引入 <code class="docutils literal"><span class="pre">Vue</span></code> 库包含并初始化它。 对于本书第一部分中的示例，我们将在单个 <code class="docutils literal"><span class="pre">HTML</span></code> 页面中构建我们的应用程序。 这意味着初始化和控制 <code class="docutils literal"><span class="pre">Vue</span></code> 的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 将被放置在页面的底部。打开你最喜欢的文本编辑器并创建一个新的 <code class="docutils literal"><span class="pre">HTML</span></code> 页面。使用以下模板作为一个起点：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Vue.js App<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://unpkg.com/vue&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+        <span class="c1">// JS Code here</span>
+    <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>主要的 <code class="docutils literal"><span class="pre">HTML</span></code> 标签和结构你应该很熟悉。 让我们来看看其他几个方面。</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id9">2.2. 应用空间</a><a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>这里是你的应用程序的容器，并提供了一个 <code class="docutils literal"><span class="pre">Vue</span></code> 工作的画布。所有的 <code class="docutils literal"><span class="pre">Vue</span></code> 代码将被放置在这个标签中。 实际的标签可以是任何 <code class="docutils literal"><span class="pre">HTML</span></code> 元素 -  <code class="docutils literal"><span class="pre">main</span></code> ， <code class="docutils literal"><span class="pre">section</span></code> 等等。 元素的 <code class="docutils literal"><span class="pre">ID</span></code> 可以是任何你想要的名称但必须是唯一的。 这允许您在一个页面上拥有多个 <code class="docutils literal"><span class="pre">Vue</span></code> 实例，或标识哪个 <code class="docutils literal"><span class="pre">Vue</span></code> 实例与哪个 <code class="docutils literal"><span class="pre">Vue</span></code> 代码相关：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;app&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>在教程中，带有 <code class="docutils literal"><span class="pre">ID</span></code> 的这个元素将被称为应用程序空间或视图。 应该注意的是，应用程序的所有 <code class="docutils literal"><span class="pre">HTML</span></code> 和标签以及代码都应放置在此容器中。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">虽然您可以将大多数 <code class="docutils literal"><span class="pre">HTML</span></code> 标记用于应用程序空间，但不能在 <code class="docutils literal"><span class="pre">&lt;body&gt;</span></code> 或 <code class="docutils literal"><span class="pre">&lt;HTML&gt;</span></code> 标记上初始化 <code class="docutils literal"><span class="pre">Vue</span></code>  - 如果这样做， <code class="docutils literal"><span class="pre">Vue</span></code> 将抛出 <code class="docutils literal"><span class="pre">JavaScript</span></code> 错误并且无法初始化。你将不得不在你的 <code class="docutils literal"><span class="pre">&lt;body&gt;</span></code> 内使用一个元素。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id10">2.3. Vue库</a><a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>对于本书中的示例，我们将使用来自 <code class="docutils literal"><span class="pre">CDN</span></code> （内容交付网络） <code class="docutils literal"><span class="pre">unpkg</span></code> 的托管版本的 <code class="docutils literal"><span class="pre">Vue.js</span></code> 。这确保我们在应用程序中拥有最新版本的 <code class="docutils literal"><span class="pre">Vue</span></code> ，也意味着我们不需要创建和托管其他 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件。 <code class="docutils literal"><span class="pre">Unpkg</span></code> 是托管流行库的独立网站。 它使您能够快速轻松地将 <code class="docutils literal"><span class="pre">JavaScript</span></code> 包添加到 <code class="docutils literal"><span class="pre">HTML</span></code> 中，而无需亲自下载和托管文件：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://unpkg.com/vue&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>在部署代码时，最好从本地文件提供库，而不是依赖 <code class="docutils literal"><span class="pre">CDN</span></code> 。 如果他们发布更新，这可以确保您的实现能够与当前保存的版本一致。 它还会提高应用程序的速度，因为它不需要从另一个服务器请求文件。</p>
+<p>库之后的脚本块包含我们将要为我们的 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序编写所有 <code class="docutils literal"><span class="pre">JavaScript</span></code> 的地方。</p>
+</div>
+<div class="section" id="id5">
+<h2><a class="toc-backref" href="#id11">2.4. 初始化Vue并显示第一个消息</a><a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>现在我们已经创建了一个模板，我们可以使用以下代码初始化 <code class="docutils literal"><span class="pre">Vue</span></code> 并将其绑定到 <code class="docutils literal"><span class="pre">HTML</span></code> 应用程序空间：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">().</span><span class="nx">$mount</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>此代码创建 <code class="docutils literal"><span class="pre">Vue</span></code> 的新实例，并将其装载到 <code class="docutils literal"><span class="pre">ID</span></code> 值为 <code class="docutils literal"><span class="pre">app</span></code> 的 <code class="docutils literal"><span class="pre">HTML</span></code> 元素上。 如果保存你的文件并在浏览器中打开它，你会注意到什么都没有发生。 然而，在底层，这一行代码已经将 <code class="docutils literal"><span class="pre">div</span></code> 与 <code class="docutils literal"><span class="pre">app</span></code> 变量（它是 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序的一个实例）相连接。</p>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 本身有许多对象和属性，我们现在可以用它来构建我们的应用程序。 你会遇到的第一个是 <code class="docutils literal"><span class="pre">el</span></code> 属性。 值为 <code class="docutils literal"><span class="pre">HTML</span> <span class="pre">ID</span></code> ，该属性告诉 <code class="docutils literal"><span class="pre">Vue</span></code> 它应该绑定哪个元素以及该应用将包含在哪里。 这是安装 <code class="docutils literal"><span class="pre">Vue</span></code> 实例的最常用方法，所有 <code class="docutils literal"><span class="pre">Vue</span></code> 代码都应该在这个元素中发生：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>当在实例中未指定 <code class="docutils literal"><span class="pre">el</span></code> 属性时， <code class="docutils literal"><span class="pre">Vue</span></code> 将以未挂载状态初始化(这允许在挂载之前指定要运行的任何函数或方法)来运行和完成。 准备就绪后，您可以独立调用挂载函数。在幕后，当使用 <code class="docutils literal"><span class="pre">el</span></code> 属性时， <code class="docutils literal"><span class="pre">Vue</span></code> 使用 <code class="docutils literal"><span class="pre">$mount</span></code> 函数挂载实例。 如果您想等待特定时机挂载，可以单独调用 <code class="docutils literal"><span class="pre">$mount</span></code> 函数，例如：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">();</span>
+<span class="c1">// When ready to mount app:</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">$mount</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>但是，因为我们在本书中不需要延迟挂载时间的执行，所以我们可以将 <code class="docutils literal"><span class="pre">el</span></code> 元素与 <code class="docutils literal"><span class="pre">Vue</span></code> 实例一起使用。 使用 <code class="docutils literal"><span class="pre">el</span></code> 属性也是安装 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序的最常见方式。</p>
+<p>除了 <code class="docutils literal"><span class="pre">el</span></code> 值， <code class="docutils literal"><span class="pre">Vue</span></code> 还有一个 <code class="docutils literal"><span class="pre">data</span></code> 对象，其中包含我们访问应用程序或应用程序空间所需的任何数据。 在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例中创建一个新的数据对象，并通过执行以下操作为属性赋值：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;Hello!&#39;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>在应用程序空间内，我们现在可以访问 <code class="docutils literal"><span class="pre">message</span></code> 变量。 为了在应用中显示数据， <code class="docutils literal"><span class="pre">Vue</span></code> 使用 <code class="docutils literal"><span class="pre">Mustache</span></code> 模板语言输出数据或变量。 这是通过在双括号 <code class="docutils literal"><span class="pre">{{variable}}</span></code> 之间放置变量名来实现的。 对于逻辑语句（如 <code class="docutils literal"><span class="pre">if</span></code> 或 <code class="docutils literal"><span class="pre">foreach</span></code> ）获取 <code class="docutils literal"><span class="pre">HTML</span></code> 属性，本章后面将介绍这些属性。</p>
+<p>在应用程序空间内，添加代码以输出字符串：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    {{ message }}
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>保存文件，在浏览器中打开它，并且您应该看到您的 <code class="docutils literal"><span class="pre">Hello！</span></code> 串。</p>
+<p>如果您没有看到任何输出，请检查 <code class="docutils literal"><span class="pre">JavaScript</span></code> 控制台以查看是否有任何错误。确保远程 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件加载正确，因为某些浏览器和操作系统需要额外的安全措施，才允许在计算机上最终查看页面时加载某些远程文件。</p>
+<p><code class="docutils literal"><span class="pre">data</span></code> 对象可以处理多个键和数据类型。向数据对象添加更多值并查看会发生什么 - 确保在每个值后添加逗号。 数据值是简单的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 表达式 ，也可以处理基本的数学运算 - 尝试添加新的价格键并将值设置为 <code class="docutils literal"><span class="pre">18</span> <span class="pre">+</span> <span class="pre">6</span></code> 以查看会发生什么。或者，尝试添加一个 <code class="docutils literal"><span class="pre">JavaScript</span></code> 数组并将其打印出来：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;Hello!&#39;</span><span class="p">,</span>
+        <span class="nx">price</span><span class="o">:</span> <span class="mi">18</span> <span class="o">+</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="nx">details</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">,</span> <span class="s1">&#39;three&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>在您的应用空间中，您现在可以输出每个值 - <code class="docutils literal"><span class="pre">{{price}}</span></code> 和 <code class="docutils literal"><span class="pre">{{details}}</span></code> 。 我们将在第2章“显示，循环，搜索和过滤数据”中介绍使用和显示列表。</p>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 中的所有数据都是反应性的，可以由用户或应用程序更新。可以通过打开浏览器的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 控制台并自行更新内容来测试。尝试输入 <code class="docutils literal"><span class="pre">app.message</span> <span class="pre">='再见！';</span></code>  并按 <code class="docutils literal"><span class="pre">Enter</span></code> 键 - 你的应用程序的内容将会更新。这是因为您直接引用属性 - 第一个 <code class="docutils literal"><span class="pre">app</span></code> 引用了您的 <code class="docutils literal"><span class="pre">const</span> <span class="pre">app</span></code> 在您的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 中初始化的 <code class="docutils literal"><span class="pre">app</span></code> 变量。点号表示它的属性，并且 <code class="docutils literal"><span class="pre">message</span></code> 是数据的键。 您也可以更新 <code class="docutils literal"><span class="pre">app.details</span></code> 或 <code class="docutils literal"><span class="pre">price</span></code> 为任何你想要的值！</p>
+</div>
+<div class="section" id="computed">
+<h2><a class="toc-backref" href="#id12">2.5. computed值</a><a class="headerlink" href="#computed" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 中的 <code class="docutils literal"><span class="pre">data</span></code> 对象非常适合直接存储和检索数据，但是，在您的应用程序中输出数据之前，可能会有时间格式要处理数据。我们可以使用 <code class="docutils literal"><span class="pre">Vue</span></code> 中的 <code class="docutils literal"><span class="pre">computed</span></code> 对象来做到这一点。使用这种技术，我们开始遵循 <code class="docutils literal"><span class="pre">MVVM</span></code> （ <code class="docutils literal"><span class="pre">Model-View-ViewMode</span></code> ）方法。</p>
+<p><code class="docutils literal"><span class="pre">MVVM</span></code> 是一种软件体系结构模式，可以将应用程序的各个部分分离为不同的部分。 <code class="docutils literal"><span class="pre">Model</span></code> （或数据）是您的原始数据输入 - 可以来自 <code class="docutils literal"><span class="pre">API</span></code> ，数据库或硬编码数据值。在 <code class="docutils literal"><span class="pre">Vue</span></code> 的上下文中，这通常是我们之前使用的 <code class="docutils literal"><span class="pre">data</span></code> 对象。</p>
+<p><code class="docutils literal"><span class="pre">View</span></code> 是您的应用程序的前端。这应该只用于从模型中输出数据，并且除了一些不可避免的 <code class="docutils literal"><span class="pre">if</span></code> 语句之外，不应该包含任何逻辑或数据操作。对于 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序，这是放在 <code class="docutils literal"><span class="pre">&lt;div</span> <span class="pre">id</span> <span class="pre">=&quot;app&quot;&gt;&lt;/div&gt;</span></code> 标记中的所有代码。</p>
+<p><code class="docutils literal"><span class="pre">ViewModel</span></code> 是两者之间的桥梁。它允许您在视图输出之前操纵模型中的数据。例如，可以将字符串更改为大写或在价格前缀货币符号，直至从列表中筛选打折产品或计算数组中字段的总值。在 <code class="docutils literal"><span class="pre">Vue</span></code> 中，这是 <code class="docutils literal"><span class="pre">computed</span></code> 对象所在的位置。</p>
+<p><code class="docutils literal"><span class="pre">computed</span></code> 对象可以具有所需的任意数量的属性 - 但是，它们必须是函数。这些函数可以利用已经在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例上的数据并返回一个值，该值可以是视图中使用的字符串，数字或数组。</p>
+<p>第一步是在我们的 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序中创建一个 <code class="docutils literal"><span class="pre">computed</span></code> 对象。在这个例子中，我们将使用 <code class="docutils literal"><span class="pre">computed</span></code> 值将字符串转换为小写。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;Hello Vue!&#39;</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>不要忘记在数据对象的结束括号( <code class="docutils literal"><span class="pre">}</span></code> )后面添加一个逗号( <code class="docutils literal"><span class="pre">，</span></code> )，以便 <code class="docutils literal"><span class="pre">Vue</span></code> 知道需要一个新对象。</p>
+<p>下一步是在 <code class="docutils literal"><span class="pre">computed</span></code> 对象内部创建一个函数。开发中最难的部分之一是函数命名 - 确保你的函数的名称是描述性的。由于我们的应用程序非常小，我们将其命名为 <code class="docutils literal"><span class="pre">messageToLower</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;HelLO Vue!&#39;</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">messageToLower</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;hello vue!&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>在前面的例子中，我将它设置为返回一个硬编码的字符串，它是消息变量内容的小写版本。 计算函数可以像在视图中使用数据键一样使用它们。 更新视图以输出使用 <code class="docutils literal"><span class="pre">{{messageToLower}}</span></code> 而不是 <code class="docutils literal"><span class="pre">{{message}}</span></code> ，并在浏览器中查看结果。</p>
+<p>但是，此代码存在一些问题。首先，如果 <code class="docutils literal"><span class="pre">messageToLower</span></code> 的值被硬编码，我们可以将它添加到另一个数据属性。其次，如果 <code class="docutils literal"><span class="pre">message</span></code> 值发生了变化，小写字母的版本现在会不正确。</p>
+<p>在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例中，我们可以使用 <code class="docutils literal"><span class="pre">this</span></code> 变量访问 <code class="docutils literal"><span class="pre">data</span></code> 值和 <code class="docutils literal"><span class="pre">computed</span></code> 值 - 我们将更新函数以使用现有的 <code class="docutils literal"><span class="pre">message</span></code> 值：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">messageToLower</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">messageToLower</span></code> 函数现在引用现有的 <code class="docutils literal"><span class="pre">message</span></code> 变量，并使用本地 <code class="docutils literal"><span class="pre">JavaScript</span></code> 函数将字符串转换为小写。 尝试在应用程序或 <code class="docutils literal"><span class="pre">JavaScript</span></code> 控制台中更新 <code class="docutils literal"><span class="pre">message</span></code> 变量以查看它的更新。</p>
+<p>计算函数不仅限于基本功能 - <strong>请记住，它们旨在从视图中移除所有逻辑和操作。</strong>  一个更复杂的例子如下：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">price</span><span class="o">:</span> <span class="mi">25</span><span class="p">,</span>
+        <span class="nx">currency</span><span class="o">:</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span>
+        <span class="nx">salesTax</span><span class="o">:</span> <span class="mi">16</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">cost</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">// Work out the price of the item including salesTax</span>
+            <span class="kd">let</span> <span class="nx">itemCost</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">salesTax</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">price</span><span class="p">)</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">price</span><span class="p">).</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+            <span class="c1">// Add text before displaying the currency and amount</span>
+            <span class="kd">let</span> <span class="nx">output</span> <span class="o">=</span> <span class="s1">&#39;This item costs &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">currency</span> <span class="o">+</span> <span class="nx">itemCost</span><span class="p">;</span>
+            <span class="c1">// Append to the output variable the price without salesTax</span>
+            <span class="nx">output</span> <span class="o">+=</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">currency</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">price</span> <span class="o">+</span>  <span class="s1">&#39; excluding salesTax)&#39;</span><span class="p">;</span>
+            <span class="c1">// Return the output value</span>
+            <span class="k">return</span> <span class="nx">output</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>虽然这看起来似乎很先进，但代码是采取固定价格并计算增加销售税的情况。价格，销售税和货币符号都作为值存储在数据对象中，并在 <code class="docutils literal"><span class="pre">cost()</span></code> 计算函数中访问。 查看输出结果 <code class="docutils literal"><span class="pre">{{cost}}</span></code> ，产生以下结果：</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>This item costs $29.00 ($25 excluding sales tax)
+</pre></div>
+</div>
+<p>如果任何数据由用户或应用程序本身更新，计算函数将重新计算和更新。 这使我们的函数可以根据价格和销售税值进行动态更新。 在浏览器的控制台中尝试以下命令之一：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">salesTax</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">price</span> <span class="o">=</span> <span class="mf">99.99</span>
+</pre></div>
+</div>
+<p>销售税和价格将立即更新。这是因为计算函数对数据对象和应用程序的其余部分是反应性的。</p>
+</div>
+<div class="section" id="methods">
+<h2><a class="toc-backref" href="#id13">2.6. Methods和可重用函数</a><a class="headerlink" href="#methods" title="永久链接至标题">¶</a></h2>
+<p>在您的 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序中，您可能希望以一致或重复的方式计算或操作数据，或者运行不需要输出到视图的任务。例如，如果您想计算每个价格的销售税或在分配给一些变量数据之前先从 <code class="docutils literal"><span class="pre">API</span></code> 检索这些数据。</p>
+<p>我们需要这样做，而不是每次创建计算函数， <code class="docutils literal"><span class="pre">Vue</span></code> 允许您创建函数或方法。 这些会在您的应用程序中声明并可以从任何地方访问 - 类似于 <code class="docutils literal"><span class="pre">data</span></code> 或 <code class="docutils literal"><span class="pre">computed</span></code> 函数。</p>
+<p>将一个方法对象添加到您的 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序中，并注意对该数据对象的更新：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">shirtPrice</span><span class="o">:</span> <span class="mi">25</span><span class="p">,</span>
+        <span class="nx">hatPrice</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nx">currency</span><span class="o">:</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span>
+        <span class="nx">salesTax</span><span class="o">:</span> <span class="mi">16</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>在数据对象中，价格键被两个价格 - <code class="docutils literal"><span class="pre">shirtPrice</span></code> 和 <code class="docutils literal"><span class="pre">hatPrice</span></code> 取代。 我们将创建一个方法来计算每个价格的销售税。</p>
+<p>与为计算对象创建函数类似，创建一个名为 <code class="docutils literal"><span class="pre">calculateSalesTax</span></code> 的方法函数。 该函数需要接受单个参数，这将是价格。 在里面，我们将使用前面例子中的代码来计算销售税。 请记住用参数名称 <code class="docutils literal"><span class="pre">price</span></code> 替换 <code class="docutils literal"><span class="pre">this.price</span></code> ，如下所示：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">calculateSalesTax</span><span class="p">(</span><span class="nx">price</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Work out the price of the item including sales tax</span>
+        <span class="k">return</span> <span class="nb">parseFloat</span><span class="p">(</span>
+            <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">salesTax</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="nx">price</span><span class="p">)</span>  <span class="o">+</span> <span class="nx">price</span><span class="p">).</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>保存它不会对我们的应用程序做任何事情 - 我们需要调用该函数。 在你看来，更新输出以使用该函数并传入 <code class="docutils literal"><span class="pre">shirtPrice</span></code> 变量：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+{{ calculateSalesTax(shirtPrice) }}
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>保存您的文档并在浏览器中检查结果 - 您期望的是什么？ 接下来的任务是价格前缀货币符号。 我们可以通过添加第二个方法来实现这一点，该方法返回传入函数的参数开头的附加货币符号：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">calculateSalesTax</span><span class="p">(</span><span class="nx">price</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Work out the price of the item including sales tax</span>
+        <span class="k">return</span> <span class="nb">parseFloat</span><span class="p">(</span>
+            <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">salesTax</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="nx">price</span><span class="p">)</span> <span class="o">+</span>
+            <span class="nx">price</span><span class="p">).</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="nx">addCurrency</span><span class="p">(</span><span class="nx">price</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">currency</span> <span class="o">+</span> <span class="nx">price</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在我们看来，然后我们更新我们的输出来利用这两种方法。我们可以将第一个函数 <code class="docutils literal"><span class="pre">calculateSalesTax</span></code> 作为第二个 <code class="docutils literal"><span class="pre">addCurrency</span></code> 函数的参数，而不是分配给变量。 这是因为第一个方法 <code class="docutils literal"><span class="pre">calculateSalesTax</span></code> 接受 <code class="docutils literal"><span class="pre">shirtPrice</span></code> 参数并返回新金额。我们不是将其作为变量保存而是将该变量传递给 <code class="docutils literal"><span class="pre">addCurrency</span></code> 方法，即将函数执行结果直接传递给该函数：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">{{</span> <span class="nx">addCurrency</span><span class="p">(</span><span class="nx">calculateSalesTax</span><span class="p">(</span><span class="nx">shirtPrice</span><span class="p">))</span> <span class="p">}}</span>
+</pre></div>
+</div>
+<p>然而，每当我们需要输出价格时，就会开始厌倦不得不调用这两个函数。从这里，我们有两个选择：</p>
+<ul class="simple">
+<li>我们可以创建第三个方法，名为 <code class="docutils literal"><span class="pre">cost()</span></code> - 接受 <code class="docutils literal"><span class="pre">price</span></code> 参数并传递输入给上面的两个函数。</li>
+<li>创建一个计算函数，如 <code class="docutils literal"><span class="pre">shirtCost</span></code> ，它使用 <code class="docutils literal"><span class="pre">this.shirtPrice</span></code> 代替一个传入的参数。</li>
+</ul>
+<p>可选地，我们也可以创建一个名为 <code class="docutils literal"><span class="pre">shirtCost</span></code> 的方法，它和我们的计算函数一样；然而，在这种情况下使用计算函数更好。</p>
+<p><strong>这是因为计算的函数被缓存，而方法函数不是。</strong> 假设我们的方法比现在复杂得多，那么在函数重复调用函数后（例如，如果我们想在多个位置显示价格）可能会对性能产生影响。通过计算函数，只要数据不发生变化，您可以多次调用它，结果被应用程序缓存。如果数据确实发生了变化，则只需重新计算一次，然后重新缓存该结果。为 <code class="docutils literal"><span class="pre">shirtPrice</span></code> 和 <code class="docutils literal"><span class="pre">hatPrice</span></code> 创建一个计算函数，以便可以在视图中使用这两个变量。不要忘记，要在内部调用函数，您必须使用 <code class="docutils literal"><span class="pre">this</span></code> 变量 - 例如 <code class="docutils literal"><span class="pre">this.addCurrency()</span></code> 。使用以下 <code class="docutils literal"><span class="pre">HTML</span></code> 代码作为您的视图的模板：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>The shirt costs {{ shirtCost }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>The hat costs {{ hatCost }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">shirtPrice</span><span class="o">:</span> <span class="mi">25</span><span class="p">,</span>
+        <span class="nx">hatPrice</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nx">currency</span><span class="o">:</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span>
+        <span class="nx">salesTax</span><span class="o">:</span> <span class="mi">16</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">shirtCost</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">addCurrency</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">calculateSalesTax</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">shirtPrice</span><span class="p">))</span>
+        <span class="p">},</span>
+        <span class="nx">hatCost</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">addCurrency</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">calculateSalesTax</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hatPrice</span><span class="p">))</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">calculateSalesTax</span><span class="p">(</span><span class="nx">price</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Work out the price of the item including sales tax</span>
+            <span class="k">return</span> <span class="nb">parseFloat</span><span class="p">(</span>
+                <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">salesTax</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="nx">price</span><span class="p">)</span> <span class="o">+</span> <span class="nx">price</span><span class="p">).</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">addCurrency</span><span class="p">(</span><span class="nx">price</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">currency</span> <span class="o">+</span> <span class="nx">price</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id14">2.7. 总结</a><a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>在本章中，我们学习了如何开始使用 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">JavaScript</span></code> 框架。 我们
+检查了 <code class="docutils literal"><span class="pre">Vue</span></code> 实例中的 <code class="docutils literal"><span class="pre">data</span></code> , <code class="docutils literal"><span class="pre">computed</span></code> 和 <code class="docutils literal"><span class="pre">methods</span></code> 对象。 我们
+介绍了如何在框架内使用每一种，以及它们各自的优势。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="显示、循环、查询和过滤数据.html" class="btn btn-neutral float-right" title="3. 显示、循环、查询和过滤数据" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="前言.html" class="btn btn-neutral" title="1. 前言" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+*******
+基本的公钥加密
+*******
+与秘密密钥加密的两个参与者拥有相同的密钥不同，公钥加密允许您生成密钥对(一个密钥和一个相关的公钥)。您可以自由分享您的公钥，但绝对不能共享您的密钥。
+
+在决定是否使用某个功能之前，请检查 `快速参考 <https://paragonie.com/blog/2017/06/libsodium-quick-reference-quick-comparison-similar-functions-and-which-one-use>`_ 页面，该页面说明每个函数的作用以及每个函数的使用位置。
+
+要查看旧的 ``API`` 文档， `请点击此处 <https://github.com/paragonie/pecl-libsodium-doc/blob/v1/chapters/05-publickey-crypto.md>`_ 。
+
+为了与另一个实体通信，您必须拥有对方公钥和您自己的私钥。因此，在开始使用公钥加密之前，每个参与者都必须生成一个密钥对。
+
+.. code-block:: php
+
+    <?php
+    // On Alice's computer:
+
+    $alice_box_kp = sodium_crypto_box_keypair();
+    $alice_sign_kp = sodium_crypto_sign_keypair();
+
+    // Split the key for the crypto_box API for ease of use
+    $alice_box_secretkey = sodium_crypto_box_secretkey($alice_box_kp);
+    $alice_box_publickey = sodium_crypto_box_publickey($alice_box_kp);
+
+    // Split the key for the crypto_sign API for ease of use
+    $alice_sign_secretkey = sodium_crypto_sign_secretkey($alice_sign_kp);
+    $alice_sign_publickey = sodium_crypto_sign_publickey($alice_sign_kp);
+
+    // On Bob's computer:
+
+    $bob_box_kp = sodium_crypto_box_keypair();
+    $bob_sign_kp = sodium_crypto_sign_keypair();
+
+    // Split the key for the crypto_box API for ease of use
+    $bob_box_secretkey = sodium_crypto_box_secretkey($bob_box_kp);
+    $bob_box_publickey = sodium_crypto_box_publickey($bob_box_kp);
+
+    // Split the key for the crypto_sign API for ease of use
+    $bob_sign_secretkey = sodium_crypto_sign_secretkey($bob_sign_kp);
+    $bob_sign_publickey = sodium_crypto_sign_publickey($bob_sign_kp);
+
+    // Optionally, you can reassemble a keypair string from a secret key and
+    // public key pair:
+
+    $keypair = sodium_crypto_box_keypair_from_secretkey_and_publickey(
+    $alice_box_secretkey,
+    $alice_box_publickey
+    );
+
+在下面的例子中，你是 ``Alice`` ，你正在试图和 ``Bob`` 交谈。
+
+公钥身份验证和加密
+==================
+如果您拥有自己的密钥并拥有您的收件人的公钥，并且对方拥有您的公钥，则您可以利用 ``Box API`` 轻松实现经过身份验证的加密。这包括两个函数：
+
+- sodium_crypto_box
+- sodium_crypto_box_open
+
+发送的每条消息都需要一个随机数（一个唯一的大数字表示为一个只能使用一次的二进制字符串）。
+
+发送一个加密消息(crypto_box)
+----------------------------
+
+.. code-block:: php
+
+    <?php
+    string crypto_box(string $message, string $nonce, string $message_keypair);
+
+.. code-block:: php
+
+    <?php
+    // On Alice's computer:
+    $message = 'Hi, this is Alice';
+    $alice_to_bob_kp = sodium_crypto_box_keypair_from_secretkey_and_publickey(
+        $alice_box_secretkey,
+        $bob_box_publickey
+    );
+    $message_nonce = random_bytes(SODIUM_CRYPTO_BOX_NONCEBYTES);
+    $ciphertext = sodium_crypto_box(
+        $message,
+        $nonce,
+        $alice_to_bob_kp
+    );
+
+获取加密消息(crypto_box_open)
+-----------------------------
+
+.. code-block:: php
+
+    string|bool crypto_box_open(string $message, string $nonce, string $message_keypair);
+
+.. code-block:: php
+
+    <?php
+    // On Bob's computer:
+    $bob_to_alice_kp = sodium_crypto_box_keypair_from_secretkey_and_publickey(
+        $bob_box_secretkey,
+        $alice_box_publickey
+    );
+    $plaintext = sodium_crypto_box_open(
+        $ciphertext,
+        $nonce,
+        $bob_to_alice_kp
+    );
+    if ($plaintext === false) {
+        throw new Exception("Malformed message or invalid MAC");
+    }
+
+从一个种子生产一个 ``crypto_box`` 秘钥对
+-----------------------------------------
+
+.. code-block:: php
+
+    <?php
+    string sodium_crypto_box_seed_keypair(string $seed);
+
+要从随机字符串（或从 `密钥派生函数 <https://paragonie.com/book/pecl-libsodium/read/07-password-hashing.md#crypto-pwhash-scryptsalsa208sha256>`_ 的输出）确定性地生成密钥对，可以使用 ``crypto_box_seed_keypair`` 。
+
+.. code-block:: php
+
+    <?php
+    $bob_seed = random_bytes(SODIUM_CRYPTO_BOX_SEEDBYTES);
+    $bob_encrypt_kp = sodium_crypto_box_seed_keypair($bob_seed);
+
+公钥签名
+=========
+公钥签名非常有用。如果您可以验证您是否拥有正确的公钥，那么您可以几乎绝对确定性来验证消息的真实性（例如软件更新）。请注意， ``crypto_sign API`` **不会对消息进行加密** ，它只是对其内容进行身份验证，以便任何拥有公钥的人都可以验证其是否来自您（或拥有正确密钥的人）。
+
+您可以在两种模式下使用 ``crypto_sign API`` ：组合（默认）或分离。
+
+对一个消息签名
+--------------
+
+.. code-block:: php
+
+    string sodium_crypto_sign(string $message, string $secretkey)
+
+这将在一个字符串中返回消息和签名。
+
+.. code-block:: php
+
+    <?php
+    // On Alice's computer:
+    $message = 'This comes from Alice.';
+    $signed_msg = sodium_crypto_sign(
+        $message,
+        $alice_sign_secretkey
+    );
+
+验证一个消息
+-------------
+
+.. code-block:: php
+
+    <?php
+    string|bool sodium_crypto_sign_open(string $message, string $publickey)
+
+给定一个签名的消息，这将返回 ``FALSE`` 或消息的内容。
+
+.. code-block:: php
+
+    <?php
+    // On Bob's computer:
+    $original_msg = sodium_crypto_sign_open(
+        $signed_msg,
+        $alice_sign_publickey
+    );
+    if ($original_msg === false) {
+        throw new Exception("Invalid signature");
+    } else {
+        echo $original_msg; // Displays "This comes from Alice."
+    }
+
+分离消息签名
+------------
+
+.. code-block:: php
+
+    <?php
+    string sodium_crypto_sign_detached(string $message, string $secretkey)
+
+这个函数只会返回签名，而不是返回签名的消息。
+
+.. code-block:: php
+
+    <?php
+    // On Alice's computer:
+    $signature = sodium_crypto_sign_detached(
+        $message,
+        $alice_sign_secretkey
+    );
+
+分离签名验证
+------------
+
+.. code-block:: php
+
+    <?php
+    bool sodium_crypto_sign_verify_detached(string $signature, string $message, string $publickey)
+
+.. code-block:: php
+
+    <?php
+    // On Bob's computer:
+    if (sodium_crypto_sign_verify_detached(
+            $signature,
+            $message,
+            $alice_sign_publickey
+        )
+    ) {
+        // We've verified the authenticity of message and already had its contents
+        // stored in $message
+    } else {
+        throw new Exception("Invalid signature");
+    }
+
+从一个种子生产一个 ``crypto_sign`` 密钥对
+-----------------------------------------
+
+.. code-block:: php
+
+    <?php
+    string sodium_crypto_sign_seed_keypair(string $seed);
+
+要从随机字符串（或从 `密钥派生函数 <https://paragonie.com/book/pecl-libsodium/read/07-password-hashing.md#crypto-pwhash-scryptsalsa208sha256>`_ 的输出）确定性地生成密钥对，可以使用 ``crypto_sign_seed_keypair`` 。
+
+.. code-block:: php
+
+    <?php
+    $bob_seed = random_bytes(SODIUM_CRYPTO_SIGN_SEEDBYTES);
+    $bob_sign_kp = sodium_crypto_sign_seed_keypair($bob_seed);
+
+额外信息
+========
+
+- `Libsodium 文档:公钥加密认证 <https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption.html>`_
+- `ibsodium 文档:公钥签名 <https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures.html>`_
+- `基本公钥加密 <https://paragonie.com/blog/2015/08/you-wouldnt-base64-a-password-cryptography-decoded#public-key>`_
+- `ECC黑客-在第31届混沌通信大会上对椭圆曲线密码学（视频）的一次介绍 <https://www.youtube.com/watch?v=l6jTFxQaUJA>`_
+- `ECC黑客补充材料 <http://ecchacks.cr.yp.to/>`_
+- `Ed25519-公钥签名系统 <http://ed25519.cr.yp.to/>`_
+- `Curve25519-高速椭圆曲线Diffie Hellman <http://cr.yp.to/ecdh.html>`_

@@ -1,0 +1,31 @@
+*******
+微擎模块移动端
+*******
+
+``site.php`` 文件中可以定义模块的前端和后端方法，但是这不能区分是移动端还是PC端前后台，为此在模块中增加一个 ``mobile.php`` 文件。该文件主要是实现移动端的模块前后端方法定义；之后 ``site.php`` 则主要负责 ``PC`` 端的前后端方法定义。
+
+规范及约定
+=========
+
+- ``Rcdonkey_signup`` 为模块标识，类名的定义遵循 ``模块标识+ModuleMobile`` 规则；
+- 此类必须继承 ``WeModuleMobile`` 类；
+- 所有对外公布的接口函数，必须是以 ``doPage`` 开头；
+
+其结构大概如下：
+
+
+在模块根目录创建 ``mobile.php`` 文件。然后在文件内部定义如下内容：
+
+.. code-block:: php
+
+	defined('IN_IA') or exit('Access Denied');
+	class Rcdonkey_signupModuleMobile extends \WeModuleMobile {
+
+		doPageXXX() {
+
+		}
+	}
+
+
+
+

@@ -1,0 +1,564 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>58. Redis &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="59. Redis原理分析" href="Laravel的Redis原理分析.html"/>
+        <link rel="prev" title="57. 数据库填充" href="Laravel的数据库填充.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">58. Redis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">58.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">58.2. 配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">58.2.1. 集群配置</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#predis">58.3. Predis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">58.4. PhpRedis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">58.5. Redis 交互</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">58.5.1. 使用多个 Redis 连接</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">58.5.2. 管道命令</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">58.6. 发布与订阅</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">58.6.1. 通配符订阅</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>58. Redis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="redis">
+<h1>58. Redis<a class="headerlink" href="#redis" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>58.1. 简介<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Redis</span></code> 是一个开源的，高级键值对存储数据库。由于它包含 字符串、哈希、列表、集合 和 有序集合 这些数据类型，所以它通常被称为数据结构服务器。</p>
+<p>在使用 Laravel 的 <code class="docutils literal"><span class="pre">Redis</span></code> 之前，你需要通过 <code class="docutils literal"><span class="pre">Composer</span></code> 安装 <code class="docutils literal"><span class="pre">predis/predis</span></code> 扩展包：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>composer require predis/predis
+</pre></div>
+</div>
+<p>或者，你可以通过 <code class="docutils literal"><span class="pre">PECL</span></code> 安装 <a class="reference external" href="https://github.com/phpredis/phpredis">PhpRedis</a> PHP 扩展。这个扩展安装起来比较复杂，但对于大量使用 <code class="docutils literal"><span class="pre">Redis</span></code> 的应用程序来说可能会产生更好的性能。</p>
+</div>
+<div class="section" id="id2">
+<h2>58.2. 配置<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Laravel 应用的 <code class="docutils literal"><span class="pre">Redis</span></code> 配置都在配置文件 <code class="docutils literal"><span class="pre">config/database.php</span></code> 中。在这个文件里，你可以看到 <code class="docutils literal"><span class="pre">redis</span></code> 数组里面包含了应用程序使用的 <code class="docutils literal"><span class="pre">Redis</span></code> 服务器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;redis&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+
+    <span class="s1">&#39;client&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;predis&#39;</span><span class="p">,</span>
+
+    <span class="s1">&#39;default&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_PASSWORD&#39;</span><span class="p">,</span> <span class="k">null</span><span class="p">),</span>
+        <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_PORT&#39;</span><span class="p">,</span> <span class="mi">6379</span><span class="p">),</span>
+        <span class="s1">&#39;database&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">],</span>
+
+<span class="p">],</span>
+</pre></div>
+</div>
+<p>默认的服务器配置应该足以进行开发。当然，你也可以根据使用的环境来随意更改这个数组。只需在配置文件中给每个 <code class="docutils literal"><span class="pre">Redis</span></code> 服务器指定名称、 <code class="docutils literal"><span class="pre">host</span></code> 和 <code class="docutils literal"><span class="pre">port</span></code> 即可。</p>
+<div class="section" id="id3">
+<h3>58.2.1. 集群配置<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>如果你的程序使用 <code class="docutils literal"><span class="pre">redis</span></code> 服务器集群，你应该在 <code class="docutils literal"><span class="pre">redis</span></code> 配置文件中使用 <code class="docutils literal"><span class="pre">clusters</span></code> 键来定义这些集群：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;redis&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+
+    <span class="s1">&#39;client&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;predis&#39;</span><span class="p">,</span>
+
+    <span class="s1">&#39;clusters&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;default&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_PASSWORD&#39;</span><span class="p">,</span> <span class="k">null</span><span class="p">),</span>
+                <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_PORT&#39;</span><span class="p">,</span> <span class="mi">6379</span><span class="p">),</span>
+                <span class="s1">&#39;database&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">],</span>
+
+<span class="p">],</span>
+</pre></div>
+</div>
+<p>默认情况下，集群可以实现跨节点间客户端共享，允许你实现节点池以及创建大量可用内存。这里要注意，客户端共享不会处理失败的情况；因此，这个功能主要适用于从另一个主数据库获取的缓存数据。如果要使用 <code class="docutils literal"><span class="pre">redis</span></code> 原生集群，要在配置文件的 <code class="docutils literal"><span class="pre">options</span></code> 键中如下指定：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;redis&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+
+    <span class="s1">&#39;client&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;predis&#39;</span><span class="p">,</span>
+
+    <span class="s1">&#39;options&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;cluster&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;redis&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+
+    <span class="s1">&#39;clusters&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="c1">// ...</span>
+    <span class="p">],</span>
+
+<span class="p">],</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="predis">
+<h2>58.3. Predis<a class="headerlink" href="#predis" title="永久链接至标题">¶</a></h2>
+<p>除了默认的 <code class="docutils literal"><span class="pre">Host</span></code> 、 <code class="docutils literal"><span class="pre">port</span></code> 、 <code class="docutils literal"><span class="pre">database</span></code> 和 <code class="docutils literal"><span class="pre">password</span></code> 这些服务配置选项之外， <code class="docutils literal"><span class="pre">Predis</span></code> 还支持为每个 <code class="docutils literal"><span class="pre">redis</span></code> 服务器定义其它的 <a class="reference external" href="https://github.com/nrk/predis/wiki/Connection-Parameters">连接参数</a> 。如果要使用这些额外的配置选项，就将它们添加到配置文件 <code class="docutils literal"><span class="pre">config/database.php</span></code> 的 <code class="docutils literal"><span class="pre">Redis</span></code> 服务器配置中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;default&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_PASSWORD&#39;</span><span class="p">,</span> <span class="k">null</span><span class="p">),</span>
+    <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_PORT&#39;</span><span class="p">,</span> <span class="mi">6379</span><span class="p">),</span>
+    <span class="s1">&#39;database&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;read_write_timeout&#39;</span> <span class="o">=&gt;</span> <span class="mi">60</span><span class="p">,</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>58.4. PhpRedis<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果你是通过 PECL 安装 Redis PHP 扩展，就需要重命名 <code class="docutils literal"><span class="pre">config/app.php</span></code> 文件里 <code class="docutils literal"><span class="pre">Redis</span></code> 的别名。</p>
+</div>
+<p>如果要使用 <code class="docutils literal"><span class="pre">Phpredis</span></code> 扩展，就需要将配置文件 <code class="docutils literal"><span class="pre">config/database.php</span></code> 中 <code class="docutils literal"><span class="pre">Redis</span></code> 配置的 <code class="docutils literal"><span class="pre">client</span></code> 选项更改为 <code class="docutils literal"><span class="pre">phpredis</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;redis&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+
+    <span class="s1">&#39;client&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;phpredis&#39;</span><span class="p">,</span>
+
+    <span class="c1">// 其余的 Redis 配置...</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<p>除了默认的 <code class="docutils literal"><span class="pre">Host</span></code> 、 <code class="docutils literal"><span class="pre">port</span></code> 、 <code class="docutils literal"><span class="pre">database</span></code> 和 <code class="docutils literal"><span class="pre">password</span></code> 这些服务配置项之外， <code class="docutils literal"><span class="pre">Phpredis</span></code> 还支持以下几个额外的连接参数： <code class="docutils literal"><span class="pre">persistent</span></code> 、 <code class="docutils literal"><span class="pre">prefix</span></code> 、 <code class="docutils literal"><span class="pre">read_timeout</span></code> 和 <code class="docutils literal"><span class="pre">timeout</span></code> 。你可以将这些选项加到配置文件 <code class="docutils literal"><span class="pre">config/database.php</span></code> 中 <code class="docutils literal"><span class="pre">redis</span></code> 服务器配置项下：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;default&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_PASSWORD&#39;</span><span class="p">,</span> <span class="k">null</span><span class="p">),</span>
+    <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;REDIS_PORT&#39;</span><span class="p">,</span> <span class="mi">6379</span><span class="p">),</span>
+    <span class="s1">&#39;database&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;read_timeout&#39;</span> <span class="o">=&gt;</span> <span class="mi">60</span><span class="p">,</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>58.5. Redis 交互<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>你可以调用 <code class="docutils literal"><span class="pre">Redis</span> <span class="pre">facade</span></code> 上的各种方法来与 <code class="docutils literal"><span class="pre">Redis</span></code> 进行交互。 <code class="docutils literal"><span class="pre">Redis</span> <span class="pre">facade</span></code> 支持动态方法，这意味着你可以在 <code class="docutils literal"><span class="pre">facade</span></code> 上调用任何 <code class="docutils literal"><span class="pre">Redis</span></code> 命令 ，还能将该命令直接传递给 <code class="docutils literal"><span class="pre">Redis</span></code> 。在本例中，通过调用 <code class="docutils literal"><span class="pre">Redis</span> <span class="pre">facade</span></code> 上的 <code class="docutils literal"><span class="pre">get</span></code> 方法来调用 <code class="docutils literal"><span class="pre">Redis</span></code> 的 <code class="docutils literal"><span class="pre">GET</span></code> 命令：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Redis</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 显示给定用户的配置文件。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  int  $id</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">showProfile</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nx">Redis</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user:profile:&#39;</span><span class="o">.</span><span class="nv">$id</span><span class="p">);</span> <span class="c1">// 获取默认连接的字段值</span>
+
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;user.profile&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>也就是说，你可以在 <code class="docutils literal"><span class="pre">Redis</span> <span class="pre">facade</span></code> 上调用任何的 <code class="docutils literal"><span class="pre">Redis</span></code> 命令。 Laravel 使用魔术方法将传递命令给 <code class="docutils literal"><span class="pre">Redis</span></code> 服务器，因此只需传递 <code class="docutils literal"><span class="pre">Redis</span></code> 命令所需的参数即可：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Redis</span><span class="o">::</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;Taylor&#39;</span><span class="p">);</span>
+
+<span class="nv">$values</span> <span class="o">=</span> <span class="nx">Redis</span><span class="o">::</span><span class="na">lrange</span><span class="p">(</span><span class="s1">&#39;names&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>或者，你也可以使用 <code class="docutils literal"><span class="pre">command</span></code> 方法将命令传递给服务器，它接受命令的名称作为其第一个参数，并将值的数组作为其第二个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$values</span> <span class="o">=</span> <span class="nx">Redis</span><span class="o">::</span><span class="na">command</span><span class="p">(</span><span class="s1">&#39;lrange&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]);</span>
+</pre></div>
+</div>
+<div class="section" id="id7">
+<h3>58.5.1. 使用多个 Redis 连接<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>你可以通过 <code class="docutils literal"><span class="pre">Redis::connection</span></code> 方法来获取 <code class="docutils literal"><span class="pre">Redis</span></code> 实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$redis</span> <span class="o">=</span> <span class="nx">Redis</span><span class="o">::</span><span class="na">connection</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>这会返回一个默认的 <code class="docutils literal"><span class="pre">redis</span></code> 服务器的实例。前面所有示例都是使用 <code class="docutils literal"><span class="pre">Redis</span></code> 默认连接，你也可以将连接或者集群的名称传递给 <code class="docutils literal"><span class="pre">connection</span></code> 方法，来获取在 <code class="docutils literal"><span class="pre">Redis</span></code> 配置文件中定义的特定的服务器或者集群：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$redis</span> <span class="o">=</span> <span class="nx">Redis</span><span class="o">::</span><span class="na">connection</span><span class="p">(</span><span class="s1">&#39;my-connection&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>58.5.2. 管道命令<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>如果你需要在一个操作中向服务器发送很多命令，推荐你使用管道命令。 <code class="docutils literal"><span class="pre">pipeline</span></code> 方法接收一个带有 <code class="docutils literal"><span class="pre">Redis</span></code> 实例的 闭包 。你可以将所有的命令发送给这个 <code class="docutils literal"><span class="pre">Redis</span></code> 实例，它们都会一次过执行完：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Redis</span><span class="o">::</span><span class="na">pipeline</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$pipe</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$pipe</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s2">&quot;key:</span><span class="si">$i</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nv">$i</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>58.6. 发布与订阅<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>Laravel 为 <code class="docutils literal"><span class="pre">Redis</span></code> 的 <code class="docutils literal"><span class="pre">publish</span></code> 及 <code class="docutils literal"><span class="pre">subscribe</span></code> 提供了方便的接口。这些 <code class="docutils literal"><span class="pre">Redis</span></code> 命令让你可以监听指定「频道」上的消息。你可以从另一个应用程序发布消息给另一个应用程序，甚至使用其它编程语言，让应用程序和进程之间能够轻松进行通信。</p>
+<p>首先，我们使用 <code class="docutils literal"><span class="pre">subscribe</span></code> 方法设置频道监听器。我们将这个方法调用放在 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 中，因为调用 <code class="docutils literal"><span class="pre">subscribe</span></code> 方法会启动一个长时间运行的进程：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Console\Commands</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Console\Command</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Redis</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">RedisSubscribe</span> <span class="k">extends</span> <span class="nx">Command</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 控制台命令的名称和签名。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var string</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$signature</span> <span class="o">=</span> <span class="s1">&#39;redis:subscribe&#39;</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 控制台命令说明。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var string</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$description</span> <span class="o">=</span> <span class="s1">&#39;Subscribe to a Redis channel&#39;</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 执行控制台命令。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return mixed</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Redis</span><span class="o">::</span><span class="na">subscribe</span><span class="p">([</span><span class="s1">&#39;test-channel&#39;</span><span class="p">],</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$message</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">echo</span> <span class="nv">$message</span><span class="p">;</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在我们可以使用 <code class="docutils literal"><span class="pre">publish</span></code> 方法将消息发布到频道：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;publish&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Route logic...</span>
+
+    <span class="nx">Redis</span><span class="o">::</span><span class="na">publish</span><span class="p">(</span><span class="s1">&#39;test-channel&#39;</span><span class="p">,</span> <span class="nb">json_encode</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;bar&#39;</span><span class="p">]));</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="id10">
+<h3>58.6.1. 通配符订阅<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">psubscribe</span></code> 方法可以订阅通配符频道，可以用来在所有频道上获取所有消息。 <code class="docutils literal"><span class="pre">$channel</span></code> 名称将作为第二个参数传递给提供的回调 闭包 ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Redis</span><span class="o">::</span><span class="na">psubscribe</span><span class="p">([</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="nv">$channel</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$message</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="nx">Redis</span><span class="o">::</span><span class="na">psubscribe</span><span class="p">([</span><span class="s1">&#39;users.*&#39;</span><span class="p">],</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="nv">$channel</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$message</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的Redis原理分析.html" class="btn btn-neutral float-right" title="59. Redis原理分析" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的数据库填充.html" class="btn btn-neutral" title="57. 数据库填充" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1902 @@
+****
+路由
+****
+路由功能由 ``\think\Route`` 类完成。
+
+概述
+====
+由于 ThinkPHP5.0 默认采用的 ``URL`` 规则是：
+
+.. note:: http://server/module/controller/action/param/value/
+
+路由的作用是简化 ``URL`` 访问地址，并根据定义的路由类型做出正确的解析。
+
+新版的路由功能做了大量的增强，包括：
+
+- 支持路由到模块的控制器/操作、控制器类的方法、闭包函数和重定向地址，甚至是任何类库的方法；
+- 闭包路由的增强；
+- 规则路由支持全局和局部变量规则定义（正则）；
+- 支持路由到任意层次的控制器；
+- 子域名路由功能改进；
+- 支持路由分组并支持分组参数定义；
+- 增加资源路由和嵌套支持；
+- 支持使用行为或者自定义函数检测路由规则；
+
+ThinkPHP5.0 的路由支持三种方式的 ``URL`` 解析规则。
+
+5.0 的路由是针对应用而不是针对模块，因此路由的设置也是针对应用下面的所有模块，如果希望不同的模块区分不同的设置（例如某些模块需要关闭路由，某些模块需要强制路由等），需要给该模块增加单独的入口文件，并作如下修改：
+
+.. code-block:: php
+
+    <?php
+    // 定义项目路径
+    define('APP_PATH', __DIR__ . '/../application/');
+    // 加载框架基础文件
+    require __DIR__ . '/../thinkphp/base.php';
+    // 绑定当前入口文件到 admin 模块
+    \think\Route::bind('admin');
+    // 关闭 admin 模块的路由
+    \think\App::route(false);
+    // 执行应用
+    \think\App::run()->send();
+
+V5.0.21+ 版本开始，支持了路由解析缓存。
+
+在配置文件中 设置开启
+
+.. code-block:: php
+
+    // 开启路由解析缓存
+    'route_check_cache'      => true,
+
+路由模式
+========
+ThinkPHP5.0 的路由比较灵活，并且不需要强制定义，可以总结归纳为如下三种方式：
+
+普通模式
+--------
+关闭路由，完全使用默认的 ``PATH_INFO`` 方式 ``URL`` ：
+
+.. code-block:: php
+
+    'url_route_on'  =>  false,
+
+路由关闭后，不会解析任何路由规则，采用默认的 ``PATH_INFO`` 模式访问 ``URL`` ：
+
+.. code-block:: shell
+
+    http://serverName/index.php/module/controller/action/param/value/...
+
+.. note:: 但仍然可以通过操作方法的参数绑定、空控制器和空操作等特性实现URL地址的简化。
+
+可以设置 ``url_param_type`` 配置参数来改变 ``pathinfo`` 模式下面的参数获取方式，默认是按名称成对解析，支持按照顺序解析变量，只需要更改为：
+
+.. code-block:: php
+
+    // 按照顺序解析变量
+    'url_param_type'    =>  1,
+
+混合模式
+--------
+开启路由，并使用 ``路由定义+默认 PATH_INFO`` 方式的混合：
+
+.. code-block:: php
+
+    'url_route_on'  =>  true,
+    'url_route_must'=>  false,
+
+该方式下面，只需要对需要定义路由规则的访问地址定义路由规则，其它的仍然按照第一种普通模式的 ``PATH_INFO`` 模式访问 ``URL`` 。
+
+强制模式
+--------
+开启路由，并设置必须定义路由才能访问：
+
+.. code-block:: php
+
+    'url_route_on'          =>  true,
+    'url_route_must'        =>  true,
+
+这种方式下面必须严格给每一个访问地址定义路由规则（包括首页），否则将抛出异常。
+
+首页的路由规则采用 ``/`` 定义即可，例如下面把网站首页路由输出 ``Hello,world!``
+
+.. code-block:: php
+
+    Route::get('/',function(){
+        return 'Hello,world!';
+    });
+
+路由定义
+========
+注册路由规则
+------------
+路由注册可以采用方法动态单个或者批量注册，也可以直接配置路由定义文件的方式进行集中注册。
+
+动态注册
+^^^^^^^^
+路由定义采用 ``\think\Route`` 类的 ``rule`` 方法注册，通常是在应用的路由配置文件 ``application/route.php`` 进行注册，格式是：
+
+**Route::rule('路由表达式','路由地址','请求类型','路由参数（数组）','变量规则（数组）');**
+
+路由表达式
+""""""""""
+路由表达式统一使用字符串定义，采用规则定义的方式。
+
+.. note:: 正则路由定义功能已经废除，改由变量规则定义完成。
+
+规则表达式
+++++++++++
+规则表达式通常包含 **静态地址** 和 **动态地址** ，或者两种地址的结合，例如下面都属于有效的规则表达式：
+
+.. code-block:: php
+
+    '/' => 'index', // 首页访问路由
+    'my'        =>  'Member/myinfo', // 静态地址路由
+    'blog/:id'  =>  'Blog/read', // 静态地址和动态地址结合
+    'new/:year/:month/:day' => 'News/read', // 静态地址和动态地址结合
+    ':user/:blog_id'=>'Blog/read',// 全动态地址
+
+规则表达式的定义以 ``/`` 为参数分割符（无论你的 ``PATH_INFO`` 分隔符设置是什么，请确保在定义路由规则表达式的时候统一使用 ``/`` 进行 URL 参数分割）。
+
+每个参数中以 ":" 开头的参数都表示动态变量，并且会自动绑定到操作方法的对应参数。
+
+可选定义
+++++++++
+支持对路由参数的可选定义，例如：
+
+.. code-block:: php
+
+    'blog/:year/[:month]'=>'Blog/archive',
+
+``[:month]`` 变量用 ``[ ]`` 包含起来后就表示该变量是路由匹配的可选变量。
+
+以上定义路由规则后，下面的 ``URL`` 访问地址都可以被正确的路由匹配：
+
+.. code-block:: php
+
+    http://serverName/index.php/blog/2015
+    http://serverName/index.php/blog/2015/12
+
+采用可选变量定义后，之前需要定义两个或者多个路由规则才能处理的情况可以合并为一个路由规则。
+
+.. note:: 可选参数只能放到路由规则的最后，如果在中间使用了可选参数的话，后面的变量都会变成可选参数。
+
+完全匹配
+++++++++
+规则匹配检测的时候只是对 ``URL`` 从头开始匹配，只要 ``URL`` 地址包含了定义的路由规则就会匹配成功，如果希望完全匹配，可以在路由表达式最后使用 ``$`` 符号，例如：
+
+.. code-block:: php
+
+    'new/:cate$'=> 'News/category',
+
+``http://serverName/index.php/new/info`` 会匹配成功,而 ``http://serverName/index.php/new/info/2`` 则不会匹配成功。如果是采用
+
+.. code-block:: php
+
+    'new/:cate'=> 'News/category',
+
+方式定义的话，则两种方式的 ``URL`` 访问都可以匹配成功。
+
+如果你希望所有的路由定义都是完全匹配的话，可以直接配置
+
+.. code-block:: php
+
+    // 开启路由定义的全局完全匹配
+    'route_complete_match'  =>  true,
+
+当开启全局完全匹配的时候，如果个别路由不需要使用完整匹配，可以添加路由参数覆盖定义：
+
+.. code-block:: php
+
+    Route::rule('new/:id','News/read','GET|POST',['complete_match' => false]);
+
+组合变量
+++++++++
+如果你的路由表达式比较特殊，可以在路由定义的时候使用组合变量。
+
+例如：
+
+.. code-block:: php
+
+    Route::get('item-<name>-<id>','product/detail',[],['name'=>'\w+','id'=>'\d+']);
+
+组合变量的优势是路由规则中没有固定的分隔符，可以随意组合需要的变量规则，例如路由规则改成如下一样可以支持：
+
+.. code-block:: php
+
+    Route::get('item<name><id>','product/detail',[],['name'=>'[a-zA-Z]+','id'=>'\d+']);
+    Route::get('item@<name>-<id>','product/detail',[],['name'=>'\w+','id'=>'\d+']);
+
+如果需要使用可选变量，则可以使用：
+
+.. code-block:: php
+
+    Route::get('item-<name><id?>','product/detail',[],['name'=>'[a-zA-Z]+','id'=>'\d+']);
+
+请求类型
+""""""""
+请求类型包括：
+
++--------+--------------+
+| 类型   | 描述         |
++========+==============+
+| GET    | GET请求      |
++--------+--------------+
+| POST   | POST请求     |
++--------+--------------+
+| PUT    | PUT请求      |
++--------+--------------+
+| DELETE | DELETE请求   |
++--------+--------------+
+| ``*``  | 任何请求类型 |
++--------+--------------+
+
+.. note:: 请求类型参数必须大写。
+
+系统提供了为不同的请求类型定义路由规则的简化方法，例如：
+
+.. code-block:: php
+
+    Route::get('new/:id','News/read'); // 定义GET请求路由规则
+    Route::post('new/:id','News/update'); // 定义POST请求路由规则
+    Route::put('new/:id','News/update'); // 定义PUT请求路由规则
+    Route::delete('new/:id','News/delete'); // 定义DELETE请求路由规则
+    Route::any('new/:id','News/read'); // 所有请求都支持的路由规则
+
+如果要定义 ``get`` 和 ``post`` 请求支持的路由规则，也可以用：
+
+.. code-block:: php
+
+    Route::rule('new/:id','News/read','GET|POST');
+
+变量规则
+""""""""
+ThinkPHP5.0 支持在规则路由中为变量用正则的方式指定变量规则，弥补了动态变量无法限制具体的类型问题，并且支持全局规则设置。使用方式如下：
+
+全局变量规则
+++++++++++++
+设置全局变量规则，全部路由有效：
+
+.. code-block:: php
+
+    // 设置name变量规则（采用正则定义）
+    Route::pattern('name','\w+');
+    // 支持批量添加
+    Route::pattern([
+        'name'  =>  '\w+',
+        'id'    =>  '\d+',
+    ]);
+
+局部变量规则
+++++++++++++
+局部变量规则，仅在当前路由有效：
+
+.. code-block:: php
+
+    // 定义GET请求路由规则 并设置name变量规则
+    Route::get('new/:name','News/read',[],['name'=>'\w+']);
+
+如果一个变量同时定义了全局规则和局部规则，局部规则会覆盖全局变量的定义。
+
+完整URL规则
++++++++++++
+如果要对整个 ``URL`` 进行规则检查，可以进行 ``__url__`` 变量规则，例如：
+
+.. code-block:: php
+
+    // 定义GET请求路由规则 并设置完整URL变量规则
+    Route::get('new/:id','News/read',[],['__url__'=>'new\/\w+$']);
+
+演示案例
+--------
+
+例如注册如下路由规则：
+
+.. code-block:: php
+
+    use think\Route;
+    // 注册路由到index模块的News控制器的read操作
+    Route::rule('new/:id','index/News/read');
+
+我们访问：
+
+.. code-block:: shell
+
+    http://serverName/new/5
+
+会自动路由到：
+
+.. code-block:: shell
+
+    http://serverName/index/news/read/id/5
+
+并且原来的访问地址会自动失效。
+
+路由表达式（第一个参数）支持定义命名标识，例如：
+
+.. code-block:: php
+
+    // 定义new路由命名标识
+    Route::rule(['new','new/:id'],'index/News/read');
+
+.. note:: 路由命名标识必须唯一，定义后可以用于URL的快速生成。
+
+可以在 ``rule`` 方法中指定请求类型，不指定的话默认为任何请求类型，例如：
+
+.. code-block:: php
+
+    Route::rule('new/:id','News/update','POST');
+
+表示定义的路由规则在 ``POST`` 请求下才有效。
+
+路由参数
+========
+路由参数是指可以设置一些路由匹配的条件参数，主要用于验证当前的路由规则是否有效，主要包括：
+
++------------------+-----------------------------------+
+| 参数             | 说明                              |
++==================+===================================+
+| method           | 请求类型检测，支持多个请求类型    |
++------------------+-----------------------------------+
+| ext              | URL后缀检测，支持匹配多个后缀     |
++------------------+-----------------------------------+
+| deny_ext         | URL禁止后缀检测，支持匹配多个后缀 |
++------------------+-----------------------------------+
+| https            | 检测是否https请求                 |
++------------------+-----------------------------------+
+| domain           | 域名检测                          |
++------------------+-----------------------------------+
+| before_behavior  | 前置行为（检测）                  |
++------------------+-----------------------------------+
+| after_behavior   | 后置行为（执行）                  |
++------------------+-----------------------------------+
+| callback         | 自定义检测方法                    |
++------------------+-----------------------------------+
+| merge_extra_vars | 合并额外参数                      |
++------------------+-----------------------------------+
+| bind_model       | 绑定模型（V5.0.1+）               |
++------------------+-----------------------------------+
+| cache            | 请求缓存（V5.0.1+）               |
++------------------+-----------------------------------+
+| param_depr       | 路由参数分隔符（V5.0.2+）         |
++------------------+-----------------------------------+
+| ajax             | Ajax检测（V5.0.2+）               |
++------------------+-----------------------------------+
+| pjax             | Pjax检测（V5.0.2+）               |
++------------------+-----------------------------------+
+
+V5.0.3+ 版本对 ``ajax/pjax/https`` 条件支持 ``false`` 。
+
+.. note:: 这些路由参数可以混合使用，只要有任何一条参数检查不通过，当前路由就不会生效，继续检测后面的路由规则。
+
+请求类型
+--------
+如果指定请求类型注册路由的话，无需设置 ``method`` 请求类型参数。如果使用了 ``rule`` 或者 ``any`` 方法注册路由，或者使用路由配置定义文件的话，可以单独使用 ``method`` 参数进行请求类型检测。
+
+使用方法：
+
+.. code-block:: php
+
+    // 检测路由规则仅GET请求有效
+    Route::any('new/:id','News/read',['method'=>'get']);
+    // 检测路由规则仅GET和POST请求有效
+    Route::any('new/:id','News/read',['method'=>'get|post']);
+
+URL后缀
+-------
+
+.. code-block:: php
+
+    // 定义GET请求路由规则 并设置URL后缀为html的时候有效
+    Route::get('new/:id','News/read',['ext'=>'html']);
+
+支持匹配多个后缀，例如：
+
+.. code-block:: php
+
+    Route::get('new/:id','News/read',['ext'=>'shtml|html']);
+
+可以设置禁止访问的URL后缀，例如：
+
+.. code-block:: php
+
+    // 定义GET请求路由规则 并设置禁止URL后缀为png、jpg和gif的访问
+    Route::get('new/:id','News/read',['deny_ext'=>'jpg|png|gif']);
+
+.. warning:: V5.0.7 版本以上， ``ext`` 和 ``deny_ext`` 参数允许设置为空，分别表示不允许任何后缀以及必须使用后缀访问。
+
+域名检测
+--------
+支持使用完整域名或者子域名进行检测，例如：
+
+.. code-block:: php
+
+    // 完整域名检测 只在news.thinkphp.cn访问时路由有效
+    Route::get('new/:id','News/read',['domain'=>'news.thinkphp.cn']);
+    // 子域名检测
+    Route::get('new/:id','News/read',['domain'=>'news']);
+
+HTTPS检测
+---------
+支持检测当前是否 ``HTTPS`` 访问
+
+.. code-block:: php
+
+    Route::get('new/:id','News/read',['https'=>true]);
+
+前置行为检测
+------------
+支持使用行为对路由进行检测是否匹配，如果行为方法返回 ``false`` 表示当前路由规则无效。
+
+.. code-block:: php
+
+    Route::get('user/:id','index/User/read',['before_behavior'=>'\app\index\behavior\UserCheck']);
+
+行为类定义如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\behavior;
+
+    class UserCheck
+    {
+        public function run()
+        {
+            if('user/0'==request()->url()){
+                return false;
+            }
+        }
+    }
+
+后置行为执行
+------------
+可以为某个路由或者某个分组路由定义后置行为执行，表示当路由匹配成功后，执行的行为，例如：
+
+.. code-block:: php
+
+    Route::get('user/:id','User/read',['after_behavior'=>'\app\index\behavior\ReadInfo']);
+
+其中 ``\app\index\behavior\ReadInit`` 行为类定义如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\behavior;
+
+    use app\index\model\User;
+
+    class ReadInfo {
+        public function run(){
+            $id = request()->route('id');
+            request()->user = User::get($id);
+        }
+    }
+
+如果成功匹配到 ``new/:id`` 路由后，就会执行行为类的 ``run`` 方法，参数是路由地址，可以动态改变。
+
+Callback检测
+------------
+也可以支持使用函数检测路由，如果函数返回 ``false`` 则表示当前路由规则无效，例如：
+
+.. code-block:: php
+
+    Route::get('new/:id','News/read',['callback'=>'my_check_fun']);
+
+合并额外参数
+------------
+通常用于完整匹配的情况，如果有额外的参数则合并作为变量值，例如：
+
+.. code-block:: php
+
+    Route::get('new/:name$','News/read',['merge_extra_vars'=>true]);
+
+http://serverName/new/thinkphp/hello 会被匹配到，并且 ``name`` 变量的值为 ``thinkphp/hello`` 。
+
+配置文件中添加路由参数
+----------------------
+如果使用配置文件的话，可以使用：
+
+.. code-block:: php
+
+    return [
+        'blog/:id'   => ['Blog/update',['method' => 'post','ext'=>'html|shtml']],
+    ];
+
+路由绑定模型（V5.0.1）
+---------------------
+可以在当前路由匹配后绑定模型，后面则通过方法的对象自动注入来获取。
+
+.. code-block:: php
+
+    Route::get('new/:name$','News/read',['bind_model'=>['User','name']]);
+
+更多细节可以参考请求->依赖注入。
+
+缓存路由请求
+------------
+可以对当前的路由请求进行缓存处理，例如：
+
+.. code-block:: php
+
+    Route::get('new/:name$','News/read',['cache'=>3600]);
+
+表示对当前路由请求缓存 3600 秒。
+
+路由地址
+========
+
++-------+----------------------------------------+
+| 版本  | 新增功能                               |
++=======+========================================+
+| 5.0.4 | 路由到类和控制器的方法支持传入额外参数 |
++-------+----------------------------------------+
+
+路由地址表示定义的路由表达式最终需要路由到的地址以及一些需要的额外参数，支持下面5种方式定义：
+
++-------------------------------+-----------------------------------------------------------------+
+| 定义方式                      | 定义格式                                                        |
++===============================+=================================================================+
+| 方式1：路由到模块/控制器/操作 | '[模块/控制器/操作]?额外参数1=值1&额外参数2=值2...'             |
++-------------------------------+-----------------------------------------------------------------+
+| 方式2：路由到重定向地址       | '外部地址'（默认301重定向） 或者 ['外部地址','重定向代码']      |
++-------------------------------+-----------------------------------------------------------------+
+| 方式3：路由到控制器的方法     | '@[模块/控制器/]操作'                                           |
++-------------------------------+-----------------------------------------------------------------+
+| 方式4：路由到类的方法         | '\完整的命名空间类::静态方法' 或者 '\完整的命名空间类@动态方法' |
++-------------------------------+-----------------------------------------------------------------+
+| 方式5：路由到闭包函数         | 闭包函数定义（支持参数传入）                                    |
++-------------------------------+-----------------------------------------------------------------+
+
+其中方式5我们将会在下一个章节闭包支持中详细描述。
+
+路由到模块/控制器/操作
+----------------------
+这是最常用的一种路由方式，把满足条件的路由规则路由到相关的模块、控制器和操作，然后由 App 类调度执行相关的操作。
+
+同时会进行模块的初始化操作（包括配置读取、公共文件载入、行为定义载入、语言包载入等等）。
+
+路由地址的格式为： **[模块/控制器/]操作?参数1=值1&参数2=值2...**
+
+解析规则是从操作开始解析，然后解析控制器，最后解析模块，例如：
+
+.. code-block:: php
+
+    // 路由到默认或者绑定模块
+    'blog/:id'=>'blog/read',
+    // 路由到index模块
+    'blog/:id'=>'index/blog/read',
+
+Blog类定义如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    class Blog {
+        public function read($id){
+            return 'read:'.$id;
+        }
+    }
+
+路由地址中支持多级控制器，使用下面的方式进行设置：
+
+.. code-block:: php
+
+    'blog/:id'=>'index/group.blog/read'
+
+表示路由到下面的控制器类， ``index/controller/group/Blog`` 。
+
+Blog类定义如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller\group;
+
+    class Blog {
+        public function read($id){
+            return 'read:'.$id;
+        }
+    }
+
+还可以支持路由到动态的模块、控制器或者操作，例如：
+
+.. code-block:: php
+
+    // action变量的值作为操作方法传入
+    ':action/blog/:id' => 'index/blog/:action'
+    // 变量传入index模块的控制器和操作方法
+    ':c/:a'=> 'index/:c/:a'
+
+.. note:: 如果关闭路由功能的话，默认也会按照该规则对 ``URL`` 进行解析调度。
+
+额外参数
+^^^^^^^^
+在这种方式路由跳转的时候支持额外传入参数对（额外参数指的是不在 URL 里面的参数，隐式传入需要的操作中，有时候能够起到一定的安全防护作用，后面我们会提到）。例如：
+
+.. code-block:: php
+
+    'blog/:id'=>'blog/read?status=1&app_id=5',
+
+上面的路由规则定义中额外参数 ``status`` 和 ``app_id`` 参数都是 ``URL`` 里面不存在的，属于隐式传值，当然并不一定需要用到，只是在需要的时候可以使用。
+
+路由到操作方法
+--------------
+路由地址的格式为： ``@[模块/控制器/]操作``
+
+这种方式看起来似乎和第一种是一样的，本质的区别是直接执行某个控制器类的方法，而不需要去解析 **模块/控制器/操作** 这些，同时也不会去初始化模块。
+
+例如，定义如下路由后：
+
+.. code-block:: php
+
+    'blog/:id'=>'@index/blog/read',
+
+系统会直接执行
+
+.. code-block:: php
+
+    Loader::action('index/blog/read');
+
+相当于直接调用 ``\app\index\controller\blog`` 类的 ``read`` 方法。
+
+``Blog`` 类定义如下：
+
+.. code-block:: php
+
+    namespace app\index\controller;
+
+    class Blog {
+        public function read($id){
+            return 'read:'.$id;
+        }
+    }
+
+通常这种方式下面，由于没有定义当前模块名、当前控制器名和当前方法名 ，从而导致视图的默认模板规则失效，所以这种情况下面，如果使用了视图模板渲染，则必须传入明确的参数。
+
+路由到类的方法
+--------------
+路由地址的格式为（动态方法）： **\类的命名空间\类名@方法名**
+
+或者（静态方法）： **\类的命名空间\类名::方法名**
+
+这种方式更进一步，可以支持执行任何类的方法，而不仅仅是执行控制器的操作方法，例如：
+
+.. code-block:: php
+
+    'blog/:id'=>'\app\index\service\Blog@read',
+
+执行的是 ``\app\index\service\Blog`` 类的 ``read`` 方法。也支持执行某个静态方法，例如：
+
+.. code-block:: php
+
+    'blog/:id'=>'\app\index\service\Blog::read',
+
+V5.0.4+ 版本开始，支持传入额外的参数作为方法的参数调用（用于参数绑定），例如：
+
+.. code-block:: php
+
+    'blog/:id'=>'\app\index\service\Blog::read?status=1',
+
+路由到重定向地址
+----------------
+重定向的外部地址必须以 ``/`` 或者 ``http`` 开头的地址。
+
+如果路由地址以 ``/`` 或者 ``http`` 开头则会认为是一个重定向地址或者外部地址，例如：
+
+.. code-block:: php
+
+    'blog/:id'=>'/blog/read/id/:id'
+
+和
+
+.. code-block:: php
+
+    'blog/:id'=>'blog/read'
+
+虽然都是路由到同一个地址，但是前者采用的是 ``301`` 重定向的方式路由跳转，这种方式的好处是 ``URL`` 可以比较随意（包括可以在 ``URL`` 里面传入更多的非标准格式的参数），而后者只是支持模块和操作地址。举个例子，如果我们希望 ``avatar/123`` 重定向到
+ ``/member/avatar/id/123_small`` 的话，只能使用： ``'avatar/:id'=>'/member/avatar/id/:id_small'``
+
+路由地址采用重定向地址的话，如果要引用动态变量，直接使用动态变量即可。
+
+采用重定向到外部地址通常对网站改版后的 ``URL`` 迁移过程非常有用，例如：
+
+.. code-block:: php
+
+    'blog/:id'=>'http://blog.thinkphp.cn/read/:id'
+
+表示当前网站（可能是 ``http://thinkphp.cn`` ）的 ``blog/123`` 地址会直接重定向到 ``http://blog.thinkphp.cn/read/123`` 。
+
+批量注册
+========
+批量注册路由规则可以使用两种方式，包括方法注册和路由配置定义。
+
+批量注册
+--------
+如果不希望一个个注册，可以使用批量注册，规则如下：
+
+.. code-block:: php
+
+    Route::rule([
+    '路由规则1'=>'路由地址和参数',
+    '路由规则2'=>['路由地址和参数','匹配参数（数组）','变量规则（数组）']
+    ...
+    ],'','请求类型','匹配参数（数组）','变量规则');
+
+如果在外面和规则里面同时传入了匹配参数和变量规则的话，路由规则定义里面的最终生效，但请求类型参数以最外层决定，例如：
+
+.. code-block:: php
+
+    Route::rule([
+        'new/:id'  =>  'News/read',
+        'blog/:id' =>  ['Blog/update',['ext'=>'shtml'],['id'=>'\d{4}']],
+        ...
+    ],'','GET',['ext'=>'html'],['id'=>'\d+']);
+
+以上的路由注册，最终 ``blog/:id`` 只会在匹配 ``shtml`` 后缀的访问请求， ``id`` 变量的规则则是 ``\d{4}`` 。
+
+.. note:: 如果不同的请求类型的路由规则是一样的，为了避免数组索引冲突的问题，请使用单独的请求方法定义路由。
+
+同样，我们也可以使用其他几个注册方法进行批量注册。
+
+.. code-block:: php
+
+    // 批量注册GET路由
+    Route::get([
+        'new/:id'  =>  'News/read',
+        'blog/:id' =>  ['Blog/edit',[],['id'=>'\d+']]
+        ...
+    ]);
+    // 效果等同于
+    Route::rule([
+        'new/:id'  =>  'News/read',
+        'blog/:id' =>  ['Blog/edit',[],['id'=>'\d+']]
+        ...
+    ],'','GET');
+
+定义路由配置文件
+----------------
+除了支持动态注册，也可以直接在应用目录下面的 ``route.php`` 的最后通过返回数组的方式直接定义路由规则，内容示例如下：
+
+.. code-block:: php
+
+    return [
+        'new/:id'   => 'News/read',
+        'blog/:id'   => ['Blog/update',['method' => 'post|put'], ['id' => '\d+']],
+    ];
+
+路由配置文件定义的路由规则效果和使用 ``any`` 注册路由规则一样。
+
+路由动态注册和配置定义的方式可以共存，例如：
+
+.. code-block:: php
+
+    <?php
+    use think\Route;
+
+    Route::rule('hello/:name','index/index/hello');
+
+    return [
+        'new/:id'   => 'News/read',
+        'blog/:id'   => ['Blog/update',['method' => 'post|put'], ['id' => '\d+']],
+    ];
+
+默认情况下，只会加载一个路由配置文件 ``route.php`` ，如果你需要定义多个路由文件，可以修改 ``route_config_file`` 配置参数，例如：
+
+.. code-block:: php
+
+    // 定义路由配置文件（数组）
+    'route_config_file' =>  ['route', 'route1', 'route2'],
+
+如果存在相同的路由规则，一样可以参考前面的批量注册方式进行定义。
+
+.. note:: 由于检测机制问题，动态注册的性能比路由配置要高一些，尤其是多种请求类型混合定义的时候。
+
+
+资源路由
+========
+5.0支持设置 ``RESTFul`` 请求的资源路由，方式如下：
+
+.. code-block:: php
+
+    Route::resource('blog','index/blog');
+
+或者在路由配置文件中使用 ``__rest__`` 添加资源路由定义：
+
+.. code-block:: php
+
+    return [
+        // 定义资源路由
+        '__rest__'=>[
+            // 指向index模块的blog控制器
+            'blog'=>'index/blog',
+        ],
+        // 定义普通路由
+        'hello/:id'=>'index/hello',
+    ]
+
+设置后会自动注册7个路由规则，如下：
+
++--------+----------+---------------+----------------------+
+| 标识   | 请求类型 | 生成路由规则  | 对应操作方法（默认） |
++========+==========+===============+======================+
+| index  | GET      | blog          | index                |
++--------+----------+---------------+----------------------+
+| create | GET      | blog/create   | create               |
++--------+----------+---------------+----------------------+
+| save   | POST     | blog          | save                 |
++--------+----------+---------------+----------------------+
+| read   | GET      | blog/:id      | read                 |
++--------+----------+---------------+----------------------+
+| edit   | GET      | blog/:id/edit | edit                 |
++--------+----------+---------------+----------------------+
+| update | PUT      | blog/:id      | update               |
++--------+----------+---------------+----------------------+
+| delete | DELETE   | blog/:id      | delete               |
++--------+----------+---------------+----------------------+
+
+具体指向的控制器由路由地址决定，例如上面的设置，会对应 ``index`` 模块的 ``blog`` 控制器，你只需要为 ``Blog`` 控制器创建以上对应的操作方法就可以支持下面的 ``URL`` 访问：
+
+.. code-block:: shell
+
+    http://serverName/blog/
+    http://serverName/blog/128
+    http://serverName/blog/28/edit
+
+``Blog`` 控制器中的对应方法如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+    class Blog {
+        public function index(){
+        }
+
+        public function read($id){
+        }
+
+        public function edit($id){
+        }
+    }
+
+可以改变默认的 ``id`` 参数名，例如：
+
+.. code-block:: php
+
+    Route::resource('blog','index/blog',['var'=>['blog'=>'blog_id']]);
+
+控制器的方法定义需要调整如下：
+
+.. code-block:: php
+
+    namespace app\index\controller;
+    class Blog {
+        public function index(){
+        }
+
+        public function read($blog_id){
+        }
+
+        public function edit($blog_id){
+        }
+    }
+
+也可以在定义资源路由的时候限定执行的方法（标识），例如：
+
+.. code-block:: php
+
+    // 只允许index read edit update 四个操作
+    Route::resource('blog','index/blog',['only'=>['index','read','edit','update']]);
+    // 排除index和delete操作
+    Route::resource('blog','index/blog',['except'=>['index','delete']]);
+
+资源路由的标识不可更改，但生成的路由规则和对应操作方法可以修改。
+
+如果需要更改某个资源路由标识的对应操作，可以使用下面方法：
+
+.. code-block:: php
+
+    Route::rest('create',['GET', '/add','add']);
+
+设置之后， ``URL`` 访问变为：
+
+.. code-block:: shell
+
+    http://serverName/blog/create
+    变成
+    http://serverName/blog/add
+
+创建 ``blog`` 页面的对应的操作方法也变成了 ``add`` 。
+
+支持批量更改，如下：
+
+.. code-block:: php
+
+    Route::rest([
+        'save'   => ['POST', '', 'store'],
+        'update' => ['PUT', '/:id', 'save'],
+        'delete' => ['DELETE', '/:id', 'destory'],
+    ]);
+
+资源嵌套
+--------
+支持资源路由的嵌套，例如：
+
+.. code-block:: php
+
+    Route::resource('blog.comment','index/comment');
+
+就可以访问如下地址：
+
+.. code-block:: shell
+
+    http://serverName/blog/128/comment/32
+    http://serverName/blog/128/comment/32/edit
+
+生成的路由规则分别是：
+
+.. code-block:: shell
+
+    blog/:blog_id/comment/:id
+    blog/:blog_id/comment/:id/edit
+
+``Comment`` 控制器对应的操作方法如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+    class Comment{
+        public function edit($id,$blog_id){
+        }
+    }
+
+``edit`` 方法中的参数顺序可以随意，但参数名称必须满足定义要求。
+
+如果需要改变其中的变量名，可以使用：
+
+.. code-block:: php
+
+    // 更改嵌套资源路由的blog资源的资源变量名为blogId
+    Route::resource('blog.comment','index/comment',['var'=>['blog'=>'blogId']]);
+
+``Comment`` 控制器对应的操作方法改变为：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    class Comment{
+        public function edit($id,$blogId)
+        {
+        }
+    }
+
+快捷路由
+========
+快捷路由允许你快速给控制器注册路由，并且针对不同的请求类型可以设置方法前缀，例如：
+
+.. code-block:: php
+
+    // 给User控制器设置快捷路由
+    Route::controller('user','index/User');
+
+User控制器定义如下：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    class User {
+        public function getInfo()
+        {
+        }
+
+        public function getPhone()
+        {
+        }
+
+        public function postInfo()
+        {
+        }
+
+        public function putInfo()
+        {
+        }
+
+        public function deleteInfo()
+        {
+        }
+    }
+
+我们可以通过下面的 ``URL`` 访问
+
+.. code-block:: shell
+
+    get http://localhost/user/info
+    get http://localhost/user/phone
+    post http://localhost/user/info
+    put http://localhost/user/info
+    delete http://localhost/user/info
+
+路由别名
+========
+路由别名功能可以使用一条规则，批量定义一系列的路由规则。
+
+例如，我们希望使用 ``user`` 可以访问 ``index`` 模块的 ``User`` 控制器的所有操作，可以使用：
+
+.. code-block:: php
+
+    // user 别名路由到 index/User 控制器
+    Route::alias('user','index/User');
+
+如果在路由配置文件 ``route.php`` 中定义的话，使用：
+
+.. code-block:: php
+
+    return [
+        '__alias__' =>  [
+            'user'  =>  'index/User',
+        ],
+    ];
+
+和前面的方式是等效的。
+
+然后可以直接通过 ``URL`` 地址访问 ``User`` 控制器的操作，例如：
+
+.. code-block:: shell
+
+    http://serverName/index.php/user/add
+    http://serverName/index.php/user/edit/id/5
+    http://serverName/index.php/user/read/id/5
+
+.. note:: 如果 ``URL`` 参数绑定方式使用按顺序绑定的话， ``URL`` 地址可以进一步简化，参考请求->方法参数绑定。
+
+路由别名可以指向任意一个有效的路由地址，例如下面指向一个类
+
+.. code-block:: php
+
+    // user 路由别名指向 User控制器类
+    Route::alias('user','\app\index\controller\User');
+
+.. note:: 路由别名不支持变量类型和路由条件判断，单纯只是为了缩短 ``URL`` 地址，并且在定义的时候需要注意避免和路由规则产生混淆。
+
+支持给路由别名设置路由条件，例如：
+
+.. code-block:: php
+
+    // user 别名路由到 index/user 控制器
+    Route::alias('user','index/user',['ext'=>'html']);
+
+或者在路由配置文件中使用：
+
+.. code-block:: php
+
+    return [
+        '__alias__' =>  [
+            'user'  =>  ['index/user',['ext'=>'html']],
+        ],
+    ];
+
+操作方法黑白名单（v5.0.2+）
+--------------------------
+路由别名的操作方法支持白名单或者黑名单机制，例如：
+
+.. code-block:: php
+
+    // user 别名路由到 index/user 控制器
+    Route::alias('user','index/user',[
+        'ext'=>'html'，
+        'allow'=>'index,read,edit,delete',
+    ]);
+
+或者使用黑名单机制
+
+.. code-block:: php
+
+    // user 别名路由到 index/user 控制器
+    Route::alias('user','index/user',[
+        'ext'=>'html'，
+        'except'=>'save,delete',
+    ]);
+
+并且支持设置操作方法的请求类型，例如：
+
+.. code-block:: php
+
+    // user 别名路由到 index/user 控制器
+    Route::alias('user','index/user',[
+        'ext'=>'html'，
+        'allow'=>'index,save,delete',
+        'method'=>['index'=>'GET','save'=>'POST','delete'=>'DELETE'],
+    ]);
+
+路由分组
+========
+路由分组功能允许把相同前缀的路由定义合并分组，这样可以提高路由匹配的效率，不必每次都去遍历完整的路由规则。
+
+例如，我们有定义如下两个路由规则的话
+
+.. code-block:: php
+
+    'blog/:id'   => ['Blog/read', ['method' => 'get'], ['id' => '\d+']],
+    'blog/:name' => ['Blog/read', ['method' => 'post']],
+
+可以合并到一个 ``blog`` 分组
+
+.. code-block:: php
+
+    '[blog]'     => [
+        ':id'   => ['Blog/read', ['method' => 'get'], ['id' => '\d+']],
+        ':name' => ['Blog/read', ['method' => 'post']],
+    ],
+
+可以使用 ``Route`` 类的 ``group`` 方法进行注册，如下：
+
+.. code-block:: php
+
+    Route::group('blog',[
+        ':id'   => ['Blog/read', ['method' => 'get'], ['id' => '\d+']],
+        ':name' => ['Blog/read', ['method' => 'post']],
+    ]);
+
+可以给分组路由定义一些公用的路由设置参数，例如：
+
+.. code-block:: php
+
+    Route::group('blog',[
+        ':id'   => ['Blog/read', [], ['id' => '\d+']],
+        ':name' => ['Blog/read', [],
+    ],['method'=>'get','ext'=>'html']);
+
+支持使用闭包方式注册路由分组，例如：
+
+.. code-block:: php
+
+    Route::group('blog',function(){
+        Route::any(':id','blog/read',[],['id'=>'\d+']);
+        Route::any(':name','blog/read',[],['name'=>'\w+']);
+    },['method'=>'get','ext'=>'html']);
+
+如果仅仅是用于对一些路由规则设置一些公共的路由参数，也可以使用：
+
+.. code-block:: php
+
+    Route::group(['method'=>'get','ext'=>'html'],function(){
+        Route::any('blog/:id','blog/read',[],['id'=>'\d+']);
+        Route::any('blog/:name','blog/read',[],['name'=>'\w+']);
+    });
+
+路由分组支持嵌套，例如：
+
+.. code-block:: php
+
+    Route::group(['method'=>'get','ext'=>'html'],function(){
+        Route::group('blog',function(){
+            Route::any('blog/:id','blog/read',[],['id'=>'\d+']);
+            Route::any('blog/:name','blog/read',[],['name'=>'\w+']);
+        }
+    });
+
+MISS路由
+========
+全局MISS路由
+------------
+如果希望在没有匹配到所有的路由规则后执行一条设定的路由，可以使用 ``MISS`` 路由功能，只需要在路由配置文件中定义：
+
+.. code-block:: php
+
+    return [
+        'new/:id'   => 'News/read',
+        'blog/:id'  => ['Blog/update',['method' => 'post|put'], ['id' => '\d+']],
+        '__miss__'  => 'public/miss',
+    ];
+
+或者使用 ``miss`` 方法注册路由
+
+.. code-block:: php
+
+    Route::miss('public/miss');
+
+当没有匹配到所有的路由规则后，会路由到 ``public/miss`` 路由地址。
+
+分组MISS路由
+------------
+分组支持独立的 ``MISS`` 路由，例如如下定义：
+
+.. code-block:: php
+
+    return [
+        '[blog]' =>  [
+            'edit/:id'  => ['Blog/edit',['method' => 'get'], ['id' => '\d+']],
+            ':id'       => ['Blog/read',['method' => 'get'], ['id' => '\d+']],
+            '__miss__'  => 'blog/miss',
+        ],
+        'new/:id'   => 'News/read',
+        '__miss__'  => 'public/miss',
+    ];
+
+如果使用 ``group`` 方法注册路由的话，可以使用下面的方式：
+
+.. code-block:: php
+
+    Route::group('blog',function(){
+        Route::rule(':id','blog/read',[],['id'=>'\d+']);
+        Route::rule(':name','blog/read',[],['name'=>'\w+']);
+        Route::miss('blog/miss');
+    },['method'=>'get','ext'=>'html']);
+
+闭包支持
+=========
+闭包定义
+--------
+我们可以使用闭包的方式定义一些特殊需求的路由，而不需要执行控制器的操作方法了，例如：
+
+.. code-block:: php
+
+    Route::get('hello',function(){
+        return 'hello,world!';
+    });
+
+参数传递
+--------
+闭包定义的时候支持参数传递，例如：
+
+.. code-block:: php
+
+    Route::get('hello/:name',function($name){
+        return 'Hello,'.$name;
+    });
+
+规则路由中定义的动态变量的名称 就是闭包函数中的参数名称，不分次序。
+
+因此，如果我们访问的URL地址是：
+
+.. code-block:: shell
+
+    http://serverName/hello/thinkphp
+
+则浏览器输出的结果是：
+
+.. code-block:: shell
+
+    Hello,thinkphp
+
+路由绑定
+========
+可以使用路由绑定简化 ``URL`` 或者路由规则的定义，绑定支持如下方式：
+
+绑定到模块/控制器/操作
+----------------------
+把当前的 ``URL`` 绑定到 模块/控制器/操作 ，最多支持绑定到操作级别，例如在路由配置文件中添加：
+
+.. code-block:: php
+
+    // 绑定当前的URL到 index模块
+    Route::bind('index');
+    // 绑定当前的URL到 index模块的blog控制器
+    Route::bind('index/blog');
+    // 绑定当前的URL到 index模块的blog控制器的read操作
+    Route::bind('index/blog/read');
+
+该方式针对路由到 模块/控制器/操作 有效，假如我们绑定到了 ``index`` 模块的 ``blog`` 控制器，那么原来的访问 ``URL`` 从 ``http://serverName/index/blog/read/id/5`` 可以简化成 ``http://serverName/read/id/5`` 。
+
+如果定义了路由
+
+.. code-block:: php
+
+    Route::get('index/blog/:id','index/blog/read');
+
+那么访问 ``URL`` 就变成了
+
+.. code-block:: shell
+
+    http://serverName/5
+
+绑定到命名空间
+--------------
+把当前的 ``URL`` 绑定到某个指定的命名空间，例如：
+
+.. code-block:: php
+
+    // 绑定命名空间
+    Route::bind('\app\index\controller','namespace');
+
+那么，我们接下来只需要通过
+
+.. code-block:: shell
+
+    http://serverName/blog/read/id/5
+
+就可以直接访问 ``\app\index\controller\Blog`` 类的 ``read`` 方法。
+
+绑定到类
+--------
+把当前的 ``URL`` 直接绑定到某个指定的类，例如：
+
+.. code-block:: php
+
+    // 绑定到类
+    Route::bind('\app\index\controller\Blog','class');
+
+那么，我们接下来只需要通过
+
+.. code-block:: shell
+
+    http://serverName/read/id/5
+
+就可以直接访问 ``\app\index\controller\Blog`` 类的 ``read`` 方法。
+
+.. note:: 绑定到命名空间和类之后，不会进行模块的初始化工作。
+
+入口文件绑定
+------------
+如果我们需要给某个入口文件绑定模块，可以使用下面两种方式：
+
+常量定义
+^^^^^^^^
+只需要入口文件添加 ``BIND_MODULE`` 常量，即可把当前入口文件绑定到指定的模块或者控制器，例如：
+
+.. code-block:: php
+
+    // 定义应用目录
+    define('APP_PATH', __DIR__ . '/../application/');
+    // 绑定到index模块
+    define('BIND_MODULE','index');
+    // 加载框架引导文件
+    require __DIR__ . '/../thinkphp/start.php';
+
+自动入口绑定
+^^^^^^^^^^^^
+如果你的入口文件都是对应实际的模块名，那么可以使用入口文件自动绑定模块的功能，只需要在应用配置文件中添加：
+
+.. code-block:: php
+
+    // 开启入口文件自动绑定模块
+    'auto_bind_module'  =>  true,
+
+当我们重新添加一个 ``public/demo.php`` 入口文件，内容和 ``public/index.php`` 一样：
+
+.. code-block:: php
+
+    // 定义应用目录
+    define('APP_PATH', __DIR__ . '/../application/');
+    // 加载框架引导文件
+    require __DIR__ . '/../thinkphp/start.php';
+
+但其实访问 ``demo.php`` 的时候，其实已经自动绑定到了 ``demo`` 模块。
+
+绑定模型
+========
+模型绑定（V5.0.1）
+-----------------
+路由规则和分组支持绑定模型数据，例如：
+
+.. code-block:: php
+
+    Route::rule('hello/:id','index/index/hello','GET',[
+        'ext'                   =>  'html',
+        'bind_model'    =>  [
+            'user'  =>  '\app\index\model\User',
+        ],
+    ]);
+
+会自动给当前路由绑定 ``id`` 为当前路由变量值的 ``User`` 模型数据。
+
+可以定义模型数据的查询条件，例如：
+
+.. code-block:: php
+
+    Route::rule('hello/:name/:id','index/index/hello','GET',[
+        'ext'                   =>  'html',
+        'bind_model'    =>  [
+            'user'  =>  ['\app\index\model\User','id&name']
+        ],
+    ]);
+
+表示查询 ``id`` 和 ``name`` 的值等于当前路由变量的模型数据。
+
+也可以使用闭包来返回模型对象数据
+
+.. code-block:: php
+
+    Route::rule('hello/:id','index/index/hello','GET',[
+        'ext'                   =>  'html',
+        'bind_model'    =>  [
+            'user'  =>  function($param){
+                $model = new \app\index\model\User;
+                return $model->where($param)->find();
+            }
+        ],
+    ]);
+
+闭包函数的参数就是当前请求的 URL 变量信息。
+
+在控制器中可以通过下面的代码或者使用依赖注入获取：
+
+.. code-block:: php
+
+    request()->user;
+
+.. note:: 绑定的模型可以直接在控制器的架构方法或者操作方法中自动注入，具体可以参考请求章节的依赖注入。
+
+域名路由
+========
+ThinkPHP 支持完整域名、子域名和 ``IP`` 部署的路由和绑定功能，同时还可以起到简化 ``URL`` 的作用。
+
+要启用域名部署路由功能，首先需要开启：
+
+.. code-block:: php
+
+    'url_domain_deploy' =>  true
+
+定义域名部署规则支持两种方式： **动态注册** 和 **配置定义** 。
+
+动态注册
+--------
+可以在应用的公共文件或者配置文件中动态注册域名部署规则，例如：
+
+.. code-block:: php
+
+    // blog子域名绑定到blog模块
+    Route::domain('blog','blog');
+    // 完整域名绑定到admin模块
+    Route::domain('admin.thinkphp.cn','admin');
+    // IP绑定到admin模块
+    Route::domain('114.23.4.5','admin');
+
+``blog`` 子域名绑定后， ``URL`` 访问规则变成：
+
+.. code-block:: shell
+
+    // 原来的URL访问
+    http://www.thinkphp.cn/blog/article/read/id/5
+    // 绑定到blog子域名访问
+    http://blog.thinkphp.cn/article/read/id/5
+
+支持绑定的时候添加默认参数，例如：
+
+.. code-block:: php
+
+    // blog子域名绑定到blog模块
+    Route::domain('blog','blog?var=thinkphp');
+
+除了绑定到模块之外，还隐式传入了一个 ``$_GET['var'] = 'thinkphp'`` 变量。
+
+支持直接绑定到控制器，例如：
+
+.. code-block:: php
+
+    // blog子域名绑定到index模块的blog控制器
+    Route::domain('blog','index/blog');
+
+URL访问地址变化为：
+
+.. code-block:: shell
+
+    // 原来的URL访问
+    http://www.thinkphp.cn/index/blog/read/id/5
+    // 绑定到blog子域名访问
+    http://blog.thinkphp.cn/read/id/5
+
+如果你的域名后缀比较特殊，例如是 ``com.cn`` 或者 ``net.cn`` 之类的域名，需要配置：
+
+.. code-block:: php
+
+    'url_domain_root'=>'thinkphp.com.cn'
+
+泛域名部署
+^^^^^^^^^^
+可以支持泛域名部署规则，例如：
+
+.. code-block:: php
+
+    // 绑定泛二级域名域名到book模块
+    Route::domain('*','book?name=*');
+
+下面的 ``URL`` 访问都会直接访问 ``book`` 模块
+
+.. code-block:: shell
+
+    http://hello.thinkphp.cn
+    http://quickstart.thinkphp.cn
+
+并且可以直接通过 ``$_GET['name']`` 变量 获取当前的泛域名。
+
+支持三级泛域名部署，例如：
+
+.. code-block:: shell
+
+    // 绑定泛三级域名到user模块
+    Route::domain('*.user','user?name=*');
+
+如果我们访问如下 ``URL`` 地址：
+
+.. code-block:: shell
+
+    http://hello.user.thinkphp.cn
+
+的同时，除了会访问 ``user`` 模块之外，还会默认传入 ``$_GET['name'] = 'hello'`` 
+
+在配置传入参数的时候，如果需要使用当前的泛域名作为参数，可以直接设置为 ``*`` 即可。
+
+.. note:: 目前只支持二级域名和三级域名的泛域名部署。
+
+配置定义方式
+-------------
+除了动态注册之外，还支持直接在路由配置文件中定义域名部署规则，例如：
+
+.. code-block:: php
+
+    return [
+        '__domain__'=>[
+            'blog'      => 'blog',
+            // 泛域名规则建议在最后定义
+            '*.user'    =>  'user',
+            '*'         => 'book',
+        ],
+        // 下面是路由规则定义
+    ]
+
+域名绑定地址
+------------
+前面我们看到的域名部署规则：
+
+.. code-block:: php
+
+    // blog子域名绑定到blog模块
+    Route::domain('blog','blog');
+
+其实是把域名绑定到模块的方式，其实还有其他的绑定方式。
+
+绑定到命名空间
+^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    // blog子域名绑定命名空间
+    Route::domain('blog','\app\blog\controller');
+
+绑定到类
+^^^^^^^^^
+
+.. code-block:: php
+
+    // blog子域名绑定到类
+    Route::domain('blog','@\app\blog\controller\Article');
+
+绑定到闭包函数
+^^^^^^^^^^^^^^
+如果需要，你也可以直接把域名绑定到一个闭包函数，例如：
+
+.. code-block:: php
+
+    // blog子域名绑定闭包函数
+    Route::domain('blog',function(){
+        echo 'hello';
+        return ['bind'=>'module','module'=>'blog'];
+    });
+
+域名绑定到闭包函数其实是一种劫持，可以在闭包函数里面动态注册其它的绑定机制或者注册新的路由，例如：
+
+.. code-block:: php
+
+    Route::domain('www', function(){
+        // 动态注册域名的路由规则
+        Route::rule('new/:id', 'index/news/read');
+        Route::rule(':user', 'index/user/info');
+    });
+
+如果你不希望继续，可以直接在闭包函数里面中止执行。
+
+.. code-block:: php
+
+    // blog子域名绑定到闭包函数
+    Route::domain('blog',function(){
+        exit('hello');
+    });
+
+绑定路由规则
+^^^^^^^^^^^^
+可以把域名绑定到一系列指定的路由规则，例如：
+
+.. code-block:: php
+
+    Route::domain('blog',[
+        // 动态注册域名的路由规则
+        ':id' => ['blog/read',['method'=>'GET'],['id'=>'\d+']],
+        ':name'=>'blog/read',
+    ]);
+
+如果使用配置文件配置的话，可以按照下面的方式：
+
+.. code-block:: php
+
+    return [
+        '__domain__'=>[
+            'blog'      => [
+                // 动态注册域名的路由规则
+                ':id' => ['blog/read',['method'=>'GET'],['id'=>'\d+']],
+                ':name'=>'blog/read',
+            ],
+        ],
+        // 下面是其它的路由规则定义
+    ]
+
+更详细的绑定功能请参考路由绑定一章内容。
+
+URL生成
+=======
+ThinkPHP5.0 支持路由 ``URL`` 地址的统一生成，并且支持所有的路由方式，以及完美解决了路由地址的反转解析，无需再为路由定义和变化而改变 ``URL`` 生成。
+
++--------+------------------------------------------------------------------+
+| 版本   | 更新功能                                                         |
++========+==================================================================+
+| 5.0.10 | 增加app_host配置参数用于设置当前生成URL的根地址                  |
++--------+------------------------------------------------------------------+
+| -      | 增加https_agent_name配置参数用于设置当前CDN或者代理的https标识名 |
++--------+------------------------------------------------------------------+
+
+``URL`` 生成使用 ``\think\Url::build()`` 方法或者使用系统提供的助手函数 ``url()`` ，参数一致：
+
+**Url::build('地址表达式',['参数'],['URL后缀'],['域名'])**
+
+**url('地址表达式',['参数'],['URL后缀'],['域名'])**
+
+地址表达式和参数
+----------------
+对使用不同的路由地址方式，地址表达式的定义有所区别。参数单独通过第二个参数传入，假设我们定义了一个路由规则如下：
+
+.. code-block:: php
+
+    Route::rule('blog/:id','index/blog/read');
+
+就可以使用下面的方式来生成 ``URL`` 地址：
+
+.. code-block:: php
+
+    Url::build('index/blog/read','id=5&name=thinkphp');
+    Url::build('index/blog/read',['id'=>5,'name'=>'thinkphp']);
+    url('index/blog/read','id=5&name=thinkphp');
+    url('index/blog/read',['id'=>5,'name'=>'thinkphp']);
+
+使用模块/控制器/操作生成
+^^^^^^^^^^^^^^^^^^^^^^^^
+如果你的路由方式是路由到 模块/控制器/操作 ，那么可以直接写
+
+.. code-block:: php
+
+    // 生成index模块 blog 控制器的read操作 URL访问地址
+    Url::build('index/blog/read','id=5&name=thinkphp');
+    // 使用助手函数
+    url('index/blog/read','id=5&name=thinkphp');
+
+以上方法都会生成下面的 ``URL`` 地址：
+
+.. code-block:: shell
+
+    /index.php/blog/5/name/thinkphp.html
+
+.. note:: 注意，生成方法的第一个参数必须和路由定义的路由地址保持一致，如果写成下面的方式可能无法正确生成URL地址： ``Url::build('blog/read','id=5&name=thinkphp');``
+
+如果你的环境支持 ``REWRITE`` ，那么生成的 ``URL`` 地址会变为：
+
+.. code-block:: shell
+
+    /blog/5/name/thinkphp.html
+
+如果你配置了：
+
+.. code-block:: php
+
+    'url_common_param'=>true
+
+那么生成的 URL 地址变为：
+
+.. code-block:: shell
+
+    /index.php/blog/5.html?name=thinkphp
+
+不在路由规则里面的变量会直接使用普通 ``URL`` 参数的方式。
+
+.. note:: 需要注意的是， ``URL`` 地址生成不会检测路由的有效性，只是按照给定的路由地址和参数生成符合条件的路由规则。
+
+使用控制器的方法生成
+^^^^^^^^^^^^^^^^^^^^
+如果你的路由地址是采用控制器的方法，并且路由定义如下：
+
+.. code-block:: php
+
+    // 这里采用配置方式定义路由 动态注册的方式一样有效
+    'blog/:id'  => '@index/blog/read'
+
+那么可以使用如下方式生成：
+
+.. code-block:: php
+
+    // 生成index模块 blog控制器的read操作 URL访问地址
+    Url::build('@index/blog/read','id=5');
+    // 使用助手函数
+    url('@index/blog/read','id=5');
+
+那么自动生成的 URL 地址变为：
+
+.. code-block:: shell
+
+    /index.php/blog/5.html
+
+使用类的方法生成
+^^^^^^^^^^^^^^^^
+如果你的路由地址是路由到类的方法，并且做了如下路由规则定义：
+
+.. code-block:: php
+
+    // 这里采用配置方式定义路由 动态注册的方式一样有效
+    Route::rule(['blog','blog/:id'],'\app\index\controller\blog@read');
+
+如果路由地址是到类的方法，需要首先给路由定义命名标识，然后使用标识快速生成 ``URL`` 地址。
+
+那么可以使用如下方式生成：
+
+.. code-block:: php
+
+    // 生成index模块 blog控制器的read操作 URL访问地址
+    Url::build('blog?id=5');
+    url('blog?id=5');
+
+那么自动生成的 URL 地址变为：
+
+.. code-block:: shell
+
+    /index.php/blog/5.html
+
+直接使用路由地址
+^^^^^^^^^^^^^^^^
+我们也可以直接使用路由地址来生成 ``URL`` ，例如：
+
+我们定义了路由规则如下：
+
+.. code-block:: php
+
+    'blog/:id' => 'index/blog/read'
+
+可以使用下面的方式直接使用路由规则生成 ``URL`` 地址：
+
+.. code-block:: php
+
+    Url::build('/blog/5');
+
+那么自动生成的 URL 地址变为：
+
+.. code-block:: php
+
+    /index.php/blog/5.html
+
+URL后缀
+--------
+默认情况下，系统会自动读取 ``url_html_suffix`` 配置参数作为 ``URL`` 后缀（默认为 ``html`` ），如果我们设置了：
+
+.. code-block:: php
+
+    'url_html_suffix'   => 'shtml'
+
+那么自动生成的 URL 地址变为：
+
+.. code-block:: shell
+
+    /index.php/blog/5.shtml
+
+如果我们设置了多个 URL 后缀支持
+
+.. code-block:: shell
+
+    'url_html_suffix'   => 'html|shtml'
+
+则会取第一个后缀来生成 ``URL`` 地址，所以自动生成的 ``URL`` 地址还是：
+
+.. code-block:: shell
+
+    /index.php/blog/5.html
+
+如果你希望指定 URL 后缀生成，则可以使用：
+
+.. code-block:: php
+
+    Url::build('index/blog/read','id=5','shtml');
+    url('index/blog/read','id=5','shtml');
+
+域名生成
+--------
+默认生成的 URL 地址是不带域名的，如果你采用了多域名部署或者希望生成带有域名的 URL 地址的话，就需要传入第四个参数，该参数有两种用法：
+
+自动生成域名
+^^^^^^^^^^^^
+
+.. code-block:: php
+
+    Url::build('index/blog/read','id=5','shtml',true);
+    url('index/blog/read','id=5','shtml',true);
+
+第四个参数传入 ``true`` 的话，表示自动生成域名，如果你开启了 ``url_domain_deploy`` 还会自动识别匹配当前 ``URL`` 规则的域名。
+
+例如，我们注册了域名路由信息如下：
+
+.. code-block:: php
+
+    Route::domain('blog','index/blog');
+
+那么上面的 ``URL`` 地址生成为：
+
+.. code-block:: shell
+
+    http://blog.thinkphp.cn/read/id/5.shtml
+
+指定域名
+^^^^^^^^^
+你也可以显式传入需要生成地址的域名，例如：
+
+.. code-block:: php
+
+    Url::build('index/blog/read','id=5','shtml','blog');
+    url('index/blog/read','id=5','shtml','blog');
+
+或者传入完整的域名
+
+.. code-block:: php
+
+    Url::build('index/blog/read','id=5','shtml','blog.thinkphp.cn');
+    url('index/blog/read','id=5','shtml','blog.thinkphp.cn');
+
+生成的 ``URL`` 地址为：
+
+.. code-block:: shell
+
+    http://blog.thinkphp.cn/read/id/5.shtml
+
+也可以直接在第一个参数里面传入域名，例如：
+
+.. code-block:: php
+
+    Url::build('index/blog/read@blog','id=5');
+    url('index/blog/read@blog','id=5');
+    url('index/blog/read@blog.thinkphp.cn','id=5');
+
+生成锚点
+--------
+支持生成 ``URL`` 的锚点，可以直接在 ``URL`` 地址参数中使用：
+
+.. code-block:: php
+
+    Url::build('index/blog/read#anchor@blog','id=5');
+    url('index/blog/read#anchor@blog','id=5');
+
+锚点和域名一起使用的时候，注意锚点在前面，域名在后面。
+
+生成的 ``URL`` 地址为：
+
+.. code-block:: php
+
+    http://blog.thinkphp.cn/read/id/5.html#anchor
+
+隐藏或者加上入口文件
+--------------------
+有时候我们生成的 ``URL`` 地址可能需要加上 ``index.php`` 或者去掉 ``index.php`` ，大多数时候系统会自动判断，如果发现自动生成的地址有问题，可以直接在调用 ``build`` 方法之前调用 ``root`` 方法，例如加上 ``index.php`` ：
+
+.. code-block:: php
+
+    Url::root('/index.php');
+    Url::build('index/blog/read','id=5');
+
+或者隐藏 ``index.php`` ：
+
+.. code-block:: php
+
+    Url::root('/');
+    Url::build('index/blog/read','id=5');
+
+.. note:: ``root`` 方法只需要调用一次即可。

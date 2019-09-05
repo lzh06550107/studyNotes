@@ -1,0 +1,745 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5. 使用Laravel构建Web服务 &mdash; laravel整合vue 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel整合vue 1.0 文档" href="index.html"/>
+        <link rel="next" title="6. 使用Webpack整合Laravel和Vue" href="使用Webpack整合Laravel和Vue.html"/>
+        <link rel="prev" title="4. 配置Laravel开发环境" href="配置Laravel开发环境.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel整合vue
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="本书概览.html">1. 本书概览</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hello Vue – An Introduction to Vue.js.html">2. Hello Vue – An Introduction to Vue.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vuebnb原型，你的第一个vue项目.html">3. Vuebnb原型，你的第一个vue项目</a></li>
+<li class="toctree-l1"><a class="reference internal" href="配置Laravel开发环境.html">4. 配置Laravel开发环境</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. 使用Laravel构建Web服务</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vuebnb">5.1. Vuebnb房间列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#web">5.2. web服务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">5.3. 模拟数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">5.4. 数据库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">5.5. 迁移</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">5.5.1. 模式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">5.5.2. 执行</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">5.6. 填充模拟列表</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">5.6.1. 创建一个播种器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">5.6.2. 执行播种器</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">5.7. 列表模型</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#eloquent-orm">5.7.1. Eloquent ORM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">5.7.2. 类型转换</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">5.8. 闭包处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">5.9. 控制器处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">5.10. 图片</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id18">5.10.1. 访问图像</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">5.10.2. 图像链接</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">5.11. 总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="使用Webpack整合Laravel和Vue.html">6. 使用Webpack整合Laravel和Vue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Vue组件来编写小部件.html">7. 使用Vue组件来组合小部件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用Vue路由器构建一个多页面的应用程序.html">8. 用Vue路由器构建一个多页面的应用程序</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel整合vue</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>5. 使用Laravel构建Web服务</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/使用Laravel构建Web服务.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="laravelweb">
+<h1>5. 使用Laravel构建Web服务<a class="headerlink" href="#laravelweb" title="永久链接至标题">¶</a></h1>
+<p>在上一章中，我们获得了 <code class="docutils literal"><span class="pre">Homestead</span></code> 开发环境并开始运行，并开始为主要的 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 项目提供服务。 在本章中，我们将创建一个简单的 <code class="docutils literal"><span class="pre">Web</span></code> 服务，使 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的房间列表数据准备好并显示在前端。</p>
+<p>本章涵盖的主题：</p>
+<ul class="simple">
+<li>使用 <code class="docutils literal"><span class="pre">Laravel</span></code> 创建 <code class="docutils literal"><span class="pre">Web</span></code> 服务；</li>
+<li>编写数据库迁移和种子文件；</li>
+<li>创建 <code class="docutils literal"><span class="pre">API</span></code> 端点以公开访问数据；</li>
+<li>从 <code class="docutils literal"><span class="pre">Laravel</span></code> 提供图像；</li>
+</ul>
+<div class="section" id="vuebnb">
+<h2>5.1. Vuebnb房间列表<a class="headerlink" href="#vuebnb" title="永久链接至标题">¶</a></h2>
+<p>在第2章，您的第一个 <code class="docutils literal"><span class="pre">Vue.js</span></code> 项目 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 原型开发中，我们构建了前端应用程序的列表页面原型。 不久，我们将删除此页面上的硬编码数据，并将其转换为可显示任何房间列表的模板。</p>
+<p>我们不会为用户在本书中创建自己的房间列表添加功能。 相反，我们将使用包含30个不同列表的模拟数据包，每个列表都有自己独特的标题，描述和图像。 我们将为这些列表创建数据库，并根据需要配置 <code class="docutils literal"><span class="pre">Laravel</span></code> 将它们提供给前端。</p>
+</div>
+<div class="section" id="web">
+<h2>5.2. web服务<a class="headerlink" href="#web" title="永久链接至标题">¶</a></h2>
+<p>Web服务是运行在服务器上的应用程序，允许客户端（如浏览器）通过 <code class="docutils literal"><span class="pre">HTTP</span></code> 远程向/从服务器读写数据。</p>
+<p>Web服务的接口将是一个或多个 <code class="docutils literal"><span class="pre">API</span></code> 端点，有时通过身份验证进行保护，它将返回 <code class="docutils literal"><span class="pre">XML</span></code> 或 <code class="docutils literal"><span class="pre">JSON</span></code> 负载中的数据：</p>
+<div class="figure" id="id23">
+<img alt="_images/4-1.png" src="_images/4-1.png" />
+<p class="caption"><span class="caption-text">图 4.1. Vuebnb web service</span></p>
+</div>
+<p>Web服务是 <code class="docutils literal"><span class="pre">Laravel</span></code> 的特色，因此为 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 创建Web服务并不难。 我们将为我们的 <code class="docutils literal"><span class="pre">API</span></code> 端点使用路由，并使用 <code class="docutils literal"><span class="pre">Laravel</span></code> 将无缝地与数据库同步的 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型来表示列表：</p>
+<div class="figure" id="id24">
+<img alt="_images/4-2.png" src="_images/4-2.png" />
+<p class="caption"><span class="caption-text">图 4.2. Web service architecture</span></p>
+</div>
+<p><code class="docutils literal"><span class="pre">Laravel</span></code> 还具有内置功能来添加 <code class="docutils literal"><span class="pre">REST</span></code> 等 <code class="docutils literal"><span class="pre">API</span></code> 架构，尽管对于简单用例，我们不需要这些。</p>
+</div>
+<div class="section" id="id1">
+<h2>5.3. 模拟数据<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>模拟列表数据位于文件 <code class="docutils literal"><span class="pre">database/data.json</span></code> 中。 该文件包含30个对象的 <code class="docutils literal"><span class="pre">JSON</span></code> 编码数组，每个对象代表不同的列表。 建立了列表页面原型之后，您无疑会认识到这些对象上的许多相同属性，包括标题，地址和说明。</p>
+<p>database/data.json:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>[
+  {
+    &quot;id&quot;: 1,
+    &quot;title&quot;: &quot;Central Downtown Apartment with Amenities&quot;,
+    &quot;address&quot;: &quot;...&quot;,
+    &quot;about&quot;: &quot;...&quot;,
+    &quot;amenity_wifi&quot;: true,
+    &quot;amenity_pets_allowed&quot;: true,
+    &quot;amenity_tv&quot;: true,
+    &quot;amenity_kitchen&quot;: true,
+    &quot;amenity_breakfast&quot;: true,
+    &quot;amenity_laptop&quot;: true,
+    &quot;price_per_night&quot;: &quot;$89&quot;
+    &quot;price_extra_people&quot;: &quot;No charge&quot;,
+    &quot;price_weekly_discount&quot;: &quot;18%&quot;,
+    &quot;price_monthly_discount&quot;: &quot;50%&quot;,
+  },
+  {
+    &quot;id&quot;: 2,
+    ...
+  },
+  ...
+]
+</pre></div>
+</div>
+<p>每个模拟列表还包括房间的几张图片。 图像并不是真正属于web服务的一部分，但它们将存储在我们的应用程序中的公共文件夹中，以便根据需要提供服务。</p>
+<p>图像文件不在项目代码中，但在我们从 <code class="docutils literal"><span class="pre">GitHub</span></code> 下载的代码库中。 我们将在本章的后面将它们复制到我们的项目文件夹中。</p>
+</div>
+<div class="section" id="id2">
+<h2>5.4. 数据库<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>我们的 <code class="docutils literal"><span class="pre">Web</span></code> 服务将需要一个数据库表来存储模拟列表数据。 要进行设置，我们需要创建一个模式和迁移。 然后，我们将创建一个播种器，它将加载并解析我们的模拟数据文件并将其插入到数据库中，以供在应用程序中使用。</p>
+</div>
+<div class="section" id="id3">
+<h2>5.5. 迁移<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">migration`</span></code> 是一个特殊的类，它包含一组针对数据库运行的操作，例如创建或修改数据库表。 迁移可确保每次创建应用程序的新实例时都能以相同的方式设置数据库，例如在生产环境或团队计算机上进行安装。</p>
+<p>要创建新的迁移，请使用 <code class="docutils literal"><span class="pre">make:migration</span></code> <code class="docutils literal"><span class="pre">Artisan</span> <span class="pre">CLI</span></code> 命令。 该命令的参数应该是一个蛇式的描述，说明迁移将会做什么：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ php artisan make:migration create_listings_table
+</pre></div>
+</div>
+<p>您现在将在 <code class="docutils literal"><span class="pre">database/migrations</span></code> 目录中看到您的新迁移。 你会注意到文件名有一个前缀时间戳，比如 <code class="docutils literal"><span class="pre">2017_06_20_133317_create_listings_table.php</span></code> 。 时间戳允许 <code class="docutils literal"><span class="pre">Laravel</span></code> 确定迁移的正确顺序，以防一次需要运行多个迁移。</p>
+<p>您的新迁移将声明一个扩展迁移的类。 它覆盖了两种方法： <code class="docutils literal"><span class="pre">up</span></code> ，用于向数据库添加新的表，列或索引; 和 <code class="docutils literal"><span class="pre">down</span></code> ，并用于删除它们。 我们很快就会实施这些方法。</p>
+<p>2017_06_20_133317_create_listings_table.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Schema</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Schema\Blueprint</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Migrations\Migration</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">CreateListingsTable</span> <span class="k">extends</span> <span class="nx">Migration</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">up</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="c1">//</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">down</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="c1">//</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id4">
+<h3>5.5.1. 模式<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>模式是数据库结构的蓝图。 对于像 <code class="docutils literal"><span class="pre">MySQL</span></code> 这样的关系型数据库，模式会将数据组织到表和列中。 在 <code class="docutils literal"><span class="pre">Laravel</span></code> 中，架构是通过使用 <code class="docutils literal"><span class="pre">Schema</span></code> 外观的 <code class="docutils literal"><span class="pre">create</span></code> 方法来声明的。</p>
+<p>现在我们将制定一个表格来保存 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 列表。 表中的列将与我们的模拟列表数据的结构相匹配。 请注意，我们为设施设置了默认的 <code class="docutils literal"><span class="pre">false</span></code> 值 ，并允许价格具有 <code class="docutils literal"><span class="pre">NULL</span></code> 值。 所有其他列都需要一个值。</p>
+<p>模式将进入我们的迁移的 <code class="docutils literal"><span class="pre">up</span></code> 方法。 我们还会通过调用 <code class="docutils literal"><span class="pre">Schema::drop</span></code> 来填写 <code class="docutils literal"><span class="pre">down</span></code> 。</p>
+<p>2017_06_20_133317_create_listings_table.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">up</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="nx">Schema</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;listings&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">primary</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">unsignedInteger</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;address&#39;</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">longText</span><span class="p">(</span><span class="s1">&#39;about&#39;</span><span class="p">);</span>
+
+    <span class="c1">// Amenities</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">boolean</span><span class="p">(</span><span class="s1">&#39;amenity_wifi&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">default</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">boolean</span><span class="p">(</span><span class="s1">&#39;amenity_pets_allowed&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">default</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">boolean</span><span class="p">(</span><span class="s1">&#39;amenity_tv&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">default</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">boolean</span><span class="p">(</span><span class="s1">&#39;amenity_kitchen&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">default</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">boolean</span><span class="p">(</span><span class="s1">&#39;amenity_breakfast&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">default</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">boolean</span><span class="p">(</span><span class="s1">&#39;amenity_laptop&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">default</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+
+    <span class="c1">// Prices</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;price_per_night&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">();</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;price_extra_people&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">();</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;price_weekly_discount&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">();</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;price_monthly_discount&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">down</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="nx">Schema</span><span class="o">::</span><span class="na">drop</span><span class="p">(</span><span class="s1">&#39;listings&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last"><code class="docutils literal"><span class="pre">Facade</span></code> 是一种面向对象的设计模式，用于为服务容器中的基础类创建静态代理。 外观并不意味着提供任何新的功能; 它的唯一目的是提供一个更加令人难忘且易于阅读的执行共同行动的方式。 把它想象成一个面向对象的帮助函数。</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>5.5.2. 执行<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>现在我们已经设置了新的迁移，让我们用这个 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令来运行它：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ php artisan migrate
+</pre></div>
+</div>
+<p>你应该在 <code class="docutils literal"><span class="pre">Terminal</span></code> 里看到这样的输出：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>Migrating: 2017_06_20_133317_create_listings_table
+Migrated:  2017_06_20_133317_create_listings_table
+</pre></div>
+</div>
+<p>为了确认迁移工作，我们使用 <code class="docutils literal"><span class="pre">Tinker</span></code> 来显示新的表结构。 如果您从未使用过 <code class="docutils literal"><span class="pre">Tinker</span></code> 程序，那么它就是一个 <code class="docutils literal"><span class="pre">REPL</span></code> 工具，它允许您在命令行上与 <code class="docutils literal"><span class="pre">Laravel</span></code> 应用程序进行交互。 当你将一个命令输入 <code class="docutils literal"><span class="pre">Tinker</span></code> 进入程序中时，它将被认为是在你的应用程序代码中的一行。</p>
+<p>首先，打开Tinker外壳：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ php artisan tinker
+</pre></div>
+</div>
+<p>现在输入一个 <code class="docutils literal"><span class="pre">PHP</span></code> 语句进行计算。 让我们使用 <code class="docutils literal"><span class="pre">DB</span> <span class="pre">Facade</span></code> 的 <code class="docutils literal"><span class="pre">select</span></code> 方法来运行 <code class="docutils literal"><span class="pre">SQL</span> <span class="pre">DESCRIBE</span></code> 查询来显示表结构：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>&gt;&gt;&gt;&gt; DB::select<span class="o">(</span><span class="s1">&#39;DESCRIBE listings;&#39;</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>输出结果非常详细，所以我不会在这里重现它，但是您应该看到一个包含所有表格细节的对象，从而确认迁移工作正常。</p>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>5.6. 填充模拟列表<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>现在我们有一个数据库表供我们的列表使用，让我们将它与模拟数据结合起来。 要做到这一点，我们必须做到以下几点：</p>
+<ol class="arabic simple">
+<li>加载 <code class="docutils literal"><span class="pre">database/data.json</span></code> 文件；</li>
+<li>解析文件；</li>
+<li>将数据插入列表表格中；</li>
+</ol>
+<div class="section" id="id7">
+<h3>5.6.1. 创建一个播种器<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Laravel</span></code> 包含一个我们可以扩展的播种机类，称为播种机。 使用这个 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令来实现它：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ php artisan make:seeder ListingsTableSeeder
+</pre></div>
+</div>
+<p>当我们运行播种机时， <code class="docutils literal"><span class="pre">run</span></code> 方法中的任何代码都会被执行。</p>
+<p>database/ListingsTableSeeder.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Seeder</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ListingsTableSeeder</span> <span class="k">extends</span> <span class="nx">Seeder</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="c1">//</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id8">
+<h4>5.6.1.1. 加载模拟数据<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">Laravel</span></code> 提供了一个 <code class="docutils literal"><span class="pre">File</span></code> Facade，它允许我们像 <code class="docutils literal"><span class="pre">File::get($path)</span></code> 一样简单地从磁盘打开文件。 为了获得我们的模拟数据文件的完整路径，我们可以使用 <code class="docutils literal"><span class="pre">base_path()</span></code> 辅助函数，它以字符串的形式返回到我们应用程序目录根目录的路径。</p>
+<p>然后使用内置的 <code class="docutils literal"><span class="pre">json_decode</span></code> 方法将此 <code class="docutils literal"><span class="pre">JSON</span></code> 文件转换为 <code class="docutils literal"><span class="pre">PHP</span></code> 数组很简单。 一旦数据是一个数组，它可以直接插入到数据库中，因为表的列名与数组键相同。</p>
+<p>database/ListingsTableSeeder.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="nv">$path</span> <span class="o">=</span> <span class="nx">base_path</span><span class="p">()</span> <span class="o">.</span> <span class="s1">&#39;/database/data.json&#39;</span><span class="p">;</span>
+  <span class="nv">$file</span> <span class="o">=</span> <span class="nx">File</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="nv">$path</span><span class="p">);</span>
+  <span class="nv">$data</span> <span class="o">=</span> <span class="nb">json_decode</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h4>5.6.1.2. 插入数据<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<p>为了插入数据，我们将再次使用 <code class="docutils literal"><span class="pre">DB</span></code> 门面。 这次我们将调用 <code class="docutils literal"><span class="pre">table</span></code> 方法，它返回 <code class="docutils literal"><span class="pre">Builder</span></code> 的一个实例。 <code class="docutils literal"><span class="pre">Builder</span></code> 类是一个流式查询生成器，它允许我们通过链式约束来查询数据库，例如 <code class="docutils literal"><span class="pre">DB::table(...)-&gt;where(...)-&gt;join(...)</span></code> 等等。 让我们使用构建器的 <code class="docutils literal"><span class="pre">insert</span></code> 方法，该方法接受列名和值的数组。</p>
+<p>database/seeds/ListingsTableSeeder.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="nv">$path</span> <span class="o">=</span> <span class="nx">base_path</span><span class="p">()</span> <span class="o">.</span> <span class="s1">&#39;/database/data.json&#39;</span><span class="p">;</span>
+  <span class="nv">$file</span> <span class="o">=</span> <span class="nx">File</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="nv">$path</span><span class="p">);</span>
+  <span class="nv">$data</span> <span class="o">=</span> <span class="nb">json_decode</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+  <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;listings&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">insert</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>5.6.2. 执行播种器<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>为了执行播种器，我们必须从 <code class="docutils literal"><span class="pre">DatabaseSeeder.php</span></code> 文件调用它，它位于同一目录中。</p>
+<p>database/seeds/DatabaseSeeder.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Seeder</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">DatabaseSeeder</span> <span class="k">extends</span> <span class="nx">Seeder</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">call</span><span class="p">(</span><span class="nx">ListingsTableSeeder</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>完成后，我们可以使用 <a href="#id11"><span class="problematic" id="id12">``</span></a>Artisan CLI``执行播种器：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ php artisan db:seed
+</pre></div>
+</div>
+<p>您应该在终端中看到以下输出：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>Seeding: ListingsTableSeeder
+</pre></div>
+</div>
+<p>我们会再次使用 <code class="docutils literal"><span class="pre">Tinker</span></code> 来检查我们的工作。 模拟数据中有30个列表，为了确认种子是否成功，让我们检查数据库中的30行：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ php artisan tinker
+&gt;&gt;&gt;&gt; DB::table<span class="o">(</span><span class="s1">&#39;listings&#39;</span><span class="o">)</span>-&gt;count<span class="o">()</span><span class="p">;</span>
+<span class="c1"># Output: 30</span>
+</pre></div>
+</div>
+<p>最后，让我们检查表格的第一行，以确保其内容符合我们的预期：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>&gt;&gt;&gt;&gt; DB::table<span class="o">(</span><span class="s1">&#39;listings&#39;</span><span class="o">)</span>-&gt;get<span class="o">()</span>-&gt;first<span class="o">()</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>这里是输出：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="o">=</span>&gt; <span class="o">{</span><span class="c1">#732</span>
+ +<span class="s2">&quot;id&quot;</span>: <span class="m">1</span>,
+ +<span class="s2">&quot;title&quot;</span>: <span class="s2">&quot;Central Downtown Apartment with Amenities&quot;</span>,
+ +<span class="s2">&quot;address&quot;</span>: <span class="s2">&quot;No. 11, Song-Sho Road, Taipei City, Taiwan 105&quot;</span>,
+ +<span class="s2">&quot;about&quot;</span>: <span class="s2">&quot;...&quot;</span>,
+ +<span class="s2">&quot;amenity_wifi&quot;</span>: <span class="m">1</span>,
+ +<span class="s2">&quot;amenity_pets_allowed&quot;</span>: <span class="m">1</span>,
+ +<span class="s2">&quot;amenity_tv&quot;</span>: <span class="m">1</span>,
+ +<span class="s2">&quot;amenity_kitchen&quot;</span>: <span class="m">1</span>,
+ +<span class="s2">&quot;amenity_breakfast&quot;</span>: <span class="m">1</span>,
+ +<span class="s2">&quot;amenity_laptop&quot;</span>: <span class="m">1</span>,
+ +<span class="s2">&quot;price_per_night&quot;</span>: <span class="s2">&quot;</span><span class="nv">$89</span><span class="s2">&quot;</span>,
+ +<span class="s2">&quot;price_extra_people&quot;</span>: <span class="s2">&quot;No charge&quot;</span>,
+ +<span class="s2">&quot;price_weekly_discount&quot;</span>: <span class="s2">&quot;18%&quot;</span>,
+ +<span class="s2">&quot;price_monthly_discount&quot;</span>: <span class="s2">&quot;50%&quot;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>如果你的看起来已经准备好，则继续前进！</p>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>5.7. 列表模型<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<p>我们现在已经成功为我们的列表创建了一个数据库表，并用模拟列表数据对其进行了种子处理。 我们现在如何从 <code class="docutils literal"><span class="pre">Laravel</span></code> 应用程序访问这些数据？</p>
+<p>我们看到数据库外观如何让我们直接在数据库上执行查询。 但是 <code class="docutils literal"><span class="pre">Laravel</span></code> 提供了一种通过 <code class="docutils literal"><span class="pre">Eloquent</span> <span class="pre">ORM</span></code> 访问数据的更强大的方法。</p>
+<div class="section" id="eloquent-orm">
+<h3>5.7.1. Eloquent ORM<a class="headerlink" href="#eloquent-orm" title="永久链接至标题">¶</a></h3>
+<p>对象关系映射（ <code class="docutils literal"><span class="pre">Object-Relational</span> <span class="pre">Mapping，ORM</span></code> ）是一种用于在不兼容面向对象的编程语言系统中的转换数据的技术。 像 <code class="docutils literal"><span class="pre">MySQL</span></code> 这样的关系数据库只能存储表格中组织的标量值，例如整数和字符串。 不过，我们想在我们的应用中使用丰富的对象，所以我们需要一种强大的转换手段。</p>
+<p><code class="docutils literal"><span class="pre">Eloquent</span></code> 是 <code class="docutils literal"><span class="pre">Laravel</span></code> 中使用的 <code class="docutils literal"><span class="pre">ORM</span></code> 实现。 它使用活动记录设计模式，其中模型绑定到单个数据库表，并且模型的实例绑定到单个行。</p>
+<p>要使用 <code class="docutils literal"><span class="pre">Eloquent</span> <span class="pre">ORM</span></code> 在 <code class="docutils literal"><span class="pre">Laravel</span></code> 中创建模型，只需使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 扩展 <code class="docutils literal"><span class="pre">Illuminate\Database\Eloquent\Model</span></code> 类：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ php artisan make:model Listing
+</pre></div>
+</div>
+<p>它生成一个新文件。</p>
+<p>app/Listing.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Listing</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+  <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们如何告诉 <code class="docutils literal"><span class="pre">ORM</span></code> 要映射到哪个表以及包含哪些列？ 默认情况下， <code class="docutils literal"><span class="pre">Model</span></code> 类使用小写（Listing）的类名（listing）作为要使用的表名。 而且，默认情况下，它使用表中的所有字段。</p>
+<p>现在，无论何时我们想要加载我们的列表，我们都可以在我们的应用的任何地方使用这样的代码：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// Load all listings</span>
+<span class="nv">$listings</span> <span class="o">=</span> <span class="nx">\App\Listing</span><span class="o">::</span><span class="na">all</span><span class="p">();</span>
+
+<span class="c1">// Iterate listings, echo the address</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$listings</span> <span class="k">as</span> <span class="nv">$listing</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">echo</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">address</span> <span class="o">.</span> <span class="s1">&#39;\n&#39;</span> <span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * Output:</span>
+<span class="cm"> *</span>
+<span class="cm"> * No. 11, Song-Sho Road, Taipei City, Taiwan 105</span>
+<span class="cm"> * 110, Taiwan, Taipei City, Xinyi District, Section 5, Xinyi Road, 7</span>
+<span class="cm"> * No. 51, Hanzhong Street, Wanhua District, Taipei City, Taiwan 108</span>
+<span class="cm"> * ...</span>
+<span class="cm"> */</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>5.7.2. 类型转换<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">MySQL</span></code> 数据库中的数据类型与 <code class="docutils literal"><span class="pre">PHP</span></code> 中的数据类型不完全一致。 例如， <code class="docutils literal"><span class="pre">ORM</span></code> 如何知道数据库值为 <code class="docutils literal"><span class="pre">0</span></code> 是否为数字 <code class="docutils literal"><span class="pre">0</span></code> ，或 <code class="docutils literal"><span class="pre">false</span></code> 布尔值？</p>
+<p>一个 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型可以被赋予一个 <code class="docutils literal"><span class="pre">$casts</span></code> 属性来声明任何特定属性的数据类型。 <code class="docutils literal"><span class="pre">$casts</span></code> 是一个键/值的数组，其中键是要被转换的属性的名称，该值是我们要转换的数据类型。</p>
+<p>对于列表表格，我们将把设施属性设置为布尔值。</p>
+<p>app/Listing.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Listing</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+  <span class="k">protected</span> <span class="nv">$casts</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;amenity_wifi&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;boolean&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;amenity_pets_allowed&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;boolean&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;amenity_tv&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;boolean&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;amenity_kitchen&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;boolean&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;amenity_breakfast&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;boolean&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;amenity_laptop&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;boolean&#39;</span>
+  <span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在这些属性将具有正确的类型，使我们的模型更加健壮：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="nb">gettype</span><span class="p">(</span><span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">amenity_wifi</span><span class="p">());</span> <span class="c1">// boolean</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id15">
+<h2>5.8. 闭包处理<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h2>
+<p>我们的 <code class="docutils literal"><span class="pre">Web</span></code> 服务的最后一部分是允许客户端应用程序请求列表数据的公共接口。 由于 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 列表页面设计为一次显示一个列表，因此我们至少需要一个端点来检索单个列表。</p>
+<p>现在让我们创建一个将任何传入 <code class="docutils literal"><span class="pre">GET</span></code> 请求匹配到 <code class="docutils literal"><span class="pre">/api/listing/{listing}</span></code> 的路由，其中 <code class="docutils literal"><span class="pre">{listing}</span></code> 是一个 <code class="docutils literal"><span class="pre">ID</span></code> 。 我们将把它放在 <code class="docutils literal"><span class="pre">routes/api.php</span></code> 文件中，在这个文件中，路由会自动添加 <code class="docutils literal"><span class="pre">/api/</span></code> 前缀，并且默认情况下会优化中间件以用于 <code class="docutils literal"><span class="pre">Web</span></code> 服务。</p>
+<p>我们将使用闭包函数来处理路由。 该函数将有一个 <code class="docutils literal"><span class="pre">$</span> <span class="pre">listing</span></code> 参数，我们将把它作为 <code class="docutils literal"><span class="pre">Listing</span></code> 类的一个实例的类型提示。 <code class="docutils literal"><span class="pre">Laravel</span></code> 的服务容器将把它解析为 <code class="docutils literal"><span class="pre">ID</span></code> 匹配 <code class="docutils literal"><span class="pre">{listing}</span></code> 的实例。</p>
+<p>然后，我们可以将模型编码为 <code class="docutils literal"><span class="pre">JSON</span></code> 并将其作为响应返回。</p>
+<p>routes/api.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">App\Listing</span><span class="p">;</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;listing/{listing}&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="nx">Listing</span> <span class="nv">$listing</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">toJson</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>我们可以使用终端的 <code class="docutils literal"><span class="pre">curl</span></code> 命令来测试这个工作：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ curl http://vuebnb.test/api/listing/1
+</pre></div>
+</div>
+<p>响应将是 <code class="docutils literal"><span class="pre">ID</span> <span class="pre">1</span></code> 的 <code class="docutils literal"><span class="pre">JSON</span></code> 列表。</p>
+</div>
+<div class="section" id="id16">
+<h2>5.9. 控制器处理<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h2>
+<p>随着项目的进展，我们将添加更多路由来检索列表数据。 对此功能使用控制器类来保持关注点分离是最佳做法。 让我们用 <code class="docutils literal"><span class="pre">Artisan</span> <span class="pre">CLI</span></code> 创建一个：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ php artisan make:controller ListingController
+</pre></div>
+</div>
+<p>然后，我们将把路由功能移到一个新的方法 <code class="docutils literal"><span class="pre">get_listing_api</span></code> 中。</p>
+<p>app/Http/Controllers/ListingController.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Listing</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ListingController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">get_listing_api</span><span class="p">(</span><span class="nx">Listing</span> <span class="nv">$listing</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">toJson</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>对于 <code class="docutils literal"><span class="pre">Route::get</span></code> 方法，我们可以传递一个字符串作为第二个参数，而不是闭包函数。 该字符串应该采用 <code class="docutils literal"><span class="pre">[controller]&#64;[method]</span></code> 的形式，例如 <code class="docutils literal"><span class="pre">ListingController&#64;get_listing_web</span></code> 。 <code class="docutils literal"><span class="pre">Laravel</span></code> 将在运行时正确解决这个问题。</p>
+<p>routes/api.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/listing/{listing}&#39;</span><span class="p">,</span> <span class="s1">&#39;ListingController@get_listing_api&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id17">
+<h2>5.10. 图片<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
+<p>正如本章开头所述，每个模拟列表都附带了几个房间的图像。 这些图像不在项目代码中，必须从名为 <code class="docutils literal"><span class="pre">images</span></code> 的代码库中的并行目录中复制。</p>
+<p>将该目录的内容复制到 <code class="docutils literal"><span class="pre">public/images</span></code> 文件夹中：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cp -a ../images/. ./public/images
+</pre></div>
+</div>
+<p>一旦你复制这些文件， <code class="docutils literal"><span class="pre">public/image</span></code> 将有30个子文件夹，每个模拟列表一个。 这些文件夹中的每一个都将包含正好四个主要图像和一个缩略图图像：</p>
+<div class="figure" id="id25">
+<img alt="_images/4-4.png" src="_images/4-4.png" />
+<p class="caption"><span class="caption-text">图 4.4 公共文件夹的图像文件</span></p>
+</div>
+<div class="section" id="id18">
+<h3>5.10.1. 访问图像<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">public</span></code> 目录中的文件可以通过将其相对路径附加到网站 <code class="docutils literal"><span class="pre">URL</span></code> 直接请求。 例如，可以在 <code class="docutils literal"><span class="pre">http://vuebnb.test/css/app.css</span></code> 上请求默认的 <code class="docutils literal"><span class="pre">CSS</span></code> 文件 <code class="docutils literal"><span class="pre">public/css/app.css</span></code> 。</p>
+<p>使用 <code class="docutils literal"><span class="pre">public</span></code> 文件夹的好处以及我们将图片放在那里的原因是为了避免创建任何访问它们的逻辑。 前端应用程序可以直接在 <code class="docutils literal"><span class="pre">img</span></code> 标签中调用图像。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">您可能认为我们的 <code class="docutils literal"><span class="pre">Web</span></code> 服务器像这样提供图片是无效的，并且您是对的。 在本书后面，我们将在生产模式下提供来自 <code class="docutils literal"><span class="pre">CDN</span></code> 的图像。</p>
+</div>
+<p>让我们尝试在浏览器中打开一个模拟列表图像来测试此论点： <a class="reference external" href="http://vuebnb.test/images/1/Image_1.jpg">http://vuebnb.test/images/1/Image_1.jpg</a> ：</p>
+<div class="figure" id="id26">
+<img alt="_images/4-5.png" src="_images/4-5.png" />
+<p class="caption"><span class="caption-text">图4.5 模拟列表图像显示在浏览器中</span></p>
+</div>
+</div>
+<div class="section" id="id19">
+<h3>5.10.2. 图像链接<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Web</span></code> 服务中每个列表的有效载荷应包含这些新图像的链接，以便客户端应用知道在哪里找到它们。 让我们将图像路径添加到我们的列表 <code class="docutils literal"><span class="pre">API</span></code> 负载中，看起来像这样：</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  &quot;id&quot;: 1,
+  &quot;title&quot;: &quot;...&quot;,
+  &quot;description&quot;: &quot;...&quot;,
+  ...
+  &quot;image_1&quot;: &quot;http://vuebnb.test/app/image/1/Image_1.jpg&quot;,
+  &quot;image_2&quot;: &quot;http://vuebnb.test/app/image/1/Image_2.jpg&quot;,
+  &quot;image_3&quot;: &quot;http://vuebnb.test/app/image/1/Image_3.jpg&quot;,
+  &quot;image_4&quot;: &quot;http://vuebnb.test/app/image/1/Image_4.jpg&quot;
+}
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">直到项目后期才会使用缩略图图像。</p>
+</div>
+<p>为了实现这一点，我们将使用模型的 <code class="docutils literal"><span class="pre">toArray</span></code> 方法来创建模型的数组表示形式。 我们将很容易地添加新的字段。 每个模拟列表都有四个图像，编号为1到4，因此我们可以使用 <code class="docutils literal"><span class="pre">for</span></code> 循环和 <code class="docutils literal"><span class="pre">asset</span></code> 助手来为公用文件夹中的文件生成完全限定的 <code class="docutils literal"><span class="pre">URL</span></code> 。</p>
+<p>我们通过调用 <code class="docutils literal"><span class="pre">Response</span></code> 助手来创建一个 <code class="docutils literal"><span class="pre">Response</span></code> 类的实例。 我们使用 <code class="docutils literal"><span class="pre">json</span></code> 方法并传入我们的字段数组，返回结果。</p>
+<p>app/Http/Controllers/ListingController.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">public function get_listing_api(Listing $listing)</span>
+<span class="x">{</span>
+<span class="x">  $model = $listing-&gt;toArray();</span>
+<span class="x">  for($i = 1; $i &lt;=4; $i++) {</span>
+<span class="x">    $model[&#39;image_&#39; . $i] = asset(</span>
+<span class="x">      &#39;images/&#39; . $listing-&gt;id . &#39;/Image_&#39; . $i . &#39;.jpg&#39;</span>
+<span class="x">    );</span>
+<span class="x">  }</span>
+<span class="x">  return response()-&gt;json($model);</span>
+<span class="x">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/api/listing/{listing}</span></code> 端点现在已准备好供客户端应用程序使用。</p>
+</div>
+</div>
+<div class="section" id="id20">
+<h2>5.11. 总结<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h2>
+<p>在本章中，我们与 <code class="docutils literal"><span class="pre">Laravel</span></code> 建立了一个 <code class="docutils literal"><span class="pre">Web</span></code> 服务，使 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 列表数据可公开访问。</p>
+<p>这涉及使用迁移和模式设置数据库表，然后使用模拟列表数据为数据库播种。 然后我们使用路由为 <code class="docutils literal"><span class="pre">Web</span></code> 服务创建了一个公共接口。 这将模拟数据作为 <code class="docutils literal"><span class="pre">JSON</span></code> 有效内容返回，其中包括指向我们模拟图像的链接。</p>
+<p>在下一章中，我们将介绍 <code class="docutils literal"><span class="pre">Webpack</span></code> 和 <code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">Mix</span></code> 构建工具，以建立一个完整的全栈开发环境。 我们将 <a href="#id21"><span class="problematic" id="id22">``</span></a>Vuebnb``原型迁移到项目中，并重构它以适应新的工作流程。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="使用Webpack整合Laravel和Vue.html" class="btn btn-neutral float-right" title="6. 使用Webpack整合Laravel和Vue" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="配置Laravel开发环境.html" class="btn btn-neutral" title="4. 配置Laravel开发环境" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

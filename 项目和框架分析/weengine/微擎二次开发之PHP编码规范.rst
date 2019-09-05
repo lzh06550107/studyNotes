@@ -1,0 +1,1 @@
+http://weiqing.tech/help/coding-standards.html

@@ -1,0 +1,1 @@
+CGI、FastCGI和PHP-FPM关系图解 https://www.php.cn/php-weizijiaocheng-392861.html

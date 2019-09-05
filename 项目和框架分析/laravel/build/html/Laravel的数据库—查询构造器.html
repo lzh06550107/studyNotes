@@ -1,0 +1,1290 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>53. 数据库-查询构建器 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="54. 数据分页" href="Laravel的数据分页.html"/>
+        <link rel="prev" title="52. 数据库-原始操作" href="Laravel的数据库—原始方式.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">53. 数据库-查询构建器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">53.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">53.2. 获取结果</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">53.2.1. 从数据表中获取所有行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">53.2.2. 从数据表中获取单行或单行某列的值</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">53.2.3. 获取一列的值</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">53.2.4. 分块结果</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#selects">53.3. Selects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#select">53.3.1. 指定一个 Select 语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">53.3.2. 子查询</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">53.4. 原生表达式</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">53.4.1. 原生方法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#joins">53.5. Joins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#inner-join">53.5.1. Inner Join 语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#left-join">53.5.2. Left Join 语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cross-join">53.5.3. Cross Join 语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#join">53.5.4. 高级 Join 语句</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#unions">53.6. Unions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#where">53.7. Where 语句</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">53.7.1. 简单的 Where 语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">53.7.2. where子查询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wherebetween-wherenotbetween">53.7.3. whereBetween / whereNotBetween</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wherein-wherenotin-orwherein-orwherenotin">53.7.4. whereIn / whereNotIn /orWhereIn / orWhereNotIn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wherenull-wherenotnull-orwherenull-orwherenotnull">53.7.5. whereNull / whereNotNull / orWhereNull / orWhereNotNull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wheredate-wheremonth-whereday-whereyear-wheretime">53.7.6. whereDate / whereMonth / whereDay / whereYear / whereTime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wherecolumn">53.7.7. whereColumn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">53.7.8. 参数分组</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#where-exists-wherenotexists-orwhereexists-orwherenotexists">53.7.9. Where Exists / whereNotExists / orWhereExists / orWhereNotExists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json-where">53.7.10. JSON Where 语句</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ordering-grouping-limit-offset">53.8. Ordering, Grouping, Limit, &amp; Offset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#orderby">53.8.1. orderBy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#latest-oldest">53.8.2. latest / oldest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inrandomorder">53.8.3. inRandomOrder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#groupby-having">53.8.4. groupBy / having</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#skip-take-limit-offset">53.8.5. skip / take / limit / offset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">53.9. 聚合</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id15">53.9.1. 确定记录是否存在</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">53.10. 条件语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">53.11. 插入</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id">53.11.1. 自增 ID</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">53.12. 更新</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#json">53.12.1. 更新 JSON 字段</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">53.12.2. 自增与自减</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#deletes">53.13. Deletes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">53.14. 悲观锁</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>53. 数据库-查询构建器</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>53. 数据库-查询构建器<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>53.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Laravel 的数据库查询构造器为创建和运行数据库查询提供了一个方便的接口。它能用来执行应用程序中的大部分数据库操作，且可在所有支持的数据库系统上运行。</p>
+<p>Laravel 的查询构造器使用 <code class="docutils literal"><span class="pre">PDO</span></code> 参数绑定来保护您的应用程序免受 <code class="docutils literal"><span class="pre">SQL</span></code> 注入攻击。因此没有必要清理作为绑定传递的字符串。</p>
+</div>
+<div class="section" id="id3">
+<h2>53.2. 获取结果<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id4">
+<h3>53.2.1. 从数据表中获取所有行<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>你可以 <code class="docutils literal"><span class="pre">DB</span></code> facade 上使用 <code class="docutils literal"><span class="pre">table</span></code> 方法来开始查询。该 <code class="docutils literal"><span class="pre">table</span></code> 方法为给定的表返回一个查询构造器实例，允许你在查询上链式调用更多的约束，最后使用 <code class="docutils literal"><span class="pre">get</span></code> 方法获取结果：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\DB</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 显示所有应用程序用户的列表</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;user.index&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;users&#39;</span> <span class="o">=&gt;</span> <span class="nv">$users</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>该 <code class="docutils literal"><span class="pre">get</span></code> 方法返回一个包含 <code class="docutils literal"><span class="pre">Illuminate\Support\Collection</span></code> 的结果，其中每个结果都是 PHP <code class="docutils literal"><span class="pre">StdClass</span></code> 对象的一个实例。你可以访问字段作为对象的属性来访问每列的值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>53.2.2. 从数据表中获取单行或单行某列的值<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>如果你只需要从数据表中检索一行数据，你可以使用 <code class="docutils literal"><span class="pre">first</span></code> 方法。该方法返回一个 <code class="docutils literal"><span class="pre">StdClass</span></code> 对象：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;John&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
+
+<span class="k">echo</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>如果你甚至不需要整行数据，可以使用 <code class="docutils literal"><span class="pre">value</span></code> 方法从记录中获取单个值。该方法将直接返回第一条记录指定字段的值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$email</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;John&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">value</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>53.2.3. 获取一列的值<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>如果你想获取包含单列值的集合，你可以使用 <code class="docutils literal"><span class="pre">pluck</span></code> 方法。在下面的例子中，我们将获取角色表中标题的集合：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$titles</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;roles&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">pluck</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$titles</span> <span class="k">as</span> <span class="nv">$title</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$title</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>你也可以在返回的集合中指定字段的自定义键值(就是以某列的值作为键，另一列的值作为键值)：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$roles</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;roles&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">pluck</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$roles</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$title</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$title</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">implode</span></code> 函数可以将多条数据的某一列拼成字符串：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">implode</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">);</span><span class="c1">//&#39;bar,baz&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>53.2.4. 分块结果<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>如果你需要处理数千条数据库记录， 可以考虑使用 <code class="docutils literal"><span class="pre">chunk</span></code> 方法。该方法每次只取出一小块结果，并将取出的结果传递给 闭包 处理。这对于编写数千条记录的 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 而言是非常有用的。例如，一次处理 <code class="docutils literal"><span class="pre">users</span></code> 表中的 <code class="docutils literal"><span class="pre">100</span></code> 条记录：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">chunk</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$users</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>你可以从 闭包 中返回 <code class="docutils literal"><span class="pre">false</span></code> 来阻止进一步的分块结果：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">chunk</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$users</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Process the records...</span>
+
+    <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>如果不想按照主键 <code class="docutils literal"><span class="pre">id</span></code> 来进行分块，我们还可以自定义分块主键：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">chunkById</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$users</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">},</span> <span class="s1">&#39;someIdField&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="selects">
+<h2>53.3. Selects<a class="headerlink" href="#selects" title="永久链接至标题">¶</a></h2>
+<div class="section" id="select">
+<h3>53.3.1. 指定一个 Select 语句<a class="headerlink" href="#select" title="永久链接至标题">¶</a></h3>
+<p>当然你可能并不总是希望从数据库表中获取所有列。使用 <code class="docutils literal"><span class="pre">select</span></code> 方法，你可以自定义一个 <code class="docutils literal"><span class="pre">select</span></code> 语句来查询指定的字段：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;email as user_email&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">distinct</span></code> 允许你强制让查询返回不重复的结果：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">distinct</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>如果你已有一个查询构造器实例，并且希望在现有的 <code class="docutils literal"><span class="pre">select</span></code> 语句中加入一个字段，则可以 <code class="docutils literal"><span class="pre">addSelect</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$query</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">addSelect</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>53.3.2. 子查询<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>所谓的 <code class="docutils literal"><span class="pre">select</span></code> 子查询，就是查询的字段来源于其他数据表。对于这种查询，可以分成两部来理解，首先忽略整个 <code class="docutils literal"><span class="pre">select</span></code> 子查询，查出第一个表中的数据，然后根据第一个表的数据执行子查询，</p>
+<p>laravel 的 <code class="docutils literal"><span class="pre">selectSub</span></code> 支持闭包函数、 <code class="docutils literal"><span class="pre">queryBuild</span></code> 对象或者原生 <code class="docutils literal"><span class="pre">sql</span></code> 语句，以下是单元测试样例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$query</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;one&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;val&#39;</span><span class="p">);</span>
+
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">selectSub</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;two&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;baz&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;subkey&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;subval&#39;</span><span class="p">);</span>
+    <span class="p">},</span> <span class="s1">&#39;sub&#39;</span><span class="p">);</span>
+
+<span class="c1">// 另一种写法</span>
+<span class="nv">$query</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;one&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;val&#39;</span><span class="p">);</span>
+<span class="nv">$query_sub</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;one&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;baz&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;subkey&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;subval&#39;</span><span class="p">);</span>
+
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">selectSub</span><span class="p">(</span><span class="nv">$query_sub</span><span class="p">,</span> <span class="s1">&#39;sub&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>生成的 <code class="docutils literal"><span class="pre">sql</span></code> 语句：</p>
+<div class="highlight-sql"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="ss">&quot;foo&quot;</span><span class="p">,</span> <span class="ss">&quot;bar&quot;</span><span class="p">,</span> <span class="p">(</span><span class="k">select</span> <span class="ss">&quot;baz&quot;</span> <span class="k">from</span> <span class="ss">&quot;two&quot;</span> <span class="k">where</span> <span class="ss">&quot;subkey&quot;</span> <span class="o">=</span> <span class="s1">&#39;subval&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="ss">&quot;sub&quot;</span> <span class="k">from</span> <span class="ss">&quot;one&quot;</span> <span class="k">where</span> <span class="ss">&quot;key&quot;</span> <span class="o">=</span> <span class="s1">&#39;val&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>53.4. 原生表达式<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>有时候你可能需要在查询中使用原生表达式。创建一个原生表达式， 你可以使用 <code class="docutils literal"><span class="pre">DB::raw</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                     <span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">raw</span><span class="p">(</span><span class="s1">&#39;count(*) as user_count, status&#39;</span><span class="p">))</span>
+                     <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                     <span class="o">-&gt;</span><span class="na">groupBy</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span>
+                     <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">原生表达式将会被当做字符串注入到查询中，因此你应该小心使用，避免创建 <code class="docutils literal"><span class="pre">SQL</span></code> 注入漏洞。</p>
+</div>
+<div class="section" id="id10">
+<h3>53.4.1. 原生方法<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>可以使用以下的方法代替 <code class="docutils literal"><span class="pre">DB::raw</span></code> 将原生表达式插入查询的各个部分。</p>
+<div class="section" id="selectraw">
+<h4>53.4.1.1. selectRaw<a class="headerlink" href="#selectraw" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">selectRaw</span></code> 方法可以用来代替 <code class="docutils literal"><span class="pre">select(DB::raw(...))</span></code> 。这个方法的第二个参数接受一个可选的绑定参数数组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$orders</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">selectRaw</span><span class="p">(</span><span class="s1">&#39;price * ? as price_with_tax&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0825</span><span class="p">])</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="whereraw-orwhereraw">
+<h4>53.4.1.2. whereRaw / orWhereRaw<a class="headerlink" href="#whereraw-orwhereraw" title="永久链接至标题">¶</a></h4>
+<p>可以使用 <code class="docutils literal"><span class="pre">whereRaw</span></code> 和 <code class="docutils literal"><span class="pre">orWhereRaw</span></code> 方法将原生的 <code class="docutils literal"><span class="pre">where</span></code> 注入到你的查询中。这些方法接受一个可选的绑定数组作为他们的第二个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$orders</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">whereRaw</span><span class="p">(</span><span class="s1">&#39;price &gt; IF(state = &quot;TX&quot;, ?, 100)&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">200</span><span class="p">])</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">orWhereRaw</span><span class="p">(</span><span class="s1">&#39;id = ? or email = ?&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">])</span>
+        <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="havingraw-orhavingraw">
+<h4>53.4.1.3. havingRaw / orHavingRaw<a class="headerlink" href="#havingraw-orhavingraw" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">havingRaw</span></code> 和 <code class="docutils literal"><span class="pre">orHavingRaw</span></code> 方法可用于将原生字符串设置为 <code class="docutils literal"><span class="pre">having</span></code> 语句的值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$orders</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;department&#39;</span><span class="p">,</span> <span class="nx">DB</span><span class="o">::</span><span class="na">raw</span><span class="p">(</span><span class="s1">&#39;SUM(price) as total_sales&#39;</span><span class="p">))</span>
+                <span class="o">-&gt;</span><span class="na">groupBy</span><span class="p">(</span><span class="s1">&#39;department&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">havingRaw</span><span class="p">(</span><span class="s1">&#39;SUM(price) &gt; 2500&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="orderbyraw">
+<h4>53.4.1.4. orderByRaw<a class="headerlink" href="#orderbyraw" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">orderByRaw</span></code> 方法可用于将原生字符串设置为 <code class="docutils literal"><span class="pre">order</span> <span class="pre">by</span></code> 子句的值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$orders</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">orderByRaw</span><span class="p">(</span><span class="s1">&#39;updated_at - created_at DESC&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="joins">
+<h2>53.5. Joins<a class="headerlink" href="#joins" title="永久链接至标题">¶</a></h2>
+<div class="section" id="inner-join">
+<h3>53.5.1. Inner Join 语句<a class="headerlink" href="#inner-join" title="永久链接至标题">¶</a></h3>
+<p>查询构造器也可编写 <code class="docutils literal"><span class="pre">join</span></code> 语句。若要执行基本的「内链接」，你可以在查询构造器实例上使用 <code class="docutils literal"><span class="pre">join</span></code> 方法。传递给 <code class="docutils literal"><span class="pre">join</span></code> 方法的第一个参数是你需要连接的表的名称，而其它参数则用来指定连接的字段约束。你还可以在单个查询中连接多个数据表：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;services&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">join</span><span class="p">(</span><span class="s1">&#39;translations AS t&#39;</span><span class="p">,</span> <span class="s1">&#39;t.item_id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;services.id&#39;</span><span class="p">);</span>
+<span class="c1">// select * from `services` inner join `translations` as `t` on `t`.`item_id` = `services`.`id`</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">join</span><span class="p">(</span><span class="s1">&#39;contacts&#39;</span><span class="p">,</span> <span class="s1">&#39;users.id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;contacts.user_id&#39;</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">join</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">,</span> <span class="s1">&#39;users.id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;orders.user_id&#39;</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;users.*&#39;</span><span class="p">,</span> <span class="s1">&#39;contacts.phone&#39;</span><span class="p">,</span> <span class="s1">&#39;orders.price&#39;</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+<span class="c1">// select `users`.*, `contacts`.`phone`, `orders`.`price` from `users` inner join `contacts` on `users`.`id` = `contacts`.`user_id` inner join `orders` on `users`.`id` = `orders`.`user_id`</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">join</span><span class="p">(</span><span class="s1">&#39;contacts&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$j</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$j</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;users.id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;contacts.id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orOn</span><span class="p">(</span><span class="s1">&#39;users.name&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;contacts.name&#39;</span><span class="p">);</span>
+<span class="p">})</span>
+<span class="c1">// select * from `users` inner join `contacts` on `users`.`id` = `contacts`.`id` or `users`.`name` = `contacts`.`name`</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">joinWhere</span><span class="p">(</span><span class="s1">&#39;contacts&#39;</span><span class="p">,</span> <span class="s1">&#39;col1&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$j</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$j</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;users.col2&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;users.id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">toSql</span><span class="p">();</span>
+<span class="c1">// select * from `users` inner join `contacts` on `col1` = (select `users`.`col2` from `users` where `users`.`id` = ?)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="left-join">
+<h3>53.5.2. Left Join 语句<a class="headerlink" href="#left-join" title="永久链接至标题">¶</a></h3>
+<p>如果你想使用「左连接」代替「内连接」，使用 <code class="docutils literal"><span class="pre">leftJoin</span></code> 方法。 <code class="docutils literal"><span class="pre">leftJoin</span></code> 方法与 <code class="docutils literal"><span class="pre">join</span></code> 方法用法相同：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">leftJoin</span><span class="p">(</span><span class="s1">&#39;posts&#39;</span><span class="p">,</span> <span class="s1">&#39;users.id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;posts.user_id&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+<span class="c1">// select * from `users` left join `posts` on `users`.`id` = `posts`.`user_id`</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">leftJoin</span><span class="p">(</span><span class="s1">&#39;contacts&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$j</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$j</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;users.id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;contacts.id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$j</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$j</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;contacts.country&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;US&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orWhere</span><span class="p">(</span><span class="s1">&#39;contacts.is_partner&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">toSql</span><span class="p">();</span>
+<span class="c1">// select * from `users` left join `contacts` on `users`.`id` = `contacts`.`id` and (`contacts`.`country` = &#39;US&#39; or `contacts`.`is_partner` = 1)</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">leftJoin</span><span class="p">(</span><span class="s1">&#39;contacts&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$j</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$j</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;users.id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;contacts.id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;contacts.is_active&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orOn</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$j</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$j</span><span class="o">-&gt;</span><span class="na">orWhere</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$j</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;contacts.country&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;UK&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orOn</span><span class="p">(</span><span class="s1">&#39;contacts.type&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;users.type&#39;</span><span class="p">);</span>
+        <span class="p">})</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$j</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;contacts.country&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;US&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orWhereNull</span><span class="p">(</span><span class="s1">&#39;contacts.is_partner&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">toSql</span><span class="p">();</span>
+<span class="c1">// select * from `users` left join `contacts` on `users`.`id` = `contacts`.`id` and `contacts`.`is_active` = ? or ((`contacts`.`country` = ? or `contacts`.`type` = `users`.`type`) and (`contacts`.`country` = ? or `contacts`.`is_partner` is null))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cross-join">
+<h3>53.5.3. Cross Join 语句<a class="headerlink" href="#cross-join" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">crossJoin</span></code> 方法和你想要交叉连接的表名来做「交叉连接」。交叉连接在第一个表和连接之间生成笛卡尔积：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;sizes&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">crossJoin</span><span class="p">(</span><span class="s1">&#39;colours&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="join">
+<h3>53.5.4. 高级 Join 语句<a class="headerlink" href="#join" title="永久链接至标题">¶</a></h3>
+<p>你可以指定更高级的 <code class="docutils literal"><span class="pre">join</span></code> 语句。比如传递一个 <code class="docutils literal"><span class="pre">闭包</span></code> 作为 <code class="docutils literal"><span class="pre">join</span></code> 方法的第二个参数。此 <code class="docutils literal"><span class="pre">闭包</span></code> 接收一个 <code class="docutils literal"><span class="pre">JoinClause</span></code> 对象，从而在其中指定 <code class="docutils literal"><span class="pre">join</span></code> 语句中指定约束：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">join</span><span class="p">(</span><span class="s1">&#39;contacts&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$join</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$join</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;users.id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;contacts.user_id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orOn</span><span class="p">(</span><span class="o">...</span><span class="p">);</span>
+        <span class="p">})</span>
+        <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>如果你想要在连接上使用「where」风格的语句，可以在连接上使用 <code class="docutils literal"><span class="pre">where</span></code> 和 <code class="docutils literal"><span class="pre">orWhere</span></code> 方法。这些方法会将列和值进行比较而不是列和列进行比较：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">join</span><span class="p">(</span><span class="s1">&#39;contacts&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$join</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$join</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;users.id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;contacts.user_id&#39;</span><span class="p">)</span>
+                 <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;contacts.user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+        <span class="p">})</span>
+        <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="unions">
+<h2>53.6. Unions<a class="headerlink" href="#unions" title="永久链接至标题">¶</a></h2>
+<p>查询构造器还提供了将两个查询「联合」起来的快捷方式。比如，你可以先创建一个查询，然后使用 <code class="docutils literal"><span class="pre">union</span></code> 方法将其和第二个查询进行联合：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$first</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">whereNull</span><span class="p">(</span><span class="s1">&#39;first_name&#39;</span><span class="p">);</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">whereNull</span><span class="p">(</span><span class="s1">&#39;last_name&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">union</span><span class="p">(</span><span class="nv">$first</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="nv">$query</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">union</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+<span class="c1">//(select * from `users` where `id` = 1) union (select * from `users` where `id` = 2)</span>
+
+<span class="nv">$query</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">union</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">union</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+<span class="c1">//(select * from &quot;users&quot; where &quot;id&quot; = 1) union (select * from &quot;users&quot; where &quot;id&quot; = 2) union (select * from &quot;users&quot; where &quot;id&quot; = 3)</span>
+
+<span class="c1">//union 语句可以与 orderBy 相结合：</span>
+<span class="nv">$query</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">union</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">);</span>
+<span class="c1">//(select * from `users` where `id` = ?) union (select * from `users` where `id` = ?) order by `id` desc</span>
+
+<span class="c1">//union 语句可以与 limit、offset 相结合：</span>
+<span class="nv">$query</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">);</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">union</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">));</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">skip</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">take</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+<span class="c1">//(select * from `users`) union (select * from `dogs`) limit 10 offset 5</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last"><code class="docutils literal"><span class="pre">unionAll</span></code> 方法也是可用的，并且和 <code class="docutils literal"><span class="pre">union</span></code> 方法用法相同。 <code class="docutils literal"><span class="pre">union</span></code> 因为要进行重复值扫描，所以效率低。如果合并没有刻意要删除重复行，那么就使用 <code class="docutils literal"><span class="pre">unionAll</span></code> 。</p>
+</div>
+</div>
+<div class="section" id="where">
+<h2>53.7. Where 语句<a class="headerlink" href="#where" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id11">
+<h3>53.7.1. 简单的 Where 语句<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>使用查询构建器上的 <code class="docutils literal"><span class="pre">where</span></code> 方法可以添加 <code class="docutils literal"><span class="pre">where</span></code> 子句到查询中。调用 <code class="docutils literal"><span class="pre">where</span></code> 最基本的方式需要传递三个参数，第一个参数是列名，第二个参数是任意一个数据库系统支持的运算符，第三个参数是该列要比较的值。</p>
+<p>例如，下面是一个要验证「votes」字段的值等于 100 的查询：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>为了方便，如果你只是简单比较列值和给定数值是否相等，可以将数值直接作为 <code class="docutils literal"><span class="pre">where</span></code> 方法的第二个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>当然你还可以使用其他运算符来编写 <code class="docutils literal"><span class="pre">where</span></code> 子句：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;like&#39;</span><span class="p">,</span> <span class="s1">&#39;T%&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>还可以传递数组到 <code class="docutils literal"><span class="pre">where</span></code> 函数中， <strong>表示 And 条件</strong> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">([</span>
+    <span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;subscribed&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">],</span>
+<span class="p">])</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>生成sql语句：</p>
+<div class="highlight-sql"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="o">`</span><span class="n">users</span><span class="o">`</span> <span class="k">where</span> <span class="p">(</span><span class="o">`</span><span class="n">status</span><span class="o">`</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">and</span> <span class="o">`</span><span class="n">subscribed</span><span class="o">`</span> <span class="o">&lt;&gt;</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>传递数组和多次调用where有何区别？？</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span>
+        <span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span>
+        <span class="p">[</span><span class="s1">&#39;subscribed&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">toSql</span><span class="p">();</span> <span class="c1">// 有问题？？</span>
+</pre></div>
+</div>
+<p>如何表示 Or 条件呢？</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">orWhere</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;John&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;John&#39;</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">orWhere</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+              <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;Admin&#39;</span><span class="p">);</span>
+    <span class="p">})</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>生成的sql语句：</p>
+<div class="highlight-sql"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">users</span> <span class="k">where</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;John&#39;</span> <span class="k">or</span> <span class="p">(</span><span class="n">votes</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="k">and</span> <span class="n">title</span> <span class="o">&lt;&gt;</span> <span class="s1">&#39;Admin&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>53.7.2. where子查询<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">Where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$q</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$q</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="k">new</span> <span class="nx">Raw</span><span class="p">(</span><span class="s1">&#39;max(id)&#39;</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">);</span>
+    <span class="p">})</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>生成的sql语句：</p>
+<div class="highlight-sql"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="o">`</span><span class="n">users</span><span class="o">`</span> <span class="k">where</span> <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="o">=</span> <span class="p">(</span><span class="k">select</span> <span class="k">max</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="k">from</span> <span class="o">`</span><span class="n">users</span><span class="o">`</span> <span class="k">where</span> <span class="o">`</span><span class="n">email</span><span class="o">`</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="wherebetween-wherenotbetween">
+<h3>53.7.3. whereBetween / whereNotBetween<a class="headerlink" href="#wherebetween-wherenotbetween" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">whereBetween</span></code> 方法验证字段的值位于两个值之间：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">whereBetween</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">whereNotBetween</span></code> 方法验证字段的值位于两个值之外：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">whereNotBetween</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+                    <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="wherein-wherenotin-orwherein-orwherenotin">
+<h3>53.7.4. whereIn / whereNotIn /orWhereIn / orWhereNotIn<a class="headerlink" href="#wherein-wherenotin-orwherein-orwherenotin" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">whereIn</span></code> 方法验证字段的值在指定的数组内：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">whereIn</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+                    <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">whereIn</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$q</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nv">$q</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">take</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+            <span class="p">});</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">whereNotIn</span></code> 方法验证字段的值 不 在指定的数组内：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">whereNotIn</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+                    <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">whereNotIn</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$q</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nv">$q</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">take</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+            <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="wherenull-wherenotnull-orwherenull-orwherenotnull">
+<h3>53.7.5. whereNull / whereNotNull / orWhereNull / orWhereNotNull<a class="headerlink" href="#wherenull-wherenotnull-orwherenull-orwherenotnull" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">whereNull</span></code> 方法验证字段的值为 <code class="docutils literal"><span class="pre">NULL</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">whereNull</span><span class="p">(</span><span class="s1">&#39;updated_at&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">whereNotNull</span></code> 方法验证字段的值不为 <code class="docutils literal"><span class="pre">NULL</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">whereNotNull</span><span class="p">(</span><span class="s1">&#39;updated_at&#39;</span><span class="p">)</span>
+                    <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="wheredate-wheremonth-whereday-whereyear-wheretime">
+<h3>53.7.6. whereDate / whereMonth / whereDay / whereYear / whereTime<a class="headerlink" href="#wheredate-wheremonth-whereday-whereyear-wheretime" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">whereDate</span></code> 方法用于比较字段的值和日期：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">whereDate</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;2016-12-31&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">whereMonth</span></code> 方法用于比较字段的值与一年的特定月份：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">whereMonth</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;12&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">whereDay</span></code> 方法用于比较字段的值与一个月的特定日期：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">whereDay</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;31&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">whereYear</span></code> 方法用于比较字段的值与特定年份：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">whereYear</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;2016&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">whereTime</span></code> 用于将字段的值与特定的时间进行比较：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">whereTime</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;11:20&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="wherecolumn">
+<h3>53.7.7. whereColumn<a class="headerlink" href="#wherecolumn" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">whereColumn</span></code> 方法用于验证两个字段是否相等：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">whereColumn</span><span class="p">(</span><span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>还可以将比较运算符传递给该方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">whereColumn</span><span class="p">(</span><span class="s1">&#39;updated_at&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>还可以传递多条件数组到 <code class="docutils literal"><span class="pre">whereColumn</span></code> 方法，这些条件通过 <code class="docutils literal"><span class="pre">and</span></code> 运算符连接：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">whereColumn</span><span class="p">([</span>
+                    <span class="p">[</span><span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name&#39;</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s1">&#39;updated_at&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">]</span>
+                <span class="p">])</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>生成的sql语句：</p>
+<div class="highlight-sql"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="o">`</span><span class="n">users</span><span class="o">`</span> <span class="k">where</span> <span class="p">(</span><span class="o">`</span><span class="n">first_name</span><span class="o">`</span> <span class="o">=</span> <span class="o">`</span><span class="n">last_name</span><span class="o">`</span> <span class="k">and</span> <span class="o">`</span><span class="n">updated_at</span><span class="o">`</span> <span class="o">&gt;</span> <span class="o">`</span><span class="n">created_at</span><span class="o">`</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h3>53.7.8. 参数分组<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p>有时候你需要创建更高级的 <code class="docutils literal"><span class="pre">where</span></code> 子句，例如「where exists」或者嵌套的参数分组。 Laravel 的查询构造器也能够处理这些。下面，让我们看一个在括号中进行分组约束的例子：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;John&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">orWhere</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+                      <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;Admin&#39;</span><span class="p">);</span>
+            <span class="p">})</span>
+            <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>正如你所看到的，传递 闭包 到 <code class="docutils literal"><span class="pre">orWhere</span></code> 方法构造查询构建器来开始一个约束分组。 该 闭包 接受一个查询构造器实例，上述语句等价于下面的 <code class="docutils literal"><span class="pre">SQL</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">select</span> <span class="o">*</span> <span class="nx">from</span> <span class="nx">users</span> <span class="nx">where</span> <span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;John&#39;</span> <span class="k">or</span> <span class="p">(</span><span class="nx">votes</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="k">and</span> <span class="nx">title</span> <span class="o">&lt;&gt;</span> <span class="s1">&#39;Admin&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="where-exists-wherenotexists-orwhereexists-orwherenotexists">
+<h3>53.7.9. Where Exists / whereNotExists / orWhereExists / orWhereNotExists<a class="headerlink" href="#where-exists-wherenotexists-orwhereexists-orwherenotexists" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">whereExists</span></code> 方法允许你编写 <code class="docutils literal"><span class="pre">where</span> <span class="pre">exists</span> <span class="pre">SQL</span></code> 语句。 该 <code class="docutils literal"><span class="pre">whereExists</span></code> 方法接受一个 <code class="docutils literal"><span class="pre">Closure</span></code> 参数，该闭包获取一个查询构建器实例从而允许你定义放置在 &quot;exists&quot; 字句中查询：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">whereExists</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">raw</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+                      <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span>
+                      <span class="o">-&gt;</span><span class="na">whereRaw</span><span class="p">(</span><span class="s1">&#39;orders.user_id = users.id&#39;</span><span class="p">);</span>
+            <span class="p">})</span>
+            <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="c1">// select * from users where exists ( select 1 from orders where orders.user_id = users.id)</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">whereNotExists</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">raw</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+              <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span>
+              <span class="o">-&gt;</span><span class="na">whereRaw</span><span class="p">(</span><span class="s1">&#39;orders.user_id = users.id&#39;</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+<span class="c1">// select * from users where not exists ( select 1 from orders where orders.user_id = users.id)</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">orWhereExists</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">raw</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+              <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span>
+              <span class="o">-&gt;</span><span class="na">whereRaw</span><span class="p">(</span><span class="s1">&#39;orders.user_id = users.id&#39;</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+<span class="c1">// select * from users or exists ( select 1 from orders where orders.user_id = users.id)</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">orWhereNotExists</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">raw</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+              <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span>
+              <span class="o">-&gt;</span><span class="na">whereRaw</span><span class="p">(</span><span class="s1">&#39;orders.user_id = users.id&#39;</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+<span class="c1">// select * from users or not exists ( select 1 from orders where orders.user_id = users.id)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">select</span> <span class="pre">1</span> <span class="pre">from</span></code> 查看是否有记录，一般是作条件用的。 <code class="docutils literal"><span class="pre">select</span> <span class="pre">1</span> <span class="pre">from</span></code> 中的 <code class="docutils literal"><span class="pre">1</span></code> 是一常量，查到的所有行的值都是它，但从效率上来说， <code class="docutils literal"><span class="pre">1&gt;anycol&gt;*</span></code> ，因为不用查字典表。</p>
+</div>
+<div class="section" id="json-where">
+<h3>53.7.10. JSON Where 语句<a class="headerlink" href="#json-where" title="永久链接至标题">¶</a></h3>
+<p>Laravel 也支持查询 <code class="docutils literal"><span class="pre">JSON</span></code> 类型的字段（仅在对 <code class="docutils literal"><span class="pre">JSON</span></code> 类型支持的数据库上）。目前，本特性仅支持 <code class="docutils literal"><span class="pre">MySQL</span> <span class="pre">5.7+</span></code> 和 <code class="docutils literal"><span class="pre">Postgres</span></code> 数据库。使用 <code class="docutils literal"><span class="pre">-&gt;</span></code> 操作符查询 <code class="docutils literal"><span class="pre">JSON</span></code> 数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;options-&gt;language&#39;</span><span class="p">,</span> <span class="s1">&#39;en&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;preferences-&gt;dining-&gt;meal&#39;</span><span class="p">,</span> <span class="s1">&#39;salad&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="ordering-grouping-limit-offset">
+<h2>53.8. Ordering, Grouping, Limit, &amp; Offset<a class="headerlink" href="#ordering-grouping-limit-offset" title="永久链接至标题">¶</a></h2>
+<div class="section" id="orderby">
+<h3>53.8.1. orderBy<a class="headerlink" href="#orderby" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">orderBy</span></code> 方法允许你通过给定字段对结果集进行排序。 <code class="docutils literal"><span class="pre">orderBy</span></code> 的第一个参数应该是你希望排序的字段，第二个参数控制排序的方向，可以是 <code class="docutils literal"><span class="pre">asc</span></code> 或 <code class="docutils literal"><span class="pre">desc</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orderByRaw</span><span class="p">(</span><span class="s1">&#39;age desc&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="latest-oldest">
+<h3>53.8.2. latest / oldest<a class="headerlink" href="#latest-oldest" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">latest</span></code> 和 <code class="docutils literal"><span class="pre">oldest</span></code> 方法允许你通过日期对结果进行排序。默认情况下，结果集根据 <code class="docutils literal"><span class="pre">created_at</span></code> 列进行排序。或者，你可以按照你想要排序的字段作为字段名传入：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">latest</span><span class="p">()</span>
+                <span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="inrandomorder">
+<h3>53.8.3. inRandomOrder<a class="headerlink" href="#inrandomorder" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">inRandomOrder</span></code> 方法可以将查询结果随机排序。例如， 你可以使用这个方法获取一个随机用户：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$randomUser</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">inRandomOrder</span><span class="p">()</span>
+                <span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="groupby-having">
+<h3>53.8.4. groupBy / having<a class="headerlink" href="#groupby-having" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">groupBy</span></code> 和 <code class="docutils literal"><span class="pre">having</span></code> 方法对查询结果进行分组。 <code class="docutils literal"><span class="pre">having</span></code> 方法的用法与 <code class="docutils literal"><span class="pre">where</span></code> 方法类似： <code class="docutils literal"><span class="pre">HAVING</span></code> 子句可以让我们筛选成组后的各组数据， <code class="docutils literal"><span class="pre">WHERE</span></code> 子句在聚合前先筛选记录．也就是说作用在 <code class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></code> 子句和 <code class="docutils literal"><span class="pre">HAVING</span></code> 子句前；而 <code class="docutils literal"><span class="pre">HAVING</span></code> 子句在聚合后对组记录进行筛选。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">groupBy</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">groupBy</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">groupBy</span><span class="p">([</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">]);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">groupBy</span><span class="p">(</span><span class="k">new</span> <span class="nx">Raw</span><span class="p">(</span><span class="s1">&#39;DATE(created_at)&#39;</span><span class="p">));</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">groupBy</span><span class="p">(</span><span class="s1">&#39;account_id&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">having</span><span class="p">(</span><span class="s1">&#39;account_id&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>可以将多个参数传递给 <code class="docutils literal"><span class="pre">groupBy</span></code> 方法，按多个字段进行分组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">groupBy</span><span class="p">(</span><span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">having</span><span class="p">(</span><span class="s1">&#39;account_id&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>关于 <code class="docutils literal"><span class="pre">having</span></code> 更高级的用法，请查看 <code class="docutils literal"><span class="pre">havingRaw</span></code> 方法。 <code class="docutils literal"><span class="pre">having</span></code> 语句的用法也很简单。大致有 <code class="docutils literal"><span class="pre">having</span></code> 、 <code class="docutils literal"><span class="pre">orHaving</span></code> 、 <code class="docutils literal"><span class="pre">havingRaw</span></code> 、 <code class="docutils literal"><span class="pre">orHavingRaw</span></code> 这几个函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">having</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">groupBy</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">having</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">having</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orHaving</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">havingRaw</span><span class="p">(</span><span class="s1">&#39;user_foo &lt; user_bar&#39;</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">having</span><span class="p">(</span><span class="s1">&#39;baz&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">orHavingRaw</span><span class="p">(</span><span class="s1">&#39;user_foo &lt; user_bar&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="skip-take-limit-offset">
+<h3>53.8.5. skip / take / limit / offset<a class="headerlink" href="#skip-take-limit-offset" title="永久链接至标题">¶</a></h3>
+<p>想要限定查询返回的结果集的数目， 或者在查询中跳过给定数目的结果，可以使用 <code class="docutils literal"><span class="pre">skip</span></code> 和 <code class="docutils literal"><span class="pre">take</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">offset</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">skip</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">take</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">skip</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">take</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">forPage</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>或者，你也可以使用 <code class="docutils literal"><span class="pre">limit</span></code> 和 <code class="docutils literal"><span class="pre">offset</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">offset</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">limit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id14">
+<h2>53.9. 聚合<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<p>查询构造器还提供了各种聚合方法，例如 <code class="docutils literal"><span class="pre">count</span></code> ， <code class="docutils literal"><span class="pre">max</span></code> ， <code class="docutils literal"><span class="pre">min</span></code> ， <code class="docutils literal"><span class="pre">avg</span></code> ， 和 <code class="docutils literal"><span class="pre">sum</span></code> 。 你可以在查询后调用任何方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">();</span>
+
+<span class="nv">$price</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">max</span><span class="p">(</span><span class="s1">&#39;price&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>当然。你也可以将这些方法和其他语句结合起来：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$price</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;finalized&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">avg</span><span class="p">(</span><span class="s1">&#39;price&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id15">
+<h3>53.9.1. 确定记录是否存在<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p>不要使用 <code class="docutils literal"><span class="pre">count</span></code> 方法来确定是否存在与查询相匹配的记录，应该使用 <code class="docutils literal"><span class="pre">exists</span></code> 和 <code class="docutils literal"><span class="pre">doesntExist</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;finalized&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">exists</span><span class="p">();</span>
+
+<span class="k">return</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;orders&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;finalized&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">doesntExist</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id16">
+<h2>53.10. 条件语句<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h2>
+<p>有时你可能想要子句只适用于某个情况为真时才执行查询。例如，你可能只想给定值在请求中存在的情况下才应用 <code class="docutils literal"><span class="pre">where</span></code> 语句。你可以通过使用 <code class="docutils literal"><span class="pre">when</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$role</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">(</span><span class="s1">&#39;role&#39;</span><span class="p">);</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">when</span><span class="p">(</span><span class="nv">$role</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$role</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;role_id&#39;</span><span class="p">,</span> <span class="nv">$role</span><span class="p">);</span>
+                <span class="p">})</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">when</span></code> 方法只有在第一个参数为 <code class="docutils literal"><span class="pre">true</span></code> 的时候才执行给定闭包。 如果第一个参数为 <code class="docutils literal"><span class="pre">false</span></code> ，那么这个闭包将不会被执行。</p>
+<p>你可以传递另一个闭包作为 <code class="docutils literal"><span class="pre">when</span></code> 方法的第三个参数。该闭包会在第一个参数为 <code class="docutils literal"><span class="pre">false</span></code> 的情况下执行。为了演示这个特性如何使用，我们来配置一个查询的默认排序：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$sortBy</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+
+<span class="nv">$users</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">when</span><span class="p">(</span><span class="nv">$sortBy</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$sortBy</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="nv">$sortBy</span><span class="p">);</span>
+                <span class="p">},</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+                <span class="p">})</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">when</span></code> 语句可以根据条件来判断是否执行查询条件， <code class="docutils literal"><span class="pre">unless</span></code> 与 <code class="docutils literal"><span class="pre">when</span></code> 相反，第一个参数是 <code class="docutils literal"><span class="pre">false</span></code> 才会调用闭包函数执行查询， <code class="docutils literal"><span class="pre">tap</span></code> 指定 <code class="docutils literal"><span class="pre">when</span></code> 的第一参数永远为真：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$callback</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">,</span> <span class="nv">$condition</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="nv">$condition</span><span class="p">,</span> <span class="s1">&#39;truthy&#39;</span><span class="p">);</span>
+
+    <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nv">$default</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$query</span><span class="p">,</span> <span class="nv">$condition</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="nv">$condition</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+    <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">when</span><span class="p">(</span><span class="s1">&#39;truthy&#39;</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">,</span> <span class="nv">$default</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">tap</span><span class="p">(</span><span class="nv">$callback</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">unless</span><span class="p">(</span><span class="s1">&#39;truthy&#39;</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">,</span> <span class="nv">$default</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id17">
+<h2>53.11. 插入<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
+<p>查询构造器还提供了 <code class="docutils literal"><span class="pre">insert</span></code> 方法用于插入记录到数据库中。 <code class="docutils literal"><span class="pre">insert</span></code> 方法接收数组形式的字段名和字段值进行插入操作：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">insert</span><span class="p">(</span>
+    <span class="p">[</span><span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;votes&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>你还可以在 <code class="docutils literal"><span class="pre">insert</span></code> 中传入一个嵌套数组向表中插入多条记录。每个数组代表要插入表中的行：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">insert</span><span class="p">([</span>
+    <span class="p">[</span><span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;taylor@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;votes&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;dayle@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;votes&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+<div class="section" id="id">
+<h3>53.11.1. 自增 ID<a class="headerlink" href="#id" title="永久链接至标题">¶</a></h3>
+<p>如果数据表有自增 <code class="docutils literal"><span class="pre">ID</span></code> ，使用 <code class="docutils literal"><span class="pre">insertGetId</span></code> 方法来插入记录并返回 <code class="docutils literal"><span class="pre">ID</span></code> 值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$id</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">insertGetId</span><span class="p">(</span>
+    <span class="p">[</span><span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;votes&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">当使用 <code class="docutils literal"><span class="pre">PostgreSQL</span></code> 时， <code class="docutils literal"><span class="pre">insertGetId</span></code> 方法将默认把 <code class="docutils literal"><span class="pre">id</span></code> 作为自动递增字段的名称。若你要从其他「序列」来获取 <code class="docutils literal"><span class="pre">ID</span></code> ，则可以将字段名称作为第二个参数传递给 <code class="docutils literal"><span class="pre">insertGetId</span></code> 方法。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id18">
+<h2>53.12. 更新<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h2>
+<p>当然，除了插入记录到数据库中，查询构造器也可通过 <code class="docutils literal"><span class="pre">update</span></code> 方法更新已有的记录。  <code class="docutils literal"><span class="pre">update</span></code> 方法和 <code class="docutils literal"><span class="pre">insert</span></code> 方法一样，接受包含要更新的字段及值的数组。 你可以通过 <code class="docutils literal"><span class="pre">where</span></code> 子句对 <code class="docutils literal"><span class="pre">update</span></code> 查询进行约束：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">update</span><span class="p">([</span><span class="s1">&#39;votes&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">]);</span>
+</pre></div>
+</div>
+<div class="section" id="json">
+<h3>53.12.1. 更新 JSON 字段<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h3>
+<p>更新 <code class="docutils literal"><span class="pre">JSON</span></code> 字段时，你可以使用 <code class="docutils literal"><span class="pre">-&gt;</span></code> 语法访问 <code class="docutils literal"><span class="pre">JSON</span></code> 对象上相应的值，该操作只能用于支持 <code class="docutils literal"><span class="pre">JSON</span></code> 字段类型的数据库：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">update</span><span class="p">([</span><span class="s1">&#39;options-&gt;enabled&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h3>53.12.2. 自增与自减<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p>查询构造器还为给定字段的递增或递减提供了方便的方法。 此方法提供了一个比手动编写 <code class="docutils literal"><span class="pre">update</span></code> 语句更具表达力且更精练的接口。</p>
+<p>这两个方法都至少接收一个参数：需要修改的列。第二个参数是可选的，用于控制列递增或递减的量。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">increment</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">increment</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">decrement</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">);</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">decrement</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你也可以在操作过程中指定要更新的字段：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">increment</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;John&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="deletes">
+<h2>53.13. Deletes<a class="headerlink" href="#deletes" title="永久链接至标题">¶</a></h2>
+<p>查询构造器也可以使用 <code class="docutils literal"><span class="pre">delete</span></code> 方法从数据表中删除记录。在使用 <code class="docutils literal"><span class="pre">delete</span></code> 前，可添加 <code class="docutils literal"><span class="pre">where</span></code> 子句来约束 <code class="docutils literal"><span class="pre">delete</span></code> 语法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">delete</span><span class="p">();</span>
+
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">delete</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>如果你需要清空表，你可以使用 <code class="docutils literal"><span class="pre">truncate</span></code> 方法，这将删除所有行，并重置自增 <code class="docutils literal"><span class="pre">ID</span></code> 为零：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">truncate</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id20">
+<h2>53.14. 悲观锁<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h2>
+<p>查询构造器也包含一些可以帮助你在 <code class="docutils literal"><span class="pre">select</span></code> 语法上实现 「悲观锁定」的函数。若想在查询中实现一个「共享锁」，你可以使用 <code class="docutils literal"><span class="pre">sharedLock</span></code> 方法。共享锁可防止选中的数据列被篡改，直到事务被提交为止 ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">sharedLock</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>另外，你也可以使用 <code class="docutils literal"><span class="pre">lockForUpdate</span></code> 方法。使用「更新」锁可避免行被其它共享锁修改或选取：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">lockForUpdate</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的数据分页.html" class="btn btn-neutral float-right" title="54. 数据分页" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的数据库—原始方式.html" class="btn btn-neutral" title="52. 数据库-原始操作" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

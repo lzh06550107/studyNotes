@@ -1,0 +1,219 @@
+****
+微擎权限
+****
+
+微擎的权限定义主要分布在以下几个地方：
+
+- ``web/common/permission.inc.php`` ：预定义基于角色的控制器和动作映射关系；
+- ``web/common/common.func.php`` 中 ``frames_menu_append`` 方法 ：该方法预定义 ``系统菜单`` 中各个角色的显示的菜单项，通过结合 ``web/common/frames.inc.php`` 文件中预定义菜单，我们可以计算出 ``系统菜单`` 下各个角色能够执行的控制器动作；
+- 数据库 ``users_permission`` 表中存储公众号权限(system)、小程序(wxapp)、某一模块(模块标识)、系统(site)类型的权限；
+
+
+permission.inc.php文件预定义角色动作权限
+======================================
+该文件定义了微擎系统各个角色所具有的权限。控制粒度在 ``action`` 层次，但 ``see_more_info`` 对应的权限粒度在 ``do`` 层次 。
+
+.. code-block:: php
+
+	// account表示控制器名称
+	'account' => array(
+		// 当没有指定动作时，默认动作
+        'default' => '',
+        // 无须用户认证，直接可以访问
+        'direct' => array(
+            'auth', // 这里表示动作名称
+            'welcome',
+        ),
+        // 副创始人角色具有的动作权限
+        'vice_founder' => array('account*'),
+        // 拥有者角色具有的动作权限
+        'owner' => array('account*'),
+        // 管理员角色具有的动作权限
+        'manager' => array(
+            'display',
+            'manage',
+            'post-step',
+            'post-user',
+            'post',
+        ),
+        // 操作员角色具有的动作权限
+        'operator' => array(
+            'display',
+            'manage',
+            'post-step',
+        ),
+        // 店员角色具有的动作权限
+        'clerk' => array(
+            'display',
+        ),
+        // 未绑定角色具有的动作权限
+        'unbind_user' => array(),
+    ),
+
+    //....
+
+    // 这里see_more_info不是控制器名称，仅仅是一个标识
+    // 这里的权限主要控制页面内容的显示，粒度是 do 方法
+    'see_more_info' => array(
+        'founder' => array(
+            'see_module_manage_system_except_installed', // 这里也不是动作名称，仅仅是权限标识
+            'see_module_manage_system_ugrade',
+            'see_module_manage_system_stop',
+            'see_module_manage_system_install',
+            'see_module_manage_system_shopinfo',
+            'see_module_manage_system_info_edit',
+            'see_module_manage_system_detailinfo',
+            'see_module_manage_system_group_add',
+            'see_account_post_modules_tpl_edit_store_endtime',
+            'see_account_manage_module_tpl_all_permission',
+            'see_account_manage_sms_blance',
+            'see_account_manage_users_edit',
+            'see_account_manage_users_adduser',
+            'see_account_manage_users_add_viceuser',
+            'see_system_upgrade',
+            'see_system_manage_clerk',
+            'see_system_manage_user_setting',
+            'see_system_manage_vice_founder',
+            'see_system_add_vice_founder',
+            'see_notice_post',
+            'see_module_manage_system_newversion',
+            'see_user_edit_base_founder_name',
+            'see_user_create_own_vice_founder',
+            'see_user_profile_edit_username',
+            'see_user_profile_account_num',
+            'see_user_add_welcome_account'
+        ),
+        'vice_founder' => array(
+            'see_account_manage_users_adduser',
+            'see_module_manage_system_group_add',
+            'see_user_profile_account_num',
+            'see_user_add_welcome_account'
+        ),
+        'owner' => array(),
+        'manager' => array(
+            'see_user_profile_welcome'
+        ),
+        'operator' => array(
+            'see_user_profile_welcome'
+        ),
+    ),
+
+frames_menu_append方法预定义角色菜单权限
+======================================
+该方法中定义各个角色具有的菜单权限。
+
+.. code-block:: php
+
+	function frames_menu_append()
+	{
+	    $system_menu_default_permission = array(
+	    	// 创始人角色具有菜单权限
+	        'founder' => array(),
+	        // 拥有者角色具有的菜单权限
+	        'owner' => array(
+	            'system_account',
+	            'system_module',
+	            'system_wxapp',
+	            'system_module_wxapp',
+	            'system_my',
+	            'system_setting_updatecache',
+	            'system_message_notice',
+	        ),
+	        // 管理者角色具有的菜单权限
+	        'manager' => array(
+	            'system_account',
+	            'system_module',
+	            'system_wxapp',
+	            'system_module_wxapp',
+	            'system_my',
+	            'system_setting_updatecache',
+	            'system_message_notice',
+	        ),
+	        // 操作员角色具有的菜单权限
+	        'operator' => array(
+	            'system_account',
+	            'system_wxapp',
+	            'system_my',
+	            'system_setting_updatecache',
+	            'system_message_notice',
+	        ),
+	        // 店员角色具有的菜单权限
+	        'clerk' => array(
+	            'system_my',
+	        ),
+	    );
+	    return $system_menu_default_permission;
+	}
+
+该方法中返回的角色菜单权限，结合  ``web/common/frames.inc.php`` 文件中预定义菜单动作，我们可以计算出各个角色具有的动作权限，把这些权限添加到预定义角色动作权限变量中。
+
+.. code-block:: php
+
+	// 这里的键不是控制器名称，仅仅是标识
+	$we7_system_menu['webapp'] = array(
+	    'title' => 'PC', // 菜单名称
+	    'icon' => 'wi wi-pc', // 菜单图标
+	    'url' => url('webapp/home/display'), // 菜单链接
+	    'section' => array(
+	    	// 这里的键标识菜单标识，也是菜单权限标识
+	        'platform_module' => array(
+	            'title' => '应用模块',
+	            'menu' => array(),
+	            'is_display' => true,
+	        ),
+	        'mc' => array(
+	            'title' => '粉丝',
+	            'menu' => array(
+	                'mc_member' => array(
+	                    'title' => '会员管理',
+	                    'url' => url('mc/member'),
+	                    'icon' => 'wi wi-fans',
+	                    'permission_name' => 'mc_member', // 菜单权限标识
+	                )
+	            ),
+	        ),
+	        'webapp' => array(
+	            'title' => '配置',
+	            'menu' => array(
+	                'webapp_module_link' => array(
+	                    'title' => "数据同步",
+	                    'url' => url('webapp/module-link-uniacid'),
+	                    'is_display' => 1,
+	                    'icon' => 'wi wi-data-synchro',
+	                    'permission_name' => 'webapp_module_link_uniacid',
+	                ),
+	            ),
+	        ),
+	    ),
+	);
+
+除了 ``web/common/frames.inc.php`` 文件中预定义的菜单项，我们还可以在 ``站点->菜单设置`` 中添加菜单项到 ``core_menu`` 表中。最后可用的菜单项是两者计算的结果。
+
+users_permission表中用户权限
+============================
+各个角色对于微擎系统的权限都写死在程序中，只有对公众号、小程序、模块等操作权限可以根据用户角色(这些角色只能是管理员、操作员和店员，其它的角色拥有公众号等所有权限)进行配置。这些配置信息就保存在 ``users_permission`` 表中。
+
+可以在 ``公众号设置->使用者管理`` 中配置权限。
+
+权限的检查
+=========
+
+系统中权限的检查
+---------------
+在系统中使用 ``permission_check_account_user($permission_name, $show_message = true, $action = '')`` 进行检查。
+
+
+模块中权限的检查
+---------------
+在模块中使用 ``permission_check_account_user_module($action = '', $module_name = '')`` 进行检查。
+
+
+.. code-block:: php
+
+	permission_check_account_user_module($modulename.'_settings', $modulename);
+
+	permission_check_account_user_module($module_name.'_permissions', $module_name);
+
+	permission_check_account_user_module($entry['module'] . '_menu_' . $entry['do'], $entry['module']);
+
+	permission_check_account_user_module($entry['module'] . '_rule', $entry['module']);

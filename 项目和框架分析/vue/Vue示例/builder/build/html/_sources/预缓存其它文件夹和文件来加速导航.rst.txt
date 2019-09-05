@@ -1,0 +1,1162 @@
+****************
+预缓存其它文件夹和文件来加速导航
+****************
+在本章的最后一节中，我们将通过向应用程序引入更多缓存来进一步加快我们的 ``Dropbox`` 文件浏览的速度。到目前为止，我们已经构建了一个可以查询 ``Dropbox API`` 的应用程序，并返回文件和文件夹。从那里，我们添加了文件夹导航，包括更新共享的 ``URL`` 链接并能够使用后退和前进按钮。在第6章中，使用 ``Vuex`` 缓存当前文件夹结构后，我们引入 ``Vuex`` 用于存储当前文件夹路径和我们访问过的文件夹的内容。
+
+本章将着眼于：
+
+- 预先缓存用户当前所在的文件夹，还包括子文件夹。这将通过循环显示当前显示的文件夹并检查它们是否已被缓存来完成。如果不是，我们可以从 ``API`` 收集数据。
+- 如果用户通过直接URL输入，则存储父文件夹的内容。这将通过利用面包屑路径向上遍历树来完成。
+- 缓存文件的下载链接。无论文件夹是否被我们的代码缓存，每个文件都应该具有下载链接。
+
+通过这些改进，我们可以确保应用程序仅为每个项目联系一次 ``API`` ，而不是原来的无数次。
+
+缓存子文件夹
+============
+通过子文件夹和父文件夹缓存，我们不一定会编写新代码，而是将现有代码重组并重新调整为更加模块化的系统，以便可以分别调用每个部分。
+
+以下流程图应该帮助您可视化缓存当前文件夹和子文件夹所需的步骤：
+
+.. image:: ./images/流程图.png
+
+在查看流程图时，您可以立即看到应用程序所需的一些重复事件。在两个地方，应用程序需要确定缓存中是否存在文件夹，如果不存在，查询 ``API`` 以获取数据并存储结果。虽然它在流程图上只出现两次，但此功能需要多次，对于当前位置中的每个文件夹都需要一次。
+
+我们还需要将我们的显示逻辑从查询和存储逻辑中分离出来，因为我们可能需要从API和存储中加载，而不更新视图。
+
+规划应用方法
+============
+考虑到上一节，我们可以借此机会修改和重构我们的 ``dropbox-viewer`` 应用程序的方法，确保每个操作都有自己的方法。这将允许我们在需要时调用每个动作。 在我们进入代码之前，让我们根据前面的流程图规划出需要创建的方法。
+
+首先要注意的是，每次查询 ``API`` 时，我们都需要将结果存储在缓存中。由于我们不需要在缓存中存储任何内容，除非调用 ``API`` ，我们可以用相同的方法组合这两个操作。 我们还经常需要检查缓存中是否有特定路径的内容，或者从缓存加载或从API中检索它。 我们可以将其添加到自己的返回数据的方法中。
+
+让我们绘制出我们需要创建的方法：
+
+- ``getFolderStructure`` : 此方法将接受单个路径参数并返回文件夹条目的一个对象。 这将负责检查数据是否在缓存中，如果没有，则查询 ``Dropbox API`` 。
+- ``displayFolderStructure`` : 此方法将触发前面的函数并使用数据更新组件上的 ``structure`` 对象以显示 ``View`` 中的文件和文件夹。
+- ``cacheFolderStructure`` : 这个方法将包含 ``getFolderStructure`` 方法来缓存每个子文件夹 - 我们将探索一些可以触发的方法。
+
+我们可能需要创建比这更多的方法，但这三个将成为组件的中枢。 我们将保留 ``path`` 和 ``slug`` 计算属性以及 ``dropbox()`` 方法。 删除其余的对象，方法和函数，以便您的 ``Dropbox-viewer`` 恢复基本功能：
+
+.. code-block:: js
+
+    Vue.component('dropbox-viewer', {
+        template: '#dropbox-viewer-template',
+        data() {
+            return {
+                accessToken: 'XXXX',
+                structure: {},
+                isLoading: true
+            }
+        },
+        computed: {
+            path() {
+                return this.$store.state.path
+            },
+            slug() {
+                return this.path.toLowerCase()
+                    .replace(/^\/|\/$/g, '')
+                    .replace(/ /g,'-')
+                    .replace(/\//g,'-')
+                    .replace(/[-]+/g, '-')
+                    .replace(/[^\w-]+/g,'');
+            }
+        },
+        methods: {
+            dropbox() {
+                return new Dropbox({
+                    accessToken: this.accessToken
+                });
+            },
+        }
+    });
+
+创建getFolderStructure方法
+==========================
+在组件上创建一个名为 ``getFolderStructure`` 的新方法。 如前所述，此方法需要接受单个路径参数。这样我们可以使用当前路径和子路径：
+
+.. code-block:: js
+
+    getFolderStructure(path) {}
+
+此方法需要检查缓存并返回数据。在方法内部创建一个名为 ``output`` 的新变量并将其返回：
+
+.. code-block:: js
+
+    getFolderStructure(path) {
+        let output;
+        return output;
+    }
+
+在第6章中缓存数据时，使用 ``Vuex`` 缓存当前文件夹结构，我们使用 ``slug`` 作为存储中的关键字。 ``slug`` 是通过使用当前路径生成的; 但是，我们不能在新方法中使用它，因为它固定在当前位置。这里需要根据传入的路径生成动态结果。
+
+创建一个名为 ``generateSlug`` 的新方法。 这将接受一个参数(路径)，并使用 ``slug`` 计算函数的替换返回转换的字符串：
+
+.. code-block:: js
+
+    generateSlug(path) {
+        return path.toLowerCase()
+            .replace(/^\/|\/$/g, '')
+            .replace(/ /g,'-')
+            .replace(/\//g,'-')
+            .replace(/[-]+/g, '-')
+            .replace(/[^\w-]+/g,'');
+    }
+
+现在我们可以删除 ``slug`` 计算函数，以便我们没有任何重复的代码。
+
+回到我们的 ``getFolderStructure`` 方法，创建一个存储路径别名的新变量。 为此，我们将使用 ``const`` 创建一个无法更改的变量：
+
+.. code-block:: js
+
+    getFolderStructure(path) {
+        let output;
+        const slug = this.generateSlug(path);
+        return output;
+    }
+
+我们将创建的最后一个变量是数据路径，就像我们在第8章介绍 ``VueRouter`` 和加载基于 ``URL`` 的组件中所做的那样。这将使用我们刚刚创建的新 ``slug`` 变量：
+
+.. code-block:: js
+
+    getFolderStructure(path) {
+        let output;
+        const slug = this.generateSlug(path),
+            data = this.$store.state.structure[slug];
+        return output;
+    }
+
+我们现在可以使用前面的代码中的 ``data``  通过if语句判断是否存在缓存。如果存储在缓存中，我们可以将 ``data`` 直接分配给 ``output`` ：
+
+.. code-block:: js
+
+    getFolderStructure(path) {
+        let output;
+        const slug = this.generateSlug(path),
+            data = this.$store.state.structure[slug];
+        if(data) {
+            output = data;
+        } else {
+        }
+        return output;
+    }
+
+但是，通过 ``Dropbox API`` 调用，我们可以调整它以适应这个新代码。 以前，它从 ``API`` 中检索数据，然后触发一个方法，然后保存并显示结构。 由于我们需要将检索到的数据存储到 ``output`` 变量中，因此我们将更改数据流。 我们首先将响应存储在缓存中，然后将数据返回到 ``output`` 变量，而不是触发方法。
+
+由于我们只使用 ``API`` 调用中的条目，因此我们也将更新 ``store`` 以缓存这部分响应。 这将减少应用程序的代码和复杂性：
+
+.. code-block:: js
+
+    getFolderStructure(path) {
+        let output;
+        const slug = this.generateSlug(path),
+            data = this.$store.state.structure[slug];
+        if(data) {
+            output = data;
+        } else {
+            output = this.dropbox().filesListFolder({
+                path: path,
+                include_media_info: true
+            })
+                .then(response => {
+                    let entries = response.entries;
+                    this.$store.commit('structure', {
+                        path: slug,
+                        data: entries
+                    });
+                    return entries;
+                })
+                .catch(error => {
+                    this.isLoading = 'error';
+                    console.log(error);
+                });
+        }
+        return output;
+    }
+
+``Dropbox filesListFolder`` 方法使用传入的路径变量，而不是它以前使用的全局路径变量。然后将响应中的条目存储在变量中，然后使用相同的 ``mutation`` 缓存到 ``Vuex`` 存储中。然后从 ``promise`` 中返回 ``entries`` 变量，将结果存储在 ``output`` 中。 ``catch()`` 函数与以前相同。
+
+通过从缓存或 ``API`` 返回数据，我们可以在创建组件和更新路径时触发并处理这些数据。然而，在我们这样做之前，我们需要混合处理数据类型。
+
+从 ``API`` 返回时，数据仍然是需要解决的 ``promise`` ；将它分配给一个变量只是传递了稍后解决的 ``promise`` 。然而，来自 ``store`` 的数据是一个普通数组。为了给我们一个单一的数据类型来处理，我们将把存储数组 ``resolve`` 为一个 ``promise`` ，这意味着不管数据从哪里加载 ``getFolderStructure`` 返回一个 ``promise`` ：
+
+.. code-block:: js
+
+    getFolderStructure(path) {
+        let output;
+        const slug = this.generateSlug(path),
+            data = this.$store.state.structure[slug];
+        if(data) {
+            output = Promise.resolve(data); // 转换为Promise
+        } else {
+            output = this.dropbox().filesListFolder({
+                path: path,
+                include_media_info: true
+            })
+                .then(response => {
+                    let entries = response.entries;
+                    this.$store.commit('structure', {
+                        path: slug,
+                        data: entries
+                    });
+                    return entries;
+                })
+                .catch(error => {
+                    this.isLoading = 'error';
+                    console.log(error);
+                });
+        }
+        return output;
+    }
+
+通过这个 ``getFolderStructure`` 方法，我们现在可以从 ``API`` 加载一些数据，并将结果存储在全局缓存中，而无需更新视图。 然而，该函数会返回我们希望用 ``JavaScript promise`` 进一步处理它的信息。
+
+我们现在可以继续创建我们的下一个方法 ``displayFolderStructure`` ，它将采用我们刚刚创建的方法的结果并更新 ``View`` ，以便应用程序再次可以导航。
+
+用displayFolderStructure方法显示数据
+====================================
+随着我们的数据现在可以从 ``store`` 中缓存并提供，我们可以继续使用我们的新方法实际显示数据。 在 ``dropbox-viewer`` 组件中创建一个名为 ``displayFolderStructure`` 新方法：
+
+.. code-block:: js
+
+    displayFolderStructure() {}
+
+这种方法将借用该组件以前版本中的很多代码。请记住，此方法纯粹用于显示文件夹，与缓存内容无关。
+
+该方法的过程将是：
+
+1. 在应用程序中将加载状态设置为 ``active`` 状态。这让用户知道发生了一些事情。
+2. 创建一个空的 ``structure`` 对象。
+3. 加载 ``getFolderStructure`` 方法的内容。
+4. 遍历结果并将每个项目添加到 ``folders`` 或 ``files`` 数组中。
+5. 将全局 ``structure`` 对象设置为新创建的对象。
+6. 将加载状态设置为 ``false`` ，以便显示内容。
+
+将加载状态设置为true并创建一个空的结构对象
+------------------------------------------
+此方法的第一步是隐藏结构树并显示加载消息。这可以像以前一样完成，方法是将 ``isLoading`` 变量设置为 ``true`` 。我们也可以在这里创建我们的空 ``structure`` 对象，随时可以填充数据：
+
+.. code-block:: js
+
+    displayFolderStructure() {
+        this.isLoading = true;
+        const structure = {
+            folders: [],
+            files: []
+        }
+    }
+
+加载getFolderStructure方法的内容
+--------------------------------
+由于 ``getFolderStructure`` 方法返回一个 ``promise`` ，我们需要在继续操作之前解析结果。这是通过 ``.then()`` 函数完成的； 我们已经在 ``Dropbox`` 类中使用了它。调用该方法，然后将结果分配给一个变量：
+
+.. code-block:: js
+
+    displayFolderStructure() {
+        this.isLoading = true;
+        const structure = {
+            folders: [],
+            files: []
+        }
+        this.getFolderStructure(this.path).then(data => {
+        });
+    }
+
+此代码将组件的 ``path`` 对象传递给方法。此路径是用户正尝试查看的当前路径。 一旦数据返回，我们可以将其分配给 data 变量，然后可以在函数内部使用。
+
+循环遍历结果并将每个项目添加到文件夹或文件数组中
+------------------------------------------------
+我们已经熟悉遍历条目并检查每个条目的 ``.tag`` 属性的代码。如果结果是一个文件夹，它将被添加到 ``structure.folders`` 数组中，否则它将被追加到 ``structure.files`` 中。
+
+.. code-block:: js
+
+    displayFolderStructure() {
+        this.isLoading = true;
+        const structure = {
+            folders: [],
+            files: []
+        }
+        this.getFolderStructure(this.path).then(data => {
+            for (let entry of data) {
+                // Check ".tag" prop for type
+                if(entry['.tag'] == 'folder') {
+                    structure.folders.push(entry);
+                } else {
+                    structure.files.push(entry);
+                }
+            }
+        });
+    }
+
+更新全局 structure 对象并修改加载状态
+-------------------------------------
+此方法的最后一项任务是更新全局 ``structure`` 并修改加载状态。此代码与之前没有任何变化：
+
+.. code-block:: js
+
+    displayFolderStructure() {
+        this.isLoading = true;
+        const structure = {
+            folders: [],
+            files: []
+        };
+        this.getFolderStructure(this.path).then(data => {
+            for (let entry of data) {
+                // Check ".tag" prop for type
+                if(entry['.tag'] == 'folder') {
+                    structure.folders.push(entry);
+                } else {
+                    structure.files.push(entry);
+                }
+            }
+            this.structure = structure;
+            this.isLoading = false;
+        });
+    }
+
+我们现在有一个方法可以显示我们的数据检索结果。
+
+调用该方法
+==========
+现在可以在创建 ``dropbox-viewer`` 组件时调用此方法。该路径已经被填充，这要归功于全局 ``Vue`` 中的 ``created`` 函数，它将 ``URL`` 散列提交给 ``store`` ，从而创建路径变量。 因此，我们不需要传递任何东西给函数。将 ``created`` 的函数添加到组件中，并在里面调用新方法：
+
+.. code-block:: js
+
+    Vue.component('dropbox-viewer', {
+        template: '#dropbox-viewer-template',
+        data() {
+            return {
+                accessToken: 'XXXX',
+                structure: {},
+                isLoading: true
+            }
+        },
+        computed: {
+            ...
+        },
+        methods: {
+            ...
+        },
+        created() {
+            this.displayFolderStructure();
+        }
+    });
+
+刷新应用程序现在将加载您的文件夹内容。 更新 ``URL`` 哈希并重新加载页面也会显示该文件夹的内容；但是，单击任何文件夹链接将更新面包屑，但不会更新数据结构。 这可以通过观察 ``computed`` 路径变量来解决。 当哈希更新并因此可以触发 ``watch`` 对象中的函数时，这将会更新。 添加一个函数，用于监视 ``path`` 变量的更新，并在具有以下内容时触发新方法：
+
+.. code-block:: js
+
+    created() {
+        this.displayFolderStructure();
+    },
+    watch: {
+        path() {
+            this.displayFolderStructure();
+        }
+    }
+
+有了这个，我们创建了一个应用程序，再次缓存您访问过的任何文件夹。第一次点击结构看起来非常慢，但是一旦你重新导入树并重新进入子文件夹，你几乎看不到加载屏幕。尽管应用程序具有与本章开始时相同的功能，但我们重构了代码以分离检索和缓存以及显示数据。 我们继续通过预缓存所选路径的子文件夹来进一步增强我们的应用程序。
+
+缓存子文件夹
+============
+现在我们可以在不更新 ``Vue`` 的情况下缓存文件夹，我们可以使用我们的 ``structure`` 对象来获取子文件夹的内容。使用结构对象中的 ``folders`` 数组，我们可以遍历它并依次缓存每个文件夹。
+
+我们必须确保我们不会妨碍应用程序的性能；缓存必须异步完成，所以用户不知道这个过程。我们还需要确保我们不会运行不必要地缓存。
+
+为了达到这个目的，我们可以 ``watch structure`` 对象。只有从缓存或 ``API`` 中加载数据并更新 ``Vue`` 后，才会进行更新。用户查看文件夹的内容后，我们可以循环遍历文件夹以存储其内容。
+
+但是，有一个小问题。如果我们监听 ``structure`` 变量，那么我们的代码将永远不会运行，因为对象的直接内容不会更新，尽管我们每次都用新的结构对象替换它。不同的文件夹，结构对象总是有两个键，即文件和文件夹，它们都是数组。就 ``Vue`` 和 ``JavaScript`` 而言，结构对象从不改变。
+
+.. note:: 由于 ``Vue`` 会在初始化实例时对属性执行 ``getter/setter`` 转化过程，所以属性必须在 ``data`` 对象上存在才能让 ``Vue`` 转换它，这样才能让它是响应的。
+
+但是， ``Vue`` 可以检测 ``deep`` 变量的嵌套更改。这可以在每个变量的基础上启用。与组件上的道具类似，为了在监视属性上启用更多选项，可以将其传递给对象而不是直接函数。
+
+为结构创建一个新的观察键，该键是具有两个值的对象， ``deep`` 和 ``handler`` 。 ``deep`` 键将被设置为 ``true`` ，而 ``handler`` 将是变量被更改时触发的函数：
+
+.. code-block:: js
+
+    watch: {
+        path() {
+            this.displayFolderStructure();
+        },
+        structure: {
+            deep: true,
+                handler() {
+            }
+        }
+    }
+
+在这个 ``handler`` 中，我们现在可以遍历每个文件夹并为每个文件夹运行 ``getFolderStructure`` 方法，并使用每个文件夹的 ``path_lower`` 属性作为函数参数：
+
+.. code-block:: js
+
+    structure: {
+        deep: true,
+        handler() {
+            for (let folder of this.structure.folders) {
+                this.getFolderStructure(folder.path_lower);
+            }
+        }
+    }
+
+通过这段简单的代码，我们的应用似乎加速了十倍。您导航到的每个子文件夹都会立即加载（除非您有特别长的文件夹列表，并且很快导航到最后一个文件夹）。 为了让您了解缓存的速度和时间，请在 ``getFolderStructure`` 方法中添加一个 ``console.log()`` 来记录这些信息：
+
+.. code-block:: js
+
+    if(data) {
+        output = Promise.resolve(data);
+    } else {
+        console.log(`API query for ${path}`);
+        output = this.dropbox().filesListFolder({
+            path: path,
+            include_media_info: true
+        })
+            .then(response => {
+                console.log(`Response for ${path}`);
+            ...
+
+这使您可以看到所有的 ``API`` 调用都是异步完成的 - 应用程序不会等待前一个文件夹被加载并缓存，然后再转到下一个文件夹。 这具有允许缓存较小的文件夹而无需等待从 ``API`` 返回更大的文件夹的优点。
+
+修改缓存方法
+============
+与所有事情一样，在制作应用程序时，有很多方法可以实现相同的结果。 这种方法的缺点是即使你的文件夹只包含文件，这个函数也会触发 - 尽管没有任何事情要做。
+
+另一种方法是再次使用我们的 ``created`` 函数，这次是在 ``folder`` 组件本身上，以路径作为参数触发父方法。
+
+一种做法是使用 ``$parent`` 属性。在 ``folder`` 组件中，使用 ``this.$parent`` 将允许访问 ``dropbox-viewer`` 组件上的变量，方法和计算值。
+
+将 ``created`` 函数添加到 ``folder`` 组件，并从 ``Dropbox`` 组件中删除 ``structure watch`` 属性。 从那里，调用父 ``getFolderStructure`` 方法：
+
+.. code-block:: js
+
+    Vue.component('folder', {
+        template: '<li><strong><a :href="\'#\' + f.path_lower">{{ f.name }}</a></strong></li>',
+        props: {
+            f: Object
+        },
+        created() {
+            this.$parent.getFolderStructure(this.f.path_lower);
+        }
+    });
+
+预览应用程序证明了此方法的有效性。只有在结构中存在文件夹时才会触发，这种更清楚的技术将文件夹缓存与文件夹本身绑定在一起，而不是混入 ``Dropbox`` 代码中。
+
+但是，除非必要，否则应该避免使用 ``this.$parent`` ，并且只能用于边缘情况。 由于我们有机会使用 ``props`` ，我们应该这样做。 它还使我们有机会在文件夹上下文中为该功能提供更有意义的名称。
+
+导航到您的 ``HTML`` 视图并更新 ``folder`` 组件以接受新的 ``prop`` 。我们将使用 ``cache prop`` 并将该函数作为值传递。由于该属性是动态的，因此不要忘记添加前面的冒号：
+
+.. code-block:: html
+
+    <folder :f="entry" :cache="getFolderStructure"></folder>
+
+将 ``cache`` 键添加到 ``JavaScript folder`` 组件中的 ``props`` 项。 告诉 ``Vue`` ，输入将是一个函数：
+
+.. code-block:: js
+
+    Vue.component('folder', {
+        template: '<li><strong><a :href="\'#\' + f.path_lower">{{ f.name }}</a></strong></li>',
+        props: {
+            f: Object,
+            cache: Function
+        }
+    });
+
+最后，我们可以在 ``created`` 函数中调用我们的新的 ``cache()`` 方法：
+
+.. code-block:: js
+
+    Vue.component('folder', {
+        template: '<li><strong><a :href="\'#\' + f.path_lower">{{ f.name }}</a></strong></li>',
+        props: {
+            f: Object,
+            cache: Function
+        },
+        created() {
+            this.cache(this.f.path_lower);
+        }
+    });
+
+可以像以前一样使用控制台日志再次验证高速缓存。 这会创建更简洁的代码，使您和其他开发人员更容易阅读。
+
+随着我们的 ``Dropbox`` 应用程序的进步，我们可以继续缓存父文件夹，如果您在 ``URL`` 中使用散列输入子文件夹。
+
+缓存父文件夹
+============
+缓存父结构是我们能够帮助加速我们的应用程序的下一个先发制人的事情。假设我们已经浏览了我们的图片目录 ``/images/holiday/summer`` ，并希望与朋友或同事分享。我们会在 ``URL`` 哈希中将这个 ``URL`` 发送给他们，并且在页面加载时，他们会看到内容。例如，如果他们使用面包屑导航到 ``/images/holiday`` 节点，那么他们需要等待应用程序检索内容。
+
+使用 ``breadcrumb`` 组件，我们可以缓存父目录，因此，在导航到 ``holiday`` 文件夹时，用户将立即显示其内容。当用户浏览该文件夹时，其所有子文件夹都将使用先前的方法一起缓存。
+
+为了缓存父文件夹，我们已经有一个组件显示路径，可以访问我们循环遍历的所有父文件夹的别名 - 面包屑。
+
+在开始缓存过程之前，我们需要更新组件内的 ``folders`` 计算函数。这是因为目前我们存储的路径带有散列前置，这会为 ``Dropbox API`` 创建无效路径。从被推送到 ``output`` 数组的对象中移除哈希，并以类似于 ``folder`` 组件的方式将其添加到模板中：
+
+.. code-block:: js
+
+    Vue.component('breadcrumb', {
+        template: '<div>' +
+            '<span v-for="(f, i) in folders">' +
+                '<a :href="\'#\' + f.path">{{ f.name || 'Home' }}</a>' +
+                '<i v-if="i !== (folders.length - 1)"> &raquo; </i>' +
+            '</span>' +
+        '</div>',
+        computed: {
+            folders() {
+                let output = [],
+                    slug = '',
+                    parts = this.$store.state.path.split('/');
+                for (let item of parts) {
+                    slug += item;
+                    output.push({'name': item || 'home', 'path': slug});
+                    slug += '/';
+                }
+                return output;
+            }
+        }
+    });
+
+我们现在可以使用输出来显示面包屑和缓存父结构。
+
+第一步是允许 ``breadcrumb`` 组件访问缓存函数。与 ``folder`` 组件类似的方式，将该函数作为 ``prop`` 添加到视图中的 ``breadcrumb`` 组件：
+
+.. code-block:: html
+
+    <breadcrumb :cache="getFolderStructure"></breadcrumb>
+
+将 ``props`` 对象添加到 ``JavaScript`` 代码中的组件中。 声明 ``cache`` 道具作为一个函数，所以 ``Vue`` 知道会发生什么：
+
+.. code-block:: js
+
+    Vue.component('breadcrumb', {
+        template: '...',
+        props: {
+            cache: Function
+        },
+        computed: {
+            folders() {
+            ...
+            }
+    });
+
+**父级数据结构** 将在创建 ``breadcrumb`` 组件时生成。 但是，由于这会阻止加载过程，因此我们将在组件 ``mounted`` 而不是 ``created`` 时触发它。
+
+向您的组件添加一个 ``mounted`` 函数，并将文件夹的计算值分配给一个变量：
+
+.. code-block:: js
+
+    Vue.component('breadcrumb', {
+        template: '...',
+        props: {
+            cache: Function
+        },
+        computed: {
+            folders() {
+            ...
+            }
+        },
+        mounted() {
+            let parents = this.folders; // 生成父数据结构
+        }
+    });
+
+我们现在需要开始缓存文件夹；但是，我们可以明智的决定缓存文件夹的顺序。我们可以假设用户通常会回到文件夹树，所以我们理想的情况下应该缓存直接父节点，然后再移动到其父节点上，等等。由于我们的文件夹的变量从上到下，我们需要将其反转。
+
+我们可以做的另一件事是提高性能，即删除当前文件夹; 因为我们已经在其中，应用程序已经缓存了它。 在您的组件中，反转该数组并删除第一个项目：
+
+.. code-block:: js
+
+    mounted() {
+        let parents = this.folders;
+        parents.reverse().shift();
+    }
+
+如果我们将``parents`` 变量添加到控制台日志函数中 ，我们可以看到它包含我们现在想要缓存的文件夹。 我们现在可以遍历这个数组，为数组中的每个元素调用缓存函数：
+
+.. code-block:: js
+
+    mounted() {
+        let parents = this.folders;
+        parents.reverse().shift();
+        for(let parent of parents) {
+            this.cache(parent.path);
+        }
+    }
+
+有了这个，我们的父母和孩子文件夹被应用程序缓存，导致树上下之间快速导航。 但是，在挂载的函数内部运行 ``console.log()`` 会显示每次导航文件夹时重新安装面包屑。 这是因为 ``View`` 中的 ``v-if`` 语句，每次删除和添加 ``HTML`` 。
+
+由于我们只需要在初始应用程序加载时缓存父文件夹一次，让我们看看更改触发的位置。 我们只需要第一次运行这个函数； 一旦用户开始在树上上下导航，所有访问的文件夹将一路缓存。
+
+缓存父文件夹一次
+================
+为确保我们使用的资源最少，我们可以将用于 ``breadcrumb`` 的文件夹数组保留在 ``store`` 中。 这意味着 ``breadcrumb`` 组件和我们的父缓存函数都可以访问同一个数组。
+
+将 ``breadcrumb`` 键添加到 ``store state`` - 这是我们将存储数组的位置：
+
+.. code-block:: js
+
+    const store = new Vuex.Store({
+        state: {
+            path: '',
+            structure: {},
+            breadcrumb: []
+        },
+        mutations: {
+            updateHash(state) {
+                let hash = window.location.hash.substring(1);
+                state.path = (hash || '');
+            },
+            structure(state, payload) {
+                state.structure[payload.path] = payload.data;
+            }
+        }
+    });
+
+接下来，将代码从面包屑组件移动到 ``updateHash`` mutation 中，以便我们可以更新 ``path`` 和 ``breadcrumb`` 变量：
+
+.. code-block:: js
+
+    updateHash(state) {
+        let hash = window.location.hash.substring(1);
+        state.path = (hash || '');
+        let output = [],
+            slug = '',
+            parts = state.path.split('/');
+        for (let item of parts) {
+            slug += item;
+            output.push({'name': item || 'home', 'path': slug});
+            slug += '/';
+        }
+        state.breadcrumb = output;
+    },
+
+请注意，它不是返回 ``output`` 数组，而是存储在 ``state`` 对象中。我们现在可以在 ``breadcrumb`` 组件上更新 ``folders`` 计算函数以返回 ``store`` 数据：
+
+.. code-block:: js
+
+    computed: {
+        folders() {
+            return this.$store.state.breadcrumb;
+        }
+    }
+
+现在全局都可以使用这些数据，我们可以在 ``dropboxviewer`` 组件上创建一个新方法，即 ``cacheParentFolders`` ，它会触发我们为 ``breadcrumb`` 组件编写的代码。
+
+在 ``Dropbox`` 组件上创建一个新方法并将代码移动到它。 更新父的位置并确保您发射的路径正确：
+
+.. code-block:: js
+
+    cacheParentFolders() {
+        let parents = this.$store.state.breadcrumb;
+        parents.reverse().shift();
+        for(let parent of parents) {
+            this.getFolderStructure(parent.path);
+        }
+    }
+
+我们现在可以在创建 ``Dropbox`` 组件时触发该方法一次。 在 ``created`` 函数中的现有方法调用之后添加它：
+
+.. code-block:: js
+
+    created() {
+        this.displayFolderStructure();
+        this.cacheParentFolders();
+    }
+
+现在我们可以做一些家务管理，并从 ``breadcrumb`` 组件中删除 ``mounted`` 的方法，以及视图中的 ``props`` 对象和 ``:cache prop`` 。 这意味着我们的 ``breadcrumb`` 组件现在比以前更简单：
+
+.. code-block:: js
+
+    Vue.component('breadcrumb', {
+        template: '<div>' +
+            '<span v-for="(f, i) in folders">' +
+                '<a :href="\'#\' + f.path">{{ f.name || 'Home' }}</a>' +
+                '<i v-if="i !== (folders.length - 1)"> &raquo; </i>' +
+            '</span>' +
+        '</div>',
+        computed: {
+            folders() {
+                return this.$store.state.breadcrumb;
+            }
+        }
+    });
+
+HTML样子如下所示：
+
+.. code-block:: html
+
+    <breadcrumb></breadcrumb>
+
+我们还可以整理商店中的 ``updateHash``  ``mutation`` ，使其更易于理解：
+
+.. code-block:: js
+
+    updateHash(state, val) {
+        let path = (window.location.hash.substring(1) || ''),
+            breadcrumb = [],
+            slug = '',
+            parts = path.split('/');
+        for (let item of parts) {
+            slug += item;
+            breadcrumb.push({'name': item || 'home', 'path': slug});
+            slug += '/';
+        }
+        state.path = path
+        state.breadcrumb = breadcrumb;
+    }
+
+所有变量现在都在顶部声明， ``state`` 在底部更新。 变数的数量也有所减少。
+
+现在查看应用程序，它似乎正常工作；但是，经过仔细检查， ``breadcrumb`` 似乎在初始页面加载时会受到文件夹结构的影响。一旦一个文件夹被导航到，它会迎头赶上，但在第一次加载时，它似乎只有一个项目，并且根本没有查看 ``Dropbox`` 的根目录。
+
+这是因为在我们提交 ``updateHash`` ``mutation`` 之前， ``store`` 还没有完全初始化。 如果我们回想起 ``Vue`` 实例生命周期，请参阅第4章使用 ``Dropbox API`` 获取文件列表，我们可以看到 ``created`` 函数很早就被触发了。 更新主 ``Vue`` 实例以在 ``mounted`` 时触发 ``mutation`` 来解决问题：
+
+.. code-block:: js
+
+    const app = new Vue({
+        el: '#app',
+        store,
+        mounted() {
+            store.commit('updateHash');
+        }
+    });
+
+在所有文件夹都被缓存的情况下，我们可以通过存储每个文件的下载链接来缓存更多的 ``API`` 调用。
+
+我们也可以查看缓存子文件夹的子文件夹，遍历每个缓存文件夹的内容以最终缓存整个树。 我们不会深究这一点，但你随时可以尝试下。
+
+缓存文件下载链接
+================
+当用户在文档树周围导航时， ``Dropbox API`` 仍然被查询的次数超过了必要量。 这是因为每次显示文件时，我们都会查询 ``API`` 以检索下载链接。 通过将下载链接响应存储在缓存中当重新导航到该文件夹时重新显示，可以取消额外的 ``API`` 查询。
+
+每次显示文件时，都会使用 ``store`` 中的数据初始化新组件。 我们可以将其用于我们的优势，因为这意味着我们只需更新组件实例，然后将结果缓存起来。
+
+在您的 ``file`` 组件中，更新 ``API`` 响应，以便不仅将结果保存在数据属性的 ``link`` 属性上，而且还保存在文件实例 ``f`` 上。 这将作为 ``f`` 新键 ``download_link`` 存储。
+
+当存储数据时，我们可以将它们连接赋值：
+
+.. code-block:: js
+
+    Vue.component('file', {
+        template: '<li><strong>{{ f.name }}</strong><span v-if="f.size"> - {{ bytesToSize(f.size) }}</span> - <a v-if="link" :href="link">Download</a></li>',
+        props: {
+            f: Object,
+            d: Object
+        },
+        data() {
+            return {
+                byteSizes: ['Bytes', 'KB', 'MB', 'GB', 'TB'],
+                link: false
+            }
+        },
+        methods: {
+            bytesToSize(bytes) {
+                // Set a default
+                let output = '0 Byte';
+                // If the bytes are bigger than 0
+                if (bytes > 0) {
+                    // Divide by 1024 and make an int
+                    let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+                    // Round to 2 decimal places and select the appropriate unit from the array
+                    output = Math.round(bytes / Math.pow(1024, i), 2) + ' ' + this.byteSizes[i];
+                }
+                return output;
+            }
+        },
+        created() {
+            this.d.filesGetTemporaryLink({path: this.f.path_lower})
+                .then(data => {
+                    this.f.download_link = this.link = data.link;
+                });
+        }
+    });
+
+这基本上意味着 ``this.f.download_link`` 等于 ``this.link`` ，它也等于 ``data.link`` ，它是来自 ``API`` 的下载链接。当文件夹被导航到时使用该存储并显示，我们可以添加 ``if`` 语句来查看数据是否存在，如果不存在，则查询 ``API`` 以获取它。
+
+.. code-block:: js
+
+    created() {
+        if(this.f.download_link) {
+            this.link = this.f.download_link;
+        } else {
+            this.d.filesGetTemporaryLink({path: this.f.path_lower})
+                .then(data => {
+                    this.f.download_link = this.link = data.link;
+                });
+        }
+    }
+
+在文件创建时执行此操作会不必要地保存正被查询的 ``API`` 。 如果我们在缓存文件夹时获得这些信息，我们可能会放慢应用程序并存储非必要的信息。 想象一个包含数百张照片的文件夹 - 我们不希望在用户可能进入该文件夹的时候查询每一个的 ``API`` 。
+
+这意味着我们的应用程序中的所有内容只需要查询 ``API`` 一次即可获取信息。 用户可以根据需要多次上下浏览文件夹结构，而应用程序只会越来越快。
+
+完整的代码 - 添加了文档
+=======================
+随着我们的应用程序完成，我们现在可以添加一些急需的文档。文档化代码总是很好，因为这给出了推理和解释。良好的文档不应该仅仅说明代码的功能，而是为什么它会这样做，什么是允许的，什么是不允许的。
+
+文档的流行方法是 ``JavaScript DocBlock`` 标准。 这套约定为您在编写代码时遵循样式指南规则。 ``DocBlock`` 格式化为注释块，功能键以 ``@`` 开头，例如 ``@author`` ， ``@example`` ，或用 ``@param`` 关键字列出函数可以接受的参数。 一个例子是：
+
+.. code-block:: js
+
+    /**
+     * Displays a folder with a link and cache its contents
+     * @example <folder :f="entry" :cache="getFolderStructure"></folder>
+     *
+     * @param {object} f The folder entry from the tree
+     * @param {function} cache The getFolderStructure method from the dropbox-viewer component
+     */
+
+从描述开始， ``DocBlock`` 有几个关键字来帮助布置文档。 我们将通过完成的 ``Dropbox`` 应用程序添加文档。
+
+让我们先看看 ``breadcrumb`` 组件：
+
+.. code-block:: js
+
+    /**
+     * Displays the folder tree breadcrumb
+     * @example <breadcrumb></breadcrumb>
+     */
+    Vue.component('breadcrumb', {
+        template: '<div>' +
+            '<span v-for="(f, i) in folders">' +
+                '<a :href="\'#\' + f.path">{{ f.name || 'Home' }}</a>' +
+                '<i v-if="i !== (folders.length - 1)"> &raquo; </i>' +
+            '</span>' +
+        '</div>',
+        computed: {
+            folders() {
+                return this.$store.state.breadcrumb;
+            }
+        }
+    });
+
+转到 ``folder`` 组件：
+
+.. code-block:: js
+
+    /**
+     * Displays a folder with a link and cache its contents
+     * @example <folder :f="entry" :cache="getFolderStructure"></folder>
+     *
+     * @param {object} f The folder entry from the tree
+     * @param {function} cache The getFolderStructure method from the dropbox-viewer component
+     */
+    Vue.component('folder', {
+        template: '<li><strong><a :href="\'#\' + f.path_lower">{{ f.name }}</a></strong></li>',
+        props: {
+            f: Object,
+            cache: Function
+        },
+        created() {
+            // Cache the contents of the folder
+            this.cache(this.f.path_lower);
+        }
+    });
+
+接下来，我们看到 ``file`` 组件：
+
+.. code-block:: js
+
+    /**
+     * File component display size of file and download link
+     * @example <file :d="dropbox()" :f="entry"></file>
+     *
+     *  @param {object} f The file entry from the tree
+     * @param {object} d The dropbox instance from the parent component
+     */
+    Vue.component('file', {
+        template: '<li><strong>{{ f.name }}</strong><span v-if="f.size"> - {{ bytesToSize(f.size) }}</span> - <a v-if="link" :href="link">Download</a></li>',
+        props: {
+            f: Object,
+            d: Object
+        },
+        data() {
+            return {
+                // List of file size
+                byteSizes: ['Bytes', 'KB', 'MB', 'GB', 'TB'],
+                // The download link
+                link: false
+            }
+        },
+        methods: {
+            /**
+             * Convert an integer to a human readable file size
+             * @param {integer} bytes
+             * @return {string}
+             */
+            bytesToSize(bytes) {
+                // Set a default
+                let output = '0 Byte';
+                // If the bytes are bigger than 0
+                if (bytes > 0) {
+                    // Divide by 1024 and make an int
+                    let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+                    // Round to 2 decimal places and select the appropriate unit from the array
+                    output = Math.round(bytes / Math.pow(1024, i), 2) + ' ' + this.byteSizes[i];
+                }
+                return output;
+            }
+        },
+        created() {
+            // If the download link has be retrieved from the API, use it
+            // if not, aquery the API
+            if(this.f.download_link) {
+                this.link = this.f.download_link;
+            } else {
+                this.d.filesGetTemporaryLink({path: this.f.path_lower})
+                    .then(data => {
+                        this.f.download_link = this.link = data.link;
+                    });
+            }
+        }
+    });
+
+现在我们来看看 ``dropbox-viewer`` 组件：
+
+.. code-block:: js
+
+    /**
+     * The dropbox component
+     * @example <dropbox-viewer></dropbox-viewer>
+     */
+    Vue.component('dropbox-viewer', {
+        template: '#dropbox-viewer-template',
+        data() {
+            return {
+                // Dropbox API token
+                accessToken: 'XXXX',
+                // Current folder structure
+                structure: {},
+                isLoading: true
+            }
+        },
+        computed: {
+            // The current folder path
+            path() {
+                return this.$store.state.path
+            }
+        },
+        methods: {
+            /**
+             * Dropbox API instance
+             * @return {object}
+             */
+            dropbox() {
+                return new Dropbox({
+                    accessToken: this.accessToken
+                });
+            },
+            /**
+             * @param {string} path The path to a folder
+             * @return {string} A cache-friendly URL without punctuation/symbals
+             */
+            generateSlug(path) {
+                return path.toLowerCase()
+                    .replace(/^\/|\/$/g, '')
+                    .replace(/ /g,'-')
+                    .replace(/\//g,'-')
+                    .replace(/[-]+/g, '-')
+                    .replace(/[^\w-]+/g,'');
+            },
+            /**
+             * Retrieve the folder structure form the cache or Dropbox API
+             * @param {string} path The folder path
+             * @return {Promise} A promise containing the folder data
+             */
+            getFolderStructure(path) {
+                let output;
+                const slug = this.generateSlug(path),
+                    data = this.$store.state.structure[slug];
+                if(data) {
+                    output = Promise.resolve(data);
+                } else {
+                    output = this.dropbox().filesListFolder({
+                        path: path,
+                        include_media_info: true
+                    })
+                        .then(response => {
+                            let entries = response.entries;
+                            this.$store.commit('structure', {
+                                path: slug,
+                                data: entries
+                            });
+                            return entries;
+                        })
+                        .catch(error => {
+                            this.isLoading = 'error';
+                            console.log(error);
+                        });
+                }
+                return output;
+            },
+            /**
+             * Display the contents of getFolderStructure
+             * Updates the output to display the folders and folders
+             */
+            displayFolderStructure() {
+                // Set the app to loading
+                this.isLoading = true;
+                // Create an empty object
+                const structure = {
+                        folders: [],
+                        files: []
+                    } /
+                    / Get the structure
+                this.getFolderStructure(this.path).then(data => {
+                    for (let entry of data) {
+                        // Check ".tag" prop for type
+                        if(entry['.tag'] == 'folder') {
+                            structure.folders.push(entry);
+                        } else {
+                            structure.files.push(entry);
+                        }
+                    }
+                    // Update the data object
+                    this.structure = structure;
+                    this.isLoading = false;
+                });
+            },
+            /**
+             * Loop through the breadcrumb and cache parent folders
+             */
+            cacheParentFolders() {
+                let parents = this.$store.state.breadcrumb;
+                parents.reverse().shift();
+                for(let parent of parents) {
+                    this.getFolderStructure(parent.path);
+                }
+            }
+        },
+        created() {
+            // Display the current path & cache parent folders
+            this.displayFolderStructure();
+            this.cacheParentFolders();
+        },
+        watch: {
+            // Update the view when the path gets updated
+            path() {
+                this.displayFolderStructure();
+            }
+        }
+    });
+
+让我们来看看 ``Vuex`` ``store`` ：
+
+.. code-block:: js
+
+    /**
+     * The Vuex Store
+     */
+    const store = new Vuex.Store({
+        state: {
+            // Current folder path
+            path: '',
+            // The current breadcrumb
+            breadcrumb: [],
+            // The cached folder contents
+            structure: {},
+        },
+        mutations: {
+            /**
+             * Update the path & breadcrumb components
+             * @param {object} state The state object of the store
+             */
+            updateHash(state) {
+                let path = (window.location.hash.substring(1) || ''),
+                    breadcrumb = [],
+                    slug = '',
+                    parts = path.split('/');
+                for (let item of parts) {
+                    slug += item;
+                    breadcrumb.push({'name': item || 'home', 'path': slug});
+                    slug += '/';
+                }
+                state.path = path
+                state.breadcrumb = breadcrumb;
+            },
+            /**
+             * Cache a folder structure
+             * @param {object} state The state objet of the store
+             * @param {object} payload An object containing the slug and data to store
+             */
+            structure(state, payload) {
+                state.structure[payload.path] = payload.data;
+            }
+        }
+    });
+
+我们进一步转向 ``Vue`` 应用程序：
+
+.. code-block:: js
+
+    /**
+     * The Vue app
+     */
+    const app = new Vue({
+        el: '#app',
+        // Initialize the store
+        store,
+        // Update the current path on page load
+        mounted() {
+            store.commit('updateHash');
+        }
+    });
+
+最后，我们浏览 ``window.onhashchange`` 函数：
+
+.. code-block:: js
+
+    /**
+     * Update the path & store when the URL hash changes
+     */
+    window.onhashchange = () => {
+        app.$store.commit('updateHash');
+    }
+
+最后，视图中的 ``HTML`` 如下所示：
+
+.. code-block:: js
+
+    <div id="app">
+        <dropbox-viewer></dropbox-viewer>
+    </div>
+
+``Dropbox-viewer`` 的模板如下所示：
+
+.. code-block:: html
+
+    <script type="text/x-template" id="dropbox-viewer-template">
+        <div>
+            <h1>Dropbox</h1>
+            <transition name="fade">
+                <div v-if="isLoading">
+                    <div v-if="isLoading == 'error'">
+                        <p>There seems to be an issue with the URL entered.</p>
+                        <p><a href="">Go home</a></p>
+                    </div>
+                    <div v-else>
+                        Loading...
+                    </div>
+                </div>
+            </transition>
+            <transition name="fade">
+                <div v-if="!isLoading">
+                    <breadcrumb></breadcrumb>
+                    <ul>
+                        <template v-for="entry in structure.folders">
+                            <folder :f="entry" :cache="getFolderStructure"></folder>
+                        </template>
+                        <template v-for="entry in structure.files">
+                            <file :d="dropbox()" :f="entry"></file>
+                        </template>
+                    </ul>
+                </div>
+            </transition>
+        </div>
+    </script>
+
+你会注意到并非所有事情都被记录在案。一个简单的函数或变量赋值不需要重新解释它的作用，但是主要变量的记录将帮助任何人在将来查看它。
+
+总结
+====
+在本书的这一部分，我们已经涵盖了很多！ 我们从查询 ``Dropbox API`` 开始获取文件和文件夹列表。然后，我们继续添加导航，允许用户点击文件夹并下载文件。然后，我们将 ``Vuex`` 和 ``store`` 引入到我们的应用程序中，这意味着我们可以集中路径，面包屑，最重要的是缓存文件夹内容。最后，我们研究了缓存子文件夹和文件下载链接。
+
+在本书的下一部分，我们将着眼于制作一家商店。这将包括使用称为 ``Vue`` 路由器的新 ``Vue`` 插件浏览分类和产品页面中的产品。我们还会考虑将产品添加到购物车并将产品列表和个人偏爱存储在 ``Vuex store`` 中。
+

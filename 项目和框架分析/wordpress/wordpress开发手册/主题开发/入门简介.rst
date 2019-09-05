@@ -1,0 +1,268 @@
+****
+入门简介
+****
+
+谁应该读这本书？
+==============
+
+主题开发手册是一个独立的资源，可帮助您学习 ``WordPress`` 主题开发的基础知识。您阅读本手册可以完成许多事情：
+
+- 制定一个旨在与父主题协作的子主题；
+- 基于现有主题创建新主题；
+- 了解主题的内部运作；
+- 根据你的想象力开发一个主题；
+
+你的技能
+-------
+
+为了充分利用本手册，您应该对 ``Web`` 技术（如 ``HTML`` ， ``CSS`` 和 ``PHP`` ）有一定的了解和经验。您还应该熟悉使用 ``WordPress`` 设置和配置网站。
+
+.. note:: 了解 ``MySQL`` 数据库的工作方式以及一般的服务器技术是有帮助的，但不是开发 ``WordPress`` 主题的必要条件。同样，虽然 ``JavaScript`` 知识可能很有用，但并不是必需的。
+
+这本书包括什么
+-------------
+
+本手册提供了开发 ``WordPress`` 主题所需的基本信息，包括对基本模板标签和功能的深入介绍。
+
+``WordPress`` 是一个广泛的主题。涵盖所有可能的标记，功能和方案超出了本手册的范围。如果您需要有关特定功能的帮助，可以在 `代码参考 <https://developer.wordpress.org/reference>`_  中找到该信息。
+
+本手册的目的是为您提供 ``WordPress`` 主题开发的坚实基础，提供构建基本主题的分步说明，并提供有助于提高技能的提示和资源。
+
+
+主题是什么？
+===========
+
+``WordPress`` 主题会改变您的网站的设计，通常包括其布局。 更改您的主题会改变您的网站在前端的外观，即访问者浏览您的网站时看到的内容。 `WordPress.org 主题目录 <https://wordpress.org/themes/>`_ 中有数以千计的免费 ``WordPress`` 主题，但是许多 ``WordPress`` 网站都使用自定义主题。
+
+主题可以做什么？
+---------------
+主题采用 ``WordPress`` 存储的内容和数据，并将其显示在浏览器中。当您创建 ``WordPress`` 主题时，您可以决定该内容的外观和显示方式。 建立主题时，可以使用许多选项。 例如：
+
+- 您的主题可以使用不同的布局，例如静态或响应式，使用一列或两列。
+- 您的主题可以显示任何想要显示的内容。
+- 您的主题可以指定哪些设备或操作使您的内容可见。
+- 您的主题可以使用 ``CSS`` 自定义其排版和设计元素。
+- 其他设计元素，如图像和视频可以包含在您的主题的任何地方。
+
+``WordPress`` 主题是非常强大的。但是，与每个网页设计项目一样，主题不仅仅是颜色和布局。 良好的主题除了美丽以外，还可以改善您网站内容的参与度。
+
+主题由什么组成？
+--------------
+在最基本的层面上， ``WordPress`` 主题是不同文件的集合，可共同创建您所看到的内容，以及您的网站的行为。
+
+所需文件
+^^^^^^^
+``WordPress`` 主题中必需要以下两个文件：
+
+- index.php – 主模板文件
+- style.css – 主样式文件
+
+虽然不是必须，但您可能会在主题文件夹中看到其他文件，其中包括：
+
+- PHP文件 – 包括模板文件
+- 本地化文件
+- CSS文件
+- 图片资源
+- 脚本文件(JavaScript)
+- 文本文件 – 通常是许可证信息， ``readme.txt`` 指令和 ``changelog`` 文件
+
+主题和插件有什么区别？
+--------------------
+在主题和插件中的功能之间发现交叉是很常见的。 但是，最佳做法是：
+
+- 主题控制内容的呈现；
+- 而插件用于控制您的 ``WordPress`` 网站的行为和功能。
+
+您创建的任何主题都不应该添加关键功能。这样做意味着当用户更改主题时，他们将无法访问该功能。 例如，假设您使用组合功能构建主题。 使用您的功能构建组合的用户将在更改主题时失去它。
+
+通过将关键功能移植到插件中，您可以更改您的网站的主题，同时功能保持不变。
+
+.. note:: 注意：请记住，有些用户经常转换主题。 最佳做法是确保您的网站必需的功能在单独的插件中，即使主题改变也不会有影响。
+
+WordPress.org上的主题
+---------------------
+下载 ``WordPress`` 主题最安全的地方之一是 `WordPress.org 主题目录 <https://wordpress.org/themes/>`_ 。 所有主题都经过严格审查，必须符合严格的主题 `审查指南 <https://developer.wordpress.org/theme/release/theme-review-guidelines/>`_ ，以确保质量和安全。
+
+入门
+----
+现在你知道什么是主题，是时候开始了。 如果还没有这样做，你应该设置你的本地开发环境。 然后，您可以查看一些 ``WordPress`` 主题的示例，或者如果您迫不及待要开始，请进入 构建您的第一个主题 。
+
+
+设置开发环境
+============
+为什么要建立开发环境？
+--------------------
+在开发主题时，最好在与最终托管 ``WordPress`` 的生产服务器相同的环境中执行此操作。 您的开发环境可以是本地的或远程的。 配置本地环境来处理 ``WordPress`` 主题是有利的，有以下几个原因：
+
+- 您可以在本地构建您的主题而不依靠远程服务器。 这可以加速您的开发过程，并允许您立即在浏览器中查看更改。
+- 您不需要 ``Internet`` 连接来构建您的主题。
+- 您可以从各种角度测试您的主题。这很重要，特别是如果您打算将主题发布给更多的受众，并希望确保最大的兼容性。
+
+WordPress本地开发环境
+--------------------
+要开发 ``WordPress`` 主题，您需要设置适合于 ``WordPress`` 的开发环境。开始，您将需要一个本地服务组件和一个文本编辑器。 有很多选择，包括：
+
+本地服务组件
+^^^^^^^^^^^
+
+本地服务组件如 LAMP(Linux Apache MySQL/MariaDB PHP)或 WAMP(Windows Apache MySQL/MariaDB PHP)是服务器（与您的 Web 服务器上运行的服务器非常相似），您将在本地机器上进行配置。 您可以安装包含所有这些的预捆绑程序，如 `MAMP <http://www.mamp.info/>`_ （适用于Mac）或 `XAMPP <http://www.apachefriends.org/index.html>`_ （Mac或Windows），以快速设置您的环境。
+
+虚拟环境
+^^^^^^^^
+
+使用 Vagrant 和 VirtualBox 创建的虚拟功能允许您创建易于重现的开发环境。  `Varying Vagrant Vagrants (VVV)<https://github.com/Varying-Vagrant-Vagrants/VVV>`_ 是流行的 ``Vagrant`` 选项，创建了 ``WordPress`` 开发环境。
+
+文本编辑器
+^^^^^^^^^^
+
+除了本地服务器环境之外，还需要一个文本编辑器来编写代码。 您选择的文本编辑器是个人的，但请记住，一个好的文本编辑器可以加快您的开发过程。 您的文本编辑器可以从编写代码到完全集成的开发环境（IDE）的基本工具中进行调试和测试。 值得进行研究，有些甚至包括对 ``WordPress`` 开发的支持。 热门的选择是 ``Atom`` ， ``Sublime Text`` 和 ``PhpStorm`` 。
+
+您可以在页面底部找到有关设置开发环境的教程列表。
+
+支持较旧版本的WordPress
+----------------------
+
+``WordPress`` 主题的标准做法是至少支持两个版本，以确保最小的向后兼容性。 例如，如果当前版本的 ``WordPress`` 为 ``4.6`` ，那么您还应该确保您的主题在 ``4.5`` 和 ``4.4`` 版本中运行良好。
+
+您可以参考 `WordPress 地图 https://wordpress.org/about/roadmap/>`_ 页面访问旧版本的 ``WordPress`` 。 然后，您可以下载并安装较旧的 ``WordPress`` 版本，创建多个开发站点，每个版本运行不同的 ``WordPress`` 版本进行测试。
+
+WP_DEBUG
+--------
+配置调试是 ``WordPress`` 主题开发的重要组成部分。  ``WordPress`` 提供了许多常量来支持您的调试工作。 这些包括：
+
+WP_DEBUG
+^^^^^^^^^
+
+``WP_DEBUG`` PHP常量用于在您的 ``WordPress`` 安装上触发内置的“调试”模式。 这允许您查看主题中的错误。 为了启用它：
+
+1. 打开您的WordPress安装的wp-config.php文件
+2. 修改:
+
+.. code-block:: php
+
+    define( 'WP_DEBUG', false );
+
+为
+
+.. code-block:: php
+
+    define( 'WP_DEBUG', true );
+
+
+.. note:: 通常在 ``wp-config.php`` 文件中设置为 ``false`` ，默认情况下，即将发布的 ``WP_DEBUG`` 版本的 ``WordPress-alpha`` 和 ``beta`` 版本的开发副本已设置为 ``true`` 。
+
+WP_DEBUG_DISPLAY 和 WP_DEBUG_LOG
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``WP_DEBUG_LOG`` 和 ``WP_DEBUG_DISPLAY`` 是扩展 ``WP_DEBUG`` 的其他 ``PHP`` 常量。
+
+``WP_DEBUG_LOG`` 与 ``WP_DEBUG`` 结合使用，将所有错误消息记录到 WordPress ``/wp-content/`` 目录中的 ``debug.log`` 中。 要启用此功能，您的 ``wp-config.php`` 文件中将 ``WP_DEBUG_LOG`` 设置为 ``true`` 。
+
+.. code-block:: php
+
+    define( 'WP_DEBUG_LOG', true );
+
+``WP_DEBUG_DISPLAY`` 用于控制调试消息是否显示在主题页面的 ``HTML`` 中。 要在屏幕上显示错误消息，请在 ``wp-config.php`` 文件中将此设置配置为 ``true`` 。
+
+.. code-block:: php
+
+    define( 'WP_DEBUG_DISPLAY', true );
+
+启用 ``WP_DEBUG`` 和 ``WP_DEBUG_DISPLAY`` 后，错误消息将显示在您网站页面的顶部。
+
+.. note:: 错误将显示在您的站点的前端和管理区域。这些调试工具用于本地测试和后台安装，而不是在发布站点。
+
+其他WordPress开发工具
+--------------------
+除了 ``WP_DEBUG`` ，以下插件和单元测试数据集是开发工具集的重要组成部分，可帮助您开发更好的 ``WordPress`` 主题。
+
+测试数据
+^^^^^^^^
+WordPress.org 主题单元测试数据
+"""""""""""""""""""""""""""""
+
+`WordPress.org主题单元测试数据 <https://codex.wordpress.org/Theme_Unit_Test>`_ 是一个包含虚拟测试数据的 ``XML`` 文件，您可以上传以测试主题如何与不同类型和内容布局进行匹配。
+
+WordPress.com 主题单元测试数据
+"""""""""""""""""""""""""""""
+
+`WordPress.com主题单元测试数据 <http://themetest.wordpress.com/>`_ 是虚拟测试数据，您可以上传到 ``WordPress`` 安装来测试您的主题，包括特定于 ``WordPress.com`` 的功能。
+
+插件
+^^^^^
+
+Debug Bar (WordPress插件)
+"""""""""""""""""""""""""
+
+`Debug Bar <https://wordpress.org/plugins/debug-bar/>`_ 为您的 ``WordPress`` 管理员添加一个管理栏，提供调试中心位置。
+
+Query Monitor (WordPress插件)
+"""""""""""""""""""""""""""""
+
+`Query Monitor <https://wordpress.org/plugins/query-monitor/>`_ 允许调试用于生成主题页和主题功能的数据库查询，API请求和AJAX调用。
+
+Log Deprecated Notices (WordPress插件)
+""""""""""""""""""""""""""""""""""""""
+`日志已弃用通知 <https://wordpress.org/plugins/log-deprecated-notices/>`_ 记录不正确的功能使用和 ``WordPress`` 主题中使用已弃用的文件和功能。
+
+Monster Widgets (WordPress插件)
+"""""""""""""""""""""""""""""""
+``Monster Widget`` 将核心 ``WordPress`` 小部件整合到一个小部件中，允许您在主题中测试小部件的样式和功能。
+
+Developer (WordPress插件)
+"""""""""""""""""""""""""
+开发人员通过轻松安装工具和插件来帮助您排除故障并确保代码质量，帮助您优化开发环境。
+
+Theme-Check (WordPress插件)
+"""""""""""""""""""""""""""
+``Theme-Check`` 测试您的主题，以符合最新的 ``WordPress`` 标准和做法。
+
+WordPress主题审核指南
+--------------------
+除了上述开发工具之外，最好在 ``WordPress.org`` 主题评审小组的主题提交指南和WordPress编码标准会议指导上保持最新。 这些指南是质量主题开发的“黄金标准”，即使您不打算在 ``WordPress.org`` 上发布主题，也是有用的。
+
+其他资源
+--------
+
+- `使用MAMP本地开发WordPress <http://www.smashingmagazine.com/2011/09/28/developing-wordpress-locally-with-mamp/>`_  (Mac, MAMP)
+- `如何为 Windows 设置 WordPress 开发环境 <http://code.tutsplus.com/articles/how-to-setup-a-wordpress-development-environment-for-windows--wp-23365>`_  (Windows, XAMPP)
+- `WordPress主题评论VVV：测试主题的快速流动设置 <http://wptavern.com/wordpress-theme-review-vvv-a-quick-vagrant-setup-for-testing-and-reviewing-themes>`_  (Cross-platform, Vagrant)
+- `设置开发环境 <http://vip.wordpress.com/documentation/development-environment/>`_  (WordPress.com VIP)
+- `wptest.io <http://wptest.io/>`_ – 从 ``WordPress`` 的主题单元测试派生的一系列 ``WordPress`` 测试数据
+
+
+主题开发例子
+============
+
+了解主题编码标准的最佳方法之一就是找出其他已经用这些标准编写的主题的例子。
+
+默认的 Twenty 主题
+------------------
+自版本3.0（并在其发布年份之后命名）中的每个版本的 ``WordPress`` 中打包，默认主题是研究如何构建主题的一些最佳方法。这是因为它们被广泛用于设计，并且完全遵守 ``WordPress`` 编码标准。您可以下载并学习他们的主题文件，并将其作为示例参考，同时学习如何开发自己的主题：
+
+- Twenty Seventeen
+- Twenty Fifteen
+- Twenty Fourteen
+- Twenty Thirteen
+- Twenty Twelve
+- Twenty Eleven
+- Twenty Ten
+
+Underscores主题
+---------------
+
+与默认的 ``Twenties`` 主题不同， ``_s`` 主题针对的是开发人员而不是最终用户。它旨在成为一个起始主题，您可以将其作为加快开发速度的基础。它有一些功能：
+
+- 良好评论的 ``HTML5`` 模板，包括错误模板。
+- 在 ``inc/custom-header.php`` 中的示例自定义标头实现。
+- 使用 ``inc/template-tags`` 中的自定义模板标签来保持模板的组织并防止代码重复。
+- 在 ``js/keyboard-image-navigation.js`` 中找到了许多改进键盘导航的脚本，以及 ``js/navigation.js`` 中的小屏幕导航。
+- ``CSS`` 布局/布局中的五个样本以及，用于构建您的设计开始 ``CSS`` 。
+- ``GPL`` 许可代码。
+
+上面的功能使 ``Underscores`` 成为想要创建自己的主题的开发人员的主题。即使您删除了附加组件，剩下的基础仍然是编写标准的主题的一个很好的例子，这些主题是根据标准和最佳实践开发的。
+
+更详细的概览，请查看 `它的站点 <http://underscores.me/>`_ 和 `github站点 <https://github.com/Automattic/_s/>`_
+
+其他主题
+--------
+此外，主题目录中发布的所有主题都将在发布之前进行审查。查看目录中的主题是更好地了解主题开发如何工作的好方法，并且是为您自己的主题获得灵感的好方法。

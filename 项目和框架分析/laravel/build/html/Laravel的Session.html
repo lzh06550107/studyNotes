@@ -1,0 +1,600 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>20. Session &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="21. Session原理分析" href="Laravel的Session原理分析.html"/>
+        <link rel="prev" title="19. URL" href="Laravel的生成URL.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">20. Session</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">20.1. 简介</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">20.1.1. 配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">20.1.2. 驱动程序先决条件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">20.2. 使用 Session</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">20.2.1. 获取数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">20.2.2. 存储数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">20.2.3. 闪存数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">20.2.4. 删除数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#session-id">20.2.5. 重新生成 Session ID</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">20.3. 添加自定义 Session 驱动</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id17">20.3.1. 实现驱动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">20.3.2. 注册驱动</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>20. Session</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="session">
+<h1>20. Session<a class="headerlink" href="#session" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>20.1. 简介<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>由于 <code class="docutils literal"><span class="pre">HTTP</span></code> 驱动的应用程序是无状态的， <code class="docutils literal"><span class="pre">Session</span></code> 提供了一种在多个请求之间存储有关用户的信息的方法。 Laravel 通过同一个可读性强的 <code class="docutils literal"><span class="pre">API</span></code> 处理各种自带的 <code class="docutils literal"><span class="pre">Session</span></code> 后台驱动程序。支持诸如比较热门的 <code class="docutils literal"><span class="pre">Memcached</span></code> ,  <code class="docutils literal"><span class="pre">Redis</span></code> 和数据库。</p>
+<div class="section" id="id2">
+<h3>20.1.1. 配置<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Session</span></code> 的配置文件存储在 <code class="docutils literal"><span class="pre">config/session.php</span></code> 文件中。请务必查看此文件中对于你可用的选项。默认情况下， Laravel 配置了适用于大多数应用程序的 <code class="docutils literal"><span class="pre">file</span> <span class="pre">Session</span></code> 驱动。在生产环境下，你可以考虑使用 <code class="docutils literal"><span class="pre">memcached</span></code> 或 <code class="docutils literal"><span class="pre">redis</span></code> 驱动来实现更出色的 <code class="docutils literal"><span class="pre">Session</span></code> 性能。</p>
+<p><code class="docutils literal"><span class="pre">Session</span> <span class="pre">driver</span></code> 的配置选项定义了每个请求存储 <code class="docutils literal"><span class="pre">Session</span></code> 数据的位置。 Laravel 自带了几个不错且可开箱即用的驱动：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">file</span></code> - 将 <code class="docutils literal"><span class="pre">Session</span></code> 存储在 <code class="docutils literal"><span class="pre">storage/framework/sessions</span></code> 中。</li>
+<li><code class="docutils literal"><span class="pre">cookie</span></code> - <code class="docutils literal"><span class="pre">Session</span></code> 存储在安全加密的 <code class="docutils literal"><span class="pre">cookie</span></code> 中。</li>
+<li><code class="docutils literal"><span class="pre">database</span></code> - 将 <code class="docutils literal"><span class="pre">Session</span></code> 存储在数据库中。</li>
+<li><code class="docutils literal"><span class="pre">memcached</span></code> / <code class="docutils literal"><span class="pre">redis</span></code> - <code class="docutils literal"><span class="pre">Session</span></code> 存储在基于高速缓存的存储系统中。</li>
+<li><code class="docutils literal"><span class="pre">array</span></code> - <code class="docutils literal"><span class="pre">Sessions</span></code> 存储在 PHP 数组中，但不会被持久化。</li>
+</ul>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">数组驱动一般用于 测试 ，并防止存储在 <code class="docutils literal"><span class="pre">Session</span></code> 中的数据被持久化。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>20.1.2. 驱动程序先决条件<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id4">
+<h4>20.1.2.1. 数据库<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
+<p>使用 <code class="docutils literal"><span class="pre">database</span></code> 作为 <code class="docutils literal"><span class="pre">Session</span></code> 驱动时，你需要创建一张包含 <code class="docutils literal"><span class="pre">Session</span></code> 各项数据的表。以下例子是使用 <code class="docutils literal"><span class="pre">Schema</span></code> 建表：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;sessions&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">unique</span><span class="p">();</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">unsignedInteger</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">();</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;ip_address&#39;</span><span class="p">,</span> <span class="mi">45</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">();</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">text</span><span class="p">(</span><span class="s1">&#39;user_agent&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">();</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">text</span><span class="p">(</span><span class="s1">&#39;payload&#39;</span><span class="p">);</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">integer</span><span class="p">(</span><span class="s1">&#39;last_activity&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>你可以使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">session:table</span></code> 来生成此迁移：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan session:table
+
+php artisan migrate
+</pre></div>
+</div>
+</div>
+<div class="section" id="redis">
+<h4>20.1.2.2. Redis<a class="headerlink" href="#redis" title="永久链接至标题">¶</a></h4>
+<p>Laravel 在使用 <code class="docutils literal"><span class="pre">Redis</span></code> 作为 <code class="docutils literal"><span class="pre">Session</span></code> 驱动之前，需要通过 <code class="docutils literal"><span class="pre">Composer</span></code> 安装 <code class="docutils literal"><span class="pre">predis/predis</span></code> 扩展包 (~1.0)。然后在 <code class="docutils literal"><span class="pre">database</span></code> 配置文件中配置 <code class="docutils literal"><span class="pre">Redis</span></code> 连接信息。在 <code class="docutils literal"><span class="pre">session</span></code> 配置文件中， <code class="docutils literal"><span class="pre">connection</span></code> 选项可用于指定 <code class="docutils literal"><span class="pre">Session</span></code> 使用哪个 <code class="docutils literal"><span class="pre">Redis</span></code> 连接。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>20.2. 使用 Session<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id6">
+<h3>20.2.1. 获取数据<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id7">
+<h4>20.2.1.1. 通过依赖注入<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<p>Laravel 中处理 <code class="docutils literal"><span class="pre">Session</span></code> 数据有两种主要方法：全局辅助函数 <code class="docutils literal"><span class="pre">session</span></code> 和通过一个 <code class="docutils literal"><span class="pre">Request</span></code> 实例。首先，我们来看看通过控制器方法类型提示一个 <code class="docutils literal"><span class="pre">Request</span></code> 实例来访问 <code class="docutils literal"><span class="pre">session</span></code> 。控制器方法依赖项会通过 Laravel 服务容器 实现自动注入:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 展示给定用户的配置文件。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  Request  $request</span>
+<span class="sd">     * @param  int  $id</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">show</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$id</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$value</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当你从 <code class="docutils literal"><span class="pre">Session</span></code> 获取值时，你还可以传递一个默认值作为 <code class="docutils literal"><span class="pre">get</span></code> 方法的第二个参数。如果 <code class="docutils literal"><span class="pre">Session</span></code> 中不存在指定的键，便会返回这个默认值。若传递一个闭包作为 <code class="docutils literal"><span class="pre">get</span></code> 方法的默认值，并且所请求的键并不存在时， <code class="docutils literal"><span class="pre">get</span></code> 方法将执行闭包并返回其结果：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">);</span>
+
+<span class="nv">$value</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;default&#39;</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h4>20.2.1.2. 全局辅助函数 Session<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<p>你也可以使用全局的 PHP 辅助函数 <code class="docutils literal"><span class="pre">session</span></code> 来获取和存储的 <code class="docutils literal"><span class="pre">Session</span></code> 数据。 使用单个字符串类型的值作为参数调用辅助函数 <code class="docutils literal"><span class="pre">session</span></code> 时，它会返回该字该符串对应的 <code class="docutils literal"><span class="pre">Session</span></code> 键的值。当使用一个键值对数组作为参数调用辅助函数 <code class="docutils literal"><span class="pre">session</span></code> 时，传入的键值将会存储在 <code class="docutils literal"><span class="pre">Session</span></code> 中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 获取 session 中的一条数据...</span>
+    <span class="nv">$value</span> <span class="o">=</span> <span class="nx">session</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+
+    <span class="c1">// 指定一个默认值...</span>
+    <span class="nv">$value</span> <span class="o">=</span> <span class="nx">session</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">);</span>
+
+    <span class="c1">// 在 Session 中存储一条数据...</span>
+    <span class="nx">session</span><span class="p">([</span><span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value&#39;</span><span class="p">]);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">通过 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求实例操作 <code class="docutils literal"><span class="pre">Session</span></code> 与使用全局辅助函数 <code class="docutils literal"><span class="pre">session</span></code> 两者之间并没有实质上的区别。这两种方法都可以通过所有测试用例中可用的 <code class="docutils literal"><span class="pre">assertSessionHas</span></code> 方法进行 测试。</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h4>20.2.1.3. 获取所有的 Session 数据<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<p>如果你想要获取所有的 <code class="docutils literal"><span class="pre">Session</span></code> 数据，可以使用 <code class="docutils literal"><span class="pre">all</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$data</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h4>20.2.1.4. 判断 Session 中是否存在某个值<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<p>要确定 <code class="docutils literal"><span class="pre">Session</span></code> 中是否存在某个值，可以使用 <code class="docutils literal"><span class="pre">has</span></code> 方法。如果该值存在且不为 <code class="docutils literal"><span class="pre">null</span></code> ，那么 <code class="docutils literal"><span class="pre">has</span></code> 方法会返回 <code class="docutils literal"><span class="pre">true</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">has</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>要确定 <code class="docutils literal"><span class="pre">Session</span></code> 中是否存在某个值，即使其值为 <code class="docutils literal"><span class="pre">null</span></code> ，也可以使用 <code class="docutils literal"><span class="pre">exists</span></code> 方法。如果值存在，则 <code class="docutils literal"><span class="pre">exists</span></code> 方法返回 <code class="docutils literal"><span class="pre">true</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">exists</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>20.2.2. 存储数据<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>要存储数据到 <code class="docutils literal"><span class="pre">Session</span></code> ，你可以使用 <code class="docutils literal"><span class="pre">put</span></code> 方法，或者使用辅助函数 <code class="docutils literal"><span class="pre">session</span></code> 。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 通过请求实例...</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">put</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">);</span>
+
+<span class="c1">// 通过全局辅助函数...</span>
+<span class="nx">session</span><span class="p">([</span><span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+<div class="section" id="id12">
+<h4>20.2.2.1. 在 Session 数组中保存数据<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">push</span></code> 方法可以将一个新的值添加到 <code class="docutils literal"><span class="pre">Session</span></code> 数组内。例如，假设 <code class="docutils literal"><span class="pre">user.teams</span></code> 这个键是包含团队名称的数组，你可以像这样将一个新的值加入到此数组中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">push</span><span class="p">(</span><span class="s1">&#39;user.teams&#39;</span><span class="p">,</span> <span class="s1">&#39;developers&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h4>20.2.2.2. 检索 &amp; 删除一个项目<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">pull</span></code> 方法可以只用一条语句就从 <code class="docutils literal"><span class="pre">Session</span></code> 中检索并且删除一个项目：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">pull</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>20.2.3. 闪存数据<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>有时候你仅想在下一个请求之前在 <code class="docutils literal"><span class="pre">Session</span></code> 中存入数据，你可以使用 <code class="docutils literal"><span class="pre">flash</span></code> 方法。使用这个方法保存在 <code class="docutils literal"><span class="pre">Session</span></code> 中的数据，只会保留到下个 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求到来之前，然后就会被删除。闪存数据主要用于短期的状态消息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">flash</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;Task was successful!&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果需要给更多请求保留闪存数据，可以使用 <code class="docutils literal"><span class="pre">reflash</span></code> 方法，这将会所有的闪存数据保留给其它请求。如果只想保留特定的闪存数据，则可以使用 <code class="docutils literal"><span class="pre">keep</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">reflash</span><span class="p">();</span>
+
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">keep</span><span class="p">([</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id15">
+<h3>20.2.4. 删除数据<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">forget</span></code> 方法可以从 <code class="docutils literal"><span class="pre">Session</span></code> 内删除一条数据。如果你想删除 <code class="docutils literal"><span class="pre">Session</span></code> 内所有数据，可以使用 <code class="docutils literal"><span class="pre">flush</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">forget</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">);</span>
+
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">flush</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="session-id">
+<h3>20.2.5. 重新生成 Session ID<a class="headerlink" href="#session-id" title="永久链接至标题">¶</a></h3>
+<p>重新生成 <code class="docutils literal"><span class="pre">Session</span> <span class="pre">ID</span></code> ，通常是为了防止恶意用户利用 session fixation 对应用进行攻击 (<a class="reference external" href="https://blog.csdn.net/youanyyou/article/details/79406499">https://blog.csdn.net/youanyyou/article/details/79406499</a>)。</p>
+<p>如果使用了内置函数 <code class="docutils literal"><span class="pre">LoginController</span></code> ，Laravel 会自动重新生成身份验证中的 <code class="docutils literal"><span class="pre">Session</span> <span class="pre">ID</span></code> 。否则，你需要手动使用 <code class="docutils literal"><span class="pre">regenerate</span></code> 方法重新生成 <code class="docutils literal"><span class="pre">Session</span> <span class="pre">ID</span></code> 。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">regenerate</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id16">
+<h2>20.3. 添加自定义 Session 驱动<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id17">
+<h3>20.3.1. 实现驱动<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h3>
+<p>你自定义的 <code class="docutils literal"><span class="pre">Session</span></code> 驱动必须实现 <code class="docutils literal"><span class="pre">SessionHandlerInterface</span></code> 接口。这个接口包含了一些我们需要实现的简单方法。下面是一个大概的 <code class="docutils literal"><span class="pre">MongoDB</span></code> 实现流程示例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Extensions</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">MongoSessionHandler</span> <span class="k">implements</span> <span class="nx">\SessionHandlerInterface</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">open</span><span class="p">(</span><span class="nv">$savePath</span><span class="p">,</span> <span class="nv">$sessionName</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">close</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">read</span><span class="p">(</span><span class="nv">$sessionId</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">write</span><span class="p">(</span><span class="nv">$sessionId</span><span class="p">,</span> <span class="nv">$data</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">destroy</span><span class="p">(</span><span class="nv">$sessionId</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">gc</span><span class="p">(</span><span class="nv">$lifetime</span><span class="p">)</span> <span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Laravel 默认没有附带扩展用的目录，你可以把它放在你喜欢的目录内。在下面这个例子中，我们创建了一个 <code class="docutils literal"><span class="pre">Extensions</span></code> 目录放置自定义的 <code class="docutils literal"><span class="pre">MongoHandler</span></code> 扩展。</p>
+</div>
+<p>接口中的这些方法不太容易理解。让我们来快速了解每个方法的作用：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">open</span></code> 方法通常用于基于文件的 <code class="docutils literal"><span class="pre">Session</span></code> 存储系统。因为 Laravel 已经附带了一个 <code class="docutils literal"><span class="pre">file</span></code> 的驱动，所以你不需要在该方法中放置任何代码。PHP 要求必需要有这个方法的实现（这只是一个糟糕的接口设计），你只需要把这个方法置空。</li>
+<li><code class="docutils literal"><span class="pre">close</span></code> 方法跟 <code class="docutils literal"><span class="pre">open</span></code> 方法很相似，通常也可以被忽略。对大多数的驱动而言，此方法不是必须的。</li>
+<li><code class="docutils literal"><span class="pre">read</span></code> 方法应当返回与给定的 <code class="docutils literal"><span class="pre">$sessionId</span></code> 相匹配的 <code class="docutils literal"><span class="pre">Session</span></code> 数据的字符串格式。在你的自定义的驱动中获取或存储 <code class="docutils literal"><span class="pre">Session</span></code> 数据时，不需要进行任何序列化或其它编码，因为 Laravel 会执行序列化。</li>
+<li><code class="docutils literal"><span class="pre">write</span></code> 将与 <code class="docutils literal"><span class="pre">$sessionId</span></code> 关联的给定的 <code class="docutils literal"><span class="pre">$data</span></code> 字符串写入到一些持久化存储系统，如 <code class="docutils literal"><span class="pre">MongoDB</span></code> 、 <code class="docutils literal"><span class="pre">Dynamo</span></code> 等。再次重申，你不需要进行任何序列化或其它编码，因为 Laravel 会自动处理这些事情。</li>
+<li><code class="docutils literal"><span class="pre">destroy</span></code> 方法会从持久化存储中移除与 <code class="docutils literal"><span class="pre">$sessionId</span></code> 相关联的数据。</li>
+<li><code class="docutils literal"><span class="pre">gc</span></code> 方法能销毁给定的 <code class="docutils literal"><span class="pre">$lifetime</span></code> （UNIX 的时间戳）之前的所有数据。对本身拥有过期机制的系统如 <code class="docutils literal"><span class="pre">Memcached</span></code> 和 <code class="docutils literal"><span class="pre">Redis</span></code> 而言，该方法可以置空。</li>
+</ul>
+</div>
+<div class="section" id="id18">
+<h3>20.3.2. 注册驱动<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
+<p>你的 <code class="docutils literal"><span class="pre">Session</span></code> 驱动实现之后，你还需要在框架中注册该驱动，即将该扩展驱动添加到 Laravel Session 后台。然后在 服务提供者 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法内调用 <code class="docutils literal"><span class="pre">Session</span> <span class="pre">Facade</span></code> 的 <code class="docutils literal"><span class="pre">extend</span></code> 方法。之后你就可以从现有的 <code class="docutils literal"><span class="pre">AppServiceProvider</span></code> 或者新创建的提供器中执行此操作。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Extensions\MongoSessionHandler</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Session</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\ServiceProvider</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SessionServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 执行注册后引导服务。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Session</span><span class="o">::</span><span class="na">extend</span><span class="p">(</span><span class="s1">&#39;mongo&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$app</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Return implementation of SessionHandlerInterface...</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">MongoSessionHandler</span><span class="p">;</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 在容器中注册绑定。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦 <code class="docutils literal"><span class="pre">Session</span></code> 驱动被注册，则必须在 <code class="docutils literal"><span class="pre">config/session.php</span></code> 的配置文件内使用 <code class="docutils literal"><span class="pre">Mongo</span></code> 驱动。</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的Session原理分析.html" class="btn btn-neutral float-right" title="21. Session原理分析" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的生成URL.html" class="btn btn-neutral" title="19. URL" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

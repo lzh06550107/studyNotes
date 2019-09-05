@@ -1,0 +1,527 @@
+****
+配置
+****
+ThinkPHP 提供了灵活的全局配置功能，采用最有效率的 PHP 返回数组方式定义，支持惯例配置、公共配置、模块配置、扩展配置、场景配置、环境变量配置和动态配置。
+
+对于有些简单的应用，你无需配置任何配置文件，而对于复杂的要求，你还可以扩展自己的独立配置文件。
+
+系统的配置参数是通过静态变量全局存取的，存取方式简单高效。
+
+配置功能由 ``\think\Config`` 类完成。
+
+
+配置目录
+========
+系统默认的配置文件目录就是应用目录（ ``APP_PATH`` ），也就是默认的 ``application`` 下面，并分为应用配置（整个应用有效）和模块配置（仅针对该模块有效）。
+
+.. code-block:: shell
+
+    ├─application         应用目录
+    │  ├─config.php       应用配置文件
+    │  ├─database.php     数据库配置文件
+    |  ├─office.php       场景配置文件
+    │  ├─route.php        路由配置文件
+    │  ├─index            index模块配置文件目录
+    │  │  ├─config.php    index模块配置文件
+    |  |  ├─office.php    index模块场景配置文件
+    │  │  └─database.php  index模块数据库配置文件
+    ├─.env                环境变量配置文件
+
+如果不希望配置文件放到应用目录下面，可以在入口文件中定义独立的配置目录，添加 ``CONF_PATH`` 常量定义即可，例如：
+
+.. code-block:: shell
+
+    // 定义配置文件目录和应用目录同级
+    define('CONF_PATH', __DIR__.'/../config/');
+
+配置目录下面的结构类似如下：
+
+.. code-block:: shell
+
+    ├─application         应用目录
+    ├─config              配置目录
+    │  ├─config.php       应用配置文件
+    │  ├─database.php     数据库配置文件
+    |  ├─office.php       场景配置文件
+    │  ├─route.php        路由配置文件
+    │  ├─index            index模块配置文件目录
+    │  │  ├─config.php    index模块配置文件
+    |  |  ├─office.php    index模块场景配置文件
+    │  │  └─database.php  index模块数据库配置文件
+    ├─.env                环境变量配置文件
+
+扩展配置目录（V5.0.1）
+---------------------
+5.0.1 开始增加了扩展配置目录的概念，在应用配置目录或者模块配置目录下面增加 ``extra`` 子目录，下面的配置文件都会自动加载，无需任何配置。
+
+如果你定义了 ``CONF_PATH`` 常量为 ``config`` 目录为例，扩展配置目录如下：
+
+.. code-block:: shell
+
+    ├─application         应用目录
+    │  ├─config.php       应用配置文件
+    │  ├─database.php     数据库配置文件
+    |  ├─office.php       场景配置文件
+    │  ├─route.php        路由配置文件
+    |  ├─extra            应用扩展配置目录
+    │  ├─index            index模块配置文件目录
+    │  │  ├─config.php    index模块配置文件
+    |  |  ├─office.php    index模块场景配置文件
+    |  |  ├─extra         index模块扩展配置目录
+    │  │  └─database.php  index模块数据库配置文件
+    ├─.env                环境变量配置文件
+
+.. note:: 扩展配置文件的文件名（不含后缀）就是配置参数名，并且会和应用配置文件中的参数进行合并。
+
+配置格式
+========
+ThinkPHP 支持多种格式的配置格式，但最终都是解析为 PHP 数组的方式。
+
+PHP数组定义
+-----------
+返回 PHP 数组的方式是默认的配置定义格式，例如：
+
+.. code-block:: php
+
+    <?php
+    //项目配置文件
+    return [
+        // 默认模块名
+        'default_module'        => 'index',
+        // 默认控制器名
+        'default_controller'    => 'Index',
+        // 默认操作名
+        'default_action'        => 'index',
+        //更多配置参数
+        //...
+    ];
+
+配置参数名不区分大小写（因为无论大小写定义都会转换成小写），新版的建议是使用小写定义配置参数的规范。
+
+还可以在配置文件中可以使用二维数组来配置更多的信息，例如：
+
+.. code-block:: php
+
+    <?php
+    //项目配置文件
+    return [
+        'cache'                 => [
+            'type'   => 'File',
+            'path'   => CACHE_PATH,
+            'prefix' => '',
+            'expire' => 0,
+        ],
+    ];
+
+如果需要读取二级配置，可以使用：
+
+.. code-block:: php
+
+    <?php
+    echo Config::get('配置参数.二级参数');
+    echo config('配置参数.二级参数');
+
+其他配置格式支持
+----------------
+默认方式为 PHP 数组方式定义配置文件，你可以在入口文件定义 ``CONF_EXT`` 常量来更改为其它的配置类型：如 ``yaml`` ， ``ini`` ， ``xml`` ， ``json`` 类型。
+
+配置后，会自动解析支持的配置类型，包括 ``.ini`` 、 ``.xml`` 、 ``.json`` 和 ``.php`` 在内的格式支持。
+
+yaml格式定义
+^^^^^^^^^^^^
+yaml格式配置示例：
+
+.. code-block:: yaml
+
+    default_module:Index
+    default_controller:index
+    default_action:index
+
+ini格式定义
+^^^^^^^^^^^
+ini格式配置示例：
+
+.. code-block:: ini
+
+    default_module=Index ;默认模块
+    default_controller=index ;默认控制器
+    default_action=index ;默认操作
+
+xml格式定义
+^^^^^^^^^^^
+xml格式配置示例：
+
+.. code-block:: xml
+
+    <config>
+        <default_module>Index</default_module>
+        <default_controller>index</default_controller>
+        <default_action>index</default_action>
+    </config>
+
+json格式定义
+^^^^^^^^^^^^
+json格式配置示例：
+
+.. code-block:: json
+
+    {
+        "default_module":"Index",
+        "default_controller":"index",
+        "default_action":"index"
+    }
+
+二级配置
+--------
+配置参数支持二级，例如，下面是一个二级配置的设置和读取示例：
+
+.. code-block:: php
+
+    <?php
+    $config = [
+        'user'  =>  [
+            'type'  =>  1,
+            'name'  =>  'thinkphp',
+        ],
+        'db'    =>  [
+            'type'      =>  'mysql',
+            'user'      =>  'root',
+            'password'  =>  '',
+        ],
+    ];
+    // 设置配置参数
+    Config::set($config);
+    // 读取二级配置参数
+    echo Config::get('user.type');
+    // 或者使用助手函数
+    echo config('user.type');
+
+系统不支持二级以上的配置参数读取，需要手动分步骤读取。
+有作用域的情况下，仍然支持二级配置的操作。
+
+如果采用其他格式的配置文件的话，二级配置定义方式如下（以 ``ini`` 和 ``xml`` 为例）：
+
+.. code-block:: ini
+
+    [user]
+    type=1
+    name=thinkphp
+     [db]
+    type=mysql
+    user=rot
+    password=''
+
+标准的 xml 格式文件定义：
+
+.. code-block:: xml
+
+    <config>
+        <user>
+            <type>1</type>
+            <name>thinkphp</name>
+        </user>
+        <db>
+            <type>mysql</type>
+            <user>root</user>
+            <password></password>
+        </db>
+    </config>
+
+set 方法也支持二级配置，例如：
+
+.. code-block:: php
+
+    <?php
+    Config::set([
+        'type'      =>  'file',
+        'prefix'    =>  'think'
+    ],'cache');
+
+配置加载
+========
+在 ThinkPHP 中，一般来说应用的配置文件是自动加载的，加载的顺序是：
+
+**惯例配置->应用配置->扩展配置->场景配置->模块配置->动态配置**
+
+以上是配置文件的加载顺序，因为后面的配置会覆盖之前的同名配置（在没有生效的前提下），所以配置的优先顺序从右到左。
+
+下面说明下不同的配置文件的区别和位置
+------------------------------------
+
+惯例配置
+^^^^^^^^
+惯例重于配置是系统遵循的一个重要思想，框架内置有一个惯例配置文件（位于 ``thinkphp/convention.php`` ），按照大多数的使用对常用参数进行了默认配置。所以，对于应用的配置文件，往往只需要配置和惯例配置不同的或者新增的配置参数，如果你完全采用默认配置，甚至可以不需要定义任何配置文件。
+
+应用配置
+^^^^^^^^
+应用配置文件是应用初始化的时候首先加载的公共配置文件，默认位于 ``application/config.php`` 。
+
+代码调用位于 ``thinkphp/base.php`` 文件中。
+
+扩展配置
+^^^^^^^^
+扩展配置文件是由 ``extra_config_list`` 配置参数定义的额外的配置文件，默认会加载 ``database`` 和 ``validate`` 两个扩展配置文件。(V5.0.1版本已经废除该写法）
+
+例如，不使用独立配置文件的话，数据库配置信息应该是在 ``config.php`` 中配置如下：
+
+.. code-block:: php
+
+    <?php
+    /* 数据库设置 */
+    'database'              => [
+        // 数据库类型
+        'type'        => 'mysql',
+        // 服务器地址
+        'hostname'    => '127.0.0.1',
+        // 数据库名
+        'database'    => 'thinkphp',
+        // 数据库用户名
+        'username'    => 'root',
+        // 数据库密码
+        'password'    => '',
+        // 数据库连接端口
+        'hostport'    => '',
+        // 数据库连接参数
+        'params'      => [],
+        // 数据库编码默认采用utf8
+        'charset'     => 'utf8',
+        // 数据库表前缀
+        'prefix'      => '',
+        // 数据库调试模式
+        'debug'       => false,
+    ],
+
+如果需要使用独立配置文件的话，则首先在 ``config.php`` 中添加配置：
+
+.. code-block:: php
+
+    <?php
+    'extra_config_list'     => ['database'],
+
+定义之后，数据库配置就可以独立使用 ``database.php`` 文件。
+
+如果配置了 ``extra_config_list`` 参数，并同时在 ``config.php`` 和 ``database.php`` 文件中都配置的话，则 ``database.php`` 文件的配置会覆盖 ``config.php`` 中的设置。
+
+独立配置文件的参数获取都是二维配置方式，例如，要获取 ``database`` 独立配置文件的 ``type`` 参数，应该是：
+
+.. code-block:: php
+
+    <?php
+    Config::get('database.type');
+
+要获取完整的独立配置文件的参数，则使用：
+
+.. code-block:: php
+
+    <?php
+    Config::get('database');
+
+V5.0.1 开始，取消了该配置参数，扩展配置文件直接放入 ``application/extra`` 目录会自动加载。
+
+.. note:: 自动读取的配置文件都是二级配置参数，一级配置名称就是扩展配置的文件名。
+
+模块也可以支持自己的扩展配置文件，只需要放入 ``application/模块名/extra`` 下面就可以自动加载。
+
+代码调用位于 ``\think\App::init()`` 方法中。
+
+场景配置
+^^^^^^^^
+每个应用都可以在不同的情况下设置自己的状态（或者称之为应用场景），并且加载不同的配置文件。
+
+举个例子，你需要在公司和家里分别设置不同的数据库测试环境。那么可以这样处理，在公司环境中，我们在应用配置文件中配置：
+
+.. code-block:: php
+
+    <?php
+    'app_status'=>'office'
+
+那么就会自动加载该状态对应的配置文件（默认位于 ``application/office.php`` ）。
+
+.. note:: 场景配置文件和应用配置文件 ``config.php`` 是一样的定义。
+
+如果我们回家后，我们修改定义为：
+
+.. code-block:: php
+
+    <?php
+    'app_status'=>'home'
+
+那么就会自动加载该状态对应的配置文件（位于 ``application/home.php`` ）。
+
+代码调用位于 ``\think\App::init()`` 方法中。
+
+.. note:: 场景配置文件是可选的。
+
+模块配置
+^^^^^^^^
+每个模块会自动加载自己的配置文件（位于 ``application/当前模块名/config.php`` ）。
+
+模块还可以支持独立的状态配置文件，命名规范为： ``application/当前模块名/应用状态.php`` 。
+
+.. note:: 场景配置文件是可选的。
+
+如果你的应用的配置文件比较大，想分成几个单独的配置文件或者需要加载额外的配置文件的话，可以考虑采用扩展配置(即独立配置)或者动态配置。
+
+配置加载方法
+^^^^^^^^^^^^
+
+.. code-block:: php
+
+    <?php
+    Config::load('配置文件名'); // 加载配置文件，内部调用Config::parse()方法来解析
+    // 配置文件一般位于APP_PATH目录下面，如果需要加载其它位置的配置文件，需要使用完整路径
+    Config::load(APP_PATH.'config/config.php');
+
+    // 如果你定义格式是其他格式的话，可以使用parse方法来导入
+    Config::parse(APP_PATH.'my_config.ini','ini');
+    Config::parse(APP_PATH.'my_config.xml','xml');
+
+    // parse方法的第一个参数需要传入完整的文件名或者配置内容。
+    // 如果不传入第二个参数的话，系统会根据配置文件名自动识别配置类型，所以下面的写法仍然是支持的：
+    Config::parse('my_config.ini');
+
+    // parse方法除了支持读取配置文件外，也支持直接传入配置内容，例如：
+    $config = 'var1=val
+    var2=val';
+    Config::parse($config,'ini'); //支持传入配置文件内容的时候 第二个参数必须显式指定。
+
+读取配置
+========
+读取配置参数
+
+.. code-block:: php
+
+    <?php
+    echo Config::get('配置参数1'); // 设置完配置参数后，就可以使用 get 方法读取配置了
+    echo config('配置参数1'); // 系统定义了一个助手函数 config
+    dump(Config::get()); // 读取所有的配置参数
+    dump(config()); // 读取所有的配置参数
+    Config::has('配置参数2'); // 你需要判断是否存在某个设置参数
+    config('?配置参数2'); // 你需要判断是否存在某个设置参数
+    echo Config::get('配置参数.二级参数'); // 读取二级配置
+    echo config('配置参数.二级参数'); // 读取二级配置
+
+动态配置
+========
+设置配置参数
+
+.. code-block:: php
+
+使用set方法动态设置参数，例如：
+
+.. code-block:: php
+
+    <?php
+    Config::set('配置参数','配置值');
+    // 或者使用助手函数
+    config('配置参数','配置值');
+
+也可以批量设置，例如：
+
+.. code-block:: php
+
+    <?php
+    Config::set([
+        '配置参数1'=>'配置值',
+        '配置参数2'=>'配置值'
+    ]);
+    // 或者使用助手函数
+    config([
+        '配置参数1'=>'配置值',
+        '配置参数2'=>'配置值'
+    ]);
+
+配置作用域
+==========
+配置参数支持作用域的概念，默认情况下，所有参数都在同一个系统默认作用域下面。如果你的配置参数需要用于不同的项目或者相互隔离，那么就可以使用作用域功能，作用域的作用好比是配置参数的命名空间一样。
+
+.. code-block:: php
+
+    <?php
+    // 导入my_config.php中的配置参数，并纳入user作用域
+    Config::load('my_config.php','','user');
+    // 解析并导入my_config.ini 中的配置参数，读入test作用域
+    Config::parse('my_config.ini','ini','test');
+    // 设置user_type参数，并纳入user作用域
+    Config::set('user_type',1,'user');
+    // 批量设置配置参数，并纳入test作用域
+    Config::set($config,'test');
+    // 读取user作用域的user_type配置参数
+    echo Config::get('user_type','user');
+    // 读取user作用域下面的所有配置参数
+    dump(Config::get('','user'));
+    dump(config('',null,'user')); // 同上
+    // 判断在test作用域下面是否存在user_type参数
+    Config::has('user_type','test');
+
+可以使用 ``range`` 方法切换当前配置文件的作用域，例如：
+
+.. code-block:: php
+
+    <?php
+    Config::range('test');
+
+环境变量配置
+============
+ThinkPHP5.0 支持使用环境变量配置。
+
+在开发过程中，可以在应用根目录下面的 ``.env`` 来模拟环境变量配置， ``.env`` 文件中的配置参数定义格式采用 ``ini`` 方式，例如：
+
+.. code-block:: ini
+
+    app_debug =  true
+    app_trace =  true
+
+如果你的部署环境单独配置了环境变量，那么请删除 ``.env`` 配置文件，避免冲突。
+
+环境变量配置的参数会全部转换为大写，值为 ``null`` ， ``no`` 和 ``false`` 等效于 ``""`` ，值为 ``yes`` 和 ``true`` 等效于 ``"1"`` 。
+
+.. note:: ThinkPHP5.0 默认的环境变量前缀是 ``PHP_`` ，也可以通过改变 ``ENV_PREFIX`` 常量来重新设置。
+
+注意，环境变量不支持数组参数，如果需要使用数组参数可以，使用下划线分割定义配置参数名：
+
+.. code-block:: ini
+
+    database_username =  root
+    database_password =  123456
+
+或者使用
+
+.. code-block:: ini
+
+    [database]
+    username =  root
+    password =  123456
+
+获取环境变量的值可以使用下面的两种方式获取：
+
+.. code-block:: php
+
+    <?php
+    Env::get('database.username');
+    Env::get('database.password');
+    // 同时下面的方式也可以获取
+    Env::get('database_username');
+    Env::get('database_password');
+
+可以支持默认值，例如：
+
+.. code-block:: php
+
+    <?php
+    // 获取环境变量 如果不存在则使用默认值root
+    Env::get('database.username','root');
+
+可以直接在应用配置中使用环境变量，例如：
+
+.. code-block:: php
+
+    <?php
+    return [
+        'hostname'  =>  Env::get('hostname','127.0.0.1'),
+    ];
+
+.. note:: 环境变量中设置的 ``app_debug`` 和 ``app_trace`` 参数会自动生效（优先于应用的配置文件），其它参数则必须通过 ``Env::get`` 方法才能读取。
+
+在 ``thinkphp\base.php`` 中加载环境配置文件，然后设置环境变量，然后在 ``\think\App::initCommon()`` 方法中利用 ``Env::get('app_debug', Config::get('app_debug'))`` 获取调试开关，最后使用 ``\think\Response::send()`` 方法 ``Env::get('app_trace', Config::get('app_trace'))`` 获取 ``trace`` 开关。
+

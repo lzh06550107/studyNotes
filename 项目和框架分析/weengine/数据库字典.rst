@@ -1,0 +1,1852 @@
+*****
+数据库字典
+*****
+
+
+系统表
+======
+
+ims_core_settings
+-----------------
+系统设置表
+
+key  varchar(200)  键
+value  text  系列化值
+
+- copyright ：
+- authmode ：
+- close ：
+- register ：用户注册配置信息
+- site ：
+- cloudip ：
+- module_ban ：
+- module_upgrade ：
+- module_recevie_ban ：
+- basic ：
+- platform ：微信开放平台开发配置信息，用来授权添加公众号和小程序
+- thirdlogin ：第三方登录配置信息
+- upload：本地上传配置信息
+- remote :远程配置信息
+- ip_white_list ：白名单，它是本服务器能够请求的ip地址
+- sensitive_words ：敏感词过滤，主要是过滤用户提交的内容
+- site_sms_sign :短信配置
+- global_oauth ：oauth全局设置，借用权限公众号和独立域名设置
+- news_display ：新闻排序设置，是按排序数字大小倒序还是按添加时间倒序
+- notice_display ：公告排序设置，是按排序数字大小倒序还是按添加时间倒序
+- user_expire : day表示用户到期前几天发信息；status表示是否对过期用户发送短信
+
+
+
+ims_core_menu
+--------------
+核心文件-菜单表
+
+id  int(10) unsigned
+pid  int(10) unsigned  功能ID
+title  varchar(20)  菜单名称
+name  varchar(20)  菜单位置名称
+url  varchar(255)  链接
+append_title  varchar(30)  附加名称
+append_url  varchar(255)  附加地址
+displayorder  tinyint(3) unsigned  显示顺序
+type  varchar(15)  类型
+is_display  tinyint(3) unsigned  是否展示
+is_system  tinyint(3) unsigned  是否在系统中
+permission_name  varchar(50)  权限名称，也是菜单标识
+group_name  varchar(30)  顶层菜单项则为frame，区域菜单项则为区块名称
+icon  varchar(20)  菜单图标
+
+
+ims_core_performance
+--------------------
+记录执行性能的日志表。如系统和数据。
+
+id  int(10) unsigned  主键
+type  tinyint(1)  性能类型，1表示系统日志；2表示数据库日志
+runtime  varchar(10)  执行时间
+runurl  varchar(512)  请求url
+runsql  varchar(512)  执行sql语句
+createtime  int(10)  创建时间
+
+core_cache
+----------
+系统缓存表
+
+字段名  数据类型  说明
+key  varchar(50)  缓存名称
+value  longtext  缓存内容
+
+core_attachment
+---------------
+系统附件表
+
+字段名  数据类型  说明
+id  int(10)  主键
+uniacid  int(10)  所属统一帐号
+uid  int(10)  附件所属用户
+filename  varchar(255)  附件原始文件名
+attachment  varchar(255)  附件路径(文件名称已经替换为唯一)，完整路径请加 ATTACHMENT_ROOT
+type  tinyint(3)  类型，1为图片，2为音乐，3为视频
+createtime  int(10)  创建时间
+module_upload_dir  varchar(100)  -
+group_id  int(11)  附件所在的组id，对应attachment_group表的id
+
+
+
+
+计划任务
+========
+core_cron
+---------
+计划任务表
+
+字段名  数据类型  说明
+id  int(10)  主键
+cloudid  int(10)  新建成功后，云服务返回的任务ID
+module  varchar(50)  所属模块，system为系统任务
+uniacid  int(10)  所属统一帐号
+type  tinyint(3)  类型，1为定时任务，2为循环任务
+name  varchar(50)  任务名称
+filename  varchar(50)  任务执行脚本文件名称，位于(task)模块下方 cron 目录
+lastruntime  int(10)  最后一次执行时间
+nextruntime  int(10)  下一次执行时间
+weekday  tinyint(3)  周循环，废弃
+day  tinyint(3)  天循环，废弃
+hour  tinyint(3)  时循环，废弃
+minute  varchr(255)  分循环，废弃
+extra  varchar(5000)  mc_mass_record表id
+status  tinyint(3)  执行结果，1成未执行，0为已执行，2为执行失败
+createtime  int(10)  创建时间
+
+core_cron_record
+----------------
+计划任务日志表
+
+字段名  数据类型  说明
+id  int(10)  主键
+uniacid  int(10)  所属统一账号uniacid
+module  varchar(50)  所属的模块，system为系统计划任务
+type  varchar(50)  模块里面的某个计划任务名称
+tid  int(10)  对应mc_mass_record表ID
+note  varchar(500)  发送日志
+tag  varchar(5000)
+createtime  int(10)  创建时间
+
+
+公众号，小程序相关
+=================
+
+手动接入公众号和授权接入公众号本质上是一个公众号，这时，需要统一账号
+
+uni_account 账号主表
+--------------------
+微擎系统里面主账号也称统一账号。一个统一账号对应多种子账号的一种，根据不同的类型，再对应 ``account_wechats`` 、 ``account_wxapp`` 、 ``account_aliapp`` 、 ``account_phoneapp`` 、 ``account_webapp`` 、 ``account_xzapp`` 表。
+
+微擎系统可以将不同公众平台的公众号或同一平台的不同公众号集成为一个 **统一公众号** 来进行管理。微擎系统将粉丝用户与统一公众号之间的上下文对话定义为一个会话(WeSession)。
+
+字段名  数据类型  说明
+uniacid  int(10) unsigned  主键
+groupid  int(10)  -
+default_acid  int(10) unsigned   默认关联子号id，为兼容老版本，一个主号下本来可有多个子号，目前却是一一对应
+name  varchar(100)  统一帐号名称
+description  varchar(255)  统一帐号描述
+rank  int(10)  创始人对统一帐号的排序
+title_initial  varchar(1)  账号的首字母
+
+
+ims_account 主账号和子账号基本信息中间表
+--------------------------------------
+主表和子表基本信息中间表(多对多)。是不是一个统一帐号只有一个默认子账号，但是可以有多个映射子账号；同时一个子账号可能属于某一个统一帐号的默认子号，但也可能是其它统一帐号的子账号。
+
+字段名  数据类型  说明
+acid  int(10) unsigned  子账号主键
+uniacid  int(10) unsigned  所属统一账号
+hash  varchar(8)  该子账号hash标识
+type  tinyint(3)  子帐号类型
+isconnect  tinyint(4)  是否接入成功，1为成功，0为失败
+isdelete  tinyint(3) unsigned  是否停用，您可以在回收站中恢复公众号
+endtime  int(10)  子账号过期时间
+
+子账号存在如下类型：
+
+.. code-block:: php
+
+	//正常接入公众号
+	define('ACCOUNT_TYPE_OFFCIAL_NORMAL', 1);
+	//授权接入公众号
+	define('ACCOUNT_TYPE_OFFCIAL_AUTH', 3);
+	//正常接入小程序
+	define('ACCOUNT_TYPE_APP_NORMAL', 4);
+	//正常接入PC
+	define('ACCOUNT_TYPE_WEBAPP_NORMAL', 5);
+	//正常接入APP
+	define('ACCOUNT_TYPE_PHONEAPP_NORMAL', 6);
+	//授权接入小程序
+	define('ACCOUNT_TYPE_APP_AUTH', 7);
+	//正常接入企业小程序
+	define('ACCOUNT_TYPE_WXAPP_WORK', 8);
+	//正常接入熊掌号
+	define('ACCOUNT_TYPE_XZAPP_NORMAL', 9);
+	//授权接入熊掌号
+	define('ACCOUNT_TYPE_XZAPP_AUTH', 10);
+	//支付宝小程序
+	define('ACCOUNT_TYPE_ALIAPP_NORMAL', 11);
+
+ims_account_wechats 微信公众号表
+-------------------------------
+微信公众号信息表。
+
+字段名  数据类型  说明
+acid  int(10) unsigned  主键
+uniacid  int(10) unsigned  所属主账号
+token  varchr(32)  正常接入时验证token
+encodingaeskey  varchar(255)  加密秘钥
+level  tinyint(4) unsigned  公众号类型，1为订阅号，2为服务号，3为认证订号，4为认证服务号
+name  varchr(30)  微信公众号名称
+account  varchar(30)  微信帐号
+original varchar(50)  原始ID
+signature varchar(100)  功能介绍
+country  varchar(10)  国家
+province  varchar(3)  省份
+city  varchar(15)  城市
+username varchar(30)  -
+password varchar(32)  -
+lastupdate int(10)  最后一次更新
+key  varchar(50)  微信appID
+secret  varchar(50)  微信appsecret
+styleid  int(10)  样式id
+subscribeurl  varchar(120)  关注微信url地址
+auth_refresh_token  varchar(255)  自动更新的token码
+
+可用的公众号类型：
+
+.. code-block:: php
+
+	//订阅号
+	define('ACCOUNT_SUBSCRIPTION', 1);
+	//订阅号-认证
+	define('ACCOUNT_SUBSCRIPTION_VERIFY', 3);
+	//服务号
+	define('ACCOUNT_SERVICE', 2);
+	//服务号-认证 认证媒体/政府订阅号
+	define('ACCOUNT_SERVICE_VERIFY', 4);
+
+ims_account_wxapp 微信小程序表
+-----------------------------
+微信小程序信息表。
+
+acid  int(10)  子帐号id
+uniacid  int(10)  统一帐号id
+token  varchar(32)  正常接入时验证token
+encodingaeskey  varchar(43)  加密秘钥
+level  tinyint(4)  -
+account  varchar(30)  -
+original  varchar(50)  原始ID
+key  varchar(50)  小程序appID
+secret  varchar(50)  小程序appsecret
+name  varchar(30)  小程序名称
+appdomain  varchar(255)  -
+
+ims_account_aliapp 支付宝小程序
+------------------------------
+
+
+ims_account_phoneapp
+--------------------
+手机APP应用表。
+
+acid  int(11)  子帐号id
+uniacid  int(11)  统一帐号id
+name  varchar(255)  子账号名称
+
+ims_account_webapp
+------------------
+PC应用表。
+
+acid  int(11)  子帐号id
+uniacid  int(11)  统一帐号id
+name  varchar(255)  子账号名称
+
+ims_account_xzapp 熊掌号
+------------------------
+
+uni_account_menus
+-----------------
+公众号自定义菜单
+
+字段名  数据类型  说明
+id  int(10)  主键
+uniacid  int(10)  所属公众号id
+menuid  int(10)  个性化菜单id，删除时要使用
+type  tinyint(3)  菜单类型，1:默认菜单,3:个性化菜单,2:默认菜单的历史记录
+title  varchar(30)  菜单名称
+sex  tinyint(3)  个性化菜单，性别条件，1为男，2为女
+group_id  int(10)  个性化菜单，粉丝组标条件
+client_platform_type  tinyint(3)  个性化菜单，手机系统条件，1为苹果，2为安卓，3为其它
+area  varchar(50)  个性化菜单，地区条件
+data  varchar(10000)  自定义菜单数据，微信接口返回，用于在编辑器中显示
+status  tinyint(3)  菜单是否生效
+createtime  int(10)  创建时间
+
+type 有如下菜单类型：
+
+.. code-block:: php
+
+	//自定义菜单之默认菜单
+	define('MENU_CURRENTSELF', 1);
+	//自定义菜单之默认菜单的历史记录
+	define('MENU_HISTORY', 2);
+	//自定义菜单之个性化菜单
+	define('MENU_CONDITIONAL', 3);
+
+uni_account_users
+-----------------
+统一帐号所属用户角色表。
+
+id  int(10)  主键
+uniacid  int(10)  所属公众号
+uid  int(10)  公众号对应具有权限用户
+role  varchao(255)  用户的角色，分为manager,operator,owner,vice_founder。公众号权限从owner上取，owner可以编辑公众号信息
+rank  tinyint(3)  公众号及小程序置顶排序
+
+
+
+uni_account_modules
+--------------------
+统一账号所属模块状态表，设置过的模块才会存放在此表。说明模块的配置是对应统一帐号的。一个统一帐号模块都有独自的配置。
+
+id  int(10) unsigned  主键
+uniacid  int(10) unsigned  所属统一账号
+module  varchar(50)  模块标识
+enabled  tinyint(1)  在该统一帐号下模块是否启用，1为启用，0为禁用
+shortcut  tinyint(1)  是否添加模块到快捷菜单，1为添加，0为不加
+displayorder  int(10)  用户对模块置顶排序
+settings  text  模块启用配置时，存放模块配置信息。存在default_entry表示模块默认入口id
+
+ims_modules
+-----------
+所有安装模块的信息表格。记录的是模块清单的所有信息。
+
+mid  int(10) unsigned  模块主键
+name  varchar(10)  模块标识，不同于名称，该值唯一
+type  varchar(20)  方便在左侧菜单中归类与显示。目前支持system,business等
+title  varchar(100)  模块名称
+version  varchar(15)  模块版本
+ability  varchar(500)  模块功能
+description  varchar(1000)  模块描述
+author  varchar(50)  模块作者
+url  varchar(255)  模块获取链接
+setting  tinyint(1)  是否有模块全局配置
+subscribes  varchar(500)  模块订阅的消息类型，模块接到消息后可以处理数据，但无法返回结果
+handles  varchar(500)  模块处理的消息类型，模块接到此事件后，会直接转到至模块中处理，并返回结果。
+isrulefields  tinyint(1)  是否要嵌入规则，设置后，可以在自动回复中设置关键字来进入模块
+issystem  tinyint(1) unsigned  是否是系统内置模块
+target  int(10) unsigned
+iscard  tinyint(3) unsigned  是否支持使用优惠券
+permissions  varchar(5000)  模块内的权限标识
+title_initial  varchar(1)  模块标题的首字母
+wxapp_support  tinyint(1)  模块是否支持微信小程序1:不支持；2:支持;0:表示没有设置
+app_support  tinyint(1)
+welcome_support  int(2)
+oauth_type  tinyint(1)  模块授权类型，模块获取用户授权方式 1.静默授权 2.用户有感知授权
+webapp_support  tinyint(1)
+phoneapp_support  tinyint(1)
+account_support  tinyint(1)
+xzapp_support  tinyint(1)
+aliapp_support  tinyint(1)
+
+.. code-block:: php
+
+	function module_types() {
+		static $types = array(
+			'business' => array(
+				'name' => 'business',
+				'title' => '主要业务',
+				'desc' => ''
+			),
+			'customer' => array(
+				'name' => 'customer',
+				'title' => '客户关系',
+				'desc' => ''
+			),
+			'activity' => array(
+				'name' => 'activity',
+				'title' => '营销及活动',
+				'desc' => ''
+			),
+			'services' => array(
+				'name' => 'services',
+				'title' => '常用服务及工具',
+				'desc' => ''
+			),
+			'biz' => array(
+				'name' => 'biz',
+				'title' => '行业解决方案',
+				'desc' => ''
+			),
+			'enterprise' => array(
+				'name' => 'enterprise',
+				'title' => '企业应用',
+				'desc' => ''
+			),
+			'h5game' => array(
+				'name' => 'h5game',
+				'title' => 'H5游戏',
+				'desc' => ''
+			),
+			'other' => array(
+				'name' => 'other',
+				'title' => '其他',
+				'desc' => ''
+			)
+		);
+		return $types;
+	}
+
+- 公众号封面设置：支持公众号时可设置此项，设置一些功能的关键字入口，方便用户利用关键字触发图文进入功能
+
+- 首页导航，个人中心导航，快捷菜单设置：支持公众号时可设置此项，设置这些菜单后，在用户DIY个人中心或是微官网首页时，可以选择此处设置的链接，方便管理员聚合模块功能。
+
+- 是否要嵌入规则：支持公众号时可设置此项，微擎系统默认支持文字，图文，音乐，语音等回复，此类回复并不能很完美的支持模块中的需求，故而模块可以在自己的功能内，嵌入一个关键字规则回复功能，自行处理关键字触发后的回复内容（查看processor.php）。
+
+- 订阅的消息类型：支持公众号时可设置此项，系统收到消息后，通知到订阅过这个消息的模块，模块只是负责接收处理消息，并不能去干预这个信息到达系统后的回复方式及内容。比如，你想用户在核销卡券后，在自己的模块中写入一条数据记录用户已经使用，则可以订阅”用户核销卡券事件”，当有人核销卡券时，系统会告诉你。
+
+- 直接处理的类型：支持公众号时可设置此项，微擎系统所有关键字回复皆是基于“文字”信息，比如用户发送“我要投票”，系统收到后路由到相应的功能中，回复相应的数据。但是一些没有含义的信息，比如一张图片，一个地址位置等等，目前系统接到后是不做处理的，如果您的模块有此方面的需求，可以设置支持”直接可处理的消息类型”。
+- 开发过程中，如果想变更一些配置，比如增加订阅消息，可以直接修改 manifest.xml 文件
+
+基础配置：
+
+- 参数设置：
+
+
+ims_modules_plugin
+-------------------
+模块插件映射表
+
+id  int(11)  主键
+name  varchar(100)  模块名称
+main_module  varchar(100)  主模块名称
+
+ims_modules_cloud
+-----------------
+本地和云端模块有更新的记录会插入到该表中。
+
+id  int(11)
+name  varchar(100)  模块标识
+title  varchar(100)  模块名称
+title_initial  varchar(1)  首写字母
+logo  varchar(100)  模块logo
+version  varchar(15)  模块版本
+install_status  tinyint(4)  安装状态
+account_support  tinyint(4)  是否支持公众号
+wxapp_support  tinyint(4)  小程序
+webapp_support  tinyint(4)  PC版
+phoneapp_support tinyint(4)  APP
+welcome_support  tinyint(4)  微擎首页
+main_module_name  varchar(50)  主模块标识
+main_module_logo  varchar(100)  主模块logo
+has_new_version  tinyint(1)  是否有新版本
+has_new_branch  tinyint(1)  是否有新分支
+is_ban  tinyint(4)  -
+lastupdatetime  int(11)  最后一次更新
+xzapp_support  tinyint(1)  是否支持熊掌
+cloud_id  int(11)  -
+aliapp_support  tinyint(1)  是否支持支付宝小程序
+
+install_status 可能值如下：
+
+.. code-block:: php
+
+	//模块位于本地且安装
+	define('MODULE_LOCAL_INSTALL', '1');
+	//模块位于本地但未安装
+	define('MODULE_LOCAL_UNINSTALL', '2');
+	//模块位于线上且安装
+	define('MODULE_CLOUD_INSTALL', '3');
+	//模块位于线上且未安装
+	define('MODULE_CLOUD_UNINSTALL', '4');
+
+
+ims_modules_bindings
+--------------------
+定义此模块的封面,管理菜单,微站菜单及规则扩展菜单。该信息来自清单文件的bindins部分。模块的所有入口地址。
+
+eid  int(11)
+module  varchar(100)  模块标识
+entry  varchar(30)  实体类型 cover/rule/menu/home/profile/shortcut/function/page/system_welcome/mine等
+call  varchar(50)  WeModuleSite 类中的方法名称
+title  varchar(50)  操作名称
+do  varchar(200)  模块操作入口
+state  varchar(200)  附加的用户参数(定义于WeModuleSite)
+direct  int(11)  指进入时不做登录验证，可随意访问
+url  varchar(100)
+icon  varchar(50)  图标地址
+displayorder  tinyint(255) unsigned  显示顺序
+
+
+ims_uni_account_modules
+------------------------
+统一账号和模块的关联表。
+
+id  int(10) unsigned  主键
+uniacid  int(10) unsigned  统一账号id
+module  varchar(50)  模块标识，即名称
+enabled  tinyint(1) unsigned  是否开启模块
+settings  text  在当前统一账号下的模块设置
+shortcut  tinyint(1) unsigned  快捷访问
+displayorder  int(10) unsigned  显示顺序
+
+modules_rank
+------------
+模块排序表。用来显示某一用户最常用模块。
+
+id  int(10) unsigned
+module_name  varchar(100)  模块名称
+uid  int(10)  用户id
+rank  int(10)  排序数
+
+
+
+ims_uni_group
+-------------
+微擎系统里面的应用权限套餐表。
+
+什么是应用权限套餐？使用微擎的时候我们可以添加多个统一账号，可以对每个统一账号进行设置一些权限，例如，有的统一账号可以使用某个模块，有的统一账号不可以使用这个模块，限制统一账号使用哪些功能的称为应用权限套餐，应用权限套餐在微擎后台的“系统”——>应用权限组里面。因为，基础服务和所有服务套餐是微擎系统默认的，所以，在应用权限套餐表中看不到这两个套餐数据，只有管理员自己添加的套餐服务才在这个表中看到。
+
+id  int(10) unsigned  主键
+owner_uid  int(10)  拥有者id，默认为0，为副创始人id
+name  varchar(50)  套餐名称
+modules  text  套餐包含的模块，包含模块标识的系列化数据
+templates  varchar(5000)  套餐包含的模板，包含模板id的系列化数据
+uniacid  int(10) unsigned  统一账号，默认为0，表示该套餐不属于任何统一帐号扩展包；如果存在，则表示该额外套餐所属的统一帐号；一个统一帐号只能有一个额外套餐；
+
+uni_account_group
+-----------------
+统一账号和套餐组映射表，即统一帐号下拥有的套餐组。
+
+id  int(10) unsigned  主键
+uniacid  int(10) unsigned  统一帐号id
+groupid  int(10)  套餐组id，-1为全部套餐，关联 uni_group 表
+
+uni_settings
+------------
+统一帐号配置表。
+
+uniacid  int(10) unsigned  统一帐号
+passport  varchar(200)  会员注册参数，当通过公众号关注时，会自动使用该密码作为系统用户密码，其中focusreg键值表示是否关注注册
+oauth  varchar(100)  oauth借用及域名设置，注意还有一个站点global_oauth设置
+jsauth_acid  int(10) unsigned  JSSDK借用公众号id
+uc  varchar(500)  Ucenter配置
+notify  varchar(2000)  公众号短信设置，如短信剩余条数和短信签名；包括邮件设置参数
+creditnames  varchar(500)  公众号积分别名
+creditbehaviors  varchar(500)  公众号积分行为设置
+welcome  varchar(60)  公众号欢迎信息
+default  varchar(60)  公众号默认回复
+default_message  varchar(2000)  特殊事件默认回复
+payment  text  公众号支付设置
+stat  varchar(300)  公众号统计设置（废弃）
+default_site  int(10) unsigned  公众号默认微官网
+sync  tinyint(3) unsigned  粉丝同步设置（废弃）
+recharge  varchar(500)
+tplnotice  varchar(1000)  粉丝通知模板消息ID数组
+grouplevel  tinyint(3) unsigned  会员所在组的变更方式，0：不自动变更，只能通过管理员来变更；1：系统根据当前会员的总积分，按照每个会员组所需总积分的设置进行变更。可自动升降；2：系统根据当前会员的总积分，如果会员的总积分达到更高一级的会员组，则变更会员组，如果积分少于当前所在会员组所需总积分，保持当前会员组不变，不会降级。
+mcplugin  varchar(500)  废弃
+exchange_enable  tinyint(3) unsigned  废弃
+coupon_type  tinyint(3) unsigned  废弃
+menuset  text
+statistics  varchar(100)  访问统计相关设置信息
+bind_domain  varchar(200)  公众号绑定的域名
+comment_status  tinyint(1)  是否开启公众号文章评论
+reply_setting  tinyint(4)  设置自动回复次数，则对于每一个用户，在当天内，某一个关键字连续并重复回复超过设置次数后，自动回复失效；为0表示不限制，最大可设置50。
+
+ims_uni_verifycode
+------------------
+会员注册或绑定手机和邮箱验证码。
+
+字段名  数据类型  说明
+id  int(10)  主键
+uniacid  int(10)  所属公众号
+receiver  varchar(50)  接收验证码的手机或是邮箱
+verifycode  varchar(6)  验证码
+total  tinyint(3)  发送次数，超过5次后需要等待
+createtime	int(10)  创建时间
+failed_count  int(10)  -
+
+
+附件相关
+========
+core_attachment
+---------------
+系统本地附件表，见上面。
+
+wechat_attachment
+-----------------
+微信素材表。
+
+字段名  数据类型  说明
+id  int(10)  主键
+uniacid  int(10)  统一帐号
+acid  int(10)  子帐号id
+uid  int(10)  所属用户
+filename  varchar(255)  附件文件名
+attachment  varchar(255)  附件路径，为微信服务器文件地址
+media_id  varchar(255)  素材Mediaid，微信返回
+width  int(10)  宽
+height  int(10)  高
+type  tinyint  素材类型，1为图片，2为音频， 3为视频，4为图文
+model  tinyint  素材存储类型，1为永久，2为临时，local表示本地
+createtime  int  创建时间
+
+wechat_news
+------------
+微信图文素材详情表。
+
+字段名  数据类型  说明
+id  int(10)  主键
+uniacid  int(10)  所属公众号
+attach_id  int(10)  所属附件id，与wechat_attachment关联
+thumb_media_id  varchar(60)  封面图media_id
+thumb_url  varchar(255)  封面图地址
+title  varchar(50)  每条图文标题
+author  varchar(30)  图文作者
+digest  varchar(255)  文章摘要
+content  text  图文内容
+content_source_url  varchar(200)  图文来源
+show_cover_pic  tinyint(3)  是否在在正文顶部显示封面图
+url  varchar(200)  图文第一篇内容URL
+displayorder  int(2)  图文节点顺序
+
+
+小程序相关
+=========
+wxapp_general_analysis
+----------------------
+小程序数据常规分析表，获取小程序访问分析数据。
+
+字段名  数据类型  说明
+id  int(10)  主键
+uniacid  int(10)  小程序uniacid
+session_cnt  int(10)  打开次数
+visit_pv  int(10)  访问次数，PV(page view)，即页面浏览量
+visit_uv  int(10)  访问人数，UV（Unique Visitor）独立访客，统计1天内访问某站点的用户数(以cookie为依据);
+visit_uv_new  int(10)  新用户数
+type  tinyint(2)  1、概况趋势；2、访问日趋势；3、访问周趋势；4、访问月趋势；5、访问分布；6、访问日留存；7、周留存；8、访问月留存；9、访问页面
+stay_time_uv  varchar(10)  人均停留时长
+stay_time_session  varchar(10)  次均停留时长
+visit_depth  varchar(10)  平均访问深度
+ref_date  varchar(8)  时间
+
+权限管理
+=======
+副创始人功能：
+
+- 公众号部分：可以添加公众号，管理公众号，给公众号分配主管理员，应用权限。
+- 用户部分：可以添加用户，添加用户后，此用户为副创始人的下级用户，可以给用户分配用户组权限。可以管理用户添加的公众号。
+
+  - 有自己的专属链接，通过专属链接注册的用户为副创始人的下级用户。
+  - 可以给之前普通注册的用户添加副创始人。
+
+- 权限部分：副创始人目前拥有所有应用，小程序，模板权限，可以修改应用的图标名称，可以新建自己的应用权限和用户权限组，可以分配给下级用户。
+- 副创始人只能看到下级用户，自己创建的应用权限和用户权限组，只能看到自己创建的公众号和下级用户创建的公众号。
+- 副创始人没有站点管理的所有权限，不能给应用模块进行升级购买等，不能发布公告文章。
+
+实现上面功能需要能够添加副创始人用户组。
+
+- 可以限制副创始人创建公众号，小程序的个数(包括副创始人的下级用户)；
+- 可以限制副创始人分配应用模块，小程序的种类；
+- 可以设置副创始人的使用期限；
+
+公众号的主管理员可以分配和取消分配公众号的使用人员(主管理员不能创建用户，一般是副创始人)，使用人员包含操作员和管理员，管理员可以修改公众号信息和查看管理操作员，操作员仅有设置公众号规则权限，无法修改公众号基本信息，主管理员可以设置管理员的功能权限以及操作员的功能权限。
+
+主管理员和管理员、操作员都可以创建应用，可以通过用户组来限制创建应用。存在两个问题，1、副创始人不能修改用户名称；
+
+将应用分配到应用权限组，即套餐
+----------------------------
+添加应用权限套餐，设置应用套餐名称，选择需要添加的应用、小程序、微站模板，提交保存后，分配给用户权限组该应用权限套餐，那么此用户组即可使用该应用权限套餐。
+
+将应用权限组分配给用户权限组
+--------------------------
+可以设置用户所在用户组权限功能，
+
+将用户分到用户权限组
+-------------------
+
+
+
+自动回复
+========
+
+自动回复分为关键字自动回复、非关键字自动回复、首次访问自动回复、默认回复、常用服务、自定义接口回复：
+
+- 关键字自动回复，一个规则，可以设置多个关键字和多个回复，回复内容是随机选择的。触发关键字的类型包括精准触发、包含关键字触发、正则匹配关键字触发。回复的内容类型包括图文、文字、微信图片、音乐、语音、视频。
+- 非关键字(非文字)自动回复，可以控制其他特殊状态的回复，比如用户直接发送图片，就可以选择回复该图片的消息类型。
+- 首次访问自动回复，该回复就是常规的欢迎回复，粉丝关注公众号之后主动推送的消息。
+- 默认回复，在粉丝给公众号发送消息，不触发任何关键字的情况下，会回复默认回复。
+- 常用服务，常用服务内接口都是设置好的，无需其他设置，直接开启使用即可。
+- 自定义接口回复，可以在不修改公众号接口的情况下，调用其他第三方平台的回复规则或者本地逻辑复杂的规则。
+
+
+ims_rule
+--------
+自动回复规则表
+
+id  int(10) unsigned  主键
+uniacid  int(10) unsigned  统一账号
+name  varchar(50)  规则名称
+module  varchar(50)  规则类型，包括userapi，cover，reply(虚拟模块)
+displayorder  int(10) unsigned  规则优先级顺序
+status  tinyint(1) unsigned  是否开启
+containtype  varchar(100)  模块标识，如，系统模块回复('basic', 'news', 'images', 'voice', 'video', 'music', 'wxcard')和自定义模块回复
+
+当规则类型是 ``reply`` 时，需要查看 ``containtype`` 字段(basic,news,images等，表示模块标识)来获取具体回复表中的内容。而处理该规则的模块是 ``core`` 模块。
+
+ims_rule_keyword
+----------------
+规则和关键字映射表，触发该规则对应的关键字。一条规则可以对应多个关键字。
+
+id  int(10) unsigned  主键
+rid  int(10) unsigned  规则主键
+uniacid  int(10) unsigned  统一账号
+module  varchar(50)  规则类型
+content  varchar(255)  关键字内容
+type  tinyint(1) unsigned  关键字匹配类型，可以是精确关键字，包含关键字，正则匹配
+displayorder  tinyint(3) unsigned  显示顺序
+status  tinyint(1) unsigned  是否启动该关键字
+
+下面的表格是自动回复类型表：
+
+一条规则可以有多条回复，每条回复可以是不同类型的消息，会随机选择一个。
+
+ims_basic_reply
+---------------
+回复文字消息
+
+id  int(10) unsigned  主键
+rid  int(10) unsigned  规则主键
+content  varchar(1000)  回复文字消息内容
+
+ims_cover_reply
+---------------
+回复模块封面消息，就是模块入口回复规则，通过关键字来自动回复包含模块入口的图文消息。
+
+id  int(10) unsigned  主键
+uniacid  int(10) unsigned  统一账号
+multiid  int(10) unsigned
+rid  int(10) unsigned  规则主键
+module  varchar(30)  模块标识
+do  varchar(30)  动作
+title  varchar(255)  图文标题
+description  varchar(255)  图文描述
+thumb  varchar(255)  图文图片
+url  varchar(255)  图文对应的链接
+
+ims_custom_reply
+----------------
+
+id  int(10) unsigned  主键
+rid  int(10) unsigned  规则主键
+start1  int(10)
+end1  int(10)
+start2  int(10)
+end2  int(10)
+
+ims_images_reply
+----------------
+回复图片消息
+
+id  int(10) unsigned  主键
+rid  int(10) unsigned  规则主键
+title  varchar(50)
+description  varchar(255)
+mediaid  varchar(255)  媒体文件id
+createtime  int(10)  创建时间
+
+ims_music_reply
+---------------
+回复音乐消息
+
+id  int(10) unsigned  主键
+rid  int(10) unsigned  规则主键
+title  varchar(50)  音乐标题
+description  varchar(255)  音乐标题下面的描述
+url  varchar(300)  音乐文件链接
+hqurl  varchar(300)  高品质音乐链接
+
+ims_news_reply
+--------------
+回复图文消息
+
+id  int(10) unsigned  主键
+rid  int(10) unsigned  规则主键
+parent_id  int(10)  当前记录所属的图文
+title  varchar(50)  标题
+author  varchar(64)  作者
+description  varchar(255)  摘要
+thumb  varchar(500)  缩略图路径
+content  mediumtext  文章内容？？
+url  varchar(255)  文章链接地址
+displayorder  int(10)  在图文列表中顺序
+incontent  tinyint(1)  是否显示为图文封面
+createtime  int(10)  图文创建时间
+media_id  varchar(50)  媒体文件id
+
+ims_userapi_reply
+------------------
+服务和自定义接口回复消息。
+
+id  int(10) unsigned  主键
+rid  int(10) unsigned  规则主键
+description  varchar(300)  功能描述
+apiurl  varchar(300)  接口地址
+token  varchar(32)  远程接口token
+default_text  varchar(100)  当接口无回复时，则返回用户此处设置的文字信息
+cachetime  int(10) unsigned  接口返回数据将缓存在系统中的时限，默认为0不缓存。
+
+ims_video_reply
+---------------
+回复视频消息
+
+id  int(10) unsigned  主键
+rid  int(10) unsigned  规则主键
+title  varchar(50)  标题
+description  varchar(300)  功能描述
+mediaid  varchar(255)  媒体文件id
+createtime  int(10)  创建时间
+
+ims_voice_reply
+---------------
+回复声音消息
+
+id  int(10) unsigned  主键
+rid  int(10) unsigned  规则主键
+title  varchar(50)  标题
+mediaid  varchar(255)  媒体文件id
+createtime  int(10)  创建时间
+
+ims_wxcard_reply
+----------------
+回复微信名片消息??
+
+id  int(10) unsigned  主键
+rid  int(10) unsigned  规则主键
+title  varchar(30)  标题
+card_id  varchar(50)
+cid  int(10) unsigned
+brand_name  varchar(30)
+logo_url  varchar(255)
+success  varchar(255)
+error  varchar(255)
+
+
+用户管理
+========
+用户角色
+
+
+ims_users
+---------
+
+uid  int(10) unsigned  用户id
+owner_uid  int(10)  副创始人id，他们有自己的专属链接，通过专属链接注册的用户为副创始人的下级用户，该值默认为0，表示属于主创始人。
+groupid  int(10) unsigned  用户所属的组，如果是副创始人，则是副创始人组id；如果不是，则对应用户组id，默认为0
+founder_groupid  tinyint(4)  用户所属的组类型，可以是普通组(0)和副创始人组(1)
+username  varchar(30)  用户名称
+password  varchar(200)  用户密码
+salt  varchar(10)  盐
+type  tinyint(3)  用户类型，可以是普通成员(1)和店员(3)
+status  tinyint(4)  用户状态，可以是审核(1)，正常(2)，禁止(3)
+joindate  int(10) unsigned
+joinip  varchar(15)
+lastvisit  int(10) unsigned  最近一次访问时间
+lastip  varchar(15)  最近一次ip地址
+remark  varchar(500)  用户备注
+starttime  int(10) unsigned  用户开始有效时间
+endtime  int(10) unsigned  账户有效期截止时间
+register_type  tinyint(3)  注册类型，可以是
+openid  varchar(50)  第三方openid，默认绑定第三方，但可能有多个第三方绑定呢？
+welcome_link  tinyint(4)
+
+.. code-block:: php
+
+	// 用户状态
+	define('USER_STATUS_CHECK', 1);
+	define('USER_STATUS_NORMAL', 2);
+	define('USER_STATUS_BAN', 3);
+	// 用户类型
+	define('USER_TYPE_COMMON', 1);
+	define('USER_TYPE_CLERK', 3);
+
+ims_users_bind
+--------------
+用户绑定表
+
+字段名  数据类型  说明
+id  int(11)  主键
+uid  int(11)  用户uid
+bind_sign  varchar(50)  绑定标识openid或者手机号
+third_type  tinyint(4)  绑定类型 1:qq 2:weixin 3:手机号
+third_nickname  varchar(255)  昵称或者手机号
+
+ims_users_group
+---------------
+后台登录用户组表。
+
+id  int(10) unsigned  主键
+owner_uid  int(10)  默认为0表示属于主创始人或者副创始人uid
+name  varchar(50)  用户组名称
+package  varchar(5000)  应用权限套餐组，包括多个套餐组id
+maxaccount  int(10) unsigned  创建公众号数量
+maxsubaccount  int(10) unsigned
+timelimit  int(10) unsigned 设置用户组的有效期限。0为不限制期限。到期后，该用户下的所有公众号只能使用 "基础服务"
+maxwxapp  int(10) unsigned  创建微信小程序数量
+maxwebapp  int(10) unsigned  创建PC数量
+maxphoneapp  int(10) unsigned  创建APP数量
+maxxzapp  int(10) unsigned  创建熊掌号数量
+maxaliapp  int(10) unsigned  创建支付宝小程序数量
+
+ims_users_founder_group
+-----------------------
+副创始人专用用户组表。和 ims_users_group 唯一的区别是没有 owner_uid 字段。？？
+
+id  int(10) unsigned  对应users表的groupid字段
+name  varchar(50)  用户组名称
+package  varchar(5000)  应用权限套餐组，包括多个套餐id
+maxaccount  int(10) unsigned  创建公众号数量
+maxsubaccount  int(10) unsigned  ？？
+timelimit  int(10) unsigned 设置用户组的有效期限。0为不限制期限。到期后，该用户下的所有公众号只能使用 "基础服务"
+maxwxapp  int(10) unsigned  创建微信小程序数量
+maxwebapp  int(10) unsigned  创建PC数量
+maxphoneapp  int(10) unsigned  创建APP数量
+maxxzapp  int(10) unsigned  创建熊掌号数量
+maxaliapp  int(10) unsigned  创建支付宝小程序数量
+
+ims_uni_account_users
+---------------------
+统一帐号所属用户角色表。一个统一帐号具有多个用户；每一个用户可以管理多个统一帐号。所以是多对多关系
+
+id  int(10) unsigned  主键
+uniacid  int(10) unsigned  统一账号
+uid  int(10) unsigned  用户id
+role  varchar(255)  用户的角色，可以是创始人(founder)，副创始人(vice_founder)，拥有者(owner)，管理员(manager)，操作员(operator)，店员(clerk)。统一账号权限从owner上取
+rank  tinyint(3) unsigned  公众号及小程序置顶排序
+
+ims_users_permission
+--------------------
+统一帐号所属用户权限表。
+
+id  int(10) unsigned  主键
+uniacid int(10) unsigned  统一账号
+uid  int(10) unsigned  用户id
+type  varchar(100)  权限类型，可以是公众号权限(system)、小程序(wxapp)、某一模块(模块标识)、系统(site)，系统权限没有找到过，从代码来看应该没有该类型
+permission  varchar(10000)  以|分隔的权限字符串
+url  varchar(255)
+
+
+ims_users_profile
+-----------------
+登录后台的用户信息表，用户信息字段可以通过系统用户字段管理进行增加。
+
+id  int(10) unsigned  主键
+uid  int(10) unsigned  用户id
+createtime  int(10) unsigned
+edittime  int(10)
+realname  varchar(10)  真实姓名
+nickname  varchar(20)  昵称
+avatar  varchar(255)  头像
+qq  varchar(15)  QQ号
+mobile  varchar(11)  手机号码，手机号码登录时，会检索该值
+fakeid  varchar(30)
+vip  tinyint(1) unsigned  VIP级别
+gender  tinyint(1)  性别
+birthyear  smallint(6) unsigned  出生年份
+birthmonth  tinyint(3) unsigned  出生月份
+birthday  tinyint(3) unsigned  出生日
+constellation  varchar(10)  星座
+zodiac  varchar(5)  生肖
+telephone  varchar(15)  固定电话
+idcard  varchar(30)  证件号码
+studentid  varchar(50)  学号
+grade  varchar(10)  班级
+address  varchar(255)  邮寄地址
+zipcode  varchar(10)  邮编
+nationality  varchar(30)  国籍
+resideprovince  varchar(30)  居住省
+residecity  varchar(30)  居住城市
+residedist  varchar(30)  居住区域
+graduateschool  varchar(50)  毕业学校
+company  varchar(50)  公司
+education  varchar(10)  学历
+occupation  varchar(30)  职业
+position  varchar(30)  职位
+revenue  varchar(10)  年收入
+affectivestatus  varchar(30)  情感状态
+lookingfor  varchar(255)  交友目的
+bloodtype  varchar(5)  血型
+height  varchar(5)  身高
+weight  varchar(5)  体重
+alipay  varchar(30)  支付宝账号
+msn  varchar(30)  MSN
+email  varchar(50)  电子邮箱
+taobao  varchar(30)  阿里旺旺
+site  varchar(30)  个人主页
+bio  text  自我介绍
+interest  text  兴趣爱好
+workerid  varchar(64)
+
+ims_activity_clerks
+-------------------
+统一帐号下门店拥有的店员表。用户表中uid如果用户是店员，则会在本表中存储另外的信息。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned  统一账号
+uid  int(10) unsigned  用户表的用户id
+storeid  int(10) unsigned  门店id
+name  varchar(20)  店员名称
+password  varchar(20)  店员密码
+mobile  varchar(20)  手机号码
+openid  varchar(50)  第三方openid
+nickname  varchar(30)  昵称
+
+
+ims_activity_stores
+-------------------
+门店表
+
+id  int(10)  -
+uniacid  int(10)  -
+business_name  varchar(50)  门店名称
+branch_name  varchar(50)
+category  varchar(255)
+province  varchar(15)
+city  varchar(15)
+district  varchar(15)
+address  varchar(50)
+longitude  varchar(15)
+latitude  varchar(15)
+telephone  varchar(20)
+photo_list  varchar(10000)
+avg_price  int(10)
+recommend  varchar(255)
+special  varchar(255)
+introduction  varchar(255)
+open_time  varchar(50)
+location_id  int(10)
+status  tinyint(3)
+source  tinyint(3)
+message  varchar(500)
+
+site_store_create_account
+-------------------------
+
+id  int(10)  -
+uid  int(10)  用户id
+uniacid  int(10)  统一帐号id
+type  tinyint(4)  -
+endtime  int(12)  截止日期
+
+type取值：
+
+.. code-block:: php
+
+	//正常接入小程序
+	define('ACCOUNT_TYPE_APP_NORMAL', 4);
+
+
+会员相关的表
+===========
+
+mc_mass_record
+---------------
+群发日志表
+
+字段名  数据类型  说明
+id  int(10)  主键
+uniacid  int(10)  统一帐号
+acid  int(10)  子账号
+groupname  varchar(50)  群发对象粉丝分组名字
+fansnum  int(10)  群发对象粉丝数量
+msgtype  varchar(10)  群发消息类型：news图文、image图片、voice语音、video视频
+group  int(10)  群发对象粉丝会员组ID
+attach_id  int(10)  对应wechat_attachment表ID
+media_id  varchar(100)  群发的素材media_id
+content  varchar(10000)  群发内容
+type  tinyint(3)  0:普通群发,1:立即群发
+status  tinyint(3)  状态：0:发送成功,1:待发送,2:发送失败
+cron_id  int(10)  对应core_cron表ID
+sendtime  int(10)  预计发送时间
+finalsendtime  int(10)  实际发送时间
+createtime  int(10)  创建时间
+
+
+message_notice_log
+------------------
+消息提醒表
+
+字段名  数据类型  说明
+id  int(11)  主键
+message  varchar(255)  消息内容
+is_read  tinyint(3)  读取状态 1未读，2已读
+uid  int(11)  用户uid
+sign  varchar(22)  订单id,公众号uniacid,工单的id,注册uid
+type  tinyint(3)  1订单，2公众号到期，3工单，4注册，5小程序到期
+status  tinyint(3)  是否需要审核 1、注册审核；2、正常
+create_time  int(11)  提交时间
+end_time  int(11)  到期时间
+
+.. code-block:: php
+
+//消息提醒类型
+//提交订单消息类型
+define('MESSAGE_ORDER_TYPE', 1);
+//公众号过期消息类型
+define('MESSAGE_ACCOUNT_EXPIRE_TYPE', 2);
+//小程序过期消息类型
+define('MESSAGE_WECHAT_EXPIRE_TYPE', 5);
+//pc过期消息类型
+define('MESSAGE_WEBAPP_EXPIRE_TYPE', 6);
+//工单消息类型
+define('MESSAGE_WORKORDER_TYPE', 3);
+//注册消息类型
+define('MESSAGE_REGISTER_TYPE', 4);
+//用户账号到期
+define('MESSAGE_USER_EXPIRE_TYPE', 7);
+//小程序应用升级
+define('MESSAGE_WXAPP_MODULE_UPGRADE', 8);
+
+//消息是否读取 1未读  2已读
+define('MESSAGE_NOREAD', 1);
+define('MESSAGE_READ', 2);
+
+
+core_sendsms_log
+----------------
+短信发送日志表。
+
+id  int(10)  -
+uniacid  int(10)  统一帐号
+mobile  varchar(11)  手机号码
+content  varchar(255)  发送内容
+result varchar(255)  发送结果
+createtime  int(11)  发送时间
+
+ims_attachment_group
+--------------------
+资源分组表，主要用于前端上传控件。
+
+
+id  int(11)  -
+name  varchar(25)  分组名称
+uniacid  int(11)  统一帐号
+uid  int(11)  用户id
+type  tinyint(1)  资源类型包括是本地服务器资源分组(0)还是微信资源分组(1)
+
+users_failed_login
+------------------
+用户登录失败记录表。用来记录最近5分钟登录失败的信息。
+
+id  int(10)  -
+ip  varchar(15)  访问ip
+username  varchar(32)  用户名称
+count  tinyint(1)  登录次数
+lastupdate  int(10)  最后一次登录时间
+
+profile_fields
+--------------
+用户详情字段表。
+
+id  int(10)
+field  varchar(255)
+available  tinyint(1)
+title  varchar(255)
+description  varchar(255)
+displayorder  smallint(6)
+required  tinyint(1)
+unchangeable  tinyint(1)
+showinregister  tinyint(1)
+field_length  int(10)
+
+
+ims_job
+--------
+系统后台任务表。
+
+id  int(11)
+type  tinyint(4)  任务类型，10表示删除统一帐号；20表示同步粉丝
+uniacid  int(11)
+payload  varchar(255)
+status  tinyint(3)  任务是否完成
+title  varchar(22)  任务标题
+handled  int(11)  任务已经处理的文件数
+total  int(11)  要删除的文件数
+createtime  int(11)
+updatetime  int(11)  任务最近一次处理时间
+endtime  int(11)  任务结束时间
+
+stat_visit
+----------
+访问记录表。用来记录客户访问记录。如何生成的记录？？
+
+id  int(10)
+uniacid  int(10)  统一帐号
+module  varchar(100)  模块标识
+count  int(10)  当天的访问数
+date  int(10)  访问日期
+type  varchar(10)  访问方式类型 有web(后台)，app(前台)，api(微信)，all
+
+
+system_stat_visit
+------------------
+系统访问记录。是否是用来记录管理员访问记录？？
+
+id  int(10)
+uniacid  int(10)  统一帐号
+modulename  varchar(100)  模块标识
+uid  int(10)  用户id
+displayorder  int(10)  显示顺序，越大的优先显示
+createtime  int(10)  创建时间
+updatetime  int(10)  更新时间
+
+
+article_news
+------------
+新闻表。
+
+id  int(10) unsigned
+cateid  int(10) unsigned 新闻分类id
+title  varchar(100)  新闻标题
+content  mediumtext  新闻内容
+thumb  varchar(255)  缩略图
+source  varchar(255)  新闻来源
+author  varchar(50)  新闻作者
+displayorder  tinyint(3) unsigned  新闻显示顺序
+is_display  tinyint(3) unsigned  是否显示
+is_show_home  tinyint(3) unsigned  是否显示在首页
+createtime  int(10) unsigned  创建时间
+click  int(10) unsigned  阅读次数
+
+
+article_category
+-----------------
+分类表。
+
+id  int(10) unsigned
+titile  varchar(30)  分类名称
+displayorder  tinyint(3) unsigned  显示顺序
+type  varchar(15)  分类类型，如news(新闻)，notice(公告)
+
+article_notice
+---------------
+公告表。
+
+id  int(10) unsigned
+cateid  int(10) unsigned 公告分类
+title  varchar(100)  公告标题
+content  mediumtext  公告内容
+source  varchar(255)  公告来源
+author  varchar(50)  公告作者
+displayorder  tinyint(3) unsigned  公告显示顺序
+is_display  tinyint(3) unsigned  公告显示
+is_show_home  tinyint(3) unsigned  公告显示在首页
+createtime  int(10) unsigned  创建时间
+click  int(10) unsigned  阅读次数
+style  varchar(200)  标题样式包括颜色和粗细
+group  varchar(255)  哪些用户组可见，不设置代表全部用户组可见；哪些副创始人用户组可见，不设置代表全部副创始人用户组可见
+
+article_unread_notice
+----------------------
+未读公告。
+
+id  int(10) unsigned
+notice_id  int(10) unsigned  公告id
+uid  int(10) unsigned  用户id
+is_new  tinyint(3) unsigned  是否已经查看，0表示未查看；1表示查看
+
+
+stat_fans
+----------
+粉丝统计表
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+new  int(10) unsigned  新关注用户数
+cancel  int(10) unsigned  取消关注用户数
+cumulate  int(10)  到统计日期为止总用户数
+date  varchar(8)  统计日期
+
+mc_mapping_fans
+---------------
+
+fanid  int(10) unsigned
+acid  int(10) unsigned
+uniacid  int(10) unsigned
+uid  int(10) unsigned  mc_members表中uid
+openid  varchar(50)  公众号openid
+nickname  varchar(50)  粉丝昵称
+groupid  varchar(30)  用户被打上的标签ID列表，以逗号分隔，这不是和mc_fans_tag_mapping表重复了吗？？
+salt  char(8)  生成会员密码的盐
+follow  tinyint(1) unsigned  0表示未关注
+followtime  int(10) unsigned  关注时间
+unfollowtime  int(10) unsigned  取消关注时间
+tag  varchar(100)  保存微信返回用户基本信息
+updatetime  int(10) unsigned  更新记录时间
+unionid  varchar(64)  微信开放平台帐号
+
+mc_oauth_fans
+-------------
+借用授权粉丝映射表。
+
+id  int(10) unsigned
+oauth_openid  varchar(50)  借用授权公众号用户openid
+acid  int(10) unsigned  公众号id
+uid  int(10) unsigned  用户id
+openid  varchar(50)  当前公众号用户openid
+
+mc_groups
+---------
+统一帐号会员组表。
+
+groupid  int(11)  组id
+uniacid  int(11)  统一帐号id
+title  varchar(20)  组标题
+credit  int(10) unsigned
+isdefault  tinyint(4)  是否是该统一帐号的默认组
+
+mc_fans_groups
+--------------
+粉丝标签列表。统一公众号下具有的标签组。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+acid  int(10) unsigned
+groups  varchar(10000)  粉丝标签列表
+
+
+mc_fans_tag_mapping
+-------------------
+粉丝和标签映射表。一个粉丝可能有多个标签。
+
+id  int(11) unsigned
+fanid  int(11) unsigned  mc_mapping_fans表fanid
+tagid  tinyint(3) unsigned
+
+mc_member_fields
+-----------------
+会员字段表。
+
+id  int(10) unsigned
+uniacid  int(10)
+fieldid  int(10)
+title  varchar(255)
+available  tinyint(1)
+displayorder  smallint(6)
+
+
+mc_members
+----------
+会员信息表。 pay_password支付密码
+
+
+qrcode
+------
+生成带参数的二维码
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+acid  int(10) unsigned
+type  varchar(10)  临时(1)还是永久(2)
+extra  int(10) unsigned
+qrcid  bigint(20)  临时二维码的数字参数值，场景值ID
+scene_str  varchar(64)  永久二维码的字符串参数值，场景值ID
+name  varchar(50)  二维码名称
+keyword  varchar(100)  消息内容，即触发关键字
+model  tinyint(1) unsigned  临时(1)还是永久(2)二维码
+ticket  varchar(250)  换取二维码ticket
+url  varchar(256)  二维码图片解析后的地址，开发者可根据该地址自行生成需要的二维码图片
+expire  int(10) unsigned  该二维码有效时间，以秒为单位。最大不超过2592000（即30天）。
+subnum  int(10) unsigned
+createtime  int(10) unsigned  二维码创建时间
+status  tinyint(1) unsigned  是否有效
+
+
+qrcode_stat
+------------
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+acid  int(10) unsigned
+qid  int(10) unsigned
+openid  varchar(50)
+type  tinyint(1) unsigned
+qrcid  bingint(20) unsigned
+scene_str  varchar(64)
+name  varchar(50)
+createtime  int(10) unsigned
+
+wxapp_versions
+---------------
+一个统一帐号具有多个版本小程序。该表用来存储多个版本。
+
+id  int(10)
+uniacid  int(10)
+multiid  int(10)  微站id，默认为0
+version  varchar(10)  版本号
+description  varchar(255)  小程序描述
+modules  varchar(1000)  如果设计方式是WXAPP_MODULE，则是选择模块数组
+design_method  tinyint(1)  设计方式
+template  int(10)  设计方式是WXAPP_TEMPLATE，则是选择模板id
+quickmenu  varchar(2500)  快捷菜单？？
+createtime  int(10)  小程序创建时间
+type  int(2)  小程序创建类型，默认为0
+entry_id  int(11)
+use_default  tinyint(1)
+
+设计方法有如下值：
+
+.. code-block:: php
+
+	//DIY小程序
+	define('WXAPP_DIY', 1);
+	//选择模版小程序
+	define('WXAPP_TEMPLATE', 2);
+	//跳转模块小程序
+	define('WXAPP_MODULE', 3);
+
+小程序创建类型有如下值：
+
+.. code-block:: php
+
+	//网页小程序类型
+	define('WXAPP_CREATE_MODULE', 1);
+	//打包多个模块小程序
+	define('WXAPP_CREATE_MUTI_MODULE', 2);
+	//普通小程序类型
+	define('WXAPP_CREATE_DEFAULT', 0);
+
+
+phoneapp_versions
+-----------------
+
+
+
+site_article
+-------------
+微信公众号内文章表。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+rid  int(10) unsigned  回复规则id
+kid  int(10) unsigned  ？？
+iscommend  tinyint(1)  是否推荐
+ishot  tinyint(1) unsigned  是否头条
+pcate  int(10) unsigned  父分类
+ccate  int(10) unsigned  子分类
+template  varchar(300)  模板，即主题中的模板
+title  varchar(100)  文章标题
+description  varchar(100)  文章简介
+content  mediumtext  文章内容
+thumb  varchar(255)  文章缩略图
+incontent  tinyint(1)  是否把封面图片显示在正文中
+source  varchar(255)  文章来源，写相对地址吧？？
+author  varchar(50)  文章作者
+displayorder  int(10) unsigned  文章的显示顺序，越大则越靠前
+linkurl  varchar(500)  直接链接，当打开该文章时，会重定向到该地址
+createtime  int(10) unsigned  文章创建时间
+edittime  int(10)  文章失效时间？？
+click  int(10) unsigned  阅读次数
+type  varchar(10)
+credit  varchar(255)  设置赠送积分后,粉丝在分享时赠送积分.粉丝的好友在点击阅读时,也会赠送积分
+
+site_article_comment
+--------------------
+微信公众号内文章评论。
+
+id  int(10)
+uniacid  int(10)
+articleid  int(10)  文章id
+parentid  int(10)  对应父评论
+uid  int(10)  用户id
+openid  varchar(50)  用户openid
+content  text  评论内容
+is_read  tinyint(1)  评论是否读取
+iscomment  tinyint(1)
+createtime  int(10)  评论创建时间
+
+is_read 可能取值：
+
+.. code-block:: php
+
+	//评论未读
+	define('ARTICLE_COMMENT_NOREAD', 1);
+	//评论已读
+	define('ARTICLE_COMMENT_READ', 2);
+
+
+
+site_category
+--------------
+公众号内文章分类表。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+nid  int(10) unsigned  site_nav表id，添加微站首页导航时，表示导航id
+name  varchar(50)  分类名称
+parentid  int(10) unsigned  父分类
+displayorder  tinyint(3) unsigned  分类的显示顺序，越大则越靠前
+enabled  tinyint(1) unsigned  是否启用
+icon  varchar(100)  图标
+description  varchar(100)  分类描述
+styleid  int(10) unsigned  分类所在主题
+linkurl  varchar(500)  直接链接
+ishomepage  tinyint(1)  是否作为首页使用
+icontype  tinyint(1) unsigned  图标类型
+css  varchar(500)  分类样式
+multiid  int(11)  分配到微站
+
+
+
+site_multi
+----------
+公众号站点，一个公众号可以有多个站点。
+
+id  int(10) unsigned  站点id
+uniacid  int(10) unsigned
+title  varchar(30)  微站名称
+styleid  int(10) unsigned  site_styles表的id， 选择的样式id，站点一般配置是样式，而不是直接配置模板
+site_info  text  站点信息
+status  tinyint(3) unsigned  是否启用该微站
+bindhost  varchar(255)   绑定域名，不能和本站点域名一样
+
+site_info 包含：
+
+.. code-block:: php
+
+	'site_info' => iserializer(array(
+                'thumb' => trim($_GPC['thumb']), // 于用户触发关键字后，系统回复时的封面图片
+                'keyword' => trim($_GPC['keyword']), // 触发关键字
+                'description' => trim($_GPC['description']), //用户通过微信分享给朋友时,会自动显示页 面描述
+                'footer' => htmlspecialchars($_GPC['footer']) // 自定义底部信息
+            )),
+
+site_styles
+-----------
+统一帐号和模板表映射表。站点模板激活时会自动生成记录。可以通过复制样式生成当前模板的另一个样式。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+templateid  int(10) unsigned  site_templates表的id
+name  varchar(50)  样式名称，根据模板名称随机生成
+
+site_styles_vars
+-----------------
+针对特定模板可以进行风格设计，最初来自模板默认配置。在站点模板激活时自动生成记录。可以通过设计样式来生成，一个变量一条记录。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+templateid  int(10) unsigned
+styleid  int(10) unsigned
+variable  variable(50)  变量名称
+content  text  变量值
+description  varchar(50)  变量描述
+
+
+site_templates
+--------------
+站点模板表，即主题表。它是在system/template中install方法中插入到表中的。
+
+id  int(10) unsigned
+name  varchar(30)  主题标识
+title  varchar(30)  主题名称
+version  varchar(64)  主题版本
+description  varchar(500)  主题描述
+author  varchar(50)  主题作者
+url  varchar(255)  主题查看链接
+type  varchar(20)  主题类型，1表示为分类
+sections  int(10) unsigned  ？？
+
+type字段可能取值：
+
+.. code-block:: php
+
+	$types = array(
+		'often' => array(
+			'name' => 'often',
+			'title' => '常用模板',
+		),
+		'rummery' => array(
+			'name' => 'rummery',
+			'title' => '酒店',
+		),
+		'car' => array(
+			'name' => 'car',
+			'title' => '汽车',
+		),
+		'tourism' => array(
+			'name' => 'tourism',
+			'title' => '旅游',
+		),
+		'drink' => array(
+			'name' => 'drink',
+			'title' => '餐饮',
+		),
+		'realty' => array(
+			'name' => 'realty',
+			'title' => '房地产',
+		),
+		'medical' => array(
+			'name' => 'medical',
+			'title' => '医疗保健'
+		),
+		'education' => array(
+			'name' => 'education',
+			'title' => '教育'
+		),
+		'cosmetology' => array(
+			'name' => 'cosmetology',
+			'title' => '健身美容'
+		),
+		'shoot' => array(
+			'name' => 'shoot',
+			'title' => '婚纱摄影'
+		),
+		'other' => array(
+			'name' => 'other',
+			'title' => '其它行业'
+		)
+	);
+
+site_nav
+---------
+首页导航菜单表。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+multiid  int(10) unsigned  site_multi表id
+section  tinyint(4)  导航显示位置，设置位置后可以将导航菜单显示到模板对应的位置中。（可以同时设置多个导航在同一个位置中，会根据排序大小依次显示），显示的位置必须要有模板支持。注意：如果您添加了模板未设置的位置时，该链接将不会显示，您可以在导航列表中查看。
+module  varchar(50)  -
+displayorder  smallint(5) unsigned  排序
+name  varchar(50)  导航名称
+description  varchar(1000)  导航描述
+position  tinyint(4)  首页导航菜单为1；个人中心为2；这个和section区别是section表示首页导航页面某个区位。
+url  varchar(255)  导航url
+icon  varchar(500)  菜单图标
+css  varchar(1000)  菜单样式
+status  tinyint(1) unsigned  菜单是否显示
+caategoryid  int(10) unsigned  site_category表的id
+
+site_slide
+-----------
+站点幻灯片表。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+multiid  int(10) unsigned
+title  varchar(255)  幻灯片标题
+url  varchar(255)  幻灯片链接
+thumb  varchar(255)  幻灯片图片
+displayorder  tinyint(4)  显示顺序
+
+
+site_page
+----------
+导航快捷菜单。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned  统一帐号id
+multiid  int(10) unsigned  微站id
+title  varchar(50)  默认为'快捷菜单'
+description  varchar(255)  -
+params  longtext  设置参数
+html  longtext  导航快捷菜单模板
+multipage  longtext
+type  tinyint(1) unsigned  默认为2，表示指定微站的菜单；4表示公众号菜单？？
+status  tinyint(1) unsigned  是否开启
+createtime  int(10) unsigned
+goodnum  int(10) unsigned
+
+params值如下所示：
+
+.. code-block:: php
+
+	{
+	    "navStyle": "4", // 导航样式
+	    "position": { // 将导航应用的页面:微站主页、微页面、文章及分类
+	        "homepage": 1,
+	        "page": 1,
+	        "article": 1
+	    },
+	    "menus": [ // 菜单项
+	        {
+	            "title": "微站首页",
+	            "url": "./index.php?i=2&c=home&",
+	            "icon": {
+	                "name": "fa-home",
+	                "color": "#00ffff"
+	            },
+	            "image": "",
+	            "hoverimage": "",
+	            "hovericon": ""
+	        },
+	        {
+	            "title": "个人中心",
+	            "url": "./index.php?i=2&c=mc&",
+	            "icon": {
+	                "name": "fa-user-md",
+	                "color": "#ddd"
+	            },
+	            "image": "",
+	            "hoverimage": "",
+	            "hovericon": ""
+	        },
+	        {
+	            "title": "标题",
+	            "url": "tel:15875546804",
+	            "icon": {
+	                "name": "fa-headphones",
+	                "color": "#ddd"
+	            },
+	            "image": "",
+	            "hoverimage": "",
+	            "hovericon": ""
+	        },
+	        {
+	            "title": "个人中心",
+	            "url": "./index.php?i=2&c=mc&",
+	            "icon": {
+	                "name": "fa-credit-card",
+	                "color": "#ddd"
+	            },
+	            "image": "",
+	            "hoverimage": "",
+	            "hovericon": ""
+	        }
+	    ]
+	}
+
+
+mc_chats_record
+---------------
+微信聊天记录表。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+acid  int(10) unsigned
+flag  tinyint(3) unsigned  默认为1
+openid  varchar(32)
+msgtype  varchar(15)  消息类型
+content  varchar(10000)  消息内容
+createtime  int(10) unsigned  创建时间
+
+mc_member_address
+------------------
+会员地址表。一个会员可以设置多个地址。
+
+id  int(10) unsigned
+uniacid  int(10) unsigned
+uid  int(50) unsigned
+username  varchar(20)  用户姓名
+mobile  varchar(11)  手机号码
+zipcode  varchar(6)  邮编
+province  varchar(32)  省份
+city  varchar(32)  城市
+district  varchar(32)  区/县
+address  varchar(512)  详细地址
+isdefault  tinyint(1) unsigned  设置为公众号默认地址
+
+mc_credits_record
+------------------
+积分或金额变动记录表。
+
+id  int(11)
+uid  int(10) unsigned
+uniacid  int(11)
+credittype  varchar(10)  积分类型，'credit1'表示积分, 'credit2'表示余额
+num  decimal(10,2)  变动数字
+operator  int(10) unsigned  users表中uid
+module  varchar(30)  模块标识
+clerk_id  int(10) unsigned  店员id
+store_id  int(10) unsigned  门店id
+clerk_type  tinyint(3) unsigned  店员类型
+createtime  varchar(200)  创建时间
+real_uniacid  int(11)  真实的统一账号
+
+mc_card
+--------
+会员卡表。
+
+
+mc_card_members
+---------------
+会员卡与用户映射表。
+
+
+
+core_paylog
+------------
+支付日志表。
+
+plid  bigint(11)
+type  varchar(20)  支付类型，微信、支付宝等
+uniacid  int(11)
+acid  int(10)
+openid  varchar(40)  支付用户openid
+unionid  varchar(64)  商户订单号，用日期，模块id和随机号组成
+tid  varchar(128)  模块中的订单号，此号码用于业务模块中区分订单，保证在业务中是唯一即可
+fee  decimal(10,2)  收银台中显示需要支付的金额，单位是元，只能大于0
+status  tinyint(4)  支付状态，是否已经支付，0：表示未支付；1：表示已经支付
+module  varchar(50)  模块标识
+tag  varchar(2000)  额外的信息，如微信acid，会员uid
+is_usecard  tinyint(3) unsigned  是否使用卡券
+card_type  tinyint(3) unsigned  卡券类型，系统和微信
+card_id  varchar(50)  卡券id
+card_fee  decimal(10,2) unsigned
+encrypt_code  varchar(100)
+
+
+core_sessions
+--------------
+会话记录表。
+
+sid  char(32)  会话id
+unionid  int(10) unsigned  统一帐号id
+openid  varchar(50)  客户端ip
+data  varchar(5000)  会话数据
+expiretime  int(10) unsigned  有效时间
+
+
+ims_business
+-------------
+商户表。
+
+id  int(10) unsigned
+weid  int(10) unsigned
+title  varchar(50)  名称
+thumb  varchar(255)  缩略图
+content  varchar(1000)  内容
+phone  varchar(15)  电话号码
+qq  varchar(15)  QQ号码
+province  varchar(50)  省份
+city  varchar(50)  城市
+dist  varchar(50)  区县
+address  varchar(500)
+lng  varchar(10)  经度
+lat  varchar(10)  纬度
+industry1  varchar(10)
+industry2  varchar(10)
+createtime  int(10)  创建时间
+
+
+ims_core_queue
+--------------
+队列表。
+
+qid  bigint(20) unsigned
+uniacid  int(10) unsigned
+acid  int(10) unsigned
+message  varchar(2000)
+params  varchar(1000)
+keyword  varchar(1000)
+response  varchar(2000)
+module  varchar(50)
+type  tinyint(3) unsigned
+dateline  int(10) unsigned
+

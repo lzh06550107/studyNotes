@@ -1,0 +1,190 @@
+****
+模型事件
+****
+
+模型事件
+========
+模型事件是指在进行模型的写入操作的时候触发的操作行为，包括模型的 ``save`` 方法和 ``delete`` 方法。
+
+.. note:: 模型事件只在调用模型的方法生效，使用查询构造器操作是无效的
+
+模型支持如下事件：
+
++----------------+--------------------+---------------+
+| 事件           | 描述               | 快捷方法      |
++================+====================+===============+
+| before_insert  | 新增前             | beforeInsert  |
++----------------+--------------------+---------------+
+| after_insert   | 新增后             | afterInsert   |
++----------------+--------------------+---------------+
+| before_update  | 更新前             | beforeUpdate  |
++----------------+--------------------+---------------+
+| after_update   | 更新后             | afterUpdate   |
++----------------+--------------------+---------------+
+| before_write   | 写入前             | beforeWrite   |
++----------------+--------------------+---------------+
+| after_write    | 写入后             | afterWrite    |
++----------------+--------------------+---------------+
+| before_delete  | 删除前             | beforeDelete  |
++----------------+--------------------+---------------+
+| after_delete   | 删除后             | afterDelete   |
++----------------+--------------------+---------------+
+| before_restore | 恢复前（V5.1.13+） | beforeRestore |
++----------------+--------------------+---------------+
+| after_restore  | 恢复后（V5.1.13+） | afterRestore  |
++----------------+--------------------+---------------+
+
+使用方法如下：
+
+.. code-block:: php
+
+	<?php
+
+	namespace app\index\model;
+
+	use think\Model;
+
+	class User extends Model
+	{
+	    public static function init()
+	    {	
+
+	    	// 事件一般在init方法中注册
+	        self::event('before_insert', function ($user) {
+	            if (1 != $user->status) {
+	                return false;
+	            }
+	        });
+	    }
+	}
+
+注册的回调方法支持传入一个参数（当前的模型对象实例），但支持依赖注入的方式增加额外参数。
+
+并且 ``before_write`` 、 ``before_insert`` 、 ``before_update`` ``、before_delete`` 事件方法如果返回 ``false`` ，则不会继续执行。
+
+支持给一个位置注册多个回调方法，例如：
+
+.. code-block:: php
+
+        User::event('before_insert', function ($user) {
+            if ($user->status != 1) {
+                return false;
+            }
+        });
+        // 注册回调到beforeInsert函数
+        User::event('before_insert', 'beforeInsert');
+
+快捷注册
+========
+系统提供了内置的事件注册的快捷方法，你可以统一在 ``init`` 方法中进行模型事件定义：
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\model;
+
+	use think\Model;
+
+	class User extends Model
+	{
+	    protected static function init()
+	    {
+	        self::beforeInsert(function ($user) {
+	            if ($user->status != 1) {
+	                return false;
+	            }
+	        });
+	    }
+	}
+
+
+事件观察者
+==========
+
+``V5.1.13+`` 版本开始，可以给模型注册一个事件观察者，例如：
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\model;
+
+	use think\Model;
+
+	class User extends Model
+	{
+	    protected $observerClass = 'app\index\event\User';
+	}
+
+或者在模型的 ``init`` 方法里面手动注册
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\model;
+
+	use think\Model;
+
+	class User extends Model
+	{
+	    protected static function init()
+	    {
+	    	self::observe(\app\index\event\User::class);
+	    }
+	}
+
+``User`` 观察者类定义如下：
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\event;
+
+	use app\index\model\Profile;
+
+	class User
+	{
+	    public function beforeUpdate($user)
+	    {
+	    	if ('thinkphp' == $user->name) {
+	        	return false;
+	        }
+	    }
+	    
+	    public function afterDelete($user)
+	    {
+			Profile::destroy($user->id);
+	    }
+	}
+
+.. note:: 观察者类的方法就是事件对应的方法名称，方法的第一个参数就是模型对象实例，你依然可以通过依赖注入传入其它的对象参数。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

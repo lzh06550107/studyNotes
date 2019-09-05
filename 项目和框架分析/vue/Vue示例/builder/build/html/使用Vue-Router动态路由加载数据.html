@@ -1,0 +1,1739 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>10. 使用Vue-Router动态路由加载数据 &mdash; Vue示例 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="Vue示例 1.0 文档" href="index.html"/>
+        <link rel="next" title="11. 建立电子商务商店-浏览产品" href="建立电子商务商店-浏览产品.html"/>
+        <link rel="prev" title="9. 介绍Vue-Router并加载基于URL的组件" href="介绍Vue-Router并加载基于URL的组件.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Vue示例
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Vue入门.html">2. Vue入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="显示、循环、查询和过滤数据.html">3. 显示、循环、查询和过滤数据</a></li>
+<li class="toctree-l1"><a class="reference internal" href="优化你的App和使用组件显示数据.html">4. 优化你的App和使用组件显示数据</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Dropbox_API获取文件列表.html">5. 使用Dropbox API获取文件列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="浏览文件树和通过URL加载文件夹.html">6. 浏览文件树和通过URL加载文件夹</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Vuex缓存当前文件夹结构.html">7. 使用Vuex缓存当前文件夹结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="预缓存其它文件夹和文件来加速导航.html">8. 预缓存其它文件夹和文件来加速导航</a></li>
+<li class="toctree-l1"><a class="reference internal" href="介绍Vue-Router并加载基于URL的组件.html">9. 介绍Vue-Router并加载基于URL的组件</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10. 使用Vue-Router动态路由加载数据</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">10.1. 概述并规划您的应用程序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">10.2. 组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">10.3. 路由组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html">10.4. HTML组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">10.5. 路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">10.6. 创建初始文件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">10.7. 服务器设置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">10.7.1. 本地存储文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">10.7.2. 使用远程服务器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">10.7.3. 设置本地服务器</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#csv">10.8. 加载CSV</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#d3csv">10.8.1. 用d3加载CSV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#csvcsv">10.8.2. 使用CSV解析器加载CSV</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#shopify-csv">10.9. 统一Shopify CSV数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">10.10. 存储产品</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">10.11. 显示单个产品</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">10.12. 找不到网页</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">10.13. 选择正确的产品</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">10.14. 找不到缓存产品</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">10.15. 显示产品信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">10.16. 产品图片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">10.17. 产品变体</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id18">10.17.1. 显示变体的表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key">10.17.2. 使用带有key的循环</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">10.17.3. 表格中显示变体</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">10.17.4. 选择框中显示变体</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">10.18. 切换网址时更新产品详情</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id22">10.19. 总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="建立电子商务商店-浏览产品.html">11. 建立电子商务商店-浏览产品</a></li>
+<li class="toctree-l1"><a class="reference internal" href="建立电子商务商店-添加结帐.html">12. 建立电子商务商店-添加结帐</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Vue开发工具并测试您的SPA.html">13. 使用Vue开发工具并测试您的SPA</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Vue示例</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>10. 使用Vue-Router动态路由加载数据</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/使用Vue-Router动态路由加载数据.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vue-router">
+<h1>10. 使用Vue-Router动态路由加载数据<a class="headerlink" href="#vue-router" title="永久链接至标题">¶</a></h1>
+<p>在第8章介绍 <code class="docutils literal"><span class="pre">Vue-Router</span></code> 和加载基于 <code class="docutils literal"><span class="pre">URL</span></code> 的组件中，我们探讨了 <code class="docutils literal"><span class="pre">Vue-router</span></code> 及其功能。有了这些知识，我们现在可以继续使用 <code class="docutils literal"><span class="pre">Vue</span></code> 开店。在我们跳入代码并开始创建之前，我们应该先计划我们的商店如何运作，我们需要哪些网址以及我们需要制定哪些组件。一旦我们计划了我们的应用程序，我们就可以开始创建产品页面。</p>
+<p>在本章中，我们将：</p>
+<ul class="simple">
+<li>概述我们的组件和路由，并创建占位符文件；</li>
+<li>加载产品 <code class="docutils literal"><span class="pre">CSV</span></code> 文件，处理它并缓存在 <code class="docutils literal"><span class="pre">Vuex</span></code> 中；</li>
+<li>创建包含图像和产品变体的单独产品页面；</li>
+</ul>
+<div class="section" id="id1">
+<h2>10.1. 概述并规划您的应用程序<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>首先，我们来考虑整体应用程序和用户流程。</p>
+<p>我们将创建一家没有付款处理网关的商店。商店主页将显示一个手工挑选的产品列表。用户将能够使用类别浏览产品，并使用我们制作的过滤器缩小选择范围。他们将能够选择产品并查看更多详细信息。该产品将有变化（大小，颜色等），并可能有几个产品图像。用户将能够添加变体到他们的购物车。从那里，他们可以继续浏览产品并添加更多内容，或者继续结账，在那里询问他们的姓名和地址，并付款。订单确认屏幕将会显示。</p>
+<p>整个商店的应用程序将在 <code class="docutils literal"><span class="pre">Vue</span></code> 中创建并运行在客户端。这不包括支付，用户账户，库存管理或验证所需的任何服务器端代码。</p>
+<p>该应用程序将使用 <code class="docutils literal"><span class="pre">Vue-router</span></code> 来处理 <code class="docutils literal"><span class="pre">URL</span></code> 和 <code class="docutils literal"><span class="pre">Vuex</span></code> 以存储产品，购物车内容和用户详细信息。</p>
+</div>
+<div class="section" id="id2">
+<h2>10.2. 组件<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>通过概述用户流程，我们需要规划我们需要为我们的商店制定哪些组件，以及他们将被称为什么。这有助于开发应用程序，因为我们清楚地知道需要创建哪些组件。我们也将决定组件名称。遵循 <code class="docutils literal"><span class="pre">Vue</span></code> 风格指南(<a class="reference external" href="https://vuejs.org/v2/style-guide/index.html">https://vuejs.org/v2/style-guide/index.html</a>)，我们所有的组件将由两个名称组成。</p>
+</div>
+<div class="section" id="id3">
+<h2>10.3. 路由组件<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>以下组件将与 <code class="docutils literal"><span class="pre">Vue-router</span></code> 结合使用以形成我们应用程序的页面：</p>
+<ul class="simple">
+<li>商店主页 - <code class="docutils literal"><span class="pre">HomePage</span></code> : 商店主页将显示由店主策划的产品列表。这将使用预先选择的产品列表来显示。</li>
+<li>类别页面 - <code class="docutils literal"><span class="pre">CategoryPage</span></code> : 这将列出特定类别的产品。类别列表页面也会有过滤器。</li>
+<li>产品页面 - <code class="docutils literal"><span class="pre">ProductPage</span></code> : 产品页面将显示产品详细信息，图像和产品的变体。</li>
+<li>购物车 - <code class="docutils literal"><span class="pre">OrderBasket</span></code> : 在购物车中，用户将能够查看他们添加的产品，删除不需要的商品以及更改每件商品的数量。它也会显示订单的总费用。</li>
+<li>结账 - <code class="docutils literal"><span class="pre">OrderCheckout</span></code> : 结账将锁定购物车 - 消除了删除和更新产品的能力，并且会有一个表格供用户输入他们的地址。</li>
+<li>订单确认 - <code class="docutils literal"><span class="pre">OrderConfirmation</span></code> : 订单准备好后，会显示该组件，确认所购买的产品，收货地址和总价。</li>
+<li>404页 - <code class="docutils literal"><span class="pre">PageNotFound</span></code> : 输入错误的 <code class="docutils literal"><span class="pre">URL</span></code> 时的错误页面。</li>
+</ul>
+</div>
+<div class="section" id="html">
+<h2>10.4. HTML组件<a class="headerlink" href="#html" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">HTML</span></code> 组件将在页面组件中使用，以帮助减少我们的代码重复布局：</p>
+<ul class="simple">
+<li>列表中的产品 - <code class="docutils literal"><span class="pre">ListProducts</span></code> : 这将在列表视图中查看时显示产品分页列表 - 例如在 <code class="docutils literal"><span class="pre">HomePage</span></code> 或 <code class="docutils literal"><span class="pre">CategoryPage</span></code> 组件中。</li>
+<li>类别列表 - <code class="docutils literal"><span class="pre">ListCategories</span></code> : 这将创建一个导航类别列表。</li>
+<li>购买清单 - <code class="docutils literal"><span class="pre">ListPurchases</span></code> : 此组件将出现在购物车，结帐和订单确认页面中。它将以表格形式列出产品 - 详细说明变化，价格和数量。它还将包含购物车中所有产品的总价。</li>
+<li>过滤 - <code class="docutils literal"><span class="pre">ProductFiltering</span></code> : 在类别页面使用的组件将为用户提供过滤和更新 <code class="docutils literal"><span class="pre">URL</span></code> 的能力，使用我们在第8章 <code class="docutils literal"><span class="pre">Vue-Router</span></code> 和加载基于 <code class="docutils literal"><span class="pre">URL</span></code> 组件中介绍的 <code class="docutils literal"><span class="pre">GET</span></code> 参数。</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h2>10.5. 路径<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>通过概述我们的组件，我们可以规划到我们商店的路径和 <code class="docutils literal"><span class="pre">URL</span></code> ，以及他们将采取的组件或操作。我们还需要考虑错误的 <code class="docutils literal"><span class="pre">URL</span></code> 以及我们是否应该将用户重定向到合适的位置或显示错误消息：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">/</span></code> : 首页；</li>
+<li><code class="docutils literal"><span class="pre">/category/:slug</span></code> : <code class="docutils literal"><span class="pre">CategoryPage</span></code> ，使用 <code class="docutils literal"><span class="pre">:slug</span></code> 唯一标识符来标识展示哪个产品；</li>
+<li><code class="docutils literal"><span class="pre">/category</span></code> : 这将重定向到 <code class="docutils literal"><span class="pre">/</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">/product/:slug</span></code> : <code class="docutils literal"><span class="pre">ProductPage</span></code> - 再次使用 <code class="docutils literal"><span class="pre">:slug</span></code> 来识别产品；</li>
+<li><code class="docutils literal"><span class="pre">/product</span></code> : 这将重定向到 <code class="docutils literal"><span class="pre">/</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">/basket</span></code> ： <code class="docutils literal"><span class="pre">OrderBasket</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">/checkout</span></code> : <code class="docutils literal"><span class="pre">OrderCheckout</span></code> - 如果没有产品，它会将用户重定向到 <code class="docutils literal"><span class="pre">/basket</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">/complete</span></code> : <code class="docutils literal"><span class="pre">OrderConfirmation</span></code> - 如果用户不是来自 <code class="docutils literal"><span class="pre">OrderCheckout</span></code> 组件，那么他们将被重定向到 <code class="docutils literal"><span class="pre">/basket</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">*</span></code> : <code class="docutils literal"><span class="pre">PageNotFound</span></code> - 这将捕获任何未指定的路由；</li>
+</ul>
+<p>随着我们的路由和组件确定，我们可以开始创建我们的应用程序。</p>
+</div>
+<div class="section" id="id5">
+<h2>10.6. 创建初始文件<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>使用上一节中概述的应用程序，我们可以为我们的文件结构和组件创建框架。这个应用程序是一个大型的应用程序，我们将每个组件分割为单个文件。这意味着我们的文件更容易管理，我们的应用程序 <code class="docutils literal"><span class="pre">main</span></code> JavaScript文件不会因为增长失去控制。</p>
+<p>尽管开发可以接受，但使用这些文件部署应用程序可能会增加您的加载时间，具体取决于您的服务器设置方式。使用传统的 <code class="docutils literal"><span class="pre">HTTP/1.1</span></code> ，浏览器不得不请求并加载每个文件 - 如果有多个文件，这是一个障碍。但是，使用 <code class="docutils literal"><span class="pre">HTTP/2</span></code> ，您可以同时向用户推送多个文件 - 在这种情况下，多个文件可以稍微提高应用程序的性能。</p>
+<p>无论您选择在部署中使用哪种方法，都强烈建议您在将代码部署到生产环境时缩小 <code class="docutils literal"><span class="pre">JavaScript</span></code> 。这确保您的代码在提供给用户时尽可能小：</p>
+<img alt="_images/content.png" src="_images/content.png" />
+<p>为每个组件，视图和库(例如 <code class="docutils literal"><span class="pre">Vue</span></code> ， <code class="docutils literal"><span class="pre">Vuex</span></code> 和 <code class="docutils literal"><span class="pre">Vue-router</span></code> )创建一个文件。 然后，为每种类型的文件创建一个文件夹。最后，添加一个 <code class="docutils literal"><span class="pre">app.js</span></code> –这是库被初始化的地方。</p>
+<p>您也可以考虑使用 <code class="docutils literal"><span class="pre">vue-cli</span></code> (<a class="reference external" href="https://github.com/vuejs/vue-cli">https://github.com/vuejs/vue-cli</a>)来构建您的应用程序。本书的范围之外，因为我们只涉及使用包含的 JavaScript 文件构建 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序，因此 <code class="docutils literal"><span class="pre">vue-cli</span></code> 应用程序允许您以更模块化的方式开发您的应用程序，并且一旦开发，就以类似我们一直在开发应用程序的方式部署它。</p>
+<p>创建一个 <code class="docutils literal"><span class="pre">index.html</span></code> 并包含您的 JavaScript 文件，确保 <code class="docutils literal"><span class="pre">Vue</span></code> 先加载并且您的应用程序的 JavaScript 保持最后。在我们商店的视图中为您的应用添加容器：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Vue Shop<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="c">&lt;!-- Libraries --&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/libs/vue.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/libs/vuex.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/libs/router.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="c">&lt;!-- Components --&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/components/ListCategories.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/components/ListProducts.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/components/ListPurchases.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/components/ProductFiltering.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="c">&lt;!-- Views --&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/views/PageNotFound.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/views/CategoryPage.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/views/HomePage.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/views/OrderBasket.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/views/OrderCheckout.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/views/OrderConfirmation.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/views/ProductPage.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="c">&lt;!-- App --&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/app.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>确保首先加载 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 组件，因为我们将在其他组件中使用它，并将其指定为路由中的 <code class="docutils literal"><span class="pre">404</span></code> 页面。</p>
+<p>在每个文件中，通过声明变量或使用 <code class="docutils literal"><span class="pre">Vue.component</span></code> 来初始化组件的类型(这是为什么？为何要区分？)。 对于视图，还要添加一个 <code class="docutils literal"><span class="pre">name</span></code> 属性 - 以帮助稍后进行调试。例如，位于 <code class="docutils literal"><span class="pre">js/components/</span></code> 文件夹中的所有文件应该像下面那样初始化。确保这些组件是小写字母并且用连字符表示：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;list-products&#39;</span><span class="p">,</span> <span class="p">{});</span>
+</pre></div>
+</div>
+<p>而位于 <code class="docutils literal"><span class="pre">js/views</span></code> 中的路由和视图的组件应如下所示：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">OrderConfirmation</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;OrderConfirmation&#39;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>最后一步是初始化我们的 <code class="docutils literal"><span class="pre">Vuex</span> <span class="pre">store</span></code> ， <code class="docutils literal"><span class="pre">Vue-router</span></code> 和 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序。 打开 <code class="docutils literal"><span class="pre">app.js</span></code> 并初始化库：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({});</span>
+<span class="kr">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VueRouter</span><span class="p">({});</span>
+
+<span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">router</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>随着 <code class="docutils literal"><span class="pre">Vue</span></code> 组件和路由的准备就绪，我们的 <code class="docutils literal"><span class="pre">store</span></code> ，路由和应用程序已初始化，让我们看看如何设置服务器（如果需要）并加载数据。</p>
+</div>
+<div class="section" id="id6">
+<h2>10.7. 服务器设置<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>在我们的商店中，我们将在加载页面时加载 <code class="docutils literal"><span class="pre">CSV</span></code> 格式产品信息。这将模拟收集销售点系统的来自数据库或 <code class="docutils literal"><span class="pre">API</span></code> 的库存和产品数据。</p>
+<p>与本书前面的 <code class="docutils literal"><span class="pre">Dropbox</span></code> 应用类似，我们将加载外部数据并将其保存到 <code class="docutils literal"><span class="pre">Vuex</span></code> 存储中。 然而，我们将要面对的问题是通过 <code class="docutils literal"><span class="pre">JavaScript</span></code> 加载资源时， 浏览器要求所请求文件的协议是通过 <code class="docutils literal"><span class="pre">HTTP</span></code> ， <code class="docutils literal"><span class="pre">HTTPS</span></code> 或 <code class="docutils literal"><span class="pre">CORS</span></code> 请求。</p>
+<p>这意味着我们无法使用我们用于 <code class="docutils literal"><span class="pre">Dropbox</span> <span class="pre">API</span></code> 的 <code class="docutils literal"><span class="pre">fetch()</span></code> 技术加载本地文件，因为在浏览器中查看我们的应用时，我们正在通过 <code class="docutils literal"><span class="pre">file://</span></code> 协议加载本地资源。 我们可以用几种不同的方式解决这个问题 - 您选择哪一个取决于您的情况。</p>
+<p>我们将加载一个 <code class="docutils literal"><span class="pre">CSV</span></code> 文件，并使用两个插件将其转换为可用的 <code class="docutils literal"><span class="pre">JSON</span></code> 对象。 你有三个选择是：</p>
+<ol class="arabic simple">
+<li>本地存储文件；</li>
+<li>使用远程服务器或；</li>
+<li>使用本地服务器；</li>
+</ol>
+<p>让我们来看看每个选项，每个选项都有其优缺点。</p>
+<div class="section" id="id7">
+<h3>10.7.1. 本地存储文件<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>第一种选择是将 <code class="docutils literal"><span class="pre">CSV</span></code> 转换为适当的 <code class="docutils literal"><span class="pre">JSON</span></code> ，然后将输出保存到文件中。您需要在文件中将其分配给一个变量并在库之前加载该 <code class="docutils literal"><span class="pre">JSON</span></code> 文件。一个示例可能是创建一个data.json并将其分配给一个变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">products</span> <span class="o">=</span> <span class="p">{...}</span>
+</pre></div>
+</div>
+<p>然后你可以在你的 <code class="docutils literal"><span class="pre">HTML</span></code> 中加载 <code class="docutils literal"><span class="pre">JSON</span></code> 文件：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>&lt;script type=&quot;text/javascript&quot; src=&quot;data.json&quot;&gt;&lt;/script&gt;
+</pre></div>
+</div>
+<p>然后，您可以在 <code class="docutils literal"><span class="pre">app.js</span></code> 中使用 <code class="docutils literal"><span class="pre">products</span></code> 变量。</p>
+<p>优点：</p>
+<ul class="simple">
+<li>减少代码中的负载；</li>
+<li>无需加载处理 <code class="docutils literal"><span class="pre">CSV</span></code> 所需的额外文件；</li>
+<li>不需要额外的步骤；</li>
+</ul>
+<p>缺点：</p>
+<ul class="simple">
+<li>不现实世界模拟；</li>
+<li>如果您想更新 <code class="docutils literal"><span class="pre">CSV</span></code> 数据，则需要转换，保存并分配给变量；</li>
+</ul>
+</div>
+<div class="section" id="id8">
+<h3>10.7.2. 使用远程服务器<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>另一种选择是将文件上传到远程的现有服务器并在那里开发您的应用程序。</p>
+<p>优点：</p>
+<ul class="simple">
+<li>模拟加载 <code class="docutils literal"><span class="pre">CSV</span></code> 的真实世界的开发；</li>
+<li>可以用任何机器在任何地方开发；</li>
+</ul>
+<p>缺点：</p>
+<ul class="simple">
+<li>可能会很慢；</li>
+<li>需要连接到互联网；</li>
+<li>需要在服务器上设置部署过程或编辑文件；</li>
+</ul>
+</div>
+<div class="section" id="id9">
+<h3>10.7.3. 设置本地服务器<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>最后一个选项是在您的机器上设置本地服务器。 有几个小型，轻量级，零配置模块和应用程序，或者还有更大更强大的应用程序。 如果你的机器上安装了 <code class="docutils literal"><span class="pre">npm</span></code> ，建议使用 node <code class="docutils literal"><span class="pre">HTTP</span></code> 服务器。如果没有，还有其他选项可用。</p>
+<p>另一种选择是使用更重量级的应用程序，它可以为您提供 <code class="docutils literal"><span class="pre">SQL</span></code> 数据库以及运行 <code class="docutils literal"><span class="pre">PHP</span></code> 应用程序的能力。 一个例子是 <code class="docutils literal"><span class="pre">MAMP</span></code> 或 <code class="docutils literal"><span class="pre">XAMPP</span></code> 。</p>
+<p>优点：</p>
+<ul class="simple">
+<li>模拟真实世界加载 <code class="docutils literal"><span class="pre">CSV</span></code> ；</li>
+<li>快速即时更新；</li>
+<li>可以离线开发；</li>
+</ul>
+<p>缺点：</p>
+<ul class="simple">
+<li>需要安装软件；</li>
+<li>可能需要一些配置或命令行知识；</li>
+</ul>
+<p>我们要选择的选项是最后一个，使用 <code class="docutils literal"><span class="pre">HTTP</span></code> 服务器。我们加载并处理 <code class="docutils literal"><span class="pre">CSV</span></code> ，以便开始创建我们的商店。</p>
+</div>
+</div>
+<div class="section" id="csv">
+<h2>10.8. 加载CSV<a class="headerlink" href="#csv" title="永久链接至标题">¶</a></h2>
+<p>为了模拟从商店数据库或销售点收集数据，我们的应用程序将从 <code class="docutils literal"><span class="pre">CSV</span></code> 中加载产品数据。 <code class="docutils literal"><span class="pre">CSV</span></code> 或逗号分隔值是通常用于以数据库样式共享数据的文件格式。想想你如何在 <code class="docutils literal"><span class="pre">excel</span></code> 或数字中列出产品列表： CSV 格式文件的格式。</p>
+<p>下一步将需要下载并包含更多的 JavaScript 文件。如果您在服务器设置部分选择了选项 1 - 让您的文件在本地存储在 <code class="docutils literal"><span class="pre">JSON</span></code> 文件中 - 您可以跳过此步骤。</p>
+<p>我们将要使用的数据是 <code class="docutils literal"><span class="pre">Shopify</span></code> 的示例商店数据。这些 <code class="docutils literal"><span class="pre">CSV</span></code> 具有广泛的产品类型和不同的数据选择，这将测试我们的 <code class="docutils literal"><span class="pre">Vue</span></code> 技能。 <code class="docutils literal"><span class="pre">Shopify</span></code> 可以从 GitHub 存储库下载(<a class="reference external" href="https://github.com/shopifypartners/shopify-product-csvs-and-images">https://github.com/shopifypartners/shopify-product-csvs-and-images</a>)他们的示例数据。下载任何感兴趣的 <code class="docutils literal"><span class="pre">CSV</span></code> 文件，并将其保存在文件系统的 <code class="docutils literal"><span class="pre">data/</span></code> 文件夹中。对于这个应用程序，我将使用 <code class="docutils literal"><span class="pre">bicycles.csv</span></code> 文件。</p>
+<p>如果没有大量的编码和处理逗号分隔和引号封装值， JavaScript 无法在本地加载和处理 <code class="docutils literal"><span class="pre">CSV</span></code> 文件。为了节省时间，深入了解如何加载，解析和处理CSV文件，我们将使用一个库来为我们完成繁重的工作。有两个值得注意的库， <code class="docutils literal"><span class="pre">CSV</span></code> 解析器(<a class="reference external" href="https://github.com/okfn/csv.js">https://github.com/okfn/csv.js</a>)和 <code class="docutils literal"><span class="pre">d3</span></code> (<a class="reference external" href="https://d3js.org/">https://d3js.org/</a>)。 <code class="docutils literal"><span class="pre">CSV</span></code> 解析器只是执行 <code class="docutils literal"><span class="pre">CSV</span></code> 解析，没有别的，而 <code class="docutils literal"><span class="pre">d3</span></code> 有能力生成图表和数据可视化。</p>
+<p>值得考虑哪一个最适合你； <code class="docutils literal"><span class="pre">CSV</span></code> 分析器仅为您的应用程序增加了超过 3KB 的大小，而 <code class="docutils literal"><span class="pre">d3</span></code> 大约为 60KB 。除非您预计稍后再添加可视化，否则建议您转到较小的库 - 尤其是在执行相同的功能时。但是，我们将通过两个库的示例。我们希望在应用程序加载时加载我们的产品数据，因此我们的CSV将在组件需要数据时加载并解析。因此，我们将把数据加载到 <code class="docutils literal"><span class="pre">Vue</span></code> 的 <code class="docutils literal"><span class="pre">created()</span></code> 方法中。</p>
+<div class="section" id="d3csv">
+<h3>10.8.1. 用d3加载CSV<a class="headerlink" href="#d3csv" title="永久链接至标题">¶</a></h3>
+<p>两种插件都以非常相似的方式加载数据，但返回的数据有所不同 - 但是，一旦我们加载了数据，我们就会处理这些数据。</p>
+<p>加载 <code class="docutils literal"><span class="pre">d3</span></code> 库 - 如果你想尝试一下，你可以使用托管版本：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://d3js.org/d3.v4.min.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>使用 <code class="docutils literal"><span class="pre">d3</span></code> ，我们在 <code class="docutils literal"><span class="pre">d3</span></code> 对象上使用一个 <code class="docutils literal"><span class="pre">csv()</span></code> 函数，它接受一个参数 - <code class="docutils literal"><span class="pre">CSV</span></code> 文件的路径。 将 <code class="docutils literal"><span class="pre">created()</span></code> 函数添加到您的 <code class="docutils literal"><span class="pre">Vue</span></code> 实例并初始化 <code class="docutils literal"><span class="pre">CSV</span></code> 加载器：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">router</span><span class="p">,</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">d3</span><span class="p">.</span><span class="nx">csv</span><span class="p">(</span><span class="s1">&#39;./data/csv-files/bicycles.csv&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">请记住文件的路径相对于包含 JavaScript 文件的 HTML 文件 - 在本例中为 index.html 。</p>
+</div>
+<p>在浏览器中打开文件将不会显示任何输出。但是，如果您打开 Javascript 控制台并展开正在输出的对象，则会看到类似如下的内容：</p>
+<p>这可以按 键:值 格式为每个产品提供所有可用属性的细分。 这使我们能够使用每个产品上的一致性 <code class="docutils literal"><span class="pre">key</span></code> 访问每个红色 <code class="docutils literal"><span class="pre">value</span></code> 。例如，如果我们想从上面的产品中选择15mm组合扳手(15mm-combo-wrench)，我们可以使用 <code class="docutils literal"><span class="pre">Handle</span></code> 键。关于这个的更多内容将在后面介绍。</p>
+</div>
+<div class="section" id="csvcsv">
+<h3>10.8.2. 使用CSV解析器加载CSV<a class="headerlink" href="#csvcsv" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">CSV</span></code> 解析器的工作方式稍有不同，因为它可以接受许多不同的参数，而库包含几种不同的方法和功能。 数据输出也采用不同的格式，提供一个 <code class="docutils literal"><span class="pre">table/CSV</span></code> 格式的结构，并带有一个 <code class="docutils literal"><span class="pre">headers</span></code> 和 <code class="docutils literal"><span class="pre">fields</span></code> 对象：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">router</span><span class="p">,</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">CSV</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span><span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;./data/csv-files/bicycles.csv&#39;</span><span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>这次查看输出将显示一个非常不同的结构，并且需要将字段的 <code class="docutils literal"><span class="pre">key</span></code> 与 <code class="docutils literal"><span class="pre">headers</span></code> 对象的索引进行匹配。</p>
+</div>
+</div>
+<div class="section" id="shopify-csv">
+<h2>10.9. 统一Shopify CSV数据<a class="headerlink" href="#shopify-csv" title="永久链接至标题">¶</a></h2>
+<p>在我们保存和使用 <code class="docutils literal"><span class="pre">Shopify</span></code> 数据之前，我们需要统一数据并将其操作为更易于管理的状态。如果您检查任一库输出的数据，您会注意到每个变体或产品的附加图像都有一个条目，并且句柄是每个条目之间的链接因子。例如，有大约12个条目用 <code class="docutils literal"><span class="pre">pure-fix-bar-tape</span></code> 句柄，每个都有不同的颜色。理想情况下，我们希望将每个变体分组在同一项目下，并将图像显示为一个产品的列表。</p>
+<p><code class="docutils literal"><span class="pre">Shopify</span> <span class="pre">CSV</span></code> 数据的另一个问题是字段标题的标点符号和语法不能成为很好的对象键。理想情况下，对象键将像 <code class="docutils literal"><span class="pre">URL</span></code> 别名、小写字母和不包含空格。例如，<code class="docutils literal"><span class="pre">Variant</span> <span class="pre">Inventory</span> <span class="pre">Qty</span></code> 最好应该是 <code class="docutils literal"><span class="pre">variant-inventory-qty</span></code> 。</p>
+<p>为了不用手动处理数据和更新键，我们可以使用 <code class="docutils literal"><span class="pre">Vue</span></code> 插件来处理加载库的输出，并返回格式完全符合我们需要的产品对象。该插件是 <code class="docutils literal"><span class="pre">vue-shopify-products</span></code> ，可从 <code class="docutils literal"><span class="pre">unpkg</span></code> 获取：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>https://unpkg.com/vue-shopify-products
+</pre></div>
+</div>
+<p>下载该库并将其包含到 <code class="docutils literal"><span class="pre">index.html</span></code> 文件中。下一步是告诉 <code class="docutils literal"><span class="pre">Vue</span></code> 使用这个插件 - 在你的 <code class="docutils literal"><span class="pre">app.js</span></code> 文件的顶部，包含以下行：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Vue</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">ShopifyProducts</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>现在在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例上公开了一个新方法 <code class="docutils literal"><span class="pre">$formatProducts()</span></code> ，它允许我们传入 <code class="docutils literal"><span class="pre">CSV</span></code> 加载库的输出并获得更有用的对象集合：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Vue</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">ShopifyProducts</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({});</span>
+<span class="kr">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VueRouter</span><span class="p">({});</span>
+<span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">router</span><span class="p">,</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">CSV</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span><span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;./data/csv-files/bicycles.csv&#39;</span><span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">products</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$formatProducts</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">products</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>现在检查输出结果，它显示按句柄分组的一个集合，变体和图像作为对象：</p>
+<p>随着我们的产品更有效地分组，我们可以根据需要继续进行存储和调用。</p>
+</div>
+<div class="section" id="id10">
+<h2>10.10. 存储产品<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
+<p>一旦我们检索并格式化了 <code class="docutils literal"><span class="pre">CSV</span></code> 数据，我们就可以将内容缓存在 <code class="docutils literal"><span class="pre">Vuex</span> <span class="pre">store</span></code> 中。这将通过一个简单的 <code class="docutils literal"><span class="pre">mutation</span></code> 来完成，该 <code class="docutils literal"><span class="pre">mutation</span></code> 需要一个有效载荷并将其存储而不需要任何修改。</p>
+<p>在 <code class="docutils literal"><span class="pre">store</span></code> 中创建一个 <code class="docutils literal"><span class="pre">state</span></code> 和 <code class="docutils literal"><span class="pre">mutations</span></code> 对象。 在 <code class="docutils literal"><span class="pre">state</span></code> 中添加一个 <code class="docutils literal"><span class="pre">products</span></code> 键作为对象，并在 <code class="docutils literal"><span class="pre">mutations</span></code> 对象中创建一个函数，也称为 <code class="docutils literal"><span class="pre">products</span></code> 。 <code class="docutils literal"><span class="pre">mutation</span></code> 应该接受两个参数 - 状态和有效载荷：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
+    <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">products</span><span class="o">:</span> <span class="p">{}</span>
+    <span class="p">},</span>
+    <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">products</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>将 <code class="docutils literal"><span class="pre">state.products</span></code> 对象更新为 <code class="docutils literal"><span class="pre">payload</span></code> 的内容：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
+    <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">products</span><span class="o">:</span> <span class="p">{}</span>
+    <span class="p">},</span>
+    <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">products</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">products</span> <span class="o">=</span> <span class="nx">payload</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>将主 <code class="docutils literal"><span class="pre">Vue</span></code> 实例中的 <code class="docutils literal"><span class="pre">console.log</span></code> 替换为 <code class="docutils literal"><span class="pre">commit</span></code> 函数，调用新的 <code class="docutils literal"><span class="pre">mutation</span></code> 并传入格式化的产品数据：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">router</span><span class="p">,</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">CSV</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span><span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;./data/csv-files/bicycles.csv&#39;</span><span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">products</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$formatProducts</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;products&#39;</span><span class="p">,</span> <span class="nx">products</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>通过直接将 <code class="docutils literal"><span class="pre">$formatProducts</span></code> 函数传递给 <code class="docutils literal"><span class="pre">store</span> <span class="pre">commit()</span></code> 函数，而不是将其作为变量存储，可以稍微降低这一点：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">router</span><span class="p">,</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">CSV</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span><span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;./data/csv-files/bicycles.csv&#39;</span><span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;products&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">$formatProducts</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h2>10.11. 显示单个产品<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
+<p>通过存储我们的数据，我们现在可以开始制作我们的组件并在前端显示内容。我们将首先制作产品视图 - 显示产品详细信息，变体和图像。我们将在第10章“构建电子商务商店 - 浏览产品”中继续创建类别列表页面。</p>
+<p>制作产品视图的第一步是创建路由，以允许通过 <code class="docutils literal"><span class="pre">URL</span></code> 显示组件。回顾本章开头的注释，产品组件将被加载到 <code class="docutils literal"><span class="pre">/product/:slug</span></code> 路径中。</p>
+<p>在 <code class="docutils literal"><span class="pre">Vue-router</span></code> 中创建 <code class="docutils literal"><span class="pre">routes</span></code> 数组，并指定路径和组件：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VueRouter</span><span class="p">({</span>
+    <span class="nx">routes</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/product/:slug&#39;</span><span class="p">,</span>
+            <span class="nx">component</span><span class="o">:</span> <span class="nx">ProductPage</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>根据前面 <code class="docutils literal"><span class="pre">products</span></code> 对象的布局解释，我们可以开始了解路由和产品如何链接。我们会将产品的句柄传递到 <code class="docutils literal"><span class="pre">URL</span></code> 中。 这将选择具有该句柄的产品并显示数据。这意味着我们不需要明确地将 <code class="docutils literal"><span class="pre">slug</span></code> 与 <code class="docutils literal"><span class="pre">products</span></code> 联系起来。</p>
+</div>
+<div class="section" id="id12">
+<h2>10.12. 找不到网页<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h2>
+<p>在创建第一条路由后，我们还应该创建我们的 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 路由，以捕捉任何不存在的 <code class="docutils literal"><span class="pre">URL</span></code> 。 如果没有匹配的产品，我们也可以重定向到此页面。</p>
+<p>我们将以与以前不同的方式创建 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 组件。我们将创建一个 /404 路径作为命名路由，而不是将 <code class="docutils literal"><span class="pre">*</span></code> 上的组件。这允许我们根据需要别名和重定向几条不同的路线。</p>
+<p>将一个新对象添加到 <code class="docutils literal"><span class="pre">routes</span></code> 数组中，其中 <code class="docutils literal"><span class="pre">/404</span></code> 作为路径， <code class="docutils literal"><span class="pre">PageNotFound</span></code> 组件作为指定组件。为您的路线添加一个名称，以便我们可以根据需要使用，最后添加一个 <code class="docutils literal"><span class="pre">alias</span></code> 属性，其中包含我们的全球搜索路线。</p>
+<p>不要忘记将它放在 <code class="docutils literal"><span class="pre">routes</span></code> 数组的最后 - 以捕获之前未指定的路线。添加新路由时，请始终记住将它们放在 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 路由之前：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VueRouter</span><span class="p">({</span>
+    <span class="nx">routes</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/product/:slug&#39;</span><span class="p">,</span>
+            <span class="nx">component</span><span class="o">:</span> <span class="nx">ProductPage</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/404&#39;</span><span class="p">,</span>
+            <span class="nx">alias</span><span class="o">:</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span>
+            <span class="nx">component</span><span class="o">:</span> <span class="nx">PageNotFound</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>向您的 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 组件添加一个模板。现在，给它一些基本的内容 - 一旦我们的应用程序的其余部分设置，稍后我们可以改进它：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">PageNotFound</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;PageNotFound&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">        &lt;h1&gt;404 Page Not Found&lt;/h1&gt;</span>
+<span class="sb">        &lt;p&gt;Head back to the &lt;router-link to=&quot;/&quot;&gt;home page&lt;/router-link&gt; and start again.&lt;/p&gt;</span>
+<span class="sb">    &lt;/div&gt;`</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>请注意在内容中使用路由器链接。我们需要做的最后一件事就是在我们的应用程序中添加 <code class="docutils literal"><span class="pre">&lt;router-view&gt;</span></code> 元素。前往视图，并在 <code class="docutils literal"><span class="pre">#app</span></code> 标签中包含它：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">router-view</span><span class="p">&gt;&lt;/</span><span class="nt">router-view</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>在浏览器中加载应用程序，不要忘记在需要时启动 <code class="docutils literal"><span class="pre">HTTP</span></code> 服务器。 起初，您应该看到您的 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 组件内容。导航到以下产品网址应导致 JavaScript 错误，而不是 404 页面。 这显示路由正确地选择 <code class="docutils literal"><span class="pre">URL</span></code> ，但错误是因为我们的 <code class="docutils literal"><span class="pre">ProductPage</span></code> 组件不包含模板：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>#/product/15mm-combo-wrench
+</pre></div>
+</div>
+<p>如果您看到 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 组件，请检查您的路由代码，因为这意味着没有拾取 <code class="docutils literal"><span class="pre">ProductPage</span></code> 路由。</p>
+</div>
+<div class="section" id="id13">
+<h2>10.13. 选择正确的产品<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<p>通过初始路由设置，现在我们可以继续加载所需产品并显示 <code class="docutils literal"><span class="pre">store</span></code> 中的信息。打开 <code class="docutils literal"><span class="pre">views/Product.js</span></code> 并创建一个 <code class="docutils literal"><span class="pre">template</span></code> 键。首先，创建一个显示产品标题的简单 <code class="docutils literal"><span class="pre">&lt;div&gt;</span></code> 容器：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;{{ product.title }}&lt;/div&gt;`</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>在浏览器中查看它会立即抛出一个 JavaScript 错误，因为 Vue 期望 <code class="docutils literal"><span class="pre">product</span></code> 变量是一个对象 - 但目前尚未定义，因为我们尚未声明它。尽管目前这个问题的解决方案似乎相当简单，但我们需要考虑产品尚未定义的情况。</p>
+<p>我们的商店应用程序异步加载数据 <code class="docutils literal"><span class="pre">CSV</span></code> 。这意味着应用程序的其他部分在产品加载时不会停止执行。总体而言，这增加了我们的产品在应用程序的速度，我们可以开始操纵和显示列表，而无需等待其他应用程序启动。</p>
+<p>因此，用户可能访问产品详细信息页面的可能性很大，无论是共享链接还是搜索结果，都不会加载产品列表。为了防止应用程序尝试显示产品数据而未完全处于已启用状态，请向模板添加条件属性，以在尝试显示其任何属性之前检查产品变量是否存在。</p>
+<p>在加载我们的产品数据时，我们可以确保产品变量设置为 <code class="docutils literal"><span class="pre">false</span></code> ，直到所有内容全部加载完毕。将 <code class="docutils literal"><span class="pre">v-if</span></code> 属性添加到模板中包含的元素：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div v-if=&quot;product&quot;&gt;{{ product.title }}&lt;/div&gt;`</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>我们现在可以开始从 <code class="docutils literal"><span class="pre">store</span></code> 加载正确的产品并将其分配给一个变量。</p>
+<p>在 <code class="docutils literal"><span class="pre">computed</span></code> 对象里面创建一个 <code class="docutils literal"><span class="pre">product()</span></code> 函数。 其中，创建 <code class="docutils literal"><span class="pre">product</span></code> 的空白变量，然后返回。 现在默认返回 <code class="docutils literal"><span class="pre">false</span></code> ，这意味着我们的模板不会生成 <code class="docutils literal"><span class="pre">&lt;div&gt;</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div v-if=&quot;product&quot;&gt;{{ product.title }}&lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>现在选择产品是一个相当简单的过程，多亏我们在产品组件中提供给我们格式良好的产品 <code class="docutils literal"><span class="pre">store</span></code> 和 <code class="docutils literal"><span class="pre">slug</span></code> 变量。存储中的 <code class="docutils literal"><span class="pre">products</span></code> 对象使用句柄作为关键字和产品细节对象作为值来进行格式化。考虑到这一点，我们可以使用方括号格式选择所需的产品。例如：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">products</span><span class="p">[</span><span class="nx">handle</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>使用 <code class="docutils literal"><span class="pre">router</span> <span class="pre">params</span></code> 对象，从存储中加载所需的产品，并将其分配给要返回的 <code class="docutils literal"><span class="pre">product</span></code> 变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div v-if=&quot;product&quot;&gt;{{ product.title }}&lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>我们不直接分配 <code class="docutils literal"><span class="pre">product</span></code> 值的原因是我们可以添加一些条件陈述。为确保我们只在 <code class="docutils literal"><span class="pre">store</span></code> 有数据时才加载产品，我们可以添加 <code class="docutils literal"><span class="pre">if()</span></code> 语句以确保产品的对象具有可用的键; 换句话说，有数据加载？</p>
+<p>添加一条 <code class="docutils literal"><span class="pre">if</span></code> 语句来检查 <code class="docutils literal"><span class="pre">store</span></code> 产品键长度。 如果它们存在，则将 <code class="docutils literal"><span class="pre">store</span></code> 中的数据分配给要返回的 <code class="docutils literal"><span class="pre">product</span></code> 变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div v-if=&quot;product&quot;&gt;{{ product.title }}&lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>现在在浏览器中查看应用程序，一旦数据加载完毕，您将看到产品的标题。这应该只需要一瞬间加载，并应该优雅地被我们的 <code class="docutils literal"><span class="pre">if</span></code> 语句处理。</p>
+<p>在继续显示我们所有的产品数据之前，我们需要处理产品中 <code class="docutils literal"><span class="pre">URL</span></code> 的句柄不存在的情况。由于我们的 <code class="docutils literal"><span class="pre">ProductPage</span></code> 路由收集在 <code class="docutils literal"><span class="pre">URL</span></code> 中的 <code class="docutils literal"><span class="pre">/product</span></code> 之后任何内容，因此 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 通配符路径将无法使用 - 因为它是加载数据并确定产品是否存在的 <code class="docutils literal"><span class="pre">ProductPage</span></code> 组件。</p>
+</div>
+<div class="section" id="id14">
+<h2>10.14. 找不到缓存产品<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<p>为了在产品不可用时显示 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 页面，我们将使用我们的 <code class="docutils literal"><span class="pre">ProductPage</span></code> 组件加载该组件，并有条件地显示它。</p>
+<p>为此，我们需要注册组件，以便我们可以在模板中使用它。我们需要注册它，因为我们的 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 组件现在作为一个对象而不是一个 <code class="docutils literal"><span class="pre">Vue</span></code> 组件（例如，当我们使用 <code class="docutils literal"><span class="pre">Vue.component</span></code> 时）。</p>
+<p>将一个组件对象添加到您的 <code class="docutils literal"><span class="pre">ProductPage</span> <span class="pre">components</span></code> 属性中，该属性包含 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 值：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div v-if=&quot;product&quot;&gt;&lt;h1&gt;{{ product.title }}&lt;/h1&gt;&lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>现在这给了我们一个新的 <code class="docutils literal"><span class="pre">HTML</span></code> 元素，以 <code class="docutils literal"><span class="pre">&lt;page-not-found&gt;</span></code> 的形式使用。在现有的 <code class="docutils literal"><span class="pre">&lt;div&gt;</span></code> 之后将此元素添加到您的模板中。由于我们的模板需要一个根元素，因此将它们都包装在一个额外的容器中：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">        &lt;div v-if=&quot;product&quot;&gt;&lt;h1&gt;{{ product.title }}&lt;/h1&gt;&lt;/div&gt;</span>
+<span class="sb">        &lt;page-not-found&gt;&lt;/page-not-found&gt;</span>
+<span class="sb">    &lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>在浏览器中查看此内容将呈现 <code class="docutils literal"><span class="pre">404</span></code> 页面模板，一旦数据加载完毕，产品标题就会显示。我们现在需要更新组件，以便在没有要显示的数据时仅显示 <code class="docutils literal"><span class="pre">PageNotFound</span></code> 组件。我们可以将现有产品变量与 <code class="docutils literal"><span class="pre">v-if</span></code> 属性一起使用，如果为 <code class="docutils literal"><span class="pre">false</span></code> ，则显示错误消息，如下所示：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">page-not-found</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;!product&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">page-not-found</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>但是，这意味着，如果用户访问产品页面时尚未加载产品数据，则在用产品信息替换之前，他们会看到 <code class="docutils literal"><span class="pre">404</span></code> 信息闪现。这不是一个很好的用户体验，所以 我们只有在产品数据已经加载并且没有匹配的项目，才应该显示错误。</p>
+<p>为了解决这个问题，我们将创建一个新的变量来确定组件是否显示。在 <code class="docutils literal"><span class="pre">ProductPage</span></code> 组件中创建一个数据函数，该函数返回一个关键字为 <code class="docutils literal"><span class="pre">productNotFound</span></code> 的对象，并设置为 <code class="docutils literal"><span class="pre">false</span></code> 。 将 <code class="docutils literal"><span class="pre">v-if</span></code> 条件添加到 <code class="docutils literal"><span class="pre">&lt;pagenot-found&gt;</span></code> 元素，并检查新的 <code class="docutils literal"><span class="pre">productNotFound</span></code> 变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">        &lt;div v-if=&quot;product&quot;&gt;&lt;h1&gt;{{ product.title }}&lt;/h1&gt;&lt;/div&gt;</span>
+<span class="sb">        &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;</span>
+<span class="sb">    &lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">productNotFound</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>最后一步是如果产品不存在，则将该变量设置为 <code class="docutils literal"><span class="pre">true</span></code> 。 由于我们只想在数据加载完成后执行此操作，请将代码添加到 <code class="docutils literal"><span class="pre">$store.state.products</span></code> 检查中。 我们已经将数据分配给 <code class="docutils literal"><span class="pre">product</span></code> 变量，因此我们可以添加一个检查来查看此变量是否存在 - 如果不存在，请更改 <code class="docutils literal"><span class="pre">productNotFound</span></code> 变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">        &lt;div v-if=&quot;product&quot;&gt;&lt;h1&gt;{{ product.title }}&lt;/h1&gt;&lt;/div&gt;</span>
+<span class="sb">        &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;</span>
+<span class="sb">    &lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">productNotFound</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">product</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">productNotFound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>尝试在网址末尾输入错误的字符串 - 您应该看到我们现在熟悉的 <code class="docutils literal"><span class="pre">404</span></code> 错误页面。</p>
+</div>
+<div class="section" id="id15">
+<h2>10.15. 显示产品信息<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h2>
+<p>通过我们的产品加载，过滤和错误捕获，我们可以继续显示我们产品所需的信息。每个产品都可以包含一个或多个图像，以及一个或多个变体以及两者之间的任意组合 - 因此我们需要确保满足这些场景中的每一个。</p>
+<p>要查看可用的数据，请在返回之前添加一个 <code class="docutils literal"><span class="pre">console.log(product)</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">product</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">productNotFound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>打开 JavaScript 控制台并检查产品对象。熟悉对你可用的键和值。请注意， <code class="docutils literal"><span class="pre">images</span></code> 键是一个数组和一个 <code class="docutils literal"><span class="pre">variations</span></code> 对象(包含一个字符串和另一个数组)。</p>
+<p>在我们处理变化和图像之前 - 让我们输出简单的东西。我们需要记住的是，我们输出的每个字段可能并不存在于每个产品上，因此最好在必要时将其包装在条件标签中。</p>
+<p>从产品详细信息中输出 <code class="docutils literal"><span class="pre">body</span></code> , <code class="docutils literal"><span class="pre">type</span></code> 和 <code class="docutils literal"><span class="pre">vendor.title</span></code> 。在 vendor.title 和 type 前加上它们描述的内容，但要确保只在产品详细信息中存在该文本时才显示该文本：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">    &lt;div v-if=&quot;product&quot;&gt;</span>
+<span class="sb">        &lt;h1&gt;{{ product.title }}&lt;/h1&gt;</span>
+<span class="sb">        &lt;div class=&quot;meta&quot;&gt;</span>
+<span class="sb">            &lt;span&gt;</span>
+<span class="sb">                Manufacturer: &lt;strong&gt;{{ product.vendor.title }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">            &lt;span v-if=&quot;product.type&quot;&gt;</span>
+<span class="sb">                Category: &lt;strong&gt;{{ product.type }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        {{ product.body }}</span>
+<span class="sb">    &lt;/div&gt;</span>
+<span class="sb">    &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;</span>
+<span class="sb">&lt;/div&gt;`</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>请注意，我们可以灵活地在类型和供应商中前置添加更多用户友好的名称。一旦我们设置了类别和过滤器，我们就可以将供应商和类型链接到适当的产品列表。</p>
+<p>在浏览器中查看这些内容将显示将所有 HTML 标签输出为文本的正文 - 这意味着我们可以在页面上看到它们。如果您回想起我们在书的开头讨论输出类型，我们需要使用 <code class="docutils literal"><span class="pre">v-html</span></code> 来告诉 <code class="docutils literal"><span class="pre">Vue</span></code> 将块作为原始 <code class="docutils literal"><span class="pre">HTML</span></code> 渲染：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>template: `<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;product&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>{{ product.title }}<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;meta&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>
+                Manufacturer: <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>{{ product.vendor.title }}<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;product.type&quot;</span><span class="p">&gt;</span>
+                Category: <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>{{ product.type }}<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-html</span><span class="o">=</span><span class="s">&quot;product.body&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">page-not-found</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;productNotFound&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">page-not-found</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>`,
+</pre></div>
+</div>
+</div>
+<div class="section" id="id16">
+<h2>10.16. 产品图片<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h2>
+<p>下一步是输出我们产品的图像。如果您使用的是自行车 <code class="docutils literal"><span class="pre">CSV</span></code> 文件，要测试的好产品是 <code class="docutils literal"><span class="pre">650c-micro-wheelset</span></code> - 导航到该产品，因为它有四个图像。 不要忘记回到原来的产品来检查它是否适用于一个图像。</p>
+<p>图像值将始终是一个数组，无论是一个图像还是 100 个，为了显示它们，我们总是需要做一个 <code class="docutils literal"><span class="pre">v-for</span></code> 。 添加一个新的容器并循环显示图像。为每张图片添加一个宽度，以免它占据您的页面。</p>
+<p>图像数组包含每个图像的对象。它有一个 <code class="docutils literal"><span class="pre">alt</span></code> 和 <code class="docutils literal"><span class="pre">source</span></code> 键，可以直接输入到你的 <code class="docutils literal"><span class="pre">HTML</span></code> 中。 但是，有些情况下， <code class="docutils literal"><span class="pre">alt</span></code> 值缺失 - 如果是，请插入产品标题来替代：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>template: `<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;product&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;images&quot;</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;product.images.length&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">template</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;img in product.images&quot;</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">img</span>
+                        <span class="na">:src</span><span class="o">=</span><span class="s">&quot;img.source&quot;</span>
+                        <span class="na">:alt</span><span class="o">=</span><span class="s">&quot;img.alt || product.title&quot;</span>
+                        <span class="na">width</span><span class="o">=</span><span class="s">&quot;100&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>{{ product.title }}<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;meta&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>
+            Manufacturer: <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>{{ product.vendor.title }}<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;product.type&quot;</span><span class="p">&gt;</span>
+            Category: <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>{{ product.type }}<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-html</span><span class="o">=</span><span class="s">&quot;product.body&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">page-not-found</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;productNotFound&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">page-not-found</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>`,
+</pre></div>
+</div>
+<p>随着我们的图像显示，创建一个画廊将是一个很好的补充。商店经常展示一个大图像，在它下面有一组缩略图。点击每个缩略图然后替换主图像，以便用户可以更好地观看更大的图像。让我们重新创建该功能。 如果只有一个图像，我们也需要确保我们不显示缩略图。</p>
+<p>我们这样做，通过设置一个图像变量到图像数组中的第一个图像，这是一个将形成大图像的图片。如果数组中有多个图像，我们将显示缩略图。然后，我们将创建一个 <code class="docutils literal"><span class="pre">click</span></code> 方法，用所选图像更新图像变量。</p>
+<p>在您的数据对象中创建一个新变量，并在产品加载时使用图像数组中的第一项更新它。 在尝试分配值之前，确保 <code class="docutils literal"><span class="pre">images</span></code> 键实际上是 <code class="docutils literal"><span class="pre">array</span></code> 项目是一种很好的做法：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">    &lt;div v-if=&quot;product&quot;&gt;</span>
+<span class="sb">        &lt;div class=&quot;images&quot; v-if=&quot;product.images.length&quot;&gt;</span>
+<span class="sb">            &lt;template v-for=&quot;img in product.images&quot;&gt;</span>
+<span class="sb">                &lt;img</span>
+<span class="sb">                :src=&quot;img.source&quot;</span>
+<span class="sb">                :alt=&quot;img.alt || product.title&quot;</span>
+<span class="sb">                width=&quot;100&quot;&gt;</span>
+<span class="sb">            &lt;/template&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;h1&gt;{{ product.title }}&lt;/h1&gt;</span>
+<span class="sb">        &lt;div class=&quot;meta&quot;&gt;</span>
+<span class="sb">            &lt;span&gt;</span>
+<span class="sb">                Manufacturer: &lt;strong&gt;{{ product.vendor.title }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">            &lt;span v-if=&quot;product.type&quot;&gt;</span>
+<span class="sb">                Category: &lt;strong&gt;{{ product.type }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;div v-html=&quot;product.body&quot;&gt;&lt;/div&gt;</span>
+<span class="sb">    &lt;/div&gt;</span>
+<span class="sb">    &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;</span>
+<span class="sb">    &lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">productNotFound</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">image</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="p">(</span><span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">product</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">productNotFound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>接下来，更新模板中现有的图像循环，以便在数组中有多个图像时才显示。另外，在模板中添加第一张图像作为主图像 - 不要忘记检查它是否首先存在：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">    &lt;div v-if=&quot;product&quot;&gt;</span>
+<span class="sb">        &lt;div class=&quot;images&quot; v-if=&quot;image&quot;&gt;</span>
+<span class="sb">            &lt;div class=&quot;main&quot;&gt;</span>
+<span class="sb">                &lt;img</span>
+<span class="sb">                        :src=&quot;image.source&quot;</span>
+<span class="sb">                        :alt=&quot;image.alt || product.title&quot;&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">            &lt;div class=&quot;thumbnails&quot; v-if=&quot;product.images.length &gt; 1&quot;&gt;</span>
+<span class="sb">                &lt;template v-for=&quot;img in product.images&quot;&gt;</span>
+<span class="sb">                    &lt;img</span>
+<span class="sb">                            :src=&quot;img.source&quot;</span>
+<span class="sb">                            :alt=&quot;img.alt || product.title&quot;</span>
+<span class="sb">                            width=&quot;100&quot;&gt;</span>
+<span class="sb">                &lt;/template&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;h1&gt;{{ product.title }}&lt;/h1&gt;</span>
+<span class="sb">        &lt;div class=&quot;meta&quot;&gt;</span>
+<span class="sb">            &lt;span&gt;</span>
+<span class="sb">                Manufacturer: &lt;strong&gt;{{ product.vendor.title }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">            &lt;span v-if=&quot;product.type&quot;&gt;</span>
+<span class="sb">                Category: &lt;strong&gt;{{ product.type }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;div v-html=&quot;product.body&quot;&gt;&lt;/div&gt;</span>
+<span class="sb">    &lt;/div&gt;</span>
+<span class="sb">    &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;</span>
+<span class="sb">&lt;/div&gt;`</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>最后一步是为每个缩略图添加一个点击处理程序，以便在与之交互时更新图像变量。 由于图像本身并不具有 <code class="docutils literal"><span class="pre">cursor:pointer</span></code> CSS 属性，因此可能值得考虑添加此项。</p>
+<p>点击处理程序将接受缩略图循环中的每个图像作为参数。点击后，它会简单地通过传递的对象更新 <code class="docutils literal"><span class="pre">image</span></code> 变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">    &lt;div v-if=&quot;product&quot;&gt;</span>
+<span class="sb">        &lt;div class=&quot;images&quot; v-if=&quot;image&quot;&gt;</span>
+<span class="sb">            &lt;div class=&quot;main&quot;&gt;</span>
+<span class="sb">                &lt;img</span>
+<span class="sb">                        :src=&quot;image.source&quot;</span>
+<span class="sb">                        :alt=&quot;image.alt || product.title&quot;&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">            &lt;div class=&quot;thumbnails&quot; v-if=&quot;product.images.length &gt; 1&quot;&gt;</span>
+<span class="sb">                &lt;template v-for=&quot;img in product.images&quot;&gt;</span>
+<span class="sb">                    &lt;img</span>
+<span class="sb">                            :src=&quot;img.source&quot;</span>
+<span class="sb">                            :alt=&quot;img.alt || product.title&quot;</span>
+<span class="sb">                            width=&quot;100&quot;</span>
+<span class="sb">                            @click=&quot;updateImage(img)&quot;&gt;</span>
+<span class="sb">                &lt;/template&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;h1&gt;{{ product.title }}&lt;/h1&gt;</span>
+<span class="sb">        &lt;div class=&quot;meta&quot;&gt;</span>
+<span class="sb">            &lt;span&gt;</span>
+<span class="sb">                Manufacturer: &lt;strong&gt;{{ product.vendor.title }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">            &lt;span v-if=&quot;product.type&quot;&gt;</span>
+<span class="sb">                Category: &lt;strong&gt;{{ product.type }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;div v-html=&quot;product.body&quot;&gt;&lt;/div&gt;</span>
+<span class="sb">    &lt;/div&gt;</span>
+<span class="sb">    &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;</span>
+<span class="sb">&lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">productNotFound</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">image</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="p">(</span><span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">product</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">productNotFound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">updateImage</span><span class="p">(</span><span class="nx">img</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="nx">img</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>在您的浏览器中加载产品并尝试点击任何缩略图 - 您应该能够更新主图像。不要忘记在产品上使用代码验证一个图像甚至零图像的情况，以确保用户不会遇到任何错误。</p>
+</div>
+<div class="section" id="id17">
+<h2>10.17. 产品变体<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
+<p>有了这个特定的数据集，我们的每个产品都至少包含一个变体，但也可以包含多个变体。这通常与图像的数量并行，但并不总是相关的。变化可以是诸如颜色或大小等事物。</p>
+<p>在我们的 <code class="docutils literal"><span class="pre">Product</span></code> 对象上，我们有两个键可以帮助我们显示变化。这些是 <code class="docutils literal"><span class="pre">variationTypes</span></code> ，其中列出了变体的名称（如大小和颜色）以及 <code class="docutils literal"><span class="pre">variationProducts</span></code> ，其中包含所有变体。 <code class="docutils literal"><span class="pre">variationProducts</span></code> 对象中的每个产品都有另一个变体对象，它列出了所有可变属性。例如，如果夹克有两种颜色，每种颜色有三种尺寸，则会有六种 <code class="docutils literal"><span class="pre">variationProducts</span></code> (不同的产品)，每种都有两种 <code class="docutils literal"><span class="pre">variant</span></code> 属性。</p>
+<p>每个产品至少会包含一个变体，但如果只有一个变体，我们可能需要考虑产品页面的 <code class="docutils literal"><span class="pre">UX</span></code> 。我们将在一个表格和下拉列表中显示我们的产品变体，因此您可以体验创建这两个元素。</p>
+<div class="section" id="id18">
+<h3>10.17.1. 显示变体的表<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
+<p>在您的产品模板中创建一个将显示变体的新容器。在这个容器中，我们可以创建一个表来显示产品的不同变化。这将通过 v-for 声明来实现。现在，既然您对功能更加熟悉了，我们可以引入一个新属性。</p>
+</div>
+<div class="section" id="key">
+<h3>10.17.2. 使用带有key的循环<a class="headerlink" href="#key" title="永久链接至标题">¶</a></h3>
+<p>在 <code class="docutils literal"><span class="pre">Vue</span></code> 中使用循环时，建议您使用额外的属性来标识每个项目 <code class="docutils literal"><span class="pre">:key</span></code> 。 这有助于 <code class="docutils literal"><span class="pre">Vue</span></code> 在重新排序，排序或过滤时识别数组的元素。 <code class="docutils literal"><span class="pre">:key</span></code> 使用的一个例子是：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;item in items&quot;</span> <span class="na">:key</span><span class="o">=</span><span class="s">&quot;item.id&quot;</span><span class="p">&gt;</span>
+    {{ item.title }}
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">key</span></code> 属性应该是项目本身的唯一属性，而不是数组中项目的索引，以帮助 <code class="docutils literal"><span class="pre">Vue</span></code> 识别特定对象。 有关在循环中使用 <code class="docutils literal"><span class="pre">key</span></code> 的更多信息，请参见官方 <a class="reference external" href="http://vue">Vue</a> 文档。</p>
+<p>我们将在显示变体时利用 key 属性，赋值为项目 <code class="docutils literal"><span class="pre">barcode</span></code> (条形码)属性。</p>
+</div>
+<div class="section" id="id19">
+<h3>10.17.3. 表格中显示变体<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p>向变体容器中添加一个表格元素，并循环遍历 <code class="docutils literal"><span class="pre">items</span></code> 数组。现在，显示 <code class="docutils literal"><span class="pre">tile</span></code> ， <code class="docutils literal"><span class="pre">quantity</span></code> 和 <code class="docutils literal"><span class="pre">price</span></code> 。添加一个附加单元格，其中包含一个按钮，其值为“添加到购物车”。 我们将在第11章“构建电子商务商店 - 添加结帐”中进行配置。不要忘记在价格前添加一个 <code class="docutils literal"><span class="pre">$currency</span></code> 符号，因为它目前只是一个“原始”数字。</p>
+<p>注意 - 在模板文字中使用 <code class="docutils literal"><span class="pre">$</span></code> 符号时， JavaScript 会尝试将其与花括号一起解释为 JavaScript 变量。 为了抵消这种情况，用一个反斜杠加上货币 - 这告诉 JavaScript 下一个字符是字面的，不应该以任何其他方式解释：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>template: `&lt;div&gt;
+    &lt;div v-if=&quot;product&quot;&gt;
+        &lt;div class=&quot;images&quot; v-if=&quot;image&quot;&gt;
+            &lt;div class=&quot;main&quot;&gt;
+                &lt;img
+                        :src=&quot;image.source&quot;
+                        :alt=&quot;image.alt || product.title&quot;&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;thumbnails&quot; v-if=&quot;product.images.length &gt; 1&quot;&gt;
+                &lt;template v-for=&quot;img in product.images&quot;&gt;
+                    &lt;img
+                            :src=&quot;img.source&quot;
+                            :alt=&quot;img.alt || product.title&quot;
+                            width=&quot;100&quot;
+                            @click=&quot;updateImage(img)&quot;&gt;
+                &lt;/template&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;h1&gt;{{ product.title }}&lt;/h1&gt;
+        &lt;div class=&quot;meta&quot;&gt;
+            &lt;span&gt;
+                Manufacturer: &lt;strong&gt;{{ product.vendor.title }}&lt;/strong&gt;
+            &lt;/span&gt;
+            &lt;span v-if=&quot;product.type&quot;&gt;
+                Category: &lt;strong&gt;{{ product.type }}&lt;/strong&gt;
+            &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;variations&quot;&gt;
+            &lt;table&gt;
+                &lt;tr v-for=&quot;variation in product.variationProducts&quot; :key=&quot;variation.barcode&quot;&gt;
+                    &lt;td&gt;{{ variation.quantity }}&lt;/td&gt;
+                    &lt;td&gt;\${{ variation.price }}&lt;/td&gt;
+                    &lt;td&gt;&lt;button&gt;Add to basket&lt;/button&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/div&gt;
+        &lt;div v-html=&quot;product.body&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;
+&lt;/div&gt;`,
+</pre></div>
+</div>
+<p>尽管我们显示了价格和数量，但我们并未输出变体的实际变体属性（如颜色）。要做到这一点，我们需要用一种方法对我们的变体进行一些处理。</p>
+<p>变体对象包含每种变体类型的子对象，每种类型都有一个 <code class="docutils literal"><span class="pre">name</span></code> 和一个 <code class="docutils literal"><span class="pre">value</span></code> 。它们也会在对象内存储一个 <code class="docutils literal"><span class="pre">slug</span></code> 转换的键。请参阅以下屏幕截图了解更多详情：</p>
+<p>在表格的开头添加一个新的单元格，将该变体传递给名为 <code class="docutils literal"><span class="pre">variantTitle()</span></code> 的方法：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;variations&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">tr</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;variation in product.variationProducts&quot;</span> <span class="na">:key</span><span class="o">=</span><span class="s">&quot;variation.barcode&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ variantTitle(variation) }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ variation.quantity }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>\${{ variation.price }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Add to basket<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>在你的 <code class="docutils literal"><span class="pre">methods</span></code> 对象中创建新的方法：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">updateImage</span><span class="p">(</span><span class="nx">img</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="nx">img</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">variantTitle</span><span class="p">(</span><span class="nx">variation</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们现在需要构建一个带有变体标题的字符串，并显示所有可用的选项。为此，我们将构建每个类型的数组，然后将它们连接成一个字符串。</p>
+<p>将 <code class="docutils literal"><span class="pre">variants</span></code> 存储为变量并创建一个空数组。 现在我们可以遍历  <code class="docutils literal"><span class="pre">variants</span></code> 对象中可用的键并创建一个字符串输出。如果您决定将 <code class="docutils literal"><span class="pre">HTML</span></code> 添加到字符串中，如以下示例所示，我们需要更新我们的模板以输出 <code class="docutils literal"><span class="pre">HTML</span></code> 而不是原始字符串：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">variantTitle</span><span class="p">(</span><span class="nx">variation</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">variants</span> <span class="o">=</span> <span class="nx">variation</span><span class="p">.</span><span class="nx">variant</span><span class="p">,</span>
+        <span class="nx">output</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">a</span> <span class="k">in</span> <span class="nx">variants</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="sb">`&lt;b&gt;</span><span class="si">${</span><span class="nx">variants</span><span class="p">[</span><span class="nx">a</span><span class="p">].</span><span class="nx">name</span><span class="si">}</span><span class="sb">:&lt;/b&gt; </span><span class="si">${</span><span class="nx">variants</span><span class="p">[</span><span class="nx">a</span><span class="p">].</span><span class="nx">value</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们的输出数组将为每个变体都有一个项目，格式如下：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s2">&quot;&lt;b&gt;Color:&lt;/b&gt; Alloy&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;b&gt;Size:&lt;/b&gt; 49 cm&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>现在我们可以将每一个连接在一起，将数组的输出转换为字符串。 您选择加入的字符，字符串或 <code class="docutils literal"><span class="pre">HTML</span></code> 取决于您。现在，在任一侧使用一个 ` / ` 。或者，您可以使用 <code class="docutils literal"><span class="pre">&lt;/td&gt;&lt;td&gt;</span></code> 标签创建新的表格单元格。传入到 <code class="docutils literal"><span class="pre">join()</span></code> 函数并使用 <code class="docutils literal"><span class="pre">v-html</span></code> 更新模板：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">    &lt;div v-if=&quot;product&quot;&gt;</span>
+<span class="sb">        &lt;div class=&quot;images&quot; v-if=&quot;image&quot;&gt;</span>
+<span class="sb">            &lt;div class=&quot;main&quot;&gt;</span>
+<span class="sb">                &lt;img</span>
+<span class="sb">                        :src=&quot;image.source&quot;</span>
+<span class="sb">                        :alt=&quot;image.alt || product.title&quot;&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">            &lt;div class=&quot;thumbnails&quot; v-if=&quot;product.images.length &gt; 1&quot;&gt;</span>
+<span class="sb">                &lt;template v-for=&quot;img in product.images&quot;&gt;</span>
+<span class="sb">                    &lt;img</span>
+<span class="sb">                            :src=&quot;img.source&quot;:alt=&quot;img.alt || product.title&quot;</span>
+<span class="sb">                            width=&quot;100&quot;</span>
+<span class="sb">                            @click=&quot;updateImage(img)&quot;&gt;</span>
+<span class="sb">                &lt;/template&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;h1&gt;{{ product.title }}&lt;/h1&gt;</span>
+<span class="sb">        &lt;div class=&quot;meta&quot;&gt;</span>
+<span class="sb">            &lt;span&gt;</span>
+<span class="sb">                Manufacturer: &lt;strong&gt;{{ product.vendor.title }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">            &lt;span v-if=&quot;product.type&quot;&gt;</span>
+<span class="sb">                Category: &lt;strong&gt;{{ product.type }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;div class=&quot;variations&quot;&gt;</span>
+<span class="sb">            &lt;table&gt;</span>
+<span class="sb">                &lt;tr v-for=&quot;variation in product.variationProducts&quot; :key=&quot;variation.barcode&quot;&gt;</span>
+<span class="sb">                    &lt;td v-html=&quot;variantTitle(variation)&quot;&gt;&lt;/td&gt;</span>
+<span class="sb">                    &lt;td&gt;{{ variation.quantity }}&lt;/td&gt;</span>
+<span class="sb">                    &lt;td&gt;</span><span class="si">${</span><span class="p">{</span> <span class="nx">variation</span><span class="p">.</span><span class="nx">price</span> <span class="si">}</span><span class="sb">}&lt;/td&gt;</span>
+<span class="sb">                    &lt;td&gt;&lt;button&gt;Add to basket&lt;/button&gt;&lt;/td&gt;</span>
+<span class="sb">                &lt;/tr&gt;</span>
+<span class="sb">            &lt;/table&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;div v-html=&quot;product.body&quot;&gt;&lt;/div&gt;</span>
+<span class="sb">    &lt;/div&gt;</span>
+<span class="sb">    &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;</span>
+<span class="sb">&lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">productNotFound</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">image</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">updateImage</span><span class="p">(</span><span class="nx">img</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="nx">img</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">variantTitle</span><span class="p">(</span><span class="nx">variation</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">variants</span> <span class="o">=</span> <span class="nx">variation</span><span class="p">.</span><span class="nx">variant</span><span class="p">,</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">a</span> <span class="k">in</span> <span class="nx">variants</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="sb">`&lt;b&gt;</span><span class="si">${</span><span class="nx">variants</span><span class="p">[</span><span class="nx">a</span><span class="p">].</span><span class="nx">name</span><span class="si">}</span><span class="sb">:&lt;/b&gt; </span><span class="si">${</span><span class="nx">variants</span><span class="p">[</span><span class="nx">a</span><span class="p">].</span><span class="nx">value</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">output</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39; / &#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>将单击事件附加到添加到购物车按钮，并在组件上创建新方法。该方法将要求传入 <code class="docutils literal"><span class="pre">variation</span></code> 对象，因此可以将对应的变体添加到购物车中。现在，添加一个 JavaScript <code class="docutils literal"><span class="pre">alert()</span></code> 以保证您拥有正确的警报：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">    &lt;div v-if=&quot;product&quot;&gt;</span>
+<span class="sb">        &lt;div class=&quot;images&quot; v-if=&quot;image&quot;&gt;</span>
+<span class="sb">            &lt;div class=&quot;main&quot;&gt;</span>
+<span class="sb">                &lt;img</span>
+<span class="sb">                        :src=&quot;image.source&quot;</span>
+<span class="sb">                        :alt=&quot;image.alt || product.title&quot;&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">            &lt;div class=&quot;thumbnails&quot; v-if=&quot;product.images.length &gt; 1&quot;&gt;</span>
+<span class="sb">                &lt;template v-for=&quot;img in product.images&quot;&gt;</span>
+<span class="sb">                    &lt;img</span>
+<span class="sb">                            :src=&quot;img.source&quot;</span>
+<span class="sb">                            :alt=&quot;img.alt || product.title&quot;</span>
+<span class="sb">                            width=&quot;100&quot;</span>
+<span class="sb">                            @click=&quot;updateImage(img)&quot;&gt;</span>
+<span class="sb">                &lt;/template&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;h1&gt;{{ product.title }}&lt;/h1&gt;</span>
+<span class="sb">        &lt;div class=&quot;meta&quot;&gt;</span>
+<span class="sb">            &lt;span&gt;</span>
+<span class="sb">                Manufacturer: &lt;strong&gt;{{ product.vendor.title }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">            &lt;span v-if=&quot;product.type&quot;&gt;</span>
+<span class="sb">                Category: &lt;strong&gt;{{ product.type }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;div class=&quot;variations&quot;&gt;</span>
+<span class="sb">            &lt;table&gt;</span>
+<span class="sb">                &lt;tr v-for=&quot;variation in product.variationProducts&quot; :key=&quot;variation.barcode&quot;&gt;</span>
+<span class="sb">                    &lt;td v-html=&quot;variantTitle(variation)&quot;&gt;&lt;/td&gt;</span>
+<span class="sb">                    &lt;td&gt;{{ variation.quantity }}&lt;/td&gt;</span>
+<span class="sb">                    &lt;td&gt;</span><span class="si">${</span><span class="p">{</span> <span class="nx">variation</span><span class="p">.</span><span class="nx">price</span> <span class="si">}</span><span class="sb">}&lt;/td&gt;</span>
+<span class="sb">                    &lt;td&gt;&lt;button @click=&quot;addToBasket(variation)&quot;&gt;Add to basket&lt;/button&gt;&lt;/td&gt;</span>
+<span class="sb">                &lt;/tr&gt;</span>
+<span class="sb">            &lt;/table&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;div v-html=&quot;product.body&quot;&gt;&lt;/div&gt;</span>
+<span class="sb">    &lt;/div&gt;</span>
+<span class="sb">    &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;</span>
+<span class="sb">&lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">productNotFound</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">image</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="p">(</span><span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">product</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">productNotFound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">updateImage</span><span class="p">(</span><span class="nx">img</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="nx">img</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">variantTitle</span><span class="p">(</span><span class="nx">variation</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">variants</span> <span class="o">=</span> <span class="nx">variation</span><span class="p">.</span><span class="nx">variant</span><span class="p">,</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">a</span> <span class="k">in</span> <span class="nx">variants</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="sb">`&lt;b&gt;</span><span class="si">${</span><span class="nx">variants</span><span class="p">[</span><span class="nx">a</span><span class="p">].</span><span class="nx">name</span><span class="si">}</span><span class="sb">:&lt;/b&gt; </span><span class="si">${</span><span class="nx">variants</span><span class="p">[</span><span class="nx">a</span><span class="p">].</span><span class="nx">value</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">output</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39; / &#39;</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">addToBasket</span><span class="p">(</span><span class="nx">variation</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">alert</span><span class="p">(</span><span class="sb">`Added to basket: </span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">product</span><span class="p">.</span><span class="nx">title</span><span class="si">}</span><span class="sb"> - </span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">variantTitle</span><span class="p">(</span><span class="nx">variation</span><span class="p">)</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>注意 <code class="docutils literal"><span class="pre">alert</span></code> 框中使用的模板文字 - 这使我们能够使用 Javascript 变量而不必使用字符串连接技术。 点击添加到购物车按钮现在将生成产品名称和所点击变体信息的弹出列表。</p>
+</div>
+<div class="section" id="id20">
+<h3>10.17.4. 选择框中显示变体<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<p>产品页面上更常见的界面模式是有一个下拉列表或选择框，显示可供您选择的变体。</p>
+<p>当使用选择框时，我们将会有一个默认选择的变体或用户已经与之进行交互和选择的变体。因此，当用户更改选择框时，在产品页面上产品的图片将会改变并且显示有关变体的其他信息，包括价格和数量。</p>
+<p>我们不会依赖传递给 <code class="docutils literal"><span class="pre">addToBasket</span></code> 方法的变体，因为它将作为产品组件上的对象存在。</p>
+<p>将 &lt;table&gt; 元素更新为 &lt;select&gt; ，将 &lt;tr&gt; 更新为 &lt;option&gt; 。 将按钮移动到该元素的外部并从 <code class="docutils literal"><span class="pre">click</span></code> 事件中删除该参数。从 <code class="docutils literal"><span class="pre">variantTitle()</span></code> 方法中删除任何 <code class="docutils literal"><span class="pre">HTML</span></code> 。因为它现在位于选择框内，所以不是必需的：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>&lt;div class=&quot;variations&quot;&gt;
+    &lt;select&gt;
+        &lt;option
+                v-for=&quot;variation in product.variationProducts&quot;
+                :key=&quot;variation.barcode&quot;
+                v-html=&quot;variantTitle(variation)&quot;
+        &gt;&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button @click=&quot;addToBasket()&quot;&gt;Add to basket&lt;/button&gt;
+&lt;/div&gt;
+</pre></div>
+</div>
+<p>下一步是创建一个可用于组件的新变量。与图像类似，这将通过 <code class="docutils literal"><span class="pre">variationProducts</span></code> 数组的第一项完成，并在选择框更改时进行更新。</p>
+<p>在数据对象中创建一个名为 <code class="docutils literal"><span class="pre">variation</span></code> 的新项目。将数据加载到 <code class="docutils literal"><span class="pre">product</span></code> 计算变量中时填充此变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`...`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">productNotFound</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">image</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">variation</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="p">(</span><span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">variation</span> <span class="o">=</span> <span class="nx">product</span><span class="p">.</span><span class="nx">variationProducts</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">product</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">productNotFound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>更新 <code class="docutils literal"><span class="pre">addToBasket</span></code> 方法以使用 <code class="docutils literal"><span class="pre">ProductPage</span></code> 组件的 <code class="docutils literal"><span class="pre">variation</span></code> 变量，而不依赖于参数：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">addToBasket</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="sb">`Added to basket: </span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">product</span><span class="p">.</span><span class="nx">title</span><span class="si">}</span><span class="sb"> - </span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">variantTitle</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">variation</span><span class="p">)</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>尝试点击添加到购物车按钮 - 它应该添加第一个变体，无论在下拉列表中选择了什么。 要更新变量，我们可以将 <code class="docutils literal"><span class="pre">variations</span></code>  变量绑定到选择框 - 以同样的方式，我们在本书开始时进行了文本框过滤。</p>
+<p>向 <code class="docutils literal"><span class="pre">select</span></code> 元素添加一个 <code class="docutils literal"><span class="pre">v-model</span></code> 属性。我们还需要告诉 <code class="docutils literal"><span class="pre">Vue</span></code> 当选择时绑定什么到这个变量。 默认情况下，它将执行 <code class="docutils literal"><span class="pre">&lt;option&gt;</span></code> 的内容，该选项是我们自定义的变体标题。但是，我们想要绑定整个 <code class="docutils literal"><span class="pre">variation</span></code> 对象。将一个 <code class="docutils literal"><span class="pre">:value</span></code> 属性添加到 <code class="docutils literal"><span class="pre">&lt;option&gt;</span></code> 元素中：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>&lt;div class=&quot;variations&quot;&gt;
+    &lt;select v-model=&quot;variation&quot;&gt;
+        &lt;option
+                v-for=&quot;variation in product.variationProducts&quot;
+                :key=&quot;variation.barcode&quot;
+                :value=&quot;variation&quot;
+                v-html=&quot;variantTitle(variation)&quot;
+        &gt;&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button @click=&quot;addToBasket()&quot;&gt;Add to basket&lt;/button&gt;
+&lt;/div&gt;
+</pre></div>
+</div>
+<p>改变选择框并点击添加到购物篮按钮现在会产生正确的变化。这种方法比我们显示表格中的变体提供了更多的灵活性。</p>
+<p>它允许我们在产品的其他地方显示变体数据。尝试在产品标题和在 <code class="docutils literal"><span class="pre">meta</span></code> 容器中数量旁边添加价格：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>template: `&lt;div&gt;
+    &lt;div v-if=&quot;product&quot;&gt;
+        &lt;div class=&quot;images&quot; v-if=&quot;image&quot;&gt;
+            &lt;div class=&quot;main&quot;&gt;
+                &lt;img
+                        :src=&quot;image.source&quot;
+                        :alt=&quot;image.alt || product.title&quot;&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;thumbnails&quot; v-if=&quot;product.images.length &gt; 1&quot;&gt;
+                &lt;template v-for=&quot;img in product.images&quot;&gt;
+                    &lt;img
+                            :src=&quot;img.source&quot;
+                            :alt=&quot;img.alt || product.title&quot;
+                            width=&quot;100&quot;
+                            @click=&quot;updateImage(img)&quot;&gt;
+                &lt;/template&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;h1&gt;{{ product.title }} - \${{ variation.price }}&lt;/h1&gt;
+        &lt;div class=&quot;meta&quot;&gt;
+            &lt;span&gt;
+                Manufacturer: &lt;strong&gt;{{ product.vendor.title }}&lt;/strong&gt;
+            &lt;/span&gt;
+            &lt;span v-if=&quot;product.type&quot;&gt;
+                Category: &lt;strong&gt;{{ product.type }}&lt;/strong&gt;
+            &lt;/span&gt;
+            &lt;span&gt;
+                Quantity: &lt;strong&gt;{{ variation.quantity }}&lt;/strong&gt;
+            &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;variations&quot;&gt;
+            &lt;select v-model=&quot;variation&quot;&gt;
+                &lt;option
+                        v-for=&quot;variation in product.variationProducts&quot;
+                        :key=&quot;variation.barcode&quot;
+                        :value=&quot;variation&quot;
+                        v-html=&quot;variantTitle(variation)&quot;
+                &gt;&lt;/option&gt;
+            &lt;/select&gt;
+            &lt;button @click=&quot;addToBasket()&quot;&gt;Add to basket&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div v-html=&quot;product.body&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;
+&lt;/div&gt;`,
+</pre></div>
+</div>
+<p>存在两个新属性将在 <code class="docutils literal"><span class="pre">variation</span></code> 变化时更新。如果图像有一个，我们也可以将图像更新为选定的变体。 为此，请将 <code class="docutils literal"><span class="pre">watch</span></code> 对象添加到组件中。 更新时，我们可以检查 <code class="docutils literal"><span class="pre">variation</span></code> 是否有图像，如果是，则使用以下属性更新 <code class="docutils literal"><span class="pre">image</span></code> 变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`...`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">...</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">},</span>
+    <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">variation</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">updateImage</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">image</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>使用 <code class="docutils literal"><span class="pre">watch</span></code> 时，该功能将新项目作为第一个参数传递。而不是引用组件上的那个，我们可以使用它来收集图像信息。</p>
+<p>我们可以做的另一个增强功能是如果变体没货，则禁用“添加到购物车”按钮，并在下拉列表中添加备注。 该信息是从变体 <code class="docutils literal"><span class="pre">quantity</span></code> 键中收集的。</p>
+<p>检查数量，如果少于一个，则在选择框中显示缺货信息，并使用 <code class="docutils literal"><span class="pre">disabled</span></code> 的 <code class="docutils literal"><span class="pre">HTML</span></code> 属性禁用“添加到购物车”按钮。我们也可以更新按钮的值：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>template: `&lt;div&gt;
+    &lt;div v-if=&quot;product&quot;&gt;
+        &lt;div class=&quot;images&quot; v-if=&quot;image&quot;&gt;
+            &lt;div class=&quot;main&quot;&gt;
+                &lt;img
+                        :src=&quot;image.source&quot;
+                        :alt=&quot;image.alt || product.title&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;thumbnails&quot; v-if=&quot;product.images.length &gt; 1&quot;&gt;
+                &lt;template v-for=&quot;img in product.images&quot;&gt;
+                    &lt;img
+                            :src=&quot;img.source&quot;
+                            :alt=&quot;img.alt || product.title&quot;
+                            width=&quot;100&quot;
+                            @click=&quot;updateImage(img)&quot;&gt;
+                &lt;/template&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;h1&gt;{{ product.title }} - \${{ variation.price }}&lt;/h1&gt;
+        &lt;div class=&quot;meta&quot;&gt;
+            &lt;span&gt;
+                Manufacturer: &lt;strong&gt;{{ product.vendor.title }}&lt;/strong&gt;
+            &lt;/span&gt;
+            &lt;span v-if=&quot;product.type&quot;&gt;
+                Category: &lt;strong&gt;{{ product.type }}&lt;/strong&gt;
+            &lt;/span&gt;
+            &lt;span&gt;
+                Quantity: &lt;strong&gt;{{ variation.quantity }}&lt;/strong&gt;
+            &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;variations&quot;&gt;
+            &lt;select v-model=&quot;variation&quot;&gt;
+                &lt;option
+                        v-for=&quot;variation in product.variationProducts&quot;
+                        :key=&quot;variation.barcode&quot;
+                        :value=&quot;variation&quot;
+                        v-html=&quot;variantTitle(variation) + ((!variation.quantity) ? &#39; - out of stock&#39; : &#39;&#39;)&quot;
+                &gt;&lt;/option&gt;
+            &lt;/select&gt;
+            &lt;button @click=&quot;addToBasket()&quot; :disabled=&quot;!variation.quantity&quot;&gt;
+                {{ (variation.quantity) ? &#39;Add to basket&#39; : &#39;Out of stock&#39; }}
+            &lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div v-html=&quot;product.body&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;
+&lt;/div&gt;`,
+</pre></div>
+</div>
+<p>如果使用 <code class="docutils literal"><span class="pre">bicycles.csv</span></code> 数据集，Keirin Pro Track Frameset 产品（ <code class="docutils literal"><span class="pre">/＃/product/keirin-pro-track-frame</span></code> ）包含多种变体，有些变体没有库存。这使您可以测试缺货功能和图像更改。</p>
+<p>我们可以对产品页面做的另一件事是只有当有多个变体时才显示下拉菜单。仅有一种产品的一个例子是 15 毫米组合扳手（ <code class="docutils literal"><span class="pre">＃/product/15mm-combo-wrench</span></code> ）。 在这种情况下，不值得显示 <code class="docutils literal"><span class="pre">&lt;select&gt;</span></code> 框。 由于我们在 <code class="docutils literal"><span class="pre">Product</span></code> 组件加载时设置 <code class="docutils literal"><span class="pre">variation</span></code> 变量，因此我们不依赖选择来初始设置变量。 因此，当只有一个替代产品时，我们可以用 <code class="docutils literal"><span class="pre">v-if=&quot;&quot;</span></code> 完全删除选择框。</p>
+<p>就像我们对图像所做的那样，检查数组的长度是否超过一个，这次是 <code class="docutils literal"><span class="pre">variationProducts</span></code> 数组：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>&lt;div class=&quot;variations&quot;&gt;
+    &lt;select v-model=&quot;variation&quot; v-if=&quot;product.variationProducts.length &gt; 1&quot;&gt;
+        &lt;option
+                v-for=&quot;variation in product.variationProducts&quot;
+                :key=&quot;variation.barcode&quot;
+                :value=&quot;variation&quot;
+                v-html=&quot;variantTitle(variation) + ((!variation.quantity) ? &#39; - out of stock&#39; : &#39;&#39;)&quot;
+        &gt;&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button @click=&quot;addToBasket()&quot; :disabled=&quot;!variation.quantity&quot;&gt;
+        {{ (variation.quantity) ? &#39;Add to basket&#39; : &#39;Out of stock&#39; }}
+    &lt;/button&gt;
+&lt;/div&gt;
+</pre></div>
+</div>
+<p>通过在不需要时删除元素，我们现在可以减少混乱的界面。</p>
+</div>
+</div>
+<div class="section" id="id21">
+<h2>10.18. 切换网址时更新产品详情<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h2>
+<p>在浏览不同的产品 <code class="docutils literal"><span class="pre">URL</span></code> 以检查变体时，您可能已经注意到，点击后退和前进不会更新页面上的产品数据。</p>
+<p>这是因为 <code class="docutils literal"><span class="pre">Vue-router</span></code> 实现了在页面之间使用相同的组件，所以不是销毁和创建新的实例，而是重用组件。 不利的一面是数据没有得到更新；我们需要触发一个功能来包含新产品数据。好处是代码更高效。</p>
+<p>为了告诉 <code class="docutils literal"><span class="pre">Vue</span></code> 检索新数据，我们需要创建一个 <code class="docutils literal"><span class="pre">watch</span></code> 函数，我们将观察 <code class="docutils literal"><span class="pre">$route</span></code> 变量。当这个更新时，我们可以加载新的数据。</p>
+<p>在数据实例中创建一个新的 <code class="docutils literal"><span class="pre">slug</span></code> 变量，并将默认值设置为路由参数。更新 <code class="docutils literal"><span class="pre">product</span></code> 计算函数以使用此变量而不是路由：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`...`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">slug</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">,</span>
+            <span class="nx">productNotFound</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">image</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">variation</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="p">(</span><span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">variation</span> <span class="o">=</span> <span class="nx">product</span><span class="p">.</span><span class="nx">variationProducts</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">product</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">productNotFound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>现在我们可以创建一个 <code class="docutils literal"><span class="pre">watch</span></code> 函数，并关注 <code class="docutils literal"><span class="pre">$route</span></code> 变量。当这个变化时，我们可以更新 <code class="docutils literal"><span class="pre">slug</span></code> 变量，这反过来会更新正在显示的数据。</p>
+<p>监控路由时，该函数有两个传递给它的参数： <code class="docutils literal"><span class="pre">to</span></code> 和 <code class="docutils literal"><span class="pre">from</span></code> 。 <code class="docutils literal"><span class="pre">to</span></code> 变量包含有关我们将要使用的路由的所有信息，包括参数和使用的组件。 <code class="docutils literal"><span class="pre">from</span></code> 变量包含有关当前路由的所有一切。</p>
+<p>通过在路由更改时将 <code class="docutils literal"><span class="pre">slug</span></code> 变量更新为新参数，我们迫使组件重新绘制 <code class="docutils literal"><span class="pre">store</span></code> 中的新数据：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ProductPage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;ProductPage&#39;</span><span class="p">,</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="sb">`&lt;div&gt;</span>
+<span class="sb">    &lt;div v-if=&quot;product&quot;&gt;</span>
+<span class="sb">        &lt;div class=&quot;images&quot; v-if=&quot;image&quot;&gt;</span>
+<span class="sb">            &lt;div class=&quot;main&quot;&gt;</span>
+<span class="sb">                &lt;img</span>
+<span class="sb">                        :src=&quot;image.source&quot;</span>
+<span class="sb">                        :alt=&quot;image.alt || product.title&quot;&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">            &lt;div class=&quot;thumbnails&quot; v-if=&quot;product.images.length &gt; 1&quot;&gt;</span>
+<span class="sb">                &lt;template v-for=&quot;img in product.images&quot;&gt;</span>
+<span class="sb">                    &lt;img</span>
+<span class="sb">                            :src=&quot;img.source&quot;</span>
+<span class="sb">                            :alt=&quot;img.alt || product.title&quot;</span>
+<span class="sb">                            width=&quot;100&quot;</span>
+<span class="sb">                            @click=&quot;updateImage(img)&quot;&gt;</span>
+<span class="sb">                &lt;/template&gt;</span>
+<span class="sb">            &lt;/div&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;h1&gt;{{ product.title }} - </span><span class="si">${</span><span class="p">{</span> <span class="nx">variation</span><span class="p">.</span><span class="nx">price</span> <span class="si">}</span><span class="sb">}&lt;/h1&gt;</span>
+<span class="sb">        &lt;div class=&quot;meta&quot;&gt;</span>
+<span class="sb">            &lt;span&gt;</span>
+<span class="sb">                Manufacturer: &lt;strong&gt;{{ product.vendor.title }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">            &lt;span v-if=&quot;product.type&quot;&gt;</span>
+<span class="sb">                Category: &lt;strong&gt;{{ product.type }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">            &lt;span&gt;</span>
+<span class="sb">                Quantity: &lt;strong&gt;{{ variation.quantity }}&lt;/strong&gt;</span>
+<span class="sb">            &lt;/span&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;div class=&quot;variations&quot;&gt;</span>
+<span class="sb">            &lt;select v-model=&quot;variation&quot; v-if=&quot;product.variationProducts.length &gt; 1&quot;&gt;</span>
+<span class="sb">                &lt;option</span>
+<span class="sb">                        v-for=&quot;variation in product.variationProducts&quot;</span>
+<span class="sb">                        :key=&quot;variation.barcode&quot;</span>
+<span class="sb">                        :value=&quot;variation&quot;</span>
+<span class="sb">                        v-html=&quot;variantTitle(variation) + ((!variation.quantity) ? &#39; - out of stock&#39; : &#39;&#39;)&quot;</span>
+<span class="sb">                &gt;&lt;/option&gt;</span>
+<span class="sb">            &lt;/select&gt;</span>
+<span class="sb">            &lt;button @click=&quot;addToBasket()&quot; :disabled=&quot;!variation.quantity&quot;&gt;</span>
+<span class="sb">                {{ (variation.quantity) ? &#39;Add to basket&#39; : &#39;Out of stock&#39; }}</span>
+<span class="sb">            &lt;/button&gt;</span>
+<span class="sb">        &lt;/div&gt;</span>
+<span class="sb">        &lt;div v-html=&quot;product.body&quot;&gt;&lt;/div&gt;</span>
+<span class="sb">    &lt;/div&gt;</span>
+<span class="sb">    &lt;page-not-found v-if=&quot;productNotFound&quot;&gt;&lt;/page-not-found&gt;</span>
+<span class="sb">&lt;/div&gt;`</span><span class="p">,</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">PageNotFound</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">slug</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">$route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">,</span>
+            <span class="nx">productNotFound</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">image</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">variation</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">product</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">product</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">product</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="p">(</span><span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="nx">product</span><span class="p">.</span><span class="nx">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">variation</span> <span class="o">=</span> <span class="nx">product</span><span class="p">.</span><span class="nx">variationProducts</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">product</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">productNotFound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">product</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">variation</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">updateImage</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">image</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;$route&#39;</span><span class="p">(</span><span class="nx">to</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 这里为何需要引号??</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">slug</span> <span class="o">=</span> <span class="nx">to</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">slug</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">updateImage</span><span class="p">(</span><span class="nx">img</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">=</span> <span class="nx">img</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">variantTitle</span><span class="p">(</span><span class="nx">variation</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">variants</span> <span class="o">=</span> <span class="nx">variation</span><span class="p">.</span><span class="nx">variant</span><span class="p">,</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">a</span> <span class="k">in</span> <span class="nx">variants</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">variants</span><span class="p">[</span><span class="nx">a</span><span class="p">].</span><span class="nx">name</span><span class="si">}</span><span class="sb">: </span><span class="si">${</span><span class="nx">variants</span><span class="p">[</span><span class="nx">a</span><span class="p">].</span><span class="nx">value</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">output</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39; / &#39;</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">addToBasket</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">alert</span><span class="p">(</span><span class="sb">`Added to basket: </span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">product</span><span class="p">.</span><span class="nx">title</span><span class="si">}</span><span class="sb"> - </span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">variantTitle</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">variation</span><span class="p">)</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>通过完成产品页面，我们可以继续为 <code class="docutils literal"><span class="pre">type</span></code> 和 <code class="docutils literal"><span class="pre">vendor</span></code> 变量创建类别列表。 删除代码中的任何 <code class="docutils literal"><span class="pre">console.log()</span></code> 调用，以保持它的清洁。</p>
+</div>
+<div class="section" id="id22">
+<h2>10.19. 总结<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h2>
+<p>本章覆盖了很多。 我们将产品的 <code class="docutils literal"><span class="pre">CSV</span></code> 文件加载并存储到我们的 <code class="docutils literal"><span class="pre">Vuex</span></code> <code class="docutils literal"><span class="pre">store</span></code> 中。从那里，我们创建了一个产品详细信息页面，该页面使用 <code class="docutils literal"><span class="pre">URL</span></code> 中的动态变量来加载特定产品。我们创建了一个产品详细视图，允许用户查看图像库并从下拉列表中选择一个变体。如果变体具有关联的图像，则更新主图像。</p>
+<p>在第10章“构建电子商务商店 - 浏览产品”中，我们将创建一个类别页面，创建过滤和订购功能 - 帮助用户找到他们想要的产品。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="建立电子商务商店-浏览产品.html" class="btn btn-neutral float-right" title="11. 建立电子商务商店-浏览产品" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="介绍Vue-Router并加载基于URL的组件.html" class="btn btn-neutral" title="9. 介绍Vue-Router并加载基于URL的组件" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,883 @@
+****
+并发集合
+****
+
+介绍
+====
+在编程中，数据结构是一种基本的元素。几乎每个程序都使用一个或多个数据结构类型来存储和管理它们的数据。 Java API 提供了 Java 集合框架（Java Collections framework），它包括可以用来实现许多不同的数据结构的接口、类和算法，你可以在程序中使用它们。
+
+当你需要在并发程序中使用数据集合时，你必须十分小心的选择实现。大多数集合数并不适合用在并发应用程序中，因为它们没有控制并发访问数据。如果一些并发任务共享一个数据结构，而这个数据结构并不适合用在并发任务中，你将会有数据不一致的错误，这将影响到程序的正确运行。 ``ArrayList`` 类就是这种数据结构的一个例子。
+
+Java 提供了你可以在你的并发程序中使用的，而且不会有任何问题或不一致的数据集合。基本上， Java 提供两种在并发应用程序中使用的集合：
+
+- 阻塞集合：这种集合包括添加和删除数据的操作。如果操作不能立即进行，是因为集合已满或者为空，该程序将被阻塞，直到操作可以进行。
+- 非阻塞集合：这种集合也包括添加和删除数据的操作。如果操作不能立即进行，这个操作将返回 ``null`` 值或抛出异常，但该线程将不会阻塞。
+
+通过本章的指南，你将学习如何使用一些可以用在并发应用程序中的 Java 集合。这包括：
+
+- 非阻塞列表，使用 ``ConcurrentLinkedDeque`` 类；
+- 阻塞列表，使用 ``LinkedBlockingDeque`` 类；
+- 用在生产者与消费者数据的阻塞列表，使用 ``LinkedTransferQueue`` 类；
+- 使用优先级排序元素的阻塞列表，使用 ``PriorityBlockingQueue`` 类；
+- 存储延迟元素的阻塞列表，使用 ``DelayQueue`` 类；
+- 非阻塞可导航的 ``map`` ，使用 ``ConcurrentSkipListMap`` 类；
+- 随机数，使用 ``ThreadLocalRandom`` 类；
+- 原子变量，使用 ``AtomicLong`` 和 ``AtomicIntegerArray`` 类；
+
+使用非阻塞线程安全列表
+=====================
+列表（list）是最基本的集合。一个列表有不确定的元素数量，并且你可以添加、读取和删除任意位置上的元素。并发列表允许不同的线程在同一时刻对列表的元素进行添加或删除，而不会产生任何数据不一致（问题）。
+
+在这个指南中，你将学习如何在你的并发应用程序中使用非阻塞列表。非阻塞列表提供这些操作：如果操作不能立即完成（比如，你想要获取列表的元素而列表却是空的），它将根据这个操作抛出异常或返回 ``null`` 值。 Java 7 引进实现了非阻塞并发列表的 ``ConcurrentLinkedDeque`` 类。
+
+我们将使用以下两种不同任务来实现一个例子：
+
+- 大量添加数据到列表
+- 在同个列表中，大量删除数据
+
+.. code-block:: java
+
+	// 1.创建一个实现Runnable接口的AddTask类
+	public class AddTask implements Runnable {
+		// 2.声明一个私有的、ConcurrentLinkedDeque类型的、参数化为String类的属性list
+		private ConcurrentLinkedDeque<String> list;
+
+		// 3.实现这个类的构造器，并初始化它的属性
+		public AddTask(ConcurrentLinkedDeque<String> list) {
+			this.list = list;
+		}
+
+		// 4.实现这个类的run()方法。它将在列表中存储10000个正在执行任务的线程的名称和一个数字的字符串
+		@Override
+		public void run() {
+			String name = Thread.currentThread().getName();
+			for (int i = 0; i < 10000; i++) {
+				list.add(name + ": Element " + i);
+			}
+		}
+	}
+
+	// 5.创建一个实现Runnable接口的PollTask类
+	public class PollTask implements Runnable {
+		// 6.声明一个私有的、ConcurrentLinkedDeque类型的、参数化为String类的属性list
+		private ConcurrentLinkedDeque<String> list;
+
+		// 7.实现这个类的构造器，并初始化它的属性
+		public PollTask(ConcurrentLinkedDeque<String> list) {
+			this.list = list;
+		}
+
+		// 8.实现这个类的run()方法。它从列表中取出10000个元素（在一个循环5000次的循环中，每次取出2个元素）
+		@Override
+		public void run() {
+			for (int i = 0; i < 5000; i++) {
+				list.pollFirst();
+				list.pollLast();
+			}
+		}
+	}
+
+	// 9.实现这个例子的主类，通过实现Main类，并实现main()方法
+	public class Main {
+		public static void main(String[] args) throws Exception {
+			// 10.创建一个参数化为String、名为list的ConcurrentLinkedDeque对象
+			ConcurrentLinkedDeque<String> list = new ConcurrentLinkedDeque<>();
+			// 11.创建一个存储100个Thread对象的数组threads
+			Thread threads[] = new Thread[100];
+
+			// 12.创建100个AddTask对象，对于它们中的每一个用一个线程来运行。用之前创建的数组来存储每个线程，并启动这些线程
+			for (int i = 0; i < threads.length; i++) {
+				AddTask task = new AddTask(list);
+				threads[i] = new Thread(task);
+				threads[i].start();
+			}
+			System.out.printf("Main: %d AddTask threads have been launched\n", threads.length);
+
+			// 13.使用join()方法，等待这些线程的完成
+			for (int i = 0; i < threads.length; i++) {
+				threads[i].join();
+			}
+			System.out.printf("Main: Size of the List: %d\n", list.size());
+
+			// 15.创建100个PollTask对象，对于它们中的每一个用一个线程来运行。用之前创建的数组来存储每个线程，并启动这些线程
+			for (int i = 0; i < threads.length; i++) {
+				PollTask task = new PollTask(list);
+				threads[i] = new Thread(task);
+				threads[i].start();
+			}
+			System.out.printf("Main: %d PollTask threads have been launched\n", threads.length);
+
+			// 16.使用join()方法，等待这些线程的完成
+			for (int i = 0; i < threads.length; i++) {
+				threads[i].join();
+			}
+			// 17.将列表的大小写入控制台
+			System.out.printf("Main: Size of the List: %d\n", list.size());
+		}
+	}
+
+首先，你已执行 100 个 ``AddTask`` 任务来给列表添加元素。每个任务使用 ``add()`` 方法添加 10000 个元素到列表。这个方法将新元素插入到列表的尾部。当这些任务全部完成，你已在控制台打印这个列表元素的数量。此时，列表有 1000000 个元素。
+
+然后，你执行 100 个 ``PollTask`` 任务从列表中删除元素。每个任务使用 ``pollFirst()`` 和 ``pollLast()`` 方法删除列表的 10000 个元素。 ``pollFirst()`` 方法返回并删除列表的第一个元素， ``pollLast()`` 方法返回并删除列表的最后一个元素。如果列表为空，这些方法将返回一个 ``null`` 值。当这些任务全部完成，你已在控制台打印这个列表元素的数量。此时，列表有 ``0`` 个元素。
+
+你使用 ``size()`` 方法，打印列表元素的数量。你必须考虑到这个方法会返回一个并不真实的值，尤其是如果你使用这个方法，而有线程正在添加或删除列表的数据。这个方法必须遍历整个列表来计算元素而对于这个操作列表的内容可以改变。只有在没有任何线程修改列表的情况下，你使用这个方法时，你将保证这个返回值是正确的。
+
+``ConcurrentLinkedDeque`` 类提供更多方法来获取列表的元素：
+
+- ``getFirst()`` 和 ``getLast()`` ：这些方法将分别返回列表的第一个和最后一个元素。它们不会从列表删除返回的元素。如果列表为空，这些方法将抛出 ``NoSuchElementExcpetion`` 异常。
+- ``peek()`` 、 ``peekFirst()`` 和 ``peekLast()`` ：这些方法将分别返回列表的第一个和最后一个元素。它们不会从列表删除返回的元素。如果列表为空，这些方法将返回 ``null`` 值。
+- ``remove()`` 、 ``removeFirst()`` 、  ``removeLast()`` ：这些方法将分别返回列表的第一个和最后一个元素。它们将从列表删除返回的元素。如果列表为空，这些方法将抛出 ``NoSuchElementExcpetion`` 异常。
+
+使用阻塞线程安全列表
+===================
+列表（list）是最基本的集合。一个列表中的元素数量是不确定的，并且你可以添加、读取和删除任意位置上的元素。并发列表允许不同的线程在同一时刻对列表里的元素进行添加或删除，而不会产生任何数据不一致的问题。
+
+在这个指南中，你将学习如何在你的并发应用程序中使用阻塞的列表。阻塞列表与非阻塞列表的主要区别是，阻塞列表有添加和删除元素的方法，如果由于列表已满或为空而导致这些操作不能立即进行，它们将阻塞调用的线程，直到这些操作可以进行。 ``Java`` 包含实现阻塞列表的 ``LinkedBlockingDeque`` 类。
+
+你将使用以下两种任务来实现例子：
+
+- 添加大量数据到列表。
+- 从同一个列表中删除大量的数据。
+
+.. code-block:: java
+
+	// 1.创建一个实现Runnable接口的Client类
+	public class Client implements Runnable {
+		// 2.声明一个私有的、LinkedBlockingDeque类型的、参数化为String类的属性requestList
+		private LinkedBlockingDeque<String> requestList;
+
+		// 3.实现这个类的构造器，并初始化它的属性
+		public Client(LinkedBlockingDeque<String> requestList) {
+			this.requestList = requestList;
+		}
+
+		// 4.实现run()方法。使用requestList对象的put()方法，每秒往列表插入5个String对象。重复这个循环3次
+		@Override
+		public void run() {
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 5; j++) {
+					StringBuilder request = new StringBuilder();
+					request.append(i);
+					request.append(":");
+					request.append(j);
+					try {
+						requestList.put(request.toString());
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					System.out.printf("Client: %s at %s.\n", request, new Date());
+				}
+				try {
+					TimeUnit.SECONDS.sleep(2);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			System.out.printf("Client: End.\n");
+		}
+	}
+
+	// 5.创建这个例子的主类，通过实现Main类，并实现main()方法
+	public class Main {
+		public static void main(String[] args) throws Exception {
+			// 6.声明和创建参数化为String类、名为list的LinkedBlockingDeque
+			LinkedBlockingDeque<String> list = new LinkedBlockingDeque<>(3);
+
+			// 7.创建和启动一个Thread对象来执行client任务
+			Client client = new Client(list);
+			Thread thread = new Thread(client);
+			thread.start();
+
+			// 8.使用这个列表的take()方法，每300毫秒获取列表的3个字符串(String)对象。重复这个循环5次。将字符串(String)写入到控制台
+			for (int i = 0; i < 5; i++) {
+				for (int j = 0; j < 3; j++) {
+					String request = list.take();
+					System.out.printf("Main: Request: %s at %s. Size: %d\n", request, new Date(), list.size());
+				}
+				TimeUnit.MILLISECONDS.sleep(300);
+			}
+			// 9.写入一条信息表明程序的结束
+			System.out.printf("Main: End of the program.\n");
+		}
+	}
+
+在这个指南中，你已使用参数化为 ``String`` 类的 ``LinkedBlockingDeque`` 来处理非阻塞并发列表的数据。
+
+``Client`` 类使用 ``put()`` 方法添加字符串到列表中。如果列表已满（因为你已使用固定大小来创建它），这个方法阻塞线程的执行，直到列表有可用空间。
+
+``Main`` 类使用 ``take()`` 方法从列表中获取字符串，如果列表为空，这个方法将阻塞线程的执行，直到列表中有元素。
+
+在这个例子中，使用 ``LinkedBlockingDeque`` 类的这两个方法，如果它们在阻塞时被中断，将抛出 ``InterruptedException`` 异常。所以，你必须包含必要的代码来捕捉这个异常。
+
+``LinkedBlockingDeque`` 类同时提供方法用于添加和获取列表的元素，而不被阻塞，而是抛出异常，或返回 ``null`` 值。这些方法是：
+
+- ``takeFirst()`` 和 ``takeLast()`` ：这些方法分别返回列表的第一个和最后一个元素。它们从列表删除返回的元素。如果列表为空，这些方法将阻塞线程，直到列表有元素。
+- ``getFirst()`` 和 ``getLast()`` ：这些方法分别返回列表的第一个和最后一个元素。它们不会从列表删除返回的元素。如果列表为空，这些方法将抛出 ``NoSuchElementExcpetion`` 异常。
+- ``peek()`` 、 ``peekFirst()`` 和 ``peekLast()`` ：这些方法分别返回列表的第一个和最后一个元素。它们不会从列表删除返回的元素。如果列表为空，这些方法将返回 ``null`` 值。
+- ``poll()`` 、 ``pollFirst()`` 和 ``pollLast()`` ：这些方法分别返回列表的第一个和最后一个元素。它们从列表删除返回的元素。如果列表为空，这些方法将返回 ``null`` 值。
+- ``add()`` 、 ``addFirst()`` 、 ``addLast()`` ：这些方法分别在第一个位置和最后一个位置上添加元素。如果列表已满（你已使用固定大小创建它），这些方法将抛出 ``IllegalStateException`` 异常。
+
+
+用优先级对使用阻塞线程安全列表排序
+===============================
+一个典型的需求是，当你需要使用一个有序列表的数据结构时， Java 提供的 ``PriorityBlockingQueue`` 类就拥有这种功能。
+
+你想要添加到 ``PriorityBlockingQueue`` 中的所有元素必须实现 ``Comparable`` 接口。这个接口有一个 ``compareTo()`` 方法，它接收同样类型的对象，你有两个比较的对象：一个是执行这个方法的对象，另一个是作为参数接收的对象。如果本地对象小于参数，则该方法返回小于 ``0`` 的数值。如果本地对象大于参数，则该方法返回大于 ``0`` 的数值。如果本地对象等于参数，则该方法返回等于 ``0`` 的数值。
+
+``PriorityBlockingQueue`` 使用 ``compareTo()`` 方法决定插入元素的位置。（校注：默认情况下）较大的元素将被放在队列的尾部。
+
+阻塞数据结构（blocking data structure）是 ``PriorityBlockingQueue`` 的另一个重要特性。它有这样的方法，如果它们不能立即进行它们的操作，则阻塞这个线程直到它们的操作可以进行。
+
+在这个指南中，你将学习如何使用 ``PriorityBlockingQueue`` 类实现一个例子，你将在相同的列表上使用不同的优先级存储大量事件（event），然后检查队列的排序是否是你想要的。
+
+.. code-block:: java
+
+	// 1.实现Event类，并指定它实现参数化为Event类的Comparable接口
+	public class Event implements Comparable<Event> {
+		// 2.声明一个私有的、int类型的属性thread，用来存储已创建事件的线程数
+		private int thread;
+
+		// 3.声明一个私有的、int类型的属性priority，用来存储事件的优先级
+		private int priority;
+
+		// 4.实现这个类的构造器，并初始化它的属性
+		public Event(int thread, int priority) {
+			this.thread = thread;
+			this.priority = priority;
+		}
+
+		// 5.实现getThread()方法，用来返回thread属性的值
+		public int getThread() {
+			return thread;
+		}
+		// 6.实现getPriority()方法，用来返回priority属性的值
+		public int getPriority() {
+			return priority;
+		}
+
+		// 7.实现compareTo()方法。它接收Event作为参数，并且比较当前事件与参数的优先级。如果当前事件的优先级更大，则返回-1，如果这两个优先级相等，则返回0，如果当前事件的优先级更小，则返回1。注意，这与大多数Comparator.compareTo()的实现是相反的
+		@Override
+		public int compareTo(Event e) {
+			if (this.priority > e.getPriority()) {
+				return -1;
+			} else if (this.priority < e.getPriority()) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
+
+	// 8.创建一个Task类，并指定它实现Runnable接口
+	public class Task implements Runnable {
+		// 9.声明一个私有的、int类型的属性id，用来存储任务的数字标识
+		private int id;
+		// 10.声明一个私有的、参数化为Event类的PriorityBlockingQueue类型的属性queue，用来存储任务产生的事件
+		private PriorityBlockingQueue<Event> queue;
+		// 11.实现这个类的构造器，并初始化它的属性
+		public Task(int id, PriorityBlockingQueue<Event> queue) {
+			this.id = id;
+			this.queue = queue;
+		}
+
+		// 12.实现run()方法。它存储100个事件到队列，使用它们的ID来标识创建事件的任务，并给予不断增加的数作为优先级。使用add()方法添加事件到队列中
+		@Override
+		public void run() {
+			for (int i = 0; i < 1000; i++) {
+				Event event = new Event(id, i);
+				queue.add(event);
+			}
+		}
+	}
+
+	// 13.实现这个例子的主类，通过创建Main类，并实现main(）方法
+	public class Main {
+		public static void main(String[] args) {
+			// 14.创建一个参数化为Event类的PriorityBlockingQueue对象
+			PriorityBlockingQueue<Event> queue = new PriorityBlockingQueue<>();
+			// 15.创建一个有5个Thread对象的数组，用来存储执行5个任务的线程
+			Thread taskThreads[] = new Thread[5];
+			// 16.创建5个Task对象。存储前面创建的线程数组
+			for (int i = 0; i < taskThreads.length; i++) {
+				Task task = new Task(i, queue);
+				taskThreads[i] = new Thread(task);
+			}
+
+			// 17.启动前面创建的5个线程
+			for (int i = 0; i < taskThreads.length; i++) {
+				taskThreads[i].start();
+			}
+
+			// 18.使用join()方法，等待这5个线程的结束
+			for (int i = 0; i < taskThreads.length; i++) {
+				try {
+					taskThreads[i].join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			// 19.将列队真实大小和存储在它里面的事件写入到控制台。使用poll()方法从队列中取出事件
+			System.out.printf("Main: Queue Size: %d\n", queue.size());
+			for (int i = 0; i < taskThreads.length * 1000; i++) {
+				Event event = queue.poll();
+				System.out.printf("Thread %s: Priority %d\n", event.getThread(), event.getPriority());
+			}
+			// 20.将队列最后的大小写入到控制台
+			System.out.printf("Main: Queue Size: %d\n", queue.size());
+			System.out.printf("Main: End of the program\n");
+		}
+	}
+
+在这个指南中，你已使用 ``PriorityBlockingQueue`` 实现 ``Event`` 对象的一个优先级队列。正如我们在引言中提到的，所有存储在 ``PriorityBlockingQueue`` 的元素必须实现 ``Comparable`` 接口，所以，你已在 ``Event`` 类中实现 ``compareTo()`` 方法。
+
+所有事件都有一个优先级属性。拥有更高优先级的元素将成为队列的第一个元素。当你已实现 ``compareTo()`` 方法，如果执行这个方法的事件拥有比作为参数传入的事件更高的优先级时，它将返回 ``-1`` 。在其他情况下，如果执行这个方法的事件拥有比作为参数传入的事件更低的优先级时，它将返回 ``1`` 。如果这两个对象拥有相同优先级， ``compareTo()`` 方法将返回 ``0`` 。在这种情况下， ``PriorityBlockingQueue`` 类并不能保证元素的顺序。
+
+我们已实现 ``Task`` 类来添加 ``Event`` 对象到优先级队列中。每个任务对象使用 ``add()`` 方法往队列添加 ``1000`` 个事件（0到99种优先级）。
+
+``Main`` 类的 ``main()`` 方法创建 5 个 ``Task`` 对象，并用相应的线程执行它们。当所有的线程完成它们的执行，你已将所有元素写入到控制台。我们使用 ``poll()`` 方法从队列中获取元素。这个方法返回并删除队列的第一个元素。
+
+``PriorityBlockingQueue`` 类提供其他有趣的方法，以下是其中一些方法的描述：
+
+- ``clear()`` ：这个方法删除队列中的所有元素。
+- ``take()`` ：这个方法返回并删除队列中的第一个元素。如果队列是空的，这个方法将阻塞线程直到队列有元素。
+- ``put(E e)`` ：``E`` 是用来参数化 ``PriorityBlockingQueue`` 类的类。这个方法将作为参数传入的元素插入到队列中。
+- ``peek()`` ：这个方法返回列队的第一个元素，但不删除它。
+
+使用线程安全与带有延迟元素的列表
+==============================
+DelayedQueue 类是 Java API 提供的一种有趣的数据结构，并且你可以用在并发应用程序中。在这个类中，你可以存储带有激活日期的元素。方法返回或抽取队列的元素将忽略未到期的数据元素。它们对这些方法来说是看不见的。
+
+为了获取这种行为，你想要存储到 DelayedQueue 类中的元素必须实现 Delayed 接口。这个接口允许你处理延迟对象，所以你将实现存储在 DelayedQueue 对象的激活日期，这个激活时期将作为对象的剩余时间，直到激活日期到来。这个接口强制实现以下两种方法：
+
+- ``compareTo(Delayed o)`` ： ``Delayed`` 接口继承 ``Comparable`` 接口。如果执行这个方法的对象的延期小于作为参数传入的对象时，该方法返回一个小于 ``0`` 的值。如果执行这个方法的对象的延期大于作为参数传入的对象时，该方法返回一个大于 ``0`` 的值。如果这两个对象有相同的延期，该方法返回 ``0`` 。
+- ``getDelay(TimeUnit unit)`` ：该方法返回与此对象相关的剩余延迟时间，以给定的时间单位表示。 ``TimeUnit`` 类是一个枚举类，有以下常量：DAYS、HOURS、 MICROSECONDS、MILLISECONDS、 MINUTES、 NANOSECONDS 和 SECONDS 。
+
+在这个例子中，你将学习如何使用 ``DelayedQueue`` 类来存储一些具有不同激活日期的事件。
+
+.. code-block:: java
+
+	// 1.创建一个实现Delayed接口的Event类
+	public class Event implements Delayed {
+		// 2.声明一个私有的、Date类型的属性startDate
+		private Date startDate;
+		// 3.实现这个类的构造器，并初始化它的属性
+		public Event(Date startDate) {
+			this.startDate = startDate;
+		}
+
+		// 4.实现compareTo()方法。它接收一个Delayed对象作为参数。返回当前对象的延期与作为参数传入对象的延期之间的差异
+		@Override
+		public int compareTo(Delayed o) {
+			long result = this.getDelay(TimeUnit.NANOSECONDS) - o.getDelay(TimeUnit.NANOSECONDS);
+
+			if (result < 0) {
+				return -1;
+			} else if (result > 0) {
+				return 1;
+			}
+
+			return 0;
+		}
+
+		// 5.实现getDelay()方法。返回对象的startDate与作为参数接收的TimeUnit的真实日期之间的差异
+		@Override
+		public long getDelay(TimeUnit unit) {
+			Date now = new Date();
+			long diff = startDate.getTime() - now.getTime();
+			return unit.convert(diff, TimeUnit.MILLISECONDS);
+		}
+	}
+
+	// 6.创建一个实现Runnable接口的Task类
+	public class Task implements Runnable {
+		// 7.声明一个私有的、int类型的属性id，用来存储任务的标识数字
+		private int id;
+		// 8.声明一个私有的、参数化为Event类的DelayQueue类型的属性queue
+		private DelayQueue<Event> queue;
+		// 9.实现这个类的构造器，并初始化它的属性
+		public Task(int id, DelayQueue<Event> queue) {
+			this.id = id;
+			this.queue = queue;
+		}
+
+		// 10.实现run()方法。首先，计算任务将要创建的事件的激活日期。添加等于对象ID的实际日期秒数
+		@Override
+		public void run() {
+			Date now = new Date();
+			Date delay = new Date();
+			delay.setTime(now.getTime() + (id * 1000));
+
+			System.out.printf("Thread %s: %s\n", id, delay);
+			// 11.使用add()方法，在队列中存储100个事件
+			for (int i = 0; i < 100; i++) {
+				Event event = new Event(delay);
+				queue.add(event);
+			}
+		}
+	}
+
+	// 12.通过创建Main类，并实现main()方法，来实现这个例子的主类
+	public class Main {
+		public static void main(String[] args) throws Exception {
+			// 13.创建一个参数化为Event类的DelayedQueue对象
+			DelayQueue<Event> queue = new DelayQueue<>();
+			// 14.创建一个有5个Thread对象的数组，用来存储将要执行的任务
+			Thread threads[] = new Thread[5];
+			// 15.创建5个具有不同IDs的Task对象
+			for (int i = 0; i < threads.length; i++) {
+				Task task = new Task(i + 1, queue);
+				threads[i] = new Thread(task);
+			}
+
+			// 16.开始执行前面创建的5个任务
+			for (int i = 0; i < threads.length; i++) {
+				threads[i].start();
+			}
+
+			// 17.使用join()方法等待任务的结束
+			for (int i = 0; i < threads.length; i++) {
+				threads[i].join();
+			}
+
+			// 18.将存储在队列中的事件写入到控制台。当队列的大小大于0时，使用poll()方法获取一个Event类。如果它返回null，令主线程睡眠500毫秒，等待更多事件的激活
+			do {
+				int counter = 0;
+				Event event;
+				do {
+					event = queue.poll();
+					if (event != null)
+						counter++;
+				} while (event != null);
+				System.out.printf("At %s you have read %d events\n", new Date(), counter);
+				TimeUnit.MILLISECONDS.sleep(500);
+			} while (queue.size() > 0);
+		}
+	}
+
+在这个指南中，我们已实现 ``Event`` 类。这个类只有一个属性（表示事件的激活日期），实现了 ``Delayed`` 接口，所以，你可以在 ``DelayedQueue`` 类中存储 ``Event`` 对象。
+
+``getDelay()`` 方法返回在实际日期和激活日期之间的纳秒数。这两个日期都是 ``Date`` 类的对象。你已使用 ``getTime()`` 方法返回一个被转换成毫秒的日期，你已转换那个值为作为参数接收的 ``TimeUnit`` 。 ``DelayedQueue`` 类使用纳秒工作，但这一点对于你来说是透明的。
+
+对于 ``compareTo()`` 方法，如果执行这个方法的对象的延期小于作为参数传入的对象的延期，该方法返回小于 ``0`` 的值。如果执行这个方法的对象的延期大于作为参数传入的对象的延期，该方法返回大于 ``0`` 的值。如果这两个对象的延期相等，则返回 ``0`` 。
+
+你同时实现了 ``Task`` 类。这个类有一个整数属性 ``id`` 。当一个 ``Task`` 对象被执行，它增加一个等于任务 ``ID`` 的秒数作为实际日期，这是被这个任务存储在 ``DelayedQueue`` 类的事件的激活日期。每个 ``Task`` 对象使用 ``add()`` 方法存储 ``100`` 个事件到队列中。
+
+最后，在 ``Main`` 类的 ``main()`` 方法中，你已创建 ``5`` 个 ``Task`` 对象，并用相应的线程来执行它们。当这些线程完成它们的执行，你已使用 ``poll()`` 方法将所有元素写入到控制台。这个方法检索并删除队列的第一个元素。如果队列中没有任务到期的元素，这个方法返回 ``null`` 值。你调用 ``poll()`` 方法，并且如果它返回一个 ``Evnet`` 类，你增加计数器。当 ``poll()`` 方法返回 ``null`` 值时，你写入计数器的值到控制台，并且令线程睡眠半秒等待更多的激活事件。当你获取存储在队列中的 ``500`` 个事件，这个程序执行结束。
+
+.. note:: 注意：你必须十分小心 ``size()`` 方法。它返回列表中的所有元素数量，包含激活与未激活元素。
+
+``DelayQueue`` 类提供其他有趣方法，如下：
+
+- ``clear()`` ：这个方法删除队列中的所有元素。
+- ``offer(E e)`` ： ``E`` 是代表用来参数化 ``DelayQueue`` 类的类。这个方法插入作为参数传入的元素到队列中。
+- ``peek()`` ：这个方法检索，但不删除队列的第一个元素。
+- ``take()`` ：这具方法检索并删除队列的第一个元素。如果队列中没有任何激活的元素，执行这个方法的线程将被阻塞，直到队列有一些激活的元素。
+
+使用线程安全的导航地图
+====================
+Java API 提供的有趣的数据结构，并且你可以在并发应用程序中使用，它就是 ``ConcurrentNavigableMap`` 接口的定义。实现 ``ConcurrentNavigableMap`` 接口的类存储以下两部分元素：
+
+- 唯一标识元素的 key
+- 定义元素的剩余数据
+
+每部分在不同的类中实现。
+
+Java API 也提供了这个接口的实现类，这个类是 ``ConcurrentSkipListMap`` ，它实现了非阻塞列表且拥有 ``ConcurrentNavigableMap`` 的行为。在内部实现中，它使用 ``Skip List`` 来存储数据。 ``Skip List`` 是基于并行列表的数据结构，它允许我们获取类似二叉树的效率。使用它，你可以得到一个排序的数据结构，这比排序数列使用更短的访问时间来插入、搜索和删除元素。
+
+注意：在1990年，由William Pugh引入 ``Skip List`` 。
+
+当你往 ``map`` 中插入数据时，它使用 ``key`` 来排序它们，所以，所有元素将是有序的。除了返回具体的元素，这个类也提供了获取 ``map`` 的子 ``map`` 的方法。
+
+在这个指南中，你将学习如何使用 ``ConcurrentSkipListMap`` 类来实现一个通讯录的 ``map`` 。
+
+.. code-block:: java
+
+	// 1.创建一个Contact类
+	public class Contact {
+		// 2.声明两个私有的、String类型的属性name和phone
+		private String name;
+		private String phone;
+
+		// 3.实现这个类的构造器，并初始化它的属性
+		public Contact(String name, String phone) {
+			this.name = name;
+			this.phone = phone;
+		}
+
+		// 4.实现返回name和phone属性值的方法
+		public String getName() {
+			return name;
+		}
+
+		public String getPhone() {
+			return phone;
+		}
+	}
+
+	// 5.创建一个Task类，并指定它实现Runnable接口
+	public class Task implements Runnable {
+		// 6.声明一个私有的、参数化为String类和Contact类的ConcurrentSkipListMap类型的属性map
+		private ConcurrentSkipListMap<String, Contact> map;
+		// 7.声明一个私有的、String类型的属性id，用来存储当前任务的ID
+		private String id;
+		// 8.实现这个类的构造器，用来存储它的属性
+		public Task(ConcurrentSkipListMap<String, Contact> map, String id) {
+			this.map = map;
+			this.id = id;
+		}
+
+		// 9.实现run()方法。使用任务的ID和创建Contact对象的增长数，在map中存储1000个不同的通讯录。使用put()方法添加通讯录到map中
+		@Override
+		public void run() {
+			for (int i = 0; i < 1000; i++) {
+				Contact contact = new Contact(id, String.valueOf(i + 1000));
+				map.put(id + contact.getPhone(), contact);
+			}
+		}
+	}
+
+	// 10.通过创建Main类，并添加main()方法来实现这个例子的主类
+	public class Main {
+		public static void main(String[] args) {
+			// 11.创建一个参数化为String类和Contact类的ConcurrentSkipListMap对象map
+			ConcurrentSkipListMap<String, Contact> map = new ConcurrentSkipListMap<>();
+			// 12.创建一个有25个Thread对象的数组，用来存储你将要执行的所有任务
+			Thread threads[] = new Thread[25];
+			int counter = 0;
+
+			// 13.创建和启动25个任务，对于每个任务指定一个大写字母作为ID
+			for (char i = 'A'; i < 'Z'; i++) {
+				Task task = new Task(map, String.valueOf(i));
+				threads[counter] = new Thread(task);
+				threads[counter].start();
+				counter++;
+			}
+
+			// 14.使用join()方法等待线程的结束
+			for (int i = 0; i < threads.length; i++) {
+				try {
+					threads[i].join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			// 15.使用firstEntry()方法获取map的第一个实体，并将它的数据写入到控制台
+			System.out.printf("Main: Size of the map: %d\n", map.size());
+			Map.Entry<String, Contact> element;
+			Contact contact;
+			element = map.firstEntry();
+			contact = element.getValue();
+			System.out.printf("Main: First Entry: %s: %s\n", contact.getName(), contact.getPhone());
+
+			// 16.使用lastEntry()方法获取map的最后一个实体，并将它的数据写入到控制台
+			element = map.lastEntry();
+			contact = element.getValue();
+			System.out.printf("Main: Last Entry: %s: %s\n", contact.getName(), contact.getPhone());
+
+			// 17.使用subMap()方法获取map的子map，并将它们的数据写入到控制台
+			System.out.printf("Main: Submap from A1996 to B1002: \n");
+			ConcurrentNavigableMap<String, Contact> submap = map.subMap("A1996", "B1002");
+			do {
+				element = submap.pollFirstEntry();
+				if (element != null) {
+					contact = element.getValue();
+					System.out.printf("%s: %s\n", contact.getName(), contact.getPhone());
+				}
+			} while (element != null);
+		}
+	}
+
+在这个指南中，我们已实现 ``Task`` 类来存储 ``Contact`` 对象到 ``NavigableMap`` 中。每个通讯录都有一个名称（创建它的任务的 ``ID`` 的）和电话号码（ ``1000`` 到 ``2000`` 之间的数字）。我们已使用这些值的连续值作为通讯录的 ``key`` 。每个 ``Task`` 对象创建 ``1000`` 个通讯录，并使用 ``put()`` 方法将它们存储到 ``NavigableMap`` 中。
+
+注意：如果你插入的 ``key`` 已存在，那么这个 ``key`` 的元素将被新的元素取代。
+
+``Main`` 类的 ``main()`` 方法创建 ``25`` 个 ``Task`` 对象，并使用 ``A-Z`` 的字母作为 ``IDs`` 。然后，你已使用一些方法从 ``map`` 中获取数据。 ``firstEntry()`` 方法返回 ``map`` 第一个元素的 ``Map.Entry`` 对象，且不会删除这个元素。这个对象包含 ``key`` 和元素。你已调用 ``getValue()`` 方法来获取元素。你可以使用 ``getKey()`` 来获取元素的 ``key`` 。
+
+``lastEntry()`` 方法返回 ``map`` 最后一个元素的 ``Map.Entry`` 对象， ``subMap()`` 方法返回 ``map`` 的部分元素的 ``ConcurrentNavigableMap`` 对象。在这个例子中，元素拥有 A1996 到 B1002 之间的 ``key`` 。在这种情况下，你可以使用 ``pollFirst()`` 方法来处理 ``subMap()`` 方法返回的这些元素。这个方法将返回并删除 ``submap`` 中的第一个 ``Map.Entry`` 对象。
+
+``ConcurrentSkipListMap`` 类有其他有趣的方法，这些方法如下：
+
+- ``headMap(K toKey)`` ： ``K`` 是参数化 ``ConcurrentSkipListMap`` 对象的 ``Key`` 值的类。返回此映射的部分视图，其键值小于 ``toKey`` 。
+- ``tailMap(K fromKey)`` ： ``K`` 是参数化 ``ConcurrentSkipListMap`` 对象的 ``Key`` 值的类。返回此映射的部分视图，其键大于等于 ``fromKey`` 。
+- ``putIfAbsent(K key, V Value)`` ：如果 ``key`` 不存在 ``map`` 中，则这个方法插入指定的 ``key`` 和 ``value`` 。
+- ``pollLastEntry()`` ：这个方法返回并删除 ``map`` 中最后一个元素的 ``Map.Entry`` 对象。
+- ``replace(K key, V Value)`` ：如果这个 ``key`` 存在 ``map`` 中，则这个方法将指定 ``key`` 的 ``value`` 替换成新的 ``value`` 。
+
+生成并行随机数
+=============
+Java 并发 API 提供指定的类在并发应用程序中生成伪随机。它是 ``ThreadLocalRandom`` 类，这是 Java 7 版本中的新类。它使用线程局部变量。每个线程希望以不同的生成器生成随机数，但它们是来自相同类的管理，这对程序员是透明的。在这种机制下，你将获得比使用共享的 ``Random`` 对象为所有线程生成随机数更好的性能。
+
+在这个指南中，你将学习如何在并发应用程序中使用 ``ThreadLocalRandom`` 生成随机数。
+
+.. code-block:: java
+
+	// 1.创建一个TaskLocalRandom类，并指定它实现Runnable接口
+	public class TaskLocalRandom implements Runnable {
+
+		// 2.实现这个类的构造器，通过使用current()方法给实际线程初始化随机数生成器
+		public TaskLocalRandom() {
+			ThreadLocalRandom.current();
+		}
+
+		// 3.实现run()方法。获取执行这个任务的线程名称，使用nextInt()方法写入10个随机整数到控制台
+		@Override
+		public void run() {
+			String name = Thread.currentThread().getName();
+			for (int i = 0; i < 10; i++) {
+				System.out.printf("%s: %d\n", name, ThreadLocalRandom.current().nextInt(10));
+			}
+		}
+	}
+
+	// 4.通过实现Main类，并添加main()方法，实现这个例子的主类
+	public class Main {
+		public static void main(String[] args) {
+			// 5.为3个Thread对象创建一个数组
+			Thread threads[] = new Thread[3];
+
+			// 6.创建和启动TaskLocalRandom任务，用前面创建的数组存储线程
+			for (int i = 0; i < threads.length; i++) {
+				TaskLocalRandom task = new TaskLocalRandom();
+				threads[i] = new Thread(task);
+				threads[i].start();
+			}
+		}
+	}
+
+``TaskLocalRandom`` 类是这个例子的关键。在这个类的构造器中，我们使用 ``ThreadLocalRandom`` 的 ``current()`` 方法。这是一个静态方法，它返回当前线程的 ``ThreadLocalRandom`` 对象，你可以使用这个对象生成随机数。如果调用这个方法的线程没有与任何（ ``ThreadLocalRandom`` ）对象关联，这个类将创建一个新的 ``ThreadLocalRandom`` 对象。在这种情况下，你使用这个方法初始化与任务相关的随机数生成器，所以，在这个方法下次调用时，它将创建 ``ThreadLocalRandom`` 对象。
+
+在 ``TaskLocalRandom`` 类的 ``run()`` 方法中，调用一次 ``current()`` 方法来生成与线程相关的随机数生成器，然后，你调用一次 ``nextInt()`` 方法，并传入数值 ``10`` 作为参数。这个方法将返回 ``0`` 到 ``10`` 之间的一个伪随机数。每个任务生成 ``10`` 个随机数。
+
+``ThreadLocalRandom`` 类同样提供方法来生成 ``long`` 、 ``float`` 和 ``double`` 类型的数以及 ``Boolean`` 值。这些方法允许你传入一个数值作为参数，然后生成 ``0`` 到这个数值之间的随机数。还有允许你传入两个参数的其他方法，然后生成在这两个参数数值之间的随机数。
+
+使用原子变量
+===========
+在 Java 1.5 中就引入了原子变量，它提供对单个变量的原子操作。当你在操作一个普通变量时，你在 Java 实现的每个操作，在程序编译时会被转换成几个机器能读懂的指令。例如，当你分配一个值给变量，在 Java 你只使用了一个指令，但是当你编译这个程序时，这个指令就被转换成多个 JVM 语言指令。这样子的话当你在操作多个线程且共享一个变量时，就会导致数据不一致的错误。
+
+为了避免这样的问题， Java 引入了原子变量。当一个线程正在操作一个原子变量时，即使其他线程也想要操作这个变量，类的实现中含有一个检查那步骤操作是否完成的机制。 基本上，操作获取变量的值，改变本地变量值，然后尝试以新值代替旧值。如果旧值还是一样，那么就改变它。如果不一样，方法再次开始操作。这个操作称为 Compare and Set（校对注：简称CAS，比较并交换的意思）。
+
+原子变量不使用任何锁或者其他同步机制来保护它们的值的访问。他们的全部操作都是基于 CAS 操作。它保证几个线程可以同时操作一个原子对象也不会出现数据不一致的错误，并且它的性能比使用受同步机制保护的正常变量要好。
+
+在这个指南，你将学习怎样使用原子变量实现一个银行账户和 2 个不同的任务：一个存钱到账户和另一个从账户提取钱。在例子的实现中，你将使用 ``AtomicLong`` 类。
+
+.. code-block:: java
+
+	// 1. 创建一个类，名为 Account，来模拟银行账号
+	public class Account {
+		// 2. 声明一个私有 AtomicLong 属性，名为 balance，用来储存账号的余额
+		private AtomicLong balance;
+		// 3. 实现类的构造函数，初始化它的属性值
+		public Account() {
+			balance = new AtomicLong();
+		}
+		// 4. 实现一个方法，名为 getBalance()，用来返回余额属性值
+		public long getBalance() {
+			return balance.get();
+		}
+		// 5. 实现一个方法，名为 setBalance()，用来设置余额属性值
+		public void setBalance(long balance) {
+			this.balance.set(balance);
+		}
+		// 6. 实现一个方法，名为 addAmount()，来增加余额属性值
+		public void addAmount(long amount) {
+			this.balance.getAndAdd(amount);
+		}
+		// 7. 实现一个方法，名为 substractAmount() 来减少余额属性值
+		public void subtractAmount(long amount) {
+			this.balance.getAndAdd(-amount);
+		}
+	}
+
+	//8. 创建一个类，名为 并一定实现 Runnable 接口。这个类会模拟公司付款
+	public class Company implements Runnable {
+		//9. 声明一个私有 Account 属性，名为 account
+		private Account account;
+		//10. 实现类的构造函数，初始化它的属性值
+		public Company(Account account) {
+			this.account = account;
+		}
+
+		//11. 实现任务的 run() 方法。 使用 account 的 addAmount()方法来让它的余额做10次的递增，递增额为1000
+		@Override
+		public void run() {
+			for (int i = 0; i < 10; i++) {
+				account.addAmount(1000);
+			}
+		}
+	}
+
+	//12. 创建一个类，名为 Bank，并一定实现 Runnable 接口。这个类会模拟从一个账号提款
+	public class Bank implements Runnable {
+		//13. 声明一个私有 Account 属性，名为 account
+		private Account account;
+		//14. 实现类的构造函数，初始化它的属性值
+		public Bank(Account account) {
+			this.account = account;
+		}
+
+		//15. 实现任务的 run() 方法。使用 account 的 subtractAmount() 方法来让它的余额做10次的递减，递减额为1000
+		@Override
+		public void run() {
+			for (int i = 0; i < 10; i++) {
+				account.subtractAmount(1000);
+			}
+		}
+	}
+
+	//16. 创建例子的主类通过创建一个类，名为 Main 并添加 main()方法
+	public class Main {
+		public static void main(String[] args) {
+			//17. 创建一个 Account 对象，设置它的余额为 1000
+			Account account = new Account();
+			account.setBalance(1000);
+			//18. 创建新的 Company 任务和一个线程运行它
+			Company company = new Company(account);
+			Thread companyThread = new Thread(company);
+			// 创建一个新的 Bank t任务和一个线程运行它
+			Bank bank = new Bank(account);
+			Thread bankThread = new Thread(bank);
+			//19. 在操控台写上账号的初始余额
+			System.out.printf("Account : Initial Balance: %d\n", account.getBalance());
+			//20. 开始线程
+			companyThread.start();
+			bankThread.start();
+			//21. 使用 join() 方法等待线程的完结并把账号最终余额写入操控台
+			try {
+				companyThread.join();
+				bankThread.join();
+
+				System.out.printf("Account : Final Balance: %d\n", account.getBalance());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+这个例子的关键是 ``Account`` 类。在这个类，我们声明了一个 ``AtomicLong`` 属性，名为 ``balance`` ，用来储存账户余额，然后我们使用 ``AtomicLong`` 类提供的方法实现了操作余额的方法。为了实现 ``getBalance()`` 方法，返回余额的属性值，你要使用 ``AtomicLong`` 类的 ``get()`` 方法。为了实现 ``setBalance()`` 方法，设立余额值，你要使用 ``AtomicLong`` 类的 ``set()`` 方法。为了实现 ``addAmount()`` 方法，为余额值加上收入，你要使用 ``AtomicLong`` 类的 ``getAndAdd()`` 方法，用特定的参数值增加它并返回值。最后，为了实现 ``subtractAmount()`` 方法，减少余额值，你也要使用 ``getAndAdd()`` 方法。
+
+接着，你实现了 2 个不同的任务：
+
+``Company`` 类模拟了一个公司，增加余额值。这个类的每次任务会做 10 次的递增，递增值为 1000 。
+``Bank``  类模拟了一个银行，银行作为账号的拥有者而收取费用。这个类的每次任务会做 10 次的递减，递减值为 1000 。
+
+在 ``Main`` 类，你创建了一个有 ``1000`` 余额的 ``Account`` 对象。然后，你运行一个银行任务和一个公司任务，所以最终的账号余额一定是等同于初始余额。
+
+记得我们之前提到的， ``Java`` 还有其他的原子类哦。例如： ``AtomicBoolean`` ， ``AtomicInteger`` 和 ``AtomicReference`` 。
+
+使用原子数组
+===========
+当你实现一个多个线程共享一个或者多个对象的并发应用时，你就要使用像锁或者同步关键词（例如 ``synchronized`` ）来对他们的属性的访问进行保护，来避免并发造成的数据不一致的错误。
+
+但是这些机制会有以下一些缺点：
+死锁( dead lock )：例如：当一个线程等待一个锁的时候，会被阻塞，而这个锁被其他线程占用并且永不释放。这种情况就是死锁，程序在这种情况下永远都不会往下执行。
+
+即使只有一个线程在访问共享对象，它也要执行必要的获取锁和释放锁的代码。
+
+CAS(compare-and-swap)操作为并发操作对象的提供更好的性能，CAS操作通过以下3个步骤来实现对变量值得修改：
+
+1. 获取当前内存中的变量的值；
+2. 用一个新的临时变量(temporal variable)保存改变后的新值；
+3. 如果当前内存中的值等于变量的旧值，则将新值赋值到当前变量；否则不进行任何操作；
+
+对于这个机制，你不需要使用任何同步机制，这样你就避免了 ``deadlocks`` ，也获得了更好的性能。这种机制能保证多个并发线程对一个共享变量操作做到最终一致。
+
+``Java`` 在原子类中实现了 ``CAS`` 机制。这些类提供了 ``compareAndSet()`` 方法；这个方法是 ``CAS`` 操作的实现和其他方法的基础。
+
+Java 中还引入了原子 ``Array`` ，用来实现 ``Integer`` 类型和 ``Long`` 类型数组的操作。在这个指南里，你将要学习如何使用 ``AtomicIntegerArray`` 类来操作原子 ``arrays`` 。
+
+.. code-block:: java
+
+	//1.创建一个类，名为 Incrementer，并实现 Runnable 接口
+	public class Incrementer implements Runnable {
+		//2.声明一个私有 AtomicIntegerArray 属性，名为 vector，用来储存一个整数 array
+		private AtomicIntegerArray vector;
+		//3.实现类的构造函数，初始化它的属性值
+		public Incrementer(AtomicIntegerArray vector) {
+			this.vector = vector;
+		}
+
+		//4.实现 run() 方法。使用 getAndIncrement() 方操作array里的所有元素
+		@Override
+		public void run() {
+			for (int i = 0; i < vector.length(); i++) {
+				vector.getAndIncrement(i);
+			}
+		}
+	}
+
+	//5.创建一个类，名为 Decrementer，并实现 Runnable 接口
+	public class Decrementer implements Runnable {
+		//6.声明一个私有 AtomicIntegerArray 属性，名为 vector，用来储存一个整数 array
+		private AtomicIntegerArray vector;
+		//7.实现类的构造函数，初始化它的属性值
+		public Decrementer(AtomicIntegerArray vector) {
+			this.vector = vector;
+		}
+
+		//8.实现 run() 方法。使用 getAndDecrement() 方法操作array里的所有元素
+		@Override
+		public void run() {
+			for (int i = 0; i < vector.length(); i++) {
+				vector.getAndDecrement(i);
+			}
+		}
+	}
+
+	//9.我们创建一个示例来进行示范，创建一个类，名为 Main 并添加 main()方法
+	public class Main {
+		public static void main(String[] args) {
+			//10.声明一个常量，名为 THREADS，分配它的值为 100。创建一个有1，000个元素的 AtomicIntegerArray 对象
+			final int THREADS = 100;
+
+			AtomicIntegerArray vector = new AtomicIntegerArray(100);
+			//11. 创建一个 Incrementer 任务来操作之前创建的原子 array
+			Incrementer incrementer = new Incrementer(vector);
+			//12.创建一个 Decrementer 任务来操作之前创建的原子 array
+			Decrementer decrementer = new Decrementer(vector);
+
+			//13.创建2个array 分别存储 100 个Thread 对象
+			Thread threadIncrementer[] = new Thread[THREADS];
+			Thread threadDecrementer[] = new Thread[THREADS];
+			//14.创建并运行 100 个线程来执行 Incrementer 任务和另外 100 个线程来执行 Decrementer 任务。把线程储存入之前创建的arrays内
+			for (int i = 0; i < THREADS; i++) {
+				threadIncrementer[i] = new Thread(incrementer);
+				threadDecrementer[i] = new Thread(decrementer);
+
+				threadIncrementer[i].start();
+				threadDecrementer[i].start();
+			}
+			//15.使用 join() 方法来等待线程的完结
+			for (int i = 0; i < THREADS; i++) {
+				try {
+					threadIncrementer[i].join();
+					threadDecrementer[i].join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			//16.把原子array里非0的元素写入操控台。使用 get() 方法来获取原子 array 元素
+			for (int i = 0; i < vector.length(); i++) {
+				if (vector.get(i) != 0) {
+					// 没有输出说明数据一致性，没有异常
+					System.out.println("Vector[" + i + "] : " + vector.get(i));
+				}
+			}
+			//17.在操控台写个信息表明例子结束
+			System.out.println("Main: End of the example");
+		}
+	}
+
+在这个例子里，你实现了2个不同的任务来操作 ``AtomicIntegerArray`` 对象：
+
+- ``Incrementer task`` : 这个类使用 ``getAndIncrement()`` 方法 ``array`` 里的全部元素 ``+1``
+- ``Decrementer task`` : 这个类使用 ``getAndDecrement()`` 方法 ``array`` 里的全部元素 ``-1``
+
+在 ``Main`` 类，你创建了有 ``1000`` 个元素的 ``AtomicIntegerArray`` ，然后你执行了 100 次 ``Incrementer`` 和 100 次 ``Decrementer`` 任务。在任务结束后，如果没有出现任何数据不一致错误，那么 ``array`` 的全部元素的值都为 0 。如果你运行这个任务，由于全部元素都是 0 ，你只会看到程序在操控台只写了结束信息。
+
+如今， Java 仅提供了另一个原子 ``array`` 类。它是 ``AtomicLongArray`` 类，与 ``AtomicIntegerArray`` 类提供了相同的方法。
+
+这些类的一些其他有趣的方法有：
+
+- ``get(int i)`` : 返回 ``array`` 中第 ``i`` 个位置上的值；
+- ``set(int I, int newValue)`` : 设置 ``array`` 中第 ``i`` 个位置上的值为 ``newValue`` ；

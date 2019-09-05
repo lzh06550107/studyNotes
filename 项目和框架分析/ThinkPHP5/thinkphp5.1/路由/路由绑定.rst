@@ -1,0 +1,124 @@
+****
+路由绑定
+****
+
+可以使用路由绑定简化 ``URL`` 或者路由规则的定义，绑定支持如下方式：
+
+绑定到模块/控制器/操作
+=====================
+把当前的 ``URL`` 绑定到模块/控制器/操作，最多支持绑定到操作级别，例如在路由配置文件中添加：
+
+.. code-block:: php
+
+	// 绑定当前的URL到 index模块
+	Route::bind('index');
+	// 绑定当前的URL到 index模块的blog控制器
+	Route::bind('index/blog');
+	// 绑定当前的URL到 index模块的blog控制器的read操作
+	Route::bind('index/blog/read');
+
+该方式针对路由到模块/控制器/操作有效，假如我们绑定到了 ``index`` 模块的 ``blog`` 控制器，那么原来的访问 ``URL`` 从
+
+.. code-block:: shell
+
+    http://serverName/index/blog/read/id/5
+
+可以简化成
+
+.. code-block:: shell
+
+    http://serverName/read/id/5
+
+如果定义了路由
+
+.. code-block:: php
+
+    Route::get('index/blog/:id','index/blog/read');
+
+那么访问 ``URL`` 就变成了
+
+.. code-block:: shell
+
+   http://serverName/5 
+
+绑定到命名空间
+=============
+把当前的 ``URL`` 绑定到某个指定的命名空间，例如：
+
+.. code-block:: php
+
+	// 绑定命名空间
+	Route::bind(':\app\index\controller');
+
+那么，我们接下来只需要通过
+
+.. code-block:: shell
+
+    http://serverName/blog/read/id/5
+
+就可以直接访问 ``\app\index\controller\Blog`` 类的 ``read`` 方法。
+
+
+绑定到类
+========
+把当前的 ``URL`` 直接绑定到某个指定的类，例如：
+
+.. code-block:: php
+
+	 // 绑定到类
+	Route::bind('\app\index\controller\Blog');   
+
+那么，我们接下来只需要通过
+
+.. code-block:: shell
+
+    http://serverName/read/id/5
+
+就可以直接访问 ``\app\index\controller\Blog`` 类的 ``read`` 方法。
+
+.. note:: 注意：绑定到命名空间和类之后，不会进行模块的初始化工作。
+
+入口文件绑定
+============
+
+如果我们需要给某个入口文件绑定模块，可以使用下面两种方式：
+
+手动添加绑定
+------------
+把当前入口文件绑定到指定的模块或者控制器，例如：
+
+.. code-block:: php
+
+	// [ 应用入口文件 ]
+	namespace think;
+
+	// 加载基础文件
+	require __DIR__ . '/../thinkphp/base.php';
+
+	// 支持事先使用静态方法设置Request对象和Config对象
+
+	// 绑定到index模块 执行应用并响应
+	Container::get('app')->bind('index')->run()->send();
+
+也支持绑定到控制器
+
+.. code-block:: php
+
+    Container::get('app')->bind('index/index')->run()->send();
+
+
+自动入口绑定
+-----------
+如果你的入口文件都是对应实际的模块名，那么可以使用入口文件自动绑定模块的功能，只需要在应用配置文件中添加：
+
+.. code-block:: php
+
+	// 开启入口文件自动绑定模块
+	'auto_bind_module'  =>  true,
+
+当我们重新添加一个 ``public/demo.php`` 入口文件，内容和 ``public/index.php`` 一样。
+
+但其实访问 ``demo.php`` 的时候，其实已经自动绑定到了 ``demo`` 模块。
+
+
+

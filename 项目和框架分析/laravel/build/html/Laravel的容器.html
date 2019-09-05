@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. 容器 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="4. Facades" href="Laravel的Facades.html"/>
+        <link rel="prev" title="2. 请求到console响应的生命周期" href="请求到响应的生命周期-console.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. 容器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">3.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">3.2. 绑定</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">3.2.1. 绑定基础</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">3.2.2. 简单绑定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">3.2.3. 绑定一个单例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">3.2.4. 绑定实例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">3.2.5. 绑定初始数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">3.2.6. 上下文绑定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">3.2.7. 绑定接口到实现</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">3.2.8. 标记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">3.2.9. 扩展绑定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">3.3. 解析实例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#make">3.3.1. make 方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">3.3.2. 自动注入</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">3.4. 容器事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#psr-11">3.5. PSR-11</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>3. 容器</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>3. 容器<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>3.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Laravel 服务容器是用于管理类的依赖和执行依赖注入的工具。依赖注入这个花俏名词实质上是指：类的依赖项通过构造函数，或者某些情况下通过「setter」方法「注入」到类中。</p>
+<p>来看一个简单的例子:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Repositories\UserRepository</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 用户存储库的实现。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var UserRepository</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$users</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 创建新的控制器实例。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  UserRepository  $users</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">UserRepository</span> <span class="nv">$users</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">users</span> <span class="o">=</span> <span class="nv">$users</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 显示指定用户的 profile。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  int  $id</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">show</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">users</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="nv">$id</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;user.profile&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在这个例子中，控制器 <code class="docutils literal"><span class="pre">UserController</span></code> 需要从数据源中获取 <code class="docutils literal"><span class="pre">users</span></code> 。因此，我们要注入可以获取 <code class="docutils literal"><span class="pre">users</span></code> 的服务。在这种情况下， <code class="docutils literal"><span class="pre">UserRepository</span></code> 可能是使用 <code class="docutils literal"><span class="pre">Eloquent</span></code> 从数据库中获取 <code class="docutils literal"><span class="pre">user</span></code> 信息。因为 <code class="docutils literal"><span class="pre">Repository</span></code> 是通过 <code class="docutils literal"><span class="pre">UserRepository</span></code> 注入的，所以我们可以轻易地将其切换为另一个实现。这种注入方式的便利之处还体现在当我们为应用编写测试时，我们还可以轻松地「模拟」或创建 <code class="docutils literal"><span class="pre">UserRepository</span></code> 的虚拟实现。</p>
+</div>
+<div class="section" id="id3">
+<h2>3.2. 绑定<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id4">
+<h3>3.2.1. 绑定基础<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>因为几乎所有服务容器绑定操作都是在 服务提供器 中注册的，所以文档中大多数例子都是使用了在服务提供器中绑定的容器。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果类没有依赖任何接口，就没有必要将类绑定到容器中。容器不需要指定如何构建这些对象，因为它可以使用反射自动解析这些对象。</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>3.2.2. 简单绑定<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>在服务提供器中，你可以通过 <code class="docutils literal"><span class="pre">$this-&gt;app</span></code> 属性访问容器。我们可以通过 <code class="docutils literal"><span class="pre">bind</span></code> 方法注册绑定，传递我们想要注册的类或接口名称再返回类的实例的 <code class="docutils literal"><span class="pre">Closure</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="s1">&#39;HelpSpot\API&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$app</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 接口名称</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">HelpSpot\API</span><span class="p">(</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;HttpClient&#39;</span><span class="p">));</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">我们接受容器本身作为解析器的参数。然后，我们可以使用容器来解析正在构建的对象的子依赖。</p>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>3.2.3. 绑定一个单例<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">singleton</span></code> 方法将类或接口绑定到只能解析一次的容器中。绑定的单例被解析后，相同的对象实例会在随后的调用中返回到容器中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">singleton</span><span class="p">(</span><span class="s1">&#39;HelpSpot\API&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$app</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">HelpSpot\API</span><span class="p">(</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;HttpClient&#39;</span><span class="p">));</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>3.2.4. 绑定实例<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>你也可以使用 <code class="docutils literal"><span class="pre">instance</span></code> 方法(该方法第二个参数必须是实例对象)将现有对象实例绑定到容器中。给定的实例会始终在随后的调用中返回同一个实例到容器中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$api</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">HelpSpot\API</span><span class="p">(</span><span class="k">new</span> <span class="nx">HttpClient</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">instance</span><span class="p">(</span><span class="s1">&#39;HelpSpot\API&#39;</span><span class="p">,</span> <span class="nv">$api</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>3.2.5. 绑定初始数据<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>当你有一个类不仅需要接受一个注入类，还需要注入一个基本值（比如整数）。你可以使用上下文绑定来轻松注入你的类需要的任何值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">when</span><span class="p">(</span><span class="s1">&#39;App\Http\Controllers\UserController&#39;</span><span class="p">)</span>
+          <span class="o">-&gt;</span><span class="na">needs</span><span class="p">(</span><span class="s1">&#39;$variableName&#39;</span><span class="p">)</span> <span class="c1">// 此处为构造函数的参数名称</span>
+          <span class="o">-&gt;</span><span class="na">give</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span> <span class="c1">// 此处为传入构造函数参数的值</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>3.2.6. 上下文绑定<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>有时候，你可能有两个类使用了相同的接口，但你希望每个类都能注入不同的实现。例如，两个控制器可能需要依赖不同的 <code class="docutils literal"><span class="pre">Illuminate\Contracts\Filesystem\Filesystem</span></code> 契约实现。 Laravel 提供了一个简单、优雅的接口来定义这个行为：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Storage</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\PhotoController</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\VideoController</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Filesystem\Filesystem</span><span class="p">;</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">when</span><span class="p">(</span><span class="nx">PhotoController</span><span class="o">::</span><span class="na">class</span><span class="p">)</span>
+          <span class="o">-&gt;</span><span class="na">needs</span><span class="p">(</span><span class="nx">Filesystem</span><span class="o">::</span><span class="na">class</span><span class="p">)</span>
+          <span class="o">-&gt;</span><span class="na">give</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="k">return</span> <span class="nx">Storage</span><span class="o">::</span><span class="na">disk</span><span class="p">(</span><span class="s1">&#39;local&#39;</span><span class="p">);</span>
+          <span class="p">});</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">when</span><span class="p">(</span><span class="nx">VideoController</span><span class="o">::</span><span class="na">class</span><span class="p">)</span>
+          <span class="o">-&gt;</span><span class="na">needs</span><span class="p">(</span><span class="nx">Filesystem</span><span class="o">::</span><span class="na">class</span><span class="p">)</span>
+          <span class="o">-&gt;</span><span class="na">give</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+              <span class="k">return</span> <span class="nx">Storage</span><span class="o">::</span><span class="na">disk</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">);</span>
+          <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>3.2.7. 绑定接口到实现<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>服务容器有一个强大的功能，就是将接口绑定到给定实现。例如，如果我们有一个 <code class="docutils literal"><span class="pre">EventPusher</span></code> 接口和一个 <code class="docutils literal"><span class="pre">RedisEventPusher</span></code> 实现。编写完接口的 <code class="docutils literal"><span class="pre">RedisEventPusher</span></code> 实现后，我们就可以在服务容器中注册它，像这样：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span>
+    <span class="s1">&#39;App\Contracts\EventPusher&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;App\Services\RedisEventPusher&#39;</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>这么做相当于告诉容器：当一个类需要实现 <code class="docutils literal"><span class="pre">EventPusher</span></code> 时，应该注入 <code class="docutils literal"><span class="pre">RedisEventPusher</span></code> 。现在我们就可以在构造函数或者任何其他通过服务容器注入依赖项的地方使用类型提示注入 <code class="docutils literal"><span class="pre">EventPusher</span></code> 接口：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">App\Contracts\EventPusher</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Create a new class instance.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  EventPusher  $pusher</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">EventPusher</span> <span class="nv">$pusher</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pusher</span> <span class="o">=</span> <span class="nv">$pusher</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>3.2.8. 标记<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>有时候，你可能需要解析某个「分类」下的所有绑定。例如，你正在构建一个报表的聚合器，它接收一个包含不同 <code class="docutils literal"><span class="pre">Report</span></code> 接口实现的数组。注册了 <code class="docutils literal"><span class="pre">Report</span></code> 实现后，你可以使用 <code class="docutils literal"><span class="pre">tag</span></code> 方法为其分配标签：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="s1">&#39;SpeedReport&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">});</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="s1">&#39;MemoryReport&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">});</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">tag</span><span class="p">([</span><span class="s1">&#39;SpeedReport&#39;</span><span class="p">,</span> <span class="s1">&#39;MemoryReport&#39;</span><span class="p">],</span> <span class="s1">&#39;reports&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>服务被标记后，你可以通过 <code class="docutils literal"><span class="pre">tagged</span></code> 方法轻松地将它们全部解析：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<p>&lt;?php
+$this-&gt;app-&gt;bind('ReportAggregator', function ($app) {</p>
+<blockquote>
+<div>return new ReportAggregator($app-&gt;tagged('reports'));</div></blockquote>
+<p>});</p>
+<p><code class="docutils literal"><span class="pre">tagged</span></code> 方法返回的是该标签包含的实例化数组。</p>
+</div>
+<div class="section" id="id12">
+<h3>3.2.9. 扩展绑定<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">extend</span></code> 方法可以修改解析的服务。例如，当一个服务被解析后，你可以添加额外的代码去修饰或配置这个服务。 <code class="docutils literal"><span class="pre">extend</span></code> 方法接受一个闭包，闭包的唯一参数和返回值都是一个服务实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">extend</span><span class="p">(</span><span class="nx">Service</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="nv">$service</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">DecoratedService</span><span class="p">(</span><span class="nv">$service</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>3.3. 解析实例<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<div class="section" id="make">
+<h3>3.3.1. make 方法<a class="headerlink" href="#make" title="永久链接至标题">¶</a></h3>
+<p>你可以使用 <code class="docutils literal"><span class="pre">make</span></code> 方法将容器中的类实例解析出来。 <code class="docutils literal"><span class="pre">make</span></code> 方法接受要解析的类或接口的名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$api</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;HelpSpot\API&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>如果你的代码处于不能访问 <code class="docutils literal"><span class="pre">$app</span></code> 变量的位置，你可以使用全局的辅助函数 <code class="docutils literal"><span class="pre">resolve</span></code></dt>
+<dd>：</dd>
+</dl>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$api</span> <span class="o">=</span> <span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;HelpSpot\API&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>该方法本质是调用 <code class="docutils literal"><span class="pre">app('HelpSpot\API')</span></code> 而 <code class="docutils literal"><span class="pre">app</span></code> 方法又是调用 <code class="docutils literal"><span class="pre">Container::getInstance()-&gt;make($abstract,</span> <span class="pre">$parameters)</span></code> 。</p>
+<p>如果你的某些类的依赖项不能通过容器去解析，那你可以通过将它们作为关联数组传递到 <code class="docutils literal"><span class="pre">makeWith</span></code> 方法来注入它们。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$api</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">makeWith</span><span class="p">(</span><span class="s1">&#39;HelpSpot\API&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>3.3.2. 自动注入<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>你可以简单地使用「类型提示」的方式在由容器解析的类的构造函数中添加依赖项，包括 控制器、监听事件、队列任务、中间件 等。事实上，这是你的大多数对象也应该由容器解析。</p>
+<p>例如，你可以在控制器的构造函数中对应用程序定义的 <code class="docutils literal"><span class="pre">Repository</span></code> 使用类型提示。 <code class="docutils literal"><span class="pre">Repository</span></code> 会被自动解析并注入到类中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Users\Repository</span> <span class="k">as</span> <span class="nx">UserRepository</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * UserRepository 的实例对象</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$users</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 控制器的构造函数</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  UserRepository  $users</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">UserRepository</span> <span class="nv">$users</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">users</span> <span class="o">=</span> <span class="nv">$users</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 显示 ID 对应的用户</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  int  $id</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">show</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id15">
+<h2>3.4. 容器事件<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h2>
+<p>每当服务容器解析一个对象时触发一个事件。你可以使用 <code class="docutils literal"><span class="pre">resolving</span></code> 方法监听这个事件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">resolving</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$object</span><span class="p">,</span> <span class="nv">$app</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 当容器解析任何类型时被调用</span>
+<span class="p">});</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">resolving</span><span class="p">(</span><span class="nx">HelpSpot\API</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$api</span><span class="p">,</span> <span class="nv">$app</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 当容器解析 &quot;HelpSpot\API&quot; 类型时被调用</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>如你所见，被解析的对象会被传递给回调中，让你在对象被传递出去之前可以在对象上设置任何属性。</p>
+</div>
+<div class="section" id="psr-11">
+<h2>3.5. PSR-11<a class="headerlink" href="#psr-11" title="永久链接至标题">¶</a></h2>
+<p>Laravel 的服务容器实现了 <code class="docutils literal"><span class="pre">PSR-11</span></code> 接口。 因此，你可以使用 <code class="docutils literal"><span class="pre">PSR-11</span></code> 容器『接口类型提示』来获取 Laravel 容器的实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Psr\Container\ContainerInterface</span><span class="p">;</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">ContainerInterface</span> <span class="nv">$container</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$service</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;Service&#39;</span><span class="p">);</span>
+
+    <span class="c1">//</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果该类型没有明确绑定到容器中，那么调用 <code class="docutils literal"><span class="pre">get</span></code> 方法时会抛出异常。</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的Facades.html" class="btn btn-neutral float-right" title="4. Facades" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="请求到响应的生命周期-console.html" class="btn btn-neutral" title="2. 请求到console响应的生命周期" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

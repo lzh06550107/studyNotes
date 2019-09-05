@@ -1,0 +1,1447 @@
+*****
+数据库操作
+*****
+``PhalApi`` 的数据库操作基于NotORM，并且专为海量数据而设计，即可支持分库分表的配置。此外，还有辅助的 ``SQL`` 生成脚本命令、在线调试功能。
+
+NotORM简介
+==========
+``NotORM`` 是一个优秀的开源 PHP 类库，可用于操作数据库。 ``PhalApi`` 的数据库操作，主要是依赖此 ``NotORM`` 来完成。
+
+所以，如果了解 ``NotORM`` 的使用，自然而然对 ``PhalApi`` 中的数据库操作也就一目了然了。但为了更符合接口类项目的开发， ``PhalApi`` 对 ``NotORM`` 的底层进行优化和调整。以下改动点包括但不限于：
+
+- 将原来返回的结果全部从对象类型改成数组类型，便于数据流通
+- 添加查询多条纪录的接口： ``NotORM_Result::fetchAll()`` 和 ``NotORM_Result::fetchRows()``
+- 添加支持原生 ``SQL`` 语句查询的接口： ``NotORM_Result::queryAll()`` 和 ``NotORM_Result::queryRows()``
+- ``limit`` 操作的调整，取消原来 ``OFFSET`` 关键字的使用
+- 当数据库操作失败时，抛出 ``PDOException`` 异常
+- 将结果集中以主键作为下标改为以顺序索引作为下标
+- 禁止全表删除，防止误删
+- 调整调试模式
+
+如何获取NotORM实例？
+-------------------
+在 ``PhalApi`` 中获取 ``NotORM`` 实例，有两种方式：全局获取方式、局部获取方式。
+
+- 全局获取：在任何地方，使用 ``DI`` 容器中的全局 ``notorm`` 服务： ``DI()->notorm``
+- 局部获取：在继承 ``PhalApi_Model_NotORM`` 的子类中使用： ``$this->getORM()``
+
+第一种全局获取的方式，可以用于任何地方，这是因为我们已经在初始化文件中注册了 ``DI()->notorm`` 这一服务。
+
+.. code-block:: php
+
+	// 数据操作 - 基于NotORM
+	DI()->notorm = new PhalApi_DB_NotORM(DI()->config->get('dbs'), DI()->debug);
+
+然后，再添加表名属性，即可使用相应的数据库表实例了。如 ``user`` 表的实例： ``DI()->notorm->user`` 。
+
+第二种局部获取的方式，仅限用于继承 ``PhalApi_Model_NotORM`` 的子类中。首先需要实现相应的 ``Model`` 子类，通常一个表对应一个 ``Model`` 子类。例如为 ``user`` 表创建相应的 ``Model`` 类。
+
+.. code-block:: php
+
+	<?php
+	class Model_User extends PhalApi_Model_NotORM {
+	    protected function getTableName($id) {
+	        return 'user';
+	    }
+
+	    public function doSth() {
+	        // 获取NotORM表实例，在这里相当于：DI()->notorm->user
+	        $user = $this->getORM();
+	    }
+	}
+
+与全局获取方式不同的是， ``$this->getORM()`` 获取的就已经是表实例，不需要再在后面添加表名。
+
+NotORM表实例状态
+---------------
+使用 ``NotORM`` 时，值得注意的是， ``NotORM`` 的表实例是有内部状态的，即可以保持操作状态。故而在开发过程中，需要特别注意何时需要保留状态（使用同一个实例），何时不需要保留状态（使用不同的实例）。
+
+希望保留状态时，需要使用同一个实例。例如：
+
+.. code-block:: php
+
+	// 获取一个新的实例
+	$user = DI()->notorm->user;
+	$user->where('age > ?', 18);
+
+	// 相当于：age > 18 AND name LIKE '%dog%'
+	$user->where('name LIKE ?', '%dog%');
+
+可以看到，第二次查询后，会把前面的查询条件也累加上。
+
+不希望保留状态时，需要每次使用新的实例。例如：
+
+.. code-block:: php
+
+	// 获取一个新的实例
+	$user = DI()->notorm->user;
+	$user->where('age > ?', 18);
+
+	// 重新获取新的实例
+	$user = DI()->notorm->user;
+	// 此时只有：name LIKE '%dog%'
+	$user->where('name LIKE ?', '%dog%');
+
+因为每次都是使用新的实例，所以不会出现条件叠加的情况。
+
+关于这两者的使用场景，项目可根据情况选用，通常使用不保留状态的写法。在全局方式获取后并指定表名取得的表实例，和局部方式获取的表实例，每次都会返回新的表实例。
+
+数据库配置
+==========
+数据库的配置文件为 ``./Config/dbs.php`` ，默认使用的是 ``MySQL`` 数据库，所以需要配置 ``MySQL`` 的连接信息。 ``servers`` 选项用于配置数据库服务器相关信息，可以配置多组数据库实例，每组包括数据库的账号、密码、数据库名字等信息。不同的数据库实例，使用不同标识作为下标。　　
+
+表2-11 MySQL数据库配置项
+
++---------------------+--------------+
+| servers数据库配置项 | 说明         |
++=====================+==============+
+| host                | 数据库域名   |
++---------------------+--------------+
+| name                | 数据库名字   |
++---------------------+--------------+
+| user                | 数据库用户名 |
++---------------------+--------------+
+| password            | 数据库密码   |
++---------------------+--------------+
+| port                | 数据库端口   |
++---------------------+--------------+
+| charset             | 数据库字符集 |
++---------------------+--------------+
+
+``tables`` 选项用于配置数据库表的表前缀、主键字段和路由映射关系，可以配置多个表，下标为不带表前缀的表名，其中 ``__default__`` 下标选项为缺省的数据库路由，即未配置的数据库表将使用这一份默认配置。
+
+表2-12 表配置项
+
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ables表配置项 | 说明                                                                                                                                                      |
++===============+===========================================================================================================================================================+
+| prefix        | 表前缀                                                                                                                                                    |
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| key           | 表主键                                                                                                                                                    |
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| map           | 数据库实例映射关系，可配置多组。每组格式为：array('db' => 服务器标识, 'start' => 开始分表标识, 'end' => 结束分表标识)，start和end要么都不提供，要么都提供 |
++---------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+例如默认数据库配置为：
+
+.. code-block:: php
+
+	return array(
+	    /**
+	     * DB数据库服务器集群
+	     */
+	    'servers' => array(
+	        'db_demo' => array(                         //服务器标识
+	            'host'      => 'localhost',             //数据库域名
+	            'name'      => 'phalapi',               //数据库名字
+	            'user'      => 'root',                  //数据库用户名
+	            'password'  => '',                    //数据库密码
+	            'port'      => '3306',                  //数据库端口
+	            'charset'   => 'UTF8',                  //数据库字符集
+	        ),
+	    ),
+
+	    /**
+	     * 自定义路由表
+	     */
+	    'tables' => array(
+	        //通用路由
+	        '__default__' => array(
+	            'prefix' => 'tbl_',
+	            'key' => 'id',
+	            'map' => array(
+	                array('db' => 'db_demo'),
+	            ),
+	        ),
+	    ),
+	);
+
+其中，在 ``servers`` 中配置了名称为 ``dbdemo`` 数据库实例，其 ``host`` 为 ``localhost`` ，名称为 ``phalapi`` ，用户名为 ``root`` 等。在 ``tables`` 中，只配置了通用路由，并且表前缀为 ``tbl`` ，主键均为 ``id`` ，并且全部使用 ``db_demo`` 数据库实例。
+
+.. note:: 当tables中配置的db数据库实例不存在servers中时，将会提示数据库配置错误。
+
+如何排查数据库连接错误？
+----------------------
+普通情况下，数据库连接失败时会这样提示：
+
+.. code-block:: json
+
+	{
+	    "ret": 500,
+	    "data": [],
+	    "msg": "服务器运行错误: 数据库db_demo连接失败"
+	}
+
+考虑到生产环境不方便爆露服务器的相关信息，故这样简化提示。当在开发过程中，需要定位数据库连接失败的原因时，可使用 ``debug`` 调试模式。开启调试后，当再次失败时，会看到类似这样的提示：
+
+.. code-block:: json
+
+	{
+	    "ret": 500,
+	    "data": [],
+	    "msg": "服务器运行错误: 数据库db_demo连接失败，异常码：1045，错误原因：SQLSTATE[28000] [1045] ... ..."
+	}
+
+然后，便可根据具体的错误提示进行排查解决。
+
+Model基类的使用
+===============
+
+表数据入口模式
+--------------
+我们一直在考虑，是否应该提供数据库的基本操作支持，以减少开发人员重复手工编写基本的数据操作。最后，我们认为是需要的。继而引发了新的问题：是以继承还是以委托来支持？
+
+委托有助于降低继承的层级，但却需要编写同类的操作以完成委托。所以，这里提供了基于 ``NotORM`` 的 ``Model`` 基类： ``PhalApi_Model_NotORM`` 。但提供这个基类还是会遇到一些问题，例如：如何界定基本操作？如何处理分表存储？如何支持定制化？
+
+由于我们这里的 ``Model`` 使用了“表数据入口”模式，而不是“行数据入口”，也不是“活动纪录”，也不是复杂的“数据映射器”。所以在使用时可以考虑是否需要此基类。即使这样，你也可以很轻松转换到“行数据入口”和“活动纪录”模式。这里， ``PhalApi中的Model`` 是更广义上的数据源层（后面会有更多说明），因此对应地 ``PhalApi_Model_NotORM`` 基类充当了数据库表访问入口的对象，处理表中所有的行。
+
+在明白了 ``Model`` 基类的背景后，再来了解其具体的操作和如何继承会更有意义。具体的操作与数据表的结构相关，在约定编程下：即每一个表都有一个主键（通常为id，也可以自由配置）以及一个序列化 ``LOB`` 字段 ``ext_data`` 。我们很容易想到 ``Model`` 接口的定义。为了突出接口签名，注释已移除，感兴趣的同学可查看源码。
+
+.. code-block:: php
+
+	interface PhalApi_Model {
+
+	    public function get($id, $fields = '*');
+
+	    public function insert($data, $id = NULL);
+
+	    public function update($id, $data);
+
+	    public function delete($id);
+	}
+
+上面的接口在规约层上提供了基于表主键的 ``CURD`` 基本操作，在具体实现时，需要注意两点：一是分表的处理；另一点则是 ``LOB`` 字段的序列化。
+
+推荐使用Model基类
+----------------
+由于我们使用了 ``NotORM`` 进行数据库的操作，所以这里也提供了基于 ``NotORM`` 的 ``Model`` 基类： ``PhalApi_Model_NotORM`` 。下面以我们熟悉的获取用户的基本信息为例，说明此基类的使用。
+
+不使用Model基类的写法
+^^^^^^^^^^^^^^^^^^^^
+下面是不使用 ``Model`` 基数的实现代码：
+
+.. code-block:: php
+
+	<?php
+	class Model_User {
+
+	    public function getByUserId($userId) {
+	        return DI()->notorm->user->select('*')->where('id = ?', $userId)->fetch();
+	    }
+	}
+
+获取 ``ID`` 为 ``1`` 的用户信息，对应的调用为：
+
+.. code-block:: php
+
+	$model = new Model_User();
+	$rs = $model->getByUserId(1);
+
+继承Model基类的写法
+^^^^^^^^^^^^^^^^^^
+若继承于 ``PhalApi_Model_NotORM`` ，则 ``Model`` 子类的实现代码是：
+
+.. code-block:: php
+
+	<?php
+	class Model_User extends PhalApi_Model_NotORM {
+	}
+
+从上面的代码可以看出，基类已经提供了基于主键的 ``CURD`` 操作，并且默认根据规则自动使用 ``user`` 作为表名。相应地，当需要获取 ``ID`` 为 ``1`` 的用户信息时，外部调用则调整为：
+
+.. code-block:: php
+
+	$model = new Model_User();
+	$rs = $model->get(1);
+
+再进一步，我们可以得到其他的基本操作：
+
+.. code-block:: php
+
+	$model = new Model_User();
+
+	// 查询
+	$row = $model->get(1);
+	$row = $model->get(1, 'id, name'); //取指定的字段
+	$row = $model->get(1, array('id', 'name')); //可以数组取指定要获取的字段
+
+	// 更新
+	$data = array('name' => 'test', 'update_time' => time());
+	$model->update(1, $data); //基于主键的快速更新
+
+	// 插入
+	$data = array('name' => 'phalapi');
+	$id = $model->insert($data);
+	//$id = $model->insert($data, 5); //如果是分表，可以通过第二个参数指定分表的参考ID
+
+	// 删除
+	$model->delete(1);
+
+通过对比，可以发现，使用继承于 ``PhalApi_Model_NotORM`` 基类的写法更简单，并且更统一，而且能更好地封装对数据库的操作。因此，我们通常推荐使用此实现方式。
+
+Model基类中的表名配置
+--------------------
+上面继承了 ``PhalApi_Model_NotORM`` 的 ``Model_User`` 类，对应默认的表名为： ``user`` 。默认表名的自动匹配规则是：取 "Model" 后面部分的字符全部转小写，并且在转化后会加上配置的表前缀。下面是更多 ``Model`` 子类及其自动映射的表名示例。
+
+.. code-block:: php
+
+	// 对应userinfo表
+	class Model_UserInfo extends PhalApi_Model_NotORM { }
+
+	// 对应app_settings表
+	class Model_App_Settings extends PhalApi_Model_NotORM { }
+
+	// 对应tags表
+	class Model_Tags extends PhalApi_Model_NotORM { }
+
+但在以下场景或者其他需要手动指定表名的情况，可以重写 ``PhalApi_Model_NotORM::getTableName($id)`` 方法并手动指定表名。
+
+- 存在分表
+- ``Model`` 类名不含有 ``Model_``
+- 自动匹配的表名与实际表名不符
+- 数据库表使用蛇形命名法而类名使用大写字母分割的方式
+
+如，当 ``Model_User`` 类对应的表名为： ``my_user`` 表时，可这样重新指定表名：
+
+.. code-block:: php
+
+	<?php
+	class Model_User extends PhalApi_Model_NotORM {
+	    protected function getTableName($id) {
+	        return 'my_user';
+	    }
+	}
+
+其中， ``$id`` 参数用于进行分表的参考主键，只有当存在分表时才需要用到。通常传入的 ``$id`` 是整数，然后对分表的总数进行求余从而得出分表标识。例如有 10 张分表的 ``user_session`` 表：
+
+.. code-block:: php
+
+	<?php
+	class Model_User_UserSession extends PhalApi_Model_NotORM {
+	    const TABLE_NUM = 10;
+
+	    protected function getTableName($id) {
+	        $tableName = 'user_session';
+	        if ($id !== null) {
+	            $tableName .= '_' . ($id % self::TABLE_NUM);
+	        }
+	        return $tableName;
+	    }
+
+即存在分表时，需要返回的格式为：表名称 + 下划线 + 分表标识。分表标识通常从 0 开始，为连续的自然数。
+
+这里小结一下，对于使用 ``Model`` 子类的方式，可以使用默认自动匹配的表名。若表名不符合项目的需求，可以通过重写 ``PhalApi_Model_NotORM::getTableName($id)`` 方法手动指定。最后，若存在有分表，则需要结合 ``$id`` 参数，按一定的规则，拼接返回分表格式的表名。
+
+CURD基本操作
+===========
+虽然上面的 ``Model`` 子类很好地封装了数据库的操作，但所提供的操作只是基本的操作，更多数据库的操作将在这一节进行详细说明。为了方便大家理解数据库的操作，假设数据库中已经有以下数据库表和纪录。
+
+.. code-block:: sql
+
+	CREATE TABLE `tbl_user` (
+	  `id` int(11) NOT NULL,
+	  `name` varchar(45) DEFAULT NULL,
+	  `age` int(3) DEFAULT NULL,
+	  `note` varchar(45) DEFAULT NULL,
+	  `create_date` datetime DEFAULT NULL,
+	  PRIMARY KEY (`id`)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	INSERT INTO `tbl_user` VALUES ('1', 'dogstar', '18', 'oschina', '2015-12-01 09:42:31');
+	INSERT INTO `tbl_user` VALUES ('2', 'Tom', '21', 'USA', '2015-12-08 09:42:38');
+	INSERT INTO `tbl_user` VALUES ('3', 'King', '100', 'game', '2015-12-23 09:42:42');
+
+并且，假设已获得了 ``tbl_user`` 表对应的 ``NotORM`` 实例 ``$user`` 。此 ``NotORM`` 表实例可从前面所介绍的两种方式获得：
+
+.. code-block:: php
+
+	// 全局获取方式
+	$user = DI()->notorm->user;
+
+	// 在Model_User类中的局部获取方式
+	$user = $this->getORM();
+
+下面将结合示例，分别介绍如何使用 ``NotORM`` 表实例进行基本的数据库操作。
+
+SQL基本语句介绍
+--------------
+
+SELECT字段选择
+^^^^^^^^^^^^^
+选择单个字段：
+
+.. code-block:: php
+
+	// SELECT id FROM `tbl_user`
+	$user->select('id')
+
+选择多个字段：
+
+.. code-block:: php
+
+	// SELECT id, name, age FROM `tbl_user`
+	$user->select('id, name, age')
+
+使用字段别名：
+
+.. code-block:: php
+
+	// SELECT id, name, MAX(age) AS max_age FROM `tbl_user`
+	$user->select('id, name, MAX(age) AS max_age')
+
+选择全部表字段：
+
+.. code-block:: php
+
+	// SELECT * FROM `tbl_user`
+	$user->select('*')
+
+WHERE条件
+^^^^^^^^^
+单个条件：
+
+.. code-block:: php
+
+	// WHERE id = 1
+	$user->where('id', 1)
+	$user->where('id = ?', 1)
+	$user->where(array('id', 1))
+
+多个AND条件：
+
+.. code-block:: php
+
+	// WHERE id > 1 AND age > 18
+	$user->where('id > ?', 1)->where('age > ?', 18)
+	$user->and('id > ?', 1)->and('age > ?', 18)
+	$user->where('id > ? AND age > ?', 1, 18)
+	$user->where(array('id > ?' => 1, 'age > ?' => 10))
+
+	// WHERE name = 'dogstar' AND age = 18
+	$user->where(array('name' => 'dogstar', 'age' => 18))
+
+多个OR条件：
+
+.. code-block:: php
+
+	// WHERE name = 'dogstar' OR age = 18
+	$user->or('name', 'dogstar')->or('age', 18)
+
+嵌套条件：
+
+.. code-block:: php
+
+	// WHERE ((name = ? OR id = ?)) AND (note = ?) -- 'dogstar', '1', 'xxx'
+
+	// 实现方式1：使用AND拼接
+	$user->where('(name = ? OR id = ?)', 'dogstar', '1')->and('note = ?', 'xxx')
+
+	// 实现方式2：使用WHERE，并顺序传递多个参数
+	$user->where('(name = ? OR id = ?) AND note = ?', 'dogstar', '1', 'xxx')
+
+	// 实现方式3：使用WHERE，并使用一个索引数组顺序传递参数
+	$user->where('(name = ? OR id = ?) AND note = ?', array('dogstar', '1', 'xxx'))
+
+	// 实现方式4：使用WHERE，并使用一个关联数组传递参数
+	$user->where('(name = :name OR id = :id) AND note = :note',
+	    array(':name' => 'dogstar', ':id' => '1', ':note' => 'xxx'))
+
+IN查询：
+
+.. code-block:: php
+
+	// WHERE id IN (1, 2, 3)
+	$user->where('id', array(1, 2, 3))
+
+	// WHERE id NOT IN (1, 2, 3)
+	$user->where('NOT id', array(1, 2, 3))
+
+	// WHERE (id, age) IN ((1, 18), (2, 20))
+	$user->where('(id, age)', array(array(1, 18), array(2, 20)))
+
+模糊匹配查询：
+
+.. code-block:: php
+
+	// WHERE name LIKE '%dog%'
+	$user->where('name LIKE ?', '%dog%')
+
+	// WHERE name NOT LIKE '%dog%'
+	$user->where('name NOT LIKE ?', '%dog%')
+
+.. note:: 需要模糊匹配时，不可写成：where('name LIKE %?%', 'dog')。
+
+NULL判断查询：
+
+.. code-block:: php
+
+	// WHERE (name IS NULL)
+	$user->where('name', null)
+
+非NULL判断查询：
+
+.. code-block:: php
+
+	// WHERE (name IS NOT NULL) LIMIT 1
+	$user->where('name IS NOT ?', null)
+
+ORDER BY排序
+^^^^^^^^^^^^
+
+单个字段升序排序：
+
+.. code-block:: php
+
+	// ORDER BY age
+	$user->order('age')
+	$user->order('age ASC')
+
+单个字段降序排序：
+
+.. code-block:: php
+
+	// ORDER BY age DESC
+	$user->order('age DESC')
+
+多个字段排序：
+
+.. code-block:: php
+
+	// ORDER BY id, age DESC
+	$user->order('id')->order('age DESC')
+	$user->order('id, age DESC')
+
+LIMIT数量限制
+^^^^^^^^^^^^^
+
+限制数量，如查询前10个：
+
+.. code-block:: php
+
+	// LIMIT 10
+	$user->limit(10)
+
+分页限制，如从第5个位置开始，查询前10个：
+
+.. code-block:: php
+
+	// LIMIT 5, 10
+	$user->limit(5, 10)
+
+GROUP BY和HAVING
+^^^^^^^^^^^^^^^^
+只有 ``GROUP BY`` ，没有 ``HAVING`` ：
+
+.. code-block:: php
+
+	// GROUP BY note
+	$user->group('note')
+
+既有 ``GROUP BY`` ，又有 ``HAVING`` ：
+
+.. code-block:: php
+
+	// GROUP BY note HAVING age > 10
+	$user->group('note', 'age > 10')
+
+CURD之插入操作
+--------------
+插入操作可分为插入单条纪录、多条纪录，或根据条件插入。
+
+表2-13 数据库插入操作
+
+操作  说明  示例  备注  是否PhalApi新增
+insert()  插入数据  ``$user->insert($data);``  全局方式需要再调用insert_id()获取插入的ID  否
+insert_multi()  批量插入  ``$user->insert_multi($rows);``  可批量插入  否
+insert_update()  插入/更新  接口签名： ``insert_update(array $unique, array $insert, array $update = array()``	不存时插入，存在时更新  否
+
+插入单条纪录数据，注意，必须是保持状态的同一个 ``NotORM`` 表实例，方能获取到新插入的行 ``ID`` ，且表必须设置了自增主键 ``ID`` 。
+
+.. code-block:: php
+
+	// INSERT INTO tbl_user (name, age, note) VALUES ('PhalApi', 1, 'framework')
+	$data = array('name' => 'PhalApi', 'age' => 1, 'note' => 'framework');
+	$user->insert($data);
+	$id = $user->insert_id();
+	var_dump($id);
+
+	// 输出：新增的ID
+	int (4)
+
+	// 或者使用Model封装的insert()方法
+	$model = new Model_User();
+	$id = $model->insert($data);
+	var_dump($id);
+
+批量插入多条纪录数据：
+
+.. code-block:: php
+
+	// INSERT INTO tbl_user (name, age, note) VALUES ('A君', 12, 'AA'), ('B君', 14, 'BB'), ('C君', 16, 'CC')
+	$rows = array(
+	    array('name' => 'A君', 'age' => 12, 'note' => 'AA'),
+	    array('name' => 'B君', 'age' => 14, 'note' => 'BB'),
+	    array('name' => 'C君', 'age' => 16, 'note' => 'CC'),
+	);
+	$rs = $user->insert_multi($rows);
+	var_dump($rs);
+
+	// 输出，成功插入的条数
+	int(3)
+
+插入/更新：
+
+.. code-block:: php
+
+	// INSERT INTO tbl_user (id, name, age, note) VALUES (8, 'PhalApi', 1, 'framework')
+	// ON DUPLICATE KEY UPDATE age = 2
+	$unique = array('id' => 8);
+	$insert = array('id' => 8, 'name' => 'PhalApi', 'age' => 1, 'note' => 'framework');
+	$update = array('age' => 2);
+	$rs = $user->insert_update($unique, $insert, $update);
+	var_dump($rs);
+
+	// 输出影响的行数
+
+如果你插入的记录导致一个 UNIQUE 索引或者 primary key(主键) 出现重复，那么就会认为该条记录存在，则执行 update 语句而不是 insert 语句，反之，则执行 insert 语句而不是更新语句。
+
+上面的句子使用主键作为重复记录判断，如果不存在，则插入；如果存在，则更新 ``age=2``
+
+CURD之更新操作
+-------------
+表2-14 数据库更新操作
+
++----------+----------+---------------------------------------+-------------------------------------------------------+-----------------+
+| 操作     | 说明     | 示例                                  | 备注                                                  | 是否PhalApi新增 |
++==========+==========+=======================================+=======================================================+=================+
+| update() | 更新数据 | $user->where('id', 1)->update($data); | 更新异常时返回false，数据无变化时返回0，成功更新返回1 | 否              |
++----------+----------+---------------------------------------+-------------------------------------------------------+-----------------+
+
+根据条件更新数据：
+
+.. code-block:: php
+
+	// UPDATE tbl_user SET age = 2 WHERE (name = 'PhalApi');
+	$data = array('age' => 2);
+	$rs = $user->where('name', 'PhalApi')->update($data);
+	var_dump($rs);
+
+	// 输出
+	int(1)              //正常影响的行数
+	int(0)              //无更新，或者数据没变化
+	boolean(false)      //更新异常、失败
+
+在使用 ``update()`` 进行更新操作时，如果更新的数据和原来的一样，则会返回 0 （表示影响 0 行）。这时，会和更新失败（同样影响 0 行）混淆。但 ``NotORM`` 是一个优秀的类库，它已经提供了优秀的解决文案。我们在使用 ``update()`` 时，只须了解这两者返回结果的微妙区别即可。因为失败异常时，返回 ``false`` ；而相同数据更新会返回 0 。即：
+
+1. 更新相同的数据时，返回0，严格来说是： ``int(0)``
+2. 更新失败时，如更新一个不存在的字段，返回 ``false`` ，即： ``bool(false)``
+
+用代码表示，就是：
+
+.. code-block:: php
+
+	$rs = DI()->notorm->user->where('id', $userId)->update($data);
+
+	if ($rs >= 1) {
+	    // 成功
+	} else if ($rs === 0) {
+	    // 相同数据，无更新
+	} else if ($rs === false) {
+	    // 更新失败
+	}
+
+更新数据，进行加1操作：
+
+.. code-block:: php
+
+	// UPDATE tbl_user SET age = age + 1 WHERE (name = 'PhalApi')
+	$rs = $user->where('name', 'PhalApi')->update(array('age' => new NotORM_Literal("age + 1")));
+	var_dump($rs);
+
+	// 输出影响的行数
+
+CURD之查询操作
+-------------
+查询操作主要有获取一条纪录、获取多条纪录以及聚合查询等。
+
+表2-15 数据库查询操作
+
+操作  说明  示例  备注  是否PhalApi新增
+fetch()  循环获取每一行  while($row = $user->fetch()) { ... ... }	  否
+fetchOne()  只获取第一行  $row = $user->where('id', 1)->fetchOne();  等效于fetchRow()  是
+fetchRow()  只获取第一行  $row = $user->where('id', 1)->fetchRow();  等效于fetchOne()  是
+fetchPairs()  获取键值对  $row = $user->fetchPairs('id', 'name');  第二个参数为空时，可取多个值，并且多条纪录  否
+fetchAll()  获取全部的行  $rows = $user->where('id', array(1, 2, 3))->fetchAll();	  等效于fetchRows()  是
+fetchRows()  获取全部的行	  $rows = $user->where('id', array(1, 2, 3))->fetchRows();  等效于fetchAll()  是
+queryAll()  复杂查询下获取全部的行，默认下以主键为下标  $rows = $user->queryAll($sql, $parmas);  等效于queryRows()  是
+queryRows()  复杂查询下获取全部的行，默认下以主键为下标  $rows = $user->queryRows($sql, $parmas);  等效于queryAll()  是
+count()  查询总数  $total = $user->count('id');  第一参数可省略  否
+min()  取最小值  $minId = $user->min('id');  否  -
+max()  取最大值  $maxId = $user->max('id');  否  -
+sum()  计算总和  $sum = $user->sum('age');  否  -
+
+循环获取每一行，并且同时获取多个字段：
+
+.. code-block:: php
+
+	// SELECT id, name FROM tbl_user WHERE (age > 18);
+	$user = $user->select('id, name')->where('age > 18');
+	while ($row = $user->fetch()) {
+	     var_dump($row);
+	}
+
+	// 输出
+	array(2) {
+	  ["id"]=>
+	  string(1) "2"
+	  ["name"]=>
+	  string(3) "Tom"
+	}
+	array(2) {
+	  ["id"]=>
+	  string(1) "3"
+	  ["name"]=>
+	  string(4) "King"
+	}
+
+循环获取每一行，并且只获取单个字段。需要注意的是，指定获取的字段，必须出现在 ``select`` 里，并且返回的不是数组，而是字符串。
+
+.. code-block:: php
+
+	// SELECT id, name FROM tbl_user WHERE (age > 18);
+	$user = $user->select('id, name')->where('age > 18');
+	while ($row = $user->fetch('name')) {
+	     var_dump($row);
+	}
+
+	// 输出
+	string(3) "Tom"
+	string(4) "King"
+
+注意！以下是错误的用法。还记得前面所学的 ``NotORM`` 状态的保持吗？因为这里每次循环都会新建一个 ``NotORM`` 表实例，所以没有保持前面的查询状态，从而死循环。
+
+.. code-block:: php
+
+	while ($row = DI()->notorm->user->select('id, name')->where('age > 18')->fetch('name')) {
+	     var_dump($row);
+	}
+
+只获取第一行，并且获取多个字段，等同于 ``fetchRow()`` 操作。
+
+.. code-block:: php
+
+	// SELECT id, name FROM tbl_user WHERE (age > 18) LIMIT 1;
+	$rs = $user->select('id, name')->where('age > 18')->fetchOne();
+	var_dump($rs);
+
+	// 输出
+	array(2) {
+	  ["id"]=>
+	  string(1) "2"
+	  ["name"]=>
+	  string(3) "Tom"
+	}
+
+只获取第一行，并且只获取单个字段，等同于 ``fetchRow()`` 操作。
+
+.. code-block:: shell
+
+	var_dump($user->fetchOne('name'));
+
+	// 输出
+	string(3) "Tom"
+
+获取键值对，并且获取多个字段：
+
+.. code-block:: php
+
+	// SELECT id, name, age FROM tbl_user LIMIT 2;
+	$rs = $user->select('name, age')->limit(2)->fetchPairs('id'); //指定以ID为KEY
+	var_dump($rs);
+
+	// 输出
+	array(2) {
+	  [1]=>
+	  array(3) {
+	    ["id"]=>
+	    string(1) "1"
+	    ["name"]=>
+	    string(7) "dogstar"
+	    ["age"]=>
+	    string(2) "18"
+	  }
+	  [2]=>
+	  array(3) {
+	    ["id"]=>
+	    string(1) "2"
+	    ["name"]=>
+	    string(3) "Tom"
+	    ["age"]=>
+	    string(2) "21"
+	  }
+	}
+
+获取键值对，并且只获取单个字段。注意，这时的值不是数组，而是字符串。
+
+.. code-block:: php
+
+	// SELECT id, name FROM tbl_user LIMIT 2
+	var_dump($user->limit(2)->fetchPairs('id', 'name')); //通过第二个参数，指定VALUE的列
+
+	// 输出
+	array(2) {
+	  [1]=>
+	  string(7) "dogstar"
+	  [2]=>
+	  string(3) "Tom"
+	}
+
+获取全部的行，相当于 ``fetchRows()`` 操作。
+
+.. code-block:: php
+
+	// SELECT * FROM tbl_user
+	var_dump($user->fetchAll());
+
+	// 输出全部表数据，结果略
+
+使用原生 ``SQL`` 语句进行查询，并获取全部的行：
+
+.. code-block:: php
+
+	// SELECT name FROM tbl_user WHERE age > :age LIMIT 1
+	$sql = 'SELECT name FROM tbl_user WHERE age > :age LIMIT 1';
+	$params = array(':age' => 18);
+	$rs = $user->queryAll($sql, $params);
+	var_dump($rs);
+
+	// 输出
+	array(1) {
+	  [0]=>
+	  array(1) {
+	    ["name"]=>
+	    string(3) "Tom"
+	  }
+	}
+
+	// 除了使用上面的关联数组传递参数，也可以使用索引数组传递参数
+	$sql = 'SELECT name FROM tbl_user WHERE age > ? LIMIT 1';
+	$params = array(18);
+	// 也使用queryRows()别名
+	$rs = $user->queryRows($sql, $params);
+
+在使用 ``queryAll() queryRows()`` 进行原生 ``SQL`` 操作时，需要特别注意：
+
+1. 需要手动填写完整的表名字，包括分表标识，并且需要通过任意表实例来运行
+2. 尽量使用参数绑定，而不应直接使用参数来拼接SQL语句，慎防SQL注入攻击
+
+下面是不好的写法，很有可能会导致 ``SQL`` 注入攻击
+
+.. code-block:: php
+
+	// 存在SQL注入的写法
+	$id = 1;
+	$sql = "SELECT * FROM tbl_demo WHERE id = $id";
+	$rows = $this->getORM()->queryAll($sql);
+
+查询总数：
+
+.. code-block:: php
+
+	// SELECT COUNT(id) FROM tbl_user
+	var_dump($user->sum('id'));
+
+	// 输出
+	string(3) "3"
+
+查询最小值：
+
+.. code-block:: php
+
+	// SELECT MIN(age) FROM tbl_user
+	var_dump($user->min('age'));
+
+	// 输出
+	string(2) "18"
+
+查询最大值：
+
+.. code-block:: php
+
+	// SELECT MAX(age) FROM tbl_user
+	var_dump($user->max('age'));
+
+	// 输出
+	string(3) "100"
+
+计算总和：
+
+.. code-block:: php
+
+	// SELECT SUM(age) FROM tbl_user
+	var_dump($user->sum('age'));
+
+	// 输出
+	string(3) "139"
+
+CURD之删除操作
+--------------
+表2-16 数据库删除操作
+
++----------+------+----------------------------------+---------------------------+-----------------+
+| 操作     | 说明 | 示例                             | 备注                      | 是否PhalApi新增 |
++==========+======+==================================+===========================+=================+
+| delete() | 删除 | $user->where('id', 1)->delete(); | 禁止无where条件的删除操作 | 否              |
++----------+------+----------------------------------+---------------------------+-----------------+
+
+按条件进行删除，并返回影响的行数：
+
+.. code-block:: php
+
+	// DELETE FROM tbl_user WHERE (id = 404);
+	$user->where('id', 404)->delete();
+
+请特别注意， ``PhalApi`` 禁止全表删除操作。即如果是全表删除，将会被禁止，并抛出异常。如：
+
+.. code-block:: php
+
+	// Exception: sorry, you can not delete the whole table
+	$user->delete();
+
+事务操作、关联查询和其他操作
+=========================
+
+事务操作
+--------
+关于事务的操作，可以使用 ``NotORM`` 的方式。例如：
+
+.. code-block:: php
+
+	// 第一步：先指定待进行事务的数据库
+	// 通过获取一个notorm表实例来指定；否则会提示：PDO There is no active transaction
+	$user = DI()->notorm->user;
+
+	// 第二步：开启事务开关（此开关会将当前全部打开的数据库都进行此设置）
+	DI()->notorm->transaction = 'BEGIN';
+
+	// 第三步：进行数据库操作
+	$user->insert(array('name' => 'test1',));
+	$user->insert(array('name' => 'test2',));
+
+	// 第四：提交/回滚
+	DI()->notorm->transaction = 'COMMIT';
+	//DI()->notorm->transaction = 'ROLLBACK';
+
+也可以使用 ``PhalApi`` 封装的事务操作方式，并且推荐使用该方式。
+
+.. code-block:: php
+
+ 	// Step 1: 开启事务
+    DI()->notorm->beginTransaction('db_demo');
+
+    // Step 2: 数据库操作
+    DI()->notorm->user->insert(array('name' => 'test1'));
+    DI()->notorm->user->insert(array('name' => 'test2'));
+
+    // Step 3: 提交事务/回滚
+    DI()->notorm->commit('db_demo');
+    //DI()->notorm->rollback('db_demo');
+
+关联查询
+--------
+对于关联查询，简单的关联可使用 ``NotORM`` 封装的方式，而复杂的关联，如多个表的关联查询，则可以使用 ``PhalApi`` 封装的接口。
+
+如果是简单的关联查询，可以使用 ``NotORM`` 支持的写法，这样的好处在于我们使用了一致的开发，并且能让 ``PhalApi`` 框架保持分布式的操作方式。需要注意的是，关联的表仍然需要在同一个数据库。
+
+以下是一个简单的示例。假设我们有这样的数据：
+
+.. code-block:: sql
+
+	INSERT INTO `phalapi_user` VALUES ('1', 'wx_edebc', 'dogstar', '***', '4CHqOhe1', '1431790647', '');
+	INSERT INTO `phalapi_user_session_0` VALUES ('1', '1', 'ABC', '', '0', '0', '0', null);
+
+那么对应关联查询的代码如下面：
+
+.. code-block:: php
+
+	// SELECT expires_time, user.username, user.nickname FROM phalapi_user_session_0
+	// LEFT JOIN phalapi_user AS user
+	// ON phalapi_user_session_0.user_id = user.id
+	// WHERE (token = 'ABC') LIMIT 1
+	$rs = DI()->notorm->user_session_0
+	    ->select('expires_time, user.username, user.nickname')
+	    ->where('token', 'ABC')
+	    ->fetchRow();
+
+	var_dump($rs);
+
+会得到类似这样的输出：
+
+.. code-block:: shell
+
+	array(3) {
+	  ["expires_time"]=>
+	  string(1) "0"
+	  ["username"]=>
+	  string(35) "wx_edebc"
+	  ["nickname"]=>
+	  string(10) "dogstar"
+	}
+
+这样，我们就可以实现关联查询的操作。按照 ``NotORM`` 官网的说法，所以 ``->select('expires_time, user.username, user.nickname')`` 这一行调用将会 ``NotORM`` 自动产生关联操作，而ON的字段，则是这个字段关联你配置的表结构，外键默认为：表名_id 。
+
+如果是复杂的关联查询，则是建议使用原生的 ``SQL`` 语句，但仍然可以保持很好的写法，如这样一个示例：
+
+.. code-block:: php
+
+	$sql = 'SELECT t.id, t.team_name, v.vote_num '
+	    . 'FROM phalapi_team AS t LEFT JOIN phalapi_vote AS v '
+	    . 'ON t.id = v.team_id '
+	    . 'ORDER BY v.vote_num DESC';
+
+	$rows = $this->getORM()->queryAll($sql, array());
+	var_dump($rows);
+
+如前面所述，这里需要手动填写完整的表名，以及慎防 ``SQL`` 注入攻击。
+
+其他数据库操作
+-------------
+有时，我们还需要进行一些其他的数据库操作，如创建表、删除表、添加表字段等。对于需要进行的数据库操作，而上面所介绍的方法未能满足时，可以使用更底层更通用的接口，即： ``NotORM_Result::query($query, $parameters)`` 。
+
+例如，删除一张表。
+
+.. code-block:: php
+
+    DI()->notorm->user->query('DROP TABLE tbl_user', array());
+
+
+分表分库策略
+===========
+为了应对海量用户的产品愿景需求， ``PhalApi`` 设计了一个分布式的数据库存储方案，以便能满足数据量的骤增、云服务的横向扩展、接口服务开发的兼容性，以及数据迁移等问题，避免日后因为全部数据都存放在单台服务器而导致的限制。
+
+海量数据的分表策略
+-----------------
+分表策略，即是通过可配置的路由规则，将海量的数据分散存储在多个数据库表。主要涉及的内容有：
+
+分库分表
+^^^^^^^^
+对于不需要进行必要关联查询的数据库表，进行分库分表存放。即对于同一张数据库表，若存放的数据量是可预见式的暴增，例如每时每刻都会产生大量的来自用户发布的事件信息，为了突破 数据库单表的限制以及其他问题，需要将此数据库表创建多个副本，并按照一定规则进行拆分存放。
+
+路由规则
+^^^^^^^^
+在进行了分库分表后，开发人员在对数据库表进行操作时，就需要根据相应的规则找到对应的数据库和数据库表，即需要有一个参考主键。这里建议每个表都需要有数值类型的主键字段，以便作为分表的参考。
+
+扩展字段
+^^^^^^^^
+在完成了分库分表和制定路由规则后，考虑到日后有新增表字段而导致数据库表结构的变更。为了减少数据库变更对现有数据库表的影响，这里建议每个表都增加 ``text`` 类型的 ``extra_data`` 字段，并且使用 ``JSON`` 格式进行序列化转换存储。
+
+可配置
+^^^^^^
+在有了多台数据库服务器以及每个表都拆分成多张表后，为减少后端接口开发人员的压力，有必须提供可配置的支持。即：数据库的变更不应影响开发人员现有的开发，也不需要开发人员作出代码层面的改动，只需要稍微配置一下即可。
+
+自动生成SQL语句
+^^^^^^^^^^^^^^
+对于相同表的建表语句，可以通过脚本来自动生成，然后直接导入数据即可，避免人工重复编辑维护SQL建表语句。
+
+``PhalApi`` 框架主要提供了 **表名 + ID与数据库服务器 + 数据库表** 之间的映射规则。
+
+下面结合一个示例，讲解如何使用分表策略。假设我们有一个需要数据库分表的 ``demo`` 表，且各个表所映射的数据库实例如下。
+
+表2-17 demo分表示例
+
++------------+------------+
+| 数据库表   | 数据库实例 |
++============+============+
+| tbl_demo   | db_demo    |
++------------+------------+
+| tbl_demo_0 | db_demo    |
++------------+------------+
+| tbl_demo_1 | db_demo    |
++------------+------------+
+| tbl_demo_2 | db_demo    |
++------------+------------+
+
+首先，需要配置数据库的路由规则。这里的 ``demo`` 表存储比较简单，即有 3 张分表 ``tbl_demo_0`` 、 ``tbl_demo_1`` 、 ``tbl_demo_2`` ，缺省主表 ``tbl_demo`` 是必要的，当分表不存在时将会使用该缺省主表。数据库的路由规则在前面所说的数据库配置文件 ``./Config/dbs.php`` 中，其中 ``tables`` 为数据库表的配置信息以及与数据库实例的映射关系。因此可以在 ``tables`` 选项中添加此 ``demo`` 表的相关配置。
+
+.. code-block:: php
+
+	return array(
+	    ... ...
+	    'tables' => array(
+	        'demo' => array(
+	            'prefix' => 'tbl_',
+	            'key' => 'id',
+	            'map' => array(
+	                array('db' => 'db_demo'),
+	                array('start' => 0, 'end' => 2, 'db' => 'db_demo'),
+	            ),
+	        ),
+	    ),
+	);
+
+上面配置 ``map`` 选项中 ``array('db' => 'db_demo')`` 用于指定缺省主表使用 ``db_demo`` 数据库实例，而下一组映射关系则是用于配置连续在同一台数据库实例的分表区间，即 ``tbl_demo_0`` 、 ``tbl_demo_1`` 、 ``tbl_demo_2`` 都使用了 ``db_demo`` 数据库实例。
+
+这里再侧重讲解一下 ``map`` 选项。 ``map`` 选项用于配置数据库表与数据库实例之前的映射关系，通俗来说就是指定哪张表使用哪个数据库。不管是否使用分表存储，都至少需要配置默认缺省主表。如：
+
+.. code-block:: php
+
+	'map' => array(
+	    array('db' => 'db_demo'),
+	)
+
+缺省主表的配置很简单，只需要配置使用哪个数据库实例即可。而当需要使用分表时，则要增加相应的映射关系配置。通常分表以“下划线 + 连续的自然数”为后缀，作为分表的标识。在配置时，对于使用同一个数据库实例的分表区间，可以配置成一组，并使用 ``start`` 下标和 ``end`` 下标来指定分表闭区间： ``[start, end]`` 。如上面示例中， ``[0, 2]`` 这一区间的分表使用了 ``db_demo`` 这一数据库实例，则可以添加配置成：
+
+.. code-block:: php
+
+	'map' => array(
+	    array('db' => 'db_demo'),
+	    array('start' => 0, 'end' => 2, 'db' => 'db_demo'),
+	)
+
+假设，对于 ``tbl_demo_2`` 分表，需要调整成使用数据库实例 ``db_new`` ，则可能调整配置成：
+
+.. code-block:: php
+
+	'map' => array(
+	    array('db' => 'db_demo'),
+	    array('start' => 0, 'end' => 1, 'db' => 'db_demo'),
+	    array('start' => 2, 'end' => 2, 'db' => 'db_new'),
+	)
+
+配置好路由规则后，就可以使用脚本命令生成建表语句。把数据库表的基本建表语句保存到 ``./Data`` 目录下，文件名与数据库表名相同，后缀统一为 ``.sql`` 。如这里的 ``./Data/demo.sql`` 文件。
+
+.. code-block:: sql
+
+    `name` varchar(11) DEFAULT NULL,
+
+需要注意的是，这里说的基本建表语句是指：仅是这个表所特有的字段，排除已固定公共有的自增主键id、扩展字段 ``ext_data`` 和 ``CREATE TABLE`` 关键字等。
+
+然后可以使用 ``phalapi-buildsqls`` 脚本命令，快速自动生成 demo 缺省主表和全部分表的建表 SQL 语句。如下：
+
+.. code-block:: shell
+
+    $ ./PhalApi/phalapi-buildsqls ./Config/dbs.php demo
+
+正常情况下，会生成类似以下的 SQL 语句：
+
+.. code-block:: sql
+
+	CREATE TABLE `demo` (
+	    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+	    `name` varchar(11) DEFAULT NULL,
+	    `ext_data` text COMMENT 'json data here',
+	     PRIMARY KEY (`id`)
+	 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	CREATE TABLE `tpl_demo_0` ... ...;
+	CREATE TABLE `tpl_demo_1`  ... ...;
+	CREATE TABLE `tpl_demo_2`  ... ...;
+
+在将上面的 SQL 语句导入数据库后，或者手动创建数据库表后，便可以像之前那样操作数据库了。下面是一些大家已经熟悉的示例：
+
+.. code-block:: php
+
+    DI()->notorm->demo->where('id', '1')->fetch();
+
+假设分别的规则是根据 ``ID`` 对 ``3`` 进行求余。当需要使用分表时，在使用 ``Model`` 基类的情况下，可以通过重写 ``PhalApi_Model_NotORM::getTableName($id)`` 实现相应的分表规则。
+
+.. code-block:: php
+
+	// $ vim ./Shop/Model/demo.php
+	<?php
+	class Model_Demo extends PhalApi_Model_NotORM {
+
+	    protected function getTableName($id) {
+	        $tableName = 'demo';
+	        if ($id !== null) {
+	            $tableName .= '_' . ($id % 3);
+	        }
+	        return $tableName;
+	    }
+	}
+
+然后，便可使用之前一样的 ``CURD`` 基本操作，但框架会自动匹配分表的映射。例如：
+
+.. code-block:: php
+
+	$model = new Model_Demo();
+
+	$row = $model->get('3', 'id');   // 使用分表tbl_demo_0
+	$row = $model->get('10', 'id');  // 使用分表tbl_demo_1
+	$row = $model->get('2', 'id');   // 使用分表tbl_demo_2
+
+当使用全局方式获取 ``NotORM`` 实例时，则需要手动指定分表。上面的操作等效于下面使用全局 ``NotORM`` 实例并指定分表的实现。
+
+.. code-block:: php
+
+	$row = DI()->notorm->demo_0->where('id', '3')->fetch();
+	$row = DI()->notorm->demo_1->where('id', '10')->fetch();
+	$row = DI()->notorm->demo_2->where('id', '2')->fetch();
+
+回到使用 ``Model`` 基类的上下文，更进一步，我们可以通过 ``$this->getORM($id)`` 来获取分表的实例从而进行分表的操作。如：
+
+.. code-block:: php
+
+	<?php
+	class Model_Demo extends PhalApi_Model_NotORM {
+	    ... ...
+
+	    public function getNameById($id) {
+	        $row = $this->getORM($id)->select('name')->fetchRow();
+	        return !empty($row) ? $row['name'] : '';
+	    }
+	}
+
+通过传入不同的 ``$id`` ，即可获取相应的分表实例。
+
+多个数据库的配置方式
+-------------------
+当需要使用多个数据库时，可以先在 ``servers`` 选项配置多组数据库实例，然后在 ``tables`` 选项中为不同的数据库表指定不同的数据库实例。
+
+假设我们有两台数据库服务器，分别叫做 ``db_A`` 、 ``db_B`` ，即：
+
+.. code-block:: php
+
+	return array(
+	    'servers' => array(
+	        'db_A' => array(                              //db_A
+	            'host'      => '192.168.0.1',             //数据库域名
+	            ... ...
+	        ),
+	        'db_B' => array(                              //db_B
+	            'host'      => '192.168.0.2',             //数据库域名
+	            ... ...
+	        ),
+	    ),
+
+若 ``db_A`` 服务器中的数据库有表 ``a_table_user`` 、 ``a_table_friends`` ，而 ``db_B`` 服务器中的数据库有表 ``b_table_article`` 、 ``b_table_comments`` 则：
+
+.. code-block:: php
+
+	<?php
+	return array(
+	    ... ...
+	    'tables' => array(
+	        //通用路由
+	        '__default__' => array(
+	            'prefix' => 'a_',  //以 a_ 为表前缀
+	            'key' => 'id',
+	            'map' => array(
+	                array('db' => 'db_A'),  //默认，使用db_A数据库
+	            ),
+	        ),
+
+	        'table_article' => array(                                     //表b_table_article
+	            'prefix' => 'b_',                                         //表名前缀
+	            'key' => 'id',                                            //表主键名
+	            'map' => array(                                           //表路由配置
+	                array('db' => 'db_B'),                                // b_table_article表使用db_B数据库
+	            ),
+	        ),
+
+	        'table_comments' => array(                                    //表b_table_article
+	            'prefix' => 'b_',                                         //表名前缀
+	            'key' => 'id',                                            //表主键名
+	            'map' => array(                                           //表路由配置
+	                array('db' => 'db_B'),                                // b_table_comments表使用db_B数据库
+	            ),
+	        ),
+	    ),
+
+如果项目存在分表的情况，可结合上述的分表的说明再进行配置。为了让大家更容易明白，假设 ``db_A`` 服务器中的数据库有表 ``a_table_user`` 、 ``a_table_friends_0`` 到 ``a_table_friends_9`` （共10张表），而 ``db_B`` 服务器中的数据库有表 ``b_table_article`` 、 ``b_table_comments_0`` 到 ``b_table_comments_19`` （共20张表），则结合起来的完整配置为：
+
+.. code-block:: php
+
+	<?php
+	return array(
+	    ... ...
+	    'tables' => array(
+	        //通用路由
+	        '__default__' => array(
+	            'prefix' => 'a_',  //以 a_ 为表前缀
+	            'key' => 'id',
+	            'map' => array(
+	                array('db' => 'db_A'),  //默认，使用db_A数据库
+	            ),
+	        ),
+
+	        'table_friends' => array(                                     //分表配置
+	            'prefix' => 'a_',                                         //表名前缀
+	            'key' => 'id',                                            //表主键名
+	            'map' => array(                                           //表路由配置
+	                array('db' => 'db_A'),                                // b_table_comments表使用db_B数据库
+	                array('start' => 0, 'end' => 9, 'db' => 'db_A'),      //分表配置（共10张表）
+	            ),
+	        ),
+
+	        'table_article' => array(                                     //表b_table_article
+	            'prefix' => 'b_',                                         //表名前缀
+	            'key' => 'id',                                            //表主键名
+	            'map' => array(                                           //表路由配置
+	                array('db' => 'db_B'),                                // b_table_article表使用db_B数据库
+	            ),
+	        ),
+
+	        'table_comments' => array(                                    //表b_table_article
+	            'prefix' => 'b_',                                         //表名前缀
+	            'key' => 'id',                                            //表主键名
+	            'map' => array(                                           //表路由配置
+	                array('db' => 'db_B'),                                // b_table_comments表使用db_B数据库
+	                array('start' => 0, 'end' => 19, 'db' => 'db_B'),     //分表配置（共20张表）
+	            ),
+	        ),
+	    ),
+	);
+
+通过这样简单配置，即可完成对多个数据库的配置，其他代码层面上对数据库的操作保持不变。
+
+不足与注意点
+------------
+这样的设计是有明显的灵活性的，因为在后期如果需要迁移数据库服务器，我们可以在框架支持的情况下轻松应对，但依然需要考虑到一些问题和不足。
+
+数据库变更
+^^^^^^^^^^
+DB变更，这块是必不可少的，但一旦数据库表被拆分后，表数量的骤增导致变更执行困难，所以这里暂时使用了一个折中的方案，即提供了一个ext_data 扩展字段用于存放后期可能需要的字段信息，建议采用json格式，因为通用且长度比序列化的短。但各开发可以根据自己的需要决定格式。即使如此，扩展字段 明显做不到一些SQL的查询及其他操作。
+
+表之间的关联查询
+^^^^^^^^^^^^^^^
+表之间的关联查询，这个是分拆后的最大问题。虽然这样的代价是我们可以得到更庞大的存储设计， 而且很多表之间不需要必须的关联的查询，即使需要，也可以通过其他手段如缓存和分开查询来实现。这对开发人员有一定的约束，但是对于可预见性的海量数量，这又是必须的。
+
+扩展你的项目
+===========
+其他数据库的链接
+---------------
+``PhalApi`` 的数据库操作基于 ``NotORM`` 开源类库，而 ``NotORM`` 底层则是采用了 ``PDO`` 。根据 ``PDO`` 所支持的数据库可推导出目前 ``PhalApi`` 支持数据库的连接包括但不限于： ``MySQL`` ， ``SQLite`` ， ``PostgreSQL`` ， ``MS SQL`` ， ``Oracle`` 。当需要连接非 ``MySQL`` 数据库时，可以通过扩展并定制的方式来扩展。
+
+例如需要连接 MS SQL 数据库，首先，需要重写根据配置创建 ``PDO`` 实例的 ``PhalApi_DB_NotORM::createPDOBy($dbCfg)`` 方法，并在里面定制对应的数据库连接的 ``PDO`` 。
+
+.. code-block:: php
+
+	// $ vim ./Shop/Common/DB/MSServer.php
+	<?php
+	class Common_DB_MSServer extends PhalApi_DB_NotORM {
+
+	    protected function createPDOBy($dbCfg) {
+	        $dsn = sprintf('odbc:Driver={SQL Server};Server=%s,%s;Database=%s;',
+	            $dbCfg['host'],
+	            $dbCfg['port'],
+	            $dbCfg['name']
+	        );
+
+	        $pdo = new PDO(
+	            $dsn,
+	            $dbCfg['user'],
+	            $dbCfg['password']
+	        );
+
+	        return $pdo;
+	    }
+	}
+
+如果数据库连接配置与默认的格式不同，可自行调整 ``./Config/dbs.php`` 里的配置。
+
+随后，在初始化文件 ``Shop`` 项目的入口文件 ``./Public/shop/index.php`` 中重新注册 ``DI()->notorm`` 。
+
+.. code-block:: php
+
+	DI()->notorm = function() {
+	    return new Common_DB_MSServer(DI()->config->get('dbs'), DI()->debug);
+	};
+
+使用定制了特定数据库 ``PDO`` 连接的类实例重新注册 ``notorm`` 服务后，便可以进行新的数据库连接了，并且原有的数据库操作不需要改动，便可实现数据库切换。
+
+主从数据库的配置
+---------------
+默认只有一从数据库的配置，并支持分表分库配置。当需要数据库从库时，可以参考 ``./Config/dbs.php`` 配置，复件一份作为从库的配置，例如：
+
+.. code-block:: shell
+
+    $ cp ./Config/dbs.php ./Config/dbs_slave.php
+
+然后，注册一个数据库从库的 ``notorm`` 时，指定使用从库的配置。
+
+.. code-block:: php
+
+	DI()->notormSlave = function() {
+	    return new PhalApi_DB_NotORM(DI()->config->get('dbs_slave'), DI()->debug); //注意：配置不同
+	};
+
+最后使用此从库的服务 ``DI()->notormSlave`` 即可完成对从库的读取操作，用法同 ``DI()->notorm`` ，这里不再赘述。
+
+定制化你的Model基类
+------------------
+正如前文在 ``Model`` 基类中提到的两个问题： ``LOB`` 序列化和分表处理。如果 ``PhalApi`` 现有的解决方案不能满足项目的需求，可进行定制化处理。
+
+LOB序列化
+^^^^^^^^^
+先是 ``LOB`` 序列化，考虑到有分表的存在，当发生数据库变更时会有一定的难度和风险，尤其是在线上生产环境。因此引入了扩展字段 ``ext_data`` 。当然，此字段在应对数据库变更的同时，也可以作为简单明了的值对象的大对象。序列化 ``LOB`` 首先要考虑的问题是使用二进制（ ``BLOB`` ）还是文本（ ``CLOB`` ），出于通用性、易读性和测试性，我们目前使用了 ``json`` 格式的文本序列化。例如考虑到空间或性能问题，可以重写格式化方法 ``PhalApi_Model_NotORM::formatExtData()`` 和解析方法 ``PhalApi_Model_NotORM::parseExtData()`` 。
+
+比如改成 serialize 序列化：
+
+.. code-block:: php
+
+	<?php
+	class Common_Model_NotORM extends PhalApi_Model_NotORM {
+
+	    /**
+	     * 对LOB的ext_data字段进行格式化(序列化)
+	     */
+	    protected function formatExtData(&$data) {
+	        if (isset($data['ext_data'])) {
+	            $data['ext_data'] = serialize($data['ext_data']);
+	        }
+	    }
+
+	    /**
+	     * 对LOB的ext_data字段进行解析(反序列化)
+	     */
+	    protected function parseExtData(&$data) {
+	        if (isset($data['ext_data'])) {
+	            $data['ext_data'] = unserialize($data['ext_data'], true);
+	        }
+	    }
+
+	    // ...
+	}
+
+然后编写继承于 ``Common_Model_NotORM`` 的 ``Model`` 子类。
+
+.. code-block:: php
+
+	<?php
+	class Model_User extends Common_Model_NotORM {
+	   //...
+	}
+
+就可以轻松切换到序列化，如：
+
+.. code-block:: php
+
+	$model = new Model_User();
+
+	// 带有ext_data的更新
+	$extData = array('level' => 3, 'coins' => 256);
+	$data = array('name' => 'test', 'update_time' => time(), 'ext_data' => $extData);
+	// 基于主键的快速更新
+$model->update(1, $data);
+
+分表下的主键设定
+^^^^^^^^^^^^^^^
+在存在分表过多的情况下，框架会根据配置自动匹配不同表的不同主键配置。因为 ``Model`` 基类中的 ``CURD`` 基本操作是基于主键进行的，所以这里的问题就演变成了如何快速找到表的主键名。
+
+当然，这里是可以继续使用框架默认的自动匹配算法。若表主键是固定且统一的，为了提升性能，可重写 ``PhalApi_Model_NotORM::getTableKey($table)`` 方法来指定主键名。
+
+例如，全部表的主键都固定为 ``id`` 时：
+
+.. code-block:: php
+
+	<?php
+	abstract class Common_Model_NotORM extends PhalApi_Model_NotORM {
+
+	    protected function getTableKey($table) {
+	        return 'id';
+	    }
+	}
+
+当有其他场景需要时，也可以定制自己的 ``Model`` 基类。通过提供自己的层超类，封装一些项目中公共的操作，以简化项目开发。
+

@@ -1,0 +1,100 @@
+***
+子查询
+***
+
+构造子查询 ``SQL`` ，可以使用下面三种的方式来构建子查询。
+
+
+使用fetchSql方法
+================
+
+``fetchSql`` 方法表示不进行查询而只是返回构建的 ``SQL`` 语句，并且不仅仅支持 ``select`` ，而是支持所有的 ``CURD`` 查询。
+
+.. code-block:: php
+
+
+	$subQuery = Db::table('think_user')
+	    ->field('id,name')
+	    ->where('id', '>', 10)
+	    ->fetchSql(true)
+	    ->select();
+
+生成的 ``subQuery`` 结果为：
+
+.. code-block:: shell
+
+    SELECT `id`,`name` FROM `think_user` WHERE `id` > 10 
+
+使用buildSql构造子查询
+=====================
+
+.. code-block:: php
+
+	$subQuery = Db::table('think_user')
+	    ->field('id,name')
+	    ->where('id', '>', 10)
+	    ->buildSql();
+
+生成的 ``subQuery`` 结果为：
+
+.. code-block:: shell
+
+    ( SELECT `id`,`name` FROM `think_user` WHERE `id` > 10 )
+
+调用 ``buildSql`` 方法后不会进行实际的查询操作，而只是生成该次查询的 ``SQL`` 语句（为了避免混淆，会在 ``SQL`` 两边加上括号），然后我们直接在后续的查询中直接调用。
+
+然后使用子查询构造新的查询：
+
+.. code-block:: php
+
+	Db::table($subQuery . ' a')
+	    ->where('a.name', 'like', 'thinkphp')
+	    ->order('id', 'desc')
+	    ->select();
+
+生成的 ``SQL`` 语句为：
+
+.. code-block:: shell
+
+    SELECT * FROM ( SELECT `id`,`name` FROM `think_user` WHERE `id` > 10 ) a WHERE a.name LIKE 'thinkphp' ORDER BY `id` desc
+
+使用闭包构造子查询
+=================
+``IN/NOT IN`` 和 ``EXISTS/NOT EXISTS`` 之类的查询可以直接使用闭包作为子查询，例如：
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->where('id', 'IN', function ($query) {
+	        $query->table('think_profile')->where('status', 1)->field('id');
+	    })
+	    ->select();
+
+生成的 ``SQL`` 语句是
+
+.. code-block:: shell
+
+    SELECT * FROM `think_user` WHERE `id` IN ( SELECT `id` FROM `think_profile` WHERE `status` = 1 )
+
+.. code-block:: php
+
+	Db::table('think_user')
+	    ->whereExists(function ($query) {
+	        $query->table('think_profile')->where('status', 1);
+	    })->find();
+
+.. code-block:: shell
+
+	SELECT * FROM `think_user` WHERE EXISTS ( SELECT * FROM `think_profile` WHERE `status` = 1 ) 
+
+.. note:: 除了上述查询条件外，比较运算也支持使用闭包子查询
+
+
+
+
+
+
+
+
+
+

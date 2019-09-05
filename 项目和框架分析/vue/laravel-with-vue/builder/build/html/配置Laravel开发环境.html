@@ -1,0 +1,435 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. 配置Laravel开发环境 &mdash; laravel整合vue 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel整合vue 1.0 文档" href="index.html"/>
+        <link rel="next" title="5. 使用Laravel构建Web服务" href="使用Laravel构建Web服务.html"/>
+        <link rel="prev" title="3. Vuebnb原型，你的第一个vue项目" href="vuebnb原型，你的第一个vue项目.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel整合vue
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="本书概览.html">1. 本书概览</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hello Vue – An Introduction to Vue.js.html">2. Hello Vue – An Introduction to Vue.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vuebnb原型，你的第一个vue项目.html">3. Vuebnb原型，你的第一个vue项目</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. 配置Laravel开发环境</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">4.1. Laravel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#laravelvue">4.2. Laravel和Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">4.3. 环境</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#homestead">4.3.1. Homestead</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vuebnb">4.4. Vuebnb</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">4.4.1. 项目代码</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">4.5. 共享文件夹</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">4.6. 终端命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">4.7. 环境变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#composer">4.8. Composer安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">4.9. 数据库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">4.10. 项目虚拟机</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dns">4.10.1. 本地DNS入口</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">4.11. 访问项目</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">4.12. 总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="使用Laravel构建Web服务.html">5. 使用Laravel构建Web服务</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Webpack整合Laravel和Vue.html">6. 使用Webpack整合Laravel和Vue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Vue组件来编写小部件.html">7. 使用Vue组件来组合小部件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用Vue路由器构建一个多页面的应用程序.html">8. 用Vue路由器构建一个多页面的应用程序</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel整合vue</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>4. 配置Laravel开发环境</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/配置Laravel开发环境.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="laravel">
+<h1>4. 配置Laravel开发环境<a class="headerlink" href="#laravel" title="永久链接至标题">¶</a></h1>
+<p>在本书的前两章中，我们介绍了 <code class="docutils literal"><span class="pre">Vue.js</span></code> 。您现在应该对其基本功能非常满意。 在本章中，我们将准备构建 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 后端，并开始运行 <code class="docutils literal"><span class="pre">Laravel</span></code> 开发环境。</p>
+<p>本章涵盖的主题：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">Laravel</span></code> 简要介绍；</li>
+<li>建立 <code class="docutils literal"><span class="pre">Homestead</span></code> 虚拟开发环境；</li>
+<li>配置 <code class="docutils literal"><span class="pre">Homestead</span></code> 以承载 <code class="docutils literal"><span class="pre">Vuebnb</span></code> ；</li>
+</ul>
+<div class="section" id="id1">
+<h2>4.1. Laravel<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Laravel</span></code> 是一个开源的 <code class="docutils literal"><span class="pre">PHP</span> <span class="pre">MVC</span></code> 框架，用于构建健壮的 <code class="docutils literal"><span class="pre">Web</span></code> 应用程序。 <code class="docutils literal"><span class="pre">Laravel</span></code> 目前处于 <code class="docutils literal"><span class="pre">5.5</span></code> 版本，是最受欢迎的 <code class="docutils literal"><span class="pre">PHP</span></code> 框架之一，因其优雅的语法和强大的功能而备受赞誉。</p>
+<p><code class="docutils literal"><span class="pre">Laravel</span></code> 适用于创建各种基于 <code class="docutils literal"><span class="pre">Web</span></code> 的项目，如下所示：</p>
+<ul class="simple">
+<li>具有用户认证的网站，例如客户门户或社交网络；</li>
+<li><code class="docutils literal"><span class="pre">Web</span></code> 应用程序，例如图像裁剪器或监视仪表板；</li>
+<li><code class="docutils literal"><span class="pre">Web</span></code> 服务，例如 <code class="docutils literal"><span class="pre">RESTful</span> <span class="pre">APIs</span></code> ；</li>
+</ul>
+<p>在本书中，我假设了 <code class="docutils literal"><span class="pre">Laravel</span></code> 的基本知识。 您应该熟悉安装和设置 <code class="docutils literal"><span class="pre">Laravel</span></code> 并熟悉其核心功能，例如路由，视图和中间件。</p>
+<p>如果您是 <code class="docutils literal"><span class="pre">Laravel</span></code> 的新手，或者认为您需要复习一下，那么在继续阅读本书之前，您应该花一两个小时阅读 <code class="docutils literal"><span class="pre">Laravel</span></code> 出色的文档： <a class="reference external" href="https://laravel.com/docs/5.5/">https://laravel.com/docs/5.5/</a> 。</p>
+</div>
+<div class="section" id="laravelvue">
+<h2>4.2. Laravel和Vue<a class="headerlink" href="#laravelvue" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Laravel</span></code> 可能看起来像一个庞大的框架，因为它包含了构建几乎任何类型的 <code class="docutils literal"><span class="pre">Web</span></code> 应用程序的功能。 在底层， <code class="docutils literal"><span class="pre">Laravel</span></code> 是许多独立模块的集合，其中一些是作为 <code class="docutils literal"><span class="pre">Laravel</span></code> 项目的一部分开发的，另一些是来自第三方作者。 使 <code class="docutils literal"><span class="pre">Laravel</span></code> 更加伟大的部分原因是它对这些组件模块进行了仔细的管理和无缝连接。</p>
+<p>自 <code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">5.3</span></code> 版本以来， <code class="docutils literal"><span class="pre">Vue.js</span></code> 一直是 <code class="docutils literal"><span class="pre">Laravel</span></code> 安装中包含的默认前端框架。 和其他值得的选择相比，官方没有理由说明为什么 <code class="docutils literal"><span class="pre">Vue</span></code> 被选择，比如 <code class="docutils literal"><span class="pre">React</span></code> ，但我的猜测是，这是因为 <code class="docutils literal"><span class="pre">Vue</span></code> 和 <code class="docutils literal"><span class="pre">Laravel</span></code> 有着相同的理念：简单性和对开发者体验的强调。</p>
+<p>无论是什么原因， <code class="docutils literal"><span class="pre">Vue</span></code> 和 <code class="docutils literal"><span class="pre">Laravel</span></code> 都为开发 <code class="docutils literal"><span class="pre">Web</span></code> 应用程序提供了一个非常强大且灵活的全栈框架。</p>
+</div>
+<div class="section" id="id2">
+<h2>4.3. 环境<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>我们将使用 <code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">5.5</span></code> 作为 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的后端。 此版本的 <code class="docutils literal"><span class="pre">Laravel</span></code> 需要 <code class="docutils literal"><span class="pre">PHP</span> <span class="pre">7</span></code> ，一些个 <code class="docutils literal"><span class="pre">PHP</span></code> 扩展以及以下软件：</p>
+<ul class="simple">
+<li>Composer；</li>
+<li>Web服务器，如Apache或Nginx；</li>
+<li>数据库，如MySQL或MariaDB</li>
+</ul>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">有关 <code class="docutils literal"><span class="pre">Laravel</span></code> 的完整要求列表，请参阅安装指南： <a class="reference external" href="https://laravel.com/docs/5.5#installation">https://laravel.com/docs/5.5#installation</a> 。</p>
+</div>
+<p>我强烈建议您使用 <code class="docutils literal"><span class="pre">Homestead</span></code> 开发环境，而不是在您的计算机上手动安装 <code class="docutils literal"><span class="pre">Laravel</span></code>，这样不需要预先安装所需的一切。</p>
+<div class="section" id="homestead">
+<h3>4.3.1. Homestead<a class="headerlink" href="#homestead" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">Homestead</span></code> 是一个虚拟 <code class="docutils literal"><span class="pre">Web</span></code> 应用程序环境，可在 <code class="docutils literal"><span class="pre">Vagrant</span></code> 和 <code class="docutils literal"><span class="pre">VirtualBox</span></code> 上运行，并可在任何 <code class="docutils literal"><span class="pre">Windows</span></code> ， <code class="docutils literal"><span class="pre">Mac</span></code> 或 <code class="docutils literal"><span class="pre">Linux</span></code> 系统上运行。</p>
+<p>使用 <code class="docutils literal"><span class="pre">Homestead</span></code> 可以节省您从零开始设置开发环境的麻烦。 它还将确保您拥有与我正在使用的环境相同的环境，这将使您更轻松地遵循本书。</p>
+<p>如果您的计算机上未安装 <code class="docutils literal"><span class="pre">Homestead</span></code> ，请按照 <code class="docutils literal"><span class="pre">Laravel</span></code> 文档中的说明进行操作： <a class="reference external" href="https://laravel.com/docs/5.5/homestead">https://laravel.com/docs/5.5/homestead</a> 。 使用默认配置选项。</p>
+<p>一旦你安装了 <code class="docutils literal"><span class="pre">Homestead</span></code> 并用 <code class="docutils literal"><span class="pre">vagrant</span> <span class="pre">up</span></code> 命令启动了 <code class="docutils literal"><span class="pre">Vagrant</span> <span class="pre">box</span></code> ，你就可以继续了。</p>
+</div>
+</div>
+<div class="section" id="vuebnb">
+<h2>4.4. Vuebnb<a class="headerlink" href="#vuebnb" title="永久链接至标题">¶</a></h2>
+<p>在第2章“您的第一个 <code class="docutils literal"><span class="pre">Vue.js</span></code> 项目 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 原型开发”中，我们制作了 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 前端的原型。 原型是从我们直接从浏览器加载的单个 <code class="docutils literal"><span class="pre">HTML</span></code> 文件创建的。</p>
+<p>现在我们将开始研究整个 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 项目，其中原型将很快成为关键部分。 这个主要项目将是一个带有 <code class="docutils literal"><span class="pre">Web</span></code> 服务器和数据库的完整 <code class="docutils literal"><span class="pre">Laravel</span></code> 安装。</p>
+<div class="section" id="id3">
+<h3>4.4.1. 项目代码<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>如果您还没有，则需要通过从 <code class="docutils literal"><span class="pre">GitHub</span></code> 中克隆它将代码库下载到您的计算机。 指令在第1章中的代码库部分给出， <code class="docutils literal"><span class="pre">Hello</span> <span class="pre">Vue</span> <span class="pre">-</span> <span class="pre">Vue.js</span></code> 简介。</p>
+<p>代码库中的 <code class="docutils literal"><span class="pre">vuebnb</span></code> 文件夹包含我们现在要使用的项目代码。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>4.5. 共享文件夹<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Homestead.yaml</span></code> 文件的 <code class="docutils literal"><span class="pre">folders</span></code> 属性列出了您希望在计算机和 <code class="docutils literal"><span class="pre">Homestead</span></code> 环境之间共享的所有文件夹。</p>
+<p>确保代码库与 <code class="docutils literal"><span class="pre">Homestead</span></code> 共享，以便我们可以在本章后面的 <code class="docutils literal"><span class="pre">Homestead</span> <span class="pre">Web</span></code> 服务器中为 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 提供服务。</p>
+<p>~/Homestead/Homestead.yaml:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">folders</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">map</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/Users/anthonygore/Projects/Full-Stack-Vue.js-2-and-Laravel-5</span>
+      <span class="l l-Scalar l-Scalar-Plain">to</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/home/vagrant/projects</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>4.6. 终端命令<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>除非另有说明，本书中的所有其他终端命令将相对于项目目录，即 <code class="docutils literal"><span class="pre">vuebnb</span></code> 给出。</p>
+<p>但是，由于项目目录是在主机和 <code class="docutils literal"><span class="pre">Homestead</span></code> 之间共享的，因此终端命令可以从这些环境中的任何一个运行。</p>
+<p><code class="docutils literal"><span class="pre">Homestead</span></code> 使您无需在主机上安装任何软件。 但是，如果你不这样做，在主机环境中许多终端命令可能无法正常工作，或者可能无法正常工作。 例如，如果您的主机没有安装 <code class="docutils literal"><span class="pre">PHP</span></code> ，则无法运行 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ php artisan --version
+-bash: php: <span class="nb">command</span> not found
+</pre></div>
+</div>
+<p>如果您遇到这种情况，您需要首先通过 <code class="docutils literal"><span class="pre">SSH</span></code> 连接 <code class="docutils literal"><span class="pre">Homestead</span></code> ，从 <code class="docutils literal"><span class="pre">Homestead</span></code> 环境中运行这些命令：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/Homestead
+$ vagrant ssh
+</pre></div>
+</div>
+<p>然后，将其更改为 <code class="docutils literal"><span class="pre">OS</span></code> 中的项目目录，并使用相同的终端命令：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/projects/vuebnb
+$ php artisan --version
+Laravel Framework <span class="m">5</span>.5.20
+</pre></div>
+</div>
+<p>从 <code class="docutils literal"><span class="pre">Homestead</span></code> 运行命令唯一的缺点是由于 <code class="docutils literal"><span class="pre">SSH</span></code> 连接，它们速度较慢。 我会留给你决定你宁愿使用哪一个。</p>
+</div>
+<div class="section" id="id6">
+<h2>4.7. 环境变量<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Laravel</span></code> 项目需要在 <code class="docutils literal"><span class="pre">.env</span></code> 文件中设置某些环境变量。 通过复制环境文件示例现在创建一个：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cp .env.example .env
+</pre></div>
+</div>
+<p>运行以下命令生成应用程序密钥：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ php artisan key:generate
+</pre></div>
+</div>
+<p>我已经预设了大多数其他相关的环境变量，因此除非您配置了和我 <code class="docutils literal"><span class="pre">Homestead</span></code> 不同的配置，否则不必更改任何内容。</p>
+</div>
+<div class="section" id="composer">
+<h2>4.8. Composer安装<a class="headerlink" href="#composer" title="永久链接至标题">¶</a></h2>
+<p>要完成安装过程，我们必须运行 <code class="docutils literal"><span class="pre">composer</span> <span class="pre">install</span></code> 来下载所有必需的软件包：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ composer install
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>4.9. 数据库<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>我们将使用关系数据库将数据保存在我们的后端应用程序中。 <code class="docutils literal"><span class="pre">Homestead</span></code> 已经安装 <code class="docutils literal"><span class="pre">MySQL</span></code> ; 您只需在 <code class="docutils literal"><span class="pre">.env</span></code> 文件中提供配置，以便在 <code class="docutils literal"><span class="pre">Laravel</span></code> 中使用它。 默认配置将无需进一步更改即可使用。</p>
+<p>.env:</p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">DB_CONNECTION</span><span class="o">=</span><span class="s">mysql</span>
+<span class="na">DB_HOST</span><span class="o">=</span><span class="s">192.168.10.10</span>
+<span class="na">DB_PORT</span><span class="o">=</span><span class="s">3306</span>
+<span class="na">DB_DATABASE</span><span class="o">=</span><span class="s">vuebnb</span>
+<span class="na">DB_USERNAME</span><span class="o">=</span><span class="s">homestead</span>
+<span class="na">DB_PASSWORD</span><span class="o">=</span><span class="s">secret</span>
+</pre></div>
+</div>
+<p>无论您为数据库选择什么名称（即 <code class="docutils literal"><span class="pre">DB_DATABASE</span></code> 的值），都要确保将其添加到 <code class="docutils literal"><span class="pre">Homestead.yaml</span></code> 文件中的 <code class="docutils literal"><span class="pre">database</span></code> 数组中。</p>
+<p>~/Homestead/Homestead.yaml:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">databases</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">...</span>
+  <span class="l l-Scalar l-Scalar-Plain">- vuebnb</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>4.10. 项目虚拟机<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<p>主要的 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 项目现已安装。 让我们让 <code class="docutils literal"><span class="pre">Web</span></code> 服务器在本地开发域 <code class="docutils literal"><span class="pre">vuebnb.test</span></code> 中服务它。</p>
+<p>在 <code class="docutils literal"><span class="pre">Homestead</span></code> 配置文件中，将 <code class="docutils literal"><span class="pre">vuebnb.test</span></code> 映射到项目的 <code class="docutils literal"><span class="pre">public</span></code> 文件夹。</p>
+<p>~/Homestead/Homestead.yaml:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">sites</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">...</span>
+  <span class="l l-Scalar l-Scalar-Plain">- map</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vuebnb.test</span>
+    <span class="l l-Scalar l-Scalar-Plain">to</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/home/vagrant/vuebnb/public</span>
+</pre></div>
+</div>
+<div class="section" id="dns">
+<h3>4.10.1. 本地DNS入口<a class="headerlink" href="#dns" title="永久链接至标题">¶</a></h3>
+<p>我们还需要更新计算机的主机文件，以便理解 <code class="docutils literal"><span class="pre">vuebnb.test</span></code> 和 <code class="docutils literal"><span class="pre">Web`</span></code> 服务器的 <code class="docutils literal"><span class="pre">IP</span></code> 之间的映射关系。  <code class="docutils literal"><span class="pre">Web</span></code> 服务器位于 <code class="docutils literal"><span class="pre">Homestead</span></code> 盒子中，默认 <code class="docutils literal"><span class="pre">IP</span></code> 为 <code class="docutils literal"><span class="pre">192.168.10.10</span></code> 。</p>
+<p>要在 <code class="docutils literal"><span class="pre">Mac</span></code> 上进行配置，请在文本编辑器中打开主机文件 <code class="docutils literal"><span class="pre">/etc/hosts</span></code> 并添加以下条目：</p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">192.168.10.10 vuebnb.test</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">主机文件通常可以在 <code class="docutils literal"><span class="pre">Windows</span></code> 系统上的 <code class="docutils literal"><span class="pre">C:\Windows\System32\Drivers\etc\hosts</span></code> 中找到。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>4.11. 访问项目<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>完成所有配置后，我们现在可以在 <code class="docutils literal"><span class="pre">Homestead</span></code> 目录内运行 <code class="docutils literal"><span class="pre">vagrant</span> <span class="pre">provision</span></code> 以完成设置：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/Homestead
+$ vagrant provision
+<span class="c1"># The next command will return you to the project directory</span>
+$ <span class="nb">cd</span> -
+</pre></div>
+</div>
+<p>当配置过程完成后，我们应该能够在浏览器浏览到 <code class="docutils literal"><span class="pre">http://vuebnb.test</span></code> 时看到我们的网站正在运行：</p>
+</div>
+<div class="section" id="id10">
+<h2>4.12. 总结<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
+<p>在这个简短的章节中，我们讨论了开发 <code class="docutils literal"><span class="pre">Laravel</span></code> 项目的要求。 然后，我们安装并配置了 <code class="docutils literal"><span class="pre">Homestead</span></code> 虚拟开发环境，以承载我们的主要项目 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 。</p>
+<p>在下一章中，我们将通过构建一个 <code class="docutils literal"><span class="pre">Web</span></code> 服务向 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 前端提供数据，开始我们的主要项目。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="使用Laravel构建Web服务.html" class="btn btn-neutral float-right" title="5. 使用Laravel构建Web服务" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="vuebnb原型，你的第一个vue项目.html" class="btn btn-neutral" title="3. Vuebnb原型，你的第一个vue项目" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

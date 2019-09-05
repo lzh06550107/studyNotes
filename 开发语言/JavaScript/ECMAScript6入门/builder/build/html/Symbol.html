@@ -1,0 +1,1078 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>11. Symbol &mdash; ECMAScript6入门 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="ECMAScript6入门 1.0 文档" href="index.html"/>
+        <link rel="next" title="12. Set和Map数据结构" href="Set和Map数据结构.html"/>
+        <link rel="prev" title="10. 对象的扩展" href="对象的扩展.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ECMAScript6入门
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECMAScript6简介.html">2. ECMAScript6简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="let和const命令.html">3. let 和 const 命令</a></li>
+<li class="toctree-l1"><a class="reference internal" href="变量的解构赋值.html">4. 变量的解构赋值</a></li>
+<li class="toctree-l1"><a class="reference internal" href="字符串的扩展.html">5. 字符串的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="正则的扩展.html">6. 正则的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数值的扩展.html">7. 数值的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="函数的扩展.html">8. 函数的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数组的扩展.html">9. 数组的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="对象的扩展.html">10. 对象的扩展</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">11. Symbol</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">11.1. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">11.2. 作为属性名的 Symbol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">11.3. 实例：消除魔术字符串</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">11.4. 属性名的遍历</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#symbol-for-symbol-keyfor">11.5. Symbol.for()，Symbol.keyFor()</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#singleton">11.6. 实例：模块的 Singleton 模式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">11.7. 内置的 Symbol 值</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-hasinstance">11.7.1. Symbol.hasInstance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-isconcatspreadable">11.7.2. Symbol.isConcatSpreadable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-species">11.7.3. Symbol.species</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-match">11.7.4. Symbol.match</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-replace">11.7.5. Symbol.replace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-search">11.7.6. Symbol.search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-split">11.7.7. Symbol.split</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-iterator">11.7.8. Symbol.iterator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-toprimitive">11.7.9. Symbol.toPrimitive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-tostringtag">11.7.10. Symbol.toStringTag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbol-unscopables">11.7.11. Symbol.unscopables</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Set和Map数据结构.html">12. Set和Map数据结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Proxy.html">13. Proxy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Reflect.html">14. Reflect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Promise对象.html">15. Promise对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterator和for...of循环.html">16. Iterator 和 for…of 循环</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的语法.html">17. Generator函数的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的异步应用.html">18. Generator 函数的异步应用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="async函数.html">19. asyn函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的基本语法.html">20. Class 的基本语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的继承.html">21. Class的继承</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Decorator.html">22. 修饰器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的语法.html">23. Module 的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的加载实现.html">24. Module 的加载实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="编程风格.html">25. 编程风格</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECMAScript6入门</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>11. Symbol</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="symbol">
+<h1>11. Symbol<a class="headerlink" href="#symbol" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>11.1. 概述<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>ES5 的对象属性名都是字符串，这容易造成属性名的冲突。比如，你使用了一个他人提供的对象，但又想为这个对象添加新的方法（ <code class="docutils literal"><span class="pre">mixin</span></code> 模式），新方法的名字就有可能与现有方法产生冲突。如果有一种机制，保证每个属性的名字都是独一无二的就好了，这样就从根本上防止属性名的冲突。这就是 ES6 引入 <code class="docutils literal"><span class="pre">Symbol</span></code> 的原因。</p>
+<p>ES6 引入了一种新的原始数据类型 <code class="docutils literal"><span class="pre">Symbol</span></code> ，表示独一无二的值。它是 JavaScript 语言的第七种数据类型，前六种是： <code class="docutils literal"><span class="pre">undefined</span></code> 、 <code class="docutils literal"><span class="pre">null</span></code> 、布尔值（ <code class="docutils literal"><span class="pre">Boolean</span></code> ）、字符串（ <code class="docutils literal"><span class="pre">String</span></code> ）、数值（ <code class="docutils literal"><span class="pre">Number</span></code> ）、对象（ <code class="docutils literal"><span class="pre">Object</span></code> ）。</p>
+<p><code class="docutils literal"><span class="pre">Symbol</span></code> 值通过 <code class="docutils literal"><span class="pre">Symbol</span></code> 函数生成。这就是说，对象的属性名现在可以有两种类型，一种是原来就有的字符串，另一种就是新增的 <code class="docutils literal"><span class="pre">Symbol</span></code> 类型。凡是属性名属于 <code class="docutils literal"><span class="pre">Symbol</span></code> 类型，就都是独一无二的，可以保证不会与其他属性名产生冲突。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">();</span>
+
+<span class="k">typeof</span> <span class="nx">s</span>
+<span class="c1">// &quot;symbol&quot;</span>
+</pre></div>
+</div>
+<p>上面代码中，变量 <code class="docutils literal"><span class="pre">s</span></code> 就是一个独一无二的值。 <code class="docutils literal"><span class="pre">typeof</span></code> 运算符的结果，表明变量 <code class="docutils literal"><span class="pre">s</span></code> 是 <code class="docutils literal"><span class="pre">Symbol</span></code> 数据类型，而不是字符串之类的其他类型。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">Symbol</span></code> 函数前不能使用 <code class="docutils literal"><span class="pre">new</span></code> 命令，否则会报错。这是因为生成的 <code class="docutils literal"><span class="pre">Symbol</span></code> 是一个原始类型的值，不是对象。也就是说，由于 <code class="docutils literal"><span class="pre">Symbol</span></code> 值不是对象，所以不能添加属性。基本上，它是一种类似于字符串的数据类型。</p>
+</div>
+<p><code class="docutils literal"><span class="pre">Symbol</span></code> 函数可以接受一个字符串作为参数，表示对 <code class="docutils literal"><span class="pre">Symbol</span></code> 实例的描述，主要是为了在控制台显示，或者转为字符串时，比较容易区分。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">s1</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">s2</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">);</span>
+
+<span class="nx">s1</span> <span class="c1">// Symbol(foo)</span>
+<span class="nx">s2</span> <span class="c1">// Symbol(bar)</span>
+
+<span class="nx">s1</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="c1">// &quot;Symbol(foo)&quot;</span>
+<span class="nx">s2</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="c1">// &quot;Symbol(bar)&quot;</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">s1</span></code> 和 <code class="docutils literal"><span class="pre">s2</span></code> 是两个 <code class="docutils literal"><span class="pre">Symbol</span></code> 值。如果不加参数，它们在控制台的输出都是 <code class="docutils literal"><span class="pre">Symbol()</span></code> ，不利于区分。有了参数以后，就等于为它们加上了描述，输出的时候就能够分清，到底是哪一个值。</p>
+<p>如果 <code class="docutils literal"><span class="pre">Symbol</span></code> 的参数是一个对象，就会调用该对象的 <code class="docutils literal"><span class="pre">toString</span></code> 方法，将其转为字符串，然后才生成一个 <code class="docutils literal"><span class="pre">Symbol</span></code> 值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">toString</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;abc&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+<span class="kr">const</span> <span class="nx">sym</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
+<span class="nx">sym</span> <span class="c1">// Symbol(abc)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">Symbol</span></code> 函数的参数只是表示对当前 <code class="docutils literal"><span class="pre">Symbol</span></code> 值的描述，因此相同参数的 <code class="docutils literal"><span class="pre">Symbol</span></code> 函数的返回值是不相等的。</p>
+</div>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 没有参数的情况</span>
+<span class="kd">let</span> <span class="nx">s1</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">s2</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">();</span>
+
+<span class="nx">s1</span> <span class="o">===</span> <span class="nx">s2</span> <span class="c1">// false</span>
+
+<span class="c1">// 有参数的情况</span>
+<span class="kd">let</span> <span class="nx">s1</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">s2</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+
+<span class="nx">s1</span> <span class="o">===</span> <span class="nx">s2</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">s1</span></code> 和 <code class="docutils literal"><span class="pre">s2</span></code> 都是 <code class="docutils literal"><span class="pre">Symbol</span></code> 函数的返回值，而且参数相同，但是它们是不相等的。</p>
+<p><code class="docutils literal"><span class="pre">Symbol</span></code> 值不能与其他类型的值进行运算，会报错。即不会隐式转换。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">sym</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;My symbol&#39;</span><span class="p">);</span>
+
+<span class="s2">&quot;your symbol is &quot;</span> <span class="o">+</span> <span class="nx">sym</span>
+<span class="c1">// TypeError: can&#39;t convert symbol to string</span>
+<span class="sb">`your symbol is </span><span class="si">${</span><span class="nx">sym</span><span class="si">}</span><span class="sb">`</span>
+<span class="c1">// TypeError: can&#39;t convert symbol to string</span>
+</pre></div>
+</div>
+<p>但是， <code class="docutils literal"><span class="pre">Symbol</span></code> 值可以显式转为字符串。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">sym</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;My symbol&#39;</span><span class="p">);</span>
+
+<span class="nb">String</span><span class="p">(</span><span class="nx">sym</span><span class="p">)</span> <span class="c1">// &#39;Symbol(My symbol)&#39;</span>
+<span class="nx">sym</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="c1">// &#39;Symbol(My symbol)&#39;</span>
+</pre></div>
+</div>
+<p>另外， <code class="docutils literal"><span class="pre">Symbol</span></code> 值也可以转为布尔值，但是不能转为数值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">sym</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">();</span>
+<span class="nb">Boolean</span><span class="p">(</span><span class="nx">sym</span><span class="p">)</span> <span class="c1">// true</span>
+<span class="o">!</span><span class="nx">sym</span>  <span class="c1">// false</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">sym</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="nb">Number</span><span class="p">(</span><span class="nx">sym</span><span class="p">)</span> <span class="c1">// TypeError</span>
+<span class="nx">sym</span> <span class="o">+</span> <span class="mi">2</span> <span class="c1">// TypeError</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>11.2. 作为属性名的 Symbol<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>由于每一个 <code class="docutils literal"><span class="pre">Symbol</span></code> 值都是不相等的，这意味着 <code class="docutils literal"><span class="pre">Symbol</span></code> 值可以作为标识符，用于对象的属性名，就能保证不会出现同名的属性。 <strong>这对于一个对象由多个模块构成的情况非常有用，能防止某一个键被不小心改写或覆盖。</strong></p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">mySymbol</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">();</span>
+
+<span class="c1">// 第一种写法</span>
+<span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">a</span><span class="p">[</span><span class="nx">mySymbol</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Hello!&#39;</span><span class="p">;</span>
+
+<span class="c1">// 第二种写法</span>
+<span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">mySymbol</span><span class="p">]</span><span class="o">:</span> <span class="s1">&#39;Hello!&#39;</span>
+<span class="p">};</span>
+
+<span class="c1">// 第三种写法</span>
+<span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">mySymbol</span><span class="p">,</span> <span class="p">{</span> <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;Hello!&#39;</span> <span class="p">});</span>
+
+<span class="c1">// 以上写法都得到同样结果</span>
+<span class="nx">a</span><span class="p">[</span><span class="nx">mySymbol</span><span class="p">]</span> <span class="c1">// &quot;Hello!&quot;</span>
+</pre></div>
+</div>
+<p>上面代码通过方括号结构或 <code class="docutils literal"><span class="pre">Object.defineProperty</span></code> ，将对象的属性名指定为一个 <code class="docutils literal"><span class="pre">Symbol</span></code> 值。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">Symbol</span></code> 值作为对象属性名时，不能用点运算符。</p>
+</div>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">mySymbol</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">();</span>
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{};</span>
+
+<span class="nx">a</span><span class="p">.</span><span class="nx">mySymbol</span> <span class="o">=</span> <span class="s1">&#39;Hello!&#39;</span><span class="p">;</span>
+<span class="nx">a</span><span class="p">[</span><span class="nx">mySymbol</span><span class="p">]</span> <span class="c1">// undefined</span>
+<span class="nx">a</span><span class="p">[</span><span class="s1">&#39;mySymbol&#39;</span><span class="p">]</span> <span class="c1">// &quot;Hello!&quot;</span>
+</pre></div>
+</div>
+<p>上面代码中，因为点运算符后面总是字符串，所以不会读取 <code class="docutils literal"><span class="pre">mySymbol</span></code> 作为标识名所指代的那个值，导致 <code class="docutils literal"><span class="pre">a</span></code> 的属性名实际上是一个字符串，而不是一个 <code class="docutils literal"><span class="pre">Symbol</span></code> 值。</p>
+<p>同理，在对象的内部，使用 <code class="docutils literal"><span class="pre">Symbol</span></code> 值定义属性时， <code class="docutils literal"><span class="pre">Symbol</span></code> 值必须放在方括号之中。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">();</span>
+
+<span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">s</span><span class="p">]</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">obj</span><span class="p">[</span><span class="nx">s</span><span class="p">](</span><span class="mi">123</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>上面代码中，如果 <code class="docutils literal"><span class="pre">s</span></code> 不放在方括号中，该属性的键名就是字符串 <code class="docutils literal"><span class="pre">s</span></code> ，而不是 <code class="docutils literal"><span class="pre">s</span></code> 所代表的那个 <code class="docutils literal"><span class="pre">Symbol</span></code> 值。</p>
+<p>采用增强的对象写法，上面代码的 <code class="docutils literal"><span class="pre">obj</span></code> 对象可以写得更简洁一些。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">s</span><span class="p">](</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Symbol</span></code> 类型还可以用于定义一组常量，保证这组常量的值都是不相等的。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">log</span><span class="p">.</span><span class="nx">levels</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">DEBUG</span><span class="o">:</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">),</span>
+  <span class="nx">INFO</span><span class="o">:</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;info&#39;</span><span class="p">),</span>
+  <span class="nx">WARN</span><span class="o">:</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;warn&#39;</span><span class="p">)</span>
+<span class="p">};</span>
+<span class="nx">log</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">DEBUG</span><span class="p">,</span> <span class="s1">&#39;debug message&#39;</span><span class="p">);</span>
+<span class="nx">log</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">INFO</span><span class="p">,</span> <span class="s1">&#39;info message&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>下面是另外一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">COLOR_RED</span>    <span class="o">=</span> <span class="nx">Symbol</span><span class="p">();</span>
+<span class="kr">const</span> <span class="nx">COLOR_GREEN</span>  <span class="o">=</span> <span class="nx">Symbol</span><span class="p">();</span>
+
+<span class="kd">function</span> <span class="nx">getComplement</span><span class="p">(</span><span class="nx">color</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="nx">color</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="nx">COLOR_RED</span><span class="o">:</span>
+      <span class="k">return</span> <span class="nx">COLOR_GREEN</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nx">COLOR_GREEN</span><span class="o">:</span>
+      <span class="k">return</span> <span class="nx">COLOR_RED</span><span class="p">;</span>
+    <span class="k">default</span><span class="o">:</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Undefined color&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>常量使用 <code class="docutils literal"><span class="pre">Symbol</span></code> 值最大的好处，就是其他任何值都不可能有相同的值了，因此可以保证上面的 <code class="docutils literal"><span class="pre">switch</span></code> 语句会按设计的方式工作。</p>
+<p>还有一点需要注意， <code class="docutils literal"><span class="pre">Symbol</span></code> 值作为属性名时，该属性还是公开属性，不是私有属性。</p>
+</div>
+<div class="section" id="id3">
+<h2>11.3. 实例：消除魔术字符串<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>魔术字符串指的是，在代码之中多次出现、与代码形成强耦合的某一个具体的字符串或者数值。风格良好的代码，应该尽量消除魔术字符串，改由含义清晰的变量代替。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">getArea</span><span class="p">(</span><span class="nx">shape</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">area</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">switch</span> <span class="p">(</span><span class="nx">shape</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="s1">&#39;Triangle&#39;</span><span class="o">:</span> <span class="c1">// 魔术字符串</span>
+      <span class="nx">area</span> <span class="o">=</span> <span class="mf">.5</span> <span class="o">*</span> <span class="nx">options</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="nx">options</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="cm">/* ... more code ... */</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">area</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">getArea</span><span class="p">(</span><span class="s1">&#39;Triangle&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">width</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span> <span class="nx">height</span><span class="o">:</span> <span class="mi">100</span> <span class="p">});</span> <span class="c1">// 魔术字符串</span>
+</pre></div>
+</div>
+<p>上面代码中，字符串 <code class="docutils literal"><span class="pre">Triangle</span></code> 就是一个魔术字符串。它多次出现，与代码形成“强耦合”，不利于将来的修改和维护。</p>
+<p>常用的消除魔术字符串的方法，就是把它写成一个变量。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">shapeType</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">triangle</span><span class="o">:</span> <span class="s1">&#39;Triangle&#39;</span>
+<span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">getArea</span><span class="p">(</span><span class="nx">shape</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">area</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="nx">shape</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="nx">shapeType</span><span class="p">.</span><span class="nx">triangle</span><span class="o">:</span>
+      <span class="nx">area</span> <span class="o">=</span> <span class="mf">.5</span> <span class="o">*</span> <span class="nx">options</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="nx">options</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+      <span class="k">break</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">area</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">getArea</span><span class="p">(</span><span class="nx">shapeType</span><span class="p">.</span><span class="nx">triangle</span><span class="p">,</span> <span class="p">{</span> <span class="nx">width</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span> <span class="nx">height</span><span class="o">:</span> <span class="mi">100</span> <span class="p">});</span>
+</pre></div>
+</div>
+<p>上面代码中，我们把 <code class="docutils literal"><span class="pre">Triangle</span></code> 写成 <code class="docutils literal"><span class="pre">shapeType</span></code> 对象的 <code class="docutils literal"><span class="pre">triangle</span></code> 属性，这样就消除了强耦合。</p>
+<p>如果仔细分析，可以发现 <code class="docutils literal"><span class="pre">shapeType.triangle</span></code> 等于哪个值并不重要，只要确保不会跟其他 <code class="docutils literal"><span class="pre">shapeType</span></code> 属性的值冲突即可。因此，这里就很适合改用 <code class="docutils literal"><span class="pre">Symbol</span></code> 值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">shapeType</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">triangle</span><span class="o">:</span> <span class="nx">Symbol</span><span class="p">()</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>上面代码中，除了将 <code class="docutils literal"><span class="pre">shapeType.triangle</span></code> 的值设为一个 <code class="docutils literal"><span class="pre">Symbol</span></code> ，其他地方都不用修改。</p>
+</div>
+<div class="section" id="id4">
+<h2>11.4. 属性名的遍历<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Symbol</span></code> 作为属性名，该属性不会出现在 <code class="docutils literal"><span class="pre">for...in、for...of</span></code> 循环中，也不会被 <code class="docutils literal"><span class="pre">Object.keys()、Object.getOwnPropertyNames()、JSON.stringify()</span></code> 返回。但是，它也不是私有属性，有一个 <code class="docutils literal"><span class="pre">Object.getOwnPropertySymbols</span></code> 方法，可以获取指定对象的所有 <code class="docutils literal"><span class="pre">Symbol</span></code> 属性名。</p>
+<p><code class="docutils literal"><span class="pre">Object.getOwnPropertySymbols</span></code> 方法返回一个数组，成员是当前对象的所有用作属性名的 <code class="docutils literal"><span class="pre">Symbol</span></code> 值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">);</span>
+
+<span class="nx">obj</span><span class="p">[</span><span class="nx">a</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Hello&#39;</span><span class="p">;</span>
+<span class="nx">obj</span><span class="p">[</span><span class="nx">b</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;World&#39;</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">objectSymbols</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertySymbols</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
+
+<span class="nx">objectSymbols</span>
+<span class="c1">// [Symbol(a), Symbol(b)]</span>
+</pre></div>
+</div>
+<p>下面是另一个例子， <code class="docutils literal"><span class="pre">Object.getOwnPropertySymbols</span></code> 方法与 <code class="docutils literal"><span class="pre">for...in</span></code> 循环、 <code class="docutils literal"><span class="pre">Object.getOwnPropertyNames</span></code> 方法进行对比的例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
+
+<span class="kd">let</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">);</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">foo</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;foobar&quot;</span><span class="p">,</span>
+<span class="p">});</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> <span class="c1">// 无输出</span>
+<span class="p">}</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyNames</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span>
+<span class="c1">// []</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertySymbols</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span>
+<span class="c1">// [Symbol(foo)]</span>
+</pre></div>
+</div>
+<p>上面代码中，使用 <code class="docutils literal"><span class="pre">Object.getOwnPropertyNames</span></code> 方法得不到 <code class="docutils literal"><span class="pre">Symbol</span></code> 属性名，需要使用 <code class="docutils literal"><span class="pre">Object.getOwnPropertySymbols</span></code> 方法。</p>
+<p>另一个新的 API， <code class="docutils literal"><span class="pre">Reflect.ownKeys</span></code> 方法可以返回所有类型的键名，包括常规键名和 <code class="docutils literal"><span class="pre">Symbol</span></code> 键名。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;my_key&#39;</span><span class="p">)]</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="kr">enum</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="nx">nonEnum</span><span class="o">:</span> <span class="mi">3</span>
+<span class="p">};</span>
+
+<span class="nx">Reflect</span><span class="p">.</span><span class="nx">ownKeys</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span>
+<span class="c1">//  [&quot;enum&quot;, &quot;nonEnum&quot;, Symbol(my_key)]</span>
+</pre></div>
+</div>
+<p>由于以 <code class="docutils literal"><span class="pre">Symbol</span></code> 值作为名称的属性，不会被常规方法遍历得到。我们可以利用这个特性，为对象定义一些非私有的、但又希望只用于内部的方法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">size</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;size&#39;</span><span class="p">);</span>
+
+<span class="kr">class</span> <span class="nx">Collection</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">[</span><span class="nx">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">add</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">[</span><span class="k">this</span><span class="p">[</span><span class="nx">size</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">[</span><span class="nx">size</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="kr">static</span> <span class="nx">sizeOf</span><span class="p">(</span><span class="nx">instance</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">instance</span><span class="p">[</span><span class="nx">size</span><span class="p">];</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Collection</span><span class="p">();</span>
+<span class="nx">Collection</span><span class="p">.</span><span class="nx">sizeOf</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="c1">// 0</span>
+
+<span class="nx">x</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+<span class="nx">Collection</span><span class="p">.</span><span class="nx">sizeOf</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="c1">// 1</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="c1">// [&#39;0&#39;]</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyNames</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="c1">// [&#39;0&#39;]</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertySymbols</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="c1">// [Symbol(size)]</span>
+</pre></div>
+</div>
+<p>上面代码中，对象 <code class="docutils literal"><span class="pre">x</span></code> 的 <code class="docutils literal"><span class="pre">size</span></code> 属性是一个 <code class="docutils literal"><span class="pre">Symbol</span></code> 值，所以 <code class="docutils literal"><span class="pre">Object.keys(x)</span></code> 、 <code class="docutils literal"><span class="pre">Object.getOwnPropertyNames(x)</span></code> 都无法获取它。这就造成了一种非私有的内部方法的效果。</p>
+</div>
+<div class="section" id="symbol-for-symbol-keyfor">
+<h2>11.5. Symbol.for()，Symbol.keyFor()<a class="headerlink" href="#symbol-for-symbol-keyfor" title="永久链接至标题">¶</a></h2>
+<p>有时，我们希望重新使用同一个 <code class="docutils literal"><span class="pre">Symbol</span></code> 值， <code class="docutils literal"><span class="pre">Symbol.for</span></code> 方法可以做到这一点。它接受一个字符串作为参数，然后搜索有没有以该参数作为名称的 <code class="docutils literal"><span class="pre">Symbol</span></code> 值。如果有，就返回这个 <code class="docutils literal"><span class="pre">Symbol</span></code> 值，否则就新建并返回一个以该字符串为名称的 <code class="docutils literal"><span class="pre">Symbol</span></code> 值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">s1</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">s2</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+
+<span class="nx">s1</span> <span class="o">===</span> <span class="nx">s2</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">s1</span></code> 和 <code class="docutils literal"><span class="pre">s2</span></code> 都是 <code class="docutils literal"><span class="pre">Symbol</span></code> 值，但是它们都是同样参数的 <code class="docutils literal"><span class="pre">Symbol.for</span></code> 方法生成的，所以实际上是同一个值。</p>
+<p><code class="docutils literal"><span class="pre">Symbol.for()</span></code> 与 <code class="docutils literal"><span class="pre">Symbol()</span></code> 这两种写法，都会生成新的 <code class="docutils literal"><span class="pre">Symbol</span></code> 。它们的区别是，前者会被登记在全局环境中供搜索，后者不会。 <code class="docutils literal"><span class="pre">Symbol.for()</span></code> 不会每次调用就返回一个新的 <code class="docutils literal"><span class="pre">Symbol</span></code> 类型的值，而是会先检查给定的 <code class="docutils literal"><span class="pre">key</span></code> 是否已经存在，如果不存在才会新建一个值。比如，如果你调用 <code class="docutils literal"><span class="pre">Symbol.for(&quot;cat&quot;)</span></code> 30 次，每次都会返回同一个 <code class="docutils literal"><span class="pre">Symbol</span></code> 值，但是调用 <code class="docutils literal"><span class="pre">Symbol(&quot;cat&quot;)</span></code> 30 次，会返回 30 个不同的 <code class="docutils literal"><span class="pre">Symbol</span></code> 值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span> <span class="o">===</span> <span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+<span class="c1">// true</span>
+
+<span class="nx">Symbol</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span> <span class="o">===</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+<span class="c1">// false</span>
+</pre></div>
+</div>
+<p>上面代码中，由于 <code class="docutils literal"><span class="pre">Symbol()</span></code> 写法没有登记机制，所以每次调用都会返回一个不同的值。</p>
+<p><code class="docutils literal"><span class="pre">Symbol.keyFor</span></code> 方法返回一个 <strong>已登记</strong> 的 <code class="docutils literal"><span class="pre">Symbol</span></code> 类型值的 <code class="docutils literal"><span class="pre">key</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">s1</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">);</span>
+<span class="nx">Symbol</span><span class="p">.</span><span class="nx">keyFor</span><span class="p">(</span><span class="nx">s1</span><span class="p">)</span> <span class="c1">// &quot;foo&quot;</span>
+
+<span class="kd">let</span> <span class="nx">s2</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">);</span>
+<span class="nx">Symbol</span><span class="p">.</span><span class="nx">keyFor</span><span class="p">(</span><span class="nx">s2</span><span class="p">)</span> <span class="c1">// undefined</span>
+</pre></div>
+</div>
+<p>上面代码中，变量 <code class="docutils literal"><span class="pre">s2</span></code> 属于未登记的 <code class="docutils literal"><span class="pre">Symbol</span></code> 值，所以返回 <code class="docutils literal"><span class="pre">undefined</span></code> 。</p>
+<p>需要注意的是， <code class="docutils literal"><span class="pre">Symbol.for</span></code> 为 <code class="docutils literal"><span class="pre">Symbol</span></code> 值登记的名字，是全局环境的，可以在不同的 <code class="docutils literal"><span class="pre">iframe</span></code> 或 <code class="docutils literal"><span class="pre">service</span> <span class="pre">worker</span></code> 中取到同一个值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">iframe</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;iframe&#39;</span><span class="p">);</span>
+<span class="nx">iframe</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nb">String</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span>
+
+<span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">iframe</span></code> 窗口生成的 <code class="docutils literal"><span class="pre">Symbol</span></code> 值，可以在主页面得到。</p>
+</div>
+<div class="section" id="singleton">
+<h2>11.6. 实例：模块的 Singleton 模式<a class="headerlink" href="#singleton" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Singleton</span></code> 模式指的是调用一个类，任何时候返回的都是同一个实例。</p>
+<p>对于 <code class="docutils literal"><span class="pre">Node</span></code> 来说，模块文件可以看成是一个类。怎么保证每次执行这个模块文件，返回的都是同一个实例呢？</p>
+<p>很容易想到，可以把实例放到顶层对象 <code class="docutils literal"><span class="pre">global</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// mod.js</span>
+<span class="kd">function</span> <span class="nx">A</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">global</span><span class="p">.</span><span class="nx">_foo</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">global</span><span class="p">.</span><span class="nx">_foo</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">A</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">global</span><span class="p">.</span><span class="nx">_foo</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>然后，加载上面的 <code class="docutils literal"><span class="pre">mod.js</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./mod.js&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">foo</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>上面代码中，变量 <code class="docutils literal"><span class="pre">a</span></code> 任何时候加载的都是 <code class="docutils literal"><span class="pre">A</span></code> 的同一个实例。</p>
+<p>但是，这里有一个问题，全局变量 <code class="docutils literal"><span class="pre">global._foo</span></code> 是可写的，任何文件都可以修改。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">global</span><span class="p">.</span><span class="nx">_foo</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">foo</span><span class="o">:</span> <span class="s1">&#39;world&#39;</span> <span class="p">};</span>
+
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./mod.js&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">foo</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>上面的代码，会使得加载 <code class="docutils literal"><span class="pre">mod.js</span></code> 的脚本都失真。</p>
+<p>为了防止这种情况出现，我们就可以使用 <code class="docutils literal"><span class="pre">Symbol</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// mod.js</span>
+<span class="kr">const</span> <span class="nx">FOO_KEY</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">A</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">global</span><span class="p">[</span><span class="nx">FOO_KEY</span><span class="p">])</span> <span class="p">{</span>
+  <span class="nx">global</span><span class="p">[</span><span class="nx">FOO_KEY</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">A</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">global</span><span class="p">[</span><span class="nx">FOO_KEY</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>上面代码中，可以保证 <code class="docutils literal"><span class="pre">global[FOO_KEY]</span></code> 不会被无意间覆盖，但还是可以被改写。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">global</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">foo</span><span class="o">:</span> <span class="s1">&#39;world&#39;</span> <span class="p">};</span>
+
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./mod.js&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果键名使用 <code class="docutils literal"><span class="pre">Symbol</span></code> 方法生成，那么外部将无法引用这个值，当然也就无法改写。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// mod.js</span>
+<span class="kr">const</span> <span class="nx">FOO_KEY</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+
+<span class="c1">// 后面代码相同 ……</span>
+</pre></div>
+</div>
+<p>上面代码将导致其他脚本都无法引用 <code class="docutils literal"><span class="pre">FOO_KEY</span></code> 。但这样也有一个问题，就是如果多次执行这个脚本，每次得到的 <code class="docutils literal"><span class="pre">FOO_KEY</span></code> 都是不一样的。虽然 <code class="docutils literal"><span class="pre">Node</span></code> 会将脚本的执行结果缓存，一般情况下，不会多次执行同一个脚本，但是用户可以手动清除缓存，所以也不是绝对可靠。</p>
+</div>
+<div class="section" id="id5">
+<h2>11.7. 内置的 Symbol 值<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>除了定义自己使用的 <code class="docutils literal"><span class="pre">Symbol</span></code> 值以外，ES6 还提供了 11 个内置的 <code class="docutils literal"><span class="pre">Symbol</span></code> 值，指向语言内部使用的方法。</p>
+<div class="section" id="symbol-hasinstance">
+<h3>11.7.1. Symbol.hasInstance<a class="headerlink" href="#symbol-hasinstance" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.hasInstance</span></code> 属性，指向一个内部方法。当其他对象使用 <code class="docutils literal"><span class="pre">instanceof</span></code> 运算符，判断是否为该对象的实例时，会调用这个方法。比如， <code class="docutils literal"><span class="pre">foo</span> <span class="pre">instanceof</span> <span class="pre">Foo</span></code> 在语言内部，实际调用的是 <code class="docutils literal"><span class="pre">Foo[Symbol.hasInstance](foo)</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MyClass</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">hasInstance</span><span class="p">](</span><span class="nx">foo</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">foo</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="k">instanceof</span> <span class="k">new</span> <span class="nx">MyClass</span><span class="p">()</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">MyClass</span></code> 是一个类， <code class="docutils literal"><span class="pre">new</span> <span class="pre">MyClass()</span></code> 会返回一个实例。该实例的 <code class="docutils literal"><span class="pre">Symbol.hasInstance</span></code> 方法，会在进行 <code class="docutils literal"><span class="pre">instanceof</span></code> 运算时自动调用，判断左侧的运算子是否为 <code class="docutils literal"><span class="pre">Array</span></code> 的实例。</p>
+<p>下面是另一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Even</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">hasInstance</span><span class="p">](</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 等同于</span>
+<span class="kr">const</span> <span class="nx">Even</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">hasInstance</span><span class="p">](</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="mi">1</span> <span class="k">instanceof</span> <span class="nx">Even</span> <span class="c1">// false</span>
+<span class="mi">2</span> <span class="k">instanceof</span> <span class="nx">Even</span> <span class="c1">// true</span>
+<span class="mi">12345</span> <span class="k">instanceof</span> <span class="nx">Even</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="symbol-isconcatspreadable">
+<h3>11.7.2. Symbol.isConcatSpreadable<a class="headerlink" href="#symbol-isconcatspreadable" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.isConcatSpreadable</span></code> 属性等于一个布尔值，表示该对象用于 <code class="docutils literal"><span class="pre">Array.prototype.concat()</span></code> 时，是否可以展开。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">arr1</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">];</span>
+<span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">arr1</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span> <span class="c1">// [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;e&#39;]</span>
+<span class="nx">arr1</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">isConcatSpreadable</span><span class="p">]</span> <span class="c1">// undefined</span>
+
+<span class="kd">let</span> <span class="nx">arr2</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">];</span>
+<span class="nx">arr2</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">isConcatSpreadable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">arr2</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span> <span class="c1">// [&#39;a&#39;, &#39;b&#39;, [&#39;c&#39;,&#39;d&#39;], &#39;e&#39;]</span>
+</pre></div>
+</div>
+<p>上面代码说明，数组的默认行为是可以展开， <code class="docutils literal"><span class="pre">Symbol.isConcatSpreadable</span></code> 默认等于 <code class="docutils literal"><span class="pre">undefined</span></code> 。该属性等于 <code class="docutils literal"><span class="pre">true</span></code> 时，也有展开的效果。</p>
+<p>类似数组的对象正好相反，默认不展开。它的 <code class="docutils literal"><span class="pre">Symbol.isConcatSpreadable</span></code> 属性设为 <code class="docutils literal"><span class="pre">true</span></code> ，才可以展开。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">length</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="o">:</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span> <span class="s1">&#39;d&#39;</span><span class="p">};</span>
+<span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span> <span class="c1">// [&#39;a&#39;, &#39;b&#39;, obj, &#39;e&#39;]</span>
+
+<span class="nx">obj</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">isConcatSpreadable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span> <span class="c1">// [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;e&#39;]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Symbol.isConcatSpreadable</span></code> 属性也可以定义在类里面。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">A1</span> <span class="kr">extends</span> <span class="nb">Array</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">isConcatSpreadable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kr">class</span> <span class="nx">A2</span> <span class="kr">extends</span> <span class="nb">Array</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">get</span> <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">isConcatSpreadable</span><span class="p">]</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">a1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">A1</span><span class="p">();</span>
+<span class="nx">a1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="nx">a1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">a2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">A2</span><span class="p">();</span>
+<span class="nx">a2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+<span class="nx">a2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">a1</span><span class="p">).</span><span class="nx">concat</span><span class="p">(</span><span class="nx">a2</span><span class="p">)</span>
+<span class="c1">// [1, 2, 3, 4, [5, 6]]</span>
+</pre></div>
+</div>
+<p>上面代码中，类 <code class="docutils literal"><span class="pre">A1</span></code> 是可展开的，类 <code class="docutils literal"><span class="pre">A2</span></code> 是不可展开的，所以使用 <code class="docutils literal"><span class="pre">concat</span></code> 时有不一样的结果。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">Symbol.isConcatSpreadable</span></code> 的位置差异， <code class="docutils literal"><span class="pre">A1</span></code> 是定义在实例上， <code class="docutils literal"><span class="pre">A2</span></code> 是定义在类本身，效果相同。</p>
+</div>
+</div>
+<div class="section" id="symbol-species">
+<h3>11.7.3. Symbol.species<a class="headerlink" href="#symbol-species" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.species</span></code> 属性，指向一个构造函数。创建衍生对象时，会使用该属性。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MyArray</span> <span class="kr">extends</span> <span class="nb">Array</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyArray</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="nx">b</span> <span class="k">instanceof</span> <span class="nx">MyArray</span> <span class="c1">// true</span>
+<span class="nx">c</span> <span class="k">instanceof</span> <span class="nx">MyArray</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中，子类 <code class="docutils literal"><span class="pre">MyArray</span></code> 继承了父类 <code class="docutils literal"><span class="pre">Array</span></code> ， <code class="docutils literal"><span class="pre">a</span></code> 是 <code class="docutils literal"><span class="pre">MyArray</span></code> 的实例， <code class="docutils literal"><span class="pre">b</span></code> 和 <code class="docutils literal"><span class="pre">c</span></code> 是 <code class="docutils literal"><span class="pre">a</span></code> 的衍生对象。你可能会认为， <code class="docutils literal"><span class="pre">b</span></code> 和 <code class="docutils literal"><span class="pre">c</span></code> 都是调用数组方法生成的，所以应该是数组（ <code class="docutils literal"><span class="pre">Array</span></code> 的实例），但实际上它们也是 <code class="docutils literal"><span class="pre">MyArray</span></code> 的实例。</p>
+<p><code class="docutils literal"><span class="pre">Symbol.species</span></code> 属性就是为了解决这个问题而提供的。现在，我们可以为 <code class="docutils literal"><span class="pre">MyArray</span></code> 设置 <code class="docutils literal"><span class="pre">Symbol.species</span></code> 属性。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MyArray</span> <span class="kr">extends</span> <span class="nb">Array</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">get</span> <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">species</span><span class="p">]()</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">Array</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，由于定义了 <code class="docutils literal"><span class="pre">Symbol.species</span></code> 属性，创建衍生对象时就会使用这个属性返回的函数，作为构造函数。这个例子也说明，定义 <code class="docutils literal"><span class="pre">Symbol.species</span></code> 属性要采用 <code class="docutils literal"><span class="pre">get</span></code> 取值器。默认的 <code class="docutils literal"><span class="pre">Symbol.species</span></code> 属性等同于下面的写法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">static</span> <span class="nx">get</span> <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">species</span><span class="p">]()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在，再来看前面的例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MyArray</span> <span class="kr">extends</span> <span class="nb">Array</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">get</span> <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">species</span><span class="p">]()</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">Array</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyArray</span><span class="p">();</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nx">x</span><span class="p">);</span>
+
+<span class="nx">b</span> <span class="k">instanceof</span> <span class="nx">MyArray</span> <span class="c1">// false</span>
+<span class="nx">b</span> <span class="k">instanceof</span> <span class="nb">Array</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">a.map(x</span> <span class="pre">=&gt;</span> <span class="pre">x)</span></code> 生成的衍生对象，就不是 <code class="docutils literal"><span class="pre">MyArray</span></code> 的实例，而直接就是 <code class="docutils literal"><span class="pre">Array</span></code> 的实例。</p>
+<p>再看一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">T1</span> <span class="kr">extends</span> <span class="nb">Promise</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">T2</span> <span class="kr">extends</span> <span class="nb">Promise</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">get</span> <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">species</span><span class="p">]()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">Promise</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">new</span> <span class="nx">T1</span><span class="p">(</span><span class="nx">r</span> <span class="p">=&gt;</span> <span class="nx">r</span><span class="p">()).</span><span class="nx">then</span><span class="p">(</span><span class="nx">v</span> <span class="p">=&gt;</span> <span class="nx">v</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nx">T1</span> <span class="c1">// true</span>
+<span class="k">new</span> <span class="nx">T2</span><span class="p">(</span><span class="nx">r</span> <span class="p">=&gt;</span> <span class="nx">r</span><span class="p">()).</span><span class="nx">then</span><span class="p">(</span><span class="nx">v</span> <span class="p">=&gt;</span> <span class="nx">v</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nx">T2</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">T2</span></code> 定义了 <code class="docutils literal"><span class="pre">Symbol.species</span></code> 属性， <code class="docutils literal"><span class="pre">T1</span></code> 没有。结果就导致了创建衍生对象时（ <code class="docutils literal"><span class="pre">then</span></code> 方法）， <code class="docutils literal"><span class="pre">T1</span></code> 调用的是自身的构造方法，而 <code class="docutils literal"><span class="pre">T2</span></code> 调用的是 <code class="docutils literal"><span class="pre">Promise</span></code> 的构造方法。</p>
+<p>总之， <code class="docutils literal"><span class="pre">Symbol.species</span></code> 的作用在于，实例对象在运行过程中，需要再次调用自身的构造函数时，会调用该属性指定的构造函数。它主要的用途是，有些类库是在基类的基础上修改的，那么子类使用继承的方法时，作者可能希望返回基类的实例，而不是子类的实例。</p>
+</div>
+<div class="section" id="symbol-match">
+<h3>11.7.4. Symbol.match<a class="headerlink" href="#symbol-match" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.match</span></code> 属性，指向一个函数。当执行 <code class="docutils literal"><span class="pre">str.match(myObject)</span></code> 时，如果该属性存在，会调用它，返回该方法的返回值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">regexp</span><span class="p">)</span>
+<span class="c1">// 等同于</span>
+<span class="nx">regexp</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">match</span><span class="p">](</span><span class="k">this</span><span class="p">)</span>
+
+<span class="kr">class</span> <span class="nx">MyMatcher</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">match</span><span class="p">](</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;hello world&#39;</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">string</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="s1">&#39;e&#39;</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="k">new</span> <span class="nx">MyMatcher</span><span class="p">())</span> <span class="c1">// 1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="symbol-replace">
+<h3>11.7.5. Symbol.replace<a class="headerlink" href="#symbol-replace" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.replace</span></code> 属性，指向一个方法，当该对象被 <code class="docutils literal"><span class="pre">String.prototype.replace</span></code> 方法调用时，会返回该方法的返回值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">searchValue</span><span class="p">,</span> <span class="nx">replaceValue</span><span class="p">)</span>
+<span class="c1">// 等同于</span>
+<span class="nx">searchValue</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">replace</span><span class="p">](</span><span class="k">this</span><span class="p">,</span> <span class="nx">replaceValue</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>下面是一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">x</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">replace</span><span class="p">]</span> <span class="o">=</span> <span class="p">(...</span><span class="nx">s</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
+
+<span class="s1">&#39;Hello&#39;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="s1">&#39;World&#39;</span><span class="p">)</span> <span class="c1">// [&quot;Hello&quot;, &quot;World&quot;]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Symbol.replace</span></code> 方法会收到两个参数，第一个参数是 <code class="docutils literal"><span class="pre">replace</span></code> 方法正在作用的对象，上面例子是 <code class="docutils literal"><span class="pre">Hello</span></code> ，第二个参数是替换后的值，上面例子是 <code class="docutils literal"><span class="pre">World</span></code> 。</p>
+</div>
+<div class="section" id="symbol-search">
+<h3>11.7.6. Symbol.search<a class="headerlink" href="#symbol-search" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.search</span></code> 属性，指向一个方法，当该对象被 <code class="docutils literal"><span class="pre">String.prototype.search</span></code> 方法调用时，会返回该方法的返回值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">regexp</span><span class="p">)</span>
+<span class="c1">// 等同于</span>
+<span class="nx">regexp</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">search</span><span class="p">](</span><span class="k">this</span><span class="p">)</span>
+
+<span class="kr">class</span> <span class="nx">MySearch</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">search</span><span class="p">](</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">string</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="s1">&#39;foobar&#39;</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="k">new</span> <span class="nx">MySearch</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">))</span> <span class="c1">// 0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="symbol-split">
+<h3>11.7.7. Symbol.split<a class="headerlink" href="#symbol-split" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.split</span></code> 属性，指向一个方法，当该对象被 <code class="docutils literal"><span class="pre">String.prototype.split</span></code> 方法调用时，会返回该方法的返回值。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">separator</span><span class="p">,</span> <span class="nx">limit</span><span class="p">)</span>
+<span class="c1">// 等同于</span>
+<span class="nx">separator</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">split</span><span class="p">](</span><span class="k">this</span><span class="p">,</span> <span class="nx">limit</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>下面是一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MySplitter</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">split</span><span class="p">](</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">string</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">string</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">[</span>
+      <span class="nx">string</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">index</span><span class="p">),</span>
+      <span class="nx">string</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">index</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+    <span class="p">];</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="s1">&#39;foobar&#39;</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="k">new</span> <span class="nx">MySplitter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="c1">// [&#39;&#39;, &#39;bar&#39;]</span>
+
+<span class="s1">&#39;foobar&#39;</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="k">new</span> <span class="nx">MySplitter</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">))</span>
+<span class="c1">// [&#39;foo&#39;, &#39;&#39;]</span>
+
+<span class="s1">&#39;foobar&#39;</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="k">new</span> <span class="nx">MySplitter</span><span class="p">(</span><span class="s1">&#39;baz&#39;</span><span class="p">))</span>
+<span class="c1">// &#39;foobar&#39;</span>
+</pre></div>
+</div>
+<p>上面方法使用 <code class="docutils literal"><span class="pre">Symbol.split</span></code> 方法，重新定义了字符串对象的 <code class="docutils literal"><span class="pre">split</span></code> 方法的行为。</p>
+</div>
+<div class="section" id="symbol-iterator">
+<h3>11.7.8. Symbol.iterator<a class="headerlink" href="#symbol-iterator" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.iterator</span></code> 属性，指向该对象的默认遍历器方法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">myIterable</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">myIterable</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="o">*</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">yield</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">yield</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="k">yield</span> <span class="mi">3</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="p">[...</span><span class="nx">myIterable</span><span class="p">]</span> <span class="c1">// [1, 2, 3]</span>
+</pre></div>
+</div>
+<p>对象进行 <code class="docutils literal"><span class="pre">for...of</span></code> 循环时，会调用 <code class="docutils literal"><span class="pre">Symbol.iterator</span></code> 方法，返回该对象的默认遍历器，详细介绍参见《 <code class="docutils literal"><span class="pre">Iterator</span></code> 和 <code class="docutils literal"><span class="pre">for...of</span></code> 循环》一章。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Collection</span> <span class="p">{</span>
+  <span class="o">*</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">yield</span> <span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+      <span class="o">++</span><span class="nx">i</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">myCollection</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Collection</span><span class="p">();</span>
+<span class="nx">myCollection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="nx">myCollection</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+<span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">myCollection</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// 1</span>
+<span class="c1">// 2</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="symbol-toprimitive">
+<h3>11.7.9. Symbol.toPrimitive<a class="headerlink" href="#symbol-toprimitive" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.toPrimitive</span></code> 属性，指向一个方法。该对象被转为原始类型的值时，会调用这个方法，返回该对象对应的原始类型值。</p>
+<p><code class="docutils literal"><span class="pre">Symbol.toPrimitive</span></code> 被调用时，会接受一个字符串参数，表示当前运算的模式，一共有三种模式。</p>
+<ul class="simple">
+<li>Number：该场合需要转成数值</li>
+<li>String：该场合需要转成字符串</li>
+<li>Default：该场合可以转成数值，也可以转成字符串</li>
+</ul>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">toPrimitive</span><span class="p">](</span><span class="nx">hint</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="nx">hint</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="s1">&#39;number&#39;</span><span class="o">:</span>
+        <span class="k">return</span> <span class="mi">123</span><span class="p">;</span>
+      <span class="k">case</span> <span class="s1">&#39;string&#39;</span><span class="o">:</span>
+        <span class="k">return</span> <span class="s1">&#39;str&#39;</span><span class="p">;</span>
+      <span class="k">case</span> <span class="s1">&#39;default&#39;</span><span class="o">:</span>
+        <span class="k">return</span> <span class="s1">&#39;default&#39;</span><span class="p">;</span>
+      <span class="k">default</span><span class="o">:</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+     <span class="p">}</span>
+   <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="mi">2</span> <span class="o">*</span> <span class="nx">obj</span> <span class="c1">// 246</span>
+<span class="mi">3</span> <span class="o">+</span> <span class="nx">obj</span> <span class="c1">// &#39;3default&#39;</span>
+<span class="nx">obj</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span> <span class="c1">// true</span>
+<span class="nb">String</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="c1">// &#39;str&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="symbol-tostringtag">
+<h3>11.7.10. Symbol.toStringTag<a class="headerlink" href="#symbol-tostringtag" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.toStringTag</span></code> 属性，指向一个方法。在该对象上面调用 <code class="docutils literal"><span class="pre">Object.prototype.toString</span></code> 方法时，如果这个属性存在，它的返回值会出现在 <code class="docutils literal"><span class="pre">toString</span></code> 方法返回的字符串之中，表示对象的类型。也就是说，这个属性可以用来定制 <code class="docutils literal"><span class="pre">[object</span> <span class="pre">Object]</span></code> 或 <code class="docutils literal"><span class="pre">[object</span> <span class="pre">Array]</span></code> 中 <code class="docutils literal"><span class="pre">object</span></code> 后面的那个字符串。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 例一</span>
+<span class="p">({[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">toStringTag</span><span class="p">]</span><span class="o">:</span> <span class="s1">&#39;Foo&#39;</span><span class="p">}.</span><span class="nx">toString</span><span class="p">())</span>
+<span class="c1">// &quot;[object Foo]&quot;</span>
+
+<span class="c1">// 例二</span>
+<span class="kr">class</span> <span class="nx">Collection</span> <span class="p">{</span>
+  <span class="nx">get</span> <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">toStringTag</span><span class="p">]()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;xxx&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Collection</span><span class="p">();</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="c1">// &quot;[object xxx]&quot;</span>
+</pre></div>
+</div>
+<p>ES6 新增内置对象的 <code class="docutils literal"><span class="pre">Symbol.toStringTag</span></code> 属性值如下。</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">JSON[Symbol.toStringTag]</span></code> ：’JSON’</li>
+<li><code class="docutils literal"><span class="pre">Math[Symbol.toStringTag]</span></code> ：’Math’</li>
+<li><code class="docutils literal"><span class="pre">Module</span></code> 对象 <code class="docutils literal"><span class="pre">M[Symbol.toStringTag]</span></code> ：’Module’</li>
+<li><code class="docutils literal"><span class="pre">ArrayBuffer.prototype[Symbol.toStringTag]</span></code> ：’ArrayBuffer’</li>
+<li><code class="docutils literal"><span class="pre">DataView.prototype[Symbol.toStringTag]</span></code> ：’DataView’</li>
+<li><code class="docutils literal"><span class="pre">Map.prototype[Symbol.toStringTag]</span></code> ：’Map’</li>
+<li><code class="docutils literal"><span class="pre">Promise.prototype[Symbol.toStringTag]</span></code> ：’Promise’</li>
+<li><code class="docutils literal"><span class="pre">Set.prototype[Symbol.toStringTag]</span></code> ：’Set’</li>
+<li><code class="docutils literal"><span class="pre">%TypedArray%.prototype[Symbol.toStringTag]</span></code>：’Uint8Array’等</li>
+<li><code class="docutils literal"><span class="pre">WeakMap.prototype[Symbol.toStringTag]</span></code>：’WeakMap’</li>
+<li><code class="docutils literal"><span class="pre">WeakSet.prototype[Symbol.toStringTag]</span></code> ：’WeakSet’</li>
+<li><code class="docutils literal"><span class="pre">%MapIteratorPrototype%[Symbol.toStringTag]</span></code> ：’Map Iterator’</li>
+<li><code class="docutils literal"><span class="pre">%SetIteratorPrototype%[Symbol.toStringTag]</span></code> ：’Set Iterator’</li>
+<li><code class="docutils literal"><span class="pre">%StringIteratorPrototype%[Symbol.toStringTag]</span></code> ：’String Iterator’</li>
+<li><code class="docutils literal"><span class="pre">Symbol.prototype[Symbol.toStringTag]</span></code> ：’Symbol’</li>
+<li><code class="docutils literal"><span class="pre">Generator.prototype[Symbol.toStringTag]</span></code> ：’Generator’</li>
+<li><code class="docutils literal"><span class="pre">GeneratorFunction.prototype[Symbol.toStringTag]</span></code> ：’GeneratorFunction’</li>
+</ul>
+</div>
+<div class="section" id="symbol-unscopables">
+<h3>11.7.11. Symbol.unscopables<a class="headerlink" href="#symbol-unscopables" title="永久链接至标题">¶</a></h3>
+<p>对象的 <code class="docutils literal"><span class="pre">Symbol.unscopables</span></code> 属性，指向一个对象。该对象指定了使用 <code class="docutils literal"><span class="pre">with</span></code> 关键字时，哪些属性会被 <code class="docutils literal"><span class="pre">with</span></code> 环境排除。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">unscopables</span><span class="p">]</span>
+<span class="c1">// {</span>
+<span class="c1">//   copyWithin: true,</span>
+<span class="c1">//   entries: true,</span>
+<span class="c1">//   fill: true,</span>
+<span class="c1">//   find: true,</span>
+<span class="c1">//   findIndex: true,</span>
+<span class="c1">//   includes: true,</span>
+<span class="c1">//   keys: true</span>
+<span class="c1">// }</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">unscopables</span><span class="p">])</span>
+<span class="c1">// [&#39;copyWithin&#39;, &#39;entries&#39;, &#39;fill&#39;, &#39;find&#39;, &#39;findIndex&#39;, &#39;includes&#39;, &#39;keys&#39;]</span>
+</pre></div>
+</div>
+<p>上面代码说明，数组有 7 个属性，会被 <code class="docutils literal"><span class="pre">with</span></code> 命令排除。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// 没有 unscopables 时</span>
+<span class="kr">class</span> <span class="nx">MyClass</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">2</span><span class="p">;</span> <span class="p">};</span>
+
+<span class="kd">with</span> <span class="p">(</span><span class="nx">MyClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">();</span> <span class="c1">// 1</span>
+<span class="p">}</span>
+
+<span class="c1">// 有 unscopables 时</span>
+<span class="kr">class</span> <span class="nx">MyClass</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+  <span class="nx">get</span> <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">unscopables</span><span class="p">]()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="nx">foo</span><span class="o">:</span> <span class="kc">true</span> <span class="p">};</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">2</span><span class="p">;</span> <span class="p">};</span>
+
+<span class="kd">with</span> <span class="p">(</span><span class="nx">MyClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">();</span> <span class="c1">// 2</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码通过指定 <code class="docutils literal"><span class="pre">Symbol.unscopables</span></code> 属性，使得 <code class="docutils literal"><span class="pre">with</span></code> 语法块不会在当前作用域寻找 <code class="docutils literal"><span class="pre">foo</span></code> 属性，即 <code class="docutils literal"><span class="pre">foo</span></code> 将指向外层作用域的变量。</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Set和Map数据结构.html" class="btn btn-neutral float-right" title="12. Set和Map数据结构" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="对象的扩展.html" class="btn btn-neutral" title="10. 对象的扩展" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+
+      });
+
+
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script>
+   
+
+</body>
+</html>

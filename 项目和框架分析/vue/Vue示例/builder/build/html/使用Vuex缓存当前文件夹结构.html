@@ -1,0 +1,962 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7. 使用Vuex缓存当前文件夹结构 &mdash; Vue示例 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="Vue示例 1.0 文档" href="index.html"/>
+        <link rel="prev" title="6. 浏览文件树和通过URL加载文件夹" href="浏览文件树和通过URL加载文件夹.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Vue示例
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Vue入门.html">2. Vue入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="显示、循环、查询和过滤数据.html">3. 显示、循环、查询和过滤数据</a></li>
+<li class="toctree-l1"><a class="reference internal" href="优化你的App和使用组件显示数据.html">4. 优化你的App和使用组件显示数据</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Dropbox_API获取文件列表.html">5. 使用Dropbox API获取文件列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="浏览文件树和通过URL加载文件夹.html">6. 浏览文件树和通过URL加载文件夹</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. 使用Vuex缓存当前文件夹结构</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">7.1. 包含和初始化Vuex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#store">7.2. 使用store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">7.3. 检索消息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">7.4. 更新消息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">7.5. 使用Vuex存储作为文件夹路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#store-commit">7.6. 使用store commit更新路径方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#path">7.7. 使用path变量</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#breadcrumb">7.7.1. 更新breadcrumb组件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dropbox-viewervuex">7.7.2. 更新dropbox-viewer组件以使用Vuex</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">7.8. 缓存文件内容</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">7.8.1. 如果存在从存储中加载数据</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">7.9. 总结</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Vue示例</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>7. 使用Vuex缓存当前文件夹结构</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/使用Vuex缓存当前文件夹结构.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vuex">
+<h1>7. 使用Vuex缓存当前文件夹结构<a class="headerlink" href="#vuex" title="永久链接至标题">¶</a></h1>
+<p><code class="docutils literal"><span class="pre">Vuex</span></code> 是一个专为 <code class="docutils literal"><span class="pre">Vue.js</span></code> 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态。在本章中，我们将介绍一个名为 <code class="docutils literal"><span class="pre">Vuex</span></code> 的官方 <code class="docutils literal"><span class="pre">Vue</span></code> 插件。 <code class="docutils literal"><span class="pre">Vuex</span></code> 是一种状态管理模式和库，允许您为所有 <code class="docutils literal"><span class="pre">Vue</span></code> 组件集中存储，而不管它们是子组件还是 <code class="docutils literal"><span class="pre">Vue</span></code> 组件。它使我们能够在整个应用程序中保持数据同步的集中，简单的方式。</p>
+<p>本章将包括：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">Vuex</span></code> 入门；</li>
+<li>从 <code class="docutils literal"><span class="pre">Vuex</span></code> 存储和检索数据；</li>
+<li>将 <code class="docutils literal"><span class="pre">Vuex</span></code> 与我们的 <code class="docutils literal"><span class="pre">Dropbox</span></code> 应用程序集成；</li>
+<li>如果需要，缓存当前的 <code class="docutils literal"><span class="pre">Dropbox</span></code> 文件夹内容并从存储加载数据</li>
+</ul>
+<p>取代在每个组件中要求定制事件和 <code class="docutils literal"><span class="pre">$emit</span></code> 函数，并试图让组件和子组件保持最新状态， <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序的每个部分都可以更新中央存储库，而其他组件可以根据这些信息反应和更新其数据和状态。它还为我们提供了一个存储数据的通用位置，因此，我们可以使用 <code class="docutils literal"><span class="pre">Vuex</span></code> 存储，而不是试图决定将数据对象放在组件，父组件还是 <code class="docutils literal"><span class="pre">Vue</span></code> 实例上是否更具语义。</p>
+<p><code class="docutils literal"><span class="pre">Vuex</span></code> 也集成到 <code class="docutils literal"><span class="pre">Vue</span></code> 开发工具中 - 这本书的最后一章，第12章，使用 <code class="docutils literal"><span class="pre">Vue</span></code> 开发工具和测试您的 <code class="docutils literal"><span class="pre">SPA</span></code> 涵盖了这些内容。随着库的集成，它使调试和查看存储的当前和过去的状态变得容易。开发工具反映了状态更改或数据更新，并允许您在存储的每个部分进行观察。</p>
+<p>如前所述， <code class="docutils literal"><span class="pre">Vuex</span></code> 是一种状态管理模式，它是 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序数据的真实来源。例如，跟踪购物车或登录用户对于某些应用程序至关重要，并且如果此数据在组件之间不同步可能会造成严重破坏。在不使用父级来处理交换的情况下，在子组件之间传递数据也是不可能的。 <code class="docutils literal"><span class="pre">Vuex</span></code> 通过处理数据的存储，变异和操作来消除这种复杂性。</p>
+<img alt="_images/vuex.png" src="_images/vuex.png" />
+<p>对于我们的 <code class="docutils literal"><span class="pre">Dropbox</span></code> 应用程序， <code class="docutils literal"><span class="pre">Vuex</span></code> 存储可用于存储文件夹结构，文件列表和下载链接。 这意味着，如果用户不止一次访问同一文件夹，则无需查询 <code class="docutils literal"><span class="pre">API</span></code> ，因为所有信息都已存储。这将加快文件夹的导航。</p>
+<div class="section" id="id1">
+<h2>7.1. 包含和初始化Vuex<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Vuex</span></code> 库与 <code class="docutils literal"><span class="pre">Vue</span></code> 本身一样。 您可以使用前面提到的 <code class="docutils literal"><span class="pre">unpkg</span></code> 服务（ <code class="docutils literal"><span class="pre">https://unpkg.com/vuex</span></code> ）使用托管版本，也可以从 <code class="docutils literal"><span class="pre">https://github.com/vuejs/vuex</span></code> 下载 <code class="docutils literal"><span class="pre">JavaScript</span></code> 库。</p>
+<p>将一个新的 <code class="docutils literal"><span class="pre">&lt;script&gt;</span></code> 块添加到 <code class="docutils literal"><span class="pre">HTML</span></code> 文件的底部。确保 <code class="docutils literal"><span class="pre">Vuex</span></code> 库包含在 <code class="docutils literal"><span class="pre">vue.js</span></code> 库之后但在应用程序脚本之前：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vuex.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/dropbox.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/app.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>如果您正在部署一个包含多个 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件的应用程序，则值得研究将它们合并并压缩到一个文件或将您的服务器配置为使用 <code class="docutils literal"><span class="pre">HTTP/2</span></code> 推送是否更高效。</p>
+<p>使用包含库，我们可以初始化和包含 <code class="docutils literal"><span class="pre">store</span></code> 到我们的应用程序内。 创建一个名为 <code class="docutils literal"><span class="pre">store</span></code> 的新变量并初始化 <code class="docutils literal"><span class="pre">Vuex.Store</span></code> 类，并将其分配给该变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({});</span>
+</pre></div>
+</div>
+<p>在初始化 <code class="docutils literal"><span class="pre">Vuex</span></code> 存储后，我们现在可以使用它的 <code class="docutils literal"><span class="pre">store</span></code> 变量的功能。 使用 <code class="docutils literal"><span class="pre">store</span></code> ，我们可以访问其中的数据并使用 <code class="docutils literal"><span class="pre">mutations</span></code> 更改数据。 有了独立的 <code class="docutils literal"><span class="pre">store</span></code> ，许多 <code class="docutils literal"><span class="pre">Vue</span></code> 实例可以更新同一 <code class="docutils literal"><span class="pre">store</span></code> ; 这在某些情况下可能是需要的，但是，在其他情况下可能是不希望有的副作用。</p>
+<p>为了避免这种情况，我们可以将 <code class="docutils literal"><span class="pre">store</span></code> 与特定的 <code class="docutils literal"><span class="pre">Vue</span></code> 实例相关联。 这是通过将 <code class="docutils literal"><span class="pre">store</span></code> 变量传递给我们的 <code class="docutils literal"><span class="pre">Vue</span></code> 类来完成的。 这样做也会将 <code class="docutils literal"><span class="pre">store</span></code> 实例注入到我们所有的子组件中。 虽然我们的应用不是严格要求的，但养成将 <code class="docutils literal"><span class="pre">store</span></code> 与应用相关联的习惯是一种很好的做法：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">updateHash</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="p">(</span><span class="nx">hash</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">updateHash</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>通过添加 <code class="docutils literal"><span class="pre">store</span></code> 变量，我们现在可以使用 <code class="docutils literal"><span class="pre">this.$store</span></code> 变量访问我们组件中的 <code class="docutils literal"><span class="pre">store</span></code> 。</p>
+</div>
+<div class="section" id="store">
+<h2>7.2. 使用store<a class="headerlink" href="#store" title="永久链接至标题">¶</a></h2>
+<p>为了帮助我们掌握如何使用 <code class="docutils literal"><span class="pre">store</span></code> ，让我们移动当前存储在父 <code class="docutils literal"><span class="pre">Vue</span></code> 实例上的 <code class="docutils literal"><span class="pre">path</span></code> 变量。在我们开始编写和移动代码之前，有一些短语和单词在使用 <code class="docutils literal"><span class="pre">Vuex</span></code> 存储时会有所不同，我们应该熟悉它们：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">state</span></code> : 这是 <code class="docutils literal"><span class="pre">sotre</span></code> 对应的 <code class="docutils literal"><span class="pre">data</span></code> 对象；原始数据存储在该对象内。</li>
+<li><code class="docutils literal"><span class="pre">getters</span></code> : 这些是 <code class="docutils literal"><span class="pre">computed</span></code> 值的 <code class="docutils literal"><span class="pre">Vuex</span></code> 等价物；该 <code class="docutils literal"><span class="pre">store</span></code> 的函数可以在将其返回以用于组件之前处理原始状态值。</li>
+<li><code class="docutils literal"><span class="pre">mutations</span></code> : <code class="docutils literal"><span class="pre">Vuex</span></code> 不允许直接在 <code class="docutils literal"><span class="pre">store</span></code> 外修改 <code class="docutils literal"><span class="pre">state</span></code> 对象，这必须通过突变处理程序完成；这些是 <code class="docutils literal"><span class="pre">store</span></code> 的函数，用来更新状态。他们总是把 <code class="docutils literal"><span class="pre">state</span></code> 作为第一个参数。</li>
+</ul>
+<p>以上对象直接属于 <code class="docutils literal"><span class="pre">store</span></code> 。但是，更新商店并不像调用 <code class="docutils literal"><span class="pre">store.mutationName()</span></code> 那么简单。相反，我们必须使用新的 <code class="docutils literal"><span class="pre">commit()</span></code> 函数来调用该方法。该函数接受两个参数： <strong>突变的名称和传递给它的数据</strong> 。</p>
+<p>虽然起初很难理解，但 <code class="docutils literal"><span class="pre">Vuex</span> <span class="pre">store</span></code> 的详细特性使其具有强大的功能。使用来自第1章 <code class="docutils literal"><span class="pre">Vue.js</span></code> 入门的原始示例的存储实例如下所示：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
+    <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;HelLO Vue!&#39;</span>
+    <span class="p">},</span>
+    <span class="nx">getters</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">message</span><span class="o">:</span> <span class="nx">state</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">state</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">updateMessage</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>前面的 <code class="docutils literal"><span class="pre">store</span></code> 示例包含 <code class="docutils literal"><span class="pre">state</span></code> 对象，它是我们的原始数据存储; 一个 <code class="docutils literal"><span class="pre">getters</span></code> 对象，其中包括我们对状态的处理；最后是一个 <code class="docutils literal"><span class="pre">mutations</span></code> 对象，它允许我们更新消息。 请注意 <code class="docutils literal"><span class="pre">message</span> <span class="pre">getter</span></code> 和 <code class="docutils literal"><span class="pre">updateMessage</span></code> 突变如何将 <code class="docutils literal"><span class="pre">store</span></code> 状态作为第一个参数。</p>
+<p>要使用此 <code class="docutils literal"><span class="pre">store</span></code> ，您可以执行以下操作：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">message</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">message</span>
+        <span class="p">},</span>
+        <span class="nx">formatted</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">getters</span><span class="p">.</span><span class="nx">message</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>7.3. 检索消息<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>在 <code class="docutils literal"><span class="pre">{{message}}</span></code> 计算函数中，我们从状态对象中检索了未处理的原始消息，并使用了以下路径：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">message</span>
+</pre></div>
+</div>
+<p>这实际上是访问 <code class="docutils literal"><span class="pre">store</span></code> ，然后是 <code class="docutils literal"><span class="pre">state</span></code> 对象，然后是消息
+对象键。</p>
+<p>类似地， <code class="docutils literal"><span class="pre">{{</span> <span class="pre">formatted</span> <span class="pre">}}</span></code> 计算值使用 <code class="docutils literal"><span class="pre">store</span></code> 中的 <code class="docutils literal"><span class="pre">getter</span></code> ，这会小写字符串。这是通过访问 <code class="docutils literal"><span class="pre">getters</span></code> 对象来获取的：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">getters</span><span class="p">.</span><span class="nx">message</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>7.4. 更新消息<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>为了更新消息，你需要调用 <code class="docutils literal"><span class="pre">commit</span></code> 函数。它接受方法名称作为第一个参数， <code class="docutils literal"><span class="pre">data</span></code> 作为第二个参数。第二个参数可以是一个简单变量，一个数组或者一个对象。</p>
+<p><code class="docutils literal"><span class="pre">store</span></code> 中的 <code class="docutils literal"><span class="pre">updateMessage</span></code> 突变接受单个参数并将消息设置为等于该参数，因此要更新消息，代码将为：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;updateMessage&#39;</span><span class="p">,</span> <span class="s1">&#39;VUEX Store&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>这可以在应用程序中的任何位置运行，并且会自动更新以前使用的值，因为它们都依赖于相同的 <code class="docutils literal"><span class="pre">store</span></code> 。</p>
+<p>现在返回我们的 <code class="docutils literal"><span class="pre">message</span></code>  <code class="docutils literal"><span class="pre">getter</span></code> 将返回 <code class="docutils literal"><span class="pre">VUEX</span> <span class="pre">Store</span></code> ，因为我们已经更新了状态。 考虑到这一点，让我们更新我们的应用程序，在 <code class="docutils literal"><span class="pre">store</span></code> 中而不是在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例中存储 <code class="docutils literal"><span class="pre">path</span></code> 变量。</p>
+</div>
+<div class="section" id="id4">
+<h2>7.5. 使用Vuex存储作为文件夹路径<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>为我们的全局 <code class="docutils literal"><span class="pre">Dropbox</span> <span class="pre">path</span></code> 变量使用 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">store</span></code> 的第一步是将 <code class="docutils literal"><span class="pre">data</span></code> 对象从 <code class="docutils literal"><span class="pre">Vue</span></code> 实例移动到 <code class="docutils literal"><span class="pre">Store</span></code> ，并将其重命名为 <code class="docutils literal"><span class="pre">state</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
+    <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>我们还需要创建一个 <code class="docutils literal"><span class="pre">mutation</span></code> 以允许从 <code class="docutils literal"><span class="pre">URL</span></code> 的散列更新 <code class="docutils literal"><span class="pre">path</span></code> 。 将一个 <code class="docutils literal"><span class="pre">mutation</span></code> 对象添加到 <code class="docutils literal"><span class="pre">store</span></code> 并从 <code class="docutils literal"><span class="pre">Vue</span></code> 实例移动 <code class="docutils literal"><span class="pre">updateHash</span></code> 函数 - 不要忘记更新函数以接受 <code class="docutils literal"><span class="pre">store</span></code> 作为第一个参数。 另外，更改方法，以便更新 <code class="docutils literal"><span class="pre">state.path</span></code> 而不是 <code class="docutils literal"><span class="pre">this.path</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
+    <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">},</span>
+    <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">updateHash</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="p">(</span><span class="nx">hash</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>通过将 <code class="docutils literal"><span class="pre">path</span></code> 变量和 <code class="docutils literal"><span class="pre">mutation</span></code> 移动到 <code class="docutils literal"><span class="pre">store</span></code> ，它使 <code class="docutils literal"><span class="pre">Vue</span></code> 实例显着缩小，同时删除 <code class="docutils literal"><span class="pre">methods</span></code> 和 <code class="docutils literal"><span class="pre">data</span></code> 对象：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">updateHash</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>我们现在需要更新我们的应用程序以使用 <code class="docutils literal"><span class="pre">store</span></code> 中的 <code class="docutils literal"><span class="pre">path</span></code> 变量，而不是 <code class="docutils literal"><span class="pre">Vue</span></code> 实例。我们还需要确保我们调用 <code class="docutils literal"><span class="pre">store</span> <span class="pre">mutation</span></code> 函数来更新路径变量，而不是 <code class="docutils literal"><span class="pre">Vue</span></code> 实例上的方法。</p>
+</div>
+<div class="section" id="store-commit">
+<h2>7.6. 使用store commit更新路径方法<a class="headerlink" href="#store-commit" title="永久链接至标题">¶</a></h2>
+<p>从 <code class="docutils literal"><span class="pre">Vue</span></code> 实例开始，将 <code class="docutils literal"><span class="pre">this.Updatehash</span></code> 改为 <code class="docutils literal"><span class="pre">store.commit('updateHash')</span></code> 。 不要忘记同样需要在 <code class="docutils literal"><span class="pre">onhashchange</span></code> 函数中更新方法。 第二个函数应该在我们的 <code class="docutils literal"><span class="pre">Vue</span></code> 实例上引用 <code class="docutils literal"><span class="pre">store</span></code> 对象，而不是直接在 <code class="docutils literal"><span class="pre">store</span></code> 中引用。 这是通过访问 <code class="docutils literal"><span class="pre">Vue</span></code> 实例变量 <code class="docutils literal"><span class="pre">app</span></code> ，然后在这个实例中引用 <code class="docutils literal"><span class="pre">Vuex</span> <span class="pre">store</span></code> 来完成的。</p>
+<p>当引用 <code class="docutils literal"><span class="pre">Vue</span></code> 实例上的 <code class="docutils literal"><span class="pre">Vuex</span> <span class="pre">store</span></code> 时， <strong>无论其最初声明的变量名称如何</strong> ，它都将保存在 <code class="docutils literal"><span class="pre">$store</span></code> 的变量下：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;updateHash&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">onhashchange</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;updateHash&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="path">
+<h2>7.7. 使用path变量<a class="headerlink" href="#path" title="永久链接至标题">¶</a></h2>
+<p>我们现在需要更新组件以使用 <code class="docutils literal"><span class="pre">store</span></code> 中的 <code class="docutils literal"><span class="pre">path</span></code> ，而不是通过组件传递的路径。 需要更新 <code class="docutils literal"><span class="pre">breadcrumb</span></code> 和 <code class="docutils literal"><span class="pre">dropbox-viewer</span></code> 以接受这个新变量。 我们也可以从组件中删除不必要的 <code class="docutils literal"><span class="pre">props</span></code> 。</p>
+<div class="section" id="breadcrumb">
+<h3>7.7.1. 更新breadcrumb组件<a class="headerlink" href="#breadcrumb" title="永久链接至标题">¶</a></h3>
+<p>从 <code class="docutils literal"><span class="pre">HTML</span></code> 中删除 <code class="docutils literal"><span class="pre">:p</span></code> prop，留下一个简单的面包屑 <code class="docutils literal"><span class="pre">HTML</span></code> 标签：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">breadcrumb</span><span class="p">&gt;&lt;/</span><span class="nt">breadcrumb</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>接下来，从 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件中的组件中移除 <code class="docutils literal"><span class="pre">props</span></code> 对象。 <code class="docutils literal"><span class="pre">parts</span></code> 变量也需要更新才能使用。使用 <code class="docutils literal"><span class="pre">$store.state.path</span></code> ，而不是 <code class="docutils literal"><span class="pre">this.p</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;breadcrumb&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;div&gt;&#39;</span> <span class="o">+</span>
+        <span class="s1">&#39;&lt;span v-for=&quot;(f, i) in folders&quot;&gt;&#39;</span> <span class="o">+</span>
+            <span class="s1">&#39;&lt;a :href=&quot;f.path&quot;&gt;[F] {{ f.name }}&lt;/a&gt;&#39;</span> <span class="o">+</span>
+            <span class="s1">&#39;&lt;i v-if=&quot;i !== (folders.length - 1)&quot;&gt; &amp;raquo; &lt;/i&gt;&#39;</span> <span class="o">+</span>
+        <span class="s1">&#39;&lt;/span&gt;&#39;</span> <span class="o">+</span>
+    <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="p">,</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">folders</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">output</span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">slug</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="nx">parts</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">item</span> <span class="k">of</span> <span class="nx">parts</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">slug</span> <span class="o">+=</span> <span class="nx">item</span><span class="p">;</span>
+                <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="nx">item</span> <span class="o">||</span> <span class="s1">&#39;home&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="o">:</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">slug</span><span class="p">});</span>
+                <span class="nx">slug</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">output</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dropbox-viewervuex">
+<h3>7.7.2. 更新dropbox-viewer组件以使用Vuex<a class="headerlink" href="#dropbox-viewervuex" title="永久链接至标题">¶</a></h3>
+<p>与 <code class="docutils literal"><span class="pre">breadcrumb</span></code> 组件一样，第一步是从视图中删除 <code class="docutils literal"><span class="pre">HTML</span> <span class="pre">prop</span></code> 。 这应该更加简化你的应用程序的视图：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">dropbox-viewer</span><span class="p">&gt;&lt;/</span><span class="nt">dropbox-viewer</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>下一步是清理 <code class="docutils literal"><span class="pre">JavaScript</span></code> ，删除任何不必要的功能参数。 从 <code class="docutils literal"><span class="pre">dropbox-viewer</span></code> 组件中移除 <code class="docutils literal"><span class="pre">props</span></code> 对象。接下来，更新位于 <code class="docutils literal"><span class="pre">getFolderStructure</span></code> 内的 <code class="docutils literal"><span class="pre">filesListFolder</span></code> <code class="docutils literal"><span class="pre">Dropbox</span></code> 方法以使用存储路径，而不是使用路径变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">dropbox</span><span class="p">().</span><span class="nx">filesListFolder</span><span class="p">({</span>
+    <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
+    <span class="nx">include_media_info</span><span class="o">:</span> <span class="kc">true</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>由于此方法现在使用 <code class="docutils literal"><span class="pre">store</span></code> 而不是函数参数，因此我们可以从方法声明本身除去该变量，并将其从 <code class="docutils literal"><span class="pre">updateStructure</span></code> 方法中移除。例如：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">updateStructure</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">getFolderStructure</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这将成为以下内容：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">updateStructure</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">getFolderStructure</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>但是，我们仍然需要将路径作为变量存储在此组件上。 这是由于我们的 <code class="docutils literal"><span class="pre">watch</span></code> 方法，它调用 <code class="docutils literal"><span class="pre">updateStructure</span></code> 函数。 <strong>为此，我们需要将我们的路径存储为计算值，而不是固定变量。</strong> 这是因为它可以在 <code class="docutils literal"><span class="pre">store</span></code> 更新时动态更新，而不是组件初始化时的固定值。</p>
+<p>使用名为 <code class="docutils literal"><span class="pre">path</span></code> 的方法在 <code class="docutils literal"><span class="pre">dropbox-viewer</span></code> 组件上创建计算对象 - 这应该只是返回 <code class="docutils literal"><span class="pre">store</span></code> 中的 <code class="docutils literal"><span class="pre">path</span></code> ：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">path</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">path</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在我们把它作为一个本地变量，所以 <code class="docutils literal"><span class="pre">Dropbox</span></code> 中 <code class="docutils literal"><span class="pre">filesListFolder</span></code> 方法可以更新为再一次使用 <code class="docutils literal"><span class="pre">this.path</span></code> 。</p>
+<p>新更新的 <code class="docutils literal"><span class="pre">dropbox-viewer</span></code> 组件应该如下所示。 在浏览器中查看应用程序，应该看起来好像没有任何变化 - 但是，应用程序的内部工作现在依赖于新的 <code class="docutils literal"><span class="pre">Vuex</span></code> 存储，而不是存储在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例上的变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;dropbox-viewer&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;#dropbox-viewer-template&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">accessToken</span><span class="o">:</span> <span class="s1">&#39;XXXX&#39;</span><span class="p">,</span>
+            <span class="nx">structure</span><span class="o">:</span> <span class="p">{},</span>
+            <span class="nx">isLoading</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">path</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// 相当于定义动态属性变量</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">path</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">dropbox</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Dropbox</span><span class="p">({</span>
+                <span class="nx">accessToken</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">accessToken</span>
+            <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">getFolderStructure</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">dropbox</span><span class="p">().</span><span class="nx">filesListFolder</span><span class="p">({</span>
+                <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="c1">// 可以直接引用变量</span>
+                <span class="nx">include_media_info</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">})</span>
+                <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                    <span class="kr">const</span> <span class="nx">structure</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="nx">folders</span><span class="o">:</span> <span class="p">[],</span>
+                        <span class="nx">files</span><span class="o">:</span> <span class="p">[]</span>
+                    <span class="p">}</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">entry</span> <span class="k">of</span> <span class="nx">response</span><span class="p">.</span><span class="nx">entries</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// Check &quot;.tag&quot; prop for type</span>
+                        <span class="k">if</span><span class="p">(</span><span class="nx">entry</span><span class="p">[</span><span class="s1">&#39;.tag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;folder&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">structure</span><span class="p">.</span><span class="nx">folders</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">entry</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">structure</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">entry</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">structure</span> <span class="o">=</span> <span class="nx">structure</span><span class="p">;</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="p">})</span>
+                <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+                <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">updateStructure</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">getFolderStructure</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">getFolderStructure</span><span class="p">();</span>
+    <span class="p">},</span>
+    <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">path</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// 需要观察path变量</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">updateStructure</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>7.8. 缓存文件内容<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>现在我们的应用程序中已经有了 <code class="docutils literal"><span class="pre">Vuex</span></code> ，并且正在将它用于路径，我们可以开始着眼于存储当前显示的文件夹的内容，以便如果用户返回到同一位置，则不需要查询 <code class="docutils literal"><span class="pre">API</span></code> 检索结果。我们将通过存储 <code class="docutils literal"><span class="pre">API</span></code> 返回的对象到 <code class="docutils literal"><span class="pre">Vuex</span></code> 存储来完成此操作。</p>
+<p>当文件夹被请求时，应用程序将检查数据是否存在于 <code class="docutils literal"><span class="pre">store</span></code> 中。如果是这样， <code class="docutils literal"><span class="pre">API</span></code> 调用将被省略，并从存储装载数据。如果它不存在， <code class="docutils literal"><span class="pre">API</span></code> 将被查询并将结果保存在 <code class="docutils literal"><span class="pre">Vuex</span></code>  <code class="docutils literal"><span class="pre">store</span></code> 中。</p>
+<p>第一步是将数据处理分解成它自己的方法。这是因为无论数据来自 <code class="docutils literal"><span class="pre">store</span></code> 还是 <code class="docutils literal"><span class="pre">API</span></code> ，文件和文件夹都需要分割。</p>
+<p>在 <code class="docutils literal"><span class="pre">dropbox-viewer</span></code> 组件中创建一个名为 <code class="docutils literal"><span class="pre">createFolderStructure()</span></code> 的新方法，并移动该函数调用代码到 <code class="docutils literal"><span class="pre">Dropbox</span> <span class="pre">filesListFolder</span></code> 方法返回对象的 <code class="docutils literal"><span class="pre">then()</span></code> 函数内。</p>
+<p>现在你的两种方法应该看起来像下面这样，你的应用程序仍然应该像以前一样工作：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">createFolderStructure</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">structure</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">folders</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="nx">files</span><span class="o">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">entry</span> <span class="k">of</span> <span class="nx">response</span><span class="p">.</span><span class="nx">entries</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Check &quot;.tag&quot; prop for type</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">entry</span><span class="p">[</span><span class="s1">&#39;.tag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;folder&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">structure</span><span class="p">.</span><span class="nx">folders</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">entry</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">structure</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">entry</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">structure</span> <span class="o">=</span> <span class="nx">structure</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">},</span>
+<span class="nx">getFolderStructure</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">dropbox</span><span class="p">().</span><span class="nx">filesListFolder</span><span class="p">({</span>
+        <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
+        <span class="nx">include_media_info</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">})</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">createFolderStructure</span><span class="p">)</span>
+        <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+        <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用承若，我们可以使用 <code class="docutils literal"><span class="pre">createFolderStructure</span></code> 作为 <code class="docutils literal"><span class="pre">API</span></code> 回调的操作。</p>
+<p>下一步是存储我们正在处理的数据。 为此，我们将利用将对象传递给 <code class="docutils literal"><span class="pre">store</span></code> 的 <code class="docutils literal"><span class="pre">commit</span></code> 函数并将该 <code class="docutils literal"><span class="pre">path</span></code> 用作存储对象中的键。 我们不是嵌套文件结构，而是将信息存储在一个扁平的结构中。 例如，我们浏览了几个文件夹之后，我们的 <code class="docutils literal"><span class="pre">store</span></code> 应该是这样的：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">structure</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s1">&#39;images&#39;</span><span class="o">:</span> <span class="p">[{...}],</span>
+     <span class="s1">&#39;images-holiday&#39;</span><span class="o">:</span> <span class="p">[{...}],</span>
+     <span class="s1">&#39;images-holiday-summer&#39;</span><span class="o">:</span> <span class="p">[{...}]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>将对路径进行多次转换，使其对 <code class="docutils literal"><span class="pre">key</span></code> 友好。它会被小写，任何标点符号都会被删除。 我们还将用连字符替换所有空格和斜杠。</p>
+<p>首先，在 <code class="docutils literal"><span class="pre">Vuex</span></code> 存储 <code class="docutils literal"><span class="pre">state</span></code> 对象中创建一个标题为 <code class="docutils literal"><span class="pre">structure</span></code> 的空对象；这是我们要存储数据的地方：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="nx">structure</span><span class="o">:</span> <span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们现在需要创建一个新的 <code class="docutils literal"><span class="pre">mutation</span></code> ，以便我们在加载数据时存储数据。 在 <code class="docutils literal"><span class="pre">mutations</span></code> 对象内创建一个新函数。 称它为 <code class="docutils literal"><span class="pre">structure</span></code> ； 它需要接受 <code class="docutils literal"><span class="pre">state</span></code> 作为参数，加上一个 <code class="docutils literal"><span class="pre">payload</span></code> 变量，它将成为一个传入的对象：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">structure</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">payload</span><span class="p">)</span> <span class="p">{}</span>
+</pre></div>
+</div>
+<p>路径对象将由 <code class="docutils literal"><span class="pre">path</span></code> 变量和 <code class="docutils literal"><span class="pre">API</span></code> 返回的数据组成。 例如：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;images-holiday&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">[{...}]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>通过传入此对象，我们可以使用 <code class="docutils literal"><span class="pre">path</span></code> 作为键， <code class="docutils literal"><span class="pre">data</span></code> 作为值。
+将数据与路径的关键字一起存储在变量中：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">structure</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">state</span><span class="p">.</span><span class="nx">structure</span><span class="p">[</span><span class="nx">payload</span><span class="p">.</span><span class="nx">path</span><span class="p">]</span> <span class="o">=</span> <span class="nx">payload</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们现在可以在我们的组件中的新 <code class="docutils literal"><span class="pre">createFolderStructure</span></code> 方法的末尾提交这些数据：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">createFolderStructure</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">structure</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">folders</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="nx">files</span><span class="o">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">entry</span> <span class="k">of</span> <span class="nx">response</span><span class="p">.</span><span class="nx">entries</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Check &quot;.tag&quot; prop for type</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">entry</span><span class="p">[</span><span class="s1">&#39;.tag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;folder&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">structure</span><span class="p">.</span><span class="nx">folders</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">entry</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">structure</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">entry</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">structure</span> <span class="o">=</span> <span class="nx">structure</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;structure&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
+        <span class="nx">data</span><span class="o">:</span> <span class="nx">response</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这将在浏览应用程序时存储每个文件夹的数据。 这可以通过在结构变体内添加一个 <code class="docutils literal"><span class="pre">console.log(state.structure)</span></code> 来验证。</p>
+<p>虽然这和原来一样工作，但在将它用作对象中的键时 “清理路径” 是一种好的做法。为此，我们将删除任何标点符号，用连字符替换任何空格和斜杠，并将路径更改为小写。</p>
+<p>在 <code class="docutils literal"><span class="pre">dropbox-viewer</span></code> 组件上创建一个名为 <code class="docutils literal"><span class="pre">slug</span></code> 的新计算函数。术语 <code class="docutils literal"><span class="pre">slug</span></code> 通常用于``URL`` 消毒。这个函数将运行几个 <code class="docutils literal"><span class="pre">JavaScript</span> <span class="pre">replace</span></code> 方法来创建一个安全的对象键：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">slug</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\/|\/$/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/ /g</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\//g</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[-]+/g</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^\w-]+/g</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">slug</span></code> 功能执行以下操作。 <code class="docutils literal"><span class="pre">/images/iPhone/mom's</span> <span class="pre">Birthday</span> <span class="pre">-</span> <span class="pre">40th</span></code>  将进行如下处理：</p>
+<ul class="simple">
+<li>转换字符串为小写： <code class="docutils literal"><span class="pre">/images/iphone/mom's</span> <span class="pre">birthday</span> <span class="pre">-</span> <span class="pre">40th</span></code> ；</li>
+<li>移除路径开始和结尾的斜线： <a href="#id6"><span class="problematic" id="id7">``</span></a>images/iphone/mom birthday -</li>
+</ul>
+<p>40th`` ；
+- 使用连字符替换所有空格： <code class="docutils literal"><span class="pre">images/iphone/mom-birthday---40th</span></code> ；
+- 使用连字符替换所有斜线： <code class="docutils literal"><span class="pre">images-iphone-mom-birthday---40th</span></code> ；
+- 使用单个连字符替换多个连续连字符： <code class="docutils literal"><span class="pre">images-iphone-mom-birthday-</span>
+<span class="pre">40th</span></code> ；
+- 最后，移除任何的标点符号： <code class="docutils literal"><span class="pre">images-iphone-moms-birthday-40th</span></code> ；</p>
+<p>使用现在创建的 <code class="docutils literal"><span class="pre">slug</span></code> ，我们可以在存储数据时使用它作为键：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;structure&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="nx">response</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>通过将我们的文件夹内容缓存到 <code class="docutils literal"><span class="pre">Vuex</span> <span class="pre">store</span></code> 中，我们可以添加一个检查来查看 <code class="docutils literal"><span class="pre">store</span></code> 中是否存在数据，如果存在，请从此处加载它。</p>
+<div class="section" id="id8">
+<h3>7.8.1. 如果存在从存储中加载数据<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>从 <code class="docutils literal"><span class="pre">store</span></code> 加载我们的数据需要对我们的代码进行一些更改。 第一步是检查 <code class="docutils literal"><span class="pre">store</span></code> 中是否存在结构，如果存在，则加载它。第二步是如果它是新数据，则将数据提交到存储 - 调用现有的 <code class="docutils literal"><span class="pre">createFolderStructure</span></code> 方法将更新结构，但也将数据重新提交到存储。尽管不会对用户造成不利影响，但当您的应用程序增长时，不必要地将数据写入 <code class="docutils literal"><span class="pre">store</span></code> 可能会导致问题。当我们来预缓存的文件夹和文件时，这也将帮助我们解决该问题。</p>
+<div class="section" id="id9">
+<h4>7.8.1.1. 从存储中加载数据<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<p>由于 <code class="docutils literal"><span class="pre">store</span></code> 是 JavaScript 对象，我们的 <code class="docutils literal"><span class="pre">slug</span></code> 变量是我们组件的一致计算值，因此我们可以使用 <code class="docutils literal"><span class="pre">if</span></code> 语句检查对象键是否存在：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">structure</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">])</span> <span class="p">{</span>
+<span class="c1">// The data exists</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这使我们可以灵活地使用 <code class="docutils literal"><span class="pre">createFolderStructure</span></code> 方法从 <code class="docutils literal"><span class="pre">store</span></code> 中加载数据（如果存在），如果不存在，则触发 <code class="docutils literal"><span class="pre">Dropbox</span> <span class="pre">API</span></code> 调用。</p>
+<p>更新 <code class="docutils literal"><span class="pre">getFolderStructure</span></code> 方法以包含 <code class="docutils literal"><span class="pre">if</span></code> 语句，并在数据存在时添加方法调用：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">getFolderStructure</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">structure</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">createFolderStructure</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">structure</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">]);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">dropbox</span><span class="p">().</span><span class="nx">filesListFolder</span><span class="p">({</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
+            <span class="nx">include_media_info</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">})</span>
+            <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">createFolderStructure</span><span class="p">)</span>
+            <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+            <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>数据的路径很长，可能导致我们的代码无法读取。为了便于理解，将数据分配给一个变量，该变量允许我们检查它是否存在，并用更干净，更小，更少重复的代码返回数据。 这也意味着如果我们的数据路径发生变化，我们只需更新一行：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">getFolderStructure</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">structure</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">createFolderStructure</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">dropbox</span><span class="p">().</span><span class="nx">filesListFolder</span><span class="p">({</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
+            <span class="nx">include_media_info</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">})</span>
+            <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">createFolderStructure</span><span class="p">)</span>
+            <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+            <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h4>7.8.1.2. 只存储新数据<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<p>如前所述，当前的 <code class="docutils literal"><span class="pre">createFolderStructure</span></code> 方法既显示结构，也缓存应用程序中的响应，从而即使从缓存中加载数据时也重新保存结构。</p>
+<p>创建一个新的方法，一旦数据加载，创建 <code class="docutils literal"><span class="pre">Dropbox</span> <span class="pre">API</span></code> 将触发的该方法。 称它为 <code class="docutils literal"><span class="pre">createStructureAndSave</span></code> 。 这应该接受响应变量作为其唯一参数：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">createStructureAndSave</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{}</span>
+</pre></div>
+</div>
+<p>现在我们可以将 <code class="docutils literal"><span class="pre">store</span> <span class="pre">commit</span></code> 函数从 <code class="docutils literal"><span class="pre">createFolderStructure</span></code> 方法移动到这个新的函数中，同时调用以使用数据激发现有方法：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">createStructureAndSave</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">createFolderStructure</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;structure&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">,</span>
+        <span class="nx">data</span><span class="o">:</span> <span class="nx">response</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>最后，更新 <code class="docutils literal"><span class="pre">Dropbox</span> <span class="pre">API</span></code> 函数以调用此方法：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">getFolderStructure</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">structure</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">createFolderStructure</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">dropbox</span><span class="p">().</span><span class="nx">filesListFolder</span><span class="p">({</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
+            <span class="nx">include_media_info</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">})</span>
+            <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">createStructureAndSave</span><span class="p">)</span>
+            <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+            <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">},</span>
+</pre></div>
+</div>
+<p>在浏览器中打开您的应用程序并浏览文件夹。当您使用面包屑导航后退时，响应应该更快 - 因为它现在从您创建的缓存中加载，而不是每次查询 <code class="docutils literal"><span class="pre">API</span></code> 。</p>
+<p>在第7章“预先缓存其他文件夹和文件用于更快导航”中，我们将讨论预先缓存文件夹以尝试并抢占用户下一步的位置。我们也会考虑缓存这些文件的下载链接。</p>
+<p>我们的完整应用程序 <code class="docutils literal"><span class="pre">JavaScript</span></code> 现在应该如下所示：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;breadcrumb&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;div&gt;&#39;</span> <span class="o">+</span>
+        <span class="s1">&#39;&lt;span v-for=&quot;(f, i) in folders&quot;&gt;&#39;</span> <span class="o">+</span>
+            <span class="s1">&#39;&lt;a :href=&quot;f.path&quot;&gt;[F] {{ f.name }}&lt;/a&gt;&#39;</span> <span class="o">+</span>
+            <span class="s1">&#39;&lt;i v-if=&quot;i !== (folders.length - 1)&quot;&gt; &amp;raquo; &lt;/i&gt;&#39;</span> <span class="o">+</span>
+        <span class="s1">&#39;&lt;/span&gt;&#39;</span> <span class="o">+</span>
+    <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="p">,</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">folders</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">output</span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">slug</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="nx">parts</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">item</span> <span class="k">of</span> <span class="nx">parts</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">slug</span> <span class="o">+=</span> <span class="nx">item</span><span class="p">;</span>
+                <span class="nx">output</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="nx">item</span> <span class="o">||</span> <span class="s1">&#39;home&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="o">:</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">slug</span><span class="p">});</span>
+                <span class="nx">slug</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">output</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;folder&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;li&gt;&lt;strong&gt;&lt;a :href=&quot;\&#39;#\&#39; + f.path_lower&quot;&gt;{{ f.name }}&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;&#39;</span><span class="p">,</span>
+    <span class="nx">props</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">f</span><span class="o">:</span> <span class="nb">Object</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;li&gt;&lt;strong&gt;{{ f.name }}&lt;/strong&gt;&lt;span v-if=&quot;f.size&quot;&gt; - {{ bytesToSize(f.size) }}&lt;/span&gt; - &lt;a v-if=&quot;link&quot; :href=&quot;link&quot;&gt;Download&lt;/a&gt;&lt;/li&gt;&#39;</span><span class="p">,</span>
+    <span class="nx">props</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">f</span><span class="o">:</span> <span class="nb">Object</span><span class="p">,</span>
+        <span class="nx">d</span><span class="o">:</span> <span class="nb">Object</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">byteSizes</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;Bytes&#39;</span><span class="p">,</span> <span class="s1">&#39;KB&#39;</span><span class="p">,</span> <span class="s1">&#39;MB&#39;</span><span class="p">,</span> <span class="s1">&#39;GB&#39;</span><span class="p">,</span> <span class="s1">&#39;TB&#39;</span><span class="p">],</span>
+            <span class="nx">link</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">bytesToSize</span><span class="p">(</span><span class="nx">bytes</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Set a default</span>
+            <span class="kd">let</span> <span class="nx">output</span> <span class="o">=</span> <span class="s1">&#39;0 Byte&#39;</span><span class="p">;</span>
+            <span class="c1">// If the bytes are bigger than 0</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">bytes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Divide by 1024 and make an int</span>
+                <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">bytes</span><span class="p">)</span> <span class="o">/</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">1024</span><span class="p">)));</span>
+                <span class="c1">// Round to 2 decimal places and select the appropriate unit from the array</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">bytes</span> <span class="o">/</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="nx">i</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">byteSizes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">output</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">d</span><span class="p">.</span><span class="nx">filesGetTemporaryLink</span><span class="p">({</span><span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">f</span><span class="p">.</span><span class="nx">path_lower</span><span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">link</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">link</span><span class="p">;</span>
+        <span class="p">});</span>
+    <span class="p">},</span>
+<span class="p">});</span>
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;dropbox-viewer&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;#dropbox-viewer-template&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">accessToken</span><span class="o">:</span> <span class="s1">&#39;XXXX&#39;</span><span class="p">,</span>
+            <span class="nx">structure</span><span class="o">:</span> <span class="p">{},</span>
+            <span class="nx">isLoading</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">path</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">path</span>
+        <span class="p">},</span>
+        <span class="nx">slug</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+                <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\/|\/$/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/ /g</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\//g</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[-]+/g</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^\w-]+/g</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">dropbox</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Dropbox</span><span class="p">({</span>
+                <span class="nx">accessToken</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">accessToken</span>
+            <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">createFolderStructure</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kr">const</span> <span class="nx">structure</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">folders</span><span class="o">:</span> <span class="p">[],</span>
+                <span class="nx">files</span><span class="o">:</span> <span class="p">[]</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">entry</span> <span class="k">of</span> <span class="nx">response</span><span class="p">.</span><span class="nx">entries</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Check &quot;.tag&quot; prop for type</span>
+                <span class="k">if</span><span class="p">(</span><span class="nx">entry</span><span class="p">[</span><span class="s1">&#39;.tag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;folder&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">structure</span><span class="p">.</span><span class="nx">folders</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">entry</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">structure</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">entry</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">structure</span> <span class="o">=</span> <span class="nx">structure</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">createStructureAndSave</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">createFolderStructure</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;structure&#39;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="nx">response</span>
+            <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">getFolderStructure</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">structure</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">slug</span><span class="p">];</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">createFolderStructure</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">dropbox</span><span class="p">().</span><span class="nx">filesListFolder</span><span class="p">({</span>
+                    <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
+                    <span class="nx">include_media_info</span><span class="o">:</span> <span class="kc">true</span>
+                <span class="p">})</span>
+                    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">createStructureAndSave</span><span class="p">)</span>
+                    <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+                        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+                    <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">updateStructure</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">isLoading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">getFolderStructure</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">getFolderStructure</span><span class="p">();</span>
+    <span class="p">},</span>
+    <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">path</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">updateStructure</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+<span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
+    <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="nx">structure</span><span class="o">:</span> <span class="p">{}</span>
+    <span class="p">},</span>
+    <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">updateHash</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="p">(</span><span class="nx">hash</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">structure</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">structure</span><span class="p">[</span><span class="nx">payload</span><span class="p">.</span><span class="nx">path</span><span class="p">]</span> <span class="o">=</span> <span class="nx">payload</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">store</span><span class="p">,</span>
+    <span class="nx">created</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;updateHash&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nb">window</span><span class="p">.</span><span class="nx">onhashchange</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;updateHash&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id11">
+<h2>7.9. 总结<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
+<p>在本章之后，您的应用程序现在应该与 <code class="docutils literal"><span class="pre">Vuex</span></code> 集成并缓存 <code class="docutils literal"><span class="pre">Dropbox</span></code> 文件夹的内容。 <code class="docutils literal"><span class="pre">Dropbox</span></code> 文件夹路径也应该利用 <code class="docutils literal"><span class="pre">store</span></code> 来提高应用程序的效率。 我们也只在需要时才查询 <code class="docutils literal"><span class="pre">API</span></code> 。</p>
+<p>在第7章“预先缓存其他文件夹和文件以实现更快导航”中，我们将考虑预先缓存文件夹 - 提前主动查询 <code class="docutils literal"><span class="pre">API</span></code> 以加快应用程序导航和可用性。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="浏览文件树和通过URL加载文件夹.html" class="btn btn-neutral" title="6. 浏览文件树和通过URL加载文件夹" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

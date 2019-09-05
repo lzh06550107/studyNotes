@@ -1,0 +1,96 @@
+#!/bin/sh
+if [$UID -ne 0 ];then      
+	echo "only root cat exec" #只有root用户才可以执行
+	exit 9
+fi
+
+Path=/etc/user.conf
+if [ ! -f $Path ];then  #如果文件不存在
+	touch $Path			#创建user.conf文件
+fi
+
+chmod 700 $Path  #修改文件权限
+
+if [ 2 -ne $# ];then #判断用户输入的参数个数，如果少于两个就打印出提示信息
+	echo "USAGE: sh adduser {-add|-del|-search} username"
+	
+	exit 1
+fi
+
+Age=$1  #参数1赋给变量Age
+User=$2 #参数2赋给$2
+
+if [ 0 -lt echo "$User"|grep -E "[^a-z,A-Z,0-9,_]"|wc -l ];then #如果匹配到除[^a-z,A-Z,0-9,_]以外的字符时
+	echo "The age format is error"								#输出错误提示信息
+	exit 2			#退出
+fi
+
+
+funCheckUser(){
+	check=$(grep "$User" $Path|wc -l)  #检查匹配user.conf文件是否有相同的用户
+	if [ $check -eq 0 ];then		   #如果没有匹配到有相同的用户
+		return 0					   #返回0
+	else
+		return 1					   #如果有匹配到返回1
+	fi
+}
+
+funAddUser(){
+	funCheckUser
+	if [ $? -eq 0 ];then  		#检查上一个命令是否正确执行
+		echo "$User"  >> $Path  #追加一个用户到user.conf脚本文件
+	else
+		echo "The user is having"
+		exit 3
+	fi
+}
+
+funDelUser(){
+	funCheckUser 
+	if [ $? -eq 0 ];then 
+		echo "There is on user"
+	else
+		sed -i  /^$User$/d  $Path 
+		exit 3
+	fi
+
+}
+
+funSearch(){
+	funCheckUser
+	if [ $? -eq 0 ];then   #如果上一个命令正确执行则
+		echo "No user match"	#输出正确信息
+		
+	else 
+		echo "$User is having" #输出错误提示信息
+	fi 
+}
+
+case $Age in
+		-add)
+			funAddUser
+			;;
+		-del)
+			funDelUser
+			;;
+		-search)
+			funSearch
+			;;
+			
+			*)
+			USAGE:sh adduser {-add|-del|-search}username
+			;;
+esac
+
+
+
+
+
+
+
+
+
+
+
+
+

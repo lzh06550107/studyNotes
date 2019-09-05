@@ -1,0 +1,376 @@
+****
+视图
+****
+
+视图实例化
+==========
+视图功能由 ``\think\View`` 类配合视图驱动（模板引擎）类一起完成，目前的内置模板引擎包含 ``PHP`` 原生模板和 ``Think`` 模板引擎。
+
+因为新版的控制器可以无需继承任何的基础类，因此在控制器中如何使用视图取决于你怎么定义控制器。
+
+
+继承\think\Controller类
+------------------------
+如果你的控制器继承了 ``\think\Controller`` 类的话，则无需自己实例化视图类，可以直接调用控制器基础类封装的相关视图类的方法。
+
+.. code-block:: php
+
+    // 渲染模板输出
+    return $this->fetch('hello',['name'=>'thinkphp']);
+
+下面的方法可以直接被调用：
+
++---------+----------------+
+| 方法    | 说明           |
++=========+================+
+| fetch   | 渲染模板输出   |
++---------+----------------+
+| display | 渲染内容输出   |
++---------+----------------+
+| assign  | 模板变量赋值   |
++---------+----------------+
+| engine  | 初始化模板引擎 |
++---------+----------------+
+
+如果需要调用 ``View`` 类的其它方法，可以直接使用 ``$this->view`` 对象：
+
+``display`` 方法直接输出模板文件渲染后的内容， ``fetch`` 方法是返回模板文件渲染后的内容。 ``fetch`` 方法默认渲染输出的模板文件应该是当前控制器和操作对应的模板，也就是： ``application/index/view/user/index.html`` ``display`` 方法用于渲染内容而不是模板文件输出，和直接使用 ``echo`` 输出的区别是 ``display`` 方法输出的内容支持模板标签的解析。
+
+助手函数
+--------
+如果你只是需要渲染模板输出的话，可以使用系统提供的助手函数 ``view`` ，可以完成相同的功能：
+
+.. code-block:: php
+
+    return view('hello',['name'=>'thinkphp']);
+
+助手函数调用格式：
+
+**view('[模板文件]'[,'模板变量（数组）'][,模板替换（数组）])**
+
+无论你是否继承 ``think\Controller`` 类，助手函数都可以使用，也是最方便的一种。
+
+模板引擎
+========
+
+内置模板引擎
+------------
+视图的模板文件可以支持不同的解析规则，默认情况下无需手动初始化模板引擎。
+
+可以通过下面的几种方式对模板引擎进行初始化。
+
+配置文件
+^^^^^^^^
+在应用配置文件中配置 ``template`` 参数即可，例如：
+
+.. code-block:: php
+
+    'template'               => [
+        // 模板引擎类型 支持 php think 支持扩展
+        'type'         => 'Think',
+        // 模板路径
+        'view_path'    => './template/',
+        // 模板后缀
+        'view_suffix'  => 'html',
+        // 模板文件名分隔符
+        'view_depr'    => DS,
+        // 模板引擎普通标签开始标记
+        'tpl_begin'    => '{',
+        // 模板引擎普通标签结束标记
+        'tpl_end'      => '}',
+        // 标签库标签开始标记
+        'taglib_begin' => '{',
+        // 标签库标签结束标记
+        'taglib_end'   => '}',
+    ],
+
+调用视图类进行操作或者使用 ``view`` 助手函数的时候会自动实例化相关的模板引擎并传入参数。
+
+视图根目录
+^^^^^^^^^^
+视图文件的根目录默认情况下位于模块的 ``view`` 目录，每个模块的视图目录可以通过模板参数 ``view_path`` 自定义。
+
+V5.0.3+ 版本开始，新增了 ``view_base`` 模板引擎参数，可以用于定义全局的视图根目录，然后模块作为子目录。
+
+调用engine方法初始化
+^^^^^^^^^^^^^^^^^^^^
+视图类也提供了 ``engine`` 方法对模板解析引擎进行初始化或者切换不同的模板引擎，例如：
+
+.. code-block:: php
+
+    return $this->engine('php')->fetch();
+
+表示当前视图的模板文件使用原生 ``php`` 进行解析。
+
+使用第三方模板引擎
+------------------
+官方扩展库中提供了一个类似于 ``angularjs`` 语法的模板引擎 ``think-angular`` ，具体可以参考 `参考手册 <http://www.kancloud.cn/shuai/php-angular>`_  。
+
+模板赋值
+========
+除了系统变量和配置参数输出无需赋值外，其他变量如果需要在模板中输出必须首先进行模板赋值操作，绑定数据到模板输出有下面几种方式：
+
++-------+-------------------------------+
+| 版本  | 新增功能                      |
++=======+===============================+
+| 5.0.4 | 增加全局静态模板赋值方法share |
++-------+-------------------------------+
+
+assign方法
+
+.. code-block:: php
+
+namespace index\app\controller;
+
+class Index extends \think\Controller
+{
+    public function index()
+    {
+        // 模板变量赋值
+        $this->assign('name','ThinkPHP');
+        $this->assign('email','thinkphp@qq.com');
+        // 或者批量赋值
+        $this->assign([
+            'name'  => 'ThinkPHP',
+            'email' => 'thinkphp@qq.com'
+        ]);
+        // 模板输出
+        return $this->fetch('index');
+    }
+}
+
+传入参数方法
+------------
+方法 ``fetch`` 及 ``display`` 均可传入模版变量，例如
+
+渲染模板：
+
+.. code-block:: php
+
+    namespace app\index\controller;
+
+    class Index extends \think\Controller
+    {
+        public function index()
+        {
+            return $this->fetch('index', [
+                'name'  => 'ThinkPHP',
+                'email' => 'thinkphp@qq.com'
+            ]);
+        }
+    }
+
+渲染内容：
+
+.. code-block:: php
+
+    class Index extends \think\Controller
+    {
+        public function index()
+        {
+            $content = '{$name}-{$email}';
+            return $this->display($content, [
+                'name'  => 'ThinkPHP',
+                'email' => 'thinkphp@qq.com'
+            ]);
+        }
+    }
+
+助手函数
+--------
+如果使用 ``view`` 助手函数渲染输出的话，可以使用下面的方法进行模板变量赋值：
+
+.. code-block:: php
+
+    return view('index', [
+        'name'  => 'ThinkPHP',
+        'email' => 'thinkphp@qq.com'
+    ]);
+
+share方法
+---------
+V5.0.4+ 开始，支持在任何地方使用静态方法进行全局模板变量赋值，例如：
+
+.. code-block:: php
+
+    think\View::share('name','value');
+    // 或者批量赋值
+    think\View::share(['name1'=>'value','name2'=>'value2']);
+
+全局静态模板变量最终会和前面使用方法赋值的模板变量合并。
+
+模板渲染
+========
+
++-------+------------------------------+
+| 版本  | 新增功能                     |
++=======+==============================+
+| 5.0.4 | 支持渲染视图根目录的模板文件 |
++-------+------------------------------+
+
+渲染模板最常用的是继承系统的控制器基类后调用 ``fetch`` 方法，调用格式：
+
+**fetch('[模板文件]'[,'模板变量（数组）'])**
+
+模板文件的写法支持下面几种：
+
++------------------------+------------------------------------------+
+| 用法                   | 描述                                     |
++========================+==========================================+
+| 不带任何参数           | 自动定位当前操作的模板文件               |
++------------------------+------------------------------------------+
+| [模块@][控制器/][操作] | 常用写法，支持跨模块                     |
++------------------------+------------------------------------------+
+| 完整的模板文件名       | 直接使用完整的模板文件名（包括模板后缀） |
++------------------------+------------------------------------------+
+
+下面是一个最典型的用法，不带任何参数：
+
+.. code-block:: php
+
+    // 不带任何参数 自动定位当前操作的模板文件
+    return $this->fetch();
+
+表示系统会按照默认规则自动定位模板文件，其规则是：
+
+**当前模块/默认视图目录/当前控制器（小写）/当前操作（小写）.html**
+
+.. warning:: V5.0.16+ 版本开始，默认的模板文件名规则改为实际操作方法名的小写+下划线写法。但可以配置 ``template.auto_rule`` 的值为2 恢复之前的全小写规则。
+
+如果有更改模板引擎的 ``view_depr`` 设置（假设 ``'view_depr'=>'_'`` ）的话，则上面的自动定位规则变成：
+
+**当前模块/默认视图目录/当前控制器（小写）_当前操作（小写）.html**
+
+如果没有按照模板定义规则来定义模板文件（或者需要调用其他控制器下面的某个模板），可以使用：
+
+.. code-block:: php
+
+    // 指定模板输出
+    return $this->fetch('edit');
+
+表示调用当前控制器下面的 ``edit`` 模板
+
+.. code-block:: php
+
+    return $this->fetch('member/read');
+
+表示调用 ``Member`` 控制器下面的 ``read`` 模板。
+
+跨模块渲染模板
+
+.. code-block:: php
+
+    return $this->fetch('admin@member/edit');
+
+渲染输出不需要写模板文件的路径和后缀。这里面的控制器和操作并不一定需要有实际对应的控制器和操作，只是一个目录名称和文件名称而已，例如，你的项目里面可能根本没有 ``Public`` 控制器，更没有 ``Public`` 控制器的 ``menu`` 操作，但是一样可以使用。
+
+.. code-block:: php
+
+    return $this->fetch('public/menu');
+
+输出这个模板文件。理解了这个，模板输出就清晰了。
+
+``fetch`` 方法支持在渲染输出的时候传入模板变量，例如：
+
+.. code-block:: php
+
+    return $this->fetch('read', ['a'=>'a','b'=>'b']);
+
+V5.0.4+ 版本开始，支持从视图根目录开始读取模板，例如：
+
+.. code-block:: php
+
+    $this->fetch('/menu');
+
+表示读取的模板是 **当前模块/默认视图目录/menu.html**
+
+.. warning:: 如果你的控制器类没有继承系统的控制器基类，请使用系统提供的助手函数 view 进行渲染输出。
+
+自定义模板路径
+---------------
+如果你的模板文件位置比较特殊或者需要自定义模板文件的位置，可以采用下面的几种方式处理。
+
+渲染完整模板
+
+.. code-block:: php
+
+    return $this->fetch('./template/public/menu.html');
+
+这种方式需要带模板路径和后缀指定一个完整的模板文件位置，这里的 ``template/public`` 目录是位于当前项目入口文件位置下面。如果是其他的后缀文件，也支持直接输出，例如：
+
+.. code-block:: php
+
+    return $this->fetch('./template/public/menu.tpl');
+
+只要 ``./template/public/menu.tpl`` 是一个实际存在的模板文件。
+
+.. note:: 要注意模板文件位置是相对于应用的入口文件，而不是模板目录。
+
+渲染内容
+--------
+如果希望直接解析内容而不通过模板文件的话，可以使用 ``display`` 方法：
+
+.. code-block:: php
+
+    return $this->display($content,$vars);
+
+渲染的内容中一样可以使用模板引擎的相关标签。
+
+输出替换
+========
+
++-------+---------------------------------------------------+
+| 版本  | 新增功能                                          |
++=======+===================================================+
+| 5.0.4 | 增加__ROOT____STATIC____JS__和__CSS__内置替换规则 |
++-------+---------------------------------------------------+
+
+支持对视图输出的内容进行字符替换，例如：
+
+.. code-block:: php
+
+    namespace index\app\controller;
+
+    class Index extends \think\Controller
+    {
+        public function index()
+        {
+            $this->assign('name','thinkphp');
+            return $this->fetch('index',[],['__PUBLIC__'=>'/public/']);
+        }
+    }
+
+如果需要全局替换的话，可以直接在配置文件中添加：
+
+.. code-block:: php
+
+    'view_replace_str'  =>  [
+        '__PUBLIC__'=>'/public/',
+        '__ROOT__' => '/',
+    ]
+
+然后就可以直接使用
+
+.. code-block:: php
+
+    namespace index\app\controller;
+
+    class Index extends \think\Controller
+    {
+        public function index()
+        {
+            $this->assign('name','thinkphp');
+            return $this->fetch('index');
+        }
+    }
+
+助手函数 ``view`` 也支持全局配置参数 ``view_replace_str`` 的设置，如果需要设置不同的替换参数，可以使用：
+
+.. code-block:: php
+
+    return view('index',['name'=>'thinkphp'],['__PUBLIC__'=>'/public/']);
+
+在渲染模板或者内容输出的时候就会自动根据设置的替换规则自动替换。
+
+.. note:: 要使得你的全局替换生效，确保你的控制器类继承 ``think\Controller`` 或者使用 ``view`` 助手函数渲染输出。
+

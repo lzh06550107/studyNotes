@@ -1,0 +1,60 @@
+****
+错误处理
+****
+
+.. contents:: 目录
+   :depth: 4
+
+微擎系统只提供了简单的错误结构概念，允许用户进行业务级的错误处理，并不支持系统级的抛出、捕获异常处理。
+
+错误结构
+========
+
+.. code-block:: php
+
+	/**
+	 * 构造错误数组
+	 * @param int $errno 错误码，0为无任何错误
+	 * @param string $message 错误信息
+	 * @param mixed $data 返回数据结果
+	 * @return array
+	 */
+	function error($errno, $message = '') {
+		return array(
+			'errno' => $errno,
+			'message' => $message,
+		);
+	}
+
+错误信息是以数组形式返回的，错误编号 ``0`` 表示无任何错误，非零表示错误编号； ``message`` 则表示错误消息内容。
+
+错误判断
+========
+
+微擎系统很多系统函数也是这样返回错误信息的，在使用时，即量使用 ``is_error`` 函数来判断。如果存在错误，则返回 ``true`` ；否则返回 ``false`` 。
+
+使用错误处理器
+=============
+
+微擎系统中使用 ``error($errno, $message = '')`` 来定义一个错误结构，使用 ``is_error($data)`` 函数来判断是否发生错误。例如：
+
+.. code-block:: php
+
+	$file_delete_status = file_remote_delete('test.jpg');
+	if (!is_error($file_delete_status)) {
+	    message('删除成功');
+	} else {
+	    message('删除失败，错误码如下：' . $file_delete_status['errno'] . '，错误如下：' . $file_delete_status['message']);
+	}
+	function file_remote_delete($file) {
+	    global $_W;
+	    if(empty($file)) {
+	        return error(1, '文件不存在');
+	    }
+	    $ftp = new Ftp();
+	    if ($ftp->delete_file($file)) {
+	        return true;
+	    } else {
+	        return error(1, '删除附件失败，请检查配置并重新删除');
+	    }
+	}

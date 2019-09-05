@@ -1,0 +1,613 @@
+*************
+全局常量和变量
+*************
+
+- ``$_GPC`` ：全局请求变量，获取 ``$_GET`` ， ``$_POST`` ， ``$_COOKIES`` 中的变量；
+- ``$_W`` ： ``$_W`` （大写 ``W`` ），是系统中最为重要的全局变量，微擎系统中很多常用的数据都存储在这个变量之中，下面我们详细讲解一下此变量的结构。
+
+
+全局配置
+========
+变量名称  类型  说明  示例
+$_W['config']  array  系统设置，存放着数据库配置、缓存配置、全局配置、上传配置、cookie配置，该配置项下的值存在 /data/config.php 文件中，更改时可以直接修改此文件	  -
+$_W['timestamp']  int  当前访问时刻时间戳  -
+$_W['charset']  string  系统字符编码  -
+$_W['token']  string  系统表单验证来源，使用 checksubmit() 函数判断表单提交时，请在隐藏域中加上此值  -
+$_W['clientip']  string  当前客户端 IP 地址  -
+$_W['script_name']  string  当前脚本名称，包含子路径  "/web/index.php"
+$_W['siteroot']  string  网站 URL 根目录  "http://www.xxx.cn/"
+$_W['siteurl']  string  原始链接  "http://www.xxx.cn/test.php?a=1&b=2"
+$_W['attachurl']  string  附件 URL 目录，如果开启远程附件后，此值是远程附件地址	"http://www.xxx.cn/attachment/"
+$_W['attachurl_local']  string  附件 URL 本地目录，永远显示本地的附件目录 URL  "http://www.xxx.cn/attachment/"
+$_W['attachurl_remote']  string  附件 URL 远程目录，永远显示远程附件目录 URL  "http://ogs188fok.bkt.gdipper.com/"
+$_W['isajax']  boolean  是否为 AJAX 请求  -
+$_W['ispost']  boolean  是否为 POST 请求  -
+$_W['ishttps']  boolean  是否是 https 协议  -
+$_W['sitescheme']  string  当前系统的协议类型，值为 http:// 或是 https://  -
+$_W['page']['title']  string  当前页面标题  -
+
+系统配置
+========
+
+变量  名称  类型  说明  示例
+$_W['setting']['regedit']  array  注册设置  open 是否开启注册<br>verify 是否审核新用户<br>code 是否开启验证码<br>groupid 注册后默认用户组
+$_W['setting']['remote']  array  远程附件  type当前远程附件类型
+$_W['setting']['upload']  array  附件上传设置	  -
+
+公众号相关
+==========
+
+变量  类型  说明
+$_W['uniacid']  int  当前统一公号id与 account 内容一致
+$_W['weid']  int  [已过时], 0.6 开发中请使用 $_W['uniacid'] 代替
+$_W['uniaccount']  array	当前统一公号(主公号)信息
+$_W['uniaccount']['uniacid']  int  当前统一公号 ID (uniacid) 
+$_W['uniaccount']['groupid']  int  当前统一公号套餐组
+$_W['uniaccount']['name']  string  当前统一公号名称
+$_W['uniaccount']['description']  string  当前统一公号描述
+$_W['current_module']  array  当前模块信息数组
+
+
+Web 端可见
+==========
+
+变量  名称  类型  说明  示例
+$_W['uid']  int  当前登录的操作用户uid  -
+$_W['username']  string  当前操作用户名称  -
+$_W['user']  array   当前操作用户信息  -
+$_W['isfounder']  boolean  是否创始人包括主副  判断主创始人$_W['isfounder'] && !user_is_vice_founder()；判断副创始人 $_W['isfounder'] && user_is_vice_founder()
+$_W['role']  string  角色  取值范围：<br>ACCOUNT_MANAGE_NAME_OPERATOR（操作员）<br> ACCOUNT_MANAGE_NAME_MANAGER（管理员）<br> ACCOUNT_MANAGE_NAME_OWNER（所有者）
+
+App 端可见
+==========
+
+变量  名称  类型  说明  示例
+$_W['template']  string  当前公号使用的微站模板名称  -
+$_W['container']  string  微站客户端平台  取值范围: wechat, android, ipad, iphone, ipod, unknown
+$_W['os']  string  微站客户端平台  取值范围: windows (pc端), mobile(手机端), unknown
+$_W['member']  array  当前粉丝用户信息  -
+$_W['member']['uid']  int  当前粉丝用户 uid  -
+$_W['openid']  string  当前粉丝用户标识	可能是真实的 openid ；可能是借用的 oauth_openid
+$_W['fans']  array  当前粉丝用户信息  -
+
+网页授权
+========
+
+变量  名称  类型  说明  示例
+$_W['oauth_account']  array  当前子公号,可使用的网页授权公众号信息  可能是自己(level=4)；可能是借用的别的认证服务号；可能没有(level<4 且未借用)
+
+.. code-block:: shell
+
+	Array
+	(
+	    [config] => Array //配置文件/data/config.php
+	        (
+	            [cookie] => Array //Cookie相关信息（作用域，前缀）
+	                (
+	                    [pre] => d134_
+	                    [domain] =>
+	                    [path] => /
+	                )
+
+	            [setting] => Array // 基本全局配置信息
+	                (
+	                    [charset] => utf-8
+	                    [cache] => mysql
+	                    [timezone] => Asia/Shanghai
+	                    [memory_limit] => 256M
+	                    [filemode] => 420
+	                    [authkey] => 2bd34568
+	                    [founder] => 1
+	                    [development] => 1
+	                    [referrer] => 0
+	                    [memcache] => Array
+	                        (
+	                            [server] =>
+	                            [port] => 11211
+	                            [pconnect] => 1
+	                            [timeout] => 30
+	                            [session] => 1
+	                        )
+
+	                    [proxy] => Array
+	                        (
+	                            [host] =>
+	                            [auth] =>
+	                        )
+
+	                    [maxtimesql] => 5
+	                    [maxtimeurl] => 10 // 如果请求脚本执行时间超过该值，则会记录到性能表中
+	                )
+
+	            [upload] => Array //!!!废弃，统一从数据库读取!!!，上传配置信息（扩展名，路径），被移到setting中
+	                (
+	                    [image] => Array
+	                        (
+	                            [extentions] => Array
+	                                (
+	                                    [0] => gif
+	                                    [1] => jpg
+	                                    [2] => jpeg
+	                                    [3] => png
+	                                )
+
+	                            [limit] => 5000
+	                        )
+
+	                    [attachdir] => attachment
+	                    [audio] => Array
+	                        (
+	                            [extentions] => Array
+	                                (
+	                                    [0] => mp3
+	                                )
+
+	                            [limit] => 5000
+	                        )
+
+	                )
+
+	            [db] => Array //数据库配置信息，在初始化完成DB实例后会删除配置信息
+	                (
+	                    [tablepre] => ims_
+	                    [slave_status] =>
+	                )
+
+	        )
+
+	    [timestamp] => 1544929129 // 请求进入服务端那个时刻的时间
+	    [charset] => utf-8
+	    [clientip] => 127.0.0.1
+	    [ishttps] =>
+	    [isajax] =>
+	    [ispost] =>
+	    [sitescheme] => http://
+	    [script_name] => /web/index.php
+	    [siteroot] => http://www.weengine172.cn/ //网站URL根目录
+	    [siteurl] => http://www.weengine172.cn/web/index.php? //当前页面完整的URL
+	    [setting] => Array // 站点配置
+	        (
+	            [copyright] => Array // 版权信息
+	                (
+	                    [status] => 0 // 站点是否关闭
+	                    [verifycode] => 0
+	                    [reason] =>  // 站点关闭的原因
+	                    [sitename] =>
+	                    [url] => http://
+	                    [statcode] =>
+	                    [footerleft] =>
+	                    [footerright] =>
+	                    [icon] =>
+	                    [flogo] =>
+	                    [background_img] =>
+	                    [slides] => a:3:{i:0;s:58:"https://img.alicdn.com/tps/TB1pfG4IFXXXXc6XXXXXXXXXXXX.jpg";i:1;s:58:"https://img.alicdn.com/tps/TB1sXGYIFXXXXc5XpXXXXXXXXXX.jpg";i:2;s:58:"https://img.alicdn.com/tps/TB1h9xxIFXXXXbKXXXXXXXXXXXX.jpg";}
+	                    [notice] =>
+	                    [blogo] => 后台logo
+	                    [baidumap] => Array
+	                        (
+	                            [lng] =>
+	                            [lat] =>
+	                        )
+
+	                    [company] =>
+	                    [companyprofile] =>
+	                    [address] =>
+	                    [person] =>
+	                    [phone] =>
+	                    [qq] =>
+	                    [email] =>
+	                    [keywords] =>
+	                    [description] =>
+	                    [showhomepage] => 0
+	                    [leftmenufixed] => 0
+	                    [mobile_status] => 0 // 是否开启手机号注册
+	                    [login_type] => 0
+	                    [log_status] => 0 // 这是控制统一帐号日志记录开关，不是控制系统日志记录的
+	                    [develop_status] => 0
+	                    [icp] =>
+	                    [bind] =>
+	                )
+
+	            [authmode] => 1 //授权地址安全模式，1为宽松；2为严格模式。设置严格模式时，系统提供给用户的授权地址时效为3分钟，在这个时间内用户没有点击则失效。并且在严格模式下，授权地址为一次性地址，用户点击后该地址自动失效。但不会影响已授权过的用户。
+	            [close] => Array // 站点是否关闭
+	                (
+	                    [status] => 0
+	                    [reason] =>
+	                )
+
+	            [register] => Array // 用户注册设置
+	                (
+	                    [open] => 1 // 是否开启注册
+	                    [verify] => 0 // 是否要审核注册用户
+	                    [code] => 1 // 是否开启验证码
+	                    [groupid] => 1 // 注册用户默认组
+	                )
+
+	            [site] => // 微擎云服务平台的站点注册信息，包含token
+	            [cloudip] => Array
+	                (
+	                    [ip] => 220.181.105.241
+	                    [expire] => 1521713898
+	                )
+
+	            [module_ban] => Array
+	                (
+	                )
+
+	            [module_upgrade] => Array
+	                (
+	                )
+
+	            [module_receive_ban] => Array // 禁止接收订阅消息模块数组
+	                (
+	                )
+
+	            [basic] => Array
+	                (
+	                    [template] => black
+	                )
+
+	            [platform] => Array // 公众号和小程序使用授权登录需认证微信开放平台
+	                (
+	                    [token] => N448LX5LSl5X411x8Z0YFu15U5S5vxx5 // 公众号消息校验Token
+	                    [encodingaeskey] => o555SAX41N4X899lCn1xVF95y1UxSs4Fs4jv9X8aAaN //公众号消息加解密Key
+	                    [appsecret] => // 在微信开放平台注册且审核通过后可以获取到AppSecret
+	                    [appid] =>  //在微信开放平台注册且审核通过后可以获取到AppId
+	                    [authstate] => 1 // 是否启用微信公众号登录授权
+	                )
+
+	            [thirdlogin] => Array // 第三方登录配置
+	                (
+	                    [system] => Array
+	                        (
+	                            [appid] =>
+	                            [appsecret] =>
+	                            [authstate] =>
+	                        )
+
+	                    [qq] => Array
+	                        (
+	                            [appid] =>
+	                            [appsecret] =>
+	                            [authstate] =>
+	                        )
+
+	                    [wechat] => Array
+	                        (
+	                            [appid] =>
+	                            [appsecret] =>
+	                            [authstate] =>
+	                        )
+
+	                    [mobile] => Array
+	                        (
+	                            [appid] =>
+	                            [appsecret] =>
+	                            [authstate] =>
+	                        )
+
+	                )
+
+	            [upload] => Array // 本地附件上传配置
+	                (
+	                    [image] => Array // 图片附件设置
+	                        (
+	                        	[thumb] => 0, // 是否启用缩略设置
+    							[width] => 800, // 缩略后图片 最大宽度
+	                            [extentions] => Array //支持文件后缀
+	                                (
+	                                    [0] => gif
+	                                    [1] => jpg
+	                                    [2] => jpeg
+	                                    [3] => png
+	                                )
+
+	                            [limit] => 5000 // 支持文件大小 KB
+	                            [zip_percentage] => 100 //图片压缩比
+	                        )
+
+	                    [attachdir] => attachment // 附件目录
+	                    [audio] => Array // 音频视频附件设置
+	                        (
+	                            [extentions] => Array
+	                                (
+	                                    [0] => mp3 // 支持文件后缀
+	                                )
+
+	                            [limit] => 5000 // 支持文件大小
+	                        )
+
+	                )
+
+	            [remote_complete_info] => // 远程附件配置信息
+	        )
+
+	    [os] => windows //当前操作系统，[windows (pc端), mobile(手机端), unknown]
+	    [container] => unknown //手机端类型（wechat, android, ipad, iphone, ipod, unknown）
+	    [token] => 99dca2f8 //随机token值，表单提交用于判断来源
+	    [uid] => 1 //当前管理或是操作员UID
+	    [username] => admin //当前管理或是操作员用户名
+	    [user] => Array //当前管理或是操作员信息
+	        (
+	            [uid] => 1
+	            [owner_uid] => 0
+	            [groupid] => 1
+	            [founder_groupid] => 0
+	            [username] => admin
+	            [password] => 5cc2948146ba0062a1dc45d651b04877adada925
+	            [salt] => 3c4b2231
+	            [type] => 0
+	            [status] => 0
+	            [joindate] => 1522056522
+	            [joinip] =>
+	            [lastvisit] => 1544602253
+	            [lastip] => 127.0.0.1
+	            [remark] =>
+	            [starttime] => 0
+	            [endtime] => 0
+	            [register_type] => 0
+	            [openid] =>
+	            [welcome_link] => 0
+	            [avatar] =>
+	            [name] => admin
+	            [clerk_id] => 1
+	            [store_id] => 0
+	            [clerk_type] => 2
+	            [qq_openid] =>
+	            [wechat_openid] =>
+	            [mobile] =>
+	            [currentvisit] => 1544603841
+	            [currentip] => 127.0.0.1
+	        )
+
+	    [isfounder] => 1 //是否是创始人，包括主副
+	    [uniacid] => 1 //当前统一帐号id
+	    [account] = [uniaccount] => Array //当前统一帐号信息
+	        (
+	            [acid] => 1
+	            [uniacid] => 1 //当前统一公号 ID
+	            [token] => omJNpZEhZeHj1ZxFECKkP48B5VFbk1HP
+	            [encodingaeskey] => 1lkkB6b1s45f6C0Z5J5lHwlzDzJidQDsGOUAxmnFziQ //加密解密
+	            [level] => 4 //公众号级别，普通订阅号1，普通服务号2，认证订阅号3，认证服务号4
+	            [name] => 微擎团队
+	            [account] => we7team
+	            [original] => gh_4b1063013961
+	            [signature] => 微信公众平台自助引擎，简称微擎
+	            [country] =>
+	            [province] =>
+	            [city] =>
+	            [username] =>
+	            [password] =>
+	            [lastupdate] => 0
+	            [key] => wx2f9d7b7b086d0fd8 //公众号appid
+	            [secret] => //公众号appsecret
+	            [styleid] => 1
+	            [subscribeurl] =>
+	            [auth_refresh_token] =>
+	            [encrypt_key] =>
+	            [type] => 1
+	            [isconnect] => 0
+	            [isdeleted] => 0
+	            [endtime] => 0
+	            [uid] => 1 // 统一帐号拥有者id
+	            [starttime] => 0 //统一帐号拥有者id
+	            [groups] => Array // 统一帐号拥有的会员组
+	                (
+	                    [1] => Array // 第一个组
+	                        (
+	                            [groupid] => 1
+	                            [uniacid] => 1
+	                            [title] => 默认会员组
+	                            [credit] => 0
+	                            [isdefault] => 1
+	                        )
+
+	                )
+
+	            [setting] => Array // 统一帐号设置
+	                (
+	                    [uniacid] => 1
+	                    [passport] => Array // 会员注册参数
+	                        (
+	                            [focusreg] => 0 // 是否关注时自动注册
+	                            [item] => email
+	                            [type] => password
+	                        )
+
+	                    [oauth] => Array // oauth借用及域名设置
+	                        (
+	                            [status] => 0
+	                            [account] => 0
+	                        )
+
+	                    [jsauth_acid] => 0  // JSSDK借用公众号id
+	                    [uc] => Array // 设置UC参数
+	                        (
+	                            [status] => 0 //是否启用UC
+	                        )
+
+	                    [notify] => Array // 通知配置
+	                        (
+	                            [sms] => Array // 短信设置
+	                                (
+	                                    [balance] => 0 // 剩下可发送短信数
+	                                    [signature] => // 短信签名
+	                                )
+	                                // 还有邮件设置
+
+	                        )
+
+	                    [creditnames] => Array
+	                        (
+	                            [credit1] => Array
+	                                (
+	                                    [title] => 积分
+	                                    [enabled] => 1
+	                                )
+
+	                            [credit2] => Array
+	                                (
+	                                    [title] => 余额
+	                                    [enabled] => 1
+	                                )
+
+	                            [credit3] => Array
+	                                (
+	                                    [title] =>
+	                                    [enabled] => 0
+	                                )
+
+	                            [credit4] => Array
+	                                (
+	                                    [title] =>
+	                                    [enabled] => 0
+	                                )
+
+	                            [credit5] => Array
+	                                (
+	                                    [title] =>
+	                                    [enabled] => 0
+	                                )
+
+	                        )
+
+	                    [creditbehaviors] => Array
+	                        (
+	                            [activity] => credit1
+	                            [currency] => credit2
+	                        )
+
+	                    [welcome] =>  // 公众号欢迎信息
+	                    [default] =>  // 公众号默认回复
+	                    [default_message] => // 特殊事件默认回复
+	                    [payment] => Array // 公众号支付配置
+	                        (
+	                            [credit] => Array
+	                                (
+	                                    [switch] => // 当前操作模式
+	                                    [recharge_switch] => // 充值模式开关
+	                                    [pay_switch] => // 付款模式开关
+	                                )
+
+	                            [alipay] => Array
+	                                (
+	                                    [switch] =>
+	                                    [account] =>
+	                                    [partner] =>
+	                                    [secret] =>
+	                                    [recharge_switch] =>
+	                                    [pay_switch] =>
+	                                )
+
+	                            [wechat] => Array
+	                                (
+	                                    [switch] =>
+	                                    [account] =>
+	                                    [signkey] =>
+	                                    [partner] =>
+	                                    [key] =>
+	                                    [recharge_switch] =>
+	                                    [pay_switch] =>
+	                                )
+
+	                            [delivery] => Array
+	                                (
+	                                    [switch] =>
+	                                    [recharge_switch] =>
+	                                    [pay_switch] =>
+	                                )
+
+	                        )
+
+	                    [stat] =>
+	                    [default_site] => 1  //默认站点id
+	                    [sync] => 0 // 粉丝同步设置（废弃）
+	                    [recharge] =>
+	                    [tplnotice] =>  // 粉丝通知模板消息ID数组
+	                    [grouplevel] => 0 // 会员组变更方式
+	                    [mcplugin] =>
+	                    [exchange_enable] => 0
+	                    [coupon_type] => 0
+	                    [menuset] =>
+	                    [statistics] =>  // 访问统计相关设置信息
+	                    [bind_domain] => // 公众号绑定域名
+	                    [comment_status] => 0 // 开、关公众号文章评论
+	                    [reply_setting] => 0 // 公众号自动回复设置
+	                )
+
+	            [grouplevel] => 0 // 会员组变更方式
+	            [logo] => http://www.weengine172.cn/attachment/headimg_1.jpg?time=1544585718
+	            [qrcode] => http://www.weengine172.cn/attachment/qrcode_1.jpg?time=1544585718
+	            [switchurl] => ./index.php?c=account&a=display&do=switch&uniacid=1
+	            [sms] => 0
+	            [setmeal] => Array // 当前统一帐号套餐有效期
+	                (
+	                    [uid] => -1
+	                    [username] => 创始人
+	                    [timelimit] => 未设置
+	                    [groupid] => -1 // 用户所在的组id
+	                    [groupname] => 所有服务 // 用户所在的组名称
+	                )
+
+	        )
+
+	    [acid] => 1 // 子公众号id
+	    [weid] => 1 // 向下兼容和uniacid一样
+	    [highest_role] => founder // 当前用户具有最高角色
+	    [role] => founder // 当前管理或是操作员角色
+	    [template] => black // 当前模板主题
+	    [attachurl_local] => http://www.weengine172.cn/attachment/
+	    [attachurl] => http://www.weengine172.cn/attachment/
+	    [page] => Array //页面上一些配置信息
+	        (
+	            [copyright] => Array
+	                (
+	                    [status] => 0
+	                    [verifycode] => 0
+	                    [reason] =>
+	                    [sitename] =>
+	                    [url] => http://
+	                    [statcode] =>
+	                    [footerleft] =>
+	                    [footerright] =>
+	                    [icon] =>
+	                    [flogo] =>
+	                    [background_img] =>
+	                    [slides] => a:3:{i:0;s:58:"https://img.alicdn.com/tps/TB1pfG4IFXXXXc6XXXXXXXXXXXX.jpg";i:1;s:58:"https://img.alicdn.com/tps/TB1sXGYIFXXXXc5XpXXXXXXXXXX.jpg";i:2;s:58:"https://img.alicdn.com/tps/TB1h9xxIFXXXXbKXXXXXXXXXXXX.jpg";}
+	                    [notice] =>
+	                    [blogo] =>
+	                    [baidumap] => Array
+	                        (
+	                            [lng] =>
+	                            [lat] =>
+	                        )
+
+	                    [company] =>
+	                    [companyprofile] =>
+	                    [address] =>
+	                    [person] =>
+	                    [phone] =>
+	                    [qq] =>
+	                    [email] =>
+	                    [keywords] =>
+	                    [description] =>
+	                    [showhomepage] => 0
+	                    [leftmenufixed] => 0
+	                    [mobile_status] => 0
+	                    [login_type] => 0
+	                    [log_status] => 0
+	                    [develop_status] => 0
+	                    [icp] =>
+	                    [bind] =>
+	                )
+
+	        )
+	    [current_module] => // 模块对象
+
+	)
+
+
+
+系统配置
+
+

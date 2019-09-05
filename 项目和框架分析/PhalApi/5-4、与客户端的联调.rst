@@ -1,0 +1,211 @@
+*******
+与客户端的联调
+*******
+在完成对接口服务的开发后，便可把对应的接口服务提供给客户端使用，并通过说明文档告知客户端如何调用。结合客户端的开发，便可看到最终展示在界面上的数据，而非再是单调的 ``JSON`` 格式数据。
+
+
+与移动App的联调
+==============
+在 ``WeTime`` 项目中，移动 ``App`` 主要包括有 ``iOS`` 客户端和 ``Android`` 客户端。根据项目的情况，需要支撑的客户端也不尽相同，有的可能还需要支撑 ``H5`` 混合页面，支撑 ``Windows Phone`` 。尽量与客户端进行联调有很多好处。首先，可以有效保证项目进度，有客户端需要时甚至在客户端开始开发前就提供所需的接口服务，有助于保障项目不阻塞，不延期。其次，通过客户端在真实业务场景中使用接口服务，更有利于提前发现问题以及不合理的设计，从而在前期就进行调整，避免到了后期大量的返工。最后，在完成开发接口服务后，在后端开发人员记忆犹新时尽快和客户端进行联调，也有助于快速定位解决问题。
+
+如 ``iOS`` 客户端的个人页面，展示效果如下：
+
+.. image:: ./images/ch-5-ios-user-center.jpg
+
+图5-8 iOS客户端的个人页面
+
+又如 ``Android`` 客户端的个人页面，展示效果如下：
+
+.. image:: ./images/ch-5-android-user-center.png
+
+图5-9 Android客户端的个人页面
+
+当客户端需要调用接口服务时，可以将 ``PhalApi`` 封装的 ``SDK`` 提供给客户端开发工程师。目前客户端 ``SDK`` 包已支持的开发语言有：
+
+- JAVA
+- Objective-C
+- PHP
+- C#
+- Javascript
+- Go
+- Ruby
+- Python
+
+客户端也可以根据自己的实际情况，封装专属的接口服务请求类。
+
+在与客户端联调的过程中，往往会发现一些有趣的问题。例如字符编码问题，返回字段的类型问题，部分接口服务的签名验证等。简而言之，实践出真知。
+
+与管理后台的联调
+===============
+WeTime 项目的一个特色是它的管理后台的全部数据，也是通过接口服务来获取或操作的。这与以往的管理后台的实现方式不一样，传统方式是管理后台直接操作数据库，但对于存在多个客户端的架构中，直接操作数据库不能保证业务规则的一致性。因此，尽早考虑打造项目的接口中间层，统一业务规则，业务项目可以从中获益。
+
+提供给管理后台的接口服务，与提供给移动 App 的接口服务没有明显的差异，但存在微妙的区别。首先，是访问接口服务模块的划分。因为在管理后台往往需要一些更高级别、能操纵核心业务数据的功能，因此把管理后台的接口服务与移动 App 业务的接口服务划分在不同的模块，有助于保护接口服务的受限访问。另外，管理后台通常是提供给内部人员使用的，是针对内部的客户端，而移动 App 是提供给最终用户使用的，即针对市场的客户端。对于这些内部的操作流程，很多时候都需要对每次操作进行详细的纪录，以便进行业务上的复核与审计。即相比于提供给最终用户的接口服务，提供给内部人员的接口服务，在实现时更需要加强权限管理，操作纪录。
+
+``WeTime`` 的管理后台，是基于 ``Yii`` 框架开发的，前端则使用了 ``Bootsrap`` 和 ``jQuery`` 进行页面布局和交互。下面是在管理后台最终查看订阅号的运行效果局部截图。
+
+.. image:: ./images/ch-5-manager-user.jpg
+
+图5-10 管理后台查看订阅号页面
+
+对于此管理后台，可以使用 ``PhalApi`` 提供的 ``PHP`` 版 ``SDK`` 包，也可以自行封装对接口服务的请求。假设已封装在 ``PhalApiClient`` 类，在实现类似图 5-10 的展示类功能时，与以往实现方式不同的是，现在需要通过 ``PhalApiClient`` 类从远程的接口服务获取用户的信息，而不再是直接数据库中获取。其实现的代码片段是：
+
+.. code-block:: php
+
+    public function actionUserManagerShow()
+    {
+        $this->pageCurPosition['订阅号管理'] = '?r=DailyOperations/userManager';
+        $this->pageCurPosition[] = '订阅号查看';
+        // 更多页面设置 ... ...
+
+        $userId = isset($_REQUEST['userId']) ? intval($_REQUEST['userId']) : 0;
+        if ($userId <= 0) {
+            $this->redirect('?r=DailyOperations/userManager');
+            return;
+        }
+
+        $tip = '<br/>';
+        $status = null;
+        $dataProvider = null;
+        $totalUserCount = 0;
+        $userInfo = array();
+
+        $model = new UserForm();
+        $model->userId = $userId;
+
+        $apiClient = new PhalApiClient();
+        $apiClient->request('User.Info', array('otherUserId' => $userId));
+
+        $tip .= $apiClient->getMsg();
+        $status = $apiClient->getRet();
+
+        if ($apiClient->getRet() == PhalApiClient::STATUS_OK) {
+            $data = $apiClient->getData();
+            $userInfo = $data['user'];
+
+            $model->attributes = $userInfo;
+            $model->userId = $userId;
+            // 更多对返回字段的处理 ... ...
+        }
+
+        // 页面渲染
+        if (empty($userInfo)) {
+            $this->render('confirm',
+                array(
+                    'title' => '用户不存在或者已被删除',
+                    'msg' => $apiClient->getMsg(),
+                    'jumpUrl' => '?r=DailyOperations/userManager',
+                    'backUrl' => '?r=DailyOperations/userManager')
+                );
+            return;
+        }
+
+        $this->render('userManagerShow', array('tip' => $tip, 'status' => $status, 'model' => $model, 'userInfo' => $userInfo));
+    }
+
+上面这段代码有点长，但不难理解。先是对页面左侧菜单、页面标题的页面设置，接着是准备和初始化页面数据，以便请求远程接口服务 ``User.Info`` 获取指定用户的信息。随后是对接口返回的结果进行处理，以及对页面的渲染处理。
+
+对应的模板页面的代码为：
+
+.. code-block:: html
+
+	<h3>基本信息</h3>
+
+	<table class="table table-hover">
+	      <thead>
+	        <tr>
+	          <th width="140px">用户ID</th>
+	          <th><?php echo $model->userId; ?></th>
+	        </tr>
+	      </thead>
+
+	      <tbody>
+	        <tr width="140px">
+	            <td>头像</td>
+	            <td><img id="show_UserForm_file" class="img-thumbnail" src="<?php echo !empty($model->avatar) ? $model->avatar : '/images/WeTim_Logo_128.png'; ?>" style="width:100px;"></td>
+	        </tr>
+	        <tr>
+	          <td>用户名/登录账号</td>
+	          <td><?php echo $model->username; ?></td>
+	        </tr>
+	        <tr>
+	          <td>昵称</td>
+	          <td><?php echo $model->nickname; ?></td>
+	        </tr>
+	        <tr>
+	          <td>用户类型</td>
+	          <td><?php echo $model->userType == 1 ? '<font color="red">自媒体</font>' : '<font color="blue">普通用户</font>'; ?></td>
+	        </tr>
+	        <tr>
+	          <td>来源的头像Url</td>
+	          <td><?php echo $model->comePic; ?></td>
+	        </tr>
+	        <tr>
+	          <td>来源的Url</td>
+	          <td><a href="<?php echo $model->comeUrl; ?>" target="_blank"><?php echo $model->comeUrl; ?></a></td>
+	        </tr>
+	        <tr>
+	          <td>来源的名称</td>
+	          <td><?php echo $model->comeName; ?></td>
+	        </tr>
+	        <tr>
+	          <td>粉丝数量</td>
+	          <td><?php echo $model->fans; ?></td>
+	        </tr>
+	      </tbody>
+	</table>
+
+又如我们熟悉的日历事件发布，在管理后台最终发布日历事件的运行效果局部截图，请见5-7。
+
+.. image:: ./images/ch-5-manager-event-post.jpg
+
+图5-11 管理后台发布日历事件页面
+
+可以看到，这里也同样有图片上传功能，也需要进行事件发布，因此可以很好地重用已有的接口服务，而不再需要在管理后台系统重复实现。对于此日历事件发布，在管理后台对应的实现代码片段是：
+
+.. code-block:: php
+
+    public function actionEventAdd()
+    {
+        $this->pageCurPosition[] = '事件添加';
+        $this->setPageTitle($this->headerTitle . ' - ' . Yii::app()->name);
+        $this->pageLeftBarPos = 12;
+
+        $tip = '';
+        $status = null;
+
+        $model = new EventForm();
+        $model->time = date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']);
+
+        if (isset($_POST['EventForm'])) {
+            $model->attributes = $_POST['EventForm'];
+            if($model->validate()){
+                $tip .= '<br/>';
+
+                $model->pics = isset($_POST['pics']) && is_array($_POST['pics']) ? $_POST['pics'] : array();
+
+                // 调用接口服务发布日历事件
+                $apiClient = PhalApiClient::getInstance();
+                $apiClient->request('Event.Post', $model->toArray());
+
+                if ($apiClient->getRet() == PhalApiClient::STATUS_OK) {
+                    $apiData = $apiClient->getData();
+                    if ($apiData['code'] == 0) {
+                        $tip .= sprintf('已经为用户：<strong>%s</strong>，成功添加事件：<strong>%s</strong>', $model->userId, $model->title);
+                        $status = PhalApiClient::STATUS_OK;
+                    } else {
+                        $tip .= sprintf('<font color="red">添加失败，code = %s </font>', $apiData['code']);
+                    $status = PhalApiClient::STATUS_WRONG;
+                    }
+                } else {
+                    $tip .= sprintf('<font color="red">添加失败，错误信息：%s </font>', $apiClient->getMsg());
+                    $status = PhalApiClient::STATUS_ERROR;
+                }
+            }
+        }
+
+        $this->render('eventAdd', array('tip' => $tip, 'status' => $status, 'model' => $model));
+    }
+
+上面的代码，实现的功能主要是，对页面进行设置，收集表单数据并调用远程的日历事件发布 ``Event.Post`` 接口服务，最后处理返回的结果并渲染页面。
+
+管理后台的查看订阅号页面调用的是查询类接口服务，而发布日历事件则调用了命令类的接口服务。虽然通过接口服务可以更有效地维护业务规则的一致性，但对于需要分页的情况，则没有直接操作数据库那样方便。但也正如人们常说编程是一门艺术，也是一项需要综合权衡的工程。任何一种架构设计，都会有其优点和缺点。在实际项目开发过程中，需要作为开发人员的我们仔细评估，采用最适合当前项目的解决方案。例如在这里，相比于维护业务规则的一致性，损失了直接操作数据库的便利性，我觉得，从长远的角度上考虑，是值得的。

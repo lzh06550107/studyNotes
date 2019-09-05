@@ -1,0 +1,138 @@
+*****
+文件加载器
+*****
+
+.. contents:: 目录
+   :depth: 4
+
+微擎系统依靠 ``Load`` 类进行类、函数、模型的加载，该类会在系统初始化时引用并且实例化，系统提供 ``load()`` 函数来引用该类的实例。
+
+.. note:: 使用 ``load()`` 加载文件时，该方法总是返回同一个加载器实例对象，它可以重复加载，内部会记住已经加载的文件以防止重复加载。
+
+加载器定义在 ``framework/class/loader.class.php`` 类文件中。
+
+
+加载系统文件
+===========
+
+加载系统公共函数
+---------------
+``load()->func('filename')`` 加载文件为 ``framework/function/*.php`` 。
+
+.. code-block:: php
+
+	// framework/function/logging.func.php
+	load()->func('logging');
+
+加载系统公共类
+-------------
+``load()->classs('filename')`` 加载文件为 ``framework/class/*.php`` 。
+
+.. code-block:: php
+
+	// framework/class/account.class.php
+	load()->classs('account');
+
+加载并实例化公共类
+^^^^^^^^^^^^^^^^^
+``load()->object('filename')`` 加载并实例化 ``framework/class/*.php`` 类对象。
+
+.. code-block:: php
+
+    // 加载framework/class/query.class.php 并实例化query对象
+    load()->object('query')
+
+.. note:: 每次调用该方法会返回不同的实例对象。
+
+``load()->singleton('filename')`` 加载并实例化 ``framework/class/*.php`` 类对象。
+
+.. code-block:: php
+
+    // 加载framework/class/query.class.php 并实例化query对象
+    load()->singleton('query')
+
+.. note:: 每次调用该方法总会返回同一个实例化对象。
+
+加载系统model函数
+----------------
+``load()->model('filename')`` 加载文件为 ``framework/model/*.php`` 。
+
+.. code-block:: php
+
+	// framework/model/attachment.mod.php
+	load()->model('attachment');
+
+加载表类文件
+-----------
+这主要用于基于表的查询构建器来构建查询。
+
+``load()->table(tablename)`` 加载文件为 ``/framework/table/*.table.php`` 。
+
+.. code-block:: php
+
+    // /framework/table/users.table.php
+    load()->table('users');
+
+加载一个库文件
+-------------
+``load()->library(filename)`` 加载文件为 ``framework/library/*.php`` 下的文件。
+
+别名：
+
+.. code-block:: php
+
+	$libraryMap = array(
+        'agent' => 'agent/agent.class',
+        'captcha' => 'captcha/captcha.class',
+        'pdo' => 'pdo/PDO.class',
+        'qrcode' => 'qrcode/phpqrcode',
+        'ftp' => 'ftp/ftp',
+        'pinyin' => 'pinyin/pinyin',
+        'pkcs7' => 'pkcs7/pkcs7Encoder',
+        'json' => 'json/JSON',
+        'phpmailer' => 'phpmailer/PHPMailerAutoload',
+        'oss' => 'alioss/autoload',
+        'qiniu' => 'qiniu/autoload',
+        'cos' => 'cosv4.2/include',
+        'cosv3' => 'cos/include',
+    );
+
+示例：
+
+当定义别名时，可以直接使用
+
+.. code-block:: php
+
+	load()->library('agent');
+	//将引用framework/library/agent/agent.class.php
+
+未定义别名时，需要指定要引用的文件，不写扩展名
+
+.. code-block:: php
+
+	load()->library('agent/agent.class');
+	//将引用framework/library/agent/agent.class.php
+
+加载web端文件
+============
+
+加载web端公共函数
+----------------
+``load()->web('filename')`` 加载文件为 ``web/common/*.php`` 。
+
+.. code-block:: php
+
+	// web/common/tpl.func.php
+	load()->web('tpl');
+
+加载app端文件
+=============
+
+加载app端公共函数
+----------------
+``load()->app('filename')`` 加载文件为 ``app/common/*.php`` 。
+
+.. code-block:: php
+
+	// app/common/tpl.func.php
+	load()->app('tpl');

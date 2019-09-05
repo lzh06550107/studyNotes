@@ -1,0 +1,70 @@
+****
+随机数据
+****
+由于 ``PHP 7`` 提供了一个安全的随机源，因此这些功能不包含在 ``Sodium PHP`` 扩展的第2版中。要使用它，请查看旧的 ``API`` 文档。 `连接 <https://github.com/paragonie/pecl-libsodium-doc/blob/v1/chapters/02-random-data.md>`_
+
+经常使用加密时，您需要随机字节或整数用于各种目的（加密密钥，随机数等）。具体而言，您需要使用密码安全的伪随机数生成器( ``CSPRNG`` )。一个通用的随机数发生器是不够的。
+
+此页面上的功能应优先于 ``PHP 5`` 提供的功能( ``mt_rand()`` 或 ``openssl_random_pseudo_bytes()`` )。新的 ``PHP 7 CSPRNG`` 函数( ``random_int()`` 和 ``random_bytes()`` )是可以接受的。
+
+随机字节
+========
+
+.. code-block:: php
+
+    <?php
+    string \Sodium\randombytes_buf(int $number)
+
+如果你需要一个由随机字节组成的字符串，你可以使用 ``\Sodium\randombytes_buf()`` 。
+
+.. code-block:: php
+
+    <?php
+    $string = \Sodium\randombytes_buf($num_bytes);
+
+如果将 ``$num_bytes`` 设置为 ``32`` ，那么 ``$string`` 将是一个 ``32`` 字节的字符串，每个字节将成为 ``0`` 到 ``255`` 之间随机值的字符表示。
+
+随机整数
+========
+
+.. code-block:: php
+
+    <?php
+    int \Sodium\randombytes_uniform(int $range)
+
+如果你需要一个 ``0`` 到特定上限之间的均匀分布的随机整数，你可以使用 ``\Sodium\randombytes_uniform()`` 。
+
+例如，如果您需要1到100之间的数字：
+
+.. code-block:: php
+
+    <?php
+    $int = \Sodium\randombytes_uniform(100) + 1;
+
+请注意，在上面的示例中， ``$int`` 的可能值范围为 ``1`` 到 ``100`` ，因为 ``\Sodium\randombytes_uniform`` 将返回 ``0`` 到 ``99`` 之间的随机整数。 ``100`` 不会包含在 ``\Sodium\randombytes_uniform(100)`` 。
+
+与 ``rand() ％ $n`` 不同，该函数输出值的分布是一致的。你想要一个密码安全的伪随机数发生器的统一分布。
+
+``$range`` 的最大可能值是 ``2147483647`` ，而不是 ``PHP_INT_MAX`` 。
+
+随机16位整数
+============
+
+.. code-block:: php
+
+    <?php
+    int \Sodium\randombytes_random16()
+
+返回一个介于 ``0`` 和 ``65535`` 之间（包含）的整数，遵循均匀分布。
+
+.. code-block:: php
+
+    <?php
+    $tcp_port = \Sodium\randombytes_random16();
+
+额外信息
+========
+
+- `Libsodium文档：生成随机数据 <https://download.libsodium.org/doc/generating_random_data/index.html>`_
+- `怎样安全的生成一个随机数 <http://sockpuppet.org/blog/2014/02/25/safely-generate-random-numbers/>`_
+- `怎样在PHP中安全的生成随机字符串和整数 <https://paragonie.com/blog/2015/07/how-safely-generate-random-strings-and-integers-in-php>`_

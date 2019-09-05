@@ -1,0 +1,373 @@
+[root@localhost ~]# netstat -lnt|grep 3306
+tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN     
+[root@localhost ~]# killall mysqld
+[root@localhost ~]# netstat -lnt|grep 3306
+[root@localhost ~]# yum install ncurses-devel -y 
+Loaded plugins: fastestmirror, langpacks
+base                                                               | 3.6 kB  00:00:00     
+extras                                                             | 3.4 kB  00:00:00     
+updates                                                            | 3.4 kB  00:00:00     
+Loading mirror speeds from cached hostfile
+ * base: mirrors.163.com
+ * extras: mirrors.shu.edu.cn
+ * updates: mirrors.neusoft.edu.cn
+Package ncurses-devel-5.9-14.20130511.el7_4.x86_64 already installed and latest version
+Nothing to do
+[root@localhost ~]# yum install libaio-devel -y
+Loaded plugins: fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * base: mirrors.163.com
+ * extras: mirrors.shu.edu.cn
+ * updates: mirrors.neusoft.edu.cn
+Package libaio-devel-0.3.109-13.el7.x86_64 already installed and latest version
+Nothing to do
+[root@localhost ~]# mkdir -p /data/{3306,3307}/data
+[root@localhost ~]# tree /data
+		/data       #◀━━总的多实例跟目录
+		|--3306		#◀━━3306 实例的目录
+		|  `--data	#◀━━3306 实例的数据文件目录
+		`--3307		#◀━━3307 实例的目录
+		   `--data	#◀━━3307 实例的数据文件目录
+[root@localhost ~]# cp /usr/local/mysql/support-files/my-small.cnf   /data/3306/my.cnf
+[root@localhost ~]# cp /usr/local/mysql/support-files/my-small.cnf   /data/3307/my.cnf
+[root@localhost ~]# trre /data
+		/data       
+		|--3306		
+		|  |--data	
+		|  `--my.cnf#◀━━3306 这个就是3306实例配置文件
+		`--3307		
+		   |--data	
+		   `--my.cnf#◀━━3307 这个就是3307实例配置文件
+
+	┌------------------------------------------------------------------------------┬--------------------------------------------------------------------------------------------┐
+	|  3306																	       |   3307																						|
+	├------------------------------------------------------------------------------┼--------------------------------------------------------------------------------------------┤
+	| 																			   |	#																						|
+	| # Example MySQL config file for small systems.							   |	# Example MySQL config file for small systems.											|
+	| #																			   |	#																						|
+	| # This is for a system with little memory (<= 64M) where MySQL is only used  |	# This is for a system with little memory (<= 64M) where MySQL is only used			    |
+	| # from time to time and it's important that the mysqld daemon			       |	# from time to time and it's important that the mysqld daemon							|
+	| # doesn't use much resources.											       |	# doesn't use much resources.															|
+	| #																		       |	#																						|
+	| # MySQL programs look for option files in a set of						   |	# MySQL programs look for option files in a set of										|
+	| # locations which depend on the deployment platform.						   |	# locations which depend on the deployment platform.									|
+	| # You can copy this option file to one of those							   |	# You can copy this option file to one of those											|
+	| # locations. For information about these locations, see:					   |	# locations. For information about these locations, see:								|
+	| # http://dev.mysql.com/doc/mysql/en/option-files.html						   |	# http://dev.mysql.com/doc/mysql/en/option-files.html									|
+	| #																			   |	#																						|
+	| # In this file, you can use all long options that a program supports.		   |	# In this file, you can use all long options that a program supports.					|
+	| # If you want to know which options a program supports, run the program	   |	# If you want to know which options a program supports, run the program					|
+	| # with the "--help" option.												   |	# with the "--help" option.																|
+	| 																			   |																							|
+	| # The following options will be passed to all MySQL clients				   |	# The following options will be passed to all MySQL clients								|
+	| [client]																	   |	[client]																				|
+	| #password       = your_password											   |	#password       = your_password															|
+	| port            = 3306													   |	port            = 3307																	|
+	| socket          = /data/3306/mysql.sock									   |	socket          = /data/3307/mysql.sock													|
+	| 																			   |																							|
+	| # Here follows entries for some specific programs							   |	# Here follows entries for some specific programs										|
+	| 																			   |																							|
+	| # The MySQL server														   |	# The MySQL server																		|
+	| [mysqld]																	   |	[mysqld]																				|
+	| port            = 3306													   |	port            = 3307																	|
+	| socket          = /data/3306/mysql.sock									   |	socket          = /data/3307/mysql.sock													|
+	| basedir         = /usr/local/mysql										   |	socket          = /data/3307/mysql.sock													|
+	| datadir         = /data/3306/data											   |	basedir         = /usr/local/mysql														|
+	| pid-file        = /data/3306/mysql.pid									   |	datadir         = /data/3307/data														|
+	| relay-log       = /data/3306/relay-bin									   |	pid-file        = /data/3307/mysql.pid													|
+	| relay-log-info-file = /data/3306/relay-log.info							   |	relay-log       = /data/3307/relay-bin													|
+	| 																			   |	relay-log-info-file = /data/3307/relay-log.info											|					
+	| skip-external-locking														   |	skip-external-locking																	|
+	| key_buffer_size = 16K														   |	key_buffer_size = 16K																	|
+	| max_allowed_packet = 1M													   |	max_allowed_packet = 1M																	|
+	| table_open_cache = 4														   |	table_open_cache = 4																	|
+	| sort_buffer_size = 64K													   |	sort_buffer_size = 64K																	|
+	| read_buffer_size = 256K													   |	read_buffer_size = 256K																	|
+	| read_rnd_buffer_size = 256K												   |	read_rnd_buffer_size = 256K																|
+	| net_buffer_length = 2K													   |	net_buffer_length = 2K																	|
+	| thread_stack = 128K														   |	thread_stack = 128K																		|
+	| 																			   |																							|
+	| # Don't listen on a TCP/IP port at all. This can be a security enhancement,  |	# Don't listen on a TCP/IP port at all. This can be a security enhancement,				|
+	| # if all processes that need to connect to mysqld run on the same host.	   |    # if all processes that need to connect to mysqld run on the same host.					|
+	| # All interaction with mysqld must be made via Unix sockets or named pipes.  |	# All interaction with mysqld must be made via Unix sockets or named pipes.				|
+	| # Note that using this option without enabling named pipes on Windows		   |	# Note that using this option without enabling named pipes on Windows					|
+	| # (using the "enable-named-pipe" option) will render mysqld useless!		   |	# (using the "enable-named-pipe" option) will render mysqld useless!					|
+	| # 																		   |	# 																						|
+	| #skip-networking															   |	#skip-networking																		|
+	| server-id       = 1														   |	server-id       = 3																		|
+	| 																			   |																							|
+	| # Uncomment the following if you want to log updates						   |	# Uncomment the following if you want to log updates									|
+	| #log-bin=mysql-bin														   |	#log-bin=mysql-bin																		|
+	| 																			   |																							|
+	| # binary logging format - mixed recommended								   |	# binary logging format - mixed recommended												|
+	| #binlog_format=mixed														   |	#binlog_format=mixed																	|
+	| 																			   |																							|
+	| # Causes updates to non-transactional engines using statement format to be   |	# Causes updates to non-transactional engines using statement format to be				|
+	| # written directly to binary log. Before using this option make sure that	   |	# written directly to binary log. Before using this option make sure that				|
+	| # there are no dependencies between transactional and non-transactional	   |	# there are no dependencies between transactional and non-transactional					|
+	| # tables such as in the statement INSERT INTO t_myisam SELECT * FROM		   |	# tables such as in the statement INSERT INTO t_myisam SELECT * FROM					|
+	| # t_innodb; otherwise, slaves may diverge from the master.				   |	# t_innodb; otherwise, slaves may diverge from the master.								|
+	| #binlog_direct_non_transactional_updates=TRUE								   |	#binlog_direct_non_transactional_updates=TRUE											|
+	| 																			   |																							|
+	| # Uncomment the following if you are using InnoDB tables					   |	# Uncomment the following if you are using InnoDB tables								|
+	| #innodb_data_home_dir = /usr/local/mysql/data								   |	#innodb_data_home_dir = /usr/local/mysql/data											|
+	| #innodb_data_file_path = ibdata1:10M:autoextend							   |	#innodb_data_file_path = ibdata1:10M:autoextend											|
+	| #innodb_log_group_home_dir = /usr/local/mysql/data						   |	#innodb_log_group_home_dir = /usr/local/mysql/data										|
+	| # You can set .._buffer_pool_size up to 50 - 80 %							   |	# You can set .._buffer_pool_size up to 50 - 80 %										|
+	| # of RAM but beware of setting memory usage too high						   |	# of RAM but beware of setting memory usage too high									|
+	| #innodb_buffer_pool_size = 16M											   |	#innodb_buffer_pool_size = 16M															|
+	| #innodb_additional_mem_pool_size = 2M										   |	#innodb_additional_mem_pool_size = 2M													|
+	| # Set .._log_file_size to 25 % of buffer pool size						   |	# Set .._log_file_size to 25 % of buffer pool size										|
+	| #innodb_log_file_size = 5M												   |	#innodb_log_file_size = 5M																|
+	| #innodb_log_buffer_size = 8M												   |	#innodb_log_buffer_size = 8M															|
+	| #innodb_flush_log_at_trx_commit = 1										   |	#innodb_flush_log_at_trx_commit = 1														|
+	| #innodb_lock_wait_timeout = 50											   |	#innodb_lock_wait_timeout = 50															|
+	| 																			   |																							|
+	| [mysqldump]																   |	[mysqldump]																				|
+	| quick																		   |	quick																					|
+	| max_allowed_packet = 16M													   |	max_allowed_packet = 16M																|
+	| 																			   |																							|
+	|  [mysql]																	   |	      [mysql]																			|	
+    |  no-auto-rehash															   |		no-auto-rehash																		|
+    |  # Remove the next comment character if you are not familiar with SQL		   |	# Remove the next comment character if you are not familiar with SQL				    |
+    |  #safe-updates															   |	#safe-updates																		    |
+    |  																			   |	[mysql_safe]																		    |
+    |  [mysql_safe]																   |	log-error=/data/3307/mysql_lufeng3307.err											    |
+    |  log-error=/data/3306/mysql_lufeng3306.err								   |	pid-file=/data/3307/mysqlf.pid														    |
+    |  pid-file=/data/3306/mysqlf.pid											   |																							|
+    |  																			   |	[myisamchk]																			    |
+    |  [myisamchk]																   |		key_buffer_size = 8M																|
+    |  key_buffer_size = 8M														   |	sort_buffer_size = 8M																    |
+    |  sort_buffer_size = 8M													   |																						    |
+    |  																			   |	[mysqlhotcopy]																		    |
+    |  [mysqlhotcopy]															   |		interactive-timeout																	|
+    |  interactive-timeout														   |			                                                                                |
+    └------------------------------------------------------------------------------┴--------------------------------------------------------------------------------------------┘
+      		
+ [root@localhost ~]# vi /data/3306/mysql     		
+ [root@localhost ~]# vi /data/3307/mysql     		
+[root@localhost ~]# trre /data
+		/data       
+		|--3306		
+		|  |--data	
+		|  |--mysql #◀━━3306 实例的启动文件
+		|  `--my.cnf#◀━━3306 这个就是3306实例配置文件
+		`--3307		
+		   |--data	
+		   |--mysql #◀━━3307 实例的启动文件
+		   `--my.cnf#◀━━3307 这个就是3307实例配置文件	     		
+  	┌----------------------------------------------------------------------------------------------------------------┬--------------------------------------------------------------------------------------------------------------┐
+	|	3306 mysql																									 |	3307 mysql  														   									    |
+	|																												 |																												|
+	| #!/bin/sh																										 |	 #!/bin/sh																									|
+	| #init																											 |	 #init																										|
+	| port=3306																										 |	 port=3307																									|
+	| mysql_user="root"																								 |	 mysql_user="root"																							|
+	| mysql_pwd="123456"																							 |	 mysql_pwd="123456"																							|
+	| CmdPath="/usr/local/mysql/bin"																				 |	 CmdPath="/usr/local/mysql/bin"																				|
+	| mysql_sock="/data/${port}/mysql.sock"																			 |	 mysql_sock="/data/${port}/mysql.sock"																		|
+	| 																												 |	 																											|
+	| #startup function																								 |	 #startup function																							|
+	| 																												 |	 																											|
+	| function_start_mysql(){																						 |	 function_start_mysql(){																					|
+	|         if [ ! -e "$mysql_sock" ];then																		 |	         if [ ! -e "$mysql_sock" ];then																		|
+	|         printf "Starting MySQL....\n"																			 |	         printf "Starting MySQL....\n"																		|
+	|         /bin/sh ${CmdPath}/mysqld_safe --defaults-file=/data/${port}/my.cnf 2>&1 >/dev/null &					 |	         /bin/sh ${CmdPath}/mysqld_safe --defaults-file=/data/${port}/my.cnf 2>&1 >/dev/null &				|
+	|         else																									 |	         else																								|
+	|         printf "MySQL is running....\n"																		 |	         printf "MySQL is running....\n"																	|
+	|         exit																									 |	         exit																								|							
+	|         fi																									 |	         fi																									|
+	| }																												 |	 }																											|
+	| 																												 | 	 																											|
+	| #stop function																							     | 	 #stop function																								|
+	| 																												 |	 																											|
+	| function_stop_mysql(){																						 |	 function_stop_mysql(){																						|
+	|         if [ ! -e "$mysql_sock" ];then																		 |	         if [ ! -e "$mysql_sock" ];then																		|
+	|                 printf "MySQL is stopped...\n"																 |	                 printf "MySQL is stopped...\n"																|
+	|                 exit																							 |	                 exit																						|	
+	|         else																									 |	         else																								|
+	|                 printf "Stoping MySQL...\n"																	 |	                 printf "Stoping MySQL...\n"																|
+	|                 ${CmdPath}/mysqladmin -u ${mysql_user} -p${mysql_pwd} -S /data/${port}/mysql.sock shutdown	 |	                 ${CmdPath}/mysqladmin -u ${mysql_user} -p${mysql_pwd} -S /data/${port}/mysql.sock shutdown	|
+	|                 fi																							 |	                 fi																							|
+	| }																												 |	 }																											|
+	| 																												 |	 																											|
+	| #restart function																								 |	 #restart function																							|
+	| function_restart_mysql(){																						 |	 function_restart_mysql(){																					|
+	|         printf "Restarting MySQL...\n";																		 |	         printf "Restarting MySQL...\n";																	|
+	|         function_stop_mysql																					 |	         function_stop_mysql																				|
+	|         sleep 2																								 |	         sleep 2																							|
+	|         function_start_mysql																					 |	         function_start_mysql																				|
+	| }																												 |	 }																											|
+	| 																												 |	 																											|
+	| case $1 in																									 |	 case $1 in																									|
+	| start)																										 |	 start)																										|
+	|         function_start_mysql																					 |	         function_start_mysql																				|
+	| ;;																											 |	 ;;																											|
+	| stop)																											 |	 stop)																										|
+	|         function_stop_mysql																					 |	         function_stop_mysql																				|
+	| ;;																											 |	 ;;																											|
+	| restart)																										 |	 restart)																									|
+	|         function_restart_mysql																				 |	         function_restart_mysql																				|
+	| ;;																											 |	 ;;																											|
+	| *)																											 |	 *)																											|
+	|         printf "Usage; /data/${port}/mysql {start|stop|restart}\n"											 |	         printf "Usage; /data/${port}/mysql {start|stop|restart}\n"											|
+	| esac																											 |	 esac																										|
+	| 																											 	 |																												|
+	| 																									 			 |																												|
+	| 																												 |																												|
+	| 																									 			 |																												|
+	| 																												 |																												|
+	| 																												 |																												|
+	| 																												 |																												|
+	|																												 |																												|
+	└----------------------------------------------------------------------------------------------------------------┴--------------------------------------------------------------------------------------------------------------┘
+	    		
+ [root@localhost ~]# chown -R mysql.mysql /data     		
+ [root@localhost ~]# find /data/ -type f -name "mysql"
+ /data/3306/mysql
+ /data/3307/mysql 
+ [root@localhost ~]# find /data/ -type f -name "mysql"|xargs ls -l
+ -rw-r--r-- 1 mysql mysql 934 Jul 20 11:10 /data/3306/mysql
+ -rw-r--r-- 1 mysql mysql 934 Jul 20 11:09 /data/3307/mysql     		
+ [root@localhost ~]# find /data -name mysql -exec chmod 700 {} \;
+ [root@localhost ~]# find /data -name mysql |xargs chmod 700
+ [root@localhost ~]# find /data -name mysql -exec chmod 700 {}\;
+ [root@localhost ~]# find /data -name mysql -exec ls -l {} \;
+ -rw-r--r-- 1 mysql mysql 934 Jul 20 11:10 /data/3306/mysql
+ -rw-r--r-- 1 mysql mysql 934 Jul 20 11:09 /data/3307/mysql
+ [root@localhost ~]# cd /usr/local/mysql/scripts
+ [root@localhost scripts]# ./mysql_install_db --basedir=/usr/local/mysql --datadir=/data/3306/data --user=mysql    		
+ [root@localhost scripts]# ./mysql_install_db --basedir=/usr/local/mysql --datadir=/data/3307/data --user=mysql		
+ [root@localhost 3306]# tree ./data 
+ |--3306
+ |	|--data
+ |	|	|--mysql
+ |	|	|	|--columns_priv.MYD
+ |	|	|	|--columns_priv.frm
+ |	|	|	|--columns_priv.MYI
+ |	|	|	|--db.frm
+ |	|	|	|--db.MYD
+ |	|	|	|--db.MYI
+ |	|	|	|--event.frm
+ |	|	|	|--event.MYD
+ |	|	|	|--event.MYI
+ |	|	|	|--func.frm
+ |	|	|	|--func.MYD
+ |	|	|	|--func.MYI
+ 
+ ...省略部分...
+ 
+ [root@localhost 3306]#cd /data/3307/   		
+ [root@localhost 3307]# tree ./data   			
+ |--3307
+ |	|--data
+ |	|	|--mysql
+ |	|	|	|--columns_priv.MYD
+ |	|	|	|--columns_priv.frm
+ |	|	|	|--columns_priv.MYI
+ |	|	|	|--db.frm
+ |	|	|	|--db.MYD
+ |	|	|	|--db.MYI
+ |	|	|	|--event.frm
+ |	|	|	|--event.MYD
+ |	|	|	|--event.MYI
+ |	|	|	|--func.frm
+ |	|	|	|--func.MYD
+ |	|	|	|--func.MYI
+ 
+ ...省略部分...
+ [root@localhost 3306]# /data/3306/mysql start
+ Starting MySQL...      		
+  		
+ [root@localhost 3307]# /data/3307/mysql start
+ Starting MySQL...      		     	
+  
+ [root@localhost 3307]# netstat -lnt|grep 330[6-7]    	
+ tcp        0      0 0.0.0.0:3307            0.0.0.0:*               LISTEN      20137/mysqld        
+ tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN      20467/mysqld     
+ 
+ #并加入 /etc/rc.local,设置为开机自动启动
+ 
+ [root@localhost 3307]# echo "#mysql multi instances" >> /etc/rc.local
+ [root@localhost 3307]# echo "/data/3306/mysql start" >> /etc/rc.local
+ [root@localhost 3307]# echo "/data/3307/mysql start" >> /etc/re.local   
+ [root@localhost 3307]# mysql -S  /data/3307/mysql.sock 
+ Welcome to the MySQL monitor.  Commands end with ; or \g.
+ Your MySQL connection id is 1
+ Server version: 5.5.23 Source distribution
+ 
+ Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
+ 
+ Oracle is a registered trademark of Oracle Corporation and/or its
+ affiliates. Other names may be trademarks of their respective
+ owners.
+ 
+ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+ 
+ mysql> show databases;  #查看当前的数据库
+ +--------------------+
+ | Database           |
+ +--------------------+
+ | information_schema |
+ | mysql              |
+ | performance_schema |
+ | test               |
+ +--------------------+
+ 4 rows in set (0.00 sec)
+ 
+ mysql> select user();
+ +----------------+
+ | user()         |
+ +----------------+
+ | root@localhost |
+ +----------------+
+ 1 row in set (0.00 sec)     	
+      	
+ [root@localhost 3307]# mysql -S  /data/3306/mysql.sock 
+ Welcome to the MySQL monitor.  Commands end with ; or \g.
+ Your MySQL connection id is 1
+ Server version: 5.5.23 Source distribution
+ 
+ Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
+ 
+ Oracle is a registered trademark of Oracle Corporation and/or its
+ affiliates. Other names may be trademarks of their respective
+ owners.
+ 
+ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+ 
+ mysql> show databases;  #查看当前的数据库
+ +--------------------+
+ | Database           |
+ +--------------------+
+ | information_schema |
+ | mysql              |
+ | performance_schema |
+ | test               |
+ +--------------------+
+ 4 rows in set (0.00 sec)
+ 
+ mysql> select user();
+ +----------------+
+ | user()         |
+ +----------------+
+ | root@localhost |
+ +----------------+
+ 1 row in set (0.00 sec)    	
+ [root@localhost 3307]# mysqladmin -u root -s /data/3307/mysql.sock password 123456;   	
+ [root@localhost 3307]# mysqladmin -u root -s /data/3306/mysql.sock password 123456;   	
+ [root@localhost 3307]# killall mysqld
+ [root@localhost 3306]# /data/3306/mysql start
+ Starting MySQL...      		
+  		
+ [root@localhost 3307]# /data/3307/mysql start
+ [root@localhost scripts]# ss -lntup|grep 330
+ tcp    LISTEN     0      50        *:3308                  *:*                   users:(("mysqld",pid=5859,fd=10))
+ tcp    LISTEN     0      50        *:3306                  *:*                   users:(("mysqld",pid=2488,fd=10))
+ Starting MySQL...     	
+ [root@localhost 3307]# ./mysql stop
+ Stoping MySQL...
+ [root@localhost 3307]# /data/3306/mysql stop
+ Stoping MySQL...    	
+ [root@localhost 3308]# ss -lntup|grep 330    	
+     	

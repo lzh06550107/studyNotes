@@ -1,0 +1,222 @@
+**
+日志
+**
+关于日志接口， ``PSR`` 规范中给出了相当好的说明和定义，并且有多种细分的日记级别。
+
+.. image:: ./images/ch-2-logger-interface.png
+
+图2-12 摘自PSR中的Logger Interface
+
+
+简化版的日记接口
+===============
+虽然 ``PSR`` 规范中详尽定义了日志接口，然而在用使用开源框架或内部框架进行项目开发过程中，实际上日记的分类并没有使用得那么丰富，通常只是频繁集中在某几类。为了减少不必要的复杂性， ``PhalApi`` 特地将此规范的日志接口精简为三种，只有：
+
+- ``error`` ： 系统异常类日记
+- ``info`` ： 业务纪录类日记
+- ``debug`` ： 开发调试类日记
+
+error 系统异常类日记
+-------------------
+系统异常类日志用于纪录在后端不应该发生却发生的事情，即通常所说的系统异常。例如：调用第三方、的接口失败了，此时需要纪录一下当时的场景，以便复查和定位出错的原因。又如：写入一条纪录到数据纪录却失败了，此时需要纪录一下，以便进一步排查。
+
+纪录系统异常日志，用法很简单。可以使用 ``PhalApi_Logger::error($msg, $data)`` 接口，第一个参数 ``$msg`` 用于描述日志信息，第二个可选参数为上下文场景的信息。下面是一些使用示例。
+
+.. code-block:: php
+
+	// 只有描述
+	DI()->logger->error('fail to insert DB');
+
+	// 描述 + 简单的信息
+	DI()->logger->error('fail to insert DB', 'try to register user dogstar');
+
+	// 描述 + 当时的上下文数据
+	$data = array('name' => 'dogstar', 'password' => '123456');
+	DI()->logger->error('fail to insert DB', $data);
+
+上面三条纪录，会在日记文件中生成类似以下的日志内容。
+
+.. code-block:: shell
+
+	$ tailf ./Runtime/log/201502/20150207.log
+	2015-02-07 20:37:55|ERROR|fail to insert DB
+	2015-02-07 20:37:55|ERROR|fail to insert DB|try to register user dogstar
+	2015-02-07 20:37:55|ERROR|fail to insert DB|{"name":"dogstar","password":"123456"}
+
+info 业务纪录类日记
+-----------------
+业务纪录日志，是指纪录业务上关键流程环节的操作，以便发生系统问题后进行回滚处理、问题排查以及数据统计。如在有缓存的情况下，可能数据没及时写入数据库而导致数据丢失或者回档，这里可以通过日记简单查看是否可以恢复。以及说明一下操作发生的背景或原由，如通常游戏中用户的经验值添加：
+
+.. code-block:: php
+
+	// 假设：10 + 2 = 12
+	DI()->logger->info('add user exp', array('name' => 'dogstar', 'before' => 10, 'addExp' => 2, 'after' => 12, 'reason' => 'help one more phper'));
+
+对应的日记为：
+
+.. code-block:: shell
+
+    2015-02-07 20:48:51|INFO|add user exp|{"name":"dogstar","before":10,"addExp":2,"after":12,"reason":"help one more phper"}
+
+但当哪天我们看到以下的 ``LOG`` 是就会发现系统存在隐藏的 ``BUG`` ：
+
+.. code-block:: shell
+
+	// 居然：10 + 2 = 11 ？！
+	2015-02-07 20:48:51|INFO|add user exp|{"name":"dogstar","before":10,"addExp":2,"after":11,"reason":"help one more phper"}
+
+而当用户玩家来投诉客服时，客服人员又来找到后端开发人员时，我们可以证明得了确实是系统原因造成了用户丢失1点经验值。
+
+特别地，若我们看到以下的 ``LOG`` 时，不难看出有人在用非法的渠道刷取经验：
+
+.. code-block:: shell
+
+	2015-02-07 20:52:35|INFO|add user exp|{"name":"dogstar","before":10,"addExp":2,"after":12,"reason":"help one more phper"}
+	2015-02-07 20:52:35|INFO|add user exp|{"name":"dogstar","before":12,"addExp":2,"after":14,"reason":"help one more phper"}
+
+	....
+
+	2015-02-07 20:52:35|INFO|add user exp|{"name":"dogstar","before":998,"addExp":2,"after":1000,"reason":"help one more phper"}
+
+所幸有日记并及时发现了，随后如何处理就视具体的项目而定。但当产品来追问时，我们可以及时给出反馈和做出处理。
+
+还有更为重要的是数据统计。这块就 ``App`` 数据分析和统计这块已经有了很好的第三方服务支持。但仍然可以轻松实现自己的数据统计，以便二次确认和定制化。毕竟，总是依赖第三方不是那么轻便，而且存在敏感数据安全问题。
+
+假设提供一个简单的上报接口，如：
+
+.. code-block:: php
+
+	// $ vim ./Shop/Api/Statistics.php
+	<?php
+	class Api_Statistics extends PhalApi_Api {
+
+	    public function getRules() {
+	        return array(
+	            'report' => array(
+	                'username' => array('name' => 'username', 'require' => true),
+	                'msg' => array('name' => 'msg', 'require' => true),
+	            ),
+	        );
+	    }
+
+	    public function report() {
+	        DI()->logger->info($this->username, $this->msg);
+	    }
+	}
+
+然后，客户端 ``App`` 在需要的场景进行埋点纪录，如用户打开应用时，请求上报服务：
+
+.. code-block:: shell
+
+    http://api.phalapi.net/shop/?service=Statistics.Report&username=dogstar&msg=enter%20app
+
+即可看到：
+
+.. code-block:: shell
+
+    2015-02-07 21:01:13|INFO|dogstar|enter app
+
+到后期，若我们需要统计用户的登录情况时，便可以这样进行数据统计每天各个用户登录的次数，从而得出用户活跃程度。
+
+.. code-block:: shell
+
+	$ cat ./Runtime/log/201502/20150207.log | grep "enter app" | awk -F '|' '{print $3}' | sort | uniq -c
+	     11 dogstar
+	      5 King
+	      2 Tom
+
+debug 开发调试类日记
+-------------------
+开发调试类日记，主要用于开发过程中的调试。用法如上，这里不再赘述。以下是一些简单的示例。
+
+.. code-block:: php
+
+	// 只有描述
+	DI()->logger->debug('just for test');
+
+	// 描述 + 简单的信息
+	DI()->logger->debug('just for test', '一些其他的描述 ...');
+
+	// 描述 + 当时的上下文数据
+	DI()->logger->debug('just for test', array('name' => 'dogstar', 'password' => '******'));
+
+更灵活的日志分类
+---------------
+若上面的 ``error`` 、 ``info`` 、 ``debug`` 都不能满足项目的需求时，可以使用 ``PhalApi_Logger::log()`` 接口进行更灵活的日记纪录。
+
+.. code-block:: shell
+
+	DI()->logger->log('demo', 'add user exp', array('name' => 'dogstar', 'after' => 12));
+	DI()->logger->log('test', 'add user exp', array('name' => 'dogstar', 'after' => 12));
+
+对应的日记为：
+
+.. code-block:: shell
+
+	2015-02-07 21:13:27|DEMO|add user exp|{"name":"dogstar","after":12}
+	2015-02-07 21:15:39|TEST|add user exp|{"name":"dogstar","after":12}
+
+注意到， ``PhalApi_Logger::log()`` 接口第一个参数为日记分类的名称，在写入日记时会自动转换为大写。其接口函数签名为：
+
+.. code-block:: php
+
+	/**
+     * 日记纪录
+     *
+     * 可根据不同需要，将日记写入不同的媒介
+     *
+     * @param string $type 日记类型，如：info/debug/error, etc
+     * @param string $msg 日记关键描述
+     * @param string/array $data 场景上下文信息
+     * @return NULL
+     */
+    abstract public function log($type, $msg, $data);
+
+指定日志级别
+-----------
+在使用日志纪录前，在注册日志 ``DI()->logger`` 服务时须指定开启的日志级别，以便允许指定级别的日志得以纪录，从而达到选择性保存所需要的日志的目的。
+
+通过 ``PhalApi_Logger`` 的构造函数的参数，可以指定日志级别。多个日记级别使用或运算进行组合。
+
+.. code-block:: php
+
+	DI()->logger = new PhalApi_Logger_File(API_ROOT . '/Runtime',
+	    PhalApi_Logger::LOG_LEVEL_DEBUG | PhalApi_Logger::LOG_LEVEL_INFO | PhalApi_Logger::LOG_LEVEL_ERROR);
+
+上面的三类日记分别对应的标识如下。
+
+表2-18 日志级别标识
+
++------------------+---------------------------------+
+| 日志类型         | 日志级别标识                    |
++==================+=================================+
+| error 系统异常类 | PhalApi_Logger::LOG_LEVEL_ERROR |
++------------------+---------------------------------+
+| info 业务纪录类  | PhalApi_Logger::LOG_LEVEL_INFO  |
++------------------+---------------------------------+
+| debug 开发调试类 | PhalApi_Logger::LOG_LEVEL_DEBUG |
++------------------+---------------------------------+
+
+扩展你的项目
+===========
+普遍情况下，我们认为将日记存放在文件是比较合理的，因为便于查看、管理和统计。当然，如果你的项目需要将日记纪录保存在其他存储媒介中，也可以快速扩展实现的。例如实现数据库的存储思路。
+
+.. code-block:: php
+
+	//$ vim ./Shop/Common/Logger/DB.php
+	<?php
+	class Common_Logger_DB extends PhalApi_Logger {
+
+	    public function log($type, $msg, $data) {
+	        // TODO 数据库的日记写入 ...
+	    }
+	}
+
+随后，重新注册 ``DI()->logger`` 服务即可。
+
+.. code-block:: php
+
+	DI()->logger = new Common_Logger_DB(
+	    PhalApi_Logger::LOG_LEVEL_DEBUG | PhalApi_Logger::LOG_LEVEL_INFO | PhalApi_Logger::LOG_LEVEL_ERROR);
+
+

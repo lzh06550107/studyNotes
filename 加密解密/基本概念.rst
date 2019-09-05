@@ -1,0 +1,88 @@
+********
+基本概念
+********
+
+基本密码概念
+============
+存在很多密码算法且它们可以基于两个原则被分组：
+
+- 开发者提供多少信息；
+- 使用目的是什么？保密、完整性验证、身份认证、不可抵赖？推诿？
+
+密码概念概览
+
+.. image:: ./images/crypto-categories.png
+
+- 无钥密码(0 keys)
+
+  + 哈希函数
+- 秘钥密码(1 keys)
+
+  + 秘钥消息认证
+  + 秘钥加密
+  + 认证的秘钥加密
+- 公钥密码(2 keys)
+
+  + 共享密钥协议
+  + 数字签名
+
+无钥密码
+========
+最简单算法是密码哈希函数，它接受一个输入，返回一个确定的固定大小的输出。
+
+.. code-block:: php
+
+    hash("sha256", "");
+    // e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+    hash("sha256", "The quick brown fox jumps over the lazy dog");
+    // d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592
+
+当使用设计良好的密码哈希函数，如BLAKE2或者SHA256，对消息的任何一点改变都可能导致结果巨大的不同。
+
+.. code-block:: php
+
+    hash("sha256", "The quick brown fox jumps over the lazy cog");
+    // e4c4d8f3bf76b692de791a173e05321150f7a345b46484fe427f6acc7ecc81be
+
+简单哈希函数是快速和确定的；它们常用来错误检查或者作为其他密码的基础构建块。
+
+**密码哈希函数是单向数据转变。** 根据散列后的数据不能获取原始数据。
+
+一些哈希函数，如MD5具有很弱的安全保障且输出长度很小。
+
+秘钥密码
+=========
+大部分密码算法不是和哈希函数一样简单。因此，它们更有用，并且可以提供安全保证。
+
+它们通常需要两个输入：消息和秘钥。一个秘钥应该是一个唯一随机字节的字符串，双方都应该知道。
+
+秘钥哈希函数——消息认证
+----------------------
+一个秘钥哈希函数，如HMAC，是一个特殊的哈希函数实现，它接收一个消息和一个秘钥然后产生消息认证码(MAC)。
+
+.. code-block:: php
+
+    hash_hmac("sha256", "The quick brown fox jumps over the lazy dog", "secret key");
+    // 4a513ac60b4f0253d95c2687fa104691c77c9ed77e884453c6a822b7b010d36f
+
+    hash_hmac("sha256", "The quick brown fox jumps over the lazy cog", "secret key");
+    // ed6b9bc9d64e4c923b2cc19c15fff329f343f30884935c10e617e0fe067adef1
+
+    hash_hmac("sha256", "The quick brown fox jumps over the lazy dog", "secret kez");
+    // 291579f3123c3126df04a57f78768b6290df93f979b86af25fecd98a9811da5a
+
+    hash_hmac("sha256", "The quick brown fox jumps over the lazy cog", "secret kez");
+    // 298bb0244ebc987810de3892384bb4663742a540db2b3a875f66b09d068d1f64
+
+秘钥哈希函数比哈希函数更有用；只有拥有秘钥的人可以为给定消息计算一个MAC。因此，如果你传输一个消息和一个给定消息的MAC，且不传输秘钥，你可以合理的确定消息是否有效。
+
+秘钥加密
+--------
+.. note:: 没有消息认证的加密容易受到选择的密文攻击。请阅读我们关于php中安全数据加密的白皮书。
+
+在形式上，加密是将消息（称为明文）和秘密密钥转换为看起来随机的字节串（称为密文）的可逆过程。即加密（$ message，$ key）应该为给定的$ message和$ key对返回一个唯一的随机字节串。
+
+不幸地是，简单秘钥加密(被称为ECB模式)是不安全的。如果你
+
+（https://paragonie.com/blog/2015/08/you-wouldnt-base64-a-password-cryptography-decoded）

@@ -1,0 +1,205 @@
+******
+DHT 协议
+******
+
+``BitTorrent`` 使用“分布式哈希表” (DHT) 来存储种子的 ``peer`` 信息，且不需要专门的服务器。这样，每一个 ``peer`` 都变成一个 ``tracker`` 。 ``DHT`` 协议基于 ``Kademila`` ，且基于 ``UDP`` 实现。
+
+请注意本文档所使用的术语以免引起混淆。 ``peer`` 是一个实现了 ``BT`` 协议，且正在监听 ``TCP`` 端口的 ``client/server`` 。 ``node`` 是实现了 ``DHT`` 协议的，且正在监听 ``UDP`` 端口的 ``client/server`` 。 ``DHT`` 由 ``nodes`` 组成并保存 ``peer`` 的位置信息。 ``BitTorrent`` 客户端也包括 ``DHTnode`` ，这个 ``DHTnode`` 主要是用来联系 ``DHT`` 中的其它 ``nodes`` ，以得 ``peer`` 的位置信息，从而通过 ``BitTorrent`` 协议下载。
+
+概览
+====
+每一个 ``node`` 都有一个全局的唯一标识 ``nodeID`` 。 ``NodeIDS`` 的产生是随机的，且使用与 ``BitTorrent`` 的 ``infohashes`` 相同的 ``160-bit`` 空间。 ``distancemetric`` 用来比较 2 个 ``nodeIDs`` 或者 ``nodeID`` 与 ``infohash`` 的接近程度。 ``Nodes`` 必须维护一个路由表，其中保存了一部分其它 ``nodes`` 的联系信息。越接近自身节点时，路由表的信息会更加详细。 ``nodes`` 保存了很多接近自己的节点，但是离自己很远的节点的联系信息确知道得很少。
+
+在 ``Kademila`` 中， ``distancemetric`` 参数使用异或(XOR)计算，结果为无符号整形，即
+
+.. code-block:: shell
+
+    distance(A, B) = | A XOR B |
+
+值越小越接近。
+
+当一个 ``node`` 想得到某个 ``torrent`` 文件的 ``peers`` ，它首先使用 ``distancemetric`` 来比较 ``torrent`` 文件的 ``info_hash`` 和路由表中节点的 ``nodeID`` 。接下来向路由表中 ``nodeID`` 与 ``info_hash`` 最接近的那些节点发送请求，得到当前正在下载这个 ``torrent`` 文件数据的 ``peers`` 的联系信息。如果被请求的节点知道这个 ``torrent`` 文件的 ``peers`` ，那么 ``peer`` 的联系信息将包含在回复中。否则，被请求的节点必须返回他的路由表中更接近 ``info_hash`` 得那些节点。原始的请求 ``node`` 不断向新获得的那些 ``node`` (即更接近目标 ``info_hash`` 的那些 ``node`` )发送请求，直到不能获得更近的 ``nodes`` 。当查找结束时， ``client`` 将自己的信息作为一个 ``peer`` 插入到在刚才请求中给出回复的那些节点(即 ``nodeid`` 与 ``info_hash`` 最接近的哪个节点上)，这样，哪个节点又多保存了一个 ``peer`` 信息。
+
+在请求 ``peers`` 的时候，对方给我们的回复必须还包含一个不透明的令牌，我们称它为 ``token`` 。这样当我们宣布我们正在下载某个 ``torrent`` ，想让对方保存我们的信息时，我们必须使用对方向我们发送的最新的一个 ``token`` 。这样当我们宣布我们在下载一个 ``torrent`` 时，被请求的 ``node`` 检查这个 ``token`` 和 ``IP`` 是否与之前它向我们回复的一样。这样是为了防止恶意的攻击。由于 ``token`` 仅仅由请求的节点返回，所以我们不规定他的具体实现。但是 ``token`` 必须有一个可接受的时间范围，超过这个时间， ``token`` 将失效。在 ``BitTorrent`` 的实现中， ``token`` 是在 ``IP`` 地址后面连接一个 ``secret`` (可以视为一个随机数)的 ``SHA1`` 值，这个 ``secret`` 每五分钟改变一次，其中 ``token`` 在十分钟以内是可接受的。
+
+路由表
+======
+每一个 ``node`` 维护一个路由表保存已知的好节点。这些路由表中的 ``nodes`` 被作为 ``DHT`` 请求的起始节点。路由表中的 ``nodes`` 是在不断的向其它 ``node`` 请求过程中，对方节点回复的。
+
+并不是我们在请求过程中收到的节点都是平等的，有的 ``node`` 是好的，而有的 ``node`` 是不好的。很多使用 ``DHT`` 协议的 ``nodes`` 都可以发送请求并接收回复，但是不能主动回复其他节点的请求(我认为这是由于防火墙或者 ``NAT`` 的原因)。对每一个 ``node`` 的路由表，只包含好的 ``nodes`` 是很重要的。好的 ``node`` 是指在过去的 15 分钟以内，曾经对我们的某一个请求给出过回复的节点；或者曾经对我们的请求给出过一个回复(不用在 15 分钟以内)，并且在过去的 15 分钟给我们发送过请求。上述两种情况都可将 ``node`` 视为好的 ``node`` 。在 15 分钟之后，对方没有上述 2 种情况发生，这个 ``node`` 将变为可疑的。当 ``nodes`` 不能给我们的一系列请求给出回复时，这个节点将变为坏的。相比未知状态的 ``nodes`` ，我们将给好的节点更高的优先权。
+
+路由表覆盖从 0 到 2的160次方 完整的 ``nodeID`` 空间。路由表又被划分为 ``buckets`` (桶)，每一个 ``bucket`` 包含一个子部分的 ``nodeID`` 空间。一个空的路由表只有一个 ``bucket`` ，它的 ``ID`` 范围从 ``min=0`` 到 ``max=2160`` 。当一个 ``nodeID`` 为 ``N`` 的 ``node`` 插入到表中时，它将被放到 ``ID`` 范围在 ``min <= N < max`` 的 ``bucket`` 中。一个空的路由表只有一个 ``bucket`` 所以所有的 ``node`` 都将被放到这个 ``bucket`` 中。每一个 ``bucket`` 最多只能保存 ``K`` 个 ``nodes`` ，当前 ``K=8`` 。当一个 ``bucket`` 放满了好的 ``nodes`` 之后，将不再允许新的节点加入，除非我们自身的 ``nodeID`` 在这个 ``bucket`` 的范围内。在这样的情况下，这个 ``bucket`` 将被分裂为 2 个新的 ``buckets`` ，每一个新桶的范围都是原来旧桶的一半。原来旧桶中的 ``nodes`` 将被重新分配到这两个新的 ``buckets`` 中。如果是一个只有一个 ``bucket`` 的新表，这个包含整个范围的 ``bucket`` 将总被分裂为 2 个新的 ``buckets`` ，第一个的覆盖范围从 0..2159 ，第二个的范围从 2159..2160 。
+
+当 ``bucket`` 装满了好的 ``nodes`` ，那么新的 ``node`` 将被丢弃。一旦 ``bucket`` 中的某一个 ``node`` 变为了坏的 ``node`` ，那么我们就用新的 ``node`` 来替换这个坏的 ``node``  。如果 ``bucket`` 中有在 ``15`` 分钟内都没有活跃过的节点，我们将这样的节点视为可疑的节点，这时我们向最久没有联系的节点发送 ``ping`` 。如果被 ``pinged`` 的节点给出了回复，那么我们向下一个可疑的节点发送 ``ping`` ，不断这样循环下去，直到有某一个 ``node`` 没有给出 ``ping`` 的回复，或者当前 ``bucket`` 中的所有 ``nodes`` 都是好的(也就是所有 ``nodes`` 都不是可疑 ``nodes`` ，他们在过去 15 分钟内都有活动)。如果 ``bucket`` 中的某个 ``node`` 没有对我们的 ``ping`` 给出回复，我们最好再试一次(再发送一次 ``ping`` ，因为这个 ``node`` 也许仍然是活跃的，但由于网络拥塞，所以发生了丢包现象，注意 ``DHT`` 的包都是 ``UDP`` 的)，而不是立即丢弃这个 ``node`` 或者直接用新 ``node`` 来替代它。这样，我们得路由表将充满稳定的长时间在线的 ``nodes`` 。
+
+每一个 ``bucket`` 都应该维持一个 ``lastchange`` 字段来表明 ``bucket`` 中的 ``nodes`` 有多新鲜。当一个 ``bucket`` 中的 ``node`` 被 ``ping`` 并给出了回复，或者一个 ``node`` 被加入到了 ``bucket`` ，或者一个 ``node`` 被一个新的 ``node`` 所替代， ``bucket`` 的 ``lastchanged`` 字段都应当被更新。如果一个 ``bucket`` 的 ``lastchange`` 在过去的 15 分钟内都没有变化，那么我们将更新它。这个更新 ``bucket`` 操作是这样完成的：从这个 ``bucket`` 所覆盖的范围中随机选择一个 ``ID`` ，并对这个 ``ID`` 执行 ``find_nodes`` 查找操作。常常收到请求的 ``nodes`` 通常不需要常常更新自己的 ``buckets`` ，反之，不常常收到请求的 ``nodes`` 常常需要周期性的执行更新所有 ``buckets`` 的操作，这样才能保证当我们用到 ``DHT`` 的时候，里面有足够多的好的 ``nodes`` 。
+
+在第一个 ``node`` 插入路由表并开始服务后，这个 ``node`` 应该试着查找离自身更近的 ``node`` ，这个查找工作是通过不断的发布 ``find_node`` 消息给越来越近的 ``nodes`` 来完成的，当不能找到更近的节点时，这个扩散工作就结束了。路由表应当被启动工作和客户端软件保存（也就是启动的时候从客户端中读取路由表信息，结束的时候客户端软件记录到文件中）。
+
+BitTorret协议扩展
+=================
+``BitTorrent`` 协议已经被扩展为可以在通过 ``tracker`` 得到的 ``peer`` 之间互相交换 ``node UDP`` 端口号(也就是告诉对方我们的 ``DHT`` 服务端口号)，在这样的方式下，客户端可以通过下载普通的种子文件来自动扩展 ``DHT`` 路由表。新安装的客户端第一次试着下载一个无 ``tracker`` 的种子时，它的路由表中将没有任何 ``nodes`` ，这时它需要在 ``torrent`` 文件中找到联系信息。
+
+``peers`` 如果支持 ``DHT`` 协议就将 ``BitTorrent`` 协议握手消息的保留位的第八字节的最后一位置为 ``1`` 。这时如果 ``peer`` 收到一个 ``handshake`` 表明对方支持 ``DHT`` 协议，就应该发送 ``PORT`` 消息。它由字节 ``0x09`` 开始， ``payload`` 的长度是 2 个字节，包含了这个 ``peer`` 的 ``DHT`` 服务使用的网络字节序的 ``UDP`` 端口号。当 ``peer`` 收到这样的消息是应当向对方的 ``IP`` 和消息中指定的端口号的 ``node`` 发送 ``ping`` 。如果收到了 ``ping`` 的回复，那么应当使用上述的方法将新 ``node`` 的联系信息加入到路由表中。
+
+Torrent文件扩展
+===============
+一个无 ``tracker`` 的 ``torrent`` 文件字典不包含 ``announce`` 关键字，而使用一个 ``nodes`` 关键字来替代。这个关键字对应的内容应该设置为 ``torrent`` 创建者的路由表中 ``K`` 个最接近的 ``nodes`` 。可供选择的，这个关键字也可以设置为一个已知的可用节点，比如这个 ``torrent`` 文件的创建者。请不要自动加入 ``router.bittorrent.com`` 到 ``torrent`` 文件中或者自动加入这个 ``node`` 到客户端路由表中。
+
+.. code-block:: shell
+
+	nodes= [["<host>", <port>], ["<host>",<port>], ...]
+
+	nodes= [["127.0.0.1", 6881], ["your.router.node",4804]]
+
+KRPC协议
+========
+``KRPC`` 协议是由 ``B`` 编码字典组成的一个简单的 ``RPC`` 结构，他使用 ``UDP`` 报文发送。一个独立的请求包被发出去然后一个独立的包被回复。这个协议没有重发。它包含 3 种消息类型：请求，回复和错误。对 ``DHT`` 协议而言，这里有 4 种请求： ``ping`` ， ``find_node`` ， ``get_peers`` 和 ``announce_peer`` 。
+
+一个 ``KRPC`` 消息由一个独立的字典组成，其中有 ``3`` 个关键字是所有的消息都包含的，其余的附加关键字取决于消息类型。每一个消息都包含 ``t`` 关键字，它是一个代表了 ``transaction ID`` 的字符串类型。 ``transaction ID`` 由请求 ``node`` 产生，并且回复中要包含回显该字段，所以回复可能对应一个节点的多个请求。 ``transaction ID`` 应当被编码为一个短的二进制字符串，比如 ``2`` 个字节，这样就可以对应 ``2^16`` 个请求。另一个每个 ``KRPC`` 消息都包含的关键字是 ``y`` ，它由一个字节组成，表明这个消息的类型。 ``y`` 对应的值有三种情况： ``q`` 表示请求， ``r`` 表示回复， ``e`` 表示错误。每个带有客户端版本字符串的消息都应包含关键字 ``v`` 。该字符串应该是在 ``BEP 20`` 中注册的双字符客户端标识符，后跟两个字符的版本标识符。并非所有实现都包含 ``v`` 关键字，因此客户端不应假设其存在。
+
+联系信息编码
+-----------
+``Peers`` 的联系信息被编码为 ``6`` 字节的字符串。又被称为 ``Compact IP-address/port info`` ，其中前 ``4`` 个字节是网络字节序的 ``IP`` 地址，后 ``2`` 个字节是网络字节序的端口。
+
+``Nodes`` 的联系信息被编码为 ``26`` 字节的字符串。又被称为 ``Compact node info`` ，其中前 ``20`` 字节是网络字节序的 ``nodeID`` ，后面 ``6`` 个字节是 ``peers`` 的 ``Compact IP-address/port info`` 。
+
+请求
+----
+请求，对应于 ``KPRC`` 消息字典中的 ``y`` 关键字的值是 ``q`` ，它包含 ``2`` 个附加的关键字 ``q`` 和 ``a`` 。关键字 ``q`` 是一个字符串类型，包含了请求的方法名字。关键字 ``a`` 一个字典类型包含了请求所附加的参数。
+
+回复
+----
+回复，对应于 ``KPRC`` 消息字典中的 ``y`` 关键字的值是 ``r`` ，包含了一个附加的关键字 ``r`` 。关键字 ``r`` 是一个字典类型，包含了返回的值。发送回复消息是在正确解析了请求消息的基础上完成的。
+
+错误
+----
+错误，对应于 ``KPRC`` 消息字典中的 ``y`` 关键字的值是 ``e`` ，包含一个附加的关键字 ``e`` 。关键字 ``e`` 是一个列表类型。第一个元素是一个数字类型，表明了错误码。第二个元素是一个字符串类型，表明了错误信息。当一个请求不能解析或出错时，错误包将被发送。下表描述了可能出现的错误码：
+
++--------+------------------------------------------------------+
+| 错误码 | 错误描述                                             |
++========+======================================================+
+| 201    | 一般错误                                             |
++--------+------------------------------------------------------+
+| 202    | 服务错误                                             |
++--------+------------------------------------------------------+
+| 203    | 协议错误,比如不规范的包，无效的参数，或者错误的token |
++--------+------------------------------------------------------+
+| 204    | 未知方法                                             |
++--------+------------------------------------------------------+
+
+错误包例子:
+
+.. code-block:: shell
+
+	一般错误={"t":"aa", "y":"e", "e":[201,"A Generic Error Ocurred"]}
+
+	B编码=d1:eli201e23:AGenericErrorOcurrede1:t2:aa1:y1:ee
+
+DHT请求
+=======
+所有的请求都包含一个 ``id`` 键，它的值包含了请求节点的 ``nodeID`` 。所有的回复也包含 ``id`` 键，它的值包含了回复节点的 ``nodeID`` 。
+
+ping
+----
+最基础的请求就是 ``ping`` 。这时 ``KPRC`` 协议中的 ``q=ping`` 。 ``Ping`` 请求包含一个参数 ``id`` ，它是一个 ``20`` 字节的字符串包含了发送者网络字节序的 ``nodeID`` 。对应的 ``ping`` 回复也包含一个参数 ``id`` ，包含了回复者的 ``nodeID`` 。
+
+.. code-block:: shell
+
+	参数: {"id" : "<querying nodes id>"}
+
+	回复: {"id" : "<queried nodes id>"}
+
+报文包例子
+
+.. code-block:: shell
+
+	ping请求={"t":"aa", "y":"q","q":"ping", "a":{"id":"abcdefghij0123456789"}}
+	B编码=d1:ad2:id20:abcdefghij0123456789e1:q4:ping1:t2:aa1:y1:qe
+
+	回复={"t":"aa", "y":"r", "r":{"id":"mnopqrstuvwxyz123456"}}
+	B编码=d1:rd2:id20:mnopqrstuvwxyz123456e1:t2:aa1:y1:re
+
+find_node
+----------
+``Find node`` 被用来查找给定 ``ID`` 的 ``node`` 的联系信息。这时 ``KPRC`` 协议中的 ``q=find_node`` 。 ``find_node`` 请求包含 ``2`` 个参数，第一个参数是 ``id`` ，包含了请求 ``node`` 的 ``nodeID`` 。第二个参数是 ``target`` ，包含了请求者正在查找的 ``node`` 的 ``nodeID`` 。当一个 ``node`` 接收到了 ``find_node`` 的请求，他应该给出对应的回复，回复中包含 ``2`` 个关键字 ``id`` 和 ``nodes`` ， ``nodes`` 是一个字符串类型，包含了被请求节点的路由表中最接近目标 ``node`` 的 ``K(8)`` 个最接近的 ``nodes`` 的联系信息。
+
+.. code-block:: shell
+
+	参数: {"id" : "<querying nodes id>","target" : "<id of target node>"}
+
+	回复:{"id" : "<queried nodes id>","nodes" : "<compact node info>"}
+
+报文包例子
+
+.. code-block:: shell
+
+	find_node请求={"t":"aa", "y":"q","q":"find_node", "a":{"id":"abcdefghij0123456789","target":"mnopqrstuvwxyz123456"}}
+	B编码=d1:ad2:id20:abcdefghij01234567896:target20:mnopqrstuvwxyz123456e1:q9:find_node1:t2:aa1:y1:qe
+
+	回复={"t":"aa", "y":"r", "r":{"id":"0123456789abcdefghij", "nodes":"def456..."}}
+	B编码=d1:rd2:id20:0123456789abcdefghij5:nodes9:def456...e1:t2:aa1:y1:re
+
+get_peers
+----------
+``Get peers`` 与 ``torrent`` 文件的 ``info_hash`` 有关。这时 ``KPRC`` 协议中的 ``q=get_peers`` 。 ``get_peers`` 请求包含 ``2`` 个参数。第一个参数是 ``id`` ，包含了请求 ``node`` 的 ``nodeID`` 。第二个参数是 ``info_hash`` ，它代表 ``torrent`` 文件的 ``infohash`` 。如果被请求的节点有对应 ``info_hash`` 的 ``peers`` ，他将返回一个关键字 ``values`` ，这是一个列表类型的字符串。每一个字符串包含了 ``Compact IP-address/portinfo`` 格式的 ``peers`` 信息。如果被请求的节点没有这个 ``infohash`` 的 ``peers`` ，那么他将返回关键字 ``nodes`` ，这个关键字包含了被请求节点的路由表中离 ``info_hash`` 最近的 ``K`` 个 ``nodes`` ，使用 ``Compact nodeinfo`` 格式回复。在这两种情况下，关键字 ``token`` 都将被返回。 ``token`` 关键字在今后的 ``annouce_peer`` 请求中必须要携带。 ``Token`` 是一个短的二进制字符串。
+
+.. code-block:: shell
+
+	参数: {"id" : "<querying nodes id>","info_hash" : "<20-byte infohash of targettorrent>"}
+
+	回复:{"id" : "<queried nodes id>","token" :"<opaque write token>","values" : ["<peer 1 info string>","<peer 2 info string>"]}
+
+	or:{"id" : "<queried nodes id>","token" :"<opaque write token>","nodes" : "<compact node info>"}
+
+报文包例子
+
+.. code-block:: shell
+
+	get_peers请求={"t":"aa", "y":"q","q":"get_peers", "a":{"id":"abcdefghij0123456789","info_hash":"mnopqrstuvwxyz123456"}}
+	B编码=d1:ad2:id20:abcdefghij01234567899:info_hash20:mnopqrstuvwxyz123456e1:q9:get_peers1:t2:aa1:y1:qe
+
+	回复peers ={"t":"aa", "y":"r", "r":{"id":"abcdefghij0123456789", "token":"aoeusnth","values": ["axje.u", "idhtnm"]}}
+	B编码=d1:rd2:id20:abcdefghij01234567895:token8:aoeusnth6:valuesl6:axje.u6:idhtnmee1:t2:aa1:y1:re
+
+	回复最接近的nodes= {"t":"aa", "y":"r", "r":{"id":"abcdefghij0123456789", "token":"aoeusnth","nodes": "def456..."}}
+	B编码=d1:rd2:id20:abcdefghij01234567895:nodes9:def456...5:token8:aoeusnthe1:t2:aa1:y1:re
+
+announce_peer
+-------------
+这个请求用来表明发出 ``announce_peer`` 请求的 ``node`` ，正在某个端口下载 ``torrent`` 文件。 ``announce_peer`` 包含 ``4`` 个参数。第一个参数是 ``id`` ，包含了请求 ``node`` 的 ``nodeID`` ；第二个参数是 ``info_hash`` ，包含了 ``torrent`` 文件的 ``infohash`` ；第三个参数是 ``port`` 包含了整型的端口号，表明 ``peer`` 在哪个端口下载；第四个参数数是 ``token`` ，这是在之前的 ``get_peers`` 请求中收到的回复中包含的。收到 ``announce_peer`` 请求的 ``node`` 必须检查这个 ``token`` 与之前我们回复给这个节点 ``get_peers`` 的 ``token`` 是否相同。如果相同，那么被请求的节点将记录发送 ``announce_peer`` 节点的 ``IP`` 和请求中包含的 ``port`` 端口号在 ``peer`` 联系信息中对应的 ``infohash`` 下。
+
+有一个名为 ``implied_port`` 的可选参数，其值为 ``0`` 或 ``1`` 。如果存在且非零，则应忽略端口参数，并且应将 ``UDP`` 数据包的源端口用作对等端口。这对于可能不知道其外部端口的 ``NAT`` 后面的对等端很有用，并且支持 ``uTP`` ，它们接受与 ``DHT`` 端口在同一端口上的传入连接。
+
+.. code-block:: shell
+
+
+	参数: {"id": "<querying nodes id>",
+		"implied_port": <0 or 1>,
+		"info_hash" :"<20-byte infohash of target torrent>",
+		"port": <port number>,
+		"token" : "<opaque token>"}
+
+	回复: {"id": "<queried nodes id>"}
+
+报文包例子
+
+.. code-block:: shell
+
+	announce_peers Query = {"t":"aa", "y":"q", "q":"announce_peer", "a": {"id":"abcdefghij0123456789", "implied_port": 1, "info_hash":"mnopqrstuvwxyz123456", "port": 6881, "token": "aoeusnth"}}
+	bencoded = d1:ad2:id20:abcdefghij012345678912:implied_porti1e9:info_hash20:mnopqrstuvwxyz1234564:porti6881e5:token8:aoeusnthe1:q13:announce_peer1:t2:aa1:y1:qe
+
+	Response = {"t":"aa", "y":"r", "r": {"id":"mnopqrstuvwxyz123456"}}
+	bencoded = d1:rd2:id20:mnopqrstuvwxyz123456e1:t2:aa1:y1:re
+
+
+参考文档：
+
+- http://www.bittorrent.org/beps/bep_0005.html
+- https://blog.csdn.net/xxxxxx91116/article/details/7970815
+- http://www.lyyyuna.com/2016/03/26/dht01/
+
+
+
+
+

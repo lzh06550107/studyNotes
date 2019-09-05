@@ -1,0 +1,733 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>15. 控制器 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="16. 控制器方法的参数构建与运行" href="Laravel的控制器—控制器方法的参数构建与运行.html"/>
+        <link rel="prev" title="14. 请求" href="Laravel的请求.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">15. 控制器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">15.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">15.2. 控制器基类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">15.2.1. 定义控制器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">15.2.2. 控制器和命名空间</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">15.2.3. 单个行为控制器</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">15.3. 控制器中间件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">15.4. 资源控制器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">15.4.1. 部分资源路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">15.4.2. 命名资源路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">15.4.3. 命名资源路由参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uris">15.4.4. 本地化资源 URIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">15.4.5. 补充资源控制器</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">15.5. 依赖注入 &amp; 控制器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">15.5.1. 构造函数注入</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">15.5.2. 方法注入</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#call">15.6. __call方法</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>15. 控制器</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>15. 控制器<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>15.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>为了代替在路由文件中以闭包的形式定义所有的请求处理逻辑，你也许想使用控制类来组织这些行为。控制器能够将相关的请求处理逻辑组成一个单独的类，控制器被存放在 <code class="docutils literal"><span class="pre">app/Http/Controllers</span></code> 目录下。</p>
+</div>
+<div class="section" id="id3">
+<h2>15.2. 控制器基类<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id4">
+<h3>15.2.1. 定义控制器<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>下面是一个控制器类的例子。需要注意的是，该控制器继承了一个 Laravel 内置的控制器基类。该控制器基类提供了一些编辑的方法，比如 <code class="docutils literal"><span class="pre">middleware</span></code> 方法，该方法可以为控制器行为添加中间件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Show the profile for the given user.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  int  $id</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">show</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;user.profile&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="nx">User</span><span class="o">::</span><span class="na">findOrFail</span><span class="p">(</span><span class="nv">$id</span><span class="p">)]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>你可以这样定义一个指向控制器行为的路由:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{id}&#39;</span><span class="p">,</span> <span class="s1">&#39;UserController@show&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>现在, 当一个请求与此指定的路由的 <code class="docutils literal"><span class="pre">URI</span></code> 匹配时， <code class="docutils literal"><span class="pre">UserController</span></code> 类的 <code class="docutils literal"><span class="pre">show</span></code> 方法就会被执行。当然，路由参数也会传递至该方法。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">控制器并不是强制要求 继承基础类。但是，如果控制器没有继承基础类，你将无法使用一些便捷的功能，比如 <code class="docutils literal"><span class="pre">middleware</span></code> ,  <code class="docutils literal"><span class="pre">validate</span></code> 和 <code class="docutils literal"><span class="pre">dispatch</span></code> 。</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>15.2.2. 控制器和命名空间<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>需要注意的是，在定义控制器路由时，我们不需要指定完整的控制器命名空间。因为 <code class="docutils literal"><span class="pre">RouteServiceProvider</span></code> 会在一个包含命名空间的路由器组中加载路由文件，所以我们只需指定类名中 <code class="docutils literal"><span class="pre">App\Http\Controllers</span></code> 命名空间之后的部分就可以了。</p>
+<p>如果你选择将控制器存放在 <code class="docutils literal"><span class="pre">App\Http\Controllers</span></code> 目录下，只需要简单的使用相对于 <code class="docutils literal"><span class="pre">App\Http\Controllers</span></code> 根命名空间的特定类名。 也就是说，如果完整的控制器类是 <code class="docutils literal"><span class="pre">App\Http\Controllers\Photos\AdminController</span></code> ，那你应该用以下这种方式向控制器注册路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;Photos\AdminController@method&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>15.2.3. 单个行为控制器<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>如果你想定义一个只处理单个行为的控制器，你可以在这个控制器中放置一个 <code class="docutils literal"><span class="pre">__invoke</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ShowProfile</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Show the profile for the given user.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  int  $id</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__invoke</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;user.profile&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="nx">User</span><span class="o">::</span><span class="na">findOrFail</span><span class="p">(</span><span class="nv">$id</span><span class="p">)]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>注册单个行为控制器的路由时，不需要指定方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{id}&#39;</span><span class="p">,</span> <span class="s1">&#39;ShowProfile&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>15.3. 控制器中间件<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Middleware</span></code> 可以在路由文件中被分配给控制器路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="s1">&#39;UserController@show&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;auth&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>但是，在控制器的构造方法中指定中间件会更方便。使用控制器构造函数中的 <code class="docutils literal"><span class="pre">middleware</span></code> 方法， 你可以很容易地将中间件分配给控制器的动作。你甚至可以约束中间件只对控制器类中的某些特定方法生效：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Instantiate a new controller instance.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;auth&#39;</span><span class="p">);</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">only</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">);</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;subscribed&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">except</span><span class="p">(</span><span class="s1">&#39;store&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>还能使用闭包来为控制器注册中间件。闭包的方便之处在于，你无需特地创建一个中间件类来为某一个特殊的控制器注册中间件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$next</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+
+    <span class="k">return</span> <span class="nv">$next</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">你可以将中间件分配给控制器的部分行为上；然而这样可能意味着你的控制器正在变得很大。这里建议你将控制器分成多个更小的控制器。</p>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>15.4. 资源控制器<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<p>Laravel 资源路由将典型的「CRUD」路由分配给具有单行代码的控制器。比如，你希望创建一个控制器来处理应用保存的「照片」的所有 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求。使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">make:controller</span></code> ，我们可以快速创建这样一个控制器：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:controller PhotoController --resource
+</pre></div>
+</div>
+<p>这个命令会生成一个控制器 <code class="docutils literal"><span class="pre">app/Http/Controllers/PhotoController.php</span></code> 。其中包含了每个可用资源的操作方法。</p>
+<p>接下来，你可以给控制器注册一个资源路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">resource</span><span class="p">(</span><span class="s1">&#39;photos&#39;</span><span class="p">,</span> <span class="s1">&#39;PhotoController&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>这个单一路由声明创建多个路由来处理资源上的各种行为。生成的控制器为每个行为保留了方法，包括了关于处理 <code class="docutils literal"><span class="pre">HTTP</span></code> 动作和 <code class="docutils literal"><span class="pre">URIs</span></code> 的声明注释。</p>
+<p>你可以通过将一个数组传入到 <code class="docutils literal"><span class="pre">resources</span></code> 方法中的方式来一次性的创建多个资源控制器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">resources</span><span class="p">([</span>
+    <span class="s1">&#39;photos&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;PhotoController&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;posts&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;PostController&#39;</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+<p>资源控制器操作处理</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="38%" />
+<col width="16%" />
+<col width="28%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">动作</th>
+<th class="head">URI</th>
+<th class="head">行为</th>
+<th class="head">路由名称</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET</td>
+<td>/photos</td>
+<td>index</td>
+<td>photos.index</td>
+</tr>
+<tr class="row-odd"><td>GET</td>
+<td>/photos/create</td>
+<td>create</td>
+<td>photos.create</td>
+</tr>
+<tr class="row-even"><td>POST</td>
+<td>/photos</td>
+<td>store</td>
+<td>photos.store</td>
+</tr>
+<tr class="row-odd"><td>GET</td>
+<td>/photos/{photo}</td>
+<td>show</td>
+<td>photos.show</td>
+</tr>
+<tr class="row-even"><td>GET</td>
+<td>/photos/{photo}/edit</td>
+<td>edit</td>
+<td>photos.edit</td>
+</tr>
+<tr class="row-odd"><td>PUT/PATCH</td>
+<td>/photos/{photo}</td>
+<td>update</td>
+<td>photos.update</td>
+</tr>
+<tr class="row-even"><td>DELETE</td>
+<td>/photos/{photo}</td>
+<td>destroy</td>
+<td>photos.destroy</td>
+</tr>
+</tbody>
+</table>
+<p>指定资源模型</p>
+<p>如果你使用了路由模型绑定，并且想在资源控制器的方法中使用类型提示，你可以在生成控制器的时候使用 <code class="docutils literal"><span class="pre">--model</span></code> 选项：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:controller PhotoController --resource --model<span class="o">=</span>Photo
+</pre></div>
+</div>
+<p>伪造表单方法</p>
+<p>因为 <code class="docutils literal"><span class="pre">HTML</span></code> 表单不能生成 <code class="docutils literal"><span class="pre">PUT</span></code> ， <code class="docutils literal"><span class="pre">PATCH</span></code> 和 <code class="docutils literal"><span class="pre">DELETE</span></code> 请求，所以你需要添加一个隐藏的 <code class="docutils literal"><span class="pre">_method</span></code> 字段来伪造这些 <code class="docutils literal"><span class="pre">HTTP</span></code> 动作。 这个 Blade 指令 <code class="docutils literal"><span class="pre">&#64;method</span></code> 可以为你创建这个字段：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;</span><span class="nx">form</span> <span class="nx">action</span><span class="o">=</span><span class="s2">&quot;/foo/bar&quot;</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="o">&gt;</span>
+    <span class="o">@</span><span class="nx">method</span><span class="p">(</span><span class="s1">&#39;PUT&#39;</span><span class="p">)</span>
+<span class="o">&lt;/</span><span class="nx">form</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="id9">
+<h3>15.4.1. 部分资源路由<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>声明资源路由时，你可以指定控制器应该处理的部分行为，而不是所有默认的行为：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">resource</span><span class="p">(</span><span class="s1">&#39;photos&#39;</span><span class="p">,</span> <span class="s1">&#39;PhotoController&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;only&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;show&#39;</span>
+<span class="p">]]);</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">resource</span><span class="p">(</span><span class="s1">&#39;photos&#39;</span><span class="p">,</span> <span class="s1">&#39;PhotoController&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;except&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;create&#39;</span><span class="p">,</span> <span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="s1">&#39;destroy&#39;</span>
+<span class="p">]]);</span>
+</pre></div>
+</div>
+<div class="section" id="api">
+<h4>15.4.1.1. API 资源路由<a class="headerlink" href="#api" title="永久链接至标题">¶</a></h4>
+<p>当声明用于 <code class="docutils literal"><span class="pre">APIs</span></code> 的资源路由时，通常需要排除显示 <code class="docutils literal"><span class="pre">HTML</span></code> 模板的路由， 如 <code class="docutils literal"><span class="pre">create</span></code> 和 <code class="docutils literal"><span class="pre">edit</span></code> 。 为了方便起见，你可以使用 <code class="docutils literal"><span class="pre">apiResource</span></code> 方法自动排除这两个路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">apiResource</span><span class="p">(</span><span class="s1">&#39;photos&#39;</span><span class="p">,</span> <span class="s1">&#39;PhotoController&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你可以通过传递一个数组给 <code class="docutils literal"><span class="pre">apiResources</span></code> 方法的方式来一次性注册多个 <code class="docutils literal"><span class="pre">API</span></code> 资源控制器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">apiResources</span><span class="p">([</span>
+    <span class="s1">&#39;photos&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;PhotoController&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;posts&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;PostController&#39;</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+<p>为了快速生成一个不包含 <code class="docutils literal"><span class="pre">create</span></code> 和 <code class="docutils literal"><span class="pre">edit</span></code> 方法的API资源控制器，可以在执行 <code class="docutils literal"><span class="pre">make:controller</span></code> 命令时加上 <code class="docutils literal"><span class="pre">--api</span></code> 选项：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:controller API/PhotoController --api
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>15.4.2. 命名资源路由<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>默认情况下，所有的资源控制器行为都有一个路由名称。 但是，你可以传入一个 <code class="docutils literal"><span class="pre">names</span></code> 数组来覆盖这些名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">resource</span><span class="p">(</span><span class="s1">&#39;photos&#39;</span><span class="p">,</span> <span class="s1">&#39;PhotoController&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;names&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;create&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;photos.build&#39;</span> <span class="c1">// 默认photos.create被替换为photos.build</span>
+<span class="p">]]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>15.4.3. 命名资源路由参数<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>默认情况下， <code class="docutils literal"><span class="pre">Route::resource</span></code> 会根据资源名称的「单数」形式创建资源路由的路由参数。 你可以在选项数组中传入 <code class="docutils literal"><span class="pre">parameters</span></code> 参数来轻松地覆盖每个资源。 <code class="docutils literal"><span class="pre">parameters</span></code> 数组应当是一个资源名称和参数名称的关联数组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">resource</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;AdminUserController&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;parameters&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;admin_user&#39;</span>
+<span class="p">]]);</span>
+</pre></div>
+</div>
+<p>上例将会为资源的 <code class="docutils literal"><span class="pre">show</span></code> 路由生成如下的 <code class="docutils literal"><span class="pre">URI</span></code> ：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>/user/<span class="o">{</span>admin_user<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="uris">
+<h3>15.4.4. 本地化资源 URIs<a class="headerlink" href="#uris" title="永久链接至标题">¶</a></h3>
+<p>默认情况下， <code class="docutils literal"><span class="pre">Route::resource</span></code> 将会使用英文动词来创建资源 <code class="docutils literal"><span class="pre">URI</span></code> 。如果你需要本地化 <code class="docutils literal"><span class="pre">create</span></code> 和 <code class="docutils literal"><span class="pre">edit</span></code> 行为动作名，你可以在 <code class="docutils literal"><span class="pre">AppServiceProvider</span></code> 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法中使用 <code class="docutils literal"><span class="pre">Route::resourceVerbs</span></code> 方法实现 ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Route</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Bootstrap any application services.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nx">Route</span><span class="o">::</span><span class="na">resourceVerbs</span><span class="p">([</span>
+        <span class="s1">&#39;create&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;crear&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;edit&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;editar&#39;</span><span class="p">,</span>
+    <span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦动作被自定义后，像 <code class="docutils literal"><span class="pre">Route::resource('fotos',</span> <span class="pre">'PhotoController')</span></code> 这样注册的资源路由将会产生如下的 <code class="docutils literal"><span class="pre">URI</span></code> ：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>/fotos/crear
+
+/fotos/<span class="o">{</span>foto<span class="o">}</span>/editar
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>15.4.5. 补充资源控制器<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>如果你想为一个资源控制器在默认的资源路由之外增加额外的路由，你应该在调用 <code class="docutils literal"><span class="pre">Route::resource</span></code> 之前定义这些路由。否则由 <code class="docutils literal"><span class="pre">resource</span></code> 方法定义的路由可能会无意中优先于你补充的路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;photos/popular&#39;</span><span class="p">,</span> <span class="s1">&#39;PhotoController@method&#39;</span><span class="p">);</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">resource</span><span class="p">(</span><span class="s1">&#39;photos&#39;</span><span class="p">,</span> <span class="s1">&#39;PhotoController&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">记住保持控制器的专一性。如果你发现需要典型的资源操作之外的方法，可以考虑将你的控制器分成两个更小的控制器。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>15.5. 依赖注入 &amp; 控制器<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id14">
+<h3>15.5.1. 构造函数注入<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>Laravel 使用 服务容器 来解析所有的控制器。因此，你可以在控制器的构造函数中使用类型提示需要的依赖项，而声明的依赖项会自动解析并注入控制器实例中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Repositories\UserRepository</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 用户 repository 实例。</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$users</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 创建一个新的控制器实例。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  UserRepository  $users</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">UserRepository</span> <span class="nv">$users</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">users</span> <span class="o">=</span> <span class="nv">$users</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当然，你也可以类型提示任何 Laravel 契约，只要它能被解析。根据你的应用，将你的依赖项注入控制器能提供更好的可测试性。</p>
+</div>
+<div class="section" id="id15">
+<h3>15.5.2. 方法注入<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p>除了构造函数注入之外，你还可以在控制器方法中类型提示依赖项。 最常见的用法就是将 <code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 实例注入到控制器方法中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 保存一个新用户</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  Request  $request</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">store</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$name</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果你的控制器方法还需要从路由参数中获取输入内容，只需要在其他依赖项后列出路由参数即可。比如，如果你的路由是这样定义的：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">put</span><span class="p">(</span><span class="s1">&#39;user/{id}&#39;</span><span class="p">,</span> <span class="s1">&#39;UserController@update&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你还可以类型提示 <code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 并通过定义控制器方法获取 <code class="docutils literal"><span class="pre">id</span></code> 参数，如下所示：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 更新给定用户的信息。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  Request  $request</span>
+<span class="sd">     * @param  string  $id</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">update</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$id</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="call">
+<h2>15.6. __call方法<a class="headerlink" href="#call" title="永久链接至标题">¶</a></h2>
+<p>和普通类一样，若控制器中没有对应 <code class="docutils literal"><span class="pre">classname&#64;method</span></code> 中的 <code class="docutils literal"><span class="pre">method</span></code> ,则会调用类的 <code class="docutils literal"><span class="pre">__call</span></code> 函数。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的控制器—控制器方法的参数构建与运行.html" class="btn btn-neutral float-right" title="16. 控制器方法的参数构建与运行" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的请求.html" class="btn btn-neutral" title="14. 请求" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

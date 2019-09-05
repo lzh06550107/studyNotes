@@ -1,0 +1,591 @@
+*******
+脚本命令的使用
+*******
+自动化是提升开发效率的一个有效途径。 ``PhalApi`` 致力于简单的接口服务开发，同时也致力于通过自动化提升项目的开发速度。为此，提供了创建项目、生成单元测试骨架代码、生成数据库建表 ``SQL`` 、生成接口文件代码这些脚本命令。应用这些脚本命令，能快速完成重复但消耗时间的工作。下面将分别进行说明。
+
+在使用这些脚本命令前，需要注意以下几点。
+
+第一点是执行权限，当未设置执行权限时，脚本命令会提示无执行权限，类似这样。
+
+.. code-block:: shell
+
+	$ ./PhalApi/phalapi-buildapp
+	-bash: ./PhalApi/phalapi-buildapp: Permission denied
+
+那么需要这样设置脚本命令的执行权限。
+
+.. code-block:: shell
+
+    $ chmod +x ./PhalApi/phalapi-build*
+
+其次，对于 ``Linux`` 平台，可能会存在编码问题，例如提示：
+
+.. code-block:: shell
+
+	$ ./PhalApi/phalapi-buildapp
+	bash: ./PhalApi/phalapi-buildapp: /bin/bash^M: bad interpreter: No such file or directory
+
+这时，可使用 ``dos2unix`` 命令转换一下编码。
+
+.. code-block:: shell
+
+	$ dos2unix ./PhalApi/phalapi-build*
+	dos2unix: converting file ./PhalApi/phalapi-buildapp to Unix format ...
+	dos2unix: converting file ./PhalApi/phalapi-buildcode to Unix format ...
+	dos2unix: converting file ./PhalApi/phalapi-buildsqls to Unix format ...
+	dos2unix: converting file ./PhalApi/phalapi-buildtest to Unix format ...
+
+最后一点是，在任意目录位置都是可以使用这些命令的，但会与所在的项目目录绑定。通常，为了更方便使用这些命令，可以将这些命令软链到系统命令下。例如：
+
+.. code-block:: shell
+
+	$ cd /pah/to/PhalApi/PhalApi
+	$ sudo ln -s /path/to/phalapi-buildapp /usr/bin/phalapi-buildapp
+	$ sudo ln -s /path/to/phalapi-buildsqls /usr/bin/phalapi-buildsqls
+	$ sudo ln -s /path/to/phalapi-buildtest /usr/bin/phalapi-buildtest
+	$ sudo ln -s /path/to/phalapi-buildcode /usr/bin/phalapi-buildcode
+
+phalapi-buildapp命令
+====================
+``phalapi-buildapp`` 命令，可用于创建一个新的项目，最终效果和在线安装向导类似。其使用说明如下：
+
+.. image:: ./images/ch-3-buildapp.png
+
+图3-8 phalapi-buildapp命令的使用说明
+
+其中， **第一个参数app** 是待创建的项目名称，通常以字母开头，由字母和数字组成。
+
+例如，现在让我们来创建一个新的项目，假设是用来提供活动相关接口服务的，名称为： ``act`` ，那么可以执行以下命令。
+
+.. code-block:: shell
+
+    $ ./PhalApi/phalapi-buildapp act
+
+执行后，会看到类似以下的输出。
+
+.. code-block:: shell
+
+	create Act ...
+	create Act tests ...
+	create Act bootstarp ...
+
+	OK! Act has been created successfully!
+
+最后，可以看到会增加了以下两个目录，一个是放置 ``act`` 项目源代码和单元测试的目录。
+
+.. code-block:: shell
+
+	$ tree ./Act/
+	./Act/
+	├── Api
+	│   └── Default.php
+	├── Common
+	├── Domain
+	├── Model
+	└── Tests
+	    ├── Api
+	    │   └── Api_Default_Test.php
+	    ├── Common
+	    ├── Domain
+	    ├── Model
+	    ├── phpunit.xml
+	    └── test_env.php
+
+	9 directories, 4 files
+
+另一个是该项目对外访问的目录，包括入口文件、在线文档访问文件。
+
+.. code-block:: shell
+
+	$ tree ./Public/act/
+	./Public/act/
+	├── checkApiParams.php
+	├── index.php
+	└── listAllApis.php
+
+	0 directories, 3 files
+
+我们还可以试请求一下默认接口服务，发现也是可以正常响应的。
+
+.. code-block:: shell
+
+	$ curl "http://api.phalapi.net/act/"
+	{"ret":200,"data":{"title":"Hello World!","content":"PHPer\u60a8\u597d\uff0c\u6b22\u8fce\u4f7f\u7528PhalApi\uff01","version":"1.4.0","time":1494343386},"msg":""}
+
+最后需要注意的是，在创建新项目时，是以 ``Demo`` 项目为模板进行创建的。所以在使用 ``phalapi-buildapp`` 命令创建新项目时，应确保默认的 ``Demo`` 项目目录和文件未被删除，否则会导致创建异常。默认的 ``Demo`` 项目目录包括放置源代码的目录 ``./Demo`` 和对外可访问的目录 ``./Public/demo`` 。
+
+另外，当重复创建相同的项目时，会提示项目已存在。如再次创建 ``act`` 项目。
+
+.. code-block:: shell
+
+	$ ./PhalApi/phalapi-buildapp act
+	Error: Act exists!
+
+phalapi-buildtest命令
+=====================
+当需要对某个类进行单元测试时，可使用 ``phalapi-buildtest`` 命令生成对应的单元测试骨架代码，其使用说明如下：
+
+.. image:: ./images/ch-3-buildtest.png
+
+图3-9 phalapi-buildtest命令的使用说明
+
+其中，
+
+- 第一个参数 ``file_path`` 是待测试的源文件相对/绝对路径 。
+- 第二个参数 ``class_name`` 是待测试的类名。
+- 第三个参数 ``bootstrap`` 是测试启动文件，通常是 ``/path/to/test_env.php`` 文件。
+- 第四个参数 ``author`` 你的名字，默认是 ``dogstar`` 。
+
+通常，可以先写好类名以及相应的接口，然后再使用此脚本生成单元测试骨架代码。以 ``Shop`` 项目中 ``Hello World`` 接口为例，当需要为 ``Api_Welcome`` 类生成单元测试骨架代码时，可以依次这样操作。
+
+.. code-block:: shell
+
+	$ cd ./Shop/Tests
+	$ ../../PhalApi/phalapi-buildtest ../Api/Welcome.php Api_Welcome ./test_env.php > ./Api/Api_Welcome_Test.php
+
+.. note:: 本小节命令行中以“Tests$”开头，表示当前位置是./Shop/Tests。
+
+最后，需要将生成好的骨架代码，重定向保存到你要保存的位置。通常与产品代码对齐，并以 ``{类名} + _Test.php`` 方式命名，如这里的 ``Api_Welcome_Test.php`` 。
+
+生成的骨架代码类似如下，为节省边幅，注释已省略。
+
+.. code-block:: php
+
+	// Tests$ vim ./Api/Api_Welcome_Test.php
+	<?php
+	//require_once dirname(__FILE__) . '/test_env.php';
+
+	if (!class_exists('Api_Welcome')) {
+	    require dirname(__FILE__) . '/../Api/Welcome.php';
+	}
+
+	class PhpUnderControl_ApiWelcome_Test extends PHPUnit_Framework_TestCase
+	{
+	    public $apiWelcome;
+
+	    protected function setUp()
+	    {
+	        parent::setUp();
+
+	        $this->apiWelcome = new Api_Welcome();
+	    }
+
+	    protected function tearDown()
+	    {
+	    }
+
+	    public function testGetRules()
+	    {
+	        $rs = $this->apiWelcome->getRules();
+	    }
+
+	    public function testSay()
+	    {
+	        $rs = $this->apiWelcome->say();
+	    }
+	}
+
+这里，还需要根据情况手动更改一下 ``test_env.php`` 测试环境文件的位置，即去掉注释并改成：
+
+.. code-block:: php
+
+	// Tests$ vim ./Api/Api_Welcome_Test.php
+	require_once dirname(__FILE__) . '/../test_env.php';
+
+此时生成的单元测试骨架，会对 ``public`` 访问级别的成员函数生成一一对应的测试用例，并具备一些基本的验证功能。对于刚生成的单元测试，可以试运行一下。
+
+.. code-block:: shell
+
+	Tests$ phpunit ./Api/Api_Welcome_Test.php
+	PHPUnit 4.3.4 by Sebastian Bergmann.
+
+	..
+
+	Time: 7 ms, Memory: 6.50Mb
+
+	OK (2 tests, 0 assertions)
+
+``phalapi-buildtest`` 命令还有一些很有趣的功能。单元测试可按照构建-执行-验证的模式来编写，所以使用 ``phalapi-buildtest`` 生成的骨架代码，除了会生成执行环节的代码外，还可以生成构建和验证的代码。让我们来看一些具体的示例。
+
+继续来看一下获取商品快照信息接口服务的领域层的实现，可以看到之前的代码是这样的。
+
+.. code-block:: php
+
+	// $ vim ./Shop/Domain/Goods.php
+	<?php
+	class Domain_Goods {
+
+	    public function snapshot($goodsId) {
+	        $model = new Model_Goods();
+	        $info = $model->getSnapshot($goodsId);
+
+	        if (empty($info) || $info['goods_price'] <= 0) {
+	            return array();
+	        }
+
+	        return $info;
+	    }
+	}
+
+暂且先不关注这里具体的实现。这里需要一个没有缺省值的 ``$goodsId`` 参数，并且返回的是一个数组。 ``phalapi-buildtest`` 命令会自动识别参数列表，以及使用参数缺省值填充，但对于返回值的类型验证，则需要依据成员函数的 ``@return`` 注解。为此，我们可以先添加返回类型为数组的注解。
+
+.. code-block:: php
+
+ 	/**
+     * @return array 快照信息
+     */
+    public function snapshot($goodsId) {
+
+随后，根据 ``phalapi-buildtest`` 命令的使用说明，为 ``Domain_Goods`` 生成单元测试骨架代码，并保存到对应的测试目录。这一次，让我们先进入 ``Shop`` 项目的 ``Tests`` 目录，再使用命令，因为通常情况下使用单元测试时我们都是在此目录下的。可以看到，所在目录位置对 ``phalapi-buildtest`` 命令的使用是不影响的。
+
+.. code-block:: php
+
+	<?php
+	/**
+	 * PhpUnderControl_DomainGoods_Test
+	 *
+	 * 针对 ../Domain/Goods.php Domain_Goods 类的PHPUnit单元测试
+	 *
+	 * @author: dogstar 20170510
+	 */
+
+	//require_once dirname(__FILE__) . '/test_env.php';
+
+	if (!class_exists('Domain_Goods')) {
+	    require dirname(__FILE__) . '/../Domain/Goods.php';
+	}
+
+	class PhpUnderControl_DomainGoods_Test extends PHPUnit_Framework_TestCase
+	{
+	    ... ...
+
+预览确认生成的骨架代码没问题后，再重定向保存到测试文件。
+
+.. code-block:: shell
+
+    Tests$ ../../PhalApi/phalapi-buildtest ../Domain/Goods.php Domain_Goods > ./Domain/Domain_Goods_Test.php
+
+测试文件名为待测试的类名，加上 ``_Test.php`` 后缀。保存后，记得再适当调整一下 ``test_env.php`` 文件的引入路径。
+
+.. code-block:: shell
+
+	// Tests$ vim ./Domain/Domain_Goods_Test.php
+	require_once dirname(__FILE__) . '/../test_env.php';
+
+然后，执行一下此测试文件，可以看到是可以正常执行并通过测试的。之所以通常，是因为在找不到对应的商品信息时，默认返回空数组。
+
+.. code-block:: shell
+
+	Tests$ phpunit ./Domain/Domain_Goods_Test.php
+	PHPUnit 4.3.4 by Sebastian Bergmann.
+
+	.
+
+	Time: 35 ms, Memory: 6.50Mb
+
+	OK (1 test, 1 assertion)
+
+再回头看一下这里生成的骨架代码，看下最终生成了哪些构建的代码，又生成了哪些验证的代码。
+
+.. code-block:: php
+
+	// Tests$ vim ./Domain/Domain_Goods_Test.php
+    public function testSnapshot()
+    {
+        $goodsId = '';
+
+        $rs = $this->domainGoods->snapshot($goodsId);
+
+        $this->assertTrue(is_array($rs));
+    }
+
+由于 ``$goodsId`` 参数没有缺省值，所以这里给了空字符串，一来不管参数是数值还是字符串都方便填充测试数据，二来不会导致生成的代码语法上出错。在最后，还进行了简单的断言，对 ``Domain_Goods::snapshot($goodsId)`` 方法返回值的类型进行了检测，判断是否为期望的数组类型。是不是觉得很有趣？你也可以亲自动手，试下参数带有缺省值的情况。
+
+``phalapi-buildtest`` 命令除了能根据参数列表生成构建代码，根据 ``@return`` 注解生成类型断言代码外，还可以根据 ``@testcase`` 注解生成对应的测试用例代码。 ``@testcase`` 注解的格式是： ``@testcase`` 期望返回结果 参数1,参数2,参数3 ...，第一个是期望返回的结果，后面是提供给待测试函数的参数列表，用英文逗号分割。目前此方式适合用于参数和返回值是基本类型的场景。由于上面商品快照返回的类型是数组，非基本类型，为了演示 ``@testcase`` 注解的效果，让我们来看另一个示例。
+
+假如我们现在有一个实现了加法运算的简单计算器类，并通过 ``@testcase`` 注解添加了两组测试用例，分别是 ``2 = 1 + 1`` 和 ``-5 = -10 + 5`` 。实现代码和注释如下。
+
+.. code-block:: php
+
+	<?php
+	class Calculator {
+	    /**
+	     * 求两数和
+	     *
+	     * @testcase 2 1,1
+	     * @testcase -5 -10,5
+	     * @return int
+	     */
+	    public function add($left, $right) {
+	        return $left + $right;
+	    }
+	}
+
+使用 ``phalapi-buildtest`` 命令生成骨架代码后，可以发现除了下面默认的测试用例外，还根据 ``@testcase`` 注解生成了两个测试用例。
+
+.. code-block:: php
+
+	public function testAdd()
+    {
+        $left = '';
+        $right = '';
+
+        $rs = $this->calculator->add($left, $right);
+
+        $this->assertTrue(is_int($rs));
+    }
+
+根据`` @testcase 2 1,1`` 注释生成的测试用例是：
+
+.. code-block:: php
+
+    public function testAddCase0()
+    {
+        $rs = $this->calculator->add(1,1);
+
+        $this->assertEquals(2, $rs);
+    }
+
+根据 ``\@testcase -5 -10,5`` 注释生成的测试用例是：
+
+.. code-block:: php
+
+    public function testAddCase1()
+    {
+        $rs = $this->calculator->add(-10,5);
+
+        $this->assertEquals(-5, $rs);
+    }
+
+关于单元测试的维护，以及如何针对不同的场景编写单元测试，如何采用测试驱动进行开发，将会在后面深入讲解。
+
+phalapi-buildsqls命令
+=====================
+当需要创建数据库表时，可以使用 ``phalapi-buildsqls`` 脚本命令，再结合数据库配置文件 ``./Config/dbs.php`` 即可生成建表 ``SQL`` 语句。此命令在创建分表时尤其有用，其使用如下：
+
+??
+
+图3-10 phalapi-buildsqls命令的使用说明
+
+其中，
+
+- 第一个参数 ``dbs_config`` 是指向数据库配置文件的路径，如 ``./Config/dbs.php`` ，可以使用相对路径。
+- 第二个参数 ``table`` 是需要创建 ``sql`` 的表名，每次生成只支持一个。
+- 第三个参数 ``engine`` 可选参数，是指数据库表的引擎， ``MySQL`` 可以是： ``Innodb`` 或者 ``MyISAM`` 。
+
+.. note:: 需要提前先将建表的SQL语句，排除除主键id和ext_data字段，放置到./Data/目录下，文件名为：{表名}.sql。
+
+例如，我们需要生成 ``10`` 张 ``user_session`` 用户会话分表的建表语句，那么需要先添加数据文件 ``./Data/user_session.sql`` ，并将除主键 ``id`` 和 ``ext_data`` 字段外的其他建表语句保存到该文件。
+
+.. code-block:: sql
+
+      `user_id` bigint(20) DEFAULT '0' COMMENT '用户id',
+      `token` varchar(64) DEFAULT '' COMMENT '登录token',
+      `client` varchar(32) DEFAULT '' COMMENT '客户端来源',
+      `times` int(6) DEFAULT '0' COMMENT '登录次数',
+      `login_time` int(11) DEFAULT '0' COMMENT '登录时间',
+      `expires_time` int(11) DEFAULT '0' COMMENT '过期时间',
+
+然后，进入到项目根目录，执行命令：
+
+.. code-block:: shell
+
+    $ php ./PhalApi/phalapi-buildsqls ./Config/dbs.php user_session
+
+正常情况下，会看到生成好的 ``SQL`` 语句，类似下面这样的输出。
+
+.. code-block:: sql
+
+	CREATE TABLE `phalapi_user_session_0` (
+	      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+	      `user_id` bigint(20) DEFAULT '0' COMMENT '用户id',
+	      `token` varchar(64) DEFAULT '' COMMENT '登录token',
+	      `client` varchar(32) DEFAULT '' COMMENT '客户端来源',
+	      `times` int(6) DEFAULT '0' COMMENT '登录次数',
+	      `login_time` int(11) DEFAULT '0' COMMENT '登录时间',
+	      `expires_time` int(11) DEFAULT '0' COMMENT '过期时间',
+	      `ext_data` text COMMENT 'json data here',
+	      PRIMARY KEY (`id`)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	CREATE TABLE `phalapi_user_session_1` (
+	      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+	      ... ...
+	      `ext_data` text COMMENT 'json data here',
+	      PRIMARY KEY (`id`)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	CREATE TABLE `phalapi_user_session_2` ... ...
+	CREATE TABLE `phalapi_user_session_3` ... ...
+	CREATE TABLE `phalapi_user_session_4` ... ...
+	CREATE TABLE `phalapi_user_session_5` ... ...
+	CREATE TABLE `phalapi_user_session_6` ... ...
+	CREATE TABLE `phalapi_user_session_7` ... ...
+	CREATE TABLE `phalapi_user_session_8` ... ...
+	CREATE TABLE `phalapi_user_session_9` ... ...
+
+最后，便可把生成好的 ``SQL`` 语句，导入到数据库，完成建表的操作。
+
+值得注意的是，生成的 ``SQL`` 建表语句默认会带有自增 ``ID`` 主键 ``id`` 和扩展字段 ``ext_data`` 这两个字段。所以保存在 ``./Data`` 目录下的建表语句可省略主键字段，以免重复。
+
+.. code-block:: sql
+
+      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      ... ...
+      `ext_data` text COMMENT 'json data here',
+
+phalapi-buildcode命令
+=====================
+当需要编写开发一个新的接口服务时，可以使用 ``phalapi-buildcode`` 命令生成基本的 ``Api`` 类、 ``Domain`` 类和 ``Model`` 类的基本代码。此脚本虽然功能不是很强悍，开发人员可以根据项目的情况以及个人喜好使用，或者修改定制自己的模板。其使用，如同上面的命令一样，执行一下便可看到其使用说明如下：
+
+.. image:: ./images/ch-3-phalapi-buildcode.jpg
+
+图3-11 phalapi-buildcode命令的使用说明
+
+其中，
+
+- 第一个参数 ``app_path`` 是指根目录到你项目的相对路径。
+- 第二个参数 ``api_path`` 是指待创建接口相对于项目的相对路径，支持多级目录，可不带.php后缀。
+- 第三个参数 ``author`` 可选参数，你的名字，默认为空。
+- 第四个参数 ``overwrite`` 可选参数，是否覆盖已有的代码文件，默认为否。
+
+例如，我们现在要新增一个针对库存维度的接口服务类 ``Stock`` ，则可以使用这个命令创建配套的一系列代码模板，包括接口类 ``Api_Stock`` 、领域业务类 ``Domain_Stock`` 、数据模型类 ``Model_Stock`` 。在根目录，执行以下命令，其输出如下：
+
+.. code-block:: shell
+
+	$ ./PhalApi/phalapi-buildcode Shop Stock
+	Start to create file /path/to/PhalApi/PhalApi/../Shop/Api/Stock.php ...
+	Start to create file /path/to/PhalApi/PhalApi/../Shop/Domain/Stock.php ...
+	Start to create file /path/to/PhalApi/PhalApi/../Shop/Model/Stock.php ...
+
+	OK! Stock has been created successfully!
+
+创建好代码模板后，可以看到多了几个代码文件。生成的代码文件有：
+
+.. code-block:: shell
+
+	$ find ./Shop/ -name "Stock*"
+	./Shop/Api/Stock.php
+	./Shop/Domain/Stock.php
+	./Shop/Model/Stock.php
+
+查看各个文件，可以看到类似下面这样的代码内容。
+
+生成的接口类文件，默认带有 ``go()`` 成员函数，并简单调用领域业务类。
+
+.. code-block:: php
+
+	// $ vim ./Shop/Api/Stock.php
+	<?php
+	/**
+	 * Api_Stock
+	 * @author  2017-05-10 01:39:33
+	 */
+
+	class Api_Stock extends PhalApi_Api {
+
+	    public function getRules() {
+	        return array(
+	            'go' => array(
+	            ),
+	        );
+	    }
+
+	    /**
+	     * go接口
+	     * @desc go接口描述
+	     * @return int code 状态码，0表示成功，非0表示失败
+	     * @return string msg 状态提示
+	     */
+	    public function go() {
+	        $rs = array('code' => 0, 'msg' => '');
+
+	        // TODO
+	        $domain = new Domain_Stock();
+	        $domain->go();
+
+	        return $rs;
+	    }
+	}
+
+生成的领域业务类，同样带有 ``go()`` 成员函数，并简单调用数据模型类。
+
+.. code-block:: php
+
+	// $ vim ./Shop/Domain/Stock.php
+	<?php
+	/**
+	 * Domain_Stock
+	 * @author  2017-05-10 01:39:33
+	 */
+
+	class Domain_Stock {
+
+	    public function go() {
+	        // TODO
+	        $model = new Model_Stock();
+	    }
+	}
+
+生成的数据模型类，默认情况下继承于 ``PhalApi_Model_NotORM`` 类。
+
+.. code-block:: php
+
+	// $ vim ./Shop/Model/Stock.php
+	<?php
+	/**
+	 * Model_Stock
+	 * @author  2017-05-10 01:39:33
+	 */
+
+	class Model_Stock extends PhalApi_Model_NotORM {
+
+	    protected function getTableName($id) {
+	        return 'stock';
+	    }
+	}
+
+随后便可以这代码模板基础上进行快速开发。也可以先尝试访问一下。
+
+.. code-block:: shell
+
+	$ curl "http://api.phalapi.net/shop/?service=Stock.Go"
+	{"ret":200,"data":{"code":0,"msg":""},"msg":""}
+
+访问在线接口列表文档，也可以看到实时添加了此新建的接口服务 ``Stock.Go`` 。
+
+.. image:: ./images/ch-3-stock-go.jpg
+
+图3-12 新增的Stock接口类
+
+同样，接口服务 ``Stock.Go`` 对应的在线接口详情文档也是可以实时访问的了。
+
+若重复创建接口服务时，会提示代码已存在，但可以通过使用第四个参数强制覆盖。
+
+.. code-block:: shell
+
+	$ ./PhalApi/phalapi-buildcode Shop Stock
+	/path/to/PhalApi/PhalApi/../Shop/Api/Stock.php exists! Stop creating again!
+
+当待创建的接口服务类有多级目录时，可以使用目录分割符，例如现在需要创建一个支付宝支付相关的接口服务类 ``Pay_Alipay`` ，则可以：
+
+.. code-block:: shell
+
+	$ ./PhalApi/phalapi-buildcode Shop Pay/Alipay
+	Start to create folder /path/to/PhalApi/PhalApi/../Shop/Api/Pay ...
+	Start to create folder /path/to/PhalApi/PhalApi/../Shop/Domain/Pay ...
+	Start to create folder /path/to/PhalApi/PhalApi/../Shop/Model/Pay ...
+	Start to create file /path/to/PhalApi/PhalApi/../Shop/Api/Pay/Alipay.php ...
+	Start to create file /path/to/PhalApi/PhalApi/../Shop/Domain/Pay/Alipay.php ...
+	Start to create file /path/to/PhalApi/PhalApi/../Shop/Model/Pay/Alipay.php ...
+
+	OK! Pay/Alipay has been created successfully!
+
+由于是多级目录，所以在创建代码模板文件前，会先创建未存在的目录。生成的代码和上面类似，这里不再赘述。
+
+注意，参数应该传 ``Pay/Alipay`` ，而不是 ``Pay_Alipay`` 。即下面这样的使用是错误的！
+
+.. code-block:: shell
+
+    $ ./PhalApi/phalapi-buildcode Shop Pay_Alipay
+

@@ -1,0 +1,1201 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>26. Blade &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="27. Blade原理分析" href="Laravel的blade原理分析.html"/>
+        <link rel="prev" title="25. 异常和错误处理原理分析" href="Laravel的异常和错误处理原理分析.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">26. Blade</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">26.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">26.2. 模板继承</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">26.2.1. 定义布局</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">26.2.2. 继承布局</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yield-section">26.2.3. &#64;yield 与 &#64;section</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#show-stop">26.2.4. &#64;show 与 &#64;stop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#append-override">26.2.5. &#64;append 和 &#64;override</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#components-slots">26.3. Components &amp; Slots</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">26.3.1. 向组件传递数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">26.3.2. 组件别名(5.5 找不到功能实现代码)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">26.4. 显示数据</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">26.4.1. 显示未转义数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json">26.4.2. 渲染 JSON</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#html">26.4.3. HTML 实体转换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blade-javascript">26.4.4. Blade &amp; JavaScript 框架</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verbatim">26.4.5. &#64;verbatim 指令</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">26.5. 流程控制</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">26.5.1. 条件指令</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">26.5.2. 循环</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">26.5.3. 循环变量</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">26.5.4. 注释</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#php">26.5.5. PHP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">26.6. 引入子视图</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id16">26.6.1. 为集合渲染视图</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">26.7. 堆栈</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">26.8. 服务注入</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id19">26.9. 拓展 Blade</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id20">26.9.1. 自定义 If 语句</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>26. Blade</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="blade">
+<h1>26. Blade<a class="headerlink" href="#blade" title="永久链接至标题">¶</a></h1>
+<ul class="simple">
+<li>{{ $var }} - Echo content</li>
+<li>{{ $var or 'default' }} - Echo content with a default value</li>
+<li>{{{ $var }}} - Echo escaped content</li>
+<li>{{-- Comment --}} - A Blade comment</li>
+<li>&#64;extends('layout') - Extends a template with a layout</li>
+<li>&#64;if(condition) - Starts an if block</li>
+<li>&#64;else - Starts an else block</li>
+<li>&#64;elseif(condition) - Start a elseif block</li>
+<li>&#64;endif - Ends a if block</li>
+<li>&#64;foreach($list as $key =&gt; $val) - Starts a foreach block</li>
+<li>&#64;endforeach - Ends a foreach block</li>
+<li>&#64;for($i = 0; $i &lt; 10; $i++) - Starts a for block</li>
+<li>&#64;endfor - Ends a for block</li>
+<li>&#64;while(condition) - Starts a while block</li>
+<li>&#64;endwhile - Ends a while block</li>
+<li>&#64;unless(condition) - Starts an unless block</li>
+<li>&#64;endunless - Ends an unless block</li>
+<li>&#64;include(file) - Includes another template</li>
+<li>&#64;include(file, ['var' =&gt; $val,...]) - Includes a template, passing new variables.</li>
+<li>&#64;each('file',$list,'item') - Renders a template on a collection</li>
+<li>&#64;each('file',$list,'item','empty') - Renders a template on a collection or a different template if collection is empty.</li>
+<li>&#64;yield('section') - Yields content of a section.</li>
+<li>&#64;show - Ends section and yields its content</li>
+<li>&#64;lang('message') - Outputs message from translation table</li>
+<li>&#64;choice('message', $count) - Outputs message with language pluralization</li>
+<li>&#64;section('name') - Starts a section</li>
+<li>&#64;stop - Ends section</li>
+<li>&#64;endsection - Ends section</li>
+<li>&#64;append - Ends section and appends it to existing of section of same name</li>
+<li>&#64;overwrite - Ends section, overwriting previous section of same name</li>
+</ul>
+<div class="section" id="id1">
+<h2>26.1. 简介<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Blade</span></code> 是 Laravel 提供的一个简单而又强大的模板引擎。和其他流行的 PHP 模板引擎不同， <code class="docutils literal"><span class="pre">Blade</span></code> 并不限制你在视图中使用原生 PHP 代码。所有 <code class="docutils literal"><span class="pre">Blade</span></code> 视图文件都将被编译成原生的 PHP 代码并缓存起来，除非它被修改，否则不会重新编译，这就意味着 <code class="docutils literal"><span class="pre">Blade</span></code> 基本上不会给你的应用增加任何负担。 <code class="docutils literal"><span class="pre">Blade</span></code> 视图文件使用 <code class="docutils literal"><span class="pre">.blade.php</span></code> 作为文件扩展名，被存放在 <code class="docutils literal"><span class="pre">resources/views</span></code> 目录。</p>
+</div>
+<div class="section" id="id2">
+<h2>26.2. 模板继承<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>模板布局的编译指令功能由 <code class="docutils literal"><span class="pre">\Illuminate\View\Compilers\Concerns\CompilesLayouts</span></code> 文件提供。而模板布局的功能函数由 <code class="docutils literal"><span class="pre">\Illuminate\View\Concerns\ManagesLayouts</span></code> 文件提供。</p>
+<div class="section" id="id3">
+<h3>26.2.1. 定义布局<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Blade</span></code> 的两个主要优点是 模板继承 和 区块 。为方便开始，让我们先通过一个简单的例子来上手。首先，我们来研究一个「主」页面布局。因为大多数 web 应用会在不同的页面中使用相同的布局方式，因此可以很方便地定义单个 <code class="docutils literal"><span class="pre">Blade</span></code> 布局视图：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;!--</span> <span class="nx">文件保存于</span> <span class="nx">resources</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span><span class="nx">layouts</span><span class="o">/</span><span class="nx">app</span><span class="o">.</span><span class="nx">blade</span><span class="o">.</span><span class="nx">php</span> <span class="o">--&gt;</span>
+
+<span class="o">&lt;</span><span class="nx">html</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">head</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">title</span><span class="o">&gt;</span><span class="nx">应用程序名称</span> <span class="o">-</span> <span class="o">@</span><span class="k">yield</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span><span class="o">&lt;/</span><span class="nx">title</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="nx">head</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">body</span><span class="o">&gt;</span>
+        <span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;sidebar&#39;</span><span class="p">)</span>
+            <span class="nx">这是主布局的侧边栏。</span>
+        <span class="o">@</span><span class="nx">show</span>
+
+        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;container&quot;</span><span class="o">&gt;</span>
+            <span class="o">@</span><span class="k">yield</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+        <span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="nx">body</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">html</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>如你所见，该文件包含了典型的 <code class="docutils literal"><span class="pre">HTML</span></code> 语法。不过，请注意 <code class="docutils literal"><span class="pre">&#64;section</span></code> 和 <code class="docutils literal"><span class="pre">&#64;yield</span></code> 命令。顾名思义， <code class="docutils literal"><span class="pre">&#64;section</span></code> 命令定义了视图的一部分内容(继承类可以扩展)，而 <code class="docutils literal"><span class="pre">&#64;yield</span></code> 指令是用来显示指定部分的内容。</p>
+<p>现在，我们已经定义好了这个应用程序的布局，接下来，我们定义一个继承此布局的子页面。</p>
+</div>
+<div class="section" id="id4">
+<h3>26.2.2. 继承布局<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>当定义子视图时，你可以使用 <code class="docutils literal"><span class="pre">Blade</span></code> 提供的 <code class="docutils literal"><span class="pre">&#64;extends</span></code> 命令来为子视图指定应该 「继承」 的布局。 继承 <code class="docutils literal"><span class="pre">Blade</span></code> 布局的视图可使用 <code class="docutils literal"><span class="pre">&#64;section</span></code> 命令将内容注入于布局的 <code class="docutils literal"><span class="pre">&#64;section</span></code> 中。而「主」布局中使用 <code class="docutils literal"><span class="pre">&#64;yield</span></code> 的地方会显示这些子视图中的 <code class="docutils literal"><span class="pre">&#64;section</span></code> 间的内容：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;!--</span> <span class="nx">文件保存于</span> <span class="nx">resources</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span><span class="nx">layouts</span><span class="o">/</span><span class="nx">child</span><span class="o">.</span><span class="nx">blade</span><span class="o">.</span><span class="nx">php</span> <span class="o">--&gt;</span>
+
+<span class="o">@</span><span class="k">extends</span><span class="p">(</span><span class="s1">&#39;layouts.app&#39;</span><span class="p">)</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;Page Title&#39;</span><span class="p">)</span> <span class="c1">// 直接替换</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;sidebar&#39;</span><span class="p">)</span>
+    <span class="o">@</span><span class="k">parent</span> <span class="c1">// 扩展</span>
+
+    <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">这将追加到主布局的侧边栏。</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="nx">endsection</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+    <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">这是主体内容。</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span> <span class="c1">// 直接替换</span>
+<span class="o">@</span><span class="nx">endsection</span>
+</pre></div>
+</div>
+<p>在上面的例子里， <code class="docutils literal"><span class="pre">&#64;section</span></code> 中的 <code class="docutils literal"><span class="pre">sidebar</span></code> 使用 <code class="docutils literal"><span class="pre">&#64;parent</span></code> 命令在「主」布局的 <code class="docutils literal"><span class="pre">&#64;section('sidebar')</span></code> 中增加内容（不是覆盖）。渲染视图时， <code class="docutils literal"><span class="pre">&#64;parent</span></code> 指令会被替换为「主」布局中 <code class="docutils literal"><span class="pre">&#64;section('sidebar')</span></code> 间的内容。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">与上一个示例相反，此侧边栏部分以 <code class="docutils literal"><span class="pre">&#64;endsection</span></code> 而不是 <code class="docutils literal"><span class="pre">&#64;show</span></code> 结尾。 <code class="docutils literal"><span class="pre">&#64;endsection</span></code> 指令只定义一个区块，而 <code class="docutils literal"><span class="pre">&#64;show</span></code> 则是定义并立即生成该区块。</p>
+</div>
+<p>Laravel 框架中的 <code class="docutils literal"><span class="pre">Blade</span></code> 模板引擎，很好用，但是在官方文档中有关 <code class="docutils literal"><span class="pre">Blade</span></code> 的介绍并不详细，有些东西没有写出来，而有些则是没有说清楚。比如，使用中可能会遇到这样的问题：</p>
+<ol class="arabic simple">
+<li><code class="docutils literal"><span class="pre">&#64;yield</span></code> 和 <code class="docutils literal"><span class="pre">&#64;section</span></code> 都可以预定义可替代的区块，这两者有什么区别呢？</li>
+<li><code class="docutils literal"><span class="pre">&#64;section</span></code> 可以用 <code class="docutils literal"><span class="pre">&#64;show</span></code> ， <code class="docutils literal"><span class="pre">&#64;stop</span></code> ， <code class="docutils literal"><span class="pre">&#64;overwrite</span></code> 以及 <code class="docutils literal"><span class="pre">&#64;append</span></code> 来结束，这四者又有什么区别呢？</li>
+</ol>
+</div>
+<div class="section" id="yield-section">
+<h3>26.2.3. &#64;yield 与 &#64;section<a class="headerlink" href="#yield-section" title="永久链接至标题">¶</a></h3>
+<p>首先， <code class="docutils literal"><span class="pre">&#64;yield</span></code> 是不可扩展的，如果你要定义的部分没有默认内容让子模板扩展的，那么用 <code class="docutils literal"><span class="pre">&#64;yield($name,</span> <span class="pre">$default)</span></code> 的形式会比较方便，如果你在子模板中并没有指定这个区块的内容，它就会显示默认内容，如果定义了，就会显示你定义的内容。非此即彼。</p>
+<p>与之相比， <code class="docutils literal"><span class="pre">&#64;section</span></code> 则既可以被替代，又可以被扩展，这是最大的区别。比如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">{{</span><span class="o">--</span> <span class="nx">layout</span><span class="o">.</span><span class="nx">master</span> <span class="o">--</span><span class="p">}}</span>
+<span class="o">@</span><span class="k">yield</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="s1">&#39;默认标题&#39;</span><span class="p">)</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+<span class="nx">默认的内容</span>
+<span class="o">@</span><span class="nx">show</span>
+
+<span class="p">{{</span><span class="o">--</span> <span class="nx">home</span><span class="o">.</span><span class="nx">index</span> <span class="o">--</span><span class="p">}}</span>
+<span class="o">@</span><span class="k">extends</span><span class="p">(</span><span class="s1">&#39;layout.master&#39;</span><span class="p">)</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+  <span class="o">@</span><span class="k">parent</span>
+  <span class="nx">新的标题</span>
+<span class="o">@</span><span class="nx">stop</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+  <span class="o">@</span><span class="k">parent</span>
+  <span class="nx">扩展的内容</span>
+<span class="o">@</span><span class="nx">stop</span>
+</pre></div>
+</div>
+<p>上面的例子中，模板用 <code class="docutils literal"><span class="pre">&#64;yield</span></code> 和 <code class="docutils literal"><span class="pre">&#64;section</span></code> 分别定义了一个区块，然后在子模板中去定义内容，由于 <code class="docutils literal"><span class="pre">&#64;yield</span></code> 不能被扩展，所以即使加上了 <code class="docutils literal"><span class="pre">&#64;parent</span></code> 也不起作用，输出的内容只有 <code class="docutils literal"><span class="pre">新的标题</span></code> ，替换了 <code class="docutils literal"><span class="pre">默认标题</span></code> 。因此最终生成的页面只能是 <code class="docutils literal"><span class="pre">默认标题</span></code> 或者 <code class="docutils literal"><span class="pre">新的标题</span></code> ，不能并存。而 <code class="docutils literal"><span class="pre">&#64;section</span></code> 定义的部分，由于使用了 <code class="docutils literal"><span class="pre">&#64;parent</span></code> 关键字，父模板中的内容会被保留，然后再扩展后添加的内容进去，输出的内容会是 <code class="docutils literal"><span class="pre">默认的内容</span> <span class="pre">扩展的内容</span></code> 。</p>
+<p>官方网站上的文档中并没有涉及 <code class="docutils literal"><span class="pre">&#64;parent</span></code> 关键字，说的是默认行为是“扩展”，要覆盖需要用 <code class="docutils literal"><span class="pre">&#64;override</span></code> 来结束，这是错的，[github 上的最新文档][docs] 已经做了修正。 <code class="docutils literal"><span class="pre">&#64;section</span></code> 加上 <code class="docutils literal"><span class="pre">&#64;stop</span></code> ，默认是替换（注入），必须用 <code class="docutils literal"><span class="pre">&#64;parent</span></code> 关键字才能扩展。而 <code class="docutils literal"><span class="pre">&#64;override</span></code> 关键字实际上有另外的应用场景。</p>
+</div>
+<div class="section" id="show-stop">
+<h3>26.2.4. &#64;show 与 &#64;stop<a class="headerlink" href="#show-stop" title="永久链接至标题">¶</a></h3>
+<p>接下来再说说与 <code class="docutils literal"><span class="pre">&#64;section</span></code> 对应的结束关键字， <code class="docutils literal"><span class="pre">&#64;show</span></code> ,  <code class="docutils literal"><span class="pre">&#64;stop</span></code> 有什么区别呢？（网上的部分文章，以及一些编辑器插件还会提示 <code class="docutils literal"><span class="pre">&#64;endsection</span></code> , 这个在 4.0 版本中已经被移除，虽然向下兼容，但是不建议使用）。</p>
+<p><code class="docutils literal"><span class="pre">&#64;show</span></code> 指的是执行到此处时将该 <code class="docutils literal"><span class="pre">section</span></code> 中的内容输出到页面，而 <code class="docutils literal"><span class="pre">&#64;stop</span></code> 则只是进行内容解析，并且不再处理当前模板中后续对该 <code class="docutils literal"><span class="pre">section</span></code> 的处理，除非用 <code class="docutils literal"><span class="pre">&#64;override</span></code> 覆盖（详见下一部分）。通常来说，在首次定义某个 <code class="docutils literal"><span class="pre">section</span></code> 的时候，应该用 <code class="docutils literal"><span class="pre">&#64;show</span></code> ，而在替换它或者扩展它的时候，不应该用 <code class="docutils literal"><span class="pre">&#64;show</span></code> ，应该用 <code class="docutils literal"><span class="pre">&#64;stop</span></code> 。下面用例子说明：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">{{</span><span class="o">--</span> <span class="nx">layout</span><span class="o">.</span><span class="nx">master</span> <span class="o">--</span><span class="p">}}</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;zoneA&quot;</span><span class="o">&gt;</span>
+  <span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;zoneA&#39;</span><span class="p">)</span>
+      <span class="nx">AAA</span>
+      <span class="o">@</span><span class="nx">show</span>
+
+
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;zoneB&quot;</span><span class="o">&gt;</span>
+  <span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;zoneB&#39;</span><span class="p">)</span>
+      <span class="nx">BBB</span>
+      <span class="o">@</span><span class="nx">stop</span>
+
+
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;zoneC&quot;</span><span class="o">&gt;</span>
+  <span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;zoneC&#39;</span><span class="p">)</span>
+      <span class="nx">CCC</span>
+      <span class="o">@</span><span class="nx">show</span>
+
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+
+<span class="p">{{</span><span class="o">--</span> <span class="nx">page</span><span class="o">.</span><span class="nx">view</span> <span class="o">--</span><span class="p">}}</span>
+<span class="o">@</span><span class="k">extends</span><span class="p">(</span><span class="s1">&#39;layout.master&#39;</span><span class="p">)</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;zoneA&#39;</span><span class="p">)</span>
+<span class="nx">aaa</span>
+<span class="o">@</span><span class="nx">stop</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;zoneB&#39;</span><span class="p">)</span>
+<span class="nx">bbb</span>
+<span class="o">@</span><span class="nx">stop</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;zoneC&#39;</span><span class="p">)</span>
+<span class="nx">ccc</span>
+<span class="o">@</span><span class="nx">show</span>
+</pre></div>
+</div>
+<p>在 <code class="docutils literal"><span class="pre">layout.master</span></code> 中，用 <code class="docutils literal"><span class="pre">&#64;stop</span></code> 来结束 <code class="docutils literal"><span class="pre">zoneB</span></code> ，由于整个模板体系中，没有以 <code class="docutils literal"><span class="pre">&#64;show</span></code> 结束的 <code class="docutils literal"><span class="pre">zoneB</span></code> 的定义，因此这个区块不会被显示。而在 <code class="docutils literal"><span class="pre">page.view</span></code> 中，用 <code class="docutils literal"><span class="pre">&#64;show</span></code> 定义了 <code class="docutils literal"><span class="pre">zoneC</span></code> ，这会在执行到这里时立即显示内容，并按照模板继承机制继续覆盖内容，因此最终显示的内容会是：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">ccc</span> <span class="c1">// 来自 page.view</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;zoneA&quot;</span><span class="o">&gt;</span>
+  <span class="nx">aaa</span>
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;zoneB&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;zoneC&quot;</span><span class="o">&gt;</span>
+  <span class="nx">ccc</span>
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>从结果可以看到， <code class="docutils literal"><span class="pre">zoneB</span></code> 的内容丢失，因为没有用 <code class="docutils literal"><span class="pre">&#64;show</span></code> 告诉引擎输出这部分的内容，而 <code class="docutils literal"><span class="pre">zoneC</span></code> 的内容会显示两次，并且还破坏了 <code class="docutils literal"><span class="pre">layout.master</span></code> 的页面结构，因为 <code class="docutils literal"><span class="pre">&#64;show</span></code> 出现了两次。</p>
+</div>
+<div class="section" id="append-override">
+<h3>26.2.5. &#64;append 和 &#64;override<a class="headerlink" href="#append-override" title="永久链接至标题">¶</a></h3>
+<p>刚才说到了， <code class="docutils literal"><span class="pre">&#64;override</span></code> 并不是在子模板中指明内容替换父模板的默认内容，而是另有用途，那么是如何使用呢？这又涉及到一个 <code class="docutils literal"><span class="pre">section</span></code> 在模板中可以多次使用的问题。也即我们所定义的每一个 <code class="docutils literal"><span class="pre">section</span></code> ，在随后的子模板中其实是可以多次出现的。比如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">{{</span><span class="o">--</span> <span class="nx">master</span> <span class="o">--</span><span class="p">}}</span>
+<span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+  <span class="o">@</span><span class="k">yield</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+
+<span class="p">{{</span><span class="o">--</span> <span class="nx">subview</span> <span class="o">--</span><span class="p">}}</span>
+<span class="o">@</span><span class="k">extends</span><span class="p">(</span><span class="s1">&#39;master&#39;</span><span class="p">)</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+<span class="nx">加一行内容</span>
+<span class="o">@</span><span class="nx">append</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+<span class="nx">再加一行内容</span>
+<span class="o">@</span><span class="nx">append</span>
+
+<span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+<span class="nx">加够了，到此为止吧。</span>
+<span class="o">@</span><span class="nx">stop</span>
+</pre></div>
+</div>
+<p>在上例中，我在父级模板中只定义了一个名为 <code class="docutils literal"><span class="pre">content</span></code> 的 <code class="docutils literal"><span class="pre">section</span></code> ，而在子模板中三次指定了这个 <code class="docutils literal"><span class="pre">section</span></code> 的内容。 这个例子最终的输出是：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+加一行内容
+再加一行内容
+加够了，到此为止吧。
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>三次指定的内容都显示出来了，关键就在于 <code class="docutils literal"><span class="pre">&#64;append</span></code> 这个关键字，它表明 <code class="docutils literal"><span class="pre">此处的内容添加到</span></code> ，因此内容会不断扩展。而最后用了`` &#64;stop`` ，表示这个 <code class="docutils literal"><span class="pre">section</span></code> 的处理到此为止。如果在后面继续用 <code class="docutils literal"><span class="pre">&#64;append</span></code> 或者 <code class="docutils literal"><span class="pre">&#64;stop</span></code> 来指定这个 <code class="docutils literal"><span class="pre">section</span></code> 的内容，都不会生效。除非用 <code class="docutils literal"><span class="pre">&#64;override</span></code> 来处理。 <code class="docutils literal"><span class="pre">&#64;override</span></code> 的意思就是 <code class="docutils literal"><span class="pre">覆盖之前的所有定义，以这次的为准</span></code> 。比如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">{{</span><span class="o">--</span> <span class="nx">master</span> <span class="o">--</span><span class="p">}}</span>
+<span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+  <span class="o">@</span><span class="k">yield</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+    <span class="o">@</span><span class="k">yield</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">)</span>
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+<span class="p">{{</span><span class="o">--</span> <span class="nx">master</span> <span class="o">--</span><span class="p">}}</span>
+<span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+  <span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+    <span class="nx">加一行内容</span>
+    <span class="o">@</span><span class="nx">append</span>
+    <span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+    <span class="nx">再加一行内容</span>
+    <span class="o">@</span><span class="nx">append</span>
+    <span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+    <span class="nx">加够了，结束吧</span>
+    <span class="o">@</span><span class="nx">stop</span>
+    <span class="o">@</span><span class="nx">section</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+    <span class="nx">都不要了，我说的。</span>
+    <span class="o">@</span><span class="nx">override</span>
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>这个例子和刚才的类似，只不过最后加了一组定义。最终的输出会是：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  都不要了，我说的。
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>所以，在正式的项目中，有时候需要对数据进行遍历输出的，可以使用 <code class="docutils literal"><span class="pre">&#64;append</span></code> ，而如果遍历到了某个数据发现前面的都错了呢？用 <code class="docutils literal"><span class="pre">&#64;override</span></code> 就可以全部推翻。</p>
+</div>
+</div>
+<div class="section" id="components-slots">
+<h2>26.3. Components &amp; Slots<a class="headerlink" href="#components-slots" title="永久链接至标题">¶</a></h2>
+<p>视图组件编译指令由 <code class="docutils literal"><span class="pre">\Illuminate\View\Compilers\Concerns\CompilesComponents</span></code> 文件提供；而视图组件的功能函数由 <code class="docutils literal"><span class="pre">\Illuminate\View\Concerns\ManagesComponents</span></code> 文件提供。</p>
+<p><code class="docutils literal"><span class="pre">Components</span></code> 和 <code class="docutils literal"><span class="pre">slots</span></code> 类似于布局中的 &#64;section，但其使用方式更容易使人理解。首先，假设我们有一个能在整个应用程序中被重复使用的「警告」组件:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;!--</span> <span class="o">/</span><span class="nx">resources</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span><span class="nx">alert</span><span class="o">.</span><span class="nx">blade</span><span class="o">.</span><span class="nx">php</span> <span class="o">--&gt;</span>
+
+<span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;alert alert-danger&quot;</span><span class="o">&gt;</span>
+    <span class="p">{{</span> <span class="nv">$slot</span> <span class="p">}}</span>
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">{{</span> <span class="pre">$slot</span> <span class="pre">}}</span></code> 变量将包含我们希望注入到组件的内容。然后，我们可以使用 <code class="docutils literal"><span class="pre">Blade</span></code> 命令 <code class="docutils literal"><span class="pre">&#64;component</span></code> 来构建这个组件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;alert&#39;</span><span class="p">)</span>
+    <span class="o">&lt;</span><span class="nx">strong</span><span class="o">&gt;</span><span class="nx">Whoops</span><span class="o">!&lt;/</span><span class="nx">strong</span><span class="o">&gt;</span> <span class="nx">Something</span> <span class="nx">went</span> <span class="nx">wrong</span><span class="o">!</span>
+<span class="o">@</span><span class="nx">endcomponent</span>
+</pre></div>
+</div>
+<p>有时为组件定义多个 <code class="docutils literal"><span class="pre">slots</span></code> 是很有帮助的。现在我们要对「警报」组件进行修改，让它可以注入「标题」。通过简单地 「打印」匹配其名称的变量来显示被命名的 <code class="docutils literal"><span class="pre">&#64;slot</span></code> 之间的内容：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;!--</span> <span class="o">/</span><span class="nx">resources</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span><span class="nx">alert</span><span class="o">.</span><span class="nx">blade</span><span class="o">.</span><span class="nx">php</span> <span class="o">--&gt;</span>
+
+<span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;alert alert-danger&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;alert-title&quot;</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nv">$title</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+
+    <span class="p">{{</span> <span class="nv">$slot</span> <span class="p">}}</span>
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>现在，我们可以使用 <code class="docutils literal"><span class="pre">&#64;slot</span></code> 指令注入内容到已命名的 <code class="docutils literal"><span class="pre">slot</span></code> 中，任何没有被 <code class="docutils literal"><span class="pre">&#64;slot</span></code> 指令包裹住的内容将传递给组件中的 <code class="docutils literal"><span class="pre">$slot</span></code> 变量:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;alert&#39;</span><span class="p">)</span>
+    <span class="o">@</span><span class="nx">slot</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+        <span class="nx">Forbidden</span>
+    <span class="o">@</span><span class="nx">endslot</span>
+
+    <span class="nx">你没有权限访问这个资源！</span>
+<span class="o">@</span><span class="nx">endcomponent</span>
+</pre></div>
+</div>
+<div class="section" id="id5">
+<h3>26.3.1. 向组件传递数据<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>需要向组件传递数据时，可以给 <code class="docutils literal"><span class="pre">&#64;component</span></code> 指令的第二个参数传入一个数组。数组里的数据将在组件模板以变量的形式生效：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;alert&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;foo&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;bar&#39;</span><span class="p">])</span>
+    <span class="o">...</span>
+<span class="o">@</span><span class="nx">endcomponent</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>26.3.2. 组件别名(5.5 找不到功能实现代码)<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>子目录中的 <code class="docutils literal"><span class="pre">Blade</span></code> 组件，使用别名更方便访问。现在，有一个 <code class="docutils literal"><span class="pre">Blade</span></code> 组件存储在 <code class="docutils literal"><span class="pre">resources/views/components/alert.blade.php</span></code> ，可以使用 <code class="docutils literal"><span class="pre">component</span></code> 方法给它起个 <code class="docutils literal"><span class="pre">alert</span></code> 的别名。通常，在 <code class="docutils literal"><span class="pre">AppServiceProvider</span></code> 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法中完成这个操作：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Blade</span><span class="p">;</span>
+
+<span class="nx">Blade</span><span class="o">::</span><span class="na">component</span><span class="p">(</span><span class="s1">&#39;components.alert&#39;</span><span class="p">,</span> <span class="s1">&#39;alert&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>组件起好别名后，使用指令渲染：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">alert</span><span class="p">([</span><span class="s1">&#39;type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;danger&#39;</span><span class="p">])</span>
+    <span class="nx">你无权访问！</span>
+<span class="o">@</span><span class="nx">endalert</span>
+</pre></div>
+</div>
+<p>也可以不传参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">alert</span>
+    <span class="nx">你无权访问！</span>
+<span class="o">@</span><span class="nx">endalert</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>26.4. 显示数据<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>传入 <code class="docutils literal"><span class="pre">Blade</span></code> 视图的数据，通过双花括号包裹来显示。例如，给出如下路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;greeting&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;welcome&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Samantha&#39;</span><span class="p">]);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>这样显示 <code class="docutils literal"><span class="pre">name</span></code> 变量的内容：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Hello</span><span class="p">,</span> <span class="p">{{</span> <span class="nv">$name</span> <span class="p">}}</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>当然，不限于显示传入视图的变量内容，还可以输出 PHP 函数结果。实际上，可以在 Blade <code class="docutils literal"><span class="pre">echo</span></code> 语句里放置任何 PHP 代码：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">The</span> <span class="nb">current</span> <span class="nx">UNIX</span> <span class="nx">timestamp</span> <span class="nx">is</span> <span class="p">{{</span> <span class="nb">time</span><span class="p">()</span> <span class="p">}}</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">Blade <code class="docutils literal"><span class="pre">{{</span> <span class="pre">}}</span></code> 语句会自动调用 PHP 的 <code class="docutils literal"><span class="pre">htmlspecialchars</span></code> 函数防止 <code class="docutils literal"><span class="pre">XSS</span></code> 攻击。</p>
+</div>
+<div class="section" id="id8">
+<h3>26.4.1. 显示未转义数据<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>默认情况下，Blade <code class="docutils literal"><span class="pre">{{</span> <span class="pre">}}</span></code> 语句会自动调用 PHP 的 <code class="docutils literal"><span class="pre">htmlspecialchars</span></code> 函数防止 <code class="docutils literal"><span class="pre">XSS</span></code> 攻击。不想转义的话，可以使用以下语法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Hello</span><span class="p">,</span> <span class="p">{</span><span class="o">!!</span> <span class="nv">$name</span> <span class="o">!!</span><span class="p">}</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">输出用户提供的数据时，千万要小心。对用户提供的数据，总是要使用双花括号进行显示，防止 <code class="docutils literal"><span class="pre">XSS</span></code> 攻击。</p>
+</div>
+</div>
+<div class="section" id="json">
+<h3>26.4.2. 渲染 JSON<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h3>
+<p>有时，为了初始化 JavaScript 变量，需要将传入视图的数组进行 <code class="docutils literal"><span class="pre">JSON</span></code> 化。例如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+    <span class="k">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="o">&lt;?</span><span class="nx">php</span> <span class="k">echo</span> <span class="nb">json_encode</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="x">;</span>
+<span class="x">&lt;/script&gt;</span>
+</pre></div>
+</div>
+<p>然而，可以用 <code class="docutils literal"><span class="pre">&#64;json</span></code> Blade 指令替代手动 <code class="docutils literal"><span class="pre">json_encode</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+    <span class="k">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="o">@</span><span class="nx">json</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+<span class="o">&lt;/</span><span class="nx">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="html">
+<h3>26.4.3. HTML 实体转换<a class="headerlink" href="#html" title="永久链接至标题">¶</a></h3>
+<p>默认情况下，Blade （和 Laravel 的 辅助函数 <code class="docutils literal"><span class="pre">e</span></code> ） 会将 HTML 全部转换。要关闭全部转换，可以在 <code class="docutils literal"><span class="pre">AppServiceProvider</span></code> 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法里调用 <code class="docutils literal"><span class="pre">Blade::withoutDoubleEncoding</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Blade</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\ServiceProvider</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">AppServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 引导应用服务.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Blade</span><span class="o">::</span><span class="na">withoutDoubleEncoding</span><span class="p">();</span> <span class="c1">// 5.5找不到代码</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="blade-javascript">
+<h3>26.4.4. Blade &amp; JavaScript 框架<a class="headerlink" href="#blade-javascript" title="永久链接至标题">¶</a></h3>
+<p>由于许多 JavaScript 框架也是用花括号来表示要显示在浏览器的表达式， 可以使用 <code class="docutils literal"><span class="pre">&#64;</span></code> 符告诉 <code class="docutils literal"><span class="pre">Blade</span></code> 渲染引擎保持这个表达式不变。例如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Laravel</span><span class="o">&lt;/</span><span class="nx">h1</span><span class="o">&gt;</span>
+
+<span class="nx">Hello</span><span class="p">,</span> <span class="o">@</span><span class="p">{{</span> <span class="nx">name</span> <span class="p">}}</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>渲染后， <code class="docutils literal"><span class="pre">Blade</span></code> 引擎会把 <code class="docutils literal"><span class="pre">&#64;</span></code> 符移除，但是 <code class="docutils literal"><span class="pre">{{</span> <span class="pre">name</span> <span class="pre">}}</span></code> 表达式保留，从而让 JavaScript 框架去渲染它。</p>
+</div>
+<div class="section" id="verbatim">
+<h3>26.4.5. &#64;verbatim 指令<a class="headerlink" href="#verbatim" title="永久链接至标题">¶</a></h3>
+<p>如果模板中一大部分需要显示 JavaScript 变量，就可以用 <code class="docutils literal"><span class="pre">&#64;verbatim</span></code> 指令包裹住 HTML，这样就不用在每个 Blade <code class="docutils literal"><span class="pre">echo</span></code> 语句前加 <code class="docutils literal"><span class="pre">&#64;</span></code> 符：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">verbatim</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;container&quot;</span><span class="o">&gt;</span>
+        <span class="nx">Hello</span><span class="p">,</span> <span class="p">{{</span> <span class="nx">name</span> <span class="p">}}</span><span class="o">.</span>
+    <span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="nx">endverbatim</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>26.5. 流程控制<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>除了模板继承和数据显示外， <code class="docutils literal"><span class="pre">Blade</span></code> 还为常用的 PHP 流程控制提供了便捷语句，例如条件语句和循环语句。这些语句不但简洁，还与 PHP 语句相似。</p>
+<div class="section" id="id10">
+<h3>26.5.1. 条件指令<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>视图条件编译指令由 <code class="docutils literal"><span class="pre">\Illuminate\View\Compilers\Concerns\CompilesConditionals</span></code> 文件提供。</p>
+<div class="section" id="if">
+<h4>26.5.1.1. If 语句<a class="headerlink" href="#if" title="永久链接至标题">¶</a></h4>
+<p>使用 <code class="docutils literal"><span class="pre">&#64;if</span></code> 、 <code class="docutils literal"><span class="pre">&#64;elseif</span></code> 、 <code class="docutils literal"><span class="pre">&#64;else</span></code> 和 <code class="docutils literal"><span class="pre">&#64;endif</span></code> 指令构建 <code class="docutils literal"><span class="pre">if</span></code> 语句。这些指令与 PHP 对应，这些指令括号中是php语句：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$records</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="nx">我有一条记录！</span>
+<span class="o">@</span><span class="k">elseif</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$records</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="nx">我有好几条记录！</span>
+<span class="o">@</span><span class="k">else</span>
+   <span class="nx">我没有记录！</span>
+<span class="o">@</span><span class="k">endif</span>
+</pre></div>
+</div>
+<p>为方便起见， <code class="docutils literal"><span class="pre">Blade</span></code> 还提供了 <code class="docutils literal"><span class="pre">&#64;unless</span></code> 指令：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">unless</span> <span class="p">(</span><span class="nx">Auth</span><span class="o">::</span><span class="na">check</span><span class="p">())</span>
+    <span class="nx">未登陆</span>
+<span class="o">@</span><span class="nx">endunless</span>
+</pre></div>
+</div>
+<p>除了以上述指令， <code class="docutils literal"><span class="pre">&#64;isset</span></code> 和 <code class="docutils literal"><span class="pre">&#64;empty</span></code> 也可能用到，功能与 <code class="docutils literal"><span class="pre">PHP</span></code> 函数对应：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$records</span><span class="p">)</span>
+    <span class="c1">// $records 已定义且不为 null</span>
+<span class="o">@</span><span class="nx">endisset</span>
+
+<span class="o">@</span><span class="k">empty</span><span class="p">(</span><span class="nv">$records</span><span class="p">)</span>
+    <span class="c1">// $records 为空</span>
+<span class="o">@</span><span class="nx">endempty</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h4>26.5.1.2. 认证指令<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">&#64;auth</span></code> 和 <code class="docutils literal"><span class="pre">&#64;guest</span></code> 指令用来快速认证当前用户：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">auth</span>
+    <span class="c1">// 通过认证</span>
+<span class="o">@</span><span class="nx">endauth</span>
+
+<span class="o">@</span><span class="nx">guest</span>
+    <span class="c1">// 未通过认证</span>
+<span class="o">@</span><span class="nx">endguest</span>
+</pre></div>
+</div>
+<p>必要的话，可以在 <code class="docutils literal"><span class="pre">&#64;auth</span></code> 和 <code class="docutils literal"><span class="pre">&#64;guest</span></code> 指令中指定 认证看守器（ <code class="docutils literal"><span class="pre">Guard</span></code> ）：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">auth</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+    <span class="c1">// 通过认证</span>
+<span class="o">@</span><span class="nx">endauth</span>
+
+<span class="o">@</span><span class="nx">guest</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+    <span class="c1">// 未通过认证</span>
+<span class="o">@</span><span class="nx">endguest</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="section">
+<h4>26.5.1.3. Section 指令<a class="headerlink" href="#section" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">&#64;hasSection</span></code> 指令检查指定的 <code class="docutils literal"><span class="pre">section</span></code> 区块是否有内容，如果有内容，则输出它的内容：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">hasSection</span><span class="p">(</span><span class="s1">&#39;navigation&#39;</span><span class="p">)</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;pull-right&quot;</span><span class="o">&gt;</span>
+        <span class="o">@</span><span class="k">yield</span><span class="p">(</span><span class="s1">&#39;navigation&#39;</span><span class="p">)</span>
+    <span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;clearfix&quot;</span><span class="o">&gt;&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="k">endif</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="switch">
+<h4>26.5.1.4. Switch 语句<a class="headerlink" href="#switch" title="永久链接至标题">¶</a></h4>
+<p>可以使用 <code class="docutils literal"><span class="pre">&#64;switch</span></code> 、 <code class="docutils literal"><span class="pre">&#64;case</span></code> 、 <code class="docutils literal"><span class="pre">&#64;break</span></code> 、 <code class="docutils literal"><span class="pre">&#64;default</span></code> 和 <code class="docutils literal"><span class="pre">&#64;endswitch</span></code> 指令来构建 <code class="docutils literal"><span class="pre">Switch</span></code> 语句：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">switch</span><span class="p">(</span><span class="nv">$i</span><span class="p">)</span>
+    <span class="o">@</span><span class="k">case</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nx">First</span> <span class="k">case</span><span class="o">...</span>
+        <span class="o">@</span><span class="k">break</span>
+
+    <span class="o">@</span><span class="k">case</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="nx">Second</span> <span class="k">case</span><span class="o">...</span>
+        <span class="o">@</span><span class="k">break</span>
+
+    <span class="o">@</span><span class="k">default</span>
+        <span class="k">Default</span> <span class="k">case</span><span class="o">...</span>
+<span class="o">@</span><span class="k">endswitch</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>26.5.2. 循环<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>视图条件编译指令由 <code class="docutils literal"><span class="pre">\Illuminate\View\Compilers\Concerns\CompilesLoops</span></code> 文件提供。</p>
+<p>除了条件表达式外， <code class="docutils literal"><span class="pre">Blade</span></code> 也支持 PHP 的循环结构。同样，以下这些指令中的每一个都与其 PHP 对应的函数相同：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
+    <span class="nx">目前的值为</span> <span class="p">{{</span> <span class="nv">$i</span> <span class="p">}}</span>
+<span class="o">@</span><span class="k">endfor</span>
+
+<span class="o">@</span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">此用户为</span> <span class="p">{{</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="k">endforeach</span>
+
+<span class="o">@</span><span class="nx">forelse</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="c1">// 如果要在列表为空时显示不同的消息，请使用forelse-empty-endforeach构造。</span>
+    <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">name</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="k">empty</span>
+    <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">没有用户</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="nx">endforelse</span>
+
+<span class="o">@</span><span class="k">while</span> <span class="p">(</span><span class="k">true</span><span class="p">)</span>
+    <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">死循环了</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="k">endwhile</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">循环时，你可以使用 循环变量 来获取循环的信息，例如是否在循环中进行第一次或最后一次迭代。</p>
+</div>
+<p>当使用循环时，你也可以结束循环或跳过当前迭代：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="o">@</span><span class="k">continue</span>
+    <span class="o">@</span><span class="k">endif</span>
+
+    <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">name</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+
+    <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">number</span> <span class="o">==</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="o">@</span><span class="k">break</span>
+    <span class="o">@</span><span class="k">endif</span>
+<span class="o">@</span><span class="k">endforeach</span>
+</pre></div>
+</div>
+<p>你还可以使用一行代码包含指令声明的条件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="o">@</span><span class="k">continue</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">name</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+
+    <span class="o">@</span><span class="k">break</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">number</span> <span class="o">==</span> <span class="mi">5</span><span class="p">)</span>
+<span class="o">@</span><span class="k">endforeach</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h3>26.5.3. 循环变量<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p>循环时，可以在循环内使用 <code class="docutils literal"><span class="pre">$loop</span></code> 变量。这个变量可以提供一些有用的信息，比如当前循环的索引，当前循环是不是首次迭代，又或者当前循环是不是最后一次迭代：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$loop</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">)</span>
+        <span class="nx">这是第一个迭代。</span>
+    <span class="o">@</span><span class="k">endif</span>
+
+    <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$loop</span><span class="o">-&gt;</span><span class="na">last</span><span class="p">)</span>
+        <span class="nx">这是最后一个迭代。</span>
+    <span class="o">@</span><span class="k">endif</span>
+
+    <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">This</span> <span class="nx">is</span> <span class="nx">user</span> <span class="p">{{</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="k">endforeach</span>
+</pre></div>
+</div>
+<p>在一个嵌套的循环中，可以通过使用 <code class="docutils literal"><span class="pre">$loop</span></code> 变量的 <code class="docutils literal"><span class="pre">parent</span></code> 属性来获取父循环中的 <code class="docutils literal"><span class="pre">$loop</span></code> 变量：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">@foreach ($users as $user)</span>
+<span class="x">    @foreach ($user-&gt;posts as $post)</span>
+<span class="x">        @if ($loop-&gt;parent-&gt;first)</span>
+<span class="x">            This is first iteration of the parent loop.</span>
+<span class="x">        @endif</span>
+<span class="x">    @endforeach</span>
+<span class="x">@endforeach</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">$loop</span></code> 变量也包含了其它各种有用的属性：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="32%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">属性</th>
+<th class="head">描述</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>$loop-&gt;index</td>
+<td>当前循环迭代的索引（从0开始）。</td>
+</tr>
+<tr class="row-odd"><td>$loop-&gt;iteration</td>
+<td>当前循环迭代 （从1开始）。</td>
+</tr>
+<tr class="row-even"><td>$loop-&gt;remaining</td>
+<td>循环中剩余迭代数量。</td>
+</tr>
+<tr class="row-odd"><td>$loop-&gt;count</td>
+<td>迭代中的数组项目总数。</td>
+</tr>
+<tr class="row-even"><td>$loop-&gt;first</td>
+<td>当前迭代是否是循环中的首次迭代。</td>
+</tr>
+<tr class="row-odd"><td>$loop-&gt;last</td>
+<td>当前迭代是否是循环中的最后一次迭代。</td>
+</tr>
+<tr class="row-even"><td>$loop-&gt;depth</td>
+<td>当前循环的嵌套级别。</td>
+</tr>
+<tr class="row-odd"><td>$loop-&gt;parent</td>
+<td>在嵌套循环中，父循环的变量。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id14">
+<h3>26.5.4. 注释<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>视图注释编译指令编译指令在 <code class="docutils literal"><span class="pre">\Illuminate\View\Compilers\Concerns\CompilesComments</span></code> 文件提供。</p>
+<p><code class="docutils literal"><span class="pre">Blade</span></code> 也能在视图中定义注释。然而，跟 <code class="docutils literal"><span class="pre">HTML</span></code> 的注释不同的， <code class="docutils literal"><span class="pre">Blade</span></code> 注释不会被包含在应用程序返回的 <code class="docutils literal"><span class="pre">HTML</span></code> 内：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">{{</span><span class="o">--</span> <span class="nx">此注释将不会出现在渲染后的</span> <span class="nx">HTML</span> <span class="o">--</span><span class="p">}}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="php">
+<h3>26.5.5. PHP<a class="headerlink" href="#php" title="永久链接至标题">¶</a></h3>
+<p>在某些情况下，将 <code class="docutils literal"><span class="pre">PHP</span></code> 代码嵌入到视图中很有用。你可以使用 <code class="docutils literal"><span class="pre">Blade</span></code> 的 <code class="docutils literal"><span class="pre">&#64;php</span></code> 指令在模板中执行一段纯 <code class="docutils literal"><span class="pre">PHP</span></code> 代码：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">php</span>
+    <span class="c1">//</span>
+<span class="o">@</span><span class="nx">endphp</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">虽然 <code class="docutils literal"><span class="pre">Blade</span></code> 提供了这个功能，但频繁地使用意味着你的模版被嵌入了太多的逻辑。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id15">
+<h2>26.6. 引入子视图<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h2>
+<p>引入子视图的编译指令由 <code class="docutils literal"><span class="pre">\Illuminate\View\Compilers\Concerns\CompilesIncludes</span></code> 文件提供。</p>
+<p>你可以使用 <code class="docutils literal"><span class="pre">Blade</span></code> 的 <code class="docutils literal"><span class="pre">&#64;include</span></code> 命令来引入一个已存在的视图，所有在父视图的可用变量在被引入的视图中都是可用的。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+    <span class="o">@</span><span class="k">include</span><span class="p">(</span><span class="s1">&#39;shared.errors&#39;</span><span class="p">)</span>
+
+    <span class="o">&lt;</span><span class="nx">form</span><span class="o">&gt;</span>
+        <span class="o">&lt;!--</span> <span class="nx">表单内容</span> <span class="o">--&gt;</span>
+    <span class="o">&lt;/</span><span class="nx">form</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>被引入的视图会继承父视图中的所有数据，同时也可以向引入的视图传递额外的数组数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">include</span><span class="p">(</span><span class="s1">&#39;view.name&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;some&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;data&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>当然，如果尝试使用 <code class="docutils literal"><span class="pre">&#64;include</span></code> 去引入一个不存在的视图， Laravel 会抛出错误。如果想引入一个可能存在或可能不存在的视图，就使用 <code class="docutils literal"><span class="pre">&#64;includeIf</span></code> 指令:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">includeIf</span><span class="p">(</span><span class="s1">&#39;view.name&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;some&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;data&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>如果要根据给定的布尔条件 <code class="docutils literal"><span class="pre">&#64;include</span></code> 视图，可以使用 <code class="docutils literal"><span class="pre">&#64;includeWhen</span></code> 指令：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">includeWhen</span><span class="p">(</span><span class="nv">$boolean</span><span class="p">,</span> <span class="s1">&#39;view.name&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;some&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;data&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>要包含来自给定数组视图的第一个视图，可以使用 <code class="docutils literal"><span class="pre">includeFirst</span></code> 指令：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">includeFirst</span><span class="p">([</span><span class="s1">&#39;custom.admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;some&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;data&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">请避免在 <code class="docutils literal"><span class="pre">Blade</span></code> 视图中使用 <code class="docutils literal"><span class="pre">__DIR__</span></code> 及 <code class="docutils literal"><span class="pre">__FILE__</span></code> 常量，因为它们会引用编译视图时缓存文件的位置。</p>
+</div>
+<div class="section" id="id16">
+<h3>26.6.1. 为集合渲染视图<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<p>你可以使用 <code class="docutils literal"><span class="pre">Blade</span></code> 的 <code class="docutils literal"><span class="pre">&#64;each</span></code> 命令将循环及引入写成一行代码：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nb">each</span><span class="p">(</span><span class="s1">&#39;view.name&#39;</span><span class="p">,</span> <span class="nv">$jobs</span><span class="p">,</span> <span class="s1">&#39;job&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>第一个参数是对数组或集合中的每个元素进行渲染的部分视图。第二个参数是要迭代的数组或集合，而第三个参数是将被分配给视图中当前迭代的变量名称。举个例子，如果你要迭代一个 <code class="docutils literal"><span class="pre">jobs</span></code> 数组，通常会使用子视图中的变量 <code class="docutils literal"><span class="pre">job</span></code> 来获取每个 <code class="docutils literal"><span class="pre">job</span></code> 。当前迭代的 <code class="docutils literal"><span class="pre">key</span></code> 将作为子视图中的 <code class="docutils literal"><span class="pre">key</span></code> 变量。</p>
+<p>你也可以传递第四个参数到 <code class="docutils literal"><span class="pre">&#64;each</span></code> 命令。当需要迭代的数组为空时，将会使用这个参数提供的视图来渲染。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nb">each</span><span class="p">(</span><span class="s1">&#39;view.name&#39;</span><span class="p">,</span> <span class="nv">$jobs</span><span class="p">,</span> <span class="s1">&#39;job&#39;</span><span class="p">,</span> <span class="s1">&#39;view.empty&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">通过 <code class="docutils literal"><span class="pre">&#64;each</span></code> 渲染的视图不会从父视图继承变量。 如果子视图需要这些变量，则应该使用 <code class="docutils literal"><span class="pre">&#64;foreach</span></code> 和 <code class="docutils literal"><span class="pre">&#64;include</span></code> 。</p>
+</div>
+<p>请注意，这不是唯一的方法。这个结构大致相当于：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">forelse</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">item</span><span class="o">-&gt;</span><span class="na">users</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span>
+    <span class="o">@</span><span class="k">include</span><span class="p">(</span><span class="s1">&#39;view.name&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="nv">$key</span><span class="p">,</span> <span class="s1">&#39;job&#39;</span> <span class="o">=&gt;</span> <span class="nv">$job</span><span class="p">)</span>
+<span class="o">@</span><span class="k">empty</span>
+    <span class="o">@</span><span class="k">include</span><span class="p">(</span><span class="s1">&#39;view.empty&#39;</span><span class="p">)</span>
+<span class="o">@</span><span class="nx">endforelse</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id17">
+<h2>26.7. 堆栈<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
+<p>引入堆栈的编译指令由 <code class="docutils literal"><span class="pre">\Illuminate\View\Compilers\Concerns\CompilesStacks</span></code> 文件提供。</p>
+<p><code class="docutils literal"><span class="pre">Blade</span></code> 可以被推送到在其他视图或布局中的其他位置渲染的命名堆栈。这在子视图中指定所需的 JavaScript 库时非常有用：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;scripts&#39;</span><span class="p">)</span>
+    <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;/example.js&quot;</span><span class="o">&gt;&lt;/</span><span class="nx">script</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="nx">endpush</span>
+<span class="o">@</span><span class="nx">prepend</span><span class="p">(</span><span class="s1">&#39;scripts&#39;</span><span class="p">)</span>
+    <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;/first.js&quot;</span><span class="o">&gt;&lt;/</span><span class="nx">script</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="nx">endprepend</span>
+</pre></div>
+</div>
+<p>你可以根据需要多次压入堆栈，通过 <code class="docutils literal"><span class="pre">&#64;stack</span></code> 命令中传递堆栈的名称来渲染完整的堆栈内容：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;</span><span class="nx">head</span><span class="o">&gt;</span>
+    <span class="o">&lt;!--</span> <span class="nx">Head</span> <span class="nx">Contents</span> <span class="o">--&gt;</span>
+
+    <span class="o">@</span><span class="nx">stack</span><span class="p">(</span><span class="s1">&#39;scripts&#39;</span><span class="p">)</span>
+<span class="o">&lt;/</span><span class="nx">head</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id18">
+<h2>26.8. 服务注入<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h2>
+<p>服务注入的编译指令由 <code class="docutils literal"><span class="pre">\Illuminate\View\Compilers\Concerns\CompilesInjections</span></code> 文件提供。</p>
+<p><code class="docutils literal"><span class="pre">&#64;inject</span></code> 命令可用于从 Laravel 服务容器 中检索服务。传递给 <code class="docutils literal"><span class="pre">&#64;inject</span></code> 的第一个参数为置放该服务的变量名称，而第二个参数是要解析的服务的类或是接口的名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">inject</span><span class="p">(</span><span class="s1">&#39;metrics&#39;</span><span class="p">,</span> <span class="s1">&#39;App\Services\MetricsService&#39;</span><span class="p">)</span>
+
+<span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+    <span class="nx">Monthly</span> <span class="nx">Revenue</span><span class="o">:</span> <span class="p">{{</span> <span class="nv">$metrics</span><span class="o">-&gt;</span><span class="na">monthlyRevenue</span><span class="p">()</span> <span class="p">}}</span><span class="o">.</span>
+<span class="o">&lt;/</span><span class="nx">div</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h2>26.9. 拓展 Blade<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h2>
+<p>底层调用 <code class="docutils literal"><span class="pre">\Illuminate\View\Compilers\BladeCompiler</span></code> 的 <code class="docutils literal"><span class="pre">directive</span></code> 方法。</p>
+<p><code class="docutils literal"><span class="pre">Blade</span></code> 甚至允许你使用 <code class="docutils literal"><span class="pre">directive</span></code> 方法来定义自定义指令。当 <code class="docutils literal"><span class="pre">Blade</span></code> 编译器遇到自定义指令时，它将使用指令包含的表达式调用提供的回调。</p>
+<p>以下示例创建一个 <code class="docutils literal"><span class="pre">&#64;datetime($var)</span></code> 伪指令，该伪指令格式化给定的 <code class="docutils literal"><span class="pre">DateTime</span></code> 实例 <code class="docutils literal"><span class="pre">$var</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Blade</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\ServiceProvider</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">AppServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 执行注册后引导服务。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Blade</span><span class="o">::</span><span class="na">directive</span><span class="p">(</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$expression</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s2">&quot;&lt;?php echo (</span><span class="si">$expression</span><span class="s2">)-&gt;format(&#39;m/d/Y H:i&#39;); ?&gt;&quot;</span><span class="p">;</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 在容器中注册绑定。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如你所见，我们可以链式调用在指令中传递的任何表达式的 <code class="docutils literal"><span class="pre">format</span></code> 方法。所以，在这个例子里，该 &#64;datetime($datetime) 指令最终生成了以下 PHP 代码：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="p">(</span><span class="nv">$var</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">format</span><span class="p">(</span><span class="s1">&#39;m/d/Y H:i&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">更新 <code class="docutils literal"><span class="pre">Blade</span></code> 指令的逻辑后，你需要删除所有已缓存的 <code class="docutils literal"><span class="pre">Blade</span></code> 视图。使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">view:clear</span></code> 来清除被缓存的视图。</p>
+</div>
+<div class="section" id="id20">
+<h3>26.9.1. 自定义 If 语句<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<p>底层调用 <code class="docutils literal"><span class="pre">\Illuminate\View\Compilers\BladeCompiler</span></code> 的 <code class="docutils literal"><span class="pre">if</span></code> 方法。</p>
+<p>编写自定义指令有时候比定义简单、常见的条件语句更复杂，但是它又非常必要。因此， <code class="docutils literal"><span class="pre">Blade</span></code> 提供了一个 <code class="docutils literal"><span class="pre">Blade::if</span></code> 方法，它能使用闭包来快速定义自定义条件指令。 例如，定义一个自定义条件来检查当前的应用程序环境。我们可以在 <code class="docutils literal"><span class="pre">AppServiceProvider</span></code> 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法中这样做：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Blade</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 执行服务的注册后引导。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nx">Blade</span><span class="o">::</span><span class="na">if</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$environment</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">environment</span><span class="p">(</span><span class="nv">$environment</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦你定义了自定义条件之后，就可以很轻松地在模板中使用它：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="nx">env</span><span class="p">(</span><span class="s1">&#39;local&#39;</span><span class="p">)</span>
+    <span class="c1">// 该应用在本地环境中...</span>
+<span class="o">@</span><span class="nx">elseenv</span><span class="p">(</span><span class="s1">&#39;testing&#39;</span><span class="p">)</span>
+    <span class="c1">// 该应用在测试环境中...</span>
+<span class="o">@</span><span class="k">else</span>
+    <span class="c1">// 该应用不在本地或测试环境中...</span>
+<span class="o">@</span><span class="nx">endenv</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的blade原理分析.html" class="btn btn-neutral float-right" title="27. Blade原理分析" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的异常和错误处理原理分析.html" class="btn btn-neutral" title="25. 异常和错误处理原理分析" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

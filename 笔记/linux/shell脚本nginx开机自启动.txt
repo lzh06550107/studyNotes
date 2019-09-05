@@ -1,0 +1,88 @@
+#!/bin/bash
+[ -f /etc/init.d/functions ] && . /etc/init.d/functions  #如果存在functions 加载
+pidfile=/application/nginx/logs/nginx.pid  				 #定义nginx.pid 的位置
+nginx=/application/nginx/sbin/nginx
+oldboy(){
+	if [ $RETVAL -eq 0 ];then 
+		action "Nginx is $1" /bin/true		#上一个命令正确启动，则提示启动成功; $1 函数参数
+	else
+		action "Nginx is $1" /bin/false    #提示失败 ; $1 函数参数
+	fi
+}
+
+
+Start_Nginx(){
+	if [ -f $pidfile ];then  #如果pidfile文件存在 
+		echo "Nginx is running"  #nginx 正则运行
+	else	#不存在
+	$nginx   #启动nginx服务
+	RETVAL=$?	
+	oldboy Started #Started 是 oldboy 的参数
+	fi
+	return $RETVAL
+}
+
+Stop_Nginx(){
+	if [ ! -f $pidfile ]; then #如果该完结存在
+		echo "nginx is not running."
+	else 
+		$nginx -s stop 			 #停止apache
+		oldboy Stopped	#调用 oldboy 函数 传入Stopped参数
+	fi
+}
+
+Reload_Nginx () {
+	if [ ! -f $pidfile ]; then 
+		echo "Can't open $pidfile ,no such file or directory"
+	else
+		$nginx -s reload 			    #平滑重启
+		oldboy reload 					#调用 oldboy函数 传入reload 参数
+	fi
+}
+case $1 in 
+		start)
+			Start_Nginx
+			;;
+		stop)
+			Stop_Nginx
+			;;
+		restart)
+			Stop_Nginx
+			sleep 3
+			Start_Nginx
+			;;
+		reload)
+			Reload_Nginx
+			;;
+			*)
+			echo "USAGE:$0 {start|stop|reload|restart}"
+			exit 1
+			
+esac
+exit $RETVAL
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

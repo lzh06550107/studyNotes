@@ -1,0 +1,1150 @@
+*****
+线程执行者
+*****
+
+介绍
+====
+通常，当你在 Java 中开发一个简单的并发编程应用程序，你会创建一些 ``Runnable`` 对象并创建相应的 ``Thread`` 对象来运行它们。如果你开发一个运行多个并发任务的程序，这种途径的缺点如下：
+
+- 你必须要实现很多相关代码来管理 ``Thread`` 对象（创建，结束，获得的结果）。
+- 你必须给每个任务创建一个 ``Thread`` 对象。如果你执行一个大数据量的任务，那么这可能影响应用程序的吞吐量。
+- 你必须有效地控制和管理计算机资源。如果你创建太多线程，会使系统饱和。
+
+为了解决以上问题，从 ``Java5`` 开始 JDK 并发 ``API`` 提供一种机制。这个机制被称为 ``Executor framework`` ，接口核心是 ``Executor`` ， ``Executor`` 的子接口是 ``ExecutorService`` ，而 ``ThreadPoolExecutor`` 类则实现了这两个接口。
+
+这个机制将任务的创建与执行分离。使用执行者，你只要实现 ``Runnable`` 对象并将它们提交给执行者。执行者负责执行，实例化和运行这些线程。除了这些，它还可以使用线程池提高了性能。当你提交一个任务给这个执行者，它试图使用线程池中的线程来执行任务，从而避免继续创建线程。
+
+``Callable`` 接口是 ``Executor framework`` 的另一个重要优点。它跟 ``Runnable`` 接口很相似，但它提供了两种改进，如下：
+
+- 这个接口中主要的方法叫 ``call()`` ，可以返回结果。
+- 当你提交 ``Callable`` 对象到执行者，你可以获取一个实现 ``Future`` 接口的对象，你可以用这个对象来控制 ``Callable`` 对象的状态和结果。
+
+在这章中提供了 11 个指南，展示了如何通过使用前面提及的类和 Java 并发 ``API`` 来处理 ``Executor framework`` 。
+
+创建一个线程执行者
+=================
+使用 Executor framework 的第一步就是创建一个 ``ThreadPoolExecutor`` 类的对象。你可以使用这个类提供的 4 个构造器或 ``Executors`` 工厂类来创建 ``ThreadPoolExecutor`` 。一旦有执行者，你就可以提交 ``Runnable`` 或 ``Callable`` 对象给执行者来执行。
+
+在这个指南中，你将会学习如何使用这两种操作来实现一个 ``web`` 服务器的示例，这个 ``web`` 服务器用来处理各种客户端请求。
+
+.. code-block:: java
+
+	// 1.首先，实现能被服务器执行的任务。创建实现Runnable接口的Task类
+	public class Task implements Runnable {
+		// 2.声明一个类型为Date，名为initDate的属性，来存储任务创建日期，和一个类型为String，名为name的属性，来存储任务的名称
+		private Date initDate;
+		private String name;
+
+		// 3.实现Task构造器，初始化这两个属性
+		public Task(String name) {
+			initDate = new Date();
+			this.name = name;
+		}
+
+		// 4.实现run()方法
+		@Override
+		public void run() {
+			// 5.首先，将initDate属性和实际日期（这是任务的开始日期）写入到控制台
+			System.out.printf("%s: Task %s: Created on: %s\n", Thread.currentThread().getName(), name, initDate);
+			System.out.printf("%s: Task %s: Started on: %s\n", Thread.currentThread().getName(), name, new Date());
+
+			// 6.然后，使任务睡眠一个随机时间
+			try {
+				Long duration = (long) (Math.random() * 10);
+				System.out.printf("%s: Task %s: Doing a task during %d seconds\n", Thread.currentThread().getName(), name, duration);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 7.最后，将任务完成时间写入控制台
+			System.out.printf("%s: Task %s: Finished on: %s\n", Thread.currentThread().getName(), name, new Date());
+		}
+	}
+
+	// 8.现在，实现服务器类，用来执行使用执行者接受的所有任务。创建一个Server类
+	public class Server {
+		// 9.声明一个类型为ThreadPoolExecutor，名为executor的属性
+		private ThreadPoolExecutor executor;
+
+		// 10.实现Server构造器，使用Executors类初始化ThreadPoolExecutor对象
+		public Server() {
+			executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+		}
+
+		// 11.实现executeTask()方法，接收Task对象作为参数并将其提交到执行者。首先，写入一条信息到控制台，表明有一个新的任务到达
+		public void executeTask(Task task) {
+			System.out.printf("Server: A new task has arrived\n");
+			// 12.然后，调用执行者的execute(）方法来提交这个任务
+			executor.execute(task);
+			// 13.最后，将执行者的数据写入到控制台来看它们的状态
+			System.out.printf("Server: Pool Size: %d\n", executor.getPoolSize());
+			System.out.printf("Server: Active Count: %d\n", executor.getActiveCount());
+			System.out.printf("Server: Completed Tasks: %d\n", executor.getCompletedTaskCount());
+		}
+		// 14.实现endServer()方法，在这个方法中，调用执行者的shutdown()方法来结束任务执行
+		public void endServer() {
+			executor.shutdown();
+		}
+	}
+
+	// 15.最后，实现这个示例的主类，创建Main类，并实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			Server server = new Server();
+
+			for (int i = 0; i < 100; i++) {
+				Task task = new Task("Task " + i);
+				server.executeTask(task);
+			}
+
+			server.endServer();
+		}
+	}
+
+``Server`` 类是这个示例的关键。它创建和使用 ``ThreadPoolExecutor`` 执行任务。
+
+第一个重要点是在 ``Server`` 类的构造器中创建 ``ThreadPoolExecutor`` 。 ``ThreadPoolExecutor`` 有4个不同的构造器，但由于它们的复杂性， Java 并发 API 提供 ``Executors`` 类来构造执行者和其他相关对象。即我们可以通过 ``ThreadPoolExecutor`` 类的任意一 个构造器来创建 ``ThreadPoolExecutor`` ，但这里推荐使用 ``Executors`` 类。
+
+在本例中，你已经使用 ``newCachedThreadPool()`` 方法创建一个缓存线程池。这个方法返回 ``ExecutorService`` 对象，所以它被转换为 ``ThreadPoolExecutor`` 类型来访问它的所有方法。你已创建的缓存线程池，当需要执行新的任务会创建新的线程，如果它们已经完成运行任务，变成可用状态，会重新使用这些线程。线程重复利用的好处是，它减少线程创建的时间。缓存线程池的缺点是，为新任务不断创建线程， 所以如果你提交过多的任务给执行者，会使系统超载。
+
+注意事项：只有当你有一个合理的线程数或有一个很短的执行时间的任务时，使用通过 ``newCachedThreadPool()`` 方法创建的执行者。
+
+一旦你创建执行者，你可以使用 ``execute()`` 方法提交 ``Runnable`` 或 ``Callable`` 类型的任务。在本例中，你提交实现 ``Runnable`` 接口的 ``Task`` 类对象。
+
+你也打印了一些关于执行者信息的日志信息。特别地，你可以使用了以下方法：
+
+- ``getPoolSize()`` ：此方法返回线程池实际的线程数。
+- ``getActiveCount()`` ：此方法返回在执行者中正在执行任务的线程数。
+- ``getCompletedTaskCount()`` ：此方法返回执行者完成的任务数。
+
+``ThreadPoolExecutor`` 类和一般执行者的一个关键方面是，你必须明确地结束它。如果你没有这么做，这个执行者会继续它的执行，并且这个程序不会结束。如果执行者没有任务可执行， 它会继续等待新任务并且不会结束它的执行。一个 Java 应用程序将不会结束，除非所有的非守护线程完成它们的执行。所以，如果你不结束这个执行者，你的应用程序将不会结束。
+
+当执行者完成所有待处理的任务，你可以使用 ``ThreadPoolExecutor`` 类的 ``shutdown()`` 方法来表明你想要结束执行者。在你调用 ``shutdown()`` 方法之后，如果你试图提交其他任务给执行者，它将会拒绝，并且抛出 ``RejectedExecutionException`` 异常。
+
+``ThreadPoolExecutor`` 类提供了许多获取它状态的方法，我们在这个示例中，使用 ``getPoolSize()`` 、 ``getActiveCount()`` 和 ``getCompletedTaskCount()`` 方法来获取执行者的池大小、线程数、完成任务数信息。你也可以使用 ``getLargestPoolSize()`` 方法，返回池中某一时刻最大的线程数。
+
+``ThreadPoolExecutor`` 类也提供其他与结束执行者相关的方法，这些方法是：
+
+- ``shutdownNow()`` ：此方法立即关闭执行者。它不会执行待处理的任务，但是它会返回待处理任务的列表。当你调用这个方法时，正在运行的任务继续它们的执行，但这个方法并不会等待它们的结束。
+- ``isTerminated()`` ：如果你已经调用 ``shutdown()`` 或 ``shutdownNow()`` 方法，并且执行者完成关闭它的处理时，此方法返回 ``true`` 。
+- ``isShutdown()`` ：如果你在执行者中调用 ``shutdown()`` 方法，此方法返回 ``true`` 。
+- ``awaitTermination(long timeout, TimeUnit unit)`` ：此方法阻塞调用线程，直到执行者的任务结束或超时。 ``TimeUnit`` 类是个枚举类，有如下常 量：DAYS，HOURS，MICROSECONDS， MILLISECONDS， MINUTES,，NANOSECONDS 和SECONDS。
+注意事项：如果你想要等待任务的完成，不管它们的持续时间，请使用大的超时，如：DAYS。
+
+创建一个大小固定的线程执行者
+==========================
+当你使用由 ``Executors`` 类的 ``newCachedThreadPool()`` 方法创建的基本 ``ThreadPoolExecutor`` ，你会有执行者运行在某一时刻的线程数的问题。这个执行者为每个接收到的任务创建一个线程（如果池中没有空闲的线程），所以，如果你提交大量的任务，并且它们有很长的（执行）时间，你会使系统过载和引发应用程序性能不佳的问题。
+
+如果你想要避免这个问题， ``Executors`` 类提供一个方法来创建大小固定的线程执行者。这个执行者有最大线程数。 如果你提交超过这个最大线程数的任务，这个执行者将不会创建额外的线程，并且剩下的任务将会阻塞，直到执行者有空闲线程。这种行为，保证执行者不会引发应用程序性能不佳的问题。
+
+在这个指南中，你将继续学习怎样创建一个大小固定的线程执行者，然后修改本章第一个示例的实现。
+
+.. code-block:: java
+
+	public class Task implements Runnable {
+		private Date initDate;
+		private String name;
+
+		public Task(String name) {
+			initDate = new Date();
+			this.name = name;
+		}
+
+		@Override
+		public void run() {
+			System.out.printf("%s: Task %s: Created on: %s\n", Thread.currentThread().getName(), name, initDate);
+			System.out.printf("%s: Task %s: Started on: %s\n", Thread.currentThread().getName(), name, new Date());
+
+			try {
+				Long duration = (long) (Math.random() * 10);
+				System.out.printf("%s: Task %s: Doing a task during %d seconds\n", Thread.currentThread().getName(), name,
+						duration);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			System.out.printf("%s: Task %s: Finished on: %s\n", Thread.currentThread().getName(), name, new Date());
+		}
+	}
+
+	public class Server {
+		private ThreadPoolExecutor executor;
+
+		// 1.实现本章第一个指南描述的示例，打开Server类，修改它的构造器。使用newFixedThreadPool()方法创建执行者并传入5作为参数
+		public Server() {
+			executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
+		}
+
+		public void executeTask(Task task) {
+			System.out.printf("Server: A new task has arrived\n");
+			executor.execute(task);
+			System.out.printf("Server: Pool Size: %d\n",executor.getPoolSize());
+			System.out.printf("Server: Active Count: %d\n",executor.getActiveCount());
+			// 2.修改executeTask()方法，包含额外的日志信息行。调用getTaskCount()方法，获取已经提交给执行者的任务数
+			System.out.printf("Server: Task Count: %d\n",executor.getTaskCount());
+			System.out.printf("Server: Completed Tasks: %d\n",executor.getCompletedTaskCount());
+		}
+
+		public void endServer() {
+			executor.shutdown();
+		}
+	}
+
+	public class Main {
+		public static void main(String[] args) {
+			Server server = new Server();
+
+			for (int i = 0; i < 100; i++) {
+				Task task = new Task("Task " + i);
+				server.executeTask(task);
+			}
+
+			server.endServer();
+		}
+	}
+
+在本例中，你已经使用 ``Executors`` 类的 ``newFixedThreadPool()`` 方法来创建执行者。这个方法创建一个有最大线程数的执行者。如果你提交超过最大线程数的任务，剩下的任务将会被阻塞，直到有空闲的线程来处理它们。这个方法接收一个你想要让执行者拥有最大线程数的参数。在你的例子中，你已经创建了拥有5个线程的执行者。
+
+写入的程序输出到控制台，你已经使用了 ``ThreadPoolExecutor`` 类的一些方法，包括：
+
+- ``getPoolSize()`` ：此方法返回线程池实际的线程数。
+- ``getActiveCount()`` ：此方法返回在执行者中正在执行任务的线程数。
+
+你可以看出这些方法的输出是 5 ，表明执行者有 5 个线程。它本没有超出既定的最大线程数。
+
+当你提交最后的任务给执行者，它只有 5 个活动的线程。剩下的 95 个任务将等待空闲线程。我们使用 ``getTaskCount()`` 方法来显示有多少个任务已经提交给执行者。
+
+``Executors`` 类同时提供 ``newSingleThreadExecutor()`` 方法。这是大小固定的线程执行者的一个极端例子。它创建只有一个线程的执行者，所以它在任意时刻只能执行一个任务。
+
+执行者执行返回结果的任务
+======================
+Executor framework 的一个优点是你可以并发执行返回结果的任务。 Java 并发 API 使用以下两种接口来实现：
+
+- ``Callable`` ：此接口有一个 ``call()`` 方法。在这个方法中，你必须实现任务的（处理）逻辑。 ``Callable`` 接口是一个参数化的接口。意味着你必须表明 ``call()`` 方法返回的数据类型。
+- ``Future`` ：此接口有一些方法来保证 ``Callable`` 对象结果的获取和管理它的状态。
+
+在这个指南中，你将学习如何实现返回结果的任务，并在执行者中运行它们。
+
+.. code-block:: java
+
+	// 1.创建FactorialCalculator类，指定它实现Callable接口，并参数化为Integer类型
+	public class FactorialCalculator implements Callable<Integer> {
+		// 2.声明一个私有的，类型为Integer，名为number的属性，用来存储任务将要计算出的数
+		private Integer number;
+		// 3.实现FactorialCalculator构造器，初始化这个属性
+		public FactorialCalculator(Integer number) {
+			this.number = number;
+		}
+
+		// 4.实现call()方法。这个方法将返回FactorialCalculator的number属性的阶乘
+		@Override
+		public Integer call() throws Exception {
+			int num, result;
+
+			num = number.intValue();
+			// 5.首先，创建和初始化在这个方法中使用的局部变量
+			result = 1;
+			// 6.如果数是1或0，则返回1。否则，计算这个数的阶乘。出于教学目的，在两次乘之间，令这个任务睡眠20毫秒
+			if (num == 0 || num == 1) {
+				result = 1;
+			} else {
+				for (int i = 2; i <= number; i++) {
+					result *= i;
+					Thread.sleep(20);
+				}
+			}
+			// 7.操作结果的信息写入控制台
+			System.out.printf("%s: %d\n", Thread.currentThread().getName(), result);
+			// 8.返回操作结果
+			return result;
+		}
+	}
+
+	// 9.实现这个示例的主类，创建Main类，实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 10.使用Executors类的newFixedThreadPool()方法创建ThreadPoolExecutor来运行任务。传入参数2
+			ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+			// 11.创建Future<Integer>对象的数列
+			List<Future<Integer>> resultList = new ArrayList<>();
+			// 12.创建Random类产生的随机数
+			Random random = new Random();
+			// 13.生成0到10之间的10个随机数
+			for (int i = 0; i < 10; i++) {
+				Integer number = new Integer(random.nextInt(10));
+				// 14.创建一个FactorialCaculator对象，传入随机数作为参数
+				FactorialCalculator calcutor = new FactorialCalculator(number);
+				// 15.调用执行者的submit()方法来提交FactorialCalculator任务给执行者。这个方法返回Future<Integer>对象来管理任务，并且最终获取它的结果
+				Future<Integer> result = executor.submit(calcutor);
+				// 16.添加Future对象到之前创建的数列
+				resultList.add(result);
+			}
+
+			// 17.创建一个do循环来监控执行者的状态
+			do {
+				// 18.首先，写入信息到控制台，表明使用执行者的getCompletedTaskNumber()方法获得的已完成的任务数
+				System.out.printf("Main: Number of Completed Tasks: %d\n", executor.getCompletedTaskCount());
+				// 19.然后，对于数列中的10个Future对象，使用isDone()方法，将信息写入（到控制台）表明它们所管理的任务是否已经完成
+				for (int i = 0; i < resultList.size(); i++) {
+					Future<Integer> result = resultList.get(i);
+					System.out.printf("Main: Task %d: %s\n", i, result.isDone());
+				}
+				// 20.令这个线程睡眠50毫秒
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				// 21.如果执行者中的已完成任务数小于10，重复这个循环
+			} while (executor.getCompletedTaskCount() < resultList.size());
+
+			// 22.将获得的每个任务的结果写入控制台。对于每个Future对象，通过它的任务使用get()方法获取返回的Integer对象
+			System.out.printf("Main: Results\n");
+			for (int i = 0; i < resultList.size(); i++) {
+				Future<Integer> result = resultList.get(i);
+				Integer number = null;
+				try {
+					number = result.get();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+				// 23.然后，在控制台打印这个数
+				System.out.printf("Core: Task %d: %d\n", i, number);
+			}
+
+			//24.最后，调用执行者的shutdown()方法来结束这个执行者
+			executor.shutdown();
+		}
+	}
+
+在这个指南中，你已经学习了如何使用 ``Callable`` 接口来启动返回结果的并发任务。你已经使用 ``FactorialCalculator`` 类实现了 ``Callable`` 接口，并参数化为 ``Integer`` 类型作为结果类型。因此， ``Integer`` 就作为 ``call()`` 方法的返回类型。
+
+``Main`` 类是这个示例的另一个关键点。它使用 ``submit()`` 方法提交一个 ``Callable`` 对象给执行者执行。这个方法接收 ``Callable`` 对象参数，并且返回一个 ``Future`` 对象，你可以以这两个目标来使用它：
+
+- 你可以控制任务的状态：你可以取消任务，检查任务是否已经完成。基于这个目的，你已经使用 ``isDone()`` 方法来检查任务是否已经完成。
+- 你可以获取 ``call()`` 方法返回的结果。基于这个目的，你已经使用了 ``get()`` 方法。这个方法会等待，直到 ``Callable`` 对象完成 ``call()`` 方法的执 行，并且返回它的结果。如果线程在 ``get()`` 方法上等待结果时被中断，它将抛出 ``InterruptedException`` 异常。如果 ``call()`` 方法抛出异常，这个方法会抛出 ``ExecutionException`` 异常。
+
+当你调用 ``Future`` 对象的 ``get()`` 方法，并且这个对象控制的任务未完成，这个方法会阻塞直到任务完成。 ``Future`` 接口提供其他版本的 ``get()`` 方法：
+
+- ``get(long timeout, TimeUnit unit)`` ：这个版本的 ``get`` 方法，如果任务的结果不可用，等待它在指定的时间内。如果时间超时，并且结果不可用，这个方法返回 ``null`` 值。  ``TimeUnit`` 类是个枚举类，有如下常量：DAYS，HOURS，MICROSECONDS， MILLISECONDS， MINUTES,，NANOSECONDS 和SECONDS。
+
+运行多个任务并处理第一个结果
+==========================
+在并发编程中的一个常见的问题就是，当有多种并发任务解决一个问题时，你只对这些任务的第一个结果感兴趣。比如，你想要排序一个数组。你有多种排序算法。 你可以全部启用它们，并且获取第一个结果（对于给定数组排序最快的算法的结果）。
+
+在这个指南中，你将学习如何使用 ``ThreadPoolExecutor`` 类的场景。你将继续实现一个示例，一个用户可以被两种机制验证。如果使用其中一个机制验证通过，用户将被确认验证通过。
+
+.. code-block:: java
+
+	// 1.创建UserValidator类，实现用户验证过程
+	public class UserValidator {
+		// 2.声明一个私有的、类型为String、名为name的属性，用来存储系统验证用户的名称
+		private String name;
+		// 3.实现UserValidator类的构造器，初始化这个属性
+		public UserValidator(String name) {
+			this.name = name;
+		}
+
+		// 4.实现validate()方法。接收你想要验证用户的两个String类型参数，一个为name，一个为password
+		public boolean validate(String name, String password) {
+			// 5.创建Random对象，名为random
+			Random random = new Random();
+
+			try {
+				// 6.等待个随机时间，用来模拟用户验证的过程
+				Long duration = (long) (Math.random() * 10);
+				System.out.printf("Validator %s: Validating a user during %d seconds\n", this.name, duration);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				return false;
+			}
+
+			// 7.返回一个随机Boolean值。如果用户验证通过，这个方法将返回true，否则，返回false
+			return random.nextBoolean();
+		}
+		// 8.实现getName()方法，返回name属性值
+		public String getName() {
+			return name;
+		}
+	}
+
+	// 9.现在，创建TaskValidator类，用来执行UserValidation对象作为并发任务的验证过程。指定它实现Callable接口，并参数化为String类型
+	public class TaskValidator implements Callable<String> {
+		// 10.声明一个私有的、类型为UserValidator、名为validator的属性
+		private UserValidator validator;
+
+		// 11.声明两个私有的、类型为String、名分别为user和password的属性
+		private String user;
+		private String password;
+
+		// 12.实现TaskValidator类，初始化这些属性
+		public TaskValidator(UserValidator validator, String user, String password) {
+			this.validator = validator;
+			this.user = user;
+			this.password = password;
+		}
+
+		// 13.实现call()方法，返回一个String类型对象
+		@Override
+		public String call() throws Exception {
+			// 14.如果用户没有通过UserValidator对象验证，写入一条信息到控制台，表明这种情况，并且抛出一个Exception异常
+			if (!validator.validate(user, password)) {
+				System.out.printf("%s: The user has not been found\n", validator.getName());
+				throw new Exception("Error validating user");
+			}
+			// 15.否则，写入一条信息到控制台表明用户已通过验证，并返回UserValidator对象的名称
+			System.out.printf("%s: The user has been found\n", validator.getName());
+			return validator.getName();
+		}
+	}
+
+	// 16.现在，实现这个示例的主类，创建Main类，实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 17.创建两个String对象，一个名为name，另一个名为password，使用”test”值初始化它们
+			String username = "test";
+			String password = "test";
+
+			// 18.创建两个UserValidator对象，一个名为ldapValidator，另一个名为dbValidator
+			UserValidator ldapValidator = new UserValidator("LDAP");
+			UserValidator dbValidator = new UserValidator("DataBase");
+			// 19.创建两个TaskValidator对象，分别为ldapTask和dbTask。分别使用ldapValidator和dbValidator初始化它们
+			TaskValidator ldapTask = new TaskValidator(ldapValidator, username, password);
+			TaskValidator dbTask = new TaskValidator(dbValidator, username, password);
+			// 20.创建TaskValidator队列，添加两个已创建的对象（ldapTask和dbTask）
+			List<TaskValidator> taskList = new ArrayList<>();
+			taskList.add(ldapTask);
+			taskList.add(dbTask);
+			// 21.使用Executors类的newCachedThreadPool()方法创建一个新的ThreadPoolExecutor对象和一个类型为String，名为result的变量
+			ExecutorService executor = Executors.newCachedThreadPool();
+			String result;
+
+			// 22.调用executor对象的invokeAny()方法。该方法接收taskList参数，返回String类型。同样，它将该方法返回的String对象写入到控制台
+			try {
+				result = executor.invokeAny(taskList);
+				System.out.printf("Main: Result: %s\n", result);
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+			// 23.使用shutdown()方法结束执行者，写入一条信息到控制台，表明程序已结束
+			executor.shutdown();
+			System.out.printf("Main: End of the Execution\n");
+		}
+	}
+
+``Main`` 类是这个示例的关键。 ``ThreadPoolExecutor`` 类中的 ``invokeAny()`` 方法接收任务数列，并启动它们，返回完成时没有抛出异常的第一个 任务的结果。该方法返回的数据类型与启动任务的 ``call()`` 方法返回的类型一样。在本例中，它返回 ``String`` 值。
+
+这个示例有两个返回随机 ``Boolean`` 值的 ``UserValidator`` 对象。每个 ``UserValidator`` 对象被一个实现 ``TaskValidator`` 类的 ``Callable`` 对象使用。如果 ``UserValidator`` 类的 ``validate()`` 方法返回 ``false`` ， ``TaskValidator`` 类将抛出异常。否则，它将返回 ``true`` 值。
+
+所以，我们有两个任务，可以返回 ``true`` 值或抛出异常。有以下4种情况：
+
+- 两个任务都返回 ``ture`` 。 ``invokeAny()`` 方法的结果是第一个完成任务的名称。
+- 第一个任务返回 ``true`` ，第二个任务抛出异常。 ``invokeAny()`` 方法的结果是第一个任务的名称。
+- 第一个任务抛出异常，第二个任务返回 ``true`` 。 ``invokeAny()`` 方法的结果是第二个任务的名称。
+- 两个任务都抛出异常。在本例中， ``invokeAny()`` 方法抛出一个 ``ExecutionException`` 异常。
+
+如果你多次运行这个示例，你可以获取以上这4种情况。
+
+``ThreadPoolExecutor`` 类提供其他版本的 ``invokeAny()`` 方法：
+
+- ``invokeAny(Collection<? extends Callable<T>> tasks, long timeout,TimeUnit unit)`` ：此方法执行所有任务，并返回第一个完成（未超时）且没有抛出异常的任务的结果。 ``TimeUnit`` 类是个枚举类，有如下常量：DAYS，HOURS，MICROSECONDS，MILLISECONDS， MINUTES,，NANOSECONDS 和SECONDS。
+
+运行多个任务并处理所有的结果
+==========================
+执行者框架允许你在不用担心线程创建和执行的情况下，并发的执行任务。它还提供了 ``Future`` 类，这个类可以用来控制任务的状态,也可以用来获得执行者执行任务的结果。
+
+如果你想要等待一个任务完成，你可以使用以下两种方法：
+
+- 如果任务执行完成， ``Future`` 接口的 ``isDone()`` 方法将返回 ``true`` 。
+- ``ThreadPoolExecutor`` 类的 ``awaitTermination()`` 方法使线程进入睡眠，直到每一个任务调用 ``shutdown()`` 方法之后完成执行。
+
+这两种方法都有一些缺点。第一个方法，你只能控制一个任务的完成。第二个方法，为了等待一个线程你必须关闭执行者，否则这个方法的调用立即返回。
+
+``ThreadPoolExecutor`` 类提供一个方法，允许你提交任务列表给执行者，并且在这个列表上等待所有任务的完成。在这个指南中，你将学习如何使用这个特性，实现一个示例，执行3个任务，并且当它们完成时将结果打印出来。
+
+.. code-block:: java
+
+	// 1.创建Result类，存储这个示例中并发任务产生的结果
+	public class Result {
+		// 2.声明两个私有属性。一个String属性，名为name，另一个int属性，名为value
+		private String name;
+		private int value;
+
+		// 3.实现相应的get()和set()方法，用来设置和获取name和value属性的值
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+		public void setValue(int value) {
+			this.value = value;
+		}
+	}
+
+	// 4.创建Task类，实现Callable接口，参数化为Result类型
+	public class Task implements Callable<Result> {
+		// 5.声明一个私有String属性，名为name
+		private String name;
+
+		// 6.实现Task类构造器，初始化这个属性
+		public Task(String name) {
+			this.name = name;
+		}
+
+		// 7.实现这个类的call()方法，在本例中，它将返回一个Result对象
+		@Override
+		public Result call() throws Exception {
+			// 8.首先，写入一个信息到控制台，表明任务开始
+			System.out.printf("%s: Staring\n", this.name);
+			// 9.然后，等待一个随机时间
+			try {
+				Long duration = (long) (Math.random() * 10);
+				System.out.printf("%s: Waiting %d seconds for results.\n", this.name, duration);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 10.在Result对象中返回一个计算5个随机数的总和的int值
+			int value = 0;
+			for (int i = 0; i < 5; i++) {
+				value += (int) (Math.random() * 100);
+			}
+			// 11.创建Result对象，用任务的名称和前面操作结果来初始化它
+			Result result = new Result();
+			result.setName(this.name);
+			result.setValue(value);
+			// 12.写入一个信息到控制台，表明任务已经完成
+			System.out.printf("%s: Ends\n", this.name);
+			// 13.返回Result对象
+			return result;
+		}
+	}
+
+	// 14.最后，实现这个示例的主类，创建Main类，实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 15.使用Executors类的newCachedThreadPool()方法，创建ThreadPoolExecutor对象
+			ExecutorService executor = Executors.newCachedThreadPool();
+
+			// 16.创建Task对象列表。创建3个Task对象并且用这个列表来存储
+			List<Task> taskList = new ArrayList<>();
+			for (int i = 0; i < 3; i++) {
+				Task task = new Task("Task-" + i);
+				taskList.add(task);
+			}
+
+			// 17.创建Future对象列表，参数化为Result类型
+			List<Future<Result>> resultList = null;
+
+			try {
+				// 18.调用ThreadPoolExecutor类的invokeAll()方法。这个类将会返回之前创建的Future对象列表
+				resultList = executor.invokeAll(taskList);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			// 19.使用shutdown()方法结束执行者
+			executor.shutdown();
+
+			// 20.写入处理Future对象列表任务的结果
+			System.out.printf("Core: Printing the results\n");
+			for (int i = 0; i < resultList.size(); i++) {
+				Future<Result> future = resultList.get(i);
+
+				try {
+					Result result = future.get();
+					System.out.printf("%s: %s\n", result.getName(), result.getValue());
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+在这个指南中，你已经学习了如何提交任务列表到执行者和使用 ``invokeAll()`` 方法等待它们的完成。这个方法接收 ``Callable`` 对象列表和返回 ``Future`` 对象列表。这个列表将会有列表中每个任务的一个 ``Future`` 对象。 ``Future`` 对象列表的第一个对象是 ``Callable`` 对象列表控制的第一个任务，以此类推。
+
+第一点要考虑的是，在存储结果对象的列表中声明的 ``Future`` 接口参数化的数据类型必须与使用的 ``Callable`` 对象的参数化相兼容。在本例中，你已经使用相同数据类型： ``Result`` 类型。
+
+另一个重要的一点就是关于 ``invokeAll()`` 方法，你会使用 ``Future`` 对象获取任务的结果。当所有的任务完成时，这个方法结束，如果你调用返回的 ``Future`` 对象的 ``isDone()`` 方法，所有调用都将返回 ``true`` 值。
+
+``ExecutorService`` 类提供其他版本的 ``invokeAll()`` 方法：
+
+- ``invokeAll(Collection<? extends Callable<T>> tasks, long timeout,TimeUnit unit)`` ：此方法执行所有任务，当它们全部完成且未超时，返回它们的执行结果。 ``TimeUnit`` 类是个枚举类，有如下常量：DAYS，HOURS，MICROSECONDS， MILLISECONDS， MINUTES,，NANOSECONDS 和SECONDS。
+
+执行者延迟执行任务
+=================
+执行者框架提供 ``ThreadPoolExecutor`` 类，使用池中的线程来执行 ``Callable`` 和 ``Runnable`` 任务，这样可以避免所有线程的创建操作。当你提交一个任务给执行者，会根据执行者的配置尽快执行它。在有些使用情况下，当你对尽快执行任务不感觉兴趣。你可能想要在一段时间之后执行任务或周期性地执行任务。基于这些目的，执行者框架提供 ``ScheduledThreadPoolExecutor`` 类。
+
+在这个指南中，你将学习如何创建 ``ScheduledThreadPoolExecutor`` 和如何使用它安排任务在指定的时间后执行。
+
+.. code-block:: java
+
+	// 1.创建Task类，实现Callable接口，参数化为String类型
+	public class Task implements Callable<String> {
+		private final SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS");
+
+		// 2.声明一个私有的、类型为String、名为name的属性，用来存储任务的名称
+		private String name;
+
+		// 3.实现Task类的构造器，初始化name属性
+		public Task(String name) {
+			this.name = name;
+		}
+
+		// 4.实现call()方法，写入实际日期到控制台，返回一个文本，如：Hello, world
+		@Override
+		public String call() throws Exception {
+			System.out.printf("%s: Starting at : %s\n", name, sdf.format(new Date()));
+			return "Hello, world";
+		}
+	}
+
+	// 5.实现示例的主类，创建Main类，实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 6.使用Executors类的newScheduledThreadPool()方法，创建ScheduledThreadPoolExecutor类的一个执行者。传入参数1
+			ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+			// 7.使用ScheduledThreadPoolExecutor实例的schedule()方法，初始化和开始一些任务（本例中5个任务）
+			System.out.printf("Main: Starting at: %s\n", new Date());
+			for (int i = 0; i < 5; i++) {
+				Task task = new Task("Task-" + i);
+				executor.schedule(task, i + 1, TimeUnit.SECONDS);
+			}
+
+			// 8.使用shutdown()方法关闭执行者
+			executor.shutdown();
+
+			// 9.使用执行者的awaitTermination()方法，等待所有任务完成
+			try {
+				executor.awaitTermination(1, TimeUnit.DAYS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 10.写入一条信息表明程序结束时间
+			System.out.printf("Core: Ends at: %s\n", new Date());
+		}
+	}
+
+在这个示例中，关键的一点是 ``Main`` 类和 ``ScheduledThreadPoolExecutor`` 的管理。正如使用 ``ThreadPoolExecutor`` 类创建预定的执行者， ``Java`` 建议利用 ``Executors`` 类。在本例中，你使用 ``newScheduledThreadPool()`` 方法。你用 1 作为参数传给这个方法。这个参数是你想要让线程池创建的线程数。
+
+你必须使用 ``schedule()`` 方法，让执行者在一段时间后执行任务。这个方法接收 3 个参数，如下：
+
+- 你想要执行的任务
+- 你想要让任务在执行前等待多长时间
+- 时间单位，指定为 ``TimeUnit`` 类的常数
+
+在本例中，每个任务等待的秒数（ ``TimeUnit.SECONDS`` ）等于它在任务数组中的位置再加 1 。
+
+注意事项：如果你想在给定时间执行一个任务，计算这个日期与当前日期的差异，使用这个差异作为任务的延迟。
+
+你也可以使用 ``Runnable`` 接口实现任务，因为 ``ScheduledThreadPoolExecutor`` 类的 ``schedule()`` 方法接收这两种类型（ ``Runnable`` 和 ``Callable`` ）的任务。
+
+尽管 ``ScheduledThreadPoolExecutor`` 类是 ``ThreadPoolExecutor`` 类的子类，因此，它继承 ``ThreadPoolExecutor`` 类的所有功能，但 Java 建议使用 ``ScheduledThreadPoolExecutor`` 仅适用于调度任务。
+
+最后，你可以配置 ``ScheduledThreadPoolExecutor`` 的行为，当你调用 ``shutdown()`` 方法时，并且有待处理的任务正在等待它们延迟结束。默认的行为是，不管执行者是否结束这些任务都将被执行。你可以使用 ``ScheduledThreadPoolExecutor`` 类的 ``setExecuteExistingDelayedTasksAfterShutdownPolicy()`` 方法来改变这种行为。使用 ``false`` ，调用 ``shutdown()`` 时，待处理的任务不会被执行。
+
+执行者定期执行任务
+=================
+执行者框架提供 ``ThreadPoolExecutor`` 类，使用池中的线程执行并发任务，从而避免所有线程的创建操作。当你提交任务给执行者，根据它的配置，它尽快地执行任务。当它结束，任务将被执行者删除，如果你想再次运行任务，你必须再次提交任务给执行者。
+
+但是执行者框架通过 ``ScheduledThreadPoolExecutor`` 类可以执行周期性任务。在这个指南中，你将学习如何通过使用这个类的功能来安排一个周期性任务。
+
+.. code-block:: java
+
+	// 1.创建Task类，并指定它实现Runnable接口
+	public class Task implements Runnable {
+		// 2.声明一个私有的、类型为String、名为name的属性，用来存储任务的名称
+		private String name;
+		// 3.实现Task类的构造器，初始化name属性
+		public Task(String name) {
+			this.name = name;
+		}
+
+		// 4.实现run()方法，写入实际日期到控制台，检查任务在指定的时间内执行
+		@Override
+		public void run() {
+			System.out.printf("%s: Executed at: %s\n", name, new Date());
+		}
+	}
+
+	// 5.实现示例的主类，创建Main类，实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 6.使用Executors类的newScheduledThreadPool()方法，创建ScheduledThreadPoolExecutor。传入参数1给这个方法
+			ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+			// 7.写入实际日期到控制台
+			System.out.printf("Main: Starting at: %s\n", new Date());
+
+			// 8.创建一个新的Task对象
+			Task task = new Task("Task");
+			// 9.使用scheduledAtFixRate()方法把它提交给执行者。使用前面创建的任务，数字1，数字2和常量TimeUnit.SECONDS作为参数。这个方法返回ScheduledFuture对象，它可以用来控制任务的状态
+			ScheduledFuture<?> result = executor.scheduleAtFixedRate(task, 1, 2, TimeUnit.SECONDS);
+
+			// 10.创建10个循环步骤，写入任务下次执行的剩余时间。在循环中，使用ScheduledFuture对象的getDelay()方法，获取任务下次执行的毫秒数
+			for (int i = 0; i < 10; i++) {
+				System.out.printf("Main: Delay: %d\n", result.getDelay(TimeUnit.MILLISECONDS));
+				try {
+					TimeUnit.MILLISECONDS.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			//11.使用shutdown()方法关闭执行者
+			executor.shutdown();
+
+			// 12.使线程睡眠5秒，检查周期性任务是否完成
+			System.out.printf("Main: No more tasks at: %s\n", new Date());
+			try {
+				TimeUnit.SECONDS.sleep(5);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 13.写入一条信息到控制台，表明程序结束
+			System.out.printf("Main: Finished at: %s\n", new Date());
+		}
+	}
+
+当你想要使用执行者框架执行一个周期性任务，你需要 ``ScheduledExecutorService`` 对象。 Java 建议使用 ``Executors`` 类创建执行者， ``Executors`` 类是一个执行者对象工厂。在本例中，你应该使用 ``newScheduledThreadPool()`` 方法，创建一个 ``ScheduledExecutorService`` 对象。这个方法接收池的线程数作为参数。正如在本例中你只有一个任务，你传入了值 1 作为参数。
+
+一旦你有执行者需要执行一个周期性任务，你提交任务给该执行者。你已经使用了 ``scheduledAtFixedRate()`` 方法。此方法接收 4 个参数：你想要周期性执行的任务、第一次执行任务的延迟时间、两次执行之间的间隔期间、第2、3个参数的时间单位。它是 ``TimeUnit`` 类的常 量， ``TimeUnit`` 类是个枚举类，有如下常量：DAYS，HOURS，MICROSECONDS， MILLISECONDS， MINUTES,，NANOSECONDS 和SECONDS。
+
+很重要的一点需要考虑的是两次执行之间的（间隔）期间，是这两个执行开始之间的一段时间。如果你有一个花5秒执行的周期性任务，而你给一段3秒时间，同一时刻，你将会有两个任务在执行。
+
+``scheduleAtFixedRate()`` 方法返回 ``ScheduledFuture`` 对象，它继承 ``Future`` 接口，这个方法和调度任务一起协同工作。 ``ScheduledFuture`` 是一个参数化接口（校对注： ``ScheduledFuture<V>`` ）。在这个示例中，由于你的任务是非参数化的 ``Runnable`` 对象，你必须使用 问号作为参数。
+
+你已经使用 ``ScheduledFuture`` 接口的一个方法。 ``getDelay()`` 方法返回直到任务的下次执行时间。这个方法接收一个 ``TimeUnit`` 常量，这是你想要接收结果的时间单位。
+
+``ScheduledThreadPoolExecutor`` 提供其他方法来调度周期性任务。这就是 ``scheduleWithFixedRate()`` 方法。它与 ``scheduledAtFixedRate()`` 方法有一样的参数，但它们之间的差异值得注意。在 ``scheduledAtFixedRate()`` 方法中，第3个参数决定两个执行开始的一段时间。在 ``scheduledWithFixedRate()`` 方法中，参数决定任务执行结束与下次执行开始之间的一段时间。
+
+当你使用 ``shutdown()`` 方法时，你也可以通过参数配置一个 ``SeduledThreadPoolExecutor`` 的行为。 ``shutdown()`` 方法默认的行为是，当你调用这个方法时，计划任务就结束。 你可以使用 ``ScheduledThreadPoolExecutor`` 类的 ``setContinueExistingPeriodicTasksAfterShutdownPolicy()`` 方法设置 ``true`` 值改变这个行为。在调用 ``shutdown()`` 方法时，周期性任务将不会结束。
+
+执行者取消任务
+=============
+当你使用执行者工作时，你不得不管理线程。你只实现 ``Runnable`` 或 ``Callable`` 任务和把它们提交给执行者。执行者负责创建线程，在线程池中管理它们，当它们不需要时，结束它们。有时候，你想要取消已经提交给执行者的任务。在这种情况下，你可以使用 ``Future`` 的 ``cancel()`` 方法，它允许你做取消操作。在这个指南中，你将学习如何使用这个方法来取消已经提交给执行者的任务。
+
+.. code-block:: java
+
+	// 1.创建Task类，指定实现Callable接口，并参数化为String类型。实现call()方法，写入一条信息到控制台，并使这个线程在循环中睡眠100毫秒
+	public class Task implements Callable<String> {
+
+		@Override
+		public String call() throws Exception {
+			while (true) {
+				System.out.printf("Task: Test\n");
+				Thread.sleep(100);
+			}
+		}
+	}
+
+	// 2.实现示例的主类，创建Main类，实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 3. 使用Executors类的newCachedThreadPool()方法创建ThreadPoolExecutor对象
+			ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+
+			// 4.创建Task对象
+			Task task = new Task();
+
+			// 5.使用submit()方法提交任务给执行者
+			System.out.printf("Main: Executing the Task\n");
+			Future<String> result = executor.submit(task);
+
+			// 6.使主任务睡眠2秒
+			try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			// 7.使用通过submit()方法返回的Future对象result的cancel()方法，取消任务的执行。传入true值作为cancel()方法的参数
+			System.out.printf("Main: Cancelling the Task\n");
+			result.cancel(true);
+
+			// 8.将isCancelled()方法和isDone()的调用结果写入控制台，验证任务已取消，因此，已完成
+			System.out.printf("Main: Cancelled: %s\n", result.isCancelled());
+			System.out.printf("Main: Done: %s\n", result.isDone());
+
+			// 9.使用shutdown()方法结束执行者，写入信息（到控制台）表明程序结束
+			executor.shutdown();
+			System.out.printf("Main: The executor has finished\n");
+		}
+	}
+
+当你想要取消你已提交给执行者的任务，使用 ``Future`` 接口的 ``cancel()`` 方法。根据 ``cancel()`` 方法参数和任务的状态不同，这个方法的行为将不同：
+
+- 如果这个任务已经完成或之前的已被取消或由于其他原因不能被取消，那么这个方法将会返回 ``false`` 并且这个任务不会被取消。
+- 如果这个任务正在等待执行者获取执行它的线程，那么这个任务将被取消而且不会开始它的执行。如果这个任务已经正在运行，则视方法的参数情况而定。 ``cancel()`` 方法接收一个 ``Boolean`` 值参数。如果参数为 ``true`` 并且任务正在运行，那么这个任务将被取消。如果参数为 ``false`` 并且任务正在运行，那么这个任务将不会被取消。
+
+如果你使用 ``Future`` 对象的 ``get()`` 方法来控制一个已被取消的任务，这个 ``get()`` 方法将抛出 ``CancellationException`` 异常。
+
+
+执行者控制一个任务结束
+=====================
+``FutureTask`` 类提供一个 ``done()`` 方法，允许你在执行者执行任务完成后执行一些代码。你可以用来做一些后处理操作，生成一个报告，通过 e-mail 发送结果，或释放一些资源。当执行的任务由 ``FutureTask`` 来控制完成， ``FutureTask`` 会内部调用这个方法。这个方法在任务的结果设置和它的状态变成 ``isDone`` 状态之后被调用，不管任务是否已经被取消或正常完成。
+
+默认情况下，这个方法是空的。你可以重写 ``FutureTask`` 类实现这个方法来改变这种行为。在这个指南中，你将学习如何重写这个方法，在任务完成之后执行代码。
+
+.. code-block:: java
+
+	// 1.创建ExecutableTask类，并指定其实现Callable接口，参数化为String类型
+	public class ExecutableTask implements Callable<String> {
+
+		// 2.声明一个私有的、类型为String、名为name的属性，用来存储任务的名称。实现getName()方法，返回这个属性值
+		private String name;
+
+		// 3.实现这个类的构造器，初始化任务的名称
+		public ExecutableTask(String name) {
+			this.name = name;
+		}
+
+		// 4.实现call()方法。使这个任务睡眠一个随机时间，返回任务名称的信息
+		@Override
+		public String call() throws Exception {
+			try {
+				Long duration = (long) (Math.random() * 10);
+				System.out.printf("%s: Waiting %d seconds for results.\n", this.name, duration);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+			}
+			return "Hello, world. I'm " + name;
+		}
+
+		public String getName() {
+			return this.name;
+		}
+	}
+
+	// 5.实现ResultTask类，继承FutureTask类，参数化为String类型
+	public class ResultTask extends FutureTask<String> {
+		// 6.声明一个私有的、类型为String、名为name的属性，用来存储任务的名称
+		private String name;
+
+		// 7.实现这个类的构造器。它接收一个Callable对象参数。调用父类构造器，使用接收到的任务的属性初始化name属性
+		public ResultTask(Callable<String> callable) {
+			super(callable);
+			this.name = ((ExecutableTask) callable).getName();
+		}
+
+		// 8.重写done()方法。检查isCancelled()方法返回值，并根据这个返回值的不同，写入不同的信息到控制台
+		@Override
+		protected void done() {
+			if (isCancelled()) {
+				System.out.printf("%s: Has been cancelled\n", name);
+			} else {
+				System.out.printf("%s: Has finished\n", name);
+			}
+		}
+	}
+
+	// 9.实现示例的主类，创建Main类，实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 10.使用Executors类的newCachedThreadPool()方法创建ExecutorService
+			ExecutorService executor = Executors.newCachedThreadPool();
+
+			// 11.创建存储5个ResultTask对象的一个数组
+			ResultTask[] resultTasks = new ResultTask[5];
+			// 12.初始化ResultTask对象。对于数据的每个位置，首先，你必须创建ExecutorTask，然后，ResultTask使用这个对象，然后，然后submit()方法提交ResultTask给执行者
+			for (int i = 0; i < 5; i++) {
+				ExecutableTask executableTask = new ExecutableTask("Task " + i);
+				resultTasks[i] = new ResultTask(executableTask);
+				executor.submit(resultTasks[i]); // 注意，执行结果也存储在这里面
+			}
+
+			// 13.令主线程睡眠5秒
+			try {
+				TimeUnit.SECONDS.sleep(5);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+
+			// 14.取消你提交给执行者的所有任务
+			for (int i = 0; i < resultTasks.length; i++) {
+				resultTasks[i].cancel(true);
+			}
+
+			System.out.println("\r\nPrint the results:\n");
+			// 15.将没有被使用ResultTask对象的get()方法取消的任务的结果写入到控制台
+			for (int i = 0; i < resultTasks.length; i++) {
+				try {
+					if (!resultTasks[i].isCancelled()) {
+						System.out.printf("%s\n", resultTasks[i].get());
+					}
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+			// 16.使用shutdown()方法关闭执行者
+			executor.shutdown();
+		}
+	}
+
+当控制任务执行完成后， ``FutureTask`` 类调用 ``done()`` 方法。在这个示例中，你已经实现一个 ``Callable`` 对象， ``ExecutableTask`` 类，然后一个 ``FutureTask`` 类的子类用来控制 ``ExecutableTask`` 对象的执行。
+
+在建立返回值和改变任务的状态为 ``isDone`` 状态后， ``done()`` 方法被 ``FutureTask`` 类内部调用。你不能改变任务的结果值和它的状态，但你可以关闭任务使用的资源，写日志消息，或发送通知。
+
+执行者分离任务的启动和结果的处理
+==============================
+通常，当你使用执行者执行并发任务时，你将会提交 ``Runnable`` 或 ``Callable`` 任务给这个执行者，并获取 ``Future`` 对象控制这个方法。你可以发现这种情况，你需要提交任务给执行者在一个对象中，而处理结果在另一个对象中。基于这种情况， Java 并发 API 提供 ``CompletionService`` 类。
+
+``CompletionService`` 类有一个方法来提交任务给执行者和另一个方法来获取已完成执行的下个任务的 ``Future`` 对象。在内部实现中，它使用 ``Executor`` 对象执行任务。这种行为的优点是共享一个 ``CompletionService`` 对象，并提交任务给执行者，这样其他（对象）可以处理结果。其局限性是，第二个对象只能获取那些已经完成它们的执行的任务的 ``Future`` 对象，所以，这些 ``Future`` 对象只能获取任务的结果。
+
+在这个指南中，你将学习如何使用 ``CompletionService`` 类把执行者启动任务和处理它们的结果分开。
+
+.. code-block:: java
+
+	// 1.创建ReportGenerator类，并指定其实现Callable接口，参数化为String类型
+	public class ReportGenerator implements Callable<String> {
+		// 2.声明两个私有的、String类型的属性，sender和title，用来表示报告的数据
+		private String sender;
+		private String title;
+
+		// 3.实现这个类的构造器，初始化这两个属性
+		public ReportGenerator(String sender, String title) {
+			this.sender = sender;
+			this.title = title;
+		}
+
+		// 4.实现call()方法。首先，让线程睡眠一段随机时间
+		@Override
+		public String call() throws Exception {
+			try {
+				Long duration = (long) (Math.random() * 10);
+				System.out.printf("%s_%s: ReportGenerator: Generating a report during %d seconds\n", this.sender, this.title, duration);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 5.然后，生成一个有sender和title属性的字符串的报告，返回这个字符串
+			String ret = sender + ": " + title;
+			return ret;
+		}
+	}
+
+	// 6.创建ReportRequest类，实现Runnable接口。这个类将模拟一些报告请求
+	public class ReportRequest implements Runnable {
+		// 7.声明私有的、String类型的属性name，用来存储ReportRequest的名称
+		private String name;
+
+		// 8.声明私有的、CompletionService类型的属性service。CompletionService接口是个参数化接口，使用String类型参数化它
+		private CompletionService<String> service;
+
+		// 9.实现这个类的构造器，初始化这两个属性
+		public ReportRequest(String name, CompletionService<String> service) {
+			this.name = name;
+			this.service = service;
+		}
+
+		// 10.实现run()方法。创建1个ReportGenerator对象，并使用submit()方法把它提交给CompletionService对象
+		@Override
+		public void run() {
+			// ReportGenerator
+			ReportGenerator reportGenerator = new ReportGenerator(name, "Report");
+			service.submit(reportGenerator);
+		}
+	}
+
+	// ͨ11.创建ReportProcessor类。这个类将获取ReportGenerator任务的结果，指定它实现Runnable接口
+	public class ReportProcessor implements Runnable {
+		// 12.声明一个私有的、CompletionService类型的属性service。由于CompletionService接口是个参数化接口，使用String类作为这个CompletionService接口的参数
+		private CompletionService<String> service;
+		// 13.声明一个私有的、boolean类型的属性end
+		private boolean end;
+		// 14.实现这个类的构造器，初始化这两个属性
+		public ReportProcessor(CompletionService<String> service) {
+			this.service = service;
+			end = false;
+		}
+
+		// 15.实现run()方法。当属性end值为false，调用CompletionService接口的poll()方法，获取CompletionService执行的下个已完成任务的Future对象
+		@Override
+		public void run() {
+			while (!end) {
+				try {
+					Future<String> result = service.poll(20, TimeUnit.SECONDS);
+					// 16.然后，使用Future对象的get()方法获取任务的结果，并且将这些结果写入到控制台
+					if (result != null) {
+						String report = result.get();
+						System.out.printf("ReportReceiver: Report Recived: %s\n", report);
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+
+			System.out.printf("ReportSender: End\n");
+		}
+		// 17.实现setEnd()方法，用来修改属性end的值
+		public void setEnd(boolean end) {
+			this.end = end;
+		}
+	}
+
+	// 18.实现这个示例的主类，通过创建Main类，并实现main()方
+	public class Main {
+		public static void main(String[] args) {
+			// 19.使用Executors类的newCachedThreadPool()方法创建ThreadPoolExecutor
+			ExecutorService executor = Executors.newCachedThreadPool();
+			// 20.创建CompletionService，使用前面创建的执行者作为构造器的参数
+			CompletionService<String> service = new ExecutorCompletionService<>(executor);
+
+			// 21.创建两个ReportRequest对象，并用线程执行它们
+			ReportRequest faceRequest = new ReportRequest("Face", service);
+			ReportRequest onlineRequest = new ReportRequest("Online", service);
+			Thread faceThread = new Thread(faceRequest);
+			Thread onlineThread = new Thread(onlineRequest);
+
+			// 22.创建一个ReportProcessor对象，并用线程执行它
+			ReportProcessor processor = new ReportProcessor(service);
+			Thread senderThread = new Thread(processor);
+
+			// 23.启动这3个线程
+			System.out.printf("Main: Starting the Threads\n");
+			faceThread.start();
+			onlineThread.start();
+			senderThread.start();
+
+			// 24.等待ReportRequest线程的结束
+			try {
+				System.out.printf("Main: Waiting for the report generators.\n");
+				faceThread.join();
+				onlineThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 25.使用shutdown()方法关闭执行者，使用awaitTermination()方法等待任务的结果
+			System.out.printf("Main: Shuting down the executor.\n");
+			executor.shutdown();
+			try {
+				executor.awaitTermination(1, TimeUnit.DAYS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 26.设置ReportSender对象的end属性值为true，结束它的执行
+			processor.setEnd(true);
+			System.out.printf("Main: Ends\n");
+		}
+	}
+
+在示例的主类中，你使用 ``Executors`` 类的 ``newCachedThreadPool()`` 方法创建 ``ThreadPoolExecutor`` 。然后，使用这个对象初始化一个 ``CompletionService`` 对象，因为 ``CompletionService`` 需要使用一个执行者来执行任务。利用 ``CompletionService`` 执行一个任务，你需要使用 ``submit()`` 方法，如在 ``ReportRequest`` 类中。
+
+当其中一个任务被执行， ``CompletionService`` 完成这个任务的执行时，这个 ``CompletionService`` 在一个队列中存储 ``Future`` 对象来控制它的执行。 ``poll()`` 方法用来查看这个列队，如果有任何任务执行完成，那么返回列队的第一个元素，它是一个已完成任务的 ``Future`` 对象。当 ``poll()`` 方法返回一个 ``Future`` 对象时，它将这个 ``Future`` 对象从队列中删除。这种情况下，你可以传两个属性给那个方法，表明你想要等任务结果的时间，以防队列中的已完成任务的结果是空的。
+
+一旦 ``CompletionService`` 对象被创建，你创建 2 个 ``ReportRequest`` 对象，用来执行 3 个 ``ReportGenerator`` 任务，每个都在 ``CompletionService`` 中，和一个 ``ReportSender`` 任务，它将会处理已提交给 2 个 ``ReportRequest`` 对象的任务所产生的结果。
+
+``CompletionService`` 类可以执行 ``Callable`` 和 ``Runnable`` 任务。在这个示例中，你已经使用 ``Callable`` ，但你同样可以提交 ``Runnable`` 对象。由于 ``Runnable`` 对象不会产生结果， ``CompletionService`` 类的理念不适用于这些情况。
+
+这个类同样提供其他两个方法，用来获取已完成任务的 ``Future`` 对象。这两个方法如下：
+
+- ``poll()`` ：不带参数版本的 ``poll()`` 方法，检查是否有任何 ``Future`` 对象在队列中。如果列队是空的，它立即返回 ``null`` 。否则，它返回第一个元素，并从列队中删除它。
+- ``take()`` ：这个方法，不带参数。检查是否有任何 ``Future`` 对象在队列中。如果队列是空的，它阻塞线程直到队列有一个元素。当队列有元素，它返回第一元素，并从列队中删除它。
+
+
+控制执行器拒绝任务
+================
+当你想要结束执行者的执行，你使用 ``shutdown()`` 方法来表明它的结束。执行者等待正在运行或等待它执行的任务的结束，然后结束它们的执行。
+
+如果你在调用 ``shutdown()`` 方法和执行者结束之间，提交任务给执行者，这个任务将被拒绝，因为执行者不再接收新的任务。 ``ThreadPoolExecutor`` 类提供一种机制，在调用 ``shutdown()`` 后，不接受新的任务。
+
+在这个指南中，你将学习如何通过实现 ``RejectedExecutionHandler`` ，在执行者中管理拒绝任务。
+
+.. code-block:: java
+
+	// 1.创建RejectedTaskController类，实现RejectedExecutionHandler接口。实现这个接口的rejectedExecution()方法。写入被拒绝任务的名称和执行者的名称与状态到控制台
+	public class RejectedTaskController implements RejectedExecutionHandler {
+
+		@Override
+		public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+			System.err.printf("RejectedTaskController: The task %s has been rejected\n", r.toString());
+			System.err.printf("RejectedTaskController: %s\n", executor.toString());
+			System.err.printf("RejectedTaskController: Terminating: %s\n", executor.isTerminating());
+			System.err.printf("RejectedTaksController: Terminated: %s\n", executor.isTerminated());
+		}
+	}
+
+	//2.实现Task类，实现Runnable接口
+	public class Task implements Runnable {
+		//3.声明私有的、String类型的属性name， 用来存储任务的名称
+		private String name;
+		//4.实现这个类的构造器，初始化这个类的属性
+		public Task(String name) {
+			this.name = name;
+		}
+
+		//5.实现run()方法，写入信息到控制台，表明这个方法开始执行
+		@Override
+		public void run() {
+			System.out.printf("Task %s: Starting\n", name);
+			//6.等待一段随机时间
+			try {
+				Long duration = (long) (Math.random() * 10);
+				System.out.printf("Task %s: ReportGenerator: Generating a report during %d seconds\n", name, duration);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			//7.写入信息到控制台，表明方法的结束
+			System.out.printf("Task %s: Ending\n", name);
+		}
+
+		//8.重写toString()方法，返回任务的名称
+		@Override
+		public String toString() {
+			return name;
+		}
+	}
+
+	// 9.实现这个示例的主类，通过创建Main类，并实现main()方法
+	public class Main {
+		public static void main(String[] args) {
+			// 10.创建一个RejectedTaskController对象，管理拒绝的任务
+			RejectedTaskController controller = new RejectedTaskController();
+			// 11.使用Executors类的newCachedThreadPool()方法，创建ThreadPoolExecutor
+			ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+			// 12.建立执行者的拒绝任务控制器
+			executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+			// 13.创建任务并提交它们给执行者
+			System.out.printf("Main: Starting.\n");
+			for (int i = 0; i < 3; i++) {
+				Task task = new Task("Task" + i);
+				executor.submit(task);
+			}
+
+			// 14.使用shutdown()方法，关闭执行者
+			System.out.printf("Main: Shuting down the Executor.\n");
+			executor.shutdown();
+
+			// 15.创建其他任务并提交给执行者
+			System.out.printf("Main: Sending another Task.\n");
+			Task task = new Task("RejectedTask");
+			executor.submit(task);
+
+			//16.写入信息到控制台，表明程序结束
+			System.out.printf("Main: End.\n");
+		}
+	}
+
+你可以看出当执行者关闭时，任务被拒绝提交。 ``RejectecTaskController`` 将有关于任务和执行者的信息写入到控制台。
+
+为了管理执行者控制拒绝任务，你应该实现 ``RejectedExecutionHandler`` 接口。该接口有带有两个参数的方法 ``rejectedExecution()`` ：
+
+- ``Runnable`` 对象，存储被拒绝的任务
+- ``Executor`` 对象，存储拒绝任务的执行者
+
+每个被执行者拒绝的任务都会调用这个方法。你必须使用 ``Executor`` 类的 ``setRejectedExecutionHandler()`` 方法设置拒绝任务的处理器。
+
+当执行者接收任务时，会检查 ``shutdown()`` 是否已经被调用了。如果被调用了，它拒绝这个任务。首先，它查找 ``setRejectedExecutionHandler()`` 设置的处理器。如果有一个（处理器），它调用那个类的 ``rejectedExecution()`` 方法，否则，它将抛 ``RejectedExecutionExeption`` 异常。这是一个运行时异常，所以你不需要用 ``catch`` 语句来控制它。

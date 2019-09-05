@@ -1,0 +1,87 @@
+****
+调试日志
+****
+
+要启用调试日志，需要将 ``nginx`` 在构建时配置为支持调试:
+
+.. code-block:: shell
+
+    ./configure --with-debug ...
+
+然后使用 ``error_log`` 指令设置调试级别:
+
+.. code-block:: shell
+
+    error_log /path/to/log debug;
+
+要验证 ``nginx`` 是否配置为支持调试，运行 ``nginx -V`` 命令:
+
+.. code-block:: shell
+
+    configure arguments: --with-debug ...
+
+预构建的 ``Linux`` 包提供了可以使用命令运行的 ``nginx-debug`` 二进制文件 (1.9.8) ,它提供了开箱即用的调试日志支持
+
+.. code-block:: shell
+
+	service nginx stop
+	service nginx-debug start
+
+然后设置调试级别。在 ``Windows`` 系统上运行的 ``nginx`` 二进制版本总是构建时就支持调试日志，因此仅设置调试级别就足够了。
+
+请注意，在不指定调试级别的情况下重新定义日志将禁用调试日志。在下面的示例中，在 ``server`` 级别上重新定义日志将禁用此服务器的调试日志:
+
+.. code-block:: shell
+
+	error_log /path/to/log debug;
+
+	http {
+	    server {
+	        error_log /path/to/log;
+	        ...
+
+为了避免这种情况，应该注释掉重新定义日志的行，或者添加调试级别规范:
+
+.. code-block:: shell
+
+	error_log /path/to/log debug;
+
+	http {
+	    server {
+	        error_log /path/to/log debug;
+	        ...
+
+指定客户端的调试日志
+===================
+也可以只对选定的客户端地址启用调试日志:
+
+.. code-block:: shell
+
+	error_log /path/to/log;
+
+	events {
+	    debug_connection 192.168.1.1;
+	    debug_connection 192.168.10.0/24;
+	}
+
+
+记录日志到循环内存缓冲区
+======================
+调试日志可以写入循环内存缓冲区:
+
+.. code-block:: shell
+
+    error_log memory:32m debug;
+
+即使在高负载环境下，将调试日志记录到内存缓冲区也不会对性能产生显著影响。在这种情况下，可以使用如下 ``gdb`` 脚本提取日志:
+
+.. code-block:: shell
+
+	set $log = ngx_cycle->log
+
+	while $log->writer != ngx_log_memory_writer
+	    set $log = $log->next
+	end
+
+	set $buf = (ngx_log_memory_buf_t *) $log->wdata
+	dump binary memory debug_log.txt $buf->start $buf->end

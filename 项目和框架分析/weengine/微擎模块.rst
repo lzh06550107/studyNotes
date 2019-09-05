@@ -1,0 +1,799 @@
+*******
+模块开发
+*******
+
+模块目录
+========
+
+所有开发者模块均置于 ``addons`` 目录下。
+
+基础包
+------
+
+.. code-block:: shell
+
+	pro
+	├─ addons  ………………………………………… 【模块安装目录】 (意为附加组件)
+	│  ├─ business  …………………………………… 模块的标识  (示例)
+	│  │  ├─ images                             建议 css 文件也放此目录.
+	│  │  ├─ template                           模板目录
+	│  │  │  ├─ mobile                          移动前端模板目录
+	│  │  │  │  └─ mobile.html                  移动前端模板文件
+	│  │  │  ├─ webapp                          PC 前端模板目录
+	│  │  │  │  └─ pc.html                      PC 前端模板文件
+	│  │  │  ├─ system_welcome                  微擎后台首页模板目录
+	│  │  │  │  └─ index.html                   微擎后台首页模板文件
+	│  │  │  ├─ phoneapp                        APP 端(如安卓，IOS)模板目录
+	│  │  │  │  └─ app.html                     APP 端模板文件
+	│  │  │  └─ web.html                        模块后端模板文件(模块后端模板文件放置的目录)
+	│  │  │  └─ setting.html                    模块后端全局配置模板文件
+	│  │  ├─ inc                                引用的 php 文件目录
+	│  │  │  ├─ mobile                          前端脚本目录
+	│  │  │  │  ├─ xxx.inc.php                  微站入口
+	│  │  │  │  └─ ...                          .
+	│  │  │  └─ web                             后端脚本目录
+	│  │  │      ├─ xxx.inc.php                 微站管理入口
+	│  │  │      └─ ...                         .
+	│  │  ├─ icon.jpg                           模块图标
+	│  │  ├─ icon-custom.jpg                    模块图标(优先级更高)
+	│  │  ├─ preview.jpg                        模块预览
+	│  │  ├─ manifest.xml                       模块安装清单
+	│  │  ├─ module.php                         模块设置脚本
+	│  │  ├─ processor.php                      消息处理脚本
+	│  │  ├─ receiver.php                       消息订阅脚本
+	│  │  ├─ site.php                           微站页面脚本(包括前端访问和后端访问方法)
+	│  │  ├─ site.php                           微站页面脚本(包括前端访问和后端访问方法)
+	│  │  ├─ wxapp.php                          微信小程序应用脚本(微信小程序与该脚本中定义方法交互)
+	│  │  ├─ webapp.php                         PC应用脚本(PC端浏览器与该脚本中定义方法交互)
+	│  │  ├─ systemWelcome.php                  微擎后端首页
+	│  │  ├─ phoneapp.php                       APP应用脚本(android或ios，App端与该脚本中定义方法交互)
+	│  │  ├─ hook.php                           钩子文件脚本，定义被其它模块调用的方法
+	│  │  └─ install.php                        安装文件脚本
+	│  └─ ...
+
+
+说明：
+
++---------------+----------+--------------------------------------------------------------------------------------------------------------------------------+
+| 文件或文件夹  | 说明     |                                                                                                                                |
++===============+==========+================================================================================================================================+
+| template      | 【必有】 | 模块模板文件目录 ，其中包含 ``mobile`` 子目录存放 ``app`` 端的 ``html`` 文件， ``web`` 端的 ``html`` 文件位于当前目录          |
++---------------+----------+--------------------------------------------------------------------------------------------------------------------------------+
+| manifest.xml  | 【必有】 | 模块安装、卸载和升级信息，通过 ``微擎模块设计器`` 生成                                                                         |
++---------------+----------+--------------------------------------------------------------------------------------------------------------------------------+
+| module.php    | 【必有】 | 模块参数配置或规则配置                                                                                                         |
++---------------+----------+--------------------------------------------------------------------------------------------------------------------------------+
+| processor.php | 【必有】 | 模块消息处理器，当开启关键字回复时，粉丝触发关键字系统路由至此文件中进行结果输出                                               |
++---------------+----------+--------------------------------------------------------------------------------------------------------------------------------+
+| receiver.php  | 【必有】 | 模块消息订阅器 ，当模块订阅了事件消息时，有消息到达时系统将会执行该文件中的 ``receiver`` 方法                                  |
++---------------+----------+--------------------------------------------------------------------------------------------------------------------------------+
+| site.php      | 【必有】 | 模块的微站功能，所有 ``app`` 端的页面皆在此类文件中，分为 ``doMoilbeXXX()`` , ``doWebXXX()`` 方法，分别用于 ``app`` 端和后台端 |
++---------------+----------+--------------------------------------------------------------------------------------------------------------------------------+
+| icon.jpg      | 【必有】 | 模块的图标                                                                                                                     |
++---------------+----------+--------------------------------------------------------------------------------------------------------------------------------+
+| preview.jpg   | 【必有】 | 模块的封面                                                                                                                     |
++---------------+----------+--------------------------------------------------------------------------------------------------------------------------------+
+| install.php   | 不是必须 | 安装文件                                                                                                                       |
++---------------+----------+--------------------------------------------------------------------------------------------------------------------------------+
+
+
+清单文件
+========
+
+manifest.xml
+------------
+
+.. code-block:: xml
+
+	<html version="1.0" encoding="utf-8"?> 此行 version 只能是 "1.0"
+	<manifest xmlns="http://www.we7.cc" versionCode="0.6">
+	    <application setting="true" cloud_setting="true">
+	        <name><![CDATA[微商城]]></name>                         发布过后，应用名称不允许修改
+	        <identifie><![CDATA[ewei_shopping]]></identifie>        发布过后，应用标识不允许修改
+	        <version><![CDATA[6.9.9]]></version>                    云商城版本比较函数 version_compare($v1, $v2)
+	        <type><![CDATA[business]]></type>                       类型请到云商城设计模块中查阅，错误将无法发布成功
+	        <ability><![CDATA[微商城]]></ability>
+	        <description><![CDATA[微商城]]></description>
+	        <author><![CDATA[WeEngine Team & ewei]]></author>
+	        <url><![CDATA[url]]></url>
+	    </application>
+	    <platform>
+	        <subscribes>
+	            <message type="text"/>
+	            <message type="image"/>
+	            <message type="voice"/>
+	            <message type="video"/>
+	            <message type="shortvideo"/>
+	            <message type="location"/>
+	            <message type="link"/>
+	            <message type="subscribe"/>
+	            <message type="unsubscribe"/>
+	            <message type="qr"/>
+	            <message type="trace"/>
+	            <message type="click"/>
+	            <message type="view"/>
+	            <message type="merchant_order"/>
+	            <message type="user_get_card"/>
+	            <message type="user_del_card"/>
+	            <message type="user_consume_card"/>
+	        </subscribes>
+	        <handles>
+	            <message type="text"/>
+	            <message type="image"/>
+	            <message type="voice"/>
+	            <message type="video"/>
+	            <message type="shortvideo"/>
+	            <message type="location"/>
+	            <message type="link"/>
+	            <message type="subscribe"/>
+	            <message type="qr"/>
+	            <message type="trace"/>
+	            <message type="click"/>
+	            <message type="merchant_order"/>
+	            <message type="user_get_card"/>
+	            <message type="user_del_card"/>
+	            <message type="user_consume_card"/>
+	        </handles>
+	        <supports>                              (在线安装或更新时会重新计算所有已购买的支持类型)
+	            <item type="plugin" />
+	            <item type="app" />                 (发布公众号必须填写)
+	            <item type="wxapp" />               (发布小程序必须填写)
+	            <item type="system_welcome" />      (发布微擎首页必须填写)
+	            <item type="webapp" />              (发布 PC 版必须填写)
+	            <item type="android" />             (发布 APP[安卓]必须填写)
+	            <item type="ios" />                 (发布 APP[苹果]必须填写)
+	        </supports>
+	        <plugin-main name="wx_nstore" />        (在线安装或更新时会重新计算所有已购主应用)
+	        <plugins>                               (在线安装或更新时会重新计算所有已购插件)
+	            <item name="ewei_hotel" />
+	            <item name="ewei_hotel2" />
+	        </plugins>
+	        <rule embed="true" />
+	        <card embed="true" />
+	        <oauth type="userinfo" />
+	    </platform>
+	    <bindings>
+	        <cover>
+	            <entry title="功能封面" do="cover" state="" direct="false"/>
+	            <entry title="功能封面2" do="cover2" state="" direct="false"/>
+	        </cover>
+	        <rule>
+	            <entry title="规则" do="rule" state="" direct="false"/>
+	            <entry title="规则2" do="rule2" state="" direct="false"/>
+	        </rule>
+	        <menu>
+	            <entry title="管理中心" do="menu" state="" direct="false"/>
+	            <entry title="管理中心2" do="menu2" state="" direct="false"/>
+	        </menu>
+	        <home>
+	            <entry title="首页导航" do="home" state="" direct="false"/>
+	            <entry title="首页导航2" do="home2" state="" direct="false"/>
+	        </home>
+	        <profile>
+	            <entry title="个人中心导航" do="profile" state="" direct="false"/>
+	            <entry title="个人中心导航2" do="profile2" state="" direct="false"/>
+	        </profile>
+	        <shortcut>
+	            <entry title="快捷功能" do="shortcut" state="" direct="false"/>
+	            <entry title="快捷功能2" do="shortcut2" state="" direct="false"/>
+	        </shortcut>
+	        <function>
+	            <entry title="独立功能" do="func" state="" direct="false"/>
+	            <entry title="独立功能2" do="func2" state="" direct="false"/>
+	        </function>
+	        <page>    发布小程序必须有此项设置
+	            <entry title="首页" do="/we7_gs/pages/index/index" state="" direct=""/>
+	            <entry title="主页" do="/we7_gs/pages/index/main" state="" direct=""/>
+	        </page>
+	        <system_welcome>
+	            <entry title="systemwelcome" do="systemwelcome" state="" direct="false"/>
+	        </system_welcome>
+	        <webapp>
+	            <entry title="webapp" do="webapp" state="" direct="false"/>
+	        </webapp>
+	        <phoneapp>
+	            <entry title="phoneapp" do="phoneapp" state="" direct="false"/>
+	        </phoneapp>
+	    </bindings>
+	    <permissions>
+	        <entry title="title1" do="permission1"/>
+	        <entry title="title2" do="permission2"/>
+	    </permissions>
+	    <install><![CDATA[install.php]]></install>
+	    <uninstall><![CDATA[uninstall.php]]></uninstall>
+	    <upgrade><![CDATA[upgrade.php]]></upgrade>
+	</manifest>
+
+清单结构分析
+===========
+
+模块基本信息
+------------
+
+.. code-block:: xml
+
+	<name><![CDATA[微商城]]></name>                         发布过后，应用名称不允许修改
+	<identifie><![CDATA[ewei_shopping]]></identifie>        发布过后，应用标识不允许修改
+	<version><![CDATA[6.9.9]]></version>                    云商城版本比较函数 version_compare($v1, $v2)
+	<type><![CDATA[business]]></type>                       类型请到云商城设计模块中查阅，错误将无法发布成功
+	<ability><![CDATA[微商城]]></ability>
+	<description><![CDATA[微商城]]></description>
+	<author><![CDATA[WeEngine Team & ewei]]></author>
+	<url><![CDATA[url]]></url>
+
+- ``模块名称`` ：用于在系统中给用户显示出模块的名字
+- ``模块标识`` ：对应模块文件夹的名称。只能为英文，数字，下划线，为了减少模块标识的重复和冲突，系统规定模块必须有前缀，例如： ``we7_demo``
+- ``版本号`` ：用于标识模块版本，主要是用作于模块升级更新使用
+- ``模块类型`` ：模块的类型, 用于分类展示和查找你的模块
+- ``模块简述`` ：模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户
+- ``模块介绍`` ：模块详细描述, 详细介绍模块的功能和使用方法
+- ``作者`` ：模块的作者
+- ``发布页`` ：模块的发布页, 用于发布模块更新信息的页面, 推荐使用微擎模块版块
+
+模块全局配置项
+-------------
+
+.. code-block:: xml
+
+	<application setting="true" cloud_setting="true">
+	    ...
+	</application>
+
+设置该模块是否存在全局的配置参数, 此参数是针对公众账号独立保存的。当勾选此项时，模块安装后系统会生成一个 ``模块配置`` 的菜单，用于保存一些模块内部使用的配置项。
+
+开发者必须要完善 ``module.php`` 类文件中的 ``public function settingsDisplay($settings){}`` 成员方法。
+
+订阅的消息类型
+-------------
+
+.. code-block:: xml
+
+	<subscribes>
+	    <message type="text"/>
+	    <message type="image"/>
+	    <message type="voice"/>
+	    <message type="video"/>
+	    <message type="shortvideo"/>
+	    <message type="location"/>
+	    <message type="link"/>
+	    <message type="subscribe"/>
+	    <message type="unsubscribe"/>
+	    <message type="qr"/>
+	    <message type="trace"/>
+	    <message type="click"/>
+	    <message type="view"/>
+	    <message type="merchant_order"/>
+	    <message type="user_get_card"/>
+	    <message type="user_del_card"/>
+	    <message type="user_consume_card"/>
+	</subscribes>
+
+- 文本消息(重要)
+- 图片消息
+- 语音消息
+- 视频消息
+- 小视频消息
+- 位置消息
+- 链接消息
+- 粉丝开始关注
+- 粉丝取消关注
+- 扫描二维码
+- 追踪地理位置
+- 点击菜单(模拟关键字)
+- 点击菜单(链接)
+- 微小店消息
+
+当配置上面的事件类型后，系统会在接收到相关类型的事件后，转发消息到模块中。 **模块接到消息后可以处理数据，但无法返回结果（系统不接收）。**
+
+注意: 订阅的消息信息是只读的, 只能用作分析统计, 不能更改, 也不能改变微擎处理主流程。
+
+开发者必须要完善 ``receiver.php`` 类文件中的 ``public function receive(){}`` 成员方法。
+
+处理的消息类型
+-------------
+
+.. code-block:: xml
+
+	<handles>
+	    <message type="text"/>
+	    <message type="image"/>
+	    <message type="voice"/>
+	    <message type="video"/>
+	    <message type="shortvideo"/>
+	    <message type="location"/>
+	    <message type="link"/>
+	    <message type="subscribe"/>
+	    <message type="qr"/>
+	    <message type="trace"/>
+	    <message type="click"/>
+	    <message type="merchant_order"/>
+	    <message type="user_get_card"/>
+	    <message type="user_del_card"/>
+	    <message type="user_consume_card"/>
+	</handles>
+
+当设置上面的事件类型后，模块有权限可以直接接管选中的事件。比如，用户向公众号发送了一图片，触发了图片事件，系统接到此事件后，会直接转到至模块中处理，并返回结果。 **注意，可以处理消息并返回**
+
+注意: 关键字路由只能针对文本消息有效, 文本消息最为重要. 其他类型的消息并不能被直接理解, 多数情况需要使用文本消息来进行语境分析, 再处理其他相关消息类型。
+
+注意: 上下文锁定的模块不受此限制, 上下文锁定期间, 任何类型的消息都会路由至锁定模块。
+
+开发者必须要完善 ``processor.php`` 类文件中的 ``public function respond(){}`` 方法。
+
+模块支持类型
+------------
+
+.. code-block:: xml
+
+	<supports> (在线安装或更新时会重新计算所有已购买的支持类型)
+		<item type="plugin" />
+		<item type="app" />                 (发布公众号必须填写)
+		<item type="wxapp" />               (发布小程序必须填写)
+		<item type="system_welcome" />      (发布微擎首页必须填写)
+		<item type="webapp" />              (发布 PC 版必须填写)
+		<item type="android" />             (发布 APP[安卓]必须填写)
+		<item type="ios" />                 (发布 APP[苹果]必须填写)
+	</supports>
+
+上面配置模块支持的应用类型，可以支持公众号、微信小程序、微擎首页、PC版、APP等。
+
++-----------+-------------------------------+--------------------+------------------------------------+
+| 类型支持  | manifest.xml                  | ``*.php``          | 上传文件                           |
++===========+===============================+====================+====================================+
+| 公众号    | <item type="app" />           | mobile.php（可选） | ``*.zip（基础包）``                |
++-----------+-------------------------------+--------------------+------------------------------------+
+| PC版      | <item type="webapp" />        | webapp.php         | ``*.zip（基础包）``                |
++-----------+-------------------------------+--------------------+------------------------------------+
+| 微擎首页  | <item type="system_welcome"/> | systemWelcome.php  | ``*.zip（基础包）``                |
++-----------+-------------------------------+--------------------+------------------------------------+
+| 小程序    | <item type="wxapp" />         | wxapp.php          | ``*.zip（基础包 + 小程序包）``     |
++-----------+-------------------------------+--------------------+------------------------------------+
+| APP(安卓) | <item type="android" />       | phoneapp.php       | ``*.apk（基础包 + 安卓安装文件）`` |
++-----------+-------------------------------+--------------------+------------------------------------+
+| APP(苹果) | <item type="ios" />           | phoneapp.php       | ``*.ipa（基础包 + 苹果安装文件）`` |
++-----------+-------------------------------+--------------------+------------------------------------+
+
+模块插件
+--------
+
+.. code-block:: xml
+
+	<plugin-main name="wx_nstore" />        (在线安装或更新时会重新计算所有已购主应用)
+	<plugins>                               (在线安装或更新时会重新计算所有已购插件)
+		<item name="ewei_hotel" />
+		<item name="ewei_hotel2" />
+	</plugins>
+
+上面配置当前模块所属的主模块和当前模块包含的所有插件。
+
+是否要嵌入规
+------------
+
+.. code-block:: xml
+
+	<rule embed="true" />
+
+定义此模块是否需要回复规则触发。当勾选此项后，模块安装后系统会自动添加 ``回复规则列表`` 菜单，用户可以设置关键字触发到模块中。故而模块可以在自己的功能内，嵌入一个关键字规则回复功能，自行处理关键字触发后的回复内容。
+
+要实现上面的功能，则需要在 ``module.php`` 文件中实现如下方法：
+
+.. code-block:: php
+
+	class Aj_consteModule extends WeModule
+	{
+	    public $tablename = 'aj_conste';
+	    public function fieldsFormDisplay($rid = 0)
+	    {
+	        global $_W;
+	        load()->func('tpl');
+	        if (!empty($rid)) {
+	            $reply = pdo_fetch("SELECT * FROM " . tablename($this->tablename) . " WHERE rid = :rid ORDER BY `rid` DESC", array(':rid' => $rid));
+	        }
+	        if (!$reply) { // 如果没有配置，则使用默认规则内容
+	            $reply = array("title" => "【星座书】十二星座性格解析", "thumb" => "../addons/aj_conste/style/images/game.png", "description" => "快来看看Ta是你的幸运情侣星座吗？", "copyright" => "©星座书", "copyrighturl" => "http://www.baidu.com/", "qrcode" => "../addons/aj_conste/style/images/qrcode.png", "instruction" => "扫描二维码关注,回复“我的星座”，解密你的星座命格", "bgpic" => "../addons/aj_conste/style/images/bg.jpg");
+	        }
+	        include $this->template('rule');
+	    }
+	    public function fieldsFormValidate($rid = 0)
+	    {
+	        return '';
+	    }
+	    public function fieldsFormSubmit($rid)
+	    {
+	        global $_GPC, $_W;
+	        $uniacid = $_W['uniacid'];
+	        load()->func('tpl');
+	        // 找到对应的关键字
+	        $content = pdo_fetch('SELECT * FROM ' . tablename('rule_keyword') . ' WHERE uniacid =:uniacid AND rid = :rid', array(':uniacid' => $uniacid, ':rid' => $rid));
+	        $insert = array('rid' => $rid, 'uniacid' => $_W['uniacid'], 'content' => $content['content'], 'title' => $_GPC['title'], 'thumb' => $_GPC['thumb'], 'description' => $_GPC['description'], 'copyright' => $_GPC['copyright'], 'copyrighturl' => $_GPC['copyrighturl'], 'qrcode' => $_GPC['qrcode'], 'instruction' => $_GPC['instruction'], 'bgpic' => $_GPC['bgpic']);
+	        $res = pdo_fetch('SELECT * FROM ' . tablename($this->tablename) . ' WHERE uniacid = :uniacid AND rid = :rid', array(':uniacid' => $uniacid, ':rid' => $rid));
+	        if ($res) { // 如果存在，则更新
+	            pdo_update($this->tablename, $insert, array('rid' => $rid));
+	        } else { // 否则，插入
+	            $insert['rid'] = $rid;
+	            $insert['uniacid'] = $uniacid;
+	            pdo_insert($this->tablename, $insert);
+	        }
+	        message("游戏信息保存成功！正转向游戏管理！", $this->createWebUrl('manage', array('id' => $rid)));
+	    }
+	    public function ruleDeleted($rid)
+	    {
+	        pdo_delete('aj_conste', array('rid' => $rid));
+	    }
+	}
+
+注意: 如果需要嵌入规则, 那么此模块必须能够处理文本类型消息 (需要定义Processor)，开发者必须要完善 ``processor.php`` 类文件中的 ``public function respond(){}`` 方法。
+
+规则列表
+--------
+作用？？
+
+.. code-block:: xml
+
+	<bindings>
+	    <rule>
+	        <entry title="规则" do="rule" state="" direct="false"/>
+	        <entry title="规则2" do="rule2" state="" direct="false"/>
+	    </rule>
+	        
+	</bindings>
+
+- title ：是规则名称；
+- do ：入口标识；该标识的方法用来呈现规则列表？？
+- state：操作附加数据；
+- direct ：是否无需登陆直接展示；
+
+当模块开启嵌入规则后，开发者可以扩展 ``回复规则列表`` 中的功能菜单。
+
+规则列表是定义可重复使用或者可创建多次的活动的功能入口(管理后台 ``WEB`` 操作)，每个活动对应一条规则。一般呈现为图文消息，点击后进入定义好的某次活动中。
+
+开发者需要完善 ``site.php`` 类文件中的 ``public function doWeb{入口标识}(){}`` 相关方法。
+
+是否支持使用优惠券
+-----------------
+
+.. code-block:: xml
+
+	<card embed="true" />
+
+当勾选此项后，用户在创建（代金券和折扣券）时,模块将出现在适用模块列表中。当添加后，模块需要完成引导粉丝领取该优惠券。领取后，粉丝在该模块需要支付金钱时,可选择使用该优惠券来减免金额。
+
+
+模块获取用户授权方式
+-------------------
+
+.. code-block:: xml
+
+    <oauth type="2" />
+
+.. code-block:: php
+
+	//模块获取用户授权方式 1.静默授权 2.用户有感知授权
+	define('OAUTH_TYPE_BASE', 1);
+	define('OAUTH_TYPE_USERINFO', 2);
+
+模块获取用户授权方式;1：静默获取（默认）;2：用户有感知获取
+
+微站功能封面
+------------
+
+.. code-block:: xml
+
+	<cover>
+		<entry title="功能封面" do="cover" state="" direct="false"/>
+		<entry title="功能封面2" do="cover2" state="" direct="false"/>
+	</cover>
+
+- title ：操作名称就是应用入口菜单页面中封面链接入口列表中的入口名称；
+- do：入口标识就是实现的函数需要在 ``site.php`` 中 ``WeSite`` 类中定义；
+- state：附加数据是指进入链接后面附加一些 ``GET`` 参数，例如： ``&user=1&post=2`` ；
+- direct：是否需要登录访问，指进入时不做登录验证，可随意访问。
+
+设置此项后，安装模块后系统会按照设置的项的标题生成出若干个设置入口的菜单，管理员进入设置关键字后，粉丝可以直接通过关键字触发到该链接中。
+
+功能封面是定义公众号里一个独立功能的入口(手机端操作)，每个活动对应一条规则。一般呈现为图文消息，点击后进入公众号系统中对应的功能。
+
+例如：操作名称为首页，标识为 ``index`` ，设置关键字为 ``进入首页`` ，触发后系统回复图文信息，粉丝点击进入 ``site.php`` 类文件中的 ``public function doMobileIndex(){}`` 方法中。
+
+注意， ``doMobileXXX()`` 方法可以移到 ``mobileapp.php`` 文件中。
+
+管理中心导航菜单
+---------------
+
+.. code-block:: xml
+
+	<menu>
+		<entry title="管理中心" do="menu" state="" direct="false"/>
+		<entry title="管理中心2" do="menu2" state="" direct="false"/>
+	</menu>
+
+- title：操作名称就是将来显示到左侧的菜单名称；
+- do：入口标识就是实现的函数需要在 ``site.php`` 中 ``WeSite`` 类中定义；
+- state：附加数据是指进入链接后面附加一些 ``GET`` 参数，例如： ``&user=1&post=2`` ；
+- direct：是否需要登录访问，指进入时不做登录验证，可随意访问。
+
+``web`` 端，即后端管理菜单。注册应用的后台管理菜单，进入应用后，会显示到左侧 **业务菜单** 中，程序中需要在 ``site.php`` 中实现。
+
+开发者需要完善 ``site.php`` 类文件中的 ``public function doWeb{入口标识}(){}`` 相关方法。
+
+
+微站首页导航图标、微站个人中心导航、微站快捷功能导航
+-----------------------------------------------
+
+.. code-block:: xml
+
+	<home>
+	    <entry title="首页导航" do="home" state="" direct="false"/>
+	    <entry title="首页导航2" do="home2" state="" direct="false"/>
+	</home>
+	<profile>
+	    <entry title="个人中心导航" do="profile" state="" direct="false"/>
+	    <entry title="个人中心导航2" do="profile2" state="" direct="false"/>
+	</profile>
+	<shortcut>
+	    <entry title="快捷功能" do="shortcut" state="" direct="false"/>
+	    <entry title="快捷功能2" do="shortcut2" state="" direct="false"/>
+	</shortcut>
+
+``app`` 端，即前端访问菜单。设置此项后，管理员在添加相应的前端导航时，可以从此设置项中选取模块中的链接。
+
+- 首页导航图标：在微站的的首页上显示相关功能的链接入口(手机端操作)，一般用于通用功能的展示；
+- 个人中心导航：在微站的个人中心上显示相关功能的链接入口(手机端操作)，一般用于个人信息，或针对个人的数据的展示；
+- 快捷功能导航：在微站的快捷菜单上展示相关功能的链接入口(手机端操作)，仅在支持快捷菜单的公众号模板上有效；
+
+上面的功能定义于 ``WeSite`` 类的实现中。
+
+独立功能
+--------
+
+.. code-block:: xml
+
+	<function>
+	    <entry title="独立功能" do="func" state="" direct="false"/>
+	    <entry title="独立功能2" do="func2" state="" direct="false"/>
+	</function>
+
+需要特殊定义的操作，一般用于将指定的操作指定为( ``direct`` )，即一个操作没有具体位置绑定，但是需要定义为(direct:直接访问)，可以使用这个嵌入点。
+
+上面的功能定义于 ``WeSite`` 类的实现中。
+
+
+小程序应用配置
+-------------
+
+.. code-block:: xml
+
+	<page>    发布小程序必须有此项设置
+		<entry title="首页" do="/we7_gs/pages/index/index" state="" direct=""/>
+		<entry title="主页" do="/we7_gs/pages/index/main" state="" direct=""/>
+	</page>
+
+后台首页应用配置
+---------------
+
+.. code-block:: xml
+
+	<system_welcome>
+		<entry title="systemwelcome" do="systemwelcome" state="" direct="false"/>
+	</system_welcome>
+
+PC应用配置
+----------
+
+.. code-block:: xml
+
+	<webapp>
+		<entry title="webapp" do="webapp" state="" direct="false"/>
+	</webapp>
+
+APP应用配置
+-----------
+
+.. code-block:: xml
+
+	<phoneapp>
+		<entry title="phoneapp" do="phoneapp" state="" direct="false"/>
+	</phoneapp>
+
+模块具有的权限标识
+-----------------
+
+.. code-block:: xml
+
+	<permissions>
+		<entry title="title1" do="permission1"/>
+		<entry title="title2" do="permission2"/>
+	</permissions>
+
+- title：权限标识名称；
+- do：权限标识；
+
+微擎支持模块内部的权限判断，此处添加权限标识后，管理人员才可以在后台分派相应的权限给操作人员。
+
+权限标识由：模块名称和标识组成。例如,添加门店： ``we7_demo_store_add`` 。标识格式：模块名称_标识。例如，模块名称为： ``we7_demo`` ，标识为： ``store_add`` ,则对应标识为： ``we7_demo_store_add`` 。
+
+模块内部可以通过 **permission_check_account_user_module($action = '', $module_name = '')** 来判断操作员是否具有模块某个业务功能菜单的权限。
+
+模块安装脚本、模块卸载脚本、模块升级脚本
+------------------------------------
+微擎在安装或卸载模块时会根据 ``manifest.xml`` 生成（或删除）数据库中相应记录，并执行 ``manifest.xml`` 里指定的脚本。
+
+模块发布后，开发者如果想在用户安装、更新、卸载应用时，安装一些数据表，变更一些数据表或是执行一些脚本，可以通过在 ``manifest.xml`` 中进行设置。
+
+安装应用
+^^^^^^^^
+模块安装时执行的脚本。
+
+.. code-block:: xml
+
+    <install><![CDATA[SQL语句或是php文件名]]></install>
+
+更新应用
+^^^^^^^^
+模块更新时执行的脚本。
+
+.. code-block:: xml
+
+    <upgrade><![CDATA[SQL语句或是php文件名]]></upgrade>
+
+卸载应用
+^^^^^^^^
+模块卸载时执行的脚本。
+
+.. code-block:: xml
+
+    <uninstall><![CDATA[SQL语句或是php文件名]]></uninstall>
+
+如果是简单的 ``SQL`` 语句，创建表、删除表、更新数据，可以直接将 ``SQL`` 语句写入节点中，如果还需要 ``PHP`` 配合运行一些程序此处可以写文件名，系统会自动加载对应的文件运行(文件要放置到模块的根目录下)，例如：
+
+.. code-block:: xml
+
+    <upgrade><![CDATA[upgrade.php]]></upgrade>
+
+``upgrade.php`` 需要放置在清单文件同级目录中。
+
+上面设置更新模块时执行 ``upgrade.php`` 文件，需要注意的是，每次模块更新时均会执行该文件，需要保证升级文件是可以多次执行不会出错。如果有一些新建表或是删除表的操作，最好先判断表是否存在。
+
+.. code-block:: php
+
+	if (pdo_fieldexists('storex_room', 'hotelid')) {
+	    pdo_query("ALTER TABLE " . tablename('storex_room') . " CHANGE `hotelid` `store_base_id` INT(11) NULL DEFAULT '0';");
+	}
+	if (!pdo_fieldexists('storex_room', 'is_house')) {
+	    pdo_query("ALTER TABLE " . tablename('storex_room') . " ADD `is_house` INT(11) NOT NULL DEFAULT '1' COMMENT '是否是房型 1 是，2不是 ';");
+	}
+
+
+配置字段详解
+------------
+
+manifest - xmlns （新增）
+^^^^^^^^^^^^^^^^^^^^^^^^
+用来为此模块 ``XML`` 的命令空间，此处必须填写 ``http://www.we7.cc`` 。
+
+manifest - versionCode
+^^^^^^^^^^^^^^^^^^^^^^
+用来说明当前模块适用于哪个版本的微擎， 用来保证模块的兼容性。多个支持的版本请使用逗号隔开。
+
+manifest - application
+^^^^^^^^^^^^^^^^^^^^^^
+用来定义模块的基本设置属性。
+
+manifest - application - setting
+""""""""""""""""""""""""""""""""
+用来说明此模块是否有针对模块的设置项，设置项可以保存此模块需要的配置参数(此参数针对不同的公众号分别保存)。
+
+manifest - application - name
+"""""""""""""""""""""""""""""
+模块的名称。
+
+manifest - application - identifie
+""""""""""""""""""""""""""""""""""
+模块标识符，应对应模块文件夹的名称，微擎系统按照此标识符查找模块定义。
+
+manifest - application - version
+""""""""""""""""""""""""""""""""
+模块当前版本，此版本用于模块的版本更新。
+
+manifest - application - type （新增）
+"""""""""""""""""""""""""""""""""""""
+模块的类型，方便在左侧菜单中归类与显示，目前分为 ``business`` (主要业务)， ``customer`` (客户关系)， ``activity`` (营销及活动)， ``services`` (常用服务及工具)， ``other`` (其他)。
+
+manifest - application - ability
+""""""""""""""""""""""""""""""""
+模块功能描述，使用简单的语言描述模块的作用，来吸引用户。
+
+manifest - application - description
+""""""""""""""""""""""""""""""""""""
+模块详细描述，详细介绍模块的功能和使用方法。
+
+manifest - application - author
+"""""""""""""""""""""""""""""""
+模块的作者，留下你的大名吧。
+
+manifest - application - url
+"""""""""""""""""""""""""""""
+模块的发布页, 可以通过这个 ``url`` 来访问你的模块最新情况。
+
+manifest - platform
+^^^^^^^^^^^^^^^^^^^
+用来定义模块用以处理公众平台消息的设置项。
+
+manifest - platform - subscribes
+""""""""""""""""""""""""""""""""
+消息订阅器定义(消息订阅器提供了一种处理公众平台消息的方式, 可以接受到指定类型的消息, 来进行分析和统计, 不能用以处理消息返回结果。这种处理是并行的，同一个消息会被每一个订阅它的模块接收到)。
+
+manifest - platform - subscribes - message
++++++++++++++++++++++++++++++++++++++++++++
+定义需要被订阅器订阅的消息类型，这里的消息被 ``WeModuleReceiver`` 处理。
+
+manifest - platform - handles
+"""""""""""""""""""""""""""""
+消息处理器定义(消息处理器用于接收公众平台的消息，并返回相应的处理结果。这种处理是互斥的，同一个消息只能从一个模块返回处理结果)。
+
+manifest - platform - handles - message
+++++++++++++++++++++++++++++++++++++++++
+定义需要被处理器处理的消息类型, 这里的消息被 ``WeModuleProcessor`` 处理。
+
+manifest - platform - rule （变更）
+""""""""""""""""""""""""""""""""""
+定义此模块是否需要规则触发。
+
+manifest - platform - rule - embed
++++++++++++++++++++++++++++++++++++
+当前模块进行消息处理时需要定义规则, 是否使用规则路由。(使用规则路由必须要能处理 ``text`` 类型消息， ``handles`` 节点中必须包含 )。
+
+manifest - bindings （新增）
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+定义此模块的封面，管理菜单，微站菜单及规则扩展菜单。
+
+manifest - bindings - cover
+"""""""""""""""""""""""""""
+定义模块的封面入口，封面入口为单条图文信息即是模块需要对用户开放的入口地址。
+
+manifest - bindings - cover - call
++++++++++++++++++++++++++++++++++++
+定义模块动态扩展菜单项, 此值对应 ``WeModuleSite`` 类中的方法，返回的值结构与 ``entry`` 相同, 将成为此节点的菜单项。
+
+manifest - bindings - cover - entry
++++++++++++++++++++++++++++++++++++
+模块绑定菜单的定义结构。需要定义 ``title`` - 操作的名称， ``do`` - 模块操作入口， ``state`` - 附加的用户参数(定义于 ``WeModuleSite`` )。
+
+manifest - bindings - rule
+""""""""""""""""""""""""""
+定义规则的附加操作，每个 ``entry`` 代表一个附加操作。？？
+
+manifest - bindings - menu
+""""""""""""""""""""""""""
+定义模块在左侧本模块菜单下拉列表中的附加菜单操作，每一个 ``entry`` 代表一个菜单操作。
+
+manifest - bindings - home
+""""""""""""""""""""""""""
+定义模块在微站首页的扩展菜单项，每一个 ``entry`` 代表一个微站首页菜单项。
+
+manifest - bindings - profile
+""""""""""""""""""""""""""""""
+定义模块在微站个人中心的扩展菜单项，每一个 ``entry`` 代表一个微站个人中心菜单项。
+
+manifest - bindings - shortcut
+"""""""""""""""""""""""""""""""
+定义模块在微站快捷菜单的扩展菜单项，每一个 ``entry`` 代表一个微站快捷菜单项。
+
+manifest - install
+^^^^^^^^^^^^^^^^^^
+安装执行脚本, 这里支持两种形式:  ``php`` 脚本和 ``sql`` 语句。如果安装时只需要写入数据库相关内容, 可以在此直接定义 ``sql`` 语句。也可以使用 ``php`` 文件，例如: ``install.php`` 代表执行模块定义目录下的 ``install.php`` 。
+
+manifest - uninstall
+^^^^^^^^^^^^^^^^^^^^^
+卸载执行脚本, 参上
+
+manifest - upgrade
+^^^^^^^^^^^^^^^^^^
+升级执行脚本, 参上
+
+模块常用功能
+============
+
+
+
+

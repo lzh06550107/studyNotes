@@ -1,0 +1,255 @@
+*****
+nio概览
+*****
+
+早在2000年的时候，Sun公司就启动了 ``JSR 51`` ：为 Java 平台开发新的 I/O API ，直接访问操作系统底层输入/输出操作以提高应用程序的性能，首次引入这套 API 是在 J2SE 1.4 中，根据维基百科的新 I/O 词条显示，新I/O(NIO)由下列API组成：
+
+- 原始类型数据缓冲；
+- 字符集编码和解码；
+- 通道，新的原始I/O抽象；
+- 支持上锁和内存映射的文件接口，文件最大支持Integer.MAX_VALUE字节(2GB)；
+- 为可扩展服务器提供的多路复用，无阻塞I/O设施(基于选择器和键)；
+
+JSR 203(NIO.2) 除了解决 JSR 51 遗留下来的问题外，还为 Java 平台提供了更多新的 I/O API ， NIO.2 解决了 ``java.awt.File`` 文件系统接口存在的重大问题，引入了异步 I/O ，并完成了未包括在 JSR 51 中的功能，下面列出了包含在 JSR 203 中的主要组件：
+
+- 新的文件系统接口，支持大块访问文件属性，更改通知，绕开文件系统指定的 API ，也是可插拔文件系统实现的服务提供者接口。
+- 对套接字和文件同时提供了异步 I/O 操作的 API 。
+- JSR 51 中定义的完整的套接字通道功能，此外还包括绑定，选项配置和多播数据报的支持。
+
+新的文件系统接口
+===============
+Java 的 ``File`` 类存在重大问题，例如，操作出错时， ``delete()`` 和 ``mkdir()`` 方法返回一个状态码而不是一个异常，没有办法获知失败的原因，此外还包括以下问题：
+
+- ``File`` 没有提供方法来检测符号链接，要知道为什么检测符号链接很重要，以及如何解决这个问题的办法，请参考 Patrick 的文章“在Java中如何处理文件系统软链接/符号链接”和“Java中的链接/别名/快捷方式”。
+- ``File`` 提供的方法只能访问部分文件属性，不能访问文件权限和访问控制列表。
+- ``File`` 没有提供方法一次访问文件的所有属性(如文件的修改时间和它的类型)，因为文件系统需要为每个属性执行查询请求，可能存在性能问题。
+- ``File`` 的 ``list()`` 和 ``listFiles()`` 方法返回文件名和目录名的数组，但不支持大目录，通过网络展示大目录清单时，调用 ``list()/listFiles()`` 方法可能会使当前的线程阻塞相当长一段时间，而在服务器端，虚拟机可能会耗尽内存。
+- ``File`` 没有提供复制和移动文件的方法，虽然 ``File`` 提供了一个 ``renameTo()`` 方法在某些时候可以用来移动文件，但它的行为与平台关系紧密，即在不同平台上的行为是不一致的，根据 ``renameTo()`` 的文档说明，这个方法不能在文件系统之间移动文件，它可能不是原子的，如果目标路径下已存在同名文件，这个操作可能不会成功。
+- ``File`` 也没有提供改变通知方法，需要应用程序自己实现，因此导致应用程序的性能下降，例如，服务器需要确定什么时候往目录中添加了一个新的 JAR 文件，它需要实时监视这个目录，因为服务器后台线程需要频繁读取文件系统，因此性能会有所下降。
+- ``File`` 也不允许开发人员引入他们自己的文件系统访问功能，例如，开发人员可能想将文件系统存储到一个 zip 文件中，或创建一个内存文件系统。
+
+NIO.2 引入了新的文件系统接口，除了解决上述存在的问题外，还引入了更多的功能，这个接口由位于 ``java.nio.file`` ， ``java.nio.file.attribute`` 和 ``java.nio.file.spi`` 包中的类和其它类型组成。
+
+这些包提供了多个切入点，其中一个切入点就是 ``java.nio.file.Paths`` 类，它提供了两个方法返回一个 ``java.nio.file.Path`` 实例：
+
+- public static Path get(String path) – 它通过转换给定路径字符串返回给这个实例构造一个Path实例。
+- public static Path get(URI uri) -它通过转换给定路径的URI(统一资源定位符)返回给这个实例构造一个Path实例。
+
+与传统的基于File的代码互操作：
+
+``File`` 类提供了一个 ``public Path toPath()`` 方法，它可以将一个 ``File`` 实例转换成一个 ``Path`` 实例。
+
+当你创建了一个 ``Path`` 实例后，你就可以使用这个实例执行许多路径操作(如返回路径的一部分，连接两个路径)和许多文件操作(如删除，移动和复制文件)。
+
+为了不将问题复杂化，我就不深入讲解 ``Path`` 了，这里我用一段代码简单地演示一下以前的 ``get()`` 方法和 ``Path`` 的 ``delete()`` 方法。
+
+InformedDelete.java
+
+.. code-block:: java
+
+	// InformedDelete.java
+	import java.io.IOException;
+	import java.nio.file.DirectoryNotEmptyException;
+	import java.nio.file.NoSuchFileException;
+	import java.nio.file.Path;
+	import java.nio.file.Paths;
+	public class InformedDelete
+	{
+	   public static void main (String [] args)
+	   {
+	      if (args.length != 1)
+	      {
+	          System.err.println ("usage: java InformedDelete path");
+	          return;
+	      }
+	      // Attempt to construct a Path instance by converting the path argument
+	      // string. If unsuccessful (you passed an empty string as the
+	      // command-line argument), the get() method throws an instance of the
+	      // unchecked java.nio.file.InvalidPathException class.
+	      Path path = Paths.get (args [0]);
+	      try
+	      {
+	          path.delete (); // Attempt to delete the path.
+	      }
+	      catch (NoSuchFileException e)
+	      {
+	          System.err.format ("%s: no such file or directory%n", path);
+	      }
+	      catch (DirectoryNotEmptyException e)
+	      {
+	          System.err.format ("%s: directory not empty%n", path);
+	      }
+	      catch (IOException e)
+	      {
+	          System.err.format ("%s: %s%n", path, e);
+	      }
+	   }
+	}
+
+``InformedDelete`` 调用 ``Path`` 的 ``delete()`` 方法解决了 ``File`` 的 ``delete()`` 方法不能确定失败原因的问题，当 ``Path`` 的 ``delete()`` 当的检测到操作失败时，它会根据情况抛出适当的异常，如：
+
+1. 如果文件不存在，抛出 ``java.nio.file.NoSuchFileException`` 异常。
+2. 如果文件是一个目录不能删除，抛出 ``java.nio.file.DirectoryNotEmptyException`` 异常，因为这个目录下可能还包括一个空目录。
+3. 如果遇到其他 I/O 问题，则抛出 ``java.io.IOException`` 的子类异常，例如，如果文件是只读的，抛出 ``java.nio.file.AccessDeniedException`` 异常。
+
+异步I/O
+=======
+JSR 51 引入了多路复用 I/O(无阻塞I/O和选择就绪的结合)使创建高可扩展服务器变得更加容易，本质上是这样的，客户端代码用一个选择器注册一个套接字通道，当通道准备好可以开始 I/O 操作时发出通知。
+
+如果要深入研究多路复用I/O，请阅读Ron Hitchens的《Java NIO》一书。
+
+JSR 203 还引入了异步I/O，它也被用来建立高可扩展服务器，和多路复用I/O不同，异步I/O是让客户端启动一个I/O操作，当操作完成后向客户端发送一个通知。
+
+异步I/O 是通过以下位于 ``java.nio.channels`` 包中的接口和类实现的，它们的名称前面都加了 ``Asynchronous`` 前缀：
+
+- AsynchronousChannel – 标识一个支持异步I/O的通道。
+- AsynchronousByteChannel – 标识一个支持读写字节的异步通道，这个接口扩展了AsynchronousChannel。
+- AsynchronousDatagramChannel – 标识一个面向数据报套接字异步通道，这个类实现了AsynchronousByteChannel。
+- AsynchronousFileChannel – 标识一个可读，写和操作文件的异步通道，这个类实现了AsynchronousChannel。
+- AsynchronousServerSocketChannel – 标识一个面向流监听套接字的异步通道，这个类实现了AsynchronousChannel。
+- AsynchronousSocketChannel – 标识一个面向流连接套接字的异步通道，这个类实现了AsynchronousByteChannel。
+- AsynchronousChannelGroup – 标识一个用于资源共享的异步通道组。
+
+AsynchronousChannel 文档指定了两种形式的异步I/O操作：
+
+- Future operation(...)
+- void operation(... A attachment, CompletionHandler handler)
+
+``operation`` 列举I/O操作(如读，写)，V是操作的结果类型，A是附加给操作的对象类型。
+
+第一种形式需要你调用 ``java.util.concurrent.Future`` 方法检查操作是否完成，等待完成和检索结果，清单2的代码演示了这样一个示例。
+
+AFCDemo1.java
+
+.. code-block:: java
+
+	// AFCDemo2.java
+	import java.io.IOException;
+	import java.nio.ByteBuffer;
+	import java.nio.channels.AsynchronousFileChannel;
+	import java.nio.channels.CompletionHandler;
+	import java.nio.file.Path;
+	import java.nio.file.Paths;
+	public class AFCDemo2
+	{
+	   static Thread current;
+	   public static void main (String [] args) throws Exception
+	   {
+	      if (args.length != 1)
+	      {
+	          System.err.println ("usage: java AFCDemo1 path");
+	          return;
+	      }
+	      Path path = Paths.get (args [0]);
+	      AsynchronousFileChannel ch = AsynchronousFileChannel.open (path);
+	      ByteBuffer buf = ByteBuffer.allocate (1024);
+	      current = Thread.currentThread ();
+	      ch.read (buf, 0, null,
+	               new CompletionHandler<Integer, Void> ()
+	               {
+	                   public void completed (Integer result, Void v)
+	                   {
+	                      System.out.println ("Bytes read = "+result);
+	                      current.interrupt ();
+	                   }
+	                   public void failed (Throwable exc, Void v)
+	                   {
+	                      System.out.println ("Failure: "+exc.toString ());
+	                      current.interrupt ();
+	                   }
+	               });
+	      System.out.println ("Waiting for completion");
+	      try
+	      {
+	          current.join ();
+	      }
+	      catch (InterruptedException e)
+	      {
+	      }
+	      System.out.println ("Terminating");
+	      ch.close ();
+	   }
+	}
+
+上面的代码调用 ``AsynchronousFileChannel's public abstract void read(ByteBuffer dst, long position, A attachment, CompletionHandler handler)`` 方法异步读取前 1024 字节。
+
+虽然我们只演示了单一的读操作，但 ``attachment`` 部分也很重要，上面的代码演示了传递一个 ``null`` 给 ``read()`` 方法，并指定附加类型为 ``Void`` 。
+
+完整的套接字通道功能
+===================
+JSR 51的 ``DatagramChannel`` ， ``ServerSocketChannel`` 和 ``SocketChannel`` 类没有完整抽象一个网络套接字，为了绑定通道的套接字，或为了获得/设置套接字选项，你必须先调用每个类的 ``socket()`` 方法检索对等套接字。
+
+JSR 51生效时没有时间定义完整的套接字通道API，因此形成了套接字通道和套接字API混合的局面，JSR203引入新的 ``java.nio.channels.NetworkChannel`` 接口解决了这个问题。
+
+``NetworkChannel`` 提供了将套接字绑定到本地地址，返回绑定地址，以及获得/设置套接字选项的方法，这个接口是通过同步和异步套接字类实现的，不再需要调用 ``socket()`` 方法。
+
+JSR 203也引入了新的 ``java.nio.channels.MulticastChannel`` 接口，它为 ``DatagramChannel`` 提供了IP多播的支持，以及对应的异步支持。
+
+分类
+====
+
+``Java NIO(New IO)`` 是一个可以替代标准 Java IO API 的 IO API（从Java 1.4开始)， Java NIO 提供了与标准 IO 不同的 IO 工作方式。
+
+Java NIO: Channels and Buffers（通道和缓冲区）
+--------------------------------------------
+标准的 IO 基于字节流和字符流进行操作的，而 NIO 是基于通道（Channel）和缓冲区（Buffer）进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区写入到通道中。
+
+Java NIO: Non-blocking IO（非阻塞IO）
+-----------------------------------
+Java NIO 可以让你非阻塞的使用 IO ，例如：当线程从通道读取数据到缓冲区时，线程还是可以进行其他事情。当数据被写入到缓冲区时，线程可以继续处理它。从缓冲区写入通道也类似。
+
+Java NIO: Selectors（选择器）
+---------------------------
+Java NIO 引入了选择器的概念，选择器用于监听多个通道的事件（比如：连接打开，数据到达）。因此，单个的线程可以监听多个数据通道。
+
+组成
+====
+
+Java NIO 由以下几个核心部分组成：
+
+- Channels
+- Buffers
+- Selectors
+
+虽然 Java NIO 中除此之外还有很多类和组件，但在我看来， ``Channel`` ， ``Buffer`` 和 ``Selector`` 构成了核心的 ``API`` 。其它组件，如 ``Pipe`` 和 ``FileLock`` ，只不过是与三个核心组件共同使用的工具类。因此，在概述中我将集中在这三个组件上。其它组件会在单独的章节中讲到。
+
+Channel 和 Buffer
+-----------------
+基本上，所有的 ``IO`` 在 ``NIO`` 中都从一个 ``Channel`` 开始。 ``Channel`` 有点像流。数据可以从 ``Channel`` 读到 ``Buffer`` 中，也可以从 ``Buffer`` 写到 ``Channel`` 中。
+
+``Channel`` 和 ``Buffer`` 有好几种类型。下面是 JAVA NIO 中的一些主要 ``Channel`` 的实现：
+
+- FileChannel
+- DatagramChannel
+- SocketChannel
+- ServerSocketChannel
+
+正如你所看到的，这些通道涵盖了 ``UDP`` 和 ``TCP`` 网络 ``IO`` ，以及文件 ``IO`` 。
+
+与这些类一起的有一些有趣的接口，但为简单起见，我尽量在概述中不提到它们。本教程其它章节与它们相关的地方我会进行解释。
+
+以下是 Java NIO 里关键的 ``Buffer`` 实现：
+
+- ByteBuffer
+- CharBuffer
+- DoubleBuffer
+- FloatBuffer
+- IntBuffer
+- LongBuffer
+- ShortBuffer
+
+这些 ``Buffer`` 覆盖了你能通过 ``IO`` 发送的基本数据类型： ``byte`` ， ``short`` ， ``int`` ， ``long`` ， ``float`` ， ``double`` 和 ``char`` 。
+
+Java NIO 还有个 ``MappedByteBuffer`` ，用于表示内存映射文件， 我也不打算在概述中说明。
+
+Selector
+--------
+``Selector`` 允许单线程处理多个 ``Channel`` 。如果你的应用打开了多个连接（通道），但每个连接的流量都很低，使用 ``Selector`` 就会很方便。例如，在一个聊天服务器中。
+
+这是在一个单线程中使用一个 ``Selector`` 处理 3 个 ``Channel`` 的图示：
+
+.. image:: ../images/overview-selectors.png
+
+要使用 ``Selector`` ，得向 ``Selector`` 注册 ``Channel`` ，然后调用它的 ``select()`` 方法。这个方法会一直阻塞到某个注册的通道有事件就绪。一旦这个方法返回，线程就可以处理这些事件，事件的例子有如新连接进来，数据接收等。
+
+

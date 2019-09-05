@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>30. mix使用手册 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="31. Laravel 的用户认证系统" href="Laravel的用户认证系统.html"/>
+        <link rel="prev" title="29. Mix" href="Laravel的Mix.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">30. mix使用手册</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">30.1. 基本例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">30.2. 安装</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#laravel">30.2.1. Laravel 项目</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">30.2.2. 独立项目</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#npm">30.2.3. npm脚本</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">30.3. Laravel工作流</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">30.3.1. 1、安装 <code class="docutils literal"><span class="pre">Laravel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node">30.3.2. 2、安装 <code class="docutils literal"><span class="pre">Node</span></code> 依赖</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#webpack-min-js">30.3.3. 3、查看 <code class="docutils literal"><span class="pre">webpack.min.js</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">30.3.4. 4、编译</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">30.3.5. 5、更新你的视图</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>30. mix使用手册</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mix">
+<h1>30. mix使用手册<a class="headerlink" href="#mix" title="永久链接至标题">¶</a></h1>
+<p><a class="reference external" href="https://github.com/JeffreyWay/laravel-mix/blob/master/docs/installation.md">参考文档</a></p>
+<div class="section" id="id2">
+<h2>30.1. 基本例子<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">laravel</span> <span class="pre">mix</span></code> 是 <code class="docutils literal"><span class="pre">webpack</span></code> 的一个封装，可以让80％的用例变得简单易用。大多数人会赞同，尽管 <code class="docutils literal"><span class="pre">webpack</span></code> 功能强大，但它的学习曲线陡峭。但是你不必担心这个问题。</p>
+<p>看看一个 <code class="docutils literal"><span class="pre">webpack.mix.js</span></code> 基础文件。让我们想象一下，我们只需要 <code class="docutils literal"><span class="pre">javascript</span></code> 和 <code class="docutils literal"><span class="pre">sass</span></code> 编译，则需要如下代码：</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">mix</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;laravel-mix&#39;</span><span class="p">);</span>
+
+<span class="nx">mix</span><span class="p">.</span><span class="nx">sass</span><span class="p">(</span><span class="s1">&#39;src/app.sass&#39;</span><span class="p">,</span> <span class="s1">&#39;dist&#39;</span><span class="p">).</span><span class="nx">js</span><span class="p">(</span><span class="s1">&#39;src/app.js&#39;</span><span class="p">,</span> <span class="s1">&#39;dist&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>是不是简单？</p>
+<ol class="arabic simple">
+<li>编译 <code class="docutils literal"><span class="pre">Sass</span></code> 文件，从 <code class="docutils literal"><span class="pre">./src/app.sass</span></code> 读取，然后编译到 <code class="docutils literal"><span class="pre">./dist/app.css</span></code> ；</li>
+<li>打包所有位于 <code class="docutils literal"><span class="pre">./src/app.js</span></code> 脚本(包含任何需要的模块)到 <code class="docutils literal"><span class="pre">./dist/app.js</span></code> ；</li>
+</ol>
+<p>使用该配置文件，我们可以使用一下命令触发 <code class="docutils literal"><span class="pre">webpack</span></code> :</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>node_modules/.bin/webpack
+</pre></div>
+</div>
+<p>在开发过程中，没有必要缩小输出，但是当在生产环境 <code class="docutils literal"><span class="pre">export</span> <span class="pre">NODE_ENV=production</span> <span class="pre">webpack</span></code> 触发 <code class="docutils literal"><span class="pre">webpack</span></code> 时，会自动执行缩小功能。</p>
+<p>如果你更喜欢使用 <code class="docutils literal"><span class="pre">Less</span></code> 编译，你只需要切换 <code class="docutils literal"><span class="pre">mix.sass()</span></code> 为 <code class="docutils literal"><span class="pre">mix.less()</span></code> 。</p>
+<p>使用 <code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">Mix</span></code> ，你会发现通常的 <code class="docutils literal"><span class="pre">webpack</span></code> 任务变得简单了。</p>
+</div>
+<div class="section" id="id3">
+<h2>30.2. 安装<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>虽然 <code class="docutils literal"><span class="pre">laravel</span> <span class="pre">mix</span></code> 是针对 <code class="docutils literal"><span class="pre">laravel</span></code> 使用而优化的，但它可以用于任何类型的应用程序。</p>
+<div class="section" id="laravel">
+<h3>30.2.1. Laravel 项目<a class="headerlink" href="#laravel" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">laravel</span></code> 提供您开始所需的一切。你只需要：</p>
+<ul class="simple">
+<li>安装 <code class="docutils literal"><span class="pre">Laravel</span></code> ；</li>
+<li>运行 <code class="docutils literal"><span class="pre">npm</span> <span class="pre">install</span></code> ；</li>
+<li>查看 <code class="docutils literal"><span class="pre">webpack.mix.js</span></code> 文件 ；</li>
+</ul>
+<p>现在，在命令行中，你可以运行 <code class="docutils literal"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">watch</span></code> 来监控改变的文件，然后重新编译。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">你不会在你的项目根目录下找到一个 <code class="docutils literal"><span class="pre">webpack.config.js</span></code> 文件。默认情况下，laravel 推迟本库中的配置文件。但是，如果需要对其进行配置，则可以将该文件复制到项目根目录，然后相应地更新您的 <code class="docutils literal"><span class="pre">package.json</span></code> npm脚本： <code class="docutils literal"><span class="pre">cp</span> <span class="pre">node_modules/laravel-mix/setup/webpack.config.js</span> <span class="pre">./</span></code> 。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>30.2.2. 独立项目<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>首先通过 <code class="docutils literal"><span class="pre">npm</span></code> 或 <code class="docutils literal"><span class="pre">yarn</span></code> 安装 <code class="docutils literal"><span class="pre">laravel</span> <span class="pre">mix</span></code> ，然后将示例 <code class="docutils literal"><span class="pre">Mix</span></code> 文件复制到项目根目录。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>mkdir my-app <span class="o">&amp;&amp;</span> <span class="nb">cd</span> my-app
+npm init -y
+npm install laravel-mix --save-dev
+cp -r node_modules/laravel-mix/setup/webpack.mix.js ./
+</pre></div>
+</div>
+<p>你现在应该具有如下目录结构：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">node_modules/</span></code></li>
+<li><code class="docutils literal"><span class="pre">package.json</span></code></li>
+<li><code class="docutils literal"><span class="pre">webpack.mix.js</span></code></li>
+</ul>
+<p><code class="docutils literal"><span class="pre">webpack.mix.js</span></code> 是 <code class="docutils literal"><span class="pre">webpack</span></code> 之上的配置层。你大部分时间都会在这里度过。</p>
+<p>转到你的 <code class="docutils literal"><span class="pre">webpack.mix.js</span></code> 文件：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span> <span class="kd">let</span> <span class="nx">mix</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;laravel-mix&#39;</span><span class="p">);</span>
+
+ <span class="nx">mix</span><span class="p">.</span><span class="nx">js</span><span class="p">(</span><span class="s1">&#39;src/app.js&#39;</span><span class="p">,</span> <span class="s1">&#39;dist&#39;</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">sass</span><span class="p">(</span><span class="s1">&#39;src/app.scss&#39;</span><span class="p">,</span> <span class="s1">&#39;dist&#39;</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">setPublicPath</span><span class="p">(</span><span class="s1">&#39;dist&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>注意源路径，并创建匹配的目录结构（或者，当然，将它们更改为您喜欢的结构）。你现在都准备好了。通过从命令行运行 <code class="docutils literal"><span class="pre">node_modules/.bin/webpack</span></code> 编译所有内容。你现在应该看到：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">dist/app.css</span></code></li>
+<li><code class="docutils literal"><span class="pre">dist/app.js</span></code></li>
+<li><code class="docutils literal"><span class="pre">dist/mix-manifest.json</span></code></li>
+</ul>
+</div>
+<div class="section" id="npm">
+<h3>30.2.3. npm脚本<a class="headerlink" href="#npm" title="永久链接至标题">¶</a></h3>
+<p>作为提示，考虑将以下 <code class="docutils literal"><span class="pre">npm</span></code> 脚本添加到 <code class="docutils literal"><span class="pre">package.json</span></code> 文件中，以加快工作流程。 <code class="docutils literal"><span class="pre">laravel</span></code> 安装将已经包含这个。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>  <span class="s2">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;dev&quot;</span><span class="o">:</span> <span class="s2">&quot;NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;watch&quot;</span><span class="o">:</span> <span class="s2">&quot;NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;hot&quot;</span><span class="o">:</span> <span class="s2">&quot;NODE_ENV=development webpack-dev-server --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;production&quot;</span><span class="o">:</span> <span class="s2">&quot;NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>30.3. Laravel工作流<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>让我们回顾一下您可以从头开始为自己的项目采用的一般工作流程。</p>
+<div class="section" id="id6">
+<h3>30.3.1. 1、安装 <code class="docutils literal"><span class="pre">Laravel</span></code><a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>laravel new my-app
+</pre></div>
+</div>
+</div>
+<div class="section" id="node">
+<h3>30.3.2. 2、安装 <code class="docutils literal"><span class="pre">Node</span></code> 依赖<a class="headerlink" href="#node" title="永久链接至标题">¶</a></h3>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>npm install
+</pre></div>
+</div>
+</div>
+<div class="section" id="webpack-min-js">
+<h3>30.3.3. 3、查看 <code class="docutils literal"><span class="pre">webpack.min.js</span></code><a class="headerlink" href="#webpack-min-js" title="永久链接至标题">¶</a></h3>
+<p>将此文件视为您的所有前端配置的主基地。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">mix</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;laravel-mix&#39;</span><span class="p">);</span>
+
+<span class="nx">mix</span><span class="p">.</span><span class="nx">js</span><span class="p">(</span><span class="s1">&#39;resources/assets/js/app.js&#39;</span><span class="p">,</span> <span class="s1">&#39;public/js&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">sass</span><span class="p">(</span><span class="s1">&#39;resources/assets/sass/app.scss&#39;</span><span class="p">,</span> <span class="s1">&#39;public/css&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>默认情况下，我们启用了 <code class="docutils literal"><span class="pre">javascript</span> <span class="pre">ES2017</span></code> +模块捆绑以及 <code class="docutils literal"><span class="pre">sass</span></code> 编译。</p>
+</div>
+<div class="section" id="id7">
+<h3>30.3.4. 4、编译<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>继续前进并编译这些。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>node_modules/.bin/webpack
+</pre></div>
+</div>
+<p>或者，如果你在 <code class="docutils literal"><span class="pre">package.json</span></code> 中有 <code class="docutils literal"><span class="pre">npm</span></code> 脚本，你可以这样做：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>npm run dev
+</pre></div>
+</div>
+<p>一旦命令运行结束，你会看到：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">./public/js/app.js</span></code></li>
+<li><code class="docutils literal"><span class="pre">./public/css/app.css</span></code></li>
+</ul>
+<p>接下来，让我们开始工作。监控您的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 的更改，运行：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>npm run watch
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">laravel</span></code> 附带 <code class="docutils literal"><span class="pre">./resources/assets/js/components/Example.vue</span></code> 文件。给它一个调整，并等待OS编译已完成的通知！</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">您也可以使用 <code class="docutils literal"><span class="pre">mix.browsersync('myapp.test')</span></code> 在 <code class="docutils literal"><span class="pre">laravel</span></code> 应用程序中的任何相关文件发生更改时自动重新加载浏览器。</p>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>30.3.5. 5、更新你的视图<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>再次， <code class="docutils literal"><span class="pre">laravel</span></code> 附带一个欢迎页面。我们可以将其用于演示。将其更新为：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&quot;en&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Laravel<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{{ mix(&#39;css/app.css&#39;) }}&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">example</span><span class="p">&gt;&lt;/</span><span class="nt">example</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;{{ mix(&#39;js/app.js&#39;) }}&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>并在浏览器中重新加载页面。</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的用户认证系统.html" class="btn btn-neutral float-right" title="31. Laravel 的用户认证系统" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的Mix.html" class="btn btn-neutral" title="29. Mix" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

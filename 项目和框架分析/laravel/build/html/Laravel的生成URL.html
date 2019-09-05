@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>19. URL &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="20. Session" href="Laravel的Session.html"/>
+        <link rel="prev" title="18. 视图" href="Laravel的视图.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">19. URL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">19.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">19.2. 基础</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">19.2.1. 生成基础 URL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">19.2.2. 访问当前 URL</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">19.3. 命名路由的 URL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">19.4. 控制器动作的 URL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">19.5. 默认值</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>19. URL</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="url">
+<h1>19. URL<a class="headerlink" href="#url" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>19.1. 简介<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>Laravel 提供了几个辅助函数来为应用程序生成 <code class="docutils literal"><span class="pre">URL</span></code> 。主要用于在模板和 <code class="docutils literal"><span class="pre">API</span></code> 响应中构建 <code class="docutils literal"><span class="pre">URL</span></code> 或者在应用程序的其它部分生成重定向响应。</p>
+</div>
+<div class="section" id="id2">
+<h2>19.2. 基础<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id3">
+<h3>19.2.1. 生成基础 URL<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>辅助函数 <code class="docutils literal"><span class="pre">url</span></code> 可以用于应用的任何一个 <code class="docutils literal"><span class="pre">URL</span></code> 。生成的 <code class="docutils literal"><span class="pre">URL</span></code> 将自动使用当前请求中的方案（ <code class="docutils literal"><span class="pre">HTTP</span></code> 或 <code class="docutils literal"><span class="pre">HTTPS</span></code> ）和主机：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$post</span> <span class="o">=</span> <span class="nx">App\Post</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">url</span><span class="p">(</span><span class="s2">&quot;/posts/</span><span class="si">{</span><span class="nv">$post</span><span class="o">-&gt;</span><span class="na">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">);</span> <span class="c1">//告诉PHP，括起来的要当成变量处理。</span>
+
+<span class="c1">// http://example.com/posts/1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>19.2.2. 访问当前 URL<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>如果没有给辅助函数 <code class="docutils literal"><span class="pre">url</span></code> 提供路径，则会返回一个 <code class="docutils literal"><span class="pre">Illuminate\Routing\UrlGenerator</span></code> 实例，来允许你访问有关当前 <code class="docutils literal"><span class="pre">URL</span></code> 的信息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 获取没有查询字符串的当前的 URL ...</span>
+<span class="k">echo</span> <span class="nx">url</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">current</span><span class="p">();</span>
+
+<span class="c1">// 获取包含查询字符串的当前的 URL ...</span>
+<span class="k">echo</span> <span class="nx">url</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">full</span><span class="p">();</span>
+
+<span class="c1">// 获取上一个请求的完整的 URL...</span>
+<span class="k">echo</span> <span class="nx">url</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">previous</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>上面的这些方法都可以通过 URL facade 访问：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\URL</span><span class="p">;</span>
+
+<span class="k">echo</span> <span class="nx">URL</span><span class="o">::</span><span class="na">current</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>19.3. 命名路由的 URL<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>辅助函数 <code class="docutils literal"><span class="pre">route</span></code> 可以用于为指定路由生成 <code class="docutils literal"><span class="pre">URL</span></code> 。命名路由生成的 <code class="docutils literal"><span class="pre">URL</span></code> 方法可以让路由上定义的 <code class="docutils literal"><span class="pre">URL</span></code> 相解耦。因此，就算路由的 <code class="docutils literal"><span class="pre">URL</span></code> 路径有任何更改，都不需要对 <code class="docutils literal"><span class="pre">route</span></code> 函数调用进行任何更改。例如，假设你的应用程序包含以下路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/post/{post}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">(</span><span class="s1">&#39;post.show&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>生成此路由的 <code class="docutils literal"><span class="pre">URL</span></code> ，可以像这样使用辅助函数 <code class="docutils literal"><span class="pre">route</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="nx">route</span><span class="p">(</span><span class="s1">&#39;post.show&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;post&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">]);</span>
+
+<span class="c1">// http://example.com/post/1</span>
+</pre></div>
+</div>
+<p>将 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型 作为参数值传给 <code class="docutils literal"><span class="pre">route</span></code> 方法，它会自动提取模型的主键来生成 <code class="docutils literal"><span class="pre">URL</span></code> 。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="nx">route</span><span class="p">(</span><span class="s1">&#39;post.show&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;post&#39;</span> <span class="o">=&gt;</span> <span class="nv">$post</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>19.4. 控制器动作的 URL<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">action</span></code> 功能可以为给定的控制器动作生成 <code class="docutils literal"><span class="pre">URL</span></code> 。这个功能不需要你传递控制器的完整命名空间，但你需要传递相对于命名空间 <code class="docutils literal"><span class="pre">App\Http\Controllers</span></code> 的控制器类名：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$url</span> <span class="o">=</span> <span class="nx">action</span><span class="p">(</span><span class="s1">&#39;HomeController@index&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果控制器方法需要路由参数，那就将它们作为第二个参数传递给 <code class="docutils literal"><span class="pre">action</span></code> 函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$url</span> <span class="o">=</span> <span class="nx">action</span><span class="p">(</span><span class="s1">&#39;UserController@profile&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>19.5. 默认值<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>对于某些应用程序，你可能希望为某些 <code class="docutils literal"><span class="pre">URL</span></code> 参数的请求范围指定默认值。例如，假设有些路由定义了 <code class="docutils literal"><span class="pre">{locale}</span></code> 参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/{locale}/posts&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">(</span><span class="s1">&#39;post.index&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>每次都通过 <code class="docutils literal"><span class="pre">locale</span></code> 来调用辅助函数 <code class="docutils literal"><span class="pre">route</span></code> 也是一件很麻烦的事情。因此，使用 <code class="docutils literal"><span class="pre">URL::defaults</span></code> 方法定义这个参数的默认值，可以让该参数始终存在当前请求中。然后就能从 路由中间件 调用此方法来访问当前请求：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Middleware</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Closure</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\URL</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SetDefaultLocaleForUrls</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nx">Closure</span> <span class="nv">$next</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nx">URL</span><span class="o">::</span><span class="na">defaults</span><span class="p">([</span><span class="s1">&#39;locale&#39;</span> <span class="o">=&gt;</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">locale</span><span class="p">]);</span>
+
+        <span class="k">return</span> <span class="nv">$next</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦设置了 <code class="docutils literal"><span class="pre">locale</span></code> 参数的默认值，您就不再需要通过辅助函数 <code class="docutils literal"><span class="pre">route</span></code> 生成 <code class="docutils literal"><span class="pre">URL</span></code> 时传递它的值。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的Session.html" class="btn btn-neutral float-right" title="20. Session" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的视图.html" class="btn btn-neutral" title="18. 视图" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

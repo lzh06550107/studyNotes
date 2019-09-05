@@ -1,0 +1,976 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>22. 修饰器 &mdash; ECMAScript6入门 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="ECMAScript6入门 1.0 文档" href="index.html"/>
+        <link rel="next" title="23. Module 的语法" href="Module的语法.html"/>
+        <link rel="prev" title="21. Class的继承" href="Class的继承.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ECMAScript6入门
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECMAScript6简介.html">2. ECMAScript6简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="let和const命令.html">3. let 和 const 命令</a></li>
+<li class="toctree-l1"><a class="reference internal" href="变量的解构赋值.html">4. 变量的解构赋值</a></li>
+<li class="toctree-l1"><a class="reference internal" href="字符串的扩展.html">5. 字符串的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="正则的扩展.html">6. 正则的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数值的扩展.html">7. 数值的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="函数的扩展.html">8. 函数的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="数组的扩展.html">9. 数组的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="对象的扩展.html">10. 对象的扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Symbol.html">11. Symbol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Set和Map数据结构.html">12. Set和Map数据结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Proxy.html">13. Proxy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Reflect.html">14. Reflect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Promise对象.html">15. Promise对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterator和for...of循环.html">16. Iterator 和 for…of 循环</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的语法.html">17. Generator函数的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Generator函数的异步应用.html">18. Generator 函数的异步应用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="async函数.html">19. asyn函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的基本语法.html">20. Class 的基本语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Class的继承.html">21. Class的继承</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">22. 修饰器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">22.1. 类的修饰</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">22.2. 方法的修饰</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">22.3. 为什么修饰器不能用于函数？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-decorators-js">22.4. core-decorators.js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">22.5. 使用修饰器实现自动发布事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mixin">22.6. Mixin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#trait">22.7. Trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#babel">22.8. Babel 转码器的支持</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Module的语法.html">23. Module 的语法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Module的加载实现.html">24. Module 的加载实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="编程风格.html">25. 编程风格</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECMAScript6入门</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>22. 修饰器</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>22. 修饰器<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>22.1. 类的修饰<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>许多面向对象的语言都有修饰器（ <code class="docutils literal"><span class="pre">Decorator</span></code> ）函数，用来修改类的行为。目前，有一个提案将这项功能，引入了 <code class="docutils literal"><span class="pre">ECMAScript</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>@testable
+class MyTestableClass {
+  // ...
+}
+
+function testable(target) {
+  target.isTestable = true;
+}
+
+MyTestableClass.isTestable // true
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">&#64;testable</span></code> 就是一个修饰器。它修改了 <code class="docutils literal"><span class="pre">MyTestableClass</span></code> 这个类的行为，为它加上了静态属性 <code class="docutils literal"><span class="pre">isTestable</span></code> 。 <code class="docutils literal"><span class="pre">testable</span></code> 函数的参数 <code class="docutils literal"><span class="pre">target</span></code> 是 <code class="docutils literal"><span class="pre">yTestableClass</span></code> 类本身。</p>
+<p>基本上，修饰器的行为就是下面这样。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>@decorator
+class A {}
+
+// 等同于
+
+class A {}
+A = decorator(A) || A;
+</pre></div>
+</div>
+<p>也就是说，修饰器是一个对类进行处理的函数。修饰器函数的第一个参数，就是所要修饰的目标类。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">testable</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">testable</span></code> 函数的参数 <code class="docutils literal"><span class="pre">target</span></code> ，就是会被修饰的类。</p>
+<p>如果觉得一个参数不够用，可以在修饰器外面再封装一层函数。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>function testable(isTestable) {
+  return function(target) {
+    target.isTestable = isTestable;
+  }
+}
+
+@testable(true)
+class MyTestableClass {}
+MyTestableClass.isTestable // true
+
+@testable(false)
+class MyClass {}
+MyClass.isTestable // false
+</pre></div>
+</div>
+<p>上面代码中，修饰器 <code class="docutils literal"><span class="pre">testable</span></code> 可以接受参数，这就等于可以修改修饰器的行为。</p>
+<p>注意，修饰器对类的行为的改变，是代码编译时发生的，而不是在运行时。这意味着，修饰器能在编译阶段运行代码。也就是说，修饰器本质就是编译时执行的函数。</p>
+<p>前面的例子是为类添加一个静态属性，如果想添加实例属性，可以通过目标类的 <code class="docutils literal"><span class="pre">prototype</span></code> 对象操作。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>function testable(target) {
+  target.prototype.isTestable = true;
+}
+
+@testable
+class MyTestableClass {}
+
+let obj = new MyTestableClass();
+obj.isTestable // true
+</pre></div>
+</div>
+<p>上面代码中，修饰器函数 <code class="docutils literal"><span class="pre">testable</span></code> 是在目标类的 <code class="docutils literal"><span class="pre">prototype</span></code> 对象上添加属性，因此就可以在实例上调用。</p>
+<p>下面是另外一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>// mixins.js
+export function mixins(...list) {
+  return function (target) {
+    Object.assign(target.prototype, ...list)
+  }
+}
+
+// main.js
+import { mixins } from &#39;./mixins&#39;
+
+const Foo = {
+  foo() { console.log(&#39;foo&#39;) }
+};
+
+@mixins(Foo)
+class MyClass {}
+
+let obj = new MyClass();
+obj.foo() // &#39;foo&#39;
+</pre></div>
+</div>
+<p>上面代码通过修饰器 <code class="docutils literal"><span class="pre">mixins</span></code> ，把 <code class="docutils literal"><span class="pre">Foo</span></code> 对象的方法添加到了 <code class="docutils literal"><span class="pre">MyClass</span></code> 的实例上面。可以用 <code class="docutils literal"><span class="pre">Object.assign()</span></code> 模拟这个功能。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">Foo</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kr">class</span> <span class="nx">MyClass</span> <span class="p">{}</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">MyClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Foo</span><span class="p">);</span>
+
+<span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyClass</span><span class="p">();</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">foo</span><span class="p">()</span> <span class="c1">// &#39;foo&#39;</span>
+</pre></div>
+</div>
+<p>实际开发中， <code class="docutils literal"><span class="pre">React</span></code> 与 <code class="docutils literal"><span class="pre">Redux</span></code> 库结合使用时，常常需要写成下面这样。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MyReactComponent</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{}</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="nx">connect</span><span class="p">(</span><span class="nx">mapStateToProps</span><span class="p">,</span> <span class="nx">mapDispatchToProps</span><span class="p">)(</span><span class="nx">MyReactComponent</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>有了装饰器，就可以改写上面的代码。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>@connect(mapStateToProps, mapDispatchToProps)
+export default class MyReactComponent extends React.Component {}
+</pre></div>
+</div>
+<p>相对来说，后一种写法看上去更容易理解。</p>
+</div>
+<div class="section" id="id3">
+<h2>22.2. 方法的修饰<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>修饰器不仅可以修饰类，还可以修饰类的属性。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>class Person {
+  @readonly
+  name() { return `${this.first} ${this.last}` }
+}
+</pre></div>
+</div>
+<p>上面代码中，修饰器 <code class="docutils literal"><span class="pre">readonly</span></code> 用来修饰“类”的 <code class="docutils literal"><span class="pre">name</span></code> 方法。</p>
+<p>修饰器函数 <code class="docutils literal"><span class="pre">readonly</span></code> 一共可以接受三个参数。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">readonly</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">descriptor</span><span class="p">){</span>
+  <span class="c1">// descriptor对象原来的值如下</span>
+  <span class="c1">// {</span>
+  <span class="c1">//   value: specifiedFunction,</span>
+  <span class="c1">//   enumerable: false,</span>
+  <span class="c1">//   configurable: true,</span>
+  <span class="c1">//   writable: true</span>
+  <span class="c1">// };</span>
+  <span class="nx">descriptor</span><span class="p">.</span><span class="nx">writable</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">descriptor</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">readonly</span><span class="p">(</span><span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="nx">descriptor</span><span class="p">);</span>
+<span class="c1">// 类似于</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="nx">descriptor</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>修饰器第一个参数是类的原型对象，上例是 <code class="docutils literal"><span class="pre">Person.prototype</span></code> ，修饰器的本意是要“修饰”类的实例，但是这个时候实例还没生成，所以只能去修饰原型（这不同于类的修饰，那种情况时 <code class="docutils literal"><span class="pre">target</span></code> 参数指的是类本身）；第二个参数是所要修饰的属性名，第三个参数是该属性的描述对象。</p>
+<p>另外，上面代码说明，修饰器（ <code class="docutils literal"><span class="pre">readonly</span></code> ）会修改属性的描述对象（ <code class="docutils literal"><span class="pre">descriptor</span></code> ），然后被修改的描述对象再用来定义属性。</p>
+<p>下面是另一个例子，修改属性描述对象的 <code class="docutils literal"><span class="pre">enumerable</span></code> 属性，使得该属性不可遍历。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>class Person {
+  @nonenumerable
+  get kidCount() { return this.children.length; }
+}
+
+function nonenumerable(target, name, descriptor) {
+  descriptor.enumerable = false;
+  return descriptor;
+}
+</pre></div>
+</div>
+<p>下面的 <code class="docutils literal"><span class="pre">&#64;log</span></code> 修饰器，可以起到输出日志的作用。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>class Math {
+  @log
+  add(a, b) {
+    return a + b;
+  }
+}
+
+function log(target, name, descriptor) {
+  var oldValue = descriptor.value;
+
+  descriptor.value = function() {
+    console.log(`Calling ${name} with`, arguments);
+    return oldValue.apply(this, arguments);
+  };
+
+  return descriptor;
+}
+
+const math = new Math();
+
+// passed parameters should get logged now
+math.add(2, 4);
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">&#64;log</span></code> 修饰器的作用就是在执行原始的操作之前，执行一次 <code class="docutils literal"><span class="pre">console.log</span></code> ，从而达到输出日志的目的。</p>
+<p>修饰器有注释的作用。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>@testable
+class Person {
+  @readonly
+  @nonenumerable
+  name() { return `${this.first} ${this.last}` }
+}
+</pre></div>
+</div>
+<p>从上面代码中，我们一眼就能看出， <code class="docutils literal"><span class="pre">Person</span></code> 类是可测试的，而 <code class="docutils literal"><span class="pre">name</span></code> 方法是只读和不可枚举的。</p>
+<p>下面是使用 <code class="docutils literal"><span class="pre">Decorator</span></code> 写法的组件，看上去一目了然。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>@Component({
+  tag: &#39;my-component&#39;,
+  styleUrl: &#39;my-component.scss&#39;
+})
+export class MyComponent {
+  @Prop() first: string;
+  @Prop() last: string;
+  @State() isVisible: boolean = true;
+
+  render() {
+    return (
+      &lt;p&gt;Hello, my name is {this.first} {this.last}&lt;/p&gt;
+    );
+  }
+}
+</pre></div>
+</div>
+<p>如果同一个方法有多个修饰器，会像剥洋葱一样，先从外到内进入，然后由内向外执行。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>function dec(id){
+  console.log(&#39;evaluated&#39;, id);
+  return (target, property, descriptor) =&gt; console.log(&#39;executed&#39;, id);
+}
+
+class Example {
+    @dec(1)
+    @dec(2)
+    method(){}
+}
+// evaluated 1
+// evaluated 2
+// executed 2
+// executed 1
+</pre></div>
+</div>
+<p>上面代码中，外层修饰器 <code class="docutils literal"><span class="pre">&#64;dec(1)</span></code> 先进入，但是内层修饰器 <code class="docutils literal"><span class="pre">&#64;dec(2)</span></code> 先执行。</p>
+<p>除了注释，修饰器还能用来类型检查。所以，对于类来说，这项功能相当有用。从长期来看，它将是 JavaScript 代码静态分析的重要工具。</p>
+</div>
+<div class="section" id="id4">
+<h2>22.3. 为什么修饰器不能用于函数？<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>修饰器只能用于类和类的方法，不能用于函数，因为存在函数提升。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>var counter = 0;
+
+var add = function () {
+  counter++;
+};
+
+@add
+function foo() {
+}
+</pre></div>
+</div>
+<p>上面的代码，意图是执行后 <code class="docutils literal"><span class="pre">counter</span></code> 等于 1 ，但是实际上结果是 <code class="docutils literal"><span class="pre">counter</span></code> 等于 0 。因为函数提升，使得实际执行的代码是下面这样。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>@add
+function foo() {
+}
+
+var counter;
+var add;
+
+counter = 0;
+
+add = function () {
+  counter++;
+};
+</pre></div>
+</div>
+<p>下面是另一个例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>var readOnly = require(&quot;some-decorator&quot;);
+
+@readOnly
+function foo() {
+}
+</pre></div>
+</div>
+<p>上面代码也有问题，因为实际执行是下面这样。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>var readOnly;
+
+@readOnly
+function foo() {
+}
+
+readOnly = require(&quot;some-decorator&quot;);
+</pre></div>
+</div>
+<p>总之，由于存在函数提升，使得修饰器不能用于函数。类是不会提升的，所以就没有这方面的问题。</p>
+<p>另一方面，如果一定要修饰函数，可以采用高阶函数的形式直接执行。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">doSomething</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Hello, &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">loggingDecorator</span><span class="p">(</span><span class="nx">wrapped</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Starting&#39;</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">wrapped</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Finished&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">wrapped</span> <span class="o">=</span> <span class="nx">loggingDecorator</span><span class="p">(</span><span class="nx">doSomething</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="core-decorators-js">
+<h2>22.4. core-decorators.js<a class="headerlink" href="#core-decorators-js" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://github.com/jayphelps/core-decorators.js">core-decorators.js</a> 是一个第三方模块，提供了几个常见的修饰器，通过它可以更好地理解修饰器。</p>
+<ol class="arabic simple">
+<li>&#64;autobind</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">autobind</span></code> 修饰器使得方法中的 <code class="docutils literal"><span class="pre">this</span></code> 对象，绑定原始对象。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import { autobind } from &#39;core-decorators&#39;;
+
+class Person {
+  @autobind
+  getPerson() {
+    return this;
+  }
+}
+
+let person = new Person();
+let getPerson = person.getPerson;
+
+getPerson() === person;
+// true
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>&#64;readonly</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">readonly</span></code> 修饰器使得属性或方法不可写。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import { readonly } from &#39;core-decorators&#39;;
+
+class Meal {
+  @readonly
+  entree = &#39;steak&#39;;
+}
+
+var dinner = new Meal();
+dinner.entree = &#39;salmon&#39;;
+// Cannot assign to read only property &#39;entree&#39; of [object Object]
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li>&#64;override</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">override</span></code> 修饰器检查子类的方法，是否正确覆盖了父类的同名方法，如果不正确会报错。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import { override } from &#39;core-decorators&#39;;
+
+class Parent {
+  speak(first, second) {}
+}
+
+class Child extends Parent {
+  @override
+  speak() {}
+  // SyntaxError: Child#speak() does not properly override Parent#speak(first, second)
+}
+
+// or
+
+class Child extends Parent {
+  @override
+  speaks() {}
+  // SyntaxError: No descriptor matching Child#speaks() was found on the prototype chain.
+  //
+  //   Did you mean &quot;speak&quot;?
+}
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li>&#64;deprecate (别名&#64;deprecated)</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">deprecate</span></code> 或 <code class="docutils literal"><span class="pre">deprecated</span></code> 修饰器在控制台显示一条警告，表示该方法将废除。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import { deprecate } from &#39;core-decorators&#39;;
+
+class Person {
+  @deprecate
+  facepalm() {}
+
+  @deprecate(&#39;We stopped facepalming&#39;)
+  facepalmHard() {}
+
+  @deprecate(&#39;We stopped facepalming&#39;, { url: &#39;http://knowyourmeme.com/memes/facepalm&#39; })
+  facepalmHarder() {}
+}
+
+let person = new Person();
+
+person.facepalm();
+// DEPRECATION Person#facepalm: This function will be removed in future versions.
+
+person.facepalmHard();
+// DEPRECATION Person#facepalmHard: We stopped facepalming
+
+person.facepalmHarder();
+// DEPRECATION Person#facepalmHarder: We stopped facepalming
+//
+//     See http://knowyourmeme.com/memes/facepalm for more details.
+//
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li>&#64;suppressWarnings</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">suppressWarnings</span></code> 修饰器抑制 <code class="docutils literal"><span class="pre">deprecated</span></code> 修饰器导致的 <code class="docutils literal"><span class="pre">console.warn()</span></code> 调用。但是，异步代码发出的调用除外。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import { suppressWarnings } from &#39;core-decorators&#39;;
+
+class Person {
+  @deprecated
+  facepalm() {}
+
+  @suppressWarnings
+  facepalmWithoutWarning() {
+    this.facepalm();
+  }
+}
+
+let person = new Person();
+
+person.facepalmWithoutWarning();
+// no warning is logged
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>22.5. 使用修饰器实现自动发布事件<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>我们可以使用修饰器，使得对象的方法被调用时，自动发出一个事件。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">postal</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;postal/lib/postal.lodash&quot;</span><span class="p">);</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="kd">function</span> <span class="nx">publish</span><span class="p">(</span><span class="nx">topic</span><span class="p">,</span> <span class="nx">channel</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">channelName</span> <span class="o">=</span> <span class="nx">channel</span> <span class="o">||</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+  <span class="kr">const</span> <span class="nx">msgChannel</span> <span class="o">=</span> <span class="nx">postal</span><span class="p">.</span><span class="nx">channel</span><span class="p">(</span><span class="nx">channelName</span><span class="p">);</span>
+  <span class="nx">msgChannel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">topic</span><span class="p">,</span> <span class="nx">v</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;频道: &#39;</span><span class="p">,</span> <span class="nx">channelName</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;事件: &#39;</span><span class="p">,</span> <span class="nx">topic</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;数据: &#39;</span><span class="p">,</span> <span class="nx">v</span><span class="p">);</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">descriptor</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">descriptor</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+
+    <span class="nx">descriptor</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+      <span class="nx">msgChannel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">topic</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+    <span class="p">};</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码定义了一个名为 <code class="docutils literal"><span class="pre">publish</span></code> 的修饰器，它通过改写 <code class="docutils literal"><span class="pre">descriptor.value</span></code> ，使得原方法被调用时，会自动发出一个事件。它使用的事件“发布/订阅”库是 <code class="docutils literal"><span class="pre">Postal.js</span></code> 。</p>
+<p>它的用法如下。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>// index.js
+import publish from &#39;./publish&#39;;
+
+class FooComponent {
+  @publish(&#39;foo.some.message&#39;, &#39;component&#39;)
+  someMethod() {
+    return { my: &#39;data&#39; };
+  }
+  @publish(&#39;foo.some.other&#39;)
+  anotherMethod() {
+    // ...
+  }
+}
+
+let foo = new FooComponent();
+
+foo.someMethod();
+foo.anotherMethod();
+</pre></div>
+</div>
+<p>以后，只要调用 <code class="docutils literal"><span class="pre">someMethod</span></code> 或者 <code class="docutils literal"><span class="pre">anotherMethod</span></code> ，就会自动发出一个事件。</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>$ bash-node index.js
+频道:  component
+事件:  foo.some.message
+数据:  { my: &#39;data&#39; }
+
+频道:  /
+事件:  foo.some.other
+数据:  undefined
+</pre></div>
+</div>
+</div>
+<div class="section" id="mixin">
+<h2>22.6. Mixin<a class="headerlink" href="#mixin" title="永久链接至标题">¶</a></h2>
+<p>在修饰器的基础上，可以实现 <code class="docutils literal"><span class="pre">Mixin</span></code> 模式。所谓 <code class="docutils literal"><span class="pre">Mixin</span></code> 模式，就是对象继承的一种替代方案，中文译为“混入”（mix in），意为在一个对象之中混入另外一个对象的方法。</p>
+<p>请看下面的例子。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">Foo</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kr">class</span> <span class="nx">MyClass</span> <span class="p">{}</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">MyClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Foo</span><span class="p">);</span>
+
+<span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyClass</span><span class="p">();</span>
+<span class="nx">obj</span><span class="p">.</span><span class="nx">foo</span><span class="p">()</span> <span class="c1">// &#39;foo&#39;</span>
+</pre></div>
+</div>
+<p>上面代码之中，对象 <code class="docutils literal"><span class="pre">Foo</span></code> 有一个 <code class="docutils literal"><span class="pre">foo</span></code> 方法，通过 <code class="docutils literal"><span class="pre">Object.assign</span></code> 方法，可以将 <code class="docutils literal"><span class="pre">foo</span></code> 方法“混入” <code class="docutils literal"><span class="pre">MyClass</span></code> 类，导致 <code class="docutils literal"><span class="pre">MyClass</span></code> 的实例 <code class="docutils literal"><span class="pre">obj</span></code> 对象都具有 <code class="docutils literal"><span class="pre">foo</span></code> 方法。这就是“混入”模式的一个简单实现。</p>
+<p>下面，我们部署一个通用脚本 <code class="docutils literal"><span class="pre">mixins.js</span></code> ，将 <code class="docutils literal"><span class="pre">Mixin</span></code> 写成一个修饰器。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import { mixins } from &#39;./mixins&#39;;
+
+const Foo = {
+  foo() { console.log(&#39;foo&#39;) }
+};
+
+@mixins(Foo)
+class MyClass {}
+
+let obj = new MyClass();
+obj.foo() // &quot;foo&quot;
+</pre></div>
+</div>
+<p>通过 <code class="docutils literal"><span class="pre">mixins</span></code> 这个修饰器，实现了在 <code class="docutils literal"><span class="pre">MyClass</span></code> 类上面“混入” <code class="docutils literal"><span class="pre">Foo</span></code> 对象的 <code class="docutils literal"><span class="pre">foo</span></code> 方法。</p>
+<p>不过，上面的方法会改写 <code class="docutils literal"><span class="pre">MyClass</span></code> 类的 <code class="docutils literal"><span class="pre">prototype</span></code> 对象，如果不喜欢这一点，也可以通过类的继承实现 <code class="docutils literal"><span class="pre">Mixin</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MyClass</span> <span class="kr">extends</span> <span class="nx">MyBaseClass</span> <span class="p">{</span>
+  <span class="cm">/* ... */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">MyClass</span></code> 继承了 <code class="docutils literal"><span class="pre">MyBaseClass</span></code> 。如果我们想在 <code class="docutils literal"><span class="pre">MyClass</span></code> 里面“混入”一个 <code class="docutils literal"><span class="pre">foo</span></code> 方法，一个办法是在 <code class="docutils literal"><span class="pre">MyClass</span></code> 和 <code class="docutils literal"><span class="pre">MyBaseClass</span></code> 之间插入一个混入类，这个类具有 <code class="docutils literal"><span class="pre">foo</span></code> 方法，并且继承了 <code class="docutils literal"><span class="pre">MyBaseClass</span></code> 的所有方法，然后 <code class="docutils literal"><span class="pre">MyClass</span></code> 再继承这个类。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">MyMixin</span> <span class="o">=</span> <span class="p">(</span><span class="nx">superclass</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="kr">class</span> <span class="kr">extends</span> <span class="nx">superclass</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;foo from MyMixin&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">MyMixin</span></code> 是一个混入类生成器，接受 <code class="docutils literal"><span class="pre">superclass</span></code> 作为参数，然后返回一个继承 <code class="docutils literal"><span class="pre">superclass</span></code> 的子类，该子类包含一个 <code class="docutils literal"><span class="pre">foo</span></code> 方法。</p>
+<p>接着，目标类再去继承这个混入类，就达到了“混入” <code class="docutils literal"><span class="pre">foo</span></code> 方法的目的。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MyClass</span> <span class="kr">extends</span> <span class="nx">MyMixin</span><span class="p">(</span><span class="nx">MyBaseClass</span><span class="p">)</span> <span class="p">{</span>
+  <span class="cm">/* ... */</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyClass</span><span class="p">();</span>
+<span class="nx">c</span><span class="p">.</span><span class="nx">foo</span><span class="p">();</span> <span class="c1">// &quot;foo from MyMixin&quot;</span>
+</pre></div>
+</div>
+<p>如果需要“混入”多个方法，就生成多个混入类。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MyClass</span> <span class="kr">extends</span> <span class="nx">Mixin1</span><span class="p">(</span><span class="nx">Mixin2</span><span class="p">(</span><span class="nx">MyBaseClass</span><span class="p">))</span> <span class="p">{</span>
+  <span class="cm">/* ... */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这种写法的一个好处，是可以调用 <code class="docutils literal"><span class="pre">super</span></code> ，因此可以避免在“混入”过程中覆盖父类的同名方法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">Mixin1</span> <span class="o">=</span> <span class="p">(</span><span class="nx">superclass</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="kr">class</span> <span class="kr">extends</span> <span class="nx">superclass</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;foo from Mixin1&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="kr">super</span><span class="p">.</span><span class="nx">foo</span><span class="p">)</span> <span class="kr">super</span><span class="p">.</span><span class="nx">foo</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">Mixin2</span> <span class="o">=</span> <span class="p">(</span><span class="nx">superclass</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="kr">class</span> <span class="kr">extends</span> <span class="nx">superclass</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;foo from Mixin2&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="kr">super</span><span class="p">.</span><span class="nx">foo</span><span class="p">)</span> <span class="kr">super</span><span class="p">.</span><span class="nx">foo</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kr">class</span> <span class="nx">S</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;foo from S&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">C</span> <span class="kr">extends</span> <span class="nx">Mixin1</span><span class="p">(</span><span class="nx">Mixin2</span><span class="p">(</span><span class="nx">S</span><span class="p">))</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;foo from C&#39;</span><span class="p">);</span>
+    <span class="kr">super</span><span class="p">.</span><span class="nx">foo</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中，每一次混入发生时，都调用了父类的 <code class="docutils literal"><span class="pre">super.foo</span></code> 方法，导致父类的同名方法没有被覆盖，行为被保留了下来。</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>new C().foo()
+// foo from C
+// foo from Mixin1
+// foo from Mixin2
+// foo from S
+</pre></div>
+</div>
+</div>
+<div class="section" id="trait">
+<h2>22.7. Trait<a class="headerlink" href="#trait" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Trait</span></code> 也是一种修饰器，效果与 <code class="docutils literal"><span class="pre">Mixin</span></code> 类似，但是提供更多功能，比如防止同名方法的冲突、排除混入某些方法、为混入的方法起别名等等。</p>
+<p>下面采用 <a class="reference external" href="https://github.com/CocktailJS/traits-decorator">traits-decorator</a> 这个第三方模块作为例子。这个模块提供的 <code class="docutils literal"><span class="pre">traits</span></code> 修饰器，不仅可以接受对象，还可以接受 ES6 类作为参数。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import { traits } from &#39;traits-decorator&#39;;
+
+class TFoo {
+  foo() { console.log(&#39;foo&#39;) }
+}
+
+const TBar = {
+  bar() { console.log(&#39;bar&#39;) }
+};
+
+@traits(TFoo, TBar)
+class MyClass { }
+
+let obj = new MyClass();
+obj.foo() // foo
+obj.bar() // bar
+</pre></div>
+</div>
+<p>上面代码中，通过 <code class="docutils literal"><span class="pre">traits</span></code> 修饰器，在 <code class="docutils literal"><span class="pre">MyClass</span></code> 类上面“混入”了 <code class="docutils literal"><span class="pre">TFoo</span></code> 类的 <code class="docutils literal"><span class="pre">foo</span></code> 方法和 <code class="docutils literal"><span class="pre">TBar</span></code> 对象的 <code class="docutils literal"><span class="pre">bar</span></code> 方法。</p>
+<p><code class="docutils literal"><span class="pre">Trait</span></code> 不允许“混入”同名方法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import { traits } from &#39;traits-decorator&#39;;
+
+class TFoo {
+  foo() { console.log(&#39;foo&#39;) }
+}
+
+const TBar = {
+  bar() { console.log(&#39;bar&#39;) },
+  foo() { console.log(&#39;foo&#39;) }
+};
+
+@traits(TFoo, TBar)
+class MyClass { }
+// 报错
+// throw new Error(&#39;Method named: &#39; + methodName + &#39; is defined twice.&#39;);
+//        ^
+// Error: Method named: foo is defined twice.
+</pre></div>
+</div>
+<p>上面代码中， <code class="docutils literal"><span class="pre">TFoo</span></code> 和 <code class="docutils literal"><span class="pre">TBar</span></code> 都有 <code class="docutils literal"><span class="pre">foo</span></code> 方法，结果 <code class="docutils literal"><span class="pre">traits</span></code> 修饰器报错。</p>
+<p>一种解决方法是排除 <code class="docutils literal"><span class="pre">TBar</span></code> 的 <code class="docutils literal"><span class="pre">foo</span></code> 方法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import { traits, excludes } from &#39;traits-decorator&#39;;
+
+class TFoo {
+  foo() { console.log(&#39;foo&#39;) }
+}
+
+const TBar = {
+  bar() { console.log(&#39;bar&#39;) },
+  foo() { console.log(&#39;foo&#39;) }
+};
+
+@traits(TFoo, TBar::excludes(&#39;foo&#39;))
+class MyClass { }
+
+let obj = new MyClass();
+obj.foo() // foo
+obj.bar() // bar
+</pre></div>
+</div>
+<p>上面代码使用绑定运算符（::）在 <code class="docutils literal"><span class="pre">TBar</span></code> 上排除 <code class="docutils literal"><span class="pre">foo</span></code> 方法，混入时就不会报错了。</p>
+<p>另一种方法是为 <code class="docutils literal"><span class="pre">TBar</span></code> 的 <code class="docutils literal"><span class="pre">foo</span></code> 方法起一个别名。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import { traits, alias } from &#39;traits-decorator&#39;;
+
+class TFoo {
+  foo() { console.log(&#39;foo&#39;) }
+}
+
+const TBar = {
+  bar() { console.log(&#39;bar&#39;) },
+  foo() { console.log(&#39;foo&#39;) }
+};
+
+@traits(TFoo, TBar::alias({foo: &#39;aliasFoo&#39;}))
+class MyClass { }
+
+let obj = new MyClass();
+obj.foo() // foo
+obj.aliasFoo() // foo
+obj.bar() // bar
+</pre></div>
+</div>
+<p>上面代码为 <code class="docutils literal"><span class="pre">TBar</span></code> 的 <code class="docutils literal"><span class="pre">foo</span></code> 方法起了别名 <code class="docutils literal"><span class="pre">aliasFoo</span></code> ，于是 <code class="docutils literal"><span class="pre">MyClass</span></code> 也可以混入 <code class="docutils literal"><span class="pre">TBar</span></code> 的 <code class="docutils literal"><span class="pre">foo</span></code> 方法了。</p>
+<p><code class="docutils literal"><span class="pre">alias</span></code> 和 <code class="docutils literal"><span class="pre">excludes</span></code> 方法，可以结合起来使用。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>@traits(TExample::excludes(&#39;foo&#39;,&#39;bar&#39;)::alias({baz:&#39;exampleBaz&#39;}))
+class MyClass {}
+</pre></div>
+</div>
+<p>上面代码排除了 <code class="docutils literal"><span class="pre">TExample</span></code> 的 <code class="docutils literal"><span class="pre">foo</span></code> 方法和 <code class="docutils literal"><span class="pre">bar</span></code> 方法，为baz方法起了别名 <code class="docutils literal"><span class="pre">exampleBaz</span></code> 。</p>
+<p><code class="docutils literal"><span class="pre">as</span></code> 方法则为上面的代码提供了另一种写法。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>@traits(TExample::as({excludes:[&#39;foo&#39;, &#39;bar&#39;], alias: {baz: &#39;exampleBaz&#39;}}))
+class MyClass {}
+</pre></div>
+</div>
+</div>
+<div class="section" id="babel">
+<h2>22.8. Babel 转码器的支持<a class="headerlink" href="#babel" title="永久链接至标题">¶</a></h2>
+<p>目前， <code class="docutils literal"><span class="pre">Babel</span></code> 转码器已经支持 <code class="docutils literal"><span class="pre">Decorator</span></code> 。</p>
+<p>首先，安装 <code class="docutils literal"><span class="pre">babel-core</span></code> 和 <code class="docutils literal"><span class="pre">babel-plugin-transform-decorators</span></code> 。由于后者包括在 <code class="docutils literal"><span class="pre">babel-preset-stage-0</span></code> 之中，所以改为安装 <code class="docutils literal"><span class="pre">babel-preset-stage-0</span></code> 亦可。</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install babel-core babel-plugin-transform-decorators
+</pre></div>
+</div>
+<p>然后，设置配置文件 <code class="docutils literal"><span class="pre">.babelrc</span></code> 。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;transform-decorators&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这时， <code class="docutils literal"><span class="pre">Babel</span></code> 就可以对 <code class="docutils literal"><span class="pre">Decorator</span></code> 转码了。</p>
+<p>脚本中打开的命令如下。</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">babel</span><span class="p">.</span><span class="nx">transform</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">plugins</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;transform-decorators&quot;</span><span class="p">]})</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Babel</span></code> 的官方网站提供一个 <a class="reference external" href="https://babeljs.io/repl/">在线转码器</a> ，只要勾选 <code class="docutils literal"><span class="pre">Experimental</span></code> ，就能支持 <code class="docutils literal"><span class="pre">Decorator</span></code> 的在线转码。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Module的语法.html" class="btn btn-neutral float-right" title="23. Module 的语法" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Class的继承.html" class="btn btn-neutral" title="21. Class的继承" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+
+      });
+
+
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script>
+   
+
+</body>
+</html>

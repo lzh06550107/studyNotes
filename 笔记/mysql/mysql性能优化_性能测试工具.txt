@@ -1,0 +1,262 @@
+基准测试
+	基准测试
+		直接、简单、易于比较，用于评估服务器的处理能力
+		
+		基准测试可能不关系业务逻辑，所使用的查询和业务的真实性可以和业务环境没关系
+		
+		
+		目的：
+			建立MySQL服务器的性能基准线
+			
+			模拟比当前系统更高的负载，以找出系统的扩展瓶颈增加数据库并发，观察QPS,TPS变化，确定并发量与性能最忧的关系
+			
+			测试部同的硬件、软件和操作系统配置
+			
+			证明新的硬件设备是否配置正确
+			
+		对整个系统进行基准测试
+			优点：
+				能够测试整个系统整个系统的性能包括web服务器缓存、数据库等
+				能反映出系统中各个组件接口间的性能问题体现真实性能状况
+				
+			缺点：
+				测试设计复杂、消耗时间长
+		
+		单独对MySQL进行基准测试
+			优点：	
+				测试设计简、所需耗费时间短
+				
+			缺点：
+				无法全面了解整个系统的性能基线
+		
+		MySQL基准测试的常见指标
+			单位时间所处理的事务数（TPS）
+			单位时间内所处理的查询数（QPS）
+			响应时间
+			并发量：同时处理的查询请求的数量
+		
+		计划和设计基准测试
+			对整个系统还是某个组件
+			使用什么样的数据
+			
+			准备基准测试及数据收集本
+			CPU使用率、I/O、网络流量、状态与设计数器信息等 Get_Test_info.sh
+			
+			运算基准测试
+			
+			保存及分析基准测试结果 analyze.sh
+			
+		MySQL基准测试工作之 mysqlslap
+			下载安装
+				MySQL服务器自带的基准测试工具，随MySQL一起安装
+			
+			特点：
+				可以模拟服务器负载，并输出相关统计信息
+				可以指定也可以自动生成查询语句
+			
+			
+			常用参数说明
+				--auto-generate-sql					  由系统自动生成SQL脚本测试
+				--auto-generate-sql-add-autoincrement 在生成表中增加自增ID
+				--auto-generate-sql-load-type 		  指定测试中使用的查询类型
+				--auto-generate-sql-write-number   	  指定初始化数据时生成的数据量
+				--concurrency 						  指定并发线程的数量
+				--engine 							  指定要测试表的存储，可以用逗号分割多个 存储引擎
+				--no-drop							  指定部清理测试数据
+				--iterations 						  指定测试运行的次数
+				--number-of-queries					  指定每一个线程执行的查询数量
+				--debug-info 						  指定输出额外的内存及CPU统计信息
+				--number-int-cols					  指定测试表中包含的INT类型列的数量
+				--number-char-cols					  指定测试表中包含的varchar类型的数量
+				--create-schema						  指定了用于执行测试的数据的名字
+				--query								  用于指定自定义SQL的脚本
+				--only-print						  并部运行测试脚本，而是把生成的脚本打印出来
+				
+				
+					1个并发50个并发100个并发200个并发
+					--concurrency=1,50,100,200
+					
+					完成3次
+					--iterations=3
+					
+					[root@localhost mysql]> mysqlslap --help #查看linux 是否以安装 mysqlslap
+				mysqlslap 	--concurrency=1,50,100,200 --iterations=3 --number-int-cols=5 --number-char-cols=5 --auto-generate-sql --auto-generate-sql add-autoincrement --engine=myisam,innodb --number-of-queries=10 --create-schema=sbtest
+			
+			
+		MySQL基准测试工作之 sysbench
+			安装说明
+				https://github.com/akopytov/sysbench/archive/0.5.zip
+				
+				unzip sysbench-0.5.zip
+				cd sysbench
+				./autogen.sh
+				
+				./configure  --with-mysql-includes=/usr/local/mysql/include/  --with-mysql-libs=/usr/local/mysql/lib/
+				make && make install
+				
+				
+			Mysql基准测试工作之 sysbench
+				常用参数
+					--test 用于指定所要执行的测试类型，支持以下参数
+					Fileio 文件系统I/O性能测试
+					cpu cpu 性能测试
+					memory 	内存性能测试
+					OItp 测试要指定具体的lua脚本 lua 脚本位于 sysbench-0.5/sysbench/tests/db
+					--mysql-db 用于指定执行基准测试的数据库名
+					--mysql-table-engine 用于指定所使用的存储引擎
+					--oltp-tables-count 执行测试的表数量
+					--oltp-table-size   指定每个表中的数据行
+					--num-threads		指定测试的并发线程数量
+			
+				
+					--max-time 			指定最大的测试时间
+					--report-interval 	指定间隔多长时间输出一次统计信息
+					--mysql-user 		指定执行测试的MySQL用户
+					--mysql-password 	指定执行测试的MySQL用户的密码
+					prepare 			用于准备测试数据
+					run 				用于实际进行测试
+					cleanup 			用于清理测试数据
+			
+				运行 sysbench  测试CPU性能
+				sysbench --test=cpu --cpu-max-prime=10000 run 
+				生成文件io测试
+				sysbench --test=fileio --file-total-size=1G prepare 
+				
+				sysbench --test=./oltp.lua --mysql-table-engine=innodb --otp-table-size=10000  --mysql-db=imooc --mysql-user=sbtest --mysql-password=123456 --oltp-tables-count=10 --mysql-socket=/usr/local/mysql/data/mysql.sock prepare 
+				sysbench --test=./oltp.lua --mysql-table-engine=innodb --otp-table-size=10000  --mysql-db=imooc --mysql-user=sbtest --mysql-password=123456 --oltp-tables-count=10 --mysql-socket=/usr/local/mysql/data/mysql.sock run  正式测试 
+				
+				
+				
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		
+	压力测试
+		对真实的业务数据进行测试，获得真实系统所能承受的压力
+		
+		压力测试需要针对不同的主题，所使用的数据和查询也是真实用到的
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

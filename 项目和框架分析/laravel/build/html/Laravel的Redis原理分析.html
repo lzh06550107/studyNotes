@@ -1,0 +1,505 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>59. Redis原理分析 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="60. Eloquent" href="Laravel的数据库—Eloquent.html"/>
+        <link rel="prev" title="58. Redis" href="Laravel的Redis.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>59. Redis原理分析</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="redis">
+<h1>59. Redis原理分析<a class="headerlink" href="#redis" title="永久链接至标题">¶</a></h1>
+<p>Laravel中的Redis使用流程</p>
+<p>首先通过Redis门面来初始化RedisManger对象。</p>
+<p>文件 <code class="docutils literal"><span class="pre">routes\web.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;cats/{cat}&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="nx">App\Cat</span> <span class="nv">$cat</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Redis</span><span class="o">::</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;Taylor&#39;</span><span class="p">);</span> <span class="c1">// 这里存储数据到Redis服务器中</span>
+    <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;cats.show&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;cat&#39;</span><span class="p">,</span> <span class="nv">$cat</span><span class="p">);</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;cat&#39;</span><span class="p">,</span> <span class="s1">&#39;[0-9]+&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Support\Facades\Redis</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getFacadeAccessor</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;redis&#39;</span><span class="p">;</span> <span class="c1">// 获取容器中的RedisManager对象实例</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Foundation\Application.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">registerCoreContainerAliases</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">foreach</span> <span class="p">([</span>
+                 <span class="s1">&#39;app&#39;</span>                  <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Foundation\Application</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Container\Container</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Foundation\Application</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>  <span class="nx">\Psr\Container\ContainerInterface</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;auth&#39;</span>                 <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Auth\AuthManager</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Auth\Factory</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;auth.driver&#39;</span>          <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Contracts\Auth\Guard</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;blade.compiler&#39;</span>       <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\View\Compilers\BladeCompiler</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;cache&#39;</span>                <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Cache\CacheManager</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Cache\Factory</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;cache.store&#39;</span>          <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Cache\Repository</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Cache\Repository</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;config&#39;</span>               <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Config\Repository</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Config\Repository</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;cookie&#39;</span>               <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Cookie\CookieJar</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Cookie\Factory</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Cookie\QueueingFactory</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;encrypter&#39;</span>            <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Encryption\Encrypter</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Encryption\Encrypter</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;db&#39;</span>                   <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Database\DatabaseManager</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;db.connection&#39;</span>        <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Database\Connection</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Database\ConnectionInterface</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;events&#39;</span>               <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Events\Dispatcher</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Events\Dispatcher</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;files&#39;</span>                <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Filesystem\Filesystem</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;filesystem&#39;</span>           <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Filesystem\FilesystemManager</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Filesystem\Factory</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;filesystem.disk&#39;</span>      <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Contracts\Filesystem\Filesystem</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;filesystem.cloud&#39;</span>     <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Contracts\Filesystem\Cloud</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;hash&#39;</span>                 <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Contracts\Hashing\Hasher</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;translator&#39;</span>           <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Translation\Translator</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Translation\Translator</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;log&#39;</span>                  <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Log\Writer</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Logging\Log</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Psr\Log\LoggerInterface</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;mailer&#39;</span>               <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Mail\Mailer</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Mail\Mailer</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Mail\MailQueue</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;auth.password&#39;</span>        <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Auth\Passwords\PasswordBrokerManager</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Auth\PasswordBrokerFactory</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;auth.password.broker&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Auth\Passwords\PasswordBroker</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Auth\PasswordBroker</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;queue&#39;</span>                <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Queue\QueueManager</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Queue\Factory</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Queue\Monitor</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;queue.connection&#39;</span>     <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Contracts\Queue\Queue</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;queue.failer&#39;</span>         <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Queue\Failed\FailedJobProviderInterface</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;redirect&#39;</span>             <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Routing\Redirector</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;redis&#39;</span>                <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Redis\RedisManager</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Redis\Factory</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;request&#39;</span>              <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Http\Request</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Symfony\Component\HttpFoundation\Request</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;router&#39;</span>               <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Routing\Router</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Routing\Registrar</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Routing\BindingRegistrar</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;session&#39;</span>              <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Session\SessionManager</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;session.store&#39;</span>        <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Session\Store</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Session\Session</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;url&#39;</span>                  <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Routing\UrlGenerator</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Routing\UrlGenerator</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;validator&#39;</span>            <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\Validation\Factory</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\Validation\Factory</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+                 <span class="s1">&#39;view&#39;</span>                 <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">\Illuminate\View\Factory</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nx">\Illuminate\Contracts\View\Factory</span><span class="o">::</span><span class="na">class</span><span class="p">],</span>
+             <span class="p">]</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$aliases</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$aliases</span> <span class="k">as</span> <span class="nv">$alias</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">alias</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$alias</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>该 <code class="docutils literal"><span class="pre">redis</span></code> 别名对应容器中的 <code class="docutils literal"><span class="pre">\Illuminate\Redis\RedisManager::class</span></code> 类型。</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Support\Facades\Facade.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">resolveFacadeInstance</span><span class="p">(</span><span class="nv">$name</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_object</span><span class="p">(</span><span class="nv">$name</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="nv">$resolvedInstance</span><span class="p">[</span><span class="nv">$name</span><span class="p">]))</span> <span class="p">{</span>  <span class="c1">// 如果该名称对象已经解析，则返回以前的</span>
+        <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="nv">$resolvedInstance</span><span class="p">[</span><span class="nv">$name</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">static</span><span class="o">::</span><span class="nv">$resolvedInstance</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="o">=</span> <span class="k">static</span><span class="o">::</span><span class="nv">$app</span><span class="p">[</span><span class="nv">$name</span><span class="p">];</span> <span class="c1">// 否则利用容器获取，然后保存</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面的 <code class="docutils literal"><span class="pre">Redis</span></code> 类继承 <code class="docutils literal"><span class="pre">Facade</span></code> 类。</p>
+<p>但此时，在容器中不存在该实例对象，则需要查询延迟提供器中是否存在该实例对象，这里的 <code class="docutils literal"><span class="pre">\Illuminate\Redis\RedisServiceProvider.php</span></code> 延迟服务提供器提供了 &quot;redis&quot; 初始化工厂。</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Redis\RedisServiceProvider.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">singleton</span><span class="p">(</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$app</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 绑定创建RedisManager实例闭包</span>
+        <span class="nv">$config</span> <span class="o">=</span> <span class="nv">$app</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;database.redis&#39;</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">RedisManager</span><span class="p">(</span><span class="nx">Arr</span><span class="o">::</span><span class="na">pull</span><span class="p">(</span><span class="nv">$config</span><span class="p">,</span> <span class="s1">&#39;client&#39;</span><span class="p">,</span> <span class="s1">&#39;predis&#39;</span><span class="p">),</span> <span class="nv">$config</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="s1">&#39;redis.connection&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$app</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 绑定返回Redis默认连接的实例闭包</span>
+        <span class="k">return</span> <span class="nv">$app</span><span class="p">[</span><span class="s1">&#39;redis&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">connection</span><span class="p">();</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>通过调用上面注册的闭包工厂，生成 <code class="docutils literal"><span class="pre">RedisManager</span></code> 实例对象，这里传入了在 <code class="docutils literal"><span class="pre">database.php</span></code> 配置文件中的 <code class="docutils literal"><span class="pre">redis</span></code> 配置来初始化该实例。</p>
+<p>当我们调用 <code class="docutils literal"><span class="pre">Redis::Set()</span></code> 方法时，会调用底层的 <code class="docutils literal"><span class="pre">RedisManager</span></code> 实例对象的方法，因为该对象不存在该方法，只能调用魔术方法 <code class="docutils literal"><span class="pre">__call()</span></code> 。</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Support\Facades\Facade.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="fm">__callStatic</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="nv">$args</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$instance</span> <span class="o">=</span> <span class="k">static</span><span class="o">::</span><span class="na">getFacadeRoot</span><span class="p">();</span> <span class="c1">// 获取容器中的RedisManager对象实例</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$instance</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">RuntimeException</span><span class="p">(</span><span class="s1">&#39;A facade root has not been set.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$instance</span><span class="o">-&gt;</span><span class="nv">$method</span><span class="p">(</span><span class="o">...</span><span class="nv">$args</span><span class="p">);</span> <span class="c1">// 这里调用的是RedisManager对象实例方法</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>由于 <code class="docutils literal"><span class="pre">RedisManager</span></code> 对象实例没有 <code class="docutils literal"><span class="pre">set()</span></code> 方法，只能调用魔术方法 <code class="docutils literal"><span class="pre">__call()</span></code> 。</p>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Redis\RedisManager.php</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__call</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connection</span><span class="p">()</span><span class="o">-&gt;</span><span class="p">{</span><span class="nv">$method</span><span class="p">}(</span><span class="o">...</span><span class="nv">$parameters</span><span class="p">);</span> <span class="c1">// 只会调用默认的连接实例方法</span>
+<span class="p">}</span>
+
+<span class="c1">//通过一个客户端连接实例来连接后端redis，connections中可存在多个redis连接实例(即连接多个后端redis服务器)，</span>
+<span class="c1">//这里可通过名称(该名称为配置中定义的名称)来获取对应的连接实例</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">connection</span><span class="p">(</span><span class="nv">$name</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$name</span> <span class="o">=</span> <span class="nv">$name</span> <span class="o">?:</span> <span class="s1">&#39;default&#39;</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connections</span><span class="p">[</span><span class="nv">$name</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connections</span><span class="p">[</span><span class="nv">$name</span><span class="p">];</span> <span class="c1">// 已经存在，则直接返回连接实例对象</span>
+    <span class="p">}</span>
+    <span class="c1">// 如果不存在，则需要配置中来初始化该连接实例</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connections</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">resolve</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 根据配置来创建连接实例对象</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">resolve</span><span class="p">(</span><span class="nv">$name</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$name</span> <span class="o">=</span> <span class="nv">$name</span> <span class="o">?:</span> <span class="s1">&#39;default&#39;</span><span class="p">;</span>
+
+    <span class="nv">$options</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span> <span class="o">??</span> <span class="p">[];</span> <span class="c1">// 获取配置选项</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="p">[</span><span class="nv">$name</span><span class="p">]))</span> <span class="p">{</span> <span class="c1">// 通过不同的连接器来初始化指定的连接实例</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">connector</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="p">[</span><span class="nv">$name</span><span class="p">],</span> <span class="nv">$options</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="p">[</span><span class="s1">&#39;clusters&#39;</span><span class="p">][</span><span class="nv">$name</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">resolveCluster</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">InvalidArgumentException</span><span class="p">(</span>
+        <span class="s2">&quot;Redis connection [</span><span class="si">{</span><span class="nv">$name</span><span class="si">}</span><span class="s2">] not configured.&quot;</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 使用指定的客户端连接器来建立连接</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">connector</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">driver</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="s1">&#39;predis&#39;</span><span class="o">:</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Connectors\PredisConnector</span><span class="p">;</span> <span class="c1">// 此时的connections属性值为PredisConnection对象实例</span>
+        <span class="k">case</span> <span class="s1">&#39;phpredis&#39;</span><span class="o">:</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Connectors\PhpRedisConnector</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>文件 <code class="docutils literal"><span class="pre">\Illuminate\Redis\Connectors\PredisConnector</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 建立连接，返回连接实例对象</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">connect</span><span class="p">(</span><span class="k">array</span> <span class="nv">$config</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$formattedOptions</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">(</span>
+        <span class="p">[</span><span class="s1">&#39;timeout&#39;</span> <span class="o">=&gt;</span> <span class="mf">10.0</span><span class="p">],</span> <span class="nv">$options</span><span class="p">,</span> <span class="nx">Arr</span><span class="o">::</span><span class="na">pull</span><span class="p">(</span><span class="nv">$config</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="p">);</span>
+    <span class="c1">// 使用连接Redis服务器的\Predis\Client实例来初始化Predis连接</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">PredisConnection</span><span class="p">(</span><span class="k">new</span> <span class="nx">Client</span><span class="p">(</span><span class="nv">$config</span><span class="p">,</span> <span class="nv">$formattedOptions</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当连接初始化完成之后，就是调用它的 <code class="docutils literal"><span class="pre">set()</span></code> 方法来访问 <code class="docutils literal"><span class="pre">Redis</span></code> 服务器。由于 <code class="docutils literal"><span class="pre">\Illuminate\Redis\Connections\PredisConnection</span></code> 继承了 <code class="docutils literal"><span class="pre">\Illuminate\Redis\Connections\Connection</span></code> 类所以，调用了Connection类的魔术方法 <code class="docutils literal"><span class="pre">__call()</span></code> 。</p>
+<p>文件 <code class="docutils literal"><span class="pre">Illuminate\Redis\Connections\Connection</span></code></p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__call</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">command</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">command</span><span class="p">(</span><span class="nv">$method</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$parameters</span> <span class="o">=</span> <span class="p">[])</span>
+<span class="p">{</span>
+    <span class="c1">// 直接调用Client对象的对应方法来执行</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">client</span><span class="o">-&gt;</span><span class="p">{</span><span class="nv">$method</span><span class="p">}(</span><span class="o">...</span><span class="nv">$parameters</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>至此为止， <code class="docutils literal"><span class="pre">Redis</span></code> 访问流程完成。该过程主要是实例化 <code class="docutils literal"><span class="pre">RedisManager</span></code> 对象，同时延迟到访问 <code class="docutils literal"><span class="pre">Redis</span></code> 服务器的时候，才建立连接实例对象来访问 <code class="docutils literal"><span class="pre">Redis</span></code> 服务器。</p>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的数据库—Eloquent.html" class="btn btn-neutral float-right" title="60. Eloquent" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的Redis.html" class="btn btn-neutral" title="58. Redis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,261 @@
+新浪数据库服务器配置：
+		机器是 R510居多，CPU是E5210,48G内存，磁盘12*300G SAS 做RAID10
+		另外，sina 是编译安装DB，还是二进制的多，还是什么方式多？
+		
+		编译安装之后，做成RPM包，统一使用
+		
+百度数据库服务器配置：
+	我们那时候是单机4个实例，机器是48核，96G内存，磁盘是SATA 15000转 还有ssd。raid貌似是5 一般4快磁盘热插拔
+
+
+
+mysql 修改密码
+ 
+ 进入数据库
+	update mysql.user set password=password(123456) where user=root and host='localhost';
+ 找回丢失的mysql root 用户密码
+ 
+	5.7.1 启动修改丢失的MySQL 单实例root密码方法
+		1、首先停止 mysql
+		[root@localhost ~]# /etc/init.d/mysqld stop
+		
+		2、使用 --skip-grant-tables 启动mysql，忽略授权登录验证。
+		
+		mysql_safe --skip-grant-tables --user=mysql &
+		mysql -u root -p <==登陆时空密码
+		提示，在启动时加 --skip-grant-tables 参数，表示忽略授权表验证。
+		
+		
+		[root@localhost ~]# /etc/init.d/mysqld stop  #停止数据库
+		[root@localhost ~]# mysql_safe --skip-grant-tables --user=mysql &  #忽略授权登录验证。
+		[root@localhost ~]# mysql  #回车即可登陆
+		mysql > mysql
+		mysql > update mysql.user set password=password(123456) where user=root and host='localhost';
+		Query OK, 1 row affected (0.04 sec)			#修改成功
+		Rows matched: 1 Changed: 1 Warnings: 0
+		mysql > flush privileges;					#刷新缓存
+		Query OK, 0 rows affected (0.03 sec)
+		mysql >quit;								#退出数据库
+		Bye	
+		[root@localhost ~]#mysqladmin -uroot -p123456 shutdown   #杀掉刚才的忽略授权表验证
+		141014 06:03:50 mysqld_safe mysqld from pid file /usr/local/mysql/data/lodboy.pid ended
+		[1]+ Done 					mysqld_safe --skip-grant-tables --user=mysql
+		[root@localhost ~]# ps -ef|grep mysql
+		root  		2540  2455 0 05:55 pts/2    00:00:00 mysql -uroot -px xxxxxxx
+		root  		2953  1806 0 06:03 pts/1    00:00:00 grep --color=auto mysql
+		[root@localhost ~]#/etc/init.d/mysqld start
+		Starting MySQL .. SUCCESS!;
+		[root@localhost ~]# mysql -uroot -p123456		#从新登陆mysql
+		Welcome to the MySQL monitor. Commands end with .or \g.
+		Your MySQL connection id is 1
+		Server version: 5.5.32 MySQL Community Server (GPL)
+		
+		Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+		
+		Oracle is a registered trademark of Oracle Corporation and/or its
+		affiliates. Other names may be trademarks of their respective
+		owners.
+		
+		Type 'help.' or '\h' for help. Type '\c' to clear the current input statement.
+		
+		mysql >
+	
+	5.7.2 多实例 MySQL 启动修改丢失 root 密码方法
+		1、关闭mysql
+		killall mysql （很危险，但是目前只有这个方法，尽量不用killall -9 mysql ,因为更危险）
+		
+		2、启动时加 --skip-grant-tables 参数，表示忽略授权表验证。
+		mysqld_safe --defaults-file=/data/3306/my.conf --skip-grant-tables &    #启动多实例时需要指定配置文件
+		mysql -uroot -p -S /data/3306/mysql.sock <==登陆时密码
+		
+		3、修改密码的方法
+		
+		mysq >UPDATE mysql.user SET password=PASSWORD(123456) WHERE user='root';
+		Query OK , 2 rows affected (0.00 sec)
+		Rows matched: 2 Changed: 2 Warnings: 0
+		mysql >flush privileges;					#刷新缓存
+		Query OK, 0.rows affected (0.00 sec)
+		mysql > quit
+		
+		提示：更多的密码修改方法，请参考1.6设置修改mysql root 用户密码
+		
+		4、重启服务用新密码登陆
+		改完密码后，停止数据库，以正常 启动方式重新启动并登陆
+		killall mysqld
+		单实例： /etc/init.d/mysqld restart
+		多实例：/data/3306/mysql restart
+		
+	查看oldboy数据库字符集
+		show create database oldboy\G;
+	建立一个名为oldboy_gbk的GBK字符集数据库
+	mysql > create database oldboy_gbk DEFAULT CHARACTER SET gbk COLLATE gbk_chinese_ci;
+	Query OK ,1 row affected (0,00 sec);
+	mysql > SHOW CREATE DATABASE oldboy_gbk;
+		
+	创建utf8字符集数据库
+	create database oldboy_gbk  CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+#查看MySQL数据库字符集修改字符集		
+	show variables like 'character_set%'	#查看数据库字符集
+		
+	mysql> show variables like 'character_set%';
+	+--------------------------+----------------------------------+
+	| Variable_name            | Value                            |
+	+--------------------------+----------------------------------+
+	| character_set_client     | utf8                             |
+	| character_set_connection | utf8                             |
+	| character_set_database   | utf8                             |
+	| character_set_filesystem | binary                           |
+	| character_set_results    | utf8                             |
+	| character_set_server     | utf8                             |
+	| character_set_system     | utf8                             |
+	| character_sets_dir       | /usr/local/mysql/share/charsets/ |
+	+--------------------------+----------------------------------+
+	8 rows in set (0.13 sec)
+	
+	mysql> 	
+	
+	永久生效
+	
+	更改 my.conf 客户端模块的参数，可以实现set names utf8 的效果，并且永久生效。
+	
+	[client]  #这一段表示客户端配置
+	
+	default-character-set=utf8;
+	
+	提示：无需重启服务，退出重新登录就生效，相当于set names utf8;
+	
+	[mysqld]  #这一段表示服务端配置
+	default-character-set=utf8; #适合5.1及以前版本
+	
+	character-set-server=utf8;  #适合5.5
+	
+	修改完mysql服务端的字符集还要修改客户端的例如 Xshell  或SecurcCRT  终端
+	
+	
+	修改数据库已有数据的字符集（因为数据早已存在不可能用命令的方法来修改已有的数据）
+	
+	1、导出表结构
+	mysqldump -uroot -p --default-character-set=latinl -d dbname>alltable.sql;
+	--default-character-set=latinl  表示以GBK字符集进行连接 -d 只导表结构
+	
+	2、编辑 alltable.sql 将 latinl改成 GBK
+	
+	3、确保数据库不再更新，导出所有数据
+	mysqldump -uroot -p --quick --no-create-info --extended-insert -default-character-set=latinl dbname>alldata.sql;
+	
+	
+	
+	
+#查看数据库表结构
+	
+	show create table student \G;
+ 
+ 
+ 
+ 
+#mysql 备份和恢复
+
+	备份多个库
+		mysqldump -uroot -p 'oldboy123' -B oldboy_gbk ....
+ 
+		mysql -uroot -p'oldboy123' -e 'show databases;'   #linux 命令行查看数据库
+ 
+		mysql -uroot -p'oldboy123' -e 'show database;' |grep -Evi 'database|infor|perfor'  #linux 命令行查看 除database、infor、perfor库以外的所有的数据库
+ 
+ 
+	分库备份：
+		[root@oldboy opt]# mysql -uroot -p 'oldboy123' -e 'show databases;' |grep -Evi 'database|infor|perfor'|sed -r 's#^([a-z].*$)#mysqldump -uroot -p 'oldboy123' --events -B \1|gzip>/opt/bak/\1.sql.gz#g' |bash    
+		http://edu.51cto.com/course/808.html
+ 
+ 
+		shell 脚本分库备份数据库
+		for dbname in `mysql -uroot -p'oldboy123' -e "show databases;"|grep -Evi "database|infor|perfor"
+		do
+			mysqldump -uroot -p'oldboy123' --events -B $dbname | gzip > /opt/bak/${dbname}_bak.sql.gz
+			done
+		
+ 
+		备份多个表
+		语法： mysqldump -u 用户名 -p 数据库名 表名1 表名2 >|备份的文件名
+		操作结果：
+		[root@lodboy ~] mysqldump -uroot -p'oldboy123' oldboy course > /opt/two_tables.sql;
+		
+		mysqldump -uroot -p'oldboy123' --compact -d oldboy; #备份表结构
+		mysqldump -uroot -p'oldboy123' --compact -t oldboy; #备份数据
+		
+		myisam 备份命令：
+		mysqldump -uroot -poldboy123 -A -B -F --master-data=2 --events|gzip >opt/all.sql.gz;
+		
+		#innodb 备份命令：推荐使用
+		mysqldump -uroot -poldboy123 -A -B -F master-data=2 --events|--single-transaction|gzip > /opt/all.sql.gz;
+		
+		#-e 特有的功能 一次性多个操作；以下语句中使用了-e的功能 同时 设置了数据库的字符集 然后use  oldboy 然后 select student表 做了多给操作
+		[root@lodboy ~] mysql -uroot -p oldboy123 -e "set names latin1;use oldboy;select *from student;"
+		
+		[root@lodboy ~] mysql -uroot -poldboy123 -e "show global status;"|grep sel;		  #查询mysql 的查询数
+		[root@lodboy ~] mysql -uroot -poldboy123 -e "show global status;"|grep insert;    #查询mysql 的插入数
+		
+		[root@lodboy ~] mysql -uroot -poldboy123 -e "show full processlist;"      		  #查询有那些用户登录了数据库，做了什么操作，从哪个地址进来的 执行的语句什么
+		
+		mysqlbinlog -> 解析 mysql 的 binlog 日志
+		
+		mysql 的binlog 日志是什么？
+		数据目录下的如下文件就是mysql 的 binlog日志
+		
+		mysql-bin.000001
+		mysql-bin.000002
+		mysql-bin.000003
+		mysql-bin.000004
+		mysql-bin.000005
+		
+		mysql 的 binlog日志作用是什么？
+		用来登记mysql内部增删改查等对mysql数据库有更新的内容的记录。
+		
+#9.2基于位置点的增量恢复
+
+		mysqlbinlog 
+			-d 截取指定库的binlog
+			mysqlbinlog -d oldboy mysql-bin.000020 >oldboy.sql;
+			
+			按照位置截取：
+			mysqlbinlog mysqlbin.000020 --start-position=365 --stop-position=456 -r pos.sql;
+			按照时间截取：
+			mysqlbinlog mysql-bin.000020 --start-datetime='2014-10-16 17:14:15'   --stop-datetime='2014-10-16 17:15:15'
+
+		9.2.1指定开始位置和结束位置
+			mysqlbinlog mysqlbin.0000021 --start-position=510 --stop-position=1312 -r pos.sql;
+			输出初始位置510,结束位置1312的所有binlog日志到pos.sql;
+			注意：结尾的日志点比较特殊 不会被包含。即输出 1312pos 以前的 binlog.位置点信息一般实际存在，不能乱指定。
+		9.1.2 指定开始位置到文件结束
+			mysqlbinlog mysqlbin 000021 --start-position=510 -r pos510-end.sql;
+			
+			输出 初始位置510,结束位置到文件结尾的所有binlog到pos510-end.sql.当然，你也可以指定库名输出binlog.
+			如：
+				mysqlbinlog mysql-bin.000020 --start-datetime='2014-10-16 17:14:15' --stop-datetime='2014-10-16 17:15:15'
+		
+
+
+				
+	linux下的mysql命令:	mysqldump 、mysql 、mysqlbinlog、mysqladmin	
+
+				
+				
+				
+				
+				
+				
+
+		
+		
+
+		
+		
+		
+		
+ 
+ 
+ 
+ 
+ 
+ 

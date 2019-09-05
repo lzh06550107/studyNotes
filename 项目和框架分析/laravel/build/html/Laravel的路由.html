@@ -1,0 +1,1097 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7. 路由 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="8. 路由的正则编译" href="Laravel的路由—路由的正则编译.html"/>
+        <link rel="prev" title="6. 服务提供器" href="Laravel的服务提供器.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. 路由</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">7.1. 路由</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">7.1.1. 路由基础</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">7.1.2. 重定向路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">7.1.3. 视图路由</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">7.2. 路由参数</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">7.2.1. 必填参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">7.2.2. 可选参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">7.2.3. 正则表达式约束</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">7.3. 路由属性</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id15">7.3.1. 路由名称</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">7.4. 路由组</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id18">7.4.1. 中间件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">7.4.2. 命名空间</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">7.4.3. 子域名路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">7.4.4. 路由前缀</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22">7.4.5. 路由名称前缀</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scheme">7.4.6. 路由 scheme 协议</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uses">7.4.7. 路由 uses 属性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#group">7.4.8. 路由 group 群组属性</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id23">7.5. 路由模型绑定</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id24">7.5.1. 隐式绑定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">7.5.2. 显式绑定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id27">7.6. 访问控制</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id28">7.6.1. 动态访问控制</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id29">7.7. 表单方法伪造</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id30">7.8. 访问当前路由</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id31">7.9. 路由命令</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id32">7.9.1. 路由缓存</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id33">7.9.2. 路由缓存清理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id34">7.9.3. 路由列表</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#router">7.10. router扩展方法</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>7. 路由</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1><a class="toc-backref" href="#id35">7. 路由</a><a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id36">7.1. 路由</a><a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="contents topic" id="id3">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id35">路由</a><ul>
+<li><a class="reference internal" href="#id2" id="id36">路由</a><ul>
+<li><a class="reference internal" href="#id4" id="id37">路由基础</a><ul>
+<li><a class="reference internal" href="#id5" id="id38">默认路由文件</a></li>
+<li><a class="reference internal" href="#id6" id="id39">可用的路由方法</a></li>
+<li><a class="reference internal" href="#csrf" id="id40">CSRF 保护</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id7" id="id41">重定向路由</a></li>
+<li><a class="reference internal" href="#id8" id="id42">视图路由</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id9" id="id43">路由参数</a><ul>
+<li><a class="reference internal" href="#id10" id="id44">必填参数</a></li>
+<li><a class="reference internal" href="#id11" id="id45">可选参数</a></li>
+<li><a class="reference internal" href="#id12" id="id46">正则表达式约束</a><ul>
+<li><a class="reference internal" href="#id13" id="id47">全局约束</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id14" id="id48">路由属性</a><ul>
+<li><a class="reference internal" href="#id15" id="id49">路由名称</a><ul>
+<li><a class="reference internal" href="#as" id="id50">路由 as 别名</a></li>
+<li><a class="reference internal" href="#url" id="id51">生成指定路由的 URL</a></li>
+<li><a class="reference internal" href="#id16" id="id52">检查当前路由</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id17" id="id53">路由组</a><ul>
+<li><a class="reference internal" href="#id18" id="id54">中间件</a></li>
+<li><a class="reference internal" href="#id19" id="id55">命名空间</a></li>
+<li><a class="reference internal" href="#id20" id="id56">子域名路由</a></li>
+<li><a class="reference internal" href="#id21" id="id57">路由前缀</a></li>
+<li><a class="reference internal" href="#id22" id="id58">路由名称前缀</a></li>
+<li><a class="reference internal" href="#scheme" id="id59">路由 scheme 协议</a></li>
+<li><a class="reference internal" href="#uses" id="id60">路由 uses 属性</a></li>
+<li><a class="reference internal" href="#group" id="id61">路由 group 群组属性</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id23" id="id62">路由模型绑定</a><ul>
+<li><a class="reference internal" href="#id24" id="id63">隐式绑定</a><ul>
+<li><a class="reference internal" href="#id25" id="id64">自定义键名</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id26" id="id65">显式绑定</a><ul>
+<li><a class="reference internal" href="#model" id="id66">使用model绑定</a></li>
+<li><a class="reference internal" href="#bind" id="id67">使用bind绑定</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id27" id="id68">访问控制</a><ul>
+<li><a class="reference internal" href="#id28" id="id69">动态访问控制</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id29" id="id70">表单方法伪造</a></li>
+<li><a class="reference internal" href="#id30" id="id71">访问当前路由</a></li>
+<li><a class="reference internal" href="#id31" id="id72">路由命令</a><ul>
+<li><a class="reference internal" href="#id32" id="id73">路由缓存</a></li>
+<li><a class="reference internal" href="#id33" id="id74">路由缓存清理</a></li>
+<li><a class="reference internal" href="#id34" id="id75">路由列表</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#router" id="id76">router扩展方法</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3><a class="toc-backref" href="#id37">7.1.1. 路由基础</a><a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>构建最基本的路由只需要一个 <code class="docutils literal"><span class="pre">URI</span></code> 与一个 闭包，这里提供了一个非常简单优雅的定义路由的方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="id5">
+<h4><a class="toc-backref" href="#id38">7.1.1.1. 默认路由文件</a><a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<p>所有的 Laravel 路由都在 <code class="docutils literal"><span class="pre">routes</span></code> 目录中的路由文件中定义，这些文件都由框架自动加载。 <code class="docutils literal"><span class="pre">routes/web.php</span></code> 文件用于定义 <code class="docutils literal"><span class="pre">web</span></code> 界面的路由。这里面的路由都会被分配给 <code class="docutils literal"><span class="pre">web</span></code> 中间件组，它提供了会话状态和 <code class="docutils literal"><span class="pre">CSRF</span></code> 保护等功能。定义在 <code class="docutils literal"><span class="pre">routes/api.php</span></code> 中的路由都是无状态的，并且被分配了 <code class="docutils literal"><span class="pre">api</span></code> 中间件组。</p>
+<p>大多数的应用构建，都是以在 <code class="docutils literal"><span class="pre">routes/web.php</span></code> 文件定义路由开始的。可以通过在浏览器中输入定义的路由 <code class="docutils literal"><span class="pre">URL</span></code> 来访问 <code class="docutils literal"><span class="pre">routes/web.php</span></code> 中定义的路由。例如，你可以在浏览器中输入 <code class="docutils literal"><span class="pre">http://your-app.dev/user</span></code> 来访问以下路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/user&#39;</span><span class="p">,</span> <span class="s1">&#39;UserController@index&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">routes/api.php</span></code> 文件中定义的路由通过 <code class="docutils literal"><span class="pre">RouteServiceProvider</span></code> 被嵌套到一个路由组里面。在这个路由组中，会自动添加 <code class="docutils literal"><span class="pre">URL</span></code> 前缀 <code class="docutils literal"><span class="pre">/api</span></code> 到此文件中的每个路由，这样你就无需再手动添加了。你可以在 <code class="docutils literal"><span class="pre">RouteServiceProvider</span></code> 类中修改此前缀以及其他路由组选项。</p>
+</div>
+<div class="section" id="id6">
+<h4><a class="toc-backref" href="#id39">7.1.1.2. 可用的路由方法</a><a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<p>路由器允许你注册能响应任何 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求的路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="nv">$uri</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">post</span><span class="p">(</span><span class="nv">$uri</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">put</span><span class="p">(</span><span class="nv">$uri</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">patch</span><span class="p">(</span><span class="nv">$uri</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">delete</span><span class="p">(</span><span class="nv">$uri</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">options</span><span class="p">(</span><span class="nv">$uri</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>有的时候你可能需要注册一个可响应多个 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求的路由，这时你可以使用 <code class="docutils literal"><span class="pre">match</span></code> 方法，也可以使用 <code class="docutils literal"><span class="pre">any</span></code> 方法注册一个实现响应所有 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求的路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">match</span><span class="p">([</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="s1">&#39;post&#39;</span><span class="p">],</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">});</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">any</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="csrf">
+<h4><a class="toc-backref" href="#id40">7.1.1.3. CSRF 保护</a><a class="headerlink" href="#csrf" title="永久链接至标题">¶</a></h4>
+<p>指向 <code class="docutils literal"><span class="pre">web</span></code> 路由文件中定义的 <code class="docutils literal"><span class="pre">POST</span></code> 、 <code class="docutils literal"><span class="pre">PUT</span></code> 或 <code class="docutils literal"><span class="pre">DELETE</span></code> 路由的任何 <code class="docutils literal"><span class="pre">HTML</span></code> 表单都应该包含一个 <code class="docutils literal"><span class="pre">CSRF</span></code> 令牌字段，否则，这个请求将会被拒绝。可以在 <code class="docutils literal"><span class="pre">CSRF</span></code> 文档 中阅读有关 <code class="docutils literal"><span class="pre">CSRF</span></code> 更多的信息:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;</span><span class="nx">form</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span> <span class="nx">action</span><span class="o">=</span><span class="s2">&quot;/profile&quot;</span><span class="o">&gt;</span>
+    <span class="o">@</span><span class="nx">csrf</span>
+    <span class="o">...</span>
+<span class="o">&lt;/</span><span class="nx">form</span><span class="o">&gt;</span>
+<span class="c1">//或者</span>
+<span class="o">&lt;</span><span class="nx">form</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span> <span class="nx">action</span><span class="o">=</span><span class="s2">&quot;/profile&quot;</span><span class="o">&gt;</span>
+    <span class="p">{{</span> <span class="nx">csrf_field</span><span class="p">()</span> <span class="p">}}</span>
+    <span class="o">...</span>
+<span class="o">&lt;/</span><span class="nx">form</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3><a class="toc-backref" href="#id41">7.1.2. 重定向路由</a><a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>如果要定义重定向到另一个 <code class="docutils literal"><span class="pre">URI</span></code> 的路由，可以使用 <code class="docutils literal"><span class="pre">Route::redirect</span></code> 方法。这个方法可以快速的实现重定向，而不再需要去定义完整的路由或者控制器:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">redirect</span><span class="p">(</span><span class="s1">&#39;/here&#39;</span><span class="p">,</span> <span class="s1">&#39;/there&#39;</span><span class="p">,</span> <span class="mi">301</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3><a class="toc-backref" href="#id42">7.1.3. 视图路由</a><a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>如果你的路由只需要返回一个视图，可以使用 <code class="docutils literal"><span class="pre">Route::view</span></code> 方法。它和 <code class="docutils literal"><span class="pre">redirect</span></code> 一样方便，不需要定义完整的路由或控制器。 <code class="docutils literal"><span class="pre">view</span></code> 方法有三个参数，其中前两个是必填参数，分别是 <code class="docutils literal"><span class="pre">URI</span></code> 和视图名称。第三个参数选填，可以传入一个数组，数组中的数据会被传递给视图:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;/welcome&#39;</span><span class="p">,</span> <span class="s1">&#39;welcome&#39;</span><span class="p">);</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;/welcome&#39;</span><span class="p">,</span> <span class="s1">&#39;welcome&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Taylor&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2><a class="toc-backref" href="#id43">7.2. 路由参数</a><a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p>laravel 允许在注册定义路由的时候设定路由参数，以供控制器或者闭包所用。路由参数可以设定在 <code class="docutils literal"><span class="pre">URI</span></code> 中，也可以设定在 <code class="docutils literal"><span class="pre">domain</span></code> 中。</p>
+<p>对于已编码的请求 <code class="docutils literal"><span class="pre">URI</span></code> ，框架会自动进行解码然后进行匹配:</p>
+<div class="section" id="id10">
+<h3><a class="toc-backref" href="#id44">7.2.1. 必填参数</a><a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>当然，有时需要在路由中捕获一些 <code class="docutils literal"><span class="pre">URL</span></code> 片段。例如，从 <code class="docutils literal"><span class="pre">URL</span></code> 中捕获用户的 <code class="docutils literal"><span class="pre">ID</span></code> ，可以通过定义路由参数来执行此操作：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{id}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;User &#39;</span><span class="o">.</span><span class="nv">$id</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>也可以根据需要在路由中定义多个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;posts/{post}/comments/{comment}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$postId</span><span class="p">,</span> <span class="nv">$commentId</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>路由的参数通常都会被放在 <code class="docutils literal"><span class="pre">{}</span></code> 内，并且参数名只能为字母，同时路由参数不能包含 <code class="docutils literal"><span class="pre">-</span></code> 符号，如果需要可以用下划线 ( <code class="docutils literal"><span class="pre">_</span></code> ) 代替。 <strong>路由参数会按顺序依次被注入到路由回调或者控制器中，而不受回调或者控制器的参数名称的影响。</strong></p>
+</div>
+<div class="section" id="id11">
+<h3><a class="toc-backref" href="#id45">7.2.2. 可选参数</a><a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>有时，你可能需要指定一个路由参数，但你希望这个参数是可选的。你可以在参数后面加上 <code class="docutils literal"><span class="pre">?</span></code> 标记来实现，但前提是要确保路由的相应变量有默认值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{name?}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{name?}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span> <span class="o">=</span> <span class="s1">&#39;John&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3><a class="toc-backref" href="#id46">7.2.3. 正则表达式约束</a><a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>你可以使用路由实例上的 <code class="docutils literal"><span class="pre">where</span></code> 方法约束路由参数的格式。 <code class="docutils literal"><span class="pre">where</span></code> 方法接受参数名称和定义参数应如何约束的正则表达式：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{name}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;[A-Za-z]+&#39;</span><span class="p">);</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{id}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;[0-9]+&#39;</span><span class="p">);</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{id}/{name}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$id</span><span class="p">,</span> <span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">([</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;[0-9]+&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;[a-z]+&#39;</span><span class="p">]);</span>
+<span class="c1">//或者</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;{one}&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;where&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;one&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;(.+)&#39;</span><span class="p">],</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="p">}]);</span>
+</pre></div>
+</div>
+<div class="section" id="id13">
+<h4><a class="toc-backref" href="#id47">7.2.3.1. 全局约束</a><a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
+<p>如果你希望某个具体的路由参数都遵循同一个正则表达式的约束，就使用 <code class="docutils literal"><span class="pre">pattern</span></code> 方法在 <code class="docutils literal"><span class="pre">RouteServiceProvider</span></code> 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法中定义这些模式：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 定义你的路由模型绑定, pattern 过滤器等。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nx">Route</span><span class="o">::</span><span class="na">pattern</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;[0-9]+&#39;</span><span class="p">);</span>
+
+    <span class="k">parent</span><span class="o">::</span><span class="na">boot</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦定义好之后，便会自动应用这些规则到所有使用该参数名称的路由上：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{id}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Only executed if {id} is numeric...</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id14">
+<h2><a class="toc-backref" href="#id48">7.3. 路由属性</a><a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<p>在调用方法如 <code class="docutils literal"><span class="pre">get</span></code> <code class="docutils literal"><span class="pre">post</span></code> 或者 <code class="docutils literal"><span class="pre">group</span></code> 等前，可以定义路由的属性( <code class="docutils literal"><span class="pre">as</span></code> ,  <code class="docutils literal"><span class="pre">domain</span></code> ,  <code class="docutils literal"><span class="pre">middleware</span></code> ,  <code class="docutils literal"><span class="pre">name</span></code> ,  <code class="docutils literal"><span class="pre">namespace</span></code> ,  <code class="docutils literal"><span class="pre">prefix</span></code> )，如果你在 <code class="docutils literal"><span class="pre">get</span></code> <code class="docutils literal"><span class="pre">post</span></code> 等方法之后可调用 <code class="docutils literal"><span class="pre">name</span></code> ， <code class="docutils literal"><span class="pre">domain</span></code> ， <code class="docutils literal"><span class="pre">middleware</span></code> ， <code class="docutils literal"><span class="pre">prefix</span></code> 。而在 <code class="docutils literal"><span class="pre">group</span></code> 方法之后不能调用任何函数。</p>
+<p>路由属性的合并：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">prefix</span></code> <code class="docutils literal"><span class="pre">、name</span></code> 这几个属性会连接在一起，例如 prefix1/prefix2/prefix3，</li>
+<li><code class="docutils literal"><span class="pre">where</span></code> 属性数组相同的会被替换，不同的会被合并。</li>
+<li><code class="docutils literal"><span class="pre">domain</span></code> 属性会被替换。</li>
+<li>其他属性，例如 <code class="docutils literal"><span class="pre">middleware</span></code> 数组会直接被合并，即使存在相同的元素。</li>
+</ul>
+<div class="section" id="id15">
+<h3><a class="toc-backref" href="#id49">7.3.1. 路由名称</a><a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p>路由命名可以方便地为指定路由生成 <code class="docutils literal"><span class="pre">URL</span></code> 或者重定向。通过在路由定义上链式调用 <code class="docutils literal"><span class="pre">name</span></code> 方法可以指定路由名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/profile&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你还可以指定控制器行为的路由名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/profile&#39;</span><span class="p">,</span> <span class="s1">&#39;UserController@showProfile&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="as">
+<h4><a class="toc-backref" href="#id50">7.3.1.1. 路由 as 别名</a><a class="headerlink" href="#as" title="永久链接至标题">¶</a></h4>
+<p>可以为路由指定别名，通过路由属性的 <code class="docutils literal"><span class="pre">as</span></code> 来指定：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">as</span><span class="p">(</span><span class="s1">&#39;Foo&#39;</span><span class="p">)</span>
+     <span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="p">});</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">name</span><span class="p">(</span><span class="s1">&#39;Foo&#39;</span><span class="p">)</span>
+     <span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="p">});</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;as&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Foo&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="p">}]);</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="p">})</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">(</span><span class="s1">&#39;Foo&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">name</span></code> 是 <code class="docutils literal"><span class="pre">as</span></code> 的别名，所以两者是等同的。底层使用 <code class="docutils literal"><span class="pre">as</span></code> 属性存储路由名称。</p>
+</div>
+<div class="section" id="url">
+<h4><a class="toc-backref" href="#id51">7.3.1.2. 生成指定路由的 URL</a><a class="headerlink" href="#url" title="永久链接至标题">¶</a></h4>
+<p>为路由指定了名称后，就可以使用全局辅助函数 <code class="docutils literal"><span class="pre">route</span></code> 来生成链接或者重定向到该路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 生成 URL...</span>
+<span class="nv">$url</span> <span class="o">=</span> <span class="nx">route</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">);</span>
+
+<span class="c1">// 生成重定向...</span>
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果是有定义参数的命名路由，可以把参数作为 <code class="docutils literal"><span class="pre">route</span></code> 函数的第二个参数传入，指定的参数将会自动插入到 <code class="docutils literal"><span class="pre">URL</span></code> 中对应的位置：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{id}/profile&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">);</span>
+
+<span class="nv">$url</span> <span class="o">=</span> <span class="nx">route</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id16">
+<h4><a class="toc-backref" href="#id52">7.3.1.3. 检查当前路由</a><a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
+<p>如果你想判断当前请求是否指向了某个路由，你可以调用路由实例上的 <code class="docutils literal"><span class="pre">named</span></code> 方法。例如，你可以在路由中间件中检查当前路由名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 处理一次请求。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  \Illuminate\Http\Request  $request</span>
+<span class="sd"> * @param  \Closure  $next</span>
+<span class="sd"> * @return mixed</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nx">Closure</span> <span class="nv">$next</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">named</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$next</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id17">
+<h2><a class="toc-backref" href="#id53">7.4. 路由组</a><a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
+<p>路由组允许你在大量路由之间共享路由属性，例如中间件或命名空间，而不需要为每个路由单独定义这些属性。共享属性应该以数组的形式传入 <code class="docutils literal"><span class="pre">Route::group</span></code> 方法的第一个参数中。</p>
+<div class="section" id="id18">
+<h3><a class="toc-backref" href="#id54">7.4.1. 中间件</a><a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
+<p>要给路由组中所有的路由分配中间件，可以在 <code class="docutils literal"><span class="pre">group</span></code> 之前调用 <code class="docutils literal"><span class="pre">middleware</span></code> 方法，中间件会依照它们在数组中列出的顺序来运行：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">middleware</span><span class="p">([</span><span class="s1">&#39;first&#39;</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">group</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 使用 first 和 second 中间件</span>
+    <span class="p">});</span>
+
+    <span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/profile&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 使用 first 和 second 中间件</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+<span class="c1">//或者</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;middleware&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;web&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="p">}]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h3><a class="toc-backref" href="#id55">7.4.2. 命名空间</a><a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p>另一个常见用例是使用 <code class="docutils literal"><span class="pre">namespace</span></code> 方法将相同的 <code class="docutils literal"><span class="pre">PHP</span></code> 命名空间分配给路由组的中所有的控制器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">namespace</span><span class="p">(</span><span class="s1">&#39;Admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">group</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 在 &quot;App\Http\Controllers\Admin&quot; 命名空间下的控制器</span>
+<span class="p">});</span>
+<span class="c1">// 或者</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;namespace&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Namespace\\Example\\&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="p">}]);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">默认情况下， <code class="docutils literal"><span class="pre">RouteServiceProvider</span></code> 会在命名空间组中引入你的路由文件，让你不用指定完整的 <code class="docutils literal"><span class="pre">App\Http\Controllers</span></code> 命名空间前缀就能注册控制器路由。因此，你只需要指定命名空间 <code class="docutils literal"><span class="pre">App\Http\Controllers</span></code> 之后的部分。</p>
+</div>
+</div>
+<div class="section" id="id20">
+<h3><a class="toc-backref" href="#id56">7.4.3. 子域名路由</a><a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<p>路由组也可以用来处理子域名。子域名可以像路由 <code class="docutils literal"><span class="pre">URI</span></code> 一样被分配路由参数，允许你获取一部分子域名作为参数给路由或控制器使用。可以在 <code class="docutils literal"><span class="pre">group</span></code> 之前调用 <code class="docutils literal"><span class="pre">domain</span></code> 方法来指定子域名：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">domain</span><span class="p">(</span><span class="s1">&#39;{account}.myapp.com&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">group</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;user/{id}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$account</span><span class="p">,</span> <span class="nv">$id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+<span class="c1">//或者</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;domain&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;api.name.bar&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+<span class="p">}]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id21">
+<h3><a class="toc-backref" href="#id57">7.4.4. 路由前缀</a><a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h3>
+<p>可以用 <code class="docutils literal"><span class="pre">prefix</span></code> 方法为路由组中给定的 <code class="docutils literal"><span class="pre">URL</span></code> 增加前缀。例如，你可以为组中所有路由的 <code class="docutils literal"><span class="pre">URI</span></code> 加上 <code class="docutils literal"><span class="pre">admin</span></code> 前缀：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">prefix</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">group</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 匹配包含 &quot;/admin/users&quot; 的 URL</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+<span class="c1">//或者</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;prefix&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="p">}]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id22">
+<h3><a class="toc-backref" href="#id58">7.4.5. 路由名称前缀</a><a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">name</span></code> 方法可以用来给路由组中的每个路由名称添加一个给定的字符串。例如，您可能希望以 「admin」为所有分组路由的名称加前缀。给定的字符串与指定的路由名称前缀完全相同，因此我们将确保在前缀中提供尾部的 <code class="docutils literal"><span class="pre">.</span></code> 字符：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">name</span><span class="p">(</span><span class="s1">&#39;admin.&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">group</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 路由分配名称“admin.users”...</span>
+    <span class="p">})</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="scheme">
+<h3><a class="toc-backref" href="#id59">7.4.6. 路由 scheme 协议</a><a class="headerlink" href="#scheme" title="永久链接至标题">¶</a></h3>
+<p>对于 <code class="docutils literal"><span class="pre">web</span></code> 后台框架来说，路由的 <code class="docutils literal"><span class="pre">scheme</span></code> 底层协议一般使用 <code class="docutils literal"><span class="pre">http</span></code> 、 <code class="docutils literal"><span class="pre">https</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/{bar}&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="p">}]);</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/{bar}&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;https&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="p">}]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="uses">
+<h3><a class="toc-backref" href="#id60">7.4.7. 路由 uses 属性</a><a class="headerlink" href="#uses" title="永久链接至标题">¶</a></h3>
+<p>可以为路由添加 <code class="docutils literal"><span class="pre">URI</span></code> 对应的执行逻辑，例如闭包或者控制器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;uses&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="p">}]);</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;uses&#39;</span> <span class="o">=&gt;</span> <span class="nx">‘Illuminate\Tests\Routing\RouteTestControllerStub</span><span class="o">@</span><span class="nx">index’</span><span class="p">]);</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">uses</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="p">});</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/bar&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">uses</span><span class="p">(</span><span class="nx">‘Illuminate\Tests\Routing\RouteTestControllerStub</span><span class="o">@</span><span class="nx">index’</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="group">
+<h3><a class="toc-backref" href="#id61">7.4.8. 路由 group 群组属性</a><a class="headerlink" href="#group" title="永久链接至标题">¶</a></h3>
+<p>可以为一系列具有类似属性的路由归为同一组，利用 <code class="docutils literal"><span class="pre">group</span></code> 将这些路由归并到一起：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">group</span><span class="p">([</span><span class="s1">&#39;domain&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;group.domain.name&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;prefix&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;grouppre&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;where&#39;</span>      <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;one&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;(.+)&#39;</span><span class="p">],</span>
+              <span class="s1">&#39;middleware&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;groupMiddleware&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;namespace&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;Namespace\\Group\\&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;as&#39;</span>         <span class="o">=&gt;</span> <span class="s1">&#39;Group::&#39;</span><span class="p">,]</span>
+              <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+                  <span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/replace&#39;</span><span class="p">,</span><span class="nx">‘domain’</span> <span class="o">=&gt;</span> <span class="s1">&#39;route.domain.name&#39;</span><span class="nx">，</span>
+                                        <span class="s1">&#39;uses&#39;</span>   <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+                                        <span class="k">return</span> <span class="s1">&#39;replace&#39;</span><span class="p">;</span>
+                  <span class="p">});</span>
+
+                 <span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;additional/{one}/{two}&#39;</span><span class="p">,</span> <span class="s1">&#39;prefix&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;routepre&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;where&#39;</span>      <span class="o">=&gt;</span> <span class="s1">&#39;[&#39;</span><span class="nx">one</span><span class="s1">&#39; =&gt; &#39;</span><span class="p">([</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span><span class="o">+</span><span class="p">)</span><span class="s1">&#39;,&#39;</span><span class="nx">two</span><span class="s1">&#39; =&gt; &#39;</span><span class="p">(</span><span class="o">.+</span><span class="p">)</span><span class="s1">&#39;]&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;middleware&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;routeMiddleware&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;namespace&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;Namespace\\Group\\&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;as&#39;</span>         <span class="o">=&gt;</span> <span class="s1">&#39;Route&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;use         =&gt; &#39;</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+                                                      <span class="k">return</span> <span class="s1">&#39;additional&#39;</span><span class="p">;</span>
+                 <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">group</span></code> 群组的属性分为两类：替换型、递增型。当群组属性与路由属性重复的时候，替换型属性会用路由的属性替换群组的属性，递增型的属性会综合路由和群组的属性。</p>
+<p>在上面的例子可以看出：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">domain</span></code> 这个属性是替换型属性，路由的属性会覆盖和替换群组的这几个属性；</li>
+<li><code class="docutils literal"><span class="pre">prefix</span></code> 、 <code class="docutils literal"><span class="pre">middleware</span></code> 、 <code class="docutils literal"><span class="pre">namespace</span></code> 、 <code class="docutils literal"><span class="pre">as</span></code> 、 <code class="docutils literal"><span class="pre">where</span></code> 这几个属性是递增型属性，路由的属性和群组属性会相互结合。</li>
+</ul>
+<p>另外值得注意的是：</p>
+<ul class="simple">
+<li>路由的 <code class="docutils literal"><span class="pre">prefix</span></code> 属性具有优先级,因此上面第二个路由的 <code class="docutils literal"><span class="pre">uri</span></code> 是 <code class="docutils literal"><span class="pre">routepre/grouppre/additional/111/add</span></code> ,而不是 <code class="docutils literal"><span class="pre">grouppre/routepre/additional/111/add</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">where</span></code> 属性对于相同的路由参数会替换，不同的路由参数会结合，因此上面 <code class="docutils literal"><span class="pre">where</span></code> 中 <code class="docutils literal"><span class="pre">one</span></code> 被替换， <code class="docutils literal"><span class="pre">two</span></code> 被结合进来；</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id23">
+<h2><a class="toc-backref" href="#id62">7.5. 路由模型绑定</a><a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h2>
+<p>当向路由或控制器行为注入模型 <code class="docutils literal"><span class="pre">ID</span></code> 时，就需要查询这个 <code class="docutils literal"><span class="pre">ID</span></code> 对应的模型。 Laravel 为路由模型绑定提供了一个直接自动将模型实例注入到路由中的方法。例如，你可以注入与给定 <code class="docutils literal"><span class="pre">ID</span></code> 匹配的整个 <code class="docutils literal"><span class="pre">User</span></code> 模型实例，而不是注入用户的 <code class="docutils literal"><span class="pre">ID</span></code> 。</p>
+<p>关于路由绑定的实现参考 <code class="docutils literal"><span class="pre">Laravel的中间件-SubstituteBindings</span></code> 。</p>
+<div class="section" id="id24">
+<h3><a class="toc-backref" href="#id63">7.5.1. 隐式绑定</a><a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h3>
+<p>Laravel 会自动解析定义在路由或控制器行为中与类型提示的变量名匹配的路由段名称的 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型。例如：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;api/users/{user}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">App\User</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>在这个例子中，由于 <code class="docutils literal"><span class="pre">$user</span></code> 变量被类型提示为 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型 <code class="docutils literal"><span class="pre">App\User</span></code> ，变量名称又与 <code class="docutils literal"><span class="pre">URI</span></code> 中的 <code class="docutils literal"><span class="pre">{user}</span></code> 匹配，因此，Laravel 会自动注入与请求 <code class="docutils literal"><span class="pre">URI</span></code> 中传入的 <code class="docutils literal"><span class="pre">ID</span></code> 匹配的用户模型实例。如果在数据库中找不到对应的模型实例，将会自动生成 <code class="docutils literal"><span class="pre">404</span></code> 异常。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">需要注意的是，在隐式模型绑定中 <code class="docutils literal"><span class="pre">route</span></code> 定义路由的路由参数必须和控制器内的变量名相同，例如下例中路由参数 <code class="docutils literal"><span class="pre">userid</span></code> 和控制器参数 <code class="docutils literal"><span class="pre">userid</span></code> 。</p>
+</div>
+<div class="section" id="id25">
+<h4><a class="toc-backref" href="#id64">7.5.1.1. 自定义键名</a><a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h4>
+<p>如果你想要模型绑定在检索给定的模型类时使用除 <code class="docutils literal"><span class="pre">id</span></code> 之外的数据库字段，你可以在 <code class="docutils literal"><span class="pre">Eloquent</span></code> 模型上重写 <code class="docutils literal"><span class="pre">getRouteKeyName</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 为路由模型获取键名。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return string</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getRouteKeyName</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;slug&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id26">
+<h3><a class="toc-backref" href="#id65">7.5.2. 显式绑定</a><a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h3>
+<div class="section" id="model">
+<h4><a class="toc-backref" href="#id66">7.5.2.1. 使用model绑定</a><a class="headerlink" href="#model" title="永久链接至标题">¶</a></h4>
+<p>要注册显式绑定，使用路由器的 <code class="docutils literal"><span class="pre">model</span></code> 方法来为给定参数指定类。在 <code class="docutils literal"><span class="pre">RouteServiceProvider</span></code> 类中的 <code class="docutils literal"><span class="pre">boot</span></code> 方法内定义这些显式模型绑定：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">parent</span><span class="o">::</span><span class="na">boot</span><span class="p">();</span>
+
+    <span class="nx">Route</span><span class="o">::</span><span class="na">model</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">class</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>接着，定义一个包含 <code class="docutils literal"><span class="pre">{user}</span></code> 参数的路由:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;profile/{user}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">App\User</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>因为我们已经将所有 <code class="docutils literal"><span class="pre">{user}</span></code> 参数绑定至 <code class="docutils literal"><span class="pre">App\User</span></code> 模型，所以 <code class="docutils literal"><span class="pre">User</span></code> 实例将被注入该路由。例如， <code class="docutils literal"><span class="pre">profile/1</span></code> 的请求会注入数据库中 <code class="docutils literal"><span class="pre">ID</span></code> 为 <code class="docutils literal"><span class="pre">1</span></code> 的 <code class="docutils literal"><span class="pre">User</span></code> 实例。</p>
+<p>如果在数据库不存在对应 <code class="docutils literal"><span class="pre">ID</span></code> 的数据，就会自动抛出一个 <code class="docutils literal"><span class="pre">404</span></code> 异常。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">通过 <code class="docutils literal"><span class="pre">model</span></code> 为参数绑定数据库模型，路由的参数就不需要和控制器方法中的变量名相同，但路由参数必须和 <code class="docutils literal"><span class="pre">model</span></code> 方法的第一个参数名称一致。</p>
+</div>
+<p>若绑定的 <code class="docutils literal"><span class="pre">model</span></code> 并没有找到对应路由参数的记录，可以在 <code class="docutils literal"><span class="pre">model</span></code> 中定义一个闭包函数，路由参数会调用闭包函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">testModelBindingWithCustomNullReturn</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$router</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRouter</span><span class="p">();</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/{bar}&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;middleware&#39;</span> <span class="o">=&gt;</span> <span class="nx">SubstituteBindings</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="s1">&#39;uses&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="p">}]);</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">model</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;Illuminate\Tests\Routing\RouteModelBindingNullStub&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;missing&#39;</span><span class="p">;</span>
+    <span class="p">});</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">Request</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;foo/taylor&#39;</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">getContent</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">testModelBindingWithBindingClosure</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$router</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRouter</span><span class="p">();</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/{bar}&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;middleware&#39;</span> <span class="o">=&gt;</span> <span class="nx">SubstituteBindings</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="s1">&#39;uses&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="p">}]);</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">model</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;Illuminate\Tests\Routing\RouteModelBindingNullStub&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">RouteModelBindingClosureStub</span><span class="p">())</span><span class="o">-&gt;</span><span class="na">findAlternate</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+    <span class="p">});</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="s1">&#39;tayloralt&#39;</span><span class="p">,</span> <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">Request</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;foo/TAYLOR&#39;</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">getContent</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">RouteModelBindingNullStub</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">getRouteKeyName</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;id&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">where</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">first</span><span class="p">()</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">RouteModelBindingClosureStub</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">findAlternate</span><span class="p">(</span><span class="nv">$value</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$value</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;alt&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bind">
+<h4><a class="toc-backref" href="#id67">7.5.2.2. 使用bind绑定</a><a class="headerlink" href="#bind" title="永久链接至标题">¶</a></h4>
+<ul>
+<li><p class="first">通过 bind 为参数绑定闭包函数：如果你想要使用自定义的解析逻辑，就使用 <code class="docutils literal"><span class="pre">Route::bind</span></code> 方法。传递到 <code class="docutils literal"><span class="pre">bind</span></code> 方法的 闭包 会接受 <code class="docutils literal"><span class="pre">URI</span></code> 中大括号对应的值，并且返回你想要在该路由中注入的类的实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">parent</span><span class="o">::</span><span class="na">boot</span><span class="p">();</span>
+
+    <span class="nx">Route</span><span class="o">::</span><span class="na">bind</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="nv">$value</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">()</span> <span class="o">??</span> <span class="nx">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">bind()</span></code> 方法第一个参数必须和路由路径中的参数一致；第二个参数只支持传入闭包，该闭包函数接受路由中当前键对应的值和当前路由项。</p>
+</li>
+<li><p class="first">通过 <code class="docutils literal"><span class="pre">bind</span></code> 为参数绑定类方法，可以指定 <code class="docutils literal"><span class="pre">classname&#64;method</span></code> ，也可以直接使用类名，默认会调用类的 <code class="docutils literal"><span class="pre">bind</span></code> 函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">testRouteClassBinding</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$router</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRouter</span><span class="p">();</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/{bar}&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;middleware&#39;</span> <span class="o">=&gt;</span> <span class="nx">SubstituteBindings</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="s1">&#39;uses&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="p">}]);</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;Illuminate\Tests\Routing\RouteBindingStub&#39;</span><span class="p">);</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="s1">&#39;TAYLOR&#39;</span><span class="p">,</span> <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">Request</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;foo/taylor&#39;</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">getContent</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">testRouteClassMethodBinding</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$router</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRouter</span><span class="p">();</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foo/{bar}&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;middleware&#39;</span> <span class="o">=&gt;</span> <span class="nx">SubstituteBindings</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="s1">&#39;uses&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="p">}]);</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;Illuminate\Tests\Routing\RouteBindingStub@find&#39;</span><span class="p">);</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="s1">&#39;dragon&#39;</span><span class="p">,</span> <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">Request</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;foo/Dragon&#39;</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">getContent</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">RouteBindingStub</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">bind</span><span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nv">$route</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">find</span><span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nv">$route</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="id27">
+<h2><a class="toc-backref" href="#id68">7.6. 访问控制</a><a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h2>
+<p>Laravel 包含了一个 中间件 用于控制应用程序对路由的访问。如果想要使用，请将 <code class="docutils literal"><span class="pre">throttle</span></code> 中间件分配给一个路由或一个路由组。 <code class="docutils literal"><span class="pre">throttle</span></code> 中间件会接收两个参数，这两个参数决定了在给定的分钟数内可以进行的最大请求数。 例如，让我们指定一个经过身份验证并且用户每分钟访问频率不超过 60 次的路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;auth:api&#39;</span><span class="p">,</span> <span class="s1">&#39;throttle:60,1&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">group</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/user&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="id28">
+<h3><a class="toc-backref" href="#id69">7.6.1. 动态访问控制</a><a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h3>
+<p>您可以根据已验证的 <code class="docutils literal"><span class="pre">User</span></code> 模型的属性指定动态请求的最大值。 例如，如果您的 <code class="docutils literal"><span class="pre">User</span></code> 模型包含 <code class="docutils literal"><span class="pre">rate_limit</span></code> 属性，则可以将属性名称传递给 <code class="docutils literal"><span class="pre">throttle</span></code> 中间件，以便它用于计算最大请求计数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;auth:api&#39;</span><span class="p">,</span> <span class="s1">&#39;throttle:rate_limit,1&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">group</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/user&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id29">
+<h2><a class="toc-backref" href="#id70">7.7. 表单方法伪造</a><a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">HTML</span></code> 表单不支持 <code class="docutils literal"><span class="pre">PUT</span></code> 、 <code class="docutils literal"><span class="pre">PATCH</span></code> 或 <code class="docutils literal"><span class="pre">DELETE</span></code> 行为。所以当你要从 <code class="docutils literal"><span class="pre">HTML</span></code> 表单中调用定义了 <code class="docutils literal"><span class="pre">PUT</span></code> 、 <code class="docutils literal"><span class="pre">PATCH</span></code> 或 <code class="docutils literal"><span class="pre">DELETE</span></code> 路由时，你将需要在表单中增加隐藏的 <code class="docutils literal"><span class="pre">_method</span></code> 输入标签。使用 <code class="docutils literal"><span class="pre">_method</span></code> 字段的值作为 <code class="docutils literal"><span class="pre">HTTP</span></code> 的请求方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;</span><span class="nx">form</span> <span class="nx">action</span><span class="o">=</span><span class="s2">&quot;/foo/bar&quot;</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;hidden&quot;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;_method&quot;</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;PUT&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;hidden&quot;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;_token&quot;</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;{{ csrf_token() }}&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">form</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>你也可以使用 <code class="docutils literal"><span class="pre">&#64;method</span></code> Blade 指令生成 <code class="docutils literal"><span class="pre">_method</span></code> 输入：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">&lt;</span><span class="nx">form</span> <span class="nx">action</span><span class="o">=</span><span class="s2">&quot;/foo/bar&quot;</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="o">&gt;</span>
+    <span class="o">@</span><span class="nx">method</span><span class="p">(</span><span class="s1">&#39;PUT&#39;</span><span class="p">)</span>
+    <span class="o">@</span><span class="nx">csrf</span>
+<span class="o">&lt;/</span><span class="nx">form</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id30">
+<h2><a class="toc-backref" href="#id71">7.8. 访问当前路由</a><a class="headerlink" href="#id30" title="永久链接至标题">¶</a></h2>
+<p>你可以使用 <code class="docutils literal"><span class="pre">Route</span></code> Facade 上的 <code class="docutils literal"><span class="pre">current</span></code> 、 <code class="docutils literal"><span class="pre">currentRouteName</span></code> 和 <code class="docutils literal"><span class="pre">currentRouteAction</span></code> 方法来访问处理传入请求的路由的信息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$route</span> <span class="o">=</span> <span class="nx">Route</span><span class="o">::</span><span class="na">current</span><span class="p">();</span>
+
+<span class="nv">$name</span> <span class="o">=</span> <span class="nx">Route</span><span class="o">::</span><span class="na">currentRouteName</span><span class="p">();</span>
+
+<span class="nv">$action</span> <span class="o">=</span> <span class="nx">Route</span><span class="o">::</span><span class="na">currentRouteAction</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id31">
+<h2><a class="toc-backref" href="#id72">7.9. 路由命令</a><a class="headerlink" href="#id31" title="永久链接至标题">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">基于闭包的路由不能被缓存。如果要使用路由缓存，你必须将所有的闭包路由转换成控制器类路由。</p>
+</div>
+<p>如果你的应用只使用了基于控制器的路由，那么你应该充分利用 Laravel 的路由缓存的优势。使用路由缓存将极大地减少注册所有应用路由所需的时间。某些情况下，路由注册的速度甚至可以快一百倍。要生成路由缓存，只需执行 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">route:cache</span></code> ：</p>
+<div class="section" id="id32">
+<h3><a class="toc-backref" href="#id73">7.9.1. 路由缓存</a><a class="headerlink" href="#id32" title="永久链接至标题">¶</a></h3>
+<p>Artisan 命令 <code class="docutils literal"><span class="pre">route:cache</span></code> 可以把 <code class="docutils literal"><span class="pre">routes.php</span></code> 文件中的所有路由定义序列化 -- 会对所有的路由进行一次解析然后把解析结果缓存起来。</p>
+</div>
+<div class="section" id="id33">
+<h3><a class="toc-backref" href="#id74">7.9.2. 路由缓存清理</a><a class="headerlink" href="#id33" title="永久链接至标题">¶</a></h3>
+<p>执行完 <code class="docutils literal"><span class="pre">route:cache</span></code> 这个命令以后，所有的路由都是从缓存文件而不是路由文件进行读取。之后你可以对 <code class="docutils literal"><span class="pre">routes.php</span></code> 的随意进行修改, 但应用的路由不会发生变化, 一直到再次执行 <code class="docutils literal"><span class="pre">route:cache</span></code> 重新缓存。</p>
+</div>
+<div class="section" id="id34">
+<h3><a class="toc-backref" href="#id75">7.9.3. 路由列表</a><a class="headerlink" href="#id34" title="永久链接至标题">¶</a></h3>
+<p>Artisan 命令 <code class="docutils literal"><span class="pre">route:list</span></code> 列出所有注册的路由。</p>
+</div>
+</div>
+<div class="section" id="router">
+<h2><a class="toc-backref" href="#id76">7.10. router扩展方法</a><a class="headerlink" href="#router" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">router</span></code> 支持添加自定义的方法，只需要利用 <code class="docutils literal"><span class="pre">macro</span></code> 函数来注册对应的函数名和函数实现：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">testMacro</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$router</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRouter</span><span class="p">();</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">macro</span><span class="p">(</span><span class="s1">&#39;webhook&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$router</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">match</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">],</span> <span class="s1">&#39;webhook&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;OK&#39;</span><span class="p">;</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+    <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">webhook</span><span class="p">();</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="s1">&#39;OK&#39;</span><span class="p">,</span> <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">Request</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;webhook&#39;</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">getContent</span><span class="p">());</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="s1">&#39;OK&#39;</span><span class="p">,</span> <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">Request</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;webhook&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">getContent</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的路由—路由的正则编译.html" class="btn btn-neutral float-right" title="8. 路由的正则编译" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的服务提供器.html" class="btn btn-neutral" title="6. 服务提供器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

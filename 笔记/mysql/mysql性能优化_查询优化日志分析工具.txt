@@ -1,0 +1,133 @@
+
+常用的慢查询日志分析工具（mysqldumpslow）
+	mysqldumpslow -s -r -t10 slow-mysql.log
+	
+							     
+							    
+							   
+							   （  c:总次数
+							    |  t:总时间
+	-s order(c,t,l,r,at,al,ar) <   l:锁的时间
+	指定按那种排序方式输出结果	|  r：总数据行
+							   （  at,al,ar:t,l,r 平均数
+							   例：at=总时间/总次数 
+	-t top
+	指定取几条作为结束输出
+								
+							   
+常用的慢查询日志分析工具（pt-query-digest）
+	
+	pt-query-digest \
+	--explain h=127.0.0.1,u=root,p=p@ssW0rd \
+	slow-mysql.log
+
+	pt-query-digest-digest --explain h=127.0.0.1 slow-mysql.log
+	
+	
+	如何实时获取有性能问题的SQL 
+	
+	SELECT id,user,host,DB,command,time,state,info FROM information_schema.PROCESSLIST WHERE TIME>=60;
+
+
+如何确定查询处理各个阶段所消耗的时间
+	使用 performance_schema 
+	
+	update setup_instruments set enabled=yes,timed=yes where name like 'stage%';
+	
+	update setup_consumers set enabled='yes' where name like 'events%';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

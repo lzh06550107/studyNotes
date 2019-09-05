@@ -1,0 +1,572 @@
+*****
+样例
+*****
+本页面包含来自 ``Paragon Initiative Enterprises`` 的配方，使用 ``Libsodium`` 提供的功能为普通 ``Web`` 应用程序功能添加安全性。
+
+这些并不是 ``API`` 文档的正式组成部分，但应该为高级用户提供有关如何安全有效地组合功能的想法。请在执行本页面上的任何功能之前保持怀疑和谨慎。
+
+您可以将本页面上的所有食谱视为在MIT许可下发布的食谱。
+
+要查看旧的 ``API`` 文档， `请点击此处 <https://github.com/paragonie/pecl-libsodium-doc/blob/v1/chapters/09-recipes.md>`_
+
+密封的应用程序安全日志
+======================
+问题：加密应用程序日志，以便只有管理员才能读取消息的内容。
+
+解决方案：确保攻击者无法读取任何已发布的消息（因此不知道管理员了解他/她的活动）。在那之后，我们无法阻止攻击者发送虚假日志。不能理解？？
+
+该策略结合了 ``sodium_crypto_box_seal()`` 和 ``sodium_crypto_sign()`` 。
+
+.. code-block:: php
+
+    <?php
+    class SealedLogs extends Our_Logger_Class
+    {
+        private $log_public_key;
+        private $node_secret_key;
+
+        /**
+         * @param string $node_secretkey This endpoint's signing key
+         * @param string $log_publickey The logging server's public key
+         */
+        public function __construct($node_secretkey, $log_publickey)
+        {
+            $this->node_secret_key = $node_secretkey; // 当前端点签名私钥
+            $this->log_public_key = $log_publickey; // 日志服务器公钥
+        }
+
+        /**
+         * Prepare a message for the
+         */
+        public function sealedLog($message)
+        {
+            // 对指定的消息进行签名
+            $signed = sodium_crypto_sign($message, $this->node_secret_key);
+            return $this->log( // 匿名发送给指定公钥的日志服务器，使用公钥加密发送签名
+                sodium_crypto_box_seal($signed, $this->log_public_key)
+        );
+        }
+    }
+
+在每个端点上，您将生成用于签署消息的 ``crypto_sign`` 密钥对，并将其与日志记录服务器的公钥一起使用。日志记录服务器应该知道每个授权端点的公钥。例如：
+
+.. code-block:: php
+
+    $sl = new SealedLogs($our_secretkey, $log_publickey);// 传入当前签名的私钥和日志服务器的公钥
+    $sl->log("Unauthorized access from {$_SERVER['REMOTE_ADDR']} detected.");
+
+在日志服务器上，您应该先打开密封的盒子，然后验证签名。
+
+.. code-block:: php
+
+    <?php
+    // 打开盒子，获取签名消息
+    $unsealed = sodium_crypto_box_seal_open($message, $our_box_keypair);
+    // 利用签名公钥来验证消息
+    $verified = sodium_crypto_sign_open(
+        $unsealed,
+        $node_publickey
+    );
+
+然后， ``$verified`` 的内容是来自特定节点的特定消息。
+
+.. note:: 我们可以避免签名然后加密（然后解密，然后验证签名），而不会违反 `加密厄运原则 <http://www.thoughtcrime.org/blog/the-cryptographic-doom-principle/>`_ ，因为我们的密文已经过验证。
+
+.. code-block:: text
+
+    crypto_sign | crypto_box_seal
+    Sign       -> Encrypt -> MAC
+
+如果 ``sodium_crypto_box_seal`` 没有提供认证加密，这将是一个危险的构造。幸运的是，它的提供了。 **始终加密然后MAC！**
+
+加密的Cookie
+============
+问题：我们希望将数据存储在 ``cookie`` 中，以便用户无法读取或更改其内容。
+
+期望的解决方案：认证的秘密密钥加密，其中随机数与密文一起存储。每个加密密钥和认证密钥都应附加到 ``cookie`` 值上。
+
+这个策略结合了 ``sodium_crypto_stream_xor()`` 和 ``sodium_crypto_auth()`` 。
+
+.. code-block:: php
+
+    <?php
+    class SodiumCookie
+    {
+        private $key; // 对称密钥
+
+        /**
+         * Sets the encryption key
+         *
+         * @param string $key
+         */
+        public function __construct($key)
+        {
+            $this->key = $key;
+        }
+
+        /**
+         * Reads an encrypted cookie
+         *
+         * @param string $index
+         * @return string
+         */
+        public function read($index)
+        {
+            if (!array_key_exists($index, $_COOKIE)) {
+                return null;
+            }
+            $cookie = sodium_hex2bin($_COOKIE[$index]);
+            list ($encKey, $authKey) = $this->splitKeys($index);
+
+            // 获取签名
+            $mac = mb_substr(
+                $cookie,
+                0,
+                SODIUM_CRYPTO_AUTH_BYTES,
+                '8bit'
+            );
+
+            // 随机数
+            $nonce = mb_substr(
+                $cookie,
+                SODIUM_CRYPTO_AUTH_BYTES,
+                SODIUM_CRYPTO_STREAM_NONCEBYTES,
+                '8bit'
+            );
+
+            // 密文
+            $ciphertext = mb_substr(
+                $cookie,
+                SODIUM_CRYPTO_AUTH_BYTES + SODIUM_CRYPTO_STREAM_NONCEBYTES,
+                null,
+                '8bit'
+            );
+
+            // 身份认证
+            if (sodium_crypto_auth_verify($mac, $nonce . $ciphertext, $authKey)) {
+                sodium_memzero($authKey);
+                // 获取明文
+                $plaintext = sodium_crypto_stream_xor($ciphertext, $nonce, $encKey);
+                sodium_memzero($encKey);
+                if ($plaintext !== false) {
+                    return $plaintext;
+                }
+            } else {
+                sodium_memzero($authKey);
+                sodium_memzero($encKey);
+            }
+            throw new Exception('Decryption failed.');
+        }
+
+        /**
+         * Writes an encrypted cookie
+         *
+         * @param string $index
+         * @param string $value
+         * @return bool
+         */
+        public function write($index, $value)
+        {
+            // 生成随机数
+            $nonce = random_bytes(
+                SODIUM_CRYPTO_STREAM_NONCEBYTES
+            );
+
+
+            list ($encKey, $authKey) = $this->splitKeys($index);
+            // 生成密文
+            $ciphertext = sodium_crypto_stream_xor(
+                $value,
+                $nonce,
+                $encKey
+            );
+            sodium_memzero($value);
+            // 生成签名
+            $mac = sodium_crypto_auth($nonce . $ciphertext, $authkey);
+
+            sodium_memzero($encKey);
+            sodium_memzero($authKey);
+            // 封装cookie对象
+            return setcookie(
+                $index,
+                sodium_bin2hex($mac . $nonce . $ciphertext)
+            );
+        }
+
+        /**
+         * Just an example. In a real system, you want to use HKDF for
+         * key-splitting instead of just a keyed BLAKE2b hash.
+         *
+         * @param string $cookieName Cookie Name
+         * @return array(2) [encryption key, authentication key]
+         */
+        private function splitKeys($cookieName)
+        {
+            // 使用生成的散列值和秘钥生成指定长度的散列
+            $encKey = sodium_crypto_generichash(
+                    // 使用cookie名称作为密钥和加密字符生成散列值
+                sodium_crypto_generichash('encryption', $cookieName),
+                $this->key,
+                SODIUM_CRYPTO_STREAM_KEYBYTES
+            );
+            $authKey = sodium_crypto_generichash(
+                sodium_crypto_generichash('authentication', $cookieName),
+                $this->key,
+                SODIUM_CRYPTO_AUTH_KEYBYTES
+            );
+            return [$encKey, $authKey];
+        }
+    }
+
+例子：
+
+.. code-block:: php
+
+    <?php
+    $sc = new SodiumCookie($secretkey);
+    $sc->write('sensitive', $value);
+
+在接下来的加载页面时：
+
+.. code-block:: php
+
+    <?php
+    try {
+        $value = $sc->read('sensitive');
+    } catch (Exception $ex) {
+        // Handle the exception here
+    }
+
+加密密码散列
+============
+问题：我们希望在我们的 ``Web`` 服务器上散列密码，然后在将它们存储在我们的数据库服务器(位于单独的硬件上)之前加密它们。
+
+这种策略将 ``sodium_crypto_pwhash_scryptsalsa208sha256_*()`` 与 ``Encrypt-Then-MAC`` 构造（如上所述）结合起来，以促成认证的秘密密钥加密和密码哈希验证。
+
+.. code-block:: php
+
+    <?php
+    class PasswordStorage
+    {
+        /**
+         * Hash then encrypt a password
+         *
+         * @param string $password   - The user's password
+         * @param string $secret_key - The master key for all passwords
+         * @return string
+         */
+        public function hash($password, $secret_key)
+        {
+            // First, let's calculate the hash
+            $hashed = sodium_crypto_pwhash_scryptsalsa208sha256_str(
+                $password,
+                SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE,
+                SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE
+            );
+
+            // 通过秘钥生成加密秘钥和认证秘钥
+            list ($encKey, $authKey) = $this->splitKeys($secret_key);
+            sodium_memzero($secret_key);
+
+            $nonce = random_bytes(
+                SODIUM_CRYPTO_STREAM_NONCEBYTES
+            );
+
+            $ciphertext = sodium_crypto_stream_xor(
+                $hashed,
+                $nonce,
+                $encKey
+            );
+
+            $mac = sodium_crypto_auth($nonce . $ciphertext, $authkey);
+
+            sodium_memzero($encKey);
+            sodium_memzero($authKey);
+
+            return sodium_bin2hex($mac . $nonce . $ciphertext);
+        }
+
+        /**
+         * Decrypt then verify a password
+         *
+         * @param string $password   - The user-provided password
+         * @param string $stored     - The encrypted password hash
+         * @param string $secret_key - The master key for all passwords
+         */
+        public function verify($password, $stored, $secret_key)
+        {
+            $mac = mb_substr(
+                $stored,
+                0,
+                SODIUM_CRYPTO_AUTH_BYTES,
+                '8bit'
+            );
+            $nonce = mb_substr(
+                $stored,
+                SODIUM_CRYPTO_AUTH_BYTES,
+                SODIUM_CRYPTO_STREAM_NONCEBYTES,
+                '8bit'
+            );
+            $ciphertext = mb_substr(
+                $stored,
+                SODIUM_CRYPTO_AUTH_BYTES + SODIUM_CRYPTO_STREAM_NONCEBYTES,
+                null,
+                '8bit'
+            );
+
+            if (sodium_crypto_auth_verify($mac, $nonce . $ciphertext, $authKey)) {
+                sodium_memzero($authKey);
+                $hash_str = sodium_crypto_stream_xor($ciphertext, $nonce, $encKey);
+                sodium_memzero($encKey);
+                if ($hash_str !== false) {
+                    return sodium_crypto_pwhash_scryptsalsa208sha256_str_verify($hash_str, $password);
+                }
+            } else {
+                sodium_memzero($authKey);
+                sodium_memzero($encKey);
+            }
+            throw new Exception('Decryption failed.');
+        }
+
+        /**
+         * Just an example. In a real system, you want to use HKDF for
+         * key-splitting instead of just a keyed BLAKE2b hash.
+         *
+         * @param string $secret_key
+         * @return array(2) [encryption key, authentication key]
+         */
+        private function splitKeys($secret_key)
+        {
+            $encKey = sodium_crypto_generichash(
+                'encryption',
+                $secret_key,
+                SODIUM_CRYPTO_STREAM_KEYBYTES
+            );
+            $authKey = sodium_crypto_generichash(
+                'authentication',
+                $secret_key,
+                SODIUM_CRYPTO_AUTH_KEYBYTES
+            );
+            return [$encKey, $authKey];
+        }
+    }
+
+使用一个秘钥加密一个单独消息
+============================
+加密：
+
+.. code-block:: php
+
+    <?php
+    $secret_key = sodium_crypto_secretbox_keygen();
+    $message = 'Sensitive information';
+
+    $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+    $encrypted_message = sodium_crypto_secretbox($message, $nonce, $secret_key);
+
+解密：
+
+.. code-block:: php
+
+    <?php
+    $decrypted_message = sodium_crypto_secretbox_open($encrypted_message, $nonce, $secret_key);
+
+怎么运行的： ``$secret_key`` 是一个秘密密钥。不是密码。它是二进制数据，不是为了人类的可读性而设计的，而是为了给定长度的秘钥空间尽可能大。 ``keygen()`` 函数创建了这样一个秘钥。这必须保密，因为它既用于加密也用于解密数据。
+
+``$nonce`` 对于一个给定秘钥来说这是一个唯一的值。像秘密一样，它的长度是固定的。但它不一定是保密的，可以与加密的消息一起发送。随机数也不一定是不可预测的。对于给定的密钥，它必须是唯一的。在 ``secretbox()`` API中，使用 ``random_bytes()`` 是生成随机数的完美方法。
+
+加密的消息比未加密的消息略大，因为它们包含一个验证器，解密函数用它来检查内容是否未被更改。
+
+使用密钥加密单个消息，并隐藏其长度
+==================================
+加密：
+
+.. code-block:: php
+
+    <?php
+    $secret_key = sodium_crypto_secretbox_keygen();
+    $message = 'Sensitive information';
+    $block_size = 16;
+
+    $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+    $padded_message = sodium_pad($message, $block_size);
+    $encrypted_message = sodium_crypto_secretbox($padded_message, $nonce, $secret_key);
+
+解密：
+
+.. code-block:: php
+
+    <?php
+    $decrypted_padded_message = sodium_crypto_secretbox_open($encrypted_message, $nonce, $secret_key);
+    $decrypted_message = sodium_unpad($decrypted_padded_message, $block_size);
+
+怎么运行的：
+
+有时，消息的长度可能会提供许多关于其性质的信息。如果消息是 ``yes`` ，``no`` 和 ``maybe`` 中的一个，则对消息进行加密不会有帮助：知道消息的长度足以知道消息是什么。
+
+填充是一种通过使长度成为给定块大小的倍数来缓解这种情况的技术。
+
+消息必须在加密之前填充，解密后不取消填充。
+
+使用密钥加密文件
+================
+解密文件：
+
+.. code-block:: php
+
+    <?php
+    $secret_key = sodium_crypto_secretstream_xchacha20poly1305_keygen();
+    $input_file = '/tmp/example.original';
+    $encrypted_file = '/tmp/example.enc';
+    $chunk_size = 4096;
+
+    $fd_in = fopen($input_file, 'rb');
+    $fd_out = fopen($encrypted_file, 'wb');
+
+    list($stream, $header) = sodium_crypto_secretstream_xchacha20poly1305_init_push($secret_key);
+
+    fwrite($fd_out, $header);
+
+    $tag = SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_MESSAGE;
+    do {
+        $chunk = fread($fd_in, $chunk_size);
+        if (feof($fd_in)) {
+            $tag = SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL;
+        }
+        $encrypted_chunk = sodium_crypto_secretstream_xchacha20poly1305_push($stream, $chunk, '', $tag);
+        fwrite($fd_out, $encrypted_chunk);
+    } while ($tag !== SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL);
+
+    fclose($fd_out);
+    fclose($fd_in);
+
+解密文件：
+
+.. code-block:: php
+
+    <?php
+    $decrypted_file = '/tmp/example.dec';
+
+    $fd_in = fopen($encrypted_file, 'rb');
+    $fd_out = fopen($decrypted_file, 'wb');
+
+    $header = fread($fd_in, SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_HEADERBYTES);
+
+    $stream = sodium_crypto_secretstream_xchacha20poly1305_init_pull($header, $secret_key);
+    do {
+        $chunk = fread($fd_in, $chunk_size + SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_ABYTES);
+        list($decrypted_chunk, $tag) = sodium_crypto_secretstream_xchacha20poly1305_pull($stream, $chunk);
+        fwrite($fd_out, $decrypted_chunk);
+    } while (!feof($fd_in) && $tag !== SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL);
+    $ok = feof($fd_in);
+
+    fclose($fd_out);
+    fclose($fd_in);
+
+    if (!$ok) {
+        die('Invalid/corrupted input');
+    }
+
+怎么运行的：
+
+比前面的例子有更多的代码。
+
+事实上， ``crypto_secretbox()`` 可以用作加密文件，但只有在该文件非常小的情况下才能加密。由于我们必须将整个内容作为字符串提供，因此必须消耗对应的内存。如果文件很大，我们可以将它分成小块，并单独加密块。通过这样做，我们可以加密任意大文件。但是我们需要确保块不能被删除，截断，重复和重新排序。换句话说，我们没有一条“消息”，而是一条消息流，在解密过程中，我们需要一种方法来检查整个流匹配我们加密的内容。
+
+因此，我们创建一个新的流( ``init_push`` )并将一系列消息推入( ``push`` )中。每个消息都有一个关联的标签，默认情况下为 ``TAG_MESSAGE`` 。为了使解密过程知道数据流的结束位置，我们使用 ``TAG_FINAL`` 标记标记最后一条消息。当我们使用流( ``init_pull`` ，然后拉取每条消息)时，我们检查它们是否可以正确解密，并检索解密的块和附加的标签。如果我们读取最后一个块( ``TAG_FINAL`` )，并且我们在文件末尾，我们知道我们完全恢复了原始流。
+
+
+使用从密码派生的密钥加密文件
+----------------------------
+
+.. code-block:: php
+
+    <?php
+    $password = 'password';
+    $input_file = '/tmp/example.original';
+    $encrypted_file = '/tmp/example.enc';
+    $chunk_size = 4096;
+
+    $alg = SODIUM_CRYPTO_PWHASH_ALG_DEFAULT;
+    $opslimit = SODIUM_CRYPTO_PWHASH_OPSLIMIT_MODERATE;
+    $memlimit = SODIUM_CRYPTO_PWHASH_MEMLIMIT_MODERATE;
+    $salt = random_bytes(SODIUM_CRYPTO_PWHASH_SALTBYTES);
+
+    $secret_key = sodium_crypto_pwhash(SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_KEYBYTES,
+                                       $password, $salt, $opslimit, $memlimit, $alg);
+
+    $fd_in = fopen($input_file, 'rb');
+    $fd_out = fopen($encrypted_file, 'wb');
+
+    fwrite($fd_out, pack('C', $alg));
+    fwrite($fd_out, pack('P', $opslimit));
+    fwrite($fd_out, pack('P', $memlimit));
+    fwrite($fd_out, $salt);
+
+    list($stream, $header) = sodium_crypto_secretstream_xchacha20poly1305_init_push($secret_key);
+
+    fwrite($fd_out, $header);
+
+    $tag = SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_MESSAGE;
+    do {
+        $chunk = fread($fd_in, $chunk_size);
+        if (feof($fd_in)) {
+            $tag = SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL;
+        }
+        $encrypted_chunk = sodium_crypto_secretstream_xchacha20poly1305_push($stream, $chunk, '', $tag);
+        fwrite($fd_out, $encrypted_chunk);
+    } while ($tag !== SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL);
+
+    fclose($fd_out);
+    fclose($fd_in);
+
+读取存储的参数并解密文件：
+
+.. code-block:: php
+
+    <?php
+    $decrypted_file = '/tmp/example.dec';
+
+    $fd_in = fopen($encrypted_file, 'rb');
+    $fd_out = fopen($decrypted_file, 'wb');
+
+    $alg = unpack('C', fread($fd_in, 1))[1];
+    $opslimit = unpack('P', fread($fd_in, 8))[1];
+    $memlimit = unpack('P', fread($fd_in, 8))[1];
+    $salt = fread($fd_in, SODIUM_CRYPTO_PWHASH_SALTBYTES);
+
+    $header = fread($fd_in, SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_HEADERBYTES);
+
+    $secret_key = sodium_crypto_pwhash(SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_KEYBYTES,
+                                       $password, $salt, $opslimit, $memlimit, $alg);
+
+    $stream = sodium_crypto_secretstream_xchacha20poly1305_init_pull($header, $secret_key);
+    do {
+        $chunk = fread($fd_in, $chunk_size + SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_ABYTES);
+        $res = sodium_crypto_secretstream_xchacha20poly1305_pull($stream, $chunk);
+        if ($res === FALSE) {
+           break;
+        }
+        list($decrypted_chunk, $tag) = $res;
+        fwrite($fd_out, $decrypted_chunk);
+    } while (!feof($fd_in) && $tag !== SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL);
+    $ok = feof($fd_in);
+
+    fclose($fd_out);
+    fclose($fd_in);
+
+    if (!$ok) {
+        die('Invalid/corrupted input');
+    }
+
+怎么运行的：
+
+密码不能直接用作密钥。密码很短，必须能够在键盘上输入，而不使用密码管理器的人应该能够记住它们。
+
+8个字符的密码因此比8个字节的密钥弱。
+
+``sodium_crypto_pwhash()`` 函数对密码执行计算密集型操作，以导出密钥。
+
+通过这样做，暴力破解所有可能的密码以找到用于加密数据的密钥变成了一项昂贵的操作。
+
+可以使用多种算法从密码导出密钥，并且可以为每个算法选择不同的参数。将所有这些数据与加密数据一起存储很重要。使用相同的算法和相同的参数，可以确定性地重新计算相同的密钥。

@@ -1,0 +1,1028 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>55. 数据分页原理分析 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="56. 数据库迁移" href="Laravel的数据库迁移.html"/>
+        <link rel="prev" title="54. 数据分页" href="Laravel的数据分页.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">55. 数据分页原理分析</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#paginate">55.1. paginate 分页</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">55.2. 分页服务的启动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#paginator">55.3. 分页服务 paginator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">55.3.1. 获取当前页</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">55.3.2. 获取数据库总记录数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">55.3.3. 获取当前页数据</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#lengthawarepaginator">55.4. LengthAwarePaginator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">55.4.1. 初始化 LengthAwarePaginator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#render">55.4.2. 分页资源 render</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">55.4.3. 前一页</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">55.4.4. 下一页</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#elements">55.4.5. 分页 elements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#simplepaginate">55.5. simplePaginate 简单分页</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>55. 数据分页原理分析</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>55. 数据分页原理分析<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="paginate">
+<h2>55.1. paginate 分页<a class="headerlink" href="#paginate" title="永久链接至标题">¶</a></h2>
+<p>laravel 的分页用起来非常简单，只需要对 <code class="docutils literal"><span class="pre">query</span></code> 调用 <code class="docutils literal"><span class="pre">paginate</span></code> 函数，把返回的对象扔给前端 <code class="docutils literal"><span class="pre">blade</span></code> 文件，在 <code class="docutils literal"><span class="pre">blade</span></code> 文件调用函数 <code class="docutils literal"><span class="pre">render</span></code> 函数或者 <code class="docutils literal"><span class="pre">link</span></code> 函数，就可以得到 上一页、下一页 等等分页特效。</p>
+<p>实际上，我们可以简单地把分页服务看作一个前端资源， <code class="docutils literal"><span class="pre">render</span></code> 函数或者 <code class="docutils literal"><span class="pre">link</span></code> 函数的结果就是分页前端代码。</p>
+<p>如果你还对 laravel 的分页不是很熟悉，请先阅读官方文档 ： 分页。</p>
+</div>
+<div class="section" id="id2">
+<h2>55.2. 分页服务的启动<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>分页功能也是由一个服务提供者所启动的， <code class="docutils literal"><span class="pre">PaginationServiceProvider</span></code> 就是负责注册和启动分页服务的服务提供者：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// 注册分页器的视图工厂解析器</span>
+    <span class="nx">Paginator</span><span class="o">::</span><span class="na">viewFactoryResolver</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">];</span>
+    <span class="p">});</span>
+
+    <span class="c1">// 注册分页器的路径解析器</span>
+    <span class="nx">Paginator</span><span class="o">::</span><span class="na">currentPathResolver</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="s1">&#39;request&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">url</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="c1">// 注册分页器的页码解析器</span>
+    <span class="nx">Paginator</span><span class="o">::</span><span class="na">currentPageResolver</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$pageName</span> <span class="o">=</span> <span class="s1">&#39;page&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$page</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="s1">&#39;request&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">(</span><span class="nv">$pageName</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">filter_var</span><span class="p">(</span><span class="nv">$page</span><span class="p">,</span> <span class="nx">FILTER_VALIDATE_INT</span><span class="p">)</span> <span class="o">!==</span> <span class="k">false</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$page</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$page</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们看到，服务提供者的注册函数为 <code class="docutils literal"><span class="pre">Paginator</span></code> 设置三个闭包函数：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">viewFactoryResolver</span></code> 为 <code class="docutils literal"><span class="pre">Paginator</span></code> 设置了生成前端资源的类，用于获取分页前端代码。</li>
+<li><code class="docutils literal"><span class="pre">currentPathResolver</span></code> 为 <code class="docutils literal"><span class="pre">Paginator</span></code> 设置了 <code class="docutils literal"><span class="pre">url</span></code> 的地址。我们知道， 上一页、下一页 等等都是可以执行翻页的操作，所以实际上这些按钮必然含有链接，而链接的地址就是当前请求的 <code class="docutils literal"><span class="pre">url</span></code> 地址，不同的按钮的链接地址只是 <code class="docutils literal"><span class="pre">page</span></code> 的参数不同而已。</li>
+<li><code class="docutils literal"><span class="pre">currentPageResolver</span></code> 为 <code class="docutils literal"><span class="pre">Paginator</span></code> 获取了当前的页码。</li>
+</ul>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// 注册视图文件加载路径</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loadViewsFrom</span><span class="p">(</span><span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/resources/views&#39;</span><span class="p">,</span> <span class="s1">&#39;pagination&#39;</span><span class="p">);</span>
+
+    <span class="c1">// 注册publish发布路径</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">runningInConsole</span><span class="p">())</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">publishes</span><span class="p">([</span>
+            <span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/resources/views&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">resourcePath</span><span class="p">(</span><span class="s1">&#39;views/vendor/pagination&#39;</span><span class="p">),</span>
+        <span class="p">],</span> <span class="s1">&#39;laravel-pagination&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">loadViewsFrom</span><span class="p">(</span><span class="nv">$path</span><span class="p">,</span> <span class="nv">$namespace</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_array</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">config</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">][</span><span class="s1">&#39;paths&#39;</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">config</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">][</span><span class="s1">&#39;paths&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$viewPath</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">is_dir</span><span class="p">(</span><span class="nv">$appPath</span> <span class="o">=</span> <span class="nv">$viewPath</span><span class="o">.</span><span class="s1">&#39;/vendor/&#39;</span><span class="o">.</span><span class="nv">$namespace</span><span class="p">))</span> <span class="p">{</span><span class="c1">//存在该目录，则添加到视图查询路径中</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">addNamespace</span><span class="p">(</span><span class="nv">$namespace</span><span class="p">,</span> <span class="nv">$appPath</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">// 前面目录如果存在，则加载的优先级高于本路径</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">addNamespace</span><span class="p">(</span><span class="nv">$namespace</span><span class="p">,</span> <span class="nv">$path</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>服务的启动函数为分页服务设置了默认的前端分页资源。同时，如果用户自定义了模板文件，则会优先加载该文件。</p>
+</div>
+<div class="section" id="paginator">
+<h2>55.3. 分页服务 paginator<a class="headerlink" href="#paginator" title="永久链接至标题">¶</a></h2>
+<p>分页服务 <code class="docutils literal"><span class="pre">paginator</span></code> 函数用于 <code class="docutils literal"><span class="pre">queryBuilder</span></code> ，用于获取分页的数据库数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">paginate</span><span class="p">(</span><span class="nv">$perPage</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="nv">$columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="nv">$pageName</span> <span class="o">=</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="nv">$page</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$page</span> <span class="o">=</span> <span class="nv">$page</span> <span class="o">?:</span> <span class="nx">Paginator</span><span class="o">::</span><span class="na">resolveCurrentPage</span><span class="p">(</span><span class="nv">$pageName</span><span class="p">);</span> <span class="c1">// 获取当前的页码</span>
+
+    <span class="nv">$total</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getCountForPagination</span><span class="p">(</span><span class="nv">$columns</span><span class="p">);</span> <span class="c1">// 获取总的记录数</span>
+
+    <span class="nv">$results</span> <span class="o">=</span> <span class="nv">$total</span> <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">forPage</span><span class="p">(</span><span class="nv">$page</span><span class="p">,</span> <span class="nv">$perPage</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$columns</span><span class="p">)</span> <span class="o">:</span> <span class="nx">collect</span><span class="p">();</span> <span class="c1">// 获取当前页的记录集</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">paginator</span><span class="p">(</span><span class="nv">$results</span><span class="p">,</span> <span class="nv">$total</span><span class="p">,</span> <span class="nv">$perPage</span><span class="p">,</span> <span class="nv">$page</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;path&#39;</span> <span class="o">=&gt;</span> <span class="nx">Paginator</span><span class="o">::</span><span class="na">resolveCurrentPath</span><span class="p">(),</span> <span class="c1">// 获取当前的请求路径</span>
+        <span class="s1">&#39;pageName&#39;</span> <span class="o">=&gt;</span> <span class="nv">$pageName</span><span class="p">,</span> <span class="c1">// 当前分页的名称</span>
+    <span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">paginator</span><span class="p">(</span><span class="nv">$items</span><span class="p">,</span> <span class="nv">$total</span><span class="p">,</span> <span class="nv">$perPage</span><span class="p">,</span> <span class="nv">$currentPage</span><span class="p">,</span> <span class="nv">$options</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Container</span><span class="o">::</span><span class="na">getInstance</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">makeWith</span><span class="p">(</span><span class="nx">LengthAwarePaginator</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nb">compact</span><span class="p">(</span>
+        <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="s1">&#39;perPage&#39;</span><span class="p">,</span> <span class="s1">&#39;currentPage&#39;</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span>
+    <span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>也就是说，当我们写下这样的代码时：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">paginate</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>我们可以获取到一个 <code class="docutils literal"><span class="pre">LengthAwarePaginator</span></code> 类对象，对这个对象调用 <code class="docutils literal"><span class="pre">render</span></code> 函数就可以获取分页前端资源。</p>
+<p>我们先来研究一下 <code class="docutils literal"><span class="pre">paginator</span></code> 函数。</p>
+<div class="section" id="id3">
+<h3>55.3.1. 获取当前页<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>我们可以看到，在这个函数中程序先获取当前页数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">resolveCurrentPage</span><span class="p">(</span><span class="nv">$pageName</span> <span class="o">=</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="nv">$default</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="nv">$currentPageResolver</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="nv">$currentPageResolver</span><span class="p">,</span> <span class="nv">$pageName</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$default</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">currentPageResolver</span></code> 就是上一节中 <code class="docutils literal"><span class="pre">currentPageResolver</span></code> 设置的闭包函数，这个闭包函数从请求参数中获取当前页：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$page</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">[</span><span class="s1">&#39;request&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">(</span><span class="nv">$pageName</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>55.3.2. 获取数据库总记录数<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>计算数据库符合搜索条件的总记录数理所当然的是使用聚合函数 <code class="docutils literal"><span class="pre">count</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getCountForPagination</span><span class="p">(</span><span class="nv">$columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+<span class="p">{</span>
+    <span class="nv">$results</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runPaginationCountQuery</span><span class="p">(</span><span class="nv">$columns</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">groups</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$results</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="o">!</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$results</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nb">is_object</span><span class="p">(</span><span class="nv">$results</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">aggregate</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">int</span><span class="p">)</span> <span class="nb">array_change_key_case</span><span class="p">((</span><span class="k">array</span><span class="p">)</span> <span class="nv">$results</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="s1">&#39;aggregate&#39;</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">runPaginationCountQuery</span><span class="p">(</span><span class="nv">$columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">])</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cloneWithout</span><span class="p">([</span><span class="s1">&#39;columns&#39;</span><span class="p">,</span> <span class="s1">&#39;orders&#39;</span><span class="p">,</span> <span class="s1">&#39;limit&#39;</span><span class="p">,</span> <span class="s1">&#39;offset&#39;</span><span class="p">])</span>
+                <span class="o">-&gt;</span><span class="na">cloneWithoutBindings</span><span class="p">([</span><span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="s1">&#39;order&#39;</span><span class="p">])</span>
+                <span class="o">-&gt;</span><span class="na">setAggregate</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">withoutSelectAliases</span><span class="p">(</span><span class="nv">$columns</span><span class="p">))</span>
+                <span class="o">-&gt;</span><span class="na">get</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>55.3.3. 获取当前页数据<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>获取当前页当然是使用 <code class="docutils literal"><span class="pre">forPage</span></code> 函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$results</span> <span class="o">=</span> <span class="nv">$total</span> <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">forPage</span><span class="p">(</span><span class="nv">$page</span><span class="p">,</span> <span class="nv">$perPage</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$columns</span><span class="p">)</span> <span class="o">:</span> <span class="nx">collect</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="lengthawarepaginator">
+<h2>55.4. LengthAwarePaginator<a class="headerlink" href="#lengthawarepaginator" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id6">
+<h3>55.4.1. 初始化 LengthAwarePaginator<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">paginator</span></code> 函数利用 <code class="docutils literal"><span class="pre">Ioc</span></code> 容器来生成 <code class="docutils literal"><span class="pre">LengthAwarePaginator</span></code> 实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">paginator</span><span class="p">(</span><span class="nv">$items</span><span class="p">,</span> <span class="nv">$total</span><span class="p">,</span> <span class="nv">$perPage</span><span class="p">,</span> <span class="nv">$currentPage</span><span class="p">,</span> <span class="nv">$options</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Container</span><span class="o">::</span><span class="na">getInstance</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">makeWith</span><span class="p">(</span><span class="nx">LengthAwarePaginator</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nb">compact</span><span class="p">(</span>
+        <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="s1">&#39;perPage&#39;</span><span class="p">,</span> <span class="s1">&#39;currentPage&#39;</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span>
+    <span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">LengthAwarePaginator</span></code> 的初始化：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$items</span><span class="p">,</span> <span class="nv">$total</span><span class="p">,</span> <span class="nv">$perPage</span><span class="p">,</span> <span class="nv">$currentPage</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span> <span class="o">=</span> <span class="p">[])</span>
+<span class="p">{</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$options</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="p">{</span><span class="nv">$key</span><span class="p">}</span> <span class="o">=</span> <span class="nv">$value</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">total</span> <span class="o">=</span> <span class="nv">$total</span><span class="p">;</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">perPage</span> <span class="o">=</span> <span class="nv">$perPage</span><span class="p">;</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lastPage</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="nx">int</span><span class="p">)</span> <span class="nb">ceil</span><span class="p">(</span><span class="nv">$total</span> <span class="o">/</span> <span class="nv">$perPage</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">path</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">path</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span> <span class="o">?</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">;</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">setCurrentPage</span><span class="p">(</span><span class="nv">$currentPage</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pageName</span><span class="p">);</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">items</span> <span class="o">=</span> <span class="nv">$items</span> <span class="nx">instanceof</span> <span class="nx">Collection</span> <span class="o">?</span> <span class="nv">$items</span> <span class="o">:</span> <span class="nx">Collection</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nv">$items</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="render">
+<h3>55.4.2. 分页资源 render<a class="headerlink" href="#render" title="永久链接至标题">¶</a></h3>
+<p>对 <code class="docutils literal"><span class="pre">LengthAwarePaginator</span></code> 调用 <code class="docutils literal"><span class="pre">render</span></code> 函数会得到分页所需要的前端资源：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">render</span><span class="p">(</span><span class="nv">$view</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$data</span> <span class="o">=</span> <span class="p">[])</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">HtmlString</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">viewFactory</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nv">$view</span> <span class="o">?:</span> <span class="k">static</span><span class="o">::</span><span class="nv">$defaultView</span><span class="p">,</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;paginator&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="p">,</span>
+        <span class="s1">&#39;elements&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">elements</span><span class="p">(),</span>
+    <span class="p">]))</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当我们使用默认的分页样式的时候，不需要向 <code class="docutils literal"><span class="pre">render</span></code> 函数传入 <code class="docutils literal"><span class="pre">view</span></code> 参数，此时程序会自动加载默认的前端资源:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">static</span> <span class="nv">$defaultView</span> <span class="o">=</span> <span class="s1">&#39;pagination::default&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>该资源的默认地址是 <code class="docutils literal"><span class="pre">illuminate\Pagination\resources\views\default.blade.php</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$paginator</span><span class="o">-&gt;</span><span class="na">hasPages</span><span class="p">())</span>
+    <span class="o">&lt;</span><span class="nx">ul</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;pagination&quot;</span><span class="o">&gt;</span>
+        <span class="p">{{</span><span class="o">--</span> <span class="nx">Previous</span> <span class="nx">Page</span> <span class="nx">Link</span> <span class="o">--</span><span class="p">}}</span>
+        <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$paginator</span><span class="o">-&gt;</span><span class="na">onFirstPage</span><span class="p">())</span>
+            <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;disabled&quot;</span><span class="o">&gt;&lt;</span><span class="nx">span</span><span class="o">&gt;&lt;&lt;&lt;/</span><span class="nx">span</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+        <span class="o">@</span><span class="k">else</span>
+            <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;{{ </span><span class="si">$paginator-&gt;previousPageUrl</span><span class="s2">() }}&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;prev&quot;</span><span class="o">&gt;&lt;&lt;&lt;/</span><span class="nx">a</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+        <span class="o">@</span><span class="k">endif</span>
+
+        <span class="p">{{</span><span class="o">--</span> <span class="nx">Pagination</span> <span class="nx">Elements</span> <span class="o">--</span><span class="p">}}</span>
+        <span class="o">@</span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$elements</span> <span class="k">as</span> <span class="nv">$element</span><span class="p">)</span>
+            <span class="p">{{</span><span class="o">--</span> <span class="s2">&quot;Three Dots&quot;</span> <span class="nx">Separator</span> <span class="o">--</span><span class="p">}}</span>
+            <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nb">is_string</span><span class="p">(</span><span class="nv">$element</span><span class="p">))</span>
+                <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;disabled&quot;</span><span class="o">&gt;&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nv">$element</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">span</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+            <span class="o">@</span><span class="k">endif</span>
+
+            <span class="p">{{</span><span class="o">--</span> <span class="k">Array</span> <span class="nx">Of</span> <span class="nx">Links</span> <span class="o">--</span><span class="p">}}</span>
+            <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nb">is_array</span><span class="p">(</span><span class="nv">$element</span><span class="p">))</span>
+                <span class="o">@</span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$element</span> <span class="k">as</span> <span class="nv">$page</span> <span class="o">=&gt;</span> <span class="nv">$url</span><span class="p">)</span>
+                    <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$page</span> <span class="o">==</span> <span class="nv">$paginator</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">())</span>
+                        <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;active&quot;</span><span class="o">&gt;&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nv">$page</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">span</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+                    <span class="o">@</span><span class="k">else</span>
+                        <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;{{ </span><span class="si">$url</span><span class="s2"> }}&quot;</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nv">$page</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">a</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+                    <span class="o">@</span><span class="k">endif</span>
+                <span class="o">@</span><span class="k">endforeach</span>
+            <span class="o">@</span><span class="k">endif</span>
+        <span class="o">@</span><span class="k">endforeach</span>
+
+        <span class="p">{{</span><span class="o">--</span> <span class="nx">Next</span> <span class="nx">Page</span> <span class="nx">Link</span> <span class="o">--</span><span class="p">}}</span>
+        <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$paginator</span><span class="o">-&gt;</span><span class="na">hasMorePages</span><span class="p">())</span>
+            <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;{{ </span><span class="si">$paginator-&gt;nextPageUrl</span><span class="s2">() }}&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;next&quot;</span><span class="o">&gt;&gt;&gt;&lt;/</span><span class="nx">a</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+        <span class="o">@</span><span class="k">else</span>
+            <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;disabled&quot;</span><span class="o">&gt;&lt;</span><span class="nx">span</span><span class="o">&gt;&gt;&gt;&lt;/</span><span class="nx">span</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+        <span class="o">@</span><span class="k">endif</span>
+    <span class="o">&lt;/</span><span class="nx">ul</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="k">endif</span>
+</pre></div>
+</div>
+<p>可以看到，分页效果的代码分为三部分：前一页、后一页、分页元素。</p>
+</div>
+<div class="section" id="id7">
+<h3>55.4.3. 前一页<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>如果当前页是第一页的话，前一页 按钮需要置灰：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">onFirstPage</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>否则的话，就要为 前一页 按钮赋予链接：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">previousPageUrl</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">url</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">url</span><span class="p">(</span><span class="nv">$page</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$page</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$page</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pageName</span> <span class="o">=&gt;</span> <span class="nv">$page</span><span class="p">];</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$parameters</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">,</span> <span class="nv">$parameters</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">path</span>
+                    <span class="o">.</span><span class="p">(</span><span class="nx">Str</span><span class="o">::</span><span class="na">contains</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">,</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&amp;&#39;</span> <span class="o">:</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span>
+                    <span class="o">.</span><span class="nb">http_build_query</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">)</span>
+                    <span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">buildFragment</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果列表页中存在一些搜索条件，这些搜索条件会被加载到 <code class="docutils literal"><span class="pre">$this-&gt;query</span></code> 成员变量中，生成 <code class="docutils literal"><span class="pre">url</span></code> 的时候，这些搜索添加会被加到 <code class="docutils literal"><span class="pre">request</span></code> 的参数中。可以使用 <code class="docutils literal"><span class="pre">append</span></code> 方法附加查询参数到分页链接中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">appends</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_array</span><span class="p">(</span><span class="nv">$key</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">appendArray</span><span class="p">(</span><span class="nv">$key</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addQuery</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">appendArray</span><span class="p">(</span><span class="k">array</span> <span class="nv">$keys</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$keys</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addQuery</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>55.4.4. 下一页<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>与 前一页 类似，如果已经在最后一页，那么 下一页 按钮将会被置灰：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">hasMorePages</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lastPage</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>下一页的链接：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">nextPageUrl</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lastPage</span><span class="p">()</span> <span class="o">&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">url</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上一页 与 下一页 按钮的功能比较简单，至于中间的分页特效比较复杂，我们由下一节来说。</p>
+</div>
+<div class="section" id="elements">
+<h3>55.4.5. 分页 elements<a class="headerlink" href="#elements" title="永久链接至标题">¶</a></h3>
+<p>我们先说一下不同的分页样式：</p>
+<ul>
+<li><p class="first">当我们设置两侧页数为 3 时，当前数据总页数小于 8 页时分页效果：</p>
+<img alt="_images/page1.png" src="_images/page1.png" />
+</li>
+<li><p class="first">总页数大于 6 页，且当前页在前 8 页 <code class="docutils literal"><span class="pre">(2</span> <span class="pre">*</span> <span class="pre">3</span> <span class="pre">+</span> <span class="pre">2)</span></code> 时分页效果：</p>
+<img alt="_images/page2.png" src="_images/page2.png" />
+</li>
+<li><p class="first">当前页在前 6 页与后 6 页之间分页效果：</p>
+<img alt="_images/page3.png" src="_images/page3.png" />
+</li>
+<li><p class="first">当前页在最后 6 页时分页效果：</p>
+<img alt="_images/page4.png" src="_images/page4.png" />
+</li>
+</ul>
+<p>分页效果样式的关键来源于 <code class="docutils literal"><span class="pre">UrlWindow</span></code> ，这个类用于根据总页数与当前页的不同来控制不同的分页样式。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">elements</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$window</span> <span class="o">=</span> <span class="nx">UrlWindow</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nb">array_filter</span><span class="p">([</span>
+        <span class="nv">$window</span><span class="p">[</span><span class="s1">&#39;first&#39;</span><span class="p">],</span>
+        <span class="nb">is_array</span><span class="p">(</span><span class="nv">$window</span><span class="p">[</span><span class="s1">&#39;slider&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="s1">&#39;...&#39;</span> <span class="o">:</span> <span class="k">null</span><span class="p">,</span>
+        <span class="nv">$window</span><span class="p">[</span><span class="s1">&#39;slider&#39;</span><span class="p">],</span>
+        <span class="nb">is_array</span><span class="p">(</span><span class="nv">$window</span><span class="p">[</span><span class="s1">&#39;last&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="s1">&#39;...&#39;</span> <span class="o">:</span> <span class="k">null</span><span class="p">,</span>
+        <span class="nv">$window</span><span class="p">[</span><span class="s1">&#39;last&#39;</span><span class="p">],</span>
+    <span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">make</span><span class="p">(</span><span class="nx">PaginatorContract</span> <span class="nv">$paginator</span><span class="p">,</span> <span class="nv">$onEachSide</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="k">static</span><span class="p">(</span><span class="nv">$paginator</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$onEachSide</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">get</span><span class="p">(</span><span class="nv">$onEachSide</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">paginator</span><span class="o">-&gt;</span><span class="na">lastPage</span><span class="p">()</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nv">$onEachSide</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getSmallSlider</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getUrlSlider</span><span class="p">(</span><span class="nv">$onEachSide</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="getsmallslider">
+<h4>55.4.5.1. 小型分页 getSmallSlider<a class="headerlink" href="#getsmallslider" title="永久链接至标题">¶</a></h4>
+<p>如果当前总页数小于 <code class="docutils literal"><span class="pre">($onEachSide</span> <span class="pre">*</span> <span class="pre">2)</span> <span class="pre">+</span> <span class="pre">6</span></code> 的话，就会调用小型分页效果，这种小型分页效果直接将所有页数全部显示：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getSmallSlider</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s1">&#39;first&#39;</span>  <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">paginator</span><span class="o">-&gt;</span><span class="na">getUrlRange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lastPage</span><span class="p">()),</span>
+        <span class="s1">&#39;slider&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+        <span class="s1">&#39;last&#39;</span>   <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getUrlRange</span><span class="p">(</span><span class="nv">$start</span><span class="p">,</span> <span class="nv">$end</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nx">collect</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nv">$start</span><span class="p">,</span> <span class="nv">$end</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">mapWithKeys</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$page</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nv">$page</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">url</span><span class="p">(</span><span class="nv">$page</span><span class="p">)];</span>
+    <span class="p">})</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="closetobeginning">
+<h4>55.4.5.2. CloseToBeginning 分页效果<a class="headerlink" href="#closetobeginning" title="永久链接至标题">¶</a></h4>
+<p>当前页数位于前 <code class="docutils literal"><span class="pre">($onEachSide</span> <span class="pre">*</span> <span class="pre">2)</span></code> 页时：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getUrlSlider</span><span class="p">(</span><span class="nv">$onEachSide</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$window</span> <span class="o">=</span> <span class="nv">$onEachSide</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasPages</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;first&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span> <span class="s1">&#39;slider&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span> <span class="s1">&#39;last&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nv">$window</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getSliderTooCloseToBeginning</span><span class="p">(</span><span class="nv">$window</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">()</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lastPage</span><span class="p">()</span> <span class="o">-</span> <span class="nv">$window</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getSliderTooCloseToEnding</span><span class="p">(</span><span class="nv">$window</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getFullSlider</span><span class="p">(</span><span class="nv">$onEachSide</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getSliderTooCloseToBeginning</span><span class="p">(</span><span class="nv">$window</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s1">&#39;first&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">paginator</span><span class="o">-&gt;</span><span class="na">getUrlRange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nv">$window</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="s1">&#39;slider&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+        <span class="s1">&#39;last&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getFinish</span><span class="p">(),</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getFinish</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">paginator</span><span class="o">-&gt;</span><span class="na">getUrlRange</span><span class="p">(</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lastPage</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lastPage</span><span class="p">()</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>假设我们设置当前两侧页数为 3 ，当前页为 5 ，总页数 22 ，函数 <code class="docutils literal"><span class="pre">getSliderTooCloseToBeginning</span></code> 返回结果为：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="p">[</span>
+    <span class="s1">&#39;first&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=1&#39;</span><span class="p">,</span>
+        <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=2&#39;</span>
+        <span class="mi">3</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=3&#39;</span>
+        <span class="mi">4</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=4&#39;</span>
+        <span class="mi">5</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=5&#39;</span>
+        <span class="mi">6</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=6&#39;</span>
+        <span class="mi">7</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=7&#39;</span>
+        <span class="mi">8</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=8&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;slider&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+    <span class="s1">&#39;last&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="mi">21</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=21&#39;</span><span class="p">,</span>
+        <span class="mi">22</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=22&#39;</span><span class="p">],</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p>这个时候 <code class="docutils literal"><span class="pre">element</span></code> 函数返回数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">elements</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$window</span> <span class="o">=</span> <span class="nx">UrlWindow</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nb">array_filter</span><span class="p">([</span>
+        <span class="nv">$window</span><span class="p">[</span><span class="s1">&#39;first&#39;</span><span class="p">],</span>
+        <span class="nb">is_array</span><span class="p">(</span><span class="nv">$window</span><span class="p">[</span><span class="s1">&#39;slider&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="s1">&#39;...&#39;</span> <span class="o">:</span> <span class="k">null</span><span class="p">,</span>
+        <span class="nv">$window</span><span class="p">[</span><span class="s1">&#39;slider&#39;</span><span class="p">],</span>
+        <span class="nb">is_array</span><span class="p">(</span><span class="nv">$window</span><span class="p">[</span><span class="s1">&#39;last&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="s1">&#39;...&#39;</span> <span class="o">:</span> <span class="k">null</span><span class="p">,</span>
+        <span class="nv">$window</span><span class="p">[</span><span class="s1">&#39;last&#39;</span><span class="p">],</span>
+    <span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="c1">//返回结果</span>
+<span class="p">[</span>
+    <span class="p">[</span>
+        <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=1&#39;</span><span class="p">,</span>
+        <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=2&#39;</span><span class="p">,</span>
+        <span class="mi">3</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=3&#39;</span><span class="p">,</span>
+        <span class="mi">4</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=4&#39;</span><span class="p">,</span>
+        <span class="mi">5</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=5&#39;</span><span class="p">,</span>
+        <span class="mi">6</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=6&#39;</span><span class="p">,</span>
+        <span class="mi">7</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=7&#39;</span><span class="p">,</span>
+        <span class="mi">8</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=8&#39;</span><span class="p">,</span>
+    <span class="p">],</span>                                        <span class="c1">//$window[&#39;first&#39;]</span>
+    <span class="nx">‘</span><span class="o">...</span><span class="nx">’</span><span class="p">,</span>                                    <span class="c1">//is_array($window[&#39;last&#39;]) ? &#39;...&#39; : null</span>
+    <span class="p">[</span>
+        <span class="mi">21</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=21&#39;</span><span class="p">,</span>
+        <span class="mi">22</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=22&#39;</span><span class="p">,</span>
+    <span class="p">],</span>                                        <span class="c1">//$window[&#39;last&#39;]</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tooclosetoending">
+<h4>55.4.5.3. TooCloseToEnding 分页效果<a class="headerlink" href="#tooclosetoending" title="永久链接至标题">¶</a></h4>
+<p>当前页数位于后 <code class="docutils literal"><span class="pre">($onEachSide</span> <span class="pre">*</span> <span class="pre">2)</span></code> 页时：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getSliderTooCloseToEnding</span><span class="p">(</span><span class="nv">$window</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$last</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">paginator</span><span class="o">-&gt;</span><span class="na">getUrlRange</span><span class="p">(</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lastPage</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="nv">$window</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lastPage</span><span class="p">()</span>
+    <span class="p">);</span>
+
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s1">&#39;first&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getStart</span><span class="p">(),</span>
+        <span class="s1">&#39;slider&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+        <span class="s1">&#39;last&#39;</span> <span class="o">=&gt;</span> <span class="nv">$last</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getStart</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">paginator</span><span class="o">-&gt;</span><span class="na">getUrlRange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>假设我们设置当前两侧页数为 3 ，当前页为 18 ，总页数 22 ，函数 <code class="docutils literal"><span class="pre">getSliderTooCloseToEnding</span></code> 返回结果为：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="p">[</span>
+    <span class="s1">&#39;first&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=1&#39;</span><span class="p">,</span>
+        <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=2&#39;</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;slider&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+    <span class="s1">&#39;last&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="mi">15</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=15&#39;</span><span class="p">,</span>
+        <span class="mi">16</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=16&#39;</span><span class="p">,</span>
+        <span class="mi">17</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=17&#39;</span><span class="p">,</span>
+        <span class="mi">18</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=18&#39;</span><span class="p">,</span>
+        <span class="mi">19</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=19&#39;</span><span class="p">,</span>
+        <span class="mi">20</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=20&#39;</span><span class="p">,</span>
+        <span class="mi">21</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=21&#39;</span><span class="p">,</span>
+        <span class="mi">22</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=22&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p>这个时候 <code class="docutils literal"><span class="pre">element</span></code> 函数返回数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">[</span>
+    <span class="p">[</span>
+        <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=1&#39;</span><span class="p">,</span>
+        <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=2&#39;</span>
+   <span class="p">],</span>
+   <span class="s1">&#39;...&#39;</span><span class="p">,</span>
+   <span class="p">[</span>
+        <span class="mi">15</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=15&#39;</span><span class="p">,</span>
+        <span class="mi">16</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=16&#39;</span><span class="p">,</span>
+        <span class="mi">17</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=17&#39;</span><span class="p">,</span>
+        <span class="mi">18</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=18&#39;</span><span class="p">,</span>
+        <span class="mi">19</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=19&#39;</span><span class="p">,</span>
+        <span class="mi">20</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=20&#39;</span><span class="p">,</span>
+        <span class="mi">21</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=21&#39;</span><span class="p">,</span>
+        <span class="mi">22</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=22&#39;</span><span class="p">,</span>
+   <span class="p">]</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fullslider">
+<h4>55.4.5.4. FullSlider 分页效果<a class="headerlink" href="#fullslider" title="永久链接至标题">¶</a></h4>
+<p>当前页数位于中间时：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getFullSlider</span><span class="p">(</span><span class="nv">$onEachSide</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s1">&#39;first&#39;</span>  <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getStart</span><span class="p">(),</span>
+        <span class="s1">&#39;slider&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getAdjacentUrlRange</span><span class="p">(</span><span class="nv">$onEachSide</span><span class="p">),</span>
+        <span class="s1">&#39;last&#39;</span>   <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getFinish</span><span class="p">(),</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getAdjacentUrlRange</span><span class="p">(</span><span class="nv">$onEachSide</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">paginator</span><span class="o">-&gt;</span><span class="na">getUrlRange</span><span class="p">(</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">()</span> <span class="o">-</span> <span class="nv">$onEachSide</span><span class="p">,</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currentPage</span><span class="p">()</span> <span class="o">+</span> <span class="nv">$onEachSide</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>假设我们设置当前两侧页数为 3 ，当前页为 10 ，总页数 22 ，函数 <code class="docutils literal"><span class="pre">getFullSlider</span></code> 返回结果为：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="p">[</span>
+    <span class="s1">&#39;first&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=1&#39;</span><span class="p">,</span>
+        <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=2&#39;</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;slider&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="mi">7</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=7&#39;</span><span class="p">,</span>
+        <span class="mi">8</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=8&#39;</span><span class="p">,</span>
+        <span class="mi">9</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=9&#39;</span><span class="p">,</span>
+        <span class="mi">10</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=10&#39;</span><span class="p">,</span>
+        <span class="mi">11</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=11&#39;</span><span class="p">,</span>
+        <span class="mi">12</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=12&#39;</span><span class="p">,</span>
+        <span class="mi">13</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=13&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;last&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="mi">21</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=21&#39;</span><span class="p">,</span>
+        <span class="mi">22</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=22&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p>这个时候 <code class="docutils literal"><span class="pre">element</span></code> 函数返回数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">[</span>
+    <span class="p">[</span>
+        <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=1&#39;</span><span class="p">,</span>
+        <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=2&#39;</span>
+   <span class="p">],</span>
+   <span class="s1">&#39;...&#39;</span><span class="p">,</span>
+   <span class="p">[</span>
+       <span class="mi">7</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=7&#39;</span><span class="p">,</span>
+       <span class="mi">8</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=8&#39;</span><span class="p">,</span>
+       <span class="mi">9</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=9&#39;</span><span class="p">,</span>
+       <span class="mi">10</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=10&#39;</span><span class="p">,</span>
+       <span class="mi">11</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=11&#39;</span><span class="p">,</span>
+       <span class="mi">12</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=12&#39;</span><span class="p">,</span>
+       <span class="mi">13</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=13&#39;</span><span class="p">,</span>
+   <span class="p">],</span>
+   <span class="s1">&#39;...&#39;</span><span class="p">,</span>
+   <span class="p">[</span>
+        <span class="mi">21</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=21&#39;</span><span class="p">,</span>
+        <span class="mi">22</span> <span class="o">=&gt;</span> <span class="s1">&#39;/www.example.com/example?page=22&#39;</span><span class="p">,</span>
+   <span class="p">]</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="simplepaginate">
+<h2>55.5. simplePaginate 简单分页<a class="headerlink" href="#simplepaginate" title="永久链接至标题">¶</a></h2>
+<p>简单分页相比以上的功能来说，精简了 <code class="docutils literal"><span class="pre">elements</span></code> 的特效：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">simplePaginate</span><span class="p">(</span><span class="nv">$perPage</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="nv">$columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="nv">$pageName</span> <span class="o">=</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="nv">$page</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$page</span> <span class="o">=</span> <span class="nv">$page</span> <span class="o">?:</span> <span class="nx">Paginator</span><span class="o">::</span><span class="na">resolveCurrentPage</span><span class="p">(</span><span class="nv">$pageName</span><span class="p">);</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">skip</span><span class="p">((</span><span class="nv">$page</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="nv">$perPage</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">take</span><span class="p">(</span><span class="nv">$perPage</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">simplePaginator</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$columns</span><span class="p">),</span> <span class="nv">$perPage</span><span class="p">,</span> <span class="nv">$page</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;path&#39;</span> <span class="o">=&gt;</span> <span class="nx">Paginator</span><span class="o">::</span><span class="na">resolveCurrentPath</span><span class="p">(),</span>
+        <span class="s1">&#39;pageName&#39;</span> <span class="o">=&gt;</span> <span class="nv">$pageName</span><span class="p">,</span>
+    <span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">simplePaginator</span><span class="p">(</span><span class="nv">$items</span><span class="p">,</span> <span class="nv">$perPage</span><span class="p">,</span> <span class="nv">$currentPage</span><span class="p">,</span> <span class="nv">$options</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Container</span><span class="o">::</span><span class="na">getInstance</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">makeWith</span><span class="p">(</span><span class="nx">Paginator</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="nb">compact</span><span class="p">(</span>
+        <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;perPage&#39;</span><span class="p">,</span> <span class="s1">&#39;currentPage&#39;</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span>
+    <span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>分页服务的类不再使用 <code class="docutils literal"><span class="pre">LengthAwarePaginator</span></code> 类，而开始使用 <code class="docutils literal"><span class="pre">Paginator</span></code> ，这两个类最大的不同在于 <code class="docutils literal"><span class="pre">render</span></code> 函数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">static</span> <span class="nv">$defaultSimpleView</span> <span class="o">=</span> <span class="s1">&#39;pagination::simple-default&#39;</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">render</span><span class="p">(</span><span class="nv">$view</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$data</span> <span class="o">=</span> <span class="p">[])</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">HtmlString</span><span class="p">(</span>
+        <span class="k">static</span><span class="o">::</span><span class="na">viewFactory</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">make</span><span class="p">(</span><span class="nv">$view</span> <span class="o">?:</span> <span class="k">static</span><span class="o">::</span><span class="nv">$defaultSimpleView</span><span class="p">,</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">&#39;paginator&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="p">,</span>
+        <span class="p">]))</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">()</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">render</span></code> 函数调用的前端资源默认地址为 <code class="docutils literal"><span class="pre">illuminate\Pagination\resources\views\simple-default.blade.php</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$paginator</span><span class="o">-&gt;</span><span class="na">hasPages</span><span class="p">())</span>
+    <span class="o">&lt;</span><span class="nx">ul</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;pagination&quot;</span><span class="o">&gt;</span>
+        <span class="p">{{</span><span class="o">--</span> <span class="nx">Previous</span> <span class="nx">Page</span> <span class="nx">Link</span> <span class="o">--</span><span class="p">}}</span>
+        <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$paginator</span><span class="o">-&gt;</span><span class="na">onFirstPage</span><span class="p">())</span>
+            <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;disabled&quot;</span><span class="o">&gt;&lt;</span><span class="nx">span</span><span class="o">&gt;@</span><span class="nx">lang</span><span class="p">(</span><span class="s1">&#39;pagination.previous&#39;</span><span class="p">)</span><span class="o">&lt;/</span><span class="nx">span</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+        <span class="o">@</span><span class="k">else</span>
+            <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;{{ </span><span class="si">$paginator-&gt;previousPageUrl</span><span class="s2">() }}&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;prev&quot;</span><span class="o">&gt;@</span><span class="nx">lang</span><span class="p">(</span><span class="s1">&#39;pagination.previous&#39;</span><span class="p">)</span><span class="o">&lt;/</span><span class="nx">a</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+        <span class="o">@</span><span class="k">endif</span>
+
+        <span class="p">{{</span><span class="o">--</span> <span class="nx">Next</span> <span class="nx">Page</span> <span class="nx">Link</span> <span class="o">--</span><span class="p">}}</span>
+        <span class="o">@</span><span class="k">if</span> <span class="p">(</span><span class="nv">$paginator</span><span class="o">-&gt;</span><span class="na">hasMorePages</span><span class="p">())</span>
+            <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;{{ </span><span class="si">$paginator-&gt;nextPageUrl</span><span class="s2">() }}&quot;</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&quot;next&quot;</span><span class="o">&gt;@</span><span class="nx">lang</span><span class="p">(</span><span class="s1">&#39;pagination.next&#39;</span><span class="p">)</span><span class="o">&lt;/</span><span class="nx">a</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+        <span class="o">@</span><span class="k">else</span>
+            <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;disabled&quot;</span><span class="o">&gt;&lt;</span><span class="nx">span</span><span class="o">&gt;@</span><span class="nx">lang</span><span class="p">(</span><span class="s1">&#39;pagination.next&#39;</span><span class="p">)</span><span class="o">&lt;/</span><span class="nx">span</span><span class="o">&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+        <span class="o">@</span><span class="k">endif</span>
+    <span class="o">&lt;/</span><span class="nx">ul</span><span class="o">&gt;</span>
+<span class="o">@</span><span class="k">endif</span>
+</pre></div>
+</div>
+<p>可以看到，简单分页只有 上一页、下一页 两个按钮。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的数据库迁移.html" class="btn btn-neutral float-right" title="56. 数据库迁移" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的数据分页.html" class="btn btn-neutral" title="54. 数据分页" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

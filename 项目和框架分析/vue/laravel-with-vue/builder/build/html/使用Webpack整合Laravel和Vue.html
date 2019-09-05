@@ -1,0 +1,1234 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6. 使用Webpack整合Laravel和Vue &mdash; laravel整合vue 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel整合vue 1.0 文档" href="index.html"/>
+        <link rel="next" title="7. 使用Vue组件来组合小部件" href="使用Vue组件来编写小部件.html"/>
+        <link rel="prev" title="5. 使用Laravel构建Web服务" href="使用Laravel构建Web服务.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel整合vue
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="本书概览.html">1. 本书概览</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hello Vue – An Introduction to Vue.js.html">2. Hello Vue – An Introduction to Vue.js</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vuebnb原型，你的第一个vue项目.html">3. Vuebnb原型，你的第一个vue项目</a></li>
+<li class="toctree-l1"><a class="reference internal" href="配置Laravel开发环境.html">4. 配置Laravel开发环境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Laravel构建Web服务.html">5. 使用Laravel构建Web服务</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. 使用Webpack整合Laravel和Vue</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#laravel">6.1. Laravel前端</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#javascript">6.2. JavaScript</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#css">6.2.1. CSS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node-modules">6.2.2. Node modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">6.2.3. 视图</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#asset">6.3. Asset编译</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#webpack">6.4. Webpack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.4.1. 依赖</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">6.4.2. 模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.4.3. 打包</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">6.4.4. 加载器</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#laravel-mix">6.5. Laravel Mix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">6.6. 运行Webpack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cli">6.6.1. CLI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">6.6.2. 第一次构建</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vuebnb">6.7. 迁移Vuebnb</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">6.7.1. 移除没有必要依赖和文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#html">6.7.2. HTML</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">6.7.3. JavaScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">6.7.4. CSS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">6.7.5. Fonts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#images">6.7.6. Images</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">6.8. 开发工具</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#watch">6.8.1. Watch模式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#browsersync">6.8.2. BrowserSync</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#es2015">6.9. ES2015</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#polyfills">6.9.1. Polyfills</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">6.10. 模拟数据</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id22">6.10.1. 路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23">6.10.2. 架构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24">6.10.3. 注入数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json">6.10.4. JSON</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">6.10.5. 脚本之间共享数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">6.10.6. 替换硬编码模式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27">6.10.7. 设施和价格</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#urls">6.10.8. 图形URLs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id29">6.11. 总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="使用Vue组件来编写小部件.html">7. 使用Vue组件来组合小部件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用Vue路由器构建一个多页面的应用程序.html">8. 用Vue路由器构建一个多页面的应用程序</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel整合vue</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>6. 使用Webpack整合Laravel和Vue</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/使用Webpack整合Laravel和Vue.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="webpacklaravelvue">
+<h1>6. 使用Webpack整合Laravel和Vue<a class="headerlink" href="#webpacklaravelvue" title="永久链接至标题">¶</a></h1>
+<p>在本章中，我们将把 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 前端原型迁移到我们的主 <code class="docutils literal"><span class="pre">Laravel</span></code> 项目中，实现 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的第一个完整全栈迭代。 这个完全集成的环境将包括 <code class="docutils literal"><span class="pre">Webpack</span></code> 构建步骤，使我们能够在继续构建前端时融入更复杂的工具和技术。</p>
+<p>本章涵盖的主题：</p>
+<ul class="simple">
+<li>介绍 <code class="docutils literal"><span class="pre">Laravel</span></code> 的开箱即用前端应用程序；</li>
+<li><code class="docutils literal"><span class="pre">Webpack</span></code> 的高级概述；</li>
+<li>如何配置 <code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">Mix</span></code> 以编译前端资产；</li>
+<li>将 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 原型迁移到全栈的 <code class="docutils literal"><span class="pre">Laravel</span></code> 环境中；</li>
+<li>使用 <code class="docutils literal"><span class="pre">ES2015</span></code> 和 <code class="docutils literal"><span class="pre">Vue.js</span></code> ，包括旧版浏览器的语法和 <code class="docutils literal"><span class="pre">polyfills</span></code> ；</li>
+<li>将前端应用程序中的硬编码数据切换到后端数据；</li>
+</ul>
+<div class="section" id="laravel">
+<h2>6.1. Laravel前端<a class="headerlink" href="#laravel" title="永久链接至标题">¶</a></h2>
+<p>我们认为 <code class="docutils literal"><span class="pre">Laravel</span></code> 是一个后端框架，但是一个新的 <code class="docutils literal"><span class="pre">Laravel</span></code> 项目也包含一个前端应用程序的样板代码和配置。</p>
+<p>开箱即用的前端包括 <code class="docutils literal"><span class="pre">JavaScript</span></code> 和 <code class="docutils literal"><span class="pre">Sass</span></code> 资产文件，以及指定诸如 <code class="docutils literal"><span class="pre">Vue.js</span></code> ， <code class="docutils literal"><span class="pre">jQuery</span></code> 和 <code class="docutils literal"><span class="pre">Bootstrap</span></code> 之类的依赖关系的 <code class="docutils literal"><span class="pre">package.json</span></code> 文件。</p>
+<p>让我们来看看这个样板代码和配置，以便我们了解在开始迁移时 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 前端应用程序如何适合我们的 <code class="docutils literal"><span class="pre">Laravel</span></code> 项目。</p>
+</div>
+<div class="section" id="javascript">
+<h2>6.2. JavaScript<a class="headerlink" href="#javascript" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">JavaScript</span></code> 资源保存在 <code class="docutils literal"><span class="pre">resources/assets/js</span></code> 文件夹中。 这个目录中有几个 <code class="docutils literal"><span class="pre">.js</span></code> 文件，以及一个带有 <code class="docutils literal"><span class="pre">.vue</span></code> 组件的子目录。 后面的文件将在另一章中解释，所以我们现在将忽略它。</p>
+<p>主要的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件是 <code class="docutils literal"><span class="pre">app.js</span></code> 。 你会在这个文件中看到熟悉的 <code class="docutils literal"><span class="pre">Vue</span></code> 构造函数，但也有一些语法可能不太熟悉。 第一行是 <code class="docutils literal"><span class="pre">require</span></code> 函数，用于导入相邻文件 <code class="docutils literal"><span class="pre">bootstrap.js</span></code> ，后者又加载其他库，包括 <code class="docutils literal"><span class="pre">jQuery</span></code> 和 <code class="docutils literal"><span class="pre">Lodash</span></code> 。</p>
+<p><code class="docutils literal"><span class="pre">require</span></code> 不是一个标准的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 函数，在浏览器中使用此代码之前必须先解析。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./bootstrap&#39;</span><span class="p">);</span>
+
+<span class="nb">window</span><span class="p">.</span><span class="nx">Vue</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;vue&#39;</span><span class="p">);</span>
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">,</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./components/Example.vue&#39;</span><span class="p">));</span>
+
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="css">
+<h3>6.2.1. CSS<a class="headerlink" href="#css" title="永久链接至标题">¶</a></h3>
+<p>如果您之前没有听说过 <code class="docutils literal"><span class="pre">Sass</span></code> ，那么这个 <code class="docutils literal"><span class="pre">CSS</span></code> 扩展，可以更轻松地开发 <code class="docutils literal"><span class="pre">CSS</span></code> 。 默认的 <code class="docutils literal"><span class="pre">Laravel</span></code> 安装包含 <code class="docutils literal"><span class="pre">resources/assets/sass</span></code> 目录，其中包含两个样板 <code class="docutils literal"><span class="pre">Sass</span></code> 文件。</p>
+<p>主要的 <code class="docutils literal"><span class="pre">Sass</span></code> 文件是 <code class="docutils literal"><span class="pre">app.scss</span></code> 。 它的工作是导入其他 <code class="docutils literal"><span class="pre">Sass</span></code> 文件，包括 <code class="docutils literal"><span class="pre">Bootstrap</span> <span class="pre">CSS</span></code> 框架。</p>
+<p>resources/assets/sass/app.scss:</p>
+<div class="highlight-scss"><div class="highlight"><pre><span></span><span class="c1">// Fonts</span>
+<span class="k">@import</span> <span class="sx">url(&quot;https://fonts.googleapis.com/css?family=Raleway:300,400,600&quot;)</span><span class="p">;</span>
+
+<span class="c1">// Variables</span>
+<span class="k">@import</span> <span class="s2">&quot;variables&quot;</span><span class="p">;</span>
+
+<span class="c1">// Bootstrap</span>
+<span class="k">@import</span> <span class="s2">&quot;~bootstrap-sass/assets/stylesheets/bootstrap&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="node-modules">
+<h3>6.2.2. Node modules<a class="headerlink" href="#node-modules" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Laravel</span></code> 前端的另一个关键方面是项目目录根目录中的 <code class="docutils literal"><span class="pre">package.json</span></code> 文件。 与 <code class="docutils literal"><span class="pre">composer.json</span></code> 类似，此文件用于配置和依赖关系管理，仅用于 <code class="docutils literal"><span class="pre">Node</span></code> 模块而非 <code class="docutils literal"><span class="pre">PHP</span></code> 。</p>
+<p><code class="docutils literal"><span class="pre">package.json</span></code> 的一个属性是 <code class="docutils literal"><span class="pre">devDependencies</span></code> ，它指定了开发环境中所需的模块，包括 <code class="docutils literal"><span class="pre">jQuery</span></code> ， <code class="docutils literal"><span class="pre">Vue</span></code> 和 <code class="docutils literal"><span class="pre">Lodash</span></code> 。</p>
+<p>package.json:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  ...
+  &quot;devDependencies&quot;: {
+    &quot;axios&quot;: &quot;^0.17&quot;,
+    &quot;bootstrap-sass&quot;: &quot;^3.3.7&quot;,
+    &quot;cross-env&quot;: &quot;^5.1&quot;,
+    &quot;jquery&quot;: &quot;^3.2&quot;,
+    &quot;laravel-mix&quot;: &quot;^1.4&quot;,
+    &quot;lodash&quot;: &quot;^4.17.4&quot;,
+    &quot;vue&quot;: &quot;^2.5.3&quot;
+  }
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>6.2.3. 视图<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h3>
+<p>为了在 <code class="docutils literal"><span class="pre">Laravel</span></code> 中提供前端应用程序，它需要包含在视图中。 唯一提供的开箱即用视图是欢迎视图，位于 <code class="docutils literal"><span class="pre">resources/views/welcome.blade.php</span></code> ，它被用作主页样板。</p>
+<p>欢迎视图实际上并不包括前端应用程序，而是由用户自己安装。 我们将在本章后面讨论如何做到这一点。</p>
+</div>
+</div>
+<div class="section" id="asset">
+<h2>6.3. Asset编译<a class="headerlink" href="#asset" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">resources/assets</span></code> 中的文件包括不能在浏览器中直接使用的函数和语法。 例如，<code class="docutils literal"><span class="pre">app.js</span></code> 中用于导入 <code class="docutils literal"><span class="pre">JavaScript</span></code> 模块方式，它使用的 <code class="docutils literal"><span class="pre">require</span></code> 方法不是本地 <code class="docutils literal"><span class="pre">JavaScript</span></code> 方法，也不是标准 <code class="docutils literal"><span class="pre">Web</span> <span class="pre">API</span></code> 的一部分：</p>
+<div class="figure" id="id30">
+<img alt="_images/5-1.png" src="_images/5-1.png" />
+<p class="caption"><span class="caption-text">图5.1 require 未在浏览器中定义</span></p>
+</div>
+<p>构建工具使用这些资产文件，解析任何非标准函数和语法，并输出浏览器可以使用的代码。 有许多流行的前端资产构建工具，包括 <code class="docutils literal"><span class="pre">Grunt</span></code> ， <code class="docutils literal"><span class="pre">Gulp</span></code> 和 <code class="docutils literal"><span class="pre">Webpack</span></code> ：</p>
+<div class="figure" id="id31">
+<img alt="_images/5-2.png" src="_images/5-2.png" />
+<p class="caption"><span class="caption-text">图5.2 资产编译过程</span></p>
+</div>
+<p>我们努力使用这个资产编译过程的原因是我们可以编写我们的前端应用程序，而不受浏览器允许的限制。 我们可以引入各种方便的开发工具和功能，使我们能够更轻松地编写代码并修复问题。</p>
+</div>
+<div class="section" id="webpack">
+<h2>6.4. Webpack<a class="headerlink" href="#webpack" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Webpack</span></code> 是 <code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">5.5</span></code> 提供的默认构建工具，我们将在 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的开发中使用它。</p>
+<p>使 <code class="docutils literal"><span class="pre">Webpack</span></code> 与其他流行的构建工具（如 <code class="docutils literal"><span class="pre">Gulp</span></code> 和 <code class="docutils literal"><span class="pre">Grunt</span></code> ）不同的是，它首先是一个模块打包器。 让我们通过了解模块捆绑过程的工作原理来开始我们对 <code class="docutils literal"><span class="pre">Webpack</span></code> 的概述。</p>
+<div class="section" id="id2">
+<h3>6.4.1. 依赖<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p>在前端应用程序中，我们可能会与第三方 <code class="docutils literal"><span class="pre">JavaScript</span></code> 库或其他文件中存在依赖关系。 例如， <code class="docutils literal"><span class="pre">Vuebnb</span></code> 原型依赖于 <code class="docutils literal"><span class="pre">Vue.js</span></code> 和模拟列表数据文件：</p>
+<div class="figure" id="id32">
+<img alt="_images/5-3.png" src="_images/5-3.png" />
+<p class="caption"><span class="caption-text">图5.3 Vuebnb原型依赖关系</span></p>
+</div>
+<p>除了确保任何共享函数和变量都具有全局范围并且脚本以正确的顺序加载之外，在浏览器中没有真正的管理这些依赖关系的方法。</p>
+<p>例如，由于 <code class="docutils literal"><span class="pre">node_modules/vue/dist/vue.js</span></code> 定义了一个全局的 <code class="docutils literal"><span class="pre">Vue</span></code> 对象且首先被加载，所以我们可以在我们的 <code class="docutils literal"><span class="pre">app.js</span></code> 脚本中使用 <code class="docutils literal"><span class="pre">Vue</span></code> 对象。 如果这两个条件中的任何一个都不符合，则在 <code class="docutils literal"><span class="pre">app.js</span></code> 运行时不会定义 <code class="docutils literal"><span class="pre">Vue</span></code> ，从而导致错误：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;node_modules/vue/dist/vue.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;sample/data.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;app.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>这个系统有许多缺点：</p>
+<ul class="simple">
+<li>全局变量引入了命名碰撞和意外突变的可能性；</li>
+<li>脚本加载顺序很脆弱，随着应用程序的增长可轻松破解；</li>
+<li>我们无法利用性能优化，例如异步加载脚本；</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h3>6.4.2. 模块<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>依赖性管理问题的解决方案是使用模块系统，例如 <code class="docutils literal"><span class="pre">CommonJS</span></code> 或本地 <code class="docutils literal"><span class="pre">ES</span></code> 模块。 这些系统允许 <code class="docutils literal"><span class="pre">JavaScript</span></code> 代码被模块化并导入到其他文件中。</p>
+<p>这是一个 <code class="docutils literal"><span class="pre">CommonJS</span></code> 示例：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// moduleA.js</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">value</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// moduleB.js</span>
+<span class="kd">var</span> <span class="nx">multiplyByTwo</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./moduleA&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">multiplyByTwo</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+
+<span class="c1">// Output: 4</span>
+</pre></div>
+</div>
+<p>这里有一个 <code class="docutils literal"><span class="pre">Native</span> <span class="pre">ES</span></code> 模块示例：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// moduleA.js</span>
+<span class="kr">export</span> <span class="k">default</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">value</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// moduleB.js</span>
+<span class="kr">import</span> <span class="nx">multiplyByTwo</span> <span class="nx">from</span> <span class="s1">&#39;./moduleA&#39;</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">multiplyByTwo</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+
+<span class="c1">// Output: 4</span>
+</pre></div>
+</div>
+<p>问题是 <code class="docutils literal"><span class="pre">CommonJS</span></code> 不能在浏览器中使用（它是为服务器端 <code class="docutils literal"><span class="pre">JavaScript</span></code> 设计的），只有本地 <code class="docutils literal"><span class="pre">ES</span></code> 模块现在获得浏览器支持。 如果我们想在项目中使用模块系统，我们需要一个构建工具： <code class="docutils literal"><span class="pre">Webpack</span></code> 。</p>
+</div>
+<div class="section" id="id4">
+<h3>6.4.3. 打包<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>将模块解析为浏览器友好代码的过程称为捆绑。 <code class="docutils literal"><span class="pre">Webpack</span></code> 以入口文件作为起点开始捆绑过程。 在 <code class="docutils literal"><span class="pre">Laravel</span></code> 前端应用程序中， <code class="docutils literal"><span class="pre">resources/assets</span> <span class="pre">/js/app.js</span></code> 是入口文件。</p>
+<p><code class="docutils literal"><span class="pre">Webpack</span></code> 分析入口文件以查找任何依赖关系。 在 <code class="docutils literal"><span class="pre">app.js</span></code> 的情况下，它会找到： <code class="docutils literal"><span class="pre">bootstrap</span></code> ， <code class="docutils literal"><span class="pre">vue</span></code> 和 <code class="docutils literal"><span class="pre">Example.vue</span></code> 这三个文件。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./bootstrap&#39;</span><span class="p">);</span>
+
+<span class="nb">window</span><span class="p">.</span><span class="nx">Vue</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;vue&#39;</span><span class="p">);</span>
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">,</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./components/Example.vue&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Webpack</span></code> 将解决这些依赖关系，然后分析它们以查找它们可能具有的任何依赖关系。 这个过程一直持续到找到项目的所有依赖关系。 结果是一个依赖关系图，在一个大型项目中，可能包含数百个不同的模块。</p>
+<p><code class="docutils literal"><span class="pre">Webpack</span></code> 使用这个依赖关系图作为将所有代码捆绑到单个浏览器友好文件中的蓝图：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;bundle.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>6.4.4. 加载器<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>使 <code class="docutils literal"><span class="pre">Webpack</span></code> 如此强大的部分原因是，在捆绑过程中，它可以用一个或多个 <code class="docutils literal"><span class="pre">Webpack</span></code> 加载器来转换模块。</p>
+<p>例如， <code class="docutils literal"><span class="pre">Babel</span></code> 是一种编译器，可将下一代 <code class="docutils literal"><span class="pre">JavaScript</span></code> 语法（如 <code class="docutils literal"><span class="pre">ES2015</span></code> ）转换为标准 <code class="docutils literal"><span class="pre">ES5</span></code> 。  <code class="docutils literal"><span class="pre">Webpack</span> <span class="pre">Babel</span></code> 加载器是最受欢迎的之一，因为它允许开发人员使用模块功能编写他们的代码，但仍旧在旧版浏览器中提供支持。</p>
+<p>例如，在入口文件中，我们看到 <code class="docutils literal"><span class="pre">IE10</span></code> 不支持的 <code class="docutils literal"><span class="pre">ES2015</span></code> 常量声明。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>如果使用 <code class="docutils literal"><span class="pre">Babel</span></code> 加载器，那么在将它添加到包中之前， <code class="docutils literal"><span class="pre">const</span></code> 将被转换为 <code class="docutils literal"><span class="pre">var</span></code> 。</p>
+<p>public/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="laravel-mix">
+<h2>6.5. Laravel Mix<a class="headerlink" href="#laravel-mix" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Webpack</span></code> 的一个缺点是配置它很艰难。 为了使事情更容易， <code class="docutils literal"><span class="pre">Laravel</span></code> 包含一个名为 <code class="docutils literal"><span class="pre">Mix</span></code> 的模块，它采用最常用的 <code class="docutils literal"><span class="pre">Webpack</span></code> 选项，并将它们放在一个简单的 <code class="docutils literal"><span class="pre">API</span></code> 后面。</p>
+<p><code class="docutils literal"><span class="pre">Mix</span></code> 配置文件可以在项目目录的根目录中找到。 <code class="docutils literal"><span class="pre">Mix</span></code> 配置包含声明应用程序的基本构建步骤的混合对象 <code class="docutils literal"><span class="pre">mix</span></code> 以及对应的链式方法。 例如， <code class="docutils literal"><span class="pre">js</span></code> 方法接受两个参数，即入口文件和输出目录，默认情况下应用 <code class="docutils literal"><span class="pre">Babel</span></code> 加载器。 <code class="docutils literal"><span class="pre">sass</span></code> 方法以同样的方式工作。</p>
+<p>webpack.mix.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">mix</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;laravel-mix&#39;</span><span class="p">);</span>
+<span class="nx">mix</span><span class="p">.</span><span class="nx">js</span><span class="p">(</span><span class="s1">&#39;resources/assets/js/app.js&#39;</span><span class="p">,</span> <span class="s1">&#39;public/js&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">sass</span><span class="p">(</span><span class="s1">&#39;resources/assets/sass/app.scss&#39;</span><span class="p">,</span> <span class="s1">&#39;public/css&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>6.6. 运行Webpack<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>现在我们对 <code class="docutils literal"><span class="pre">Webpack</span></code> 有了更高层次的理解，让我们来运行它，看看它如何捆绑默认的前端资产文件。</p>
+<p>首先，确保安装了所有的开发依赖项：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install
+</pre></div>
+</div>
+<div class="section" id="cli">
+<h3>6.6.1. CLI<a class="headerlink" href="#cli" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Webpack</span></code> 通常从命令行运行，例如：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ webpack <span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>我们可以使用 <code class="docutils literal"><span class="pre">package.json</span></code> 中预定义的一个 <code class="docutils literal"><span class="pre">Weback</span></code> 脚本，而不是自己找出正确的 <code class="docutils literal"><span class="pre">CLI</span></code> 选项。 例如， <code class="docutils literal"><span class="pre">development</span></code> 脚本将运行带有适合创建开发版本选项的 <code class="docutils literal"><span class="pre">Webpack</span></code> 。</p>
+<p>package.json:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">&quot;scripts&quot;: {</span>
+<span class="x">  ...</span>
+<span class="x">  &quot;development&quot;: &quot;cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js&quot;,</span>
+<span class="x">  ...</span>
+<span class="x">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>6.6.2. 第一次构建<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>现在运行 <code class="docutils literal"><span class="pre">dev</span></code> 脚本（ <code class="docutils literal"><span class="pre">development</span></code> 脚本的快捷方式）：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm run dev
+</pre></div>
+</div>
+<p>运行后，您应该在终端中看到类似于以下内容的输出：</p>
+<div class="figure" id="id33">
+<img alt="_images/5-4.png" src="_images/5-4.png" />
+<p class="caption"><span class="caption-text">图5.4 Webpack终端输出</span></p>
+</div>
+<p>这个输出告诉我们很多东西，但最重要的是构建是成功的，在输出中创建了哪些文件，包括字体， <code class="docutils literal"><span class="pre">JavaScript</span></code> 和 <code class="docutils literal"><span class="pre">CSS</span></code> 。 请注意，输出文件路径不是相对于项目根目录，而是相对于公共目录，所以 <code class="docutils literal"><span class="pre">js/apps.js</span></code> 文件将在 <code class="docutils literal"><span class="pre">public/js/app.js</span></code> 中找到。</p>
+<div class="section" id="id8">
+<h4>6.6.2.1. JavaScript<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<p>检查输出的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 文件 <code class="docutils literal"><span class="pre">public/js/app.js</span></code> ，我们会看到很多代码 - 大约42,000行！ 这是因为 <code class="docutils literal"><span class="pre">jQuery</span></code> ， <code class="docutils literal"><span class="pre">Lodash</span></code> ， <code class="docutils literal"><span class="pre">Vue</span></code> 和其他 <code class="docutils literal"><span class="pre">JavaScript</span></code> 依赖关系已经被捆绑到这个文件中。 这也是因为我们使用了不包含缩小或丑化的开发版本。</p>
+<p>如果您通过文件进行搜索，您会发现来自入口文件 <code class="docutils literal"><span class="pre">app.js</span></code> 的代码已按预期转换为 <code class="docutils literal"><span class="pre">ES5</span></code> ：</p>
+<div class="figure" id="id34">
+<img alt="_images/5-5.png" src="_images/5-5.png" />
+<p class="caption"><span class="caption-text">图5.5 捆绑文件 public/js/app.js</span></p>
+</div>
+</div>
+<div class="section" id="id9">
+<h4>6.6.2.2. CSS<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<p>我们也有一个 <code class="docutils literal"><span class="pre">CSS</span></code> 包文件 <code class="docutils literal"><span class="pre">public/css/app.css</span></code> 。 如果你检查这个文件，你会发现已经包含了导入的 <code class="docutils literal"><span class="pre">Bootstrap</span> <span class="pre">CSS</span></code> 框架，并且 <code class="docutils literal"><span class="pre">Sass</span></code> 语法已经被编译为纯 <code class="docutils literal"><span class="pre">CSS</span></code> 。</p>
+</div>
+<div class="section" id="fonts">
+<h4>6.6.2.3. Fonts<a class="headerlink" href="#fonts" title="永久链接至标题">¶</a></h4>
+<p>你可能会奇怪的是输出中有字体，因为 <code class="docutils literal"><span class="pre">Mix</span></code> 没有包含任何明确的字体配置。 这些字体是 <code class="docutils literal"><span class="pre">Bootstrap</span> <span class="pre">CSS</span></code> 框架和 <code class="docutils literal"><span class="pre">Mix</span></code> 的依赖项，默认情况下，它们将单独输出，而不是以字体包的形式输出。</p>
+</div>
+</div>
+</div>
+<div class="section" id="vuebnb">
+<h2>6.7. 迁移Vuebnb<a class="headerlink" href="#vuebnb" title="永久链接至标题">¶</a></h2>
+<p>既然我们熟悉默认的 <code class="docutils literal"><span class="pre">Laravel</span></code> 前端应用程序代码和配置，我们已经准备好将 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 原型迁移到主项目中。 此迁移将使我们可以将所有源代码放在一个地方，此外，我们可以利用这个更复杂的开发环境来构建 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的其余部分。</p>
+<p>迁移将涉及：</p>
+<ul class="simple">
+<li>删除任何不必要的模块和文件；</li>
+<li>将原型文件移动到 <code class="docutils literal"><span class="pre">Laravel</span></code> 项目结构中；</li>
+<li>修改原型文件以使其适应新的环境；</li>
+</ul>
+<div class="figure" id="id35">
+<img alt="_images/5-6.png" src="_images/5-6.png" />
+<p class="caption"><span class="caption-text">图5.6 Vuebnb原型迁移</span></p>
+</div>
+<div class="section" id="id10">
+<h3>6.7.1. 移除没有必要依赖和文件<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p>我们首先删除我们不再需要的节点依赖关系。 我们将保留 <code class="docutils literal"><span class="pre">axis</span></code> ，因为它将在后面的章节中使用，和 <code class="docutils literal"><span class="pre">cross-env</span></code> 因为它确保我们的 <code class="docutils literal"><span class="pre">NPM</span></code> 脚本可以在各种环境中运行。 我们会去除其余的：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm uninstall bootstrap-sass jquery lodash --save-dev
+</pre></div>
+</div>
+<p>这个命令会让你的 <code class="docutils literal"><span class="pre">dev</span></code> 依赖看起来像这样。</p>
+<p>package.json:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>&quot;devDependencies&quot;: {
+  &quot;axios&quot;: &quot;^0.17&quot;,
+  &quot;cross-env&quot;: &quot;^5.1&quot;,
+  &quot;laravel-mix&quot;: &quot;^1.4&quot;,
+  &quot;vue&quot;: &quot;^2.5.3&quot;
+}
+</pre></div>
+</div>
+<p>接下来，我们将删除我们不需要的文件。 这包括一些 <code class="docutils literal"><span class="pre">JavaScript</span></code> 资产，所有 <code class="docutils literal"><span class="pre">Sass</span></code> 以及 <code class="docutils literal"><span class="pre">welcome</span></code> 视图：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ rm -rf <span class="se">\</span>
+resources/assets/js/app.js <span class="se">\</span>
+resources/assets/js/bootstrap.js <span class="se">\</span>
+resources/assets/js/components/* <span class="se">\</span>
+resources/assets/sass <span class="se">\</span>
+resources/views/welcome.blade.php
+</pre></div>
+</div>
+<p>由于我们删除了所有 <code class="docutils literal"><span class="pre">Sass</span></code> 文件，因此我们还需要删除 <code class="docutils literal"><span class="pre">Mix</span></code> 配置中的 <code class="docutils literal"><span class="pre">sass</span></code> 方法。</p>
+<p>webpack.mix.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">mix</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;laravel-mix&#39;</span><span class="p">);</span>
+<span class="nx">mix</span><span class="p">.</span><span class="nx">js</span><span class="p">(</span><span class="s1">&#39;resources/assets/js/app.js&#39;</span><span class="p">,</span> <span class="s1">&#39;public/js&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>现在我们的前端应用程序没有混乱，我们可以将原型文件移到他们的新家。</p>
+</div>
+<div class="section" id="html">
+<h3>6.7.2. HTML<a class="headerlink" href="#html" title="永久链接至标题">¶</a></h3>
+<p>现在让我们将我们在第2章原型 <code class="docutils literal"><span class="pre">Vuebnb</span></code> （您的第一个 <code class="docutils literal"><span class="pre">Vue.js</span></code> 项目）中完成的原型项目中的 <code class="docutils literal"><span class="pre">index.html</span></code> 内容复制到一个新文件 <code class="docutils literal"><span class="pre">app.blade.php</span></code> 中。 这将允许模板用作 <code class="docutils literal"><span class="pre">Laravel</span></code> 视图：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cp ../vuebnb-prototype/index.html ./resources/views/app.blade.php
+</pre></div>
+</div>
+<p>我们还会更新主页的路由以指向这个新视图，而不是欢迎视图。</p>
+<p>routes/web.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="id11">
+<h4>6.7.2.1. 语法冲突<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+<p>使用原型模板文件作为视图会导致一个小问题，因为 <code class="docutils literal"><span class="pre">Vue</span></code> 和 <code class="docutils literal"><span class="pre">Blade</span></code> 共享一个通用语法。 例如，查看 <code class="docutils literal"><span class="pre">Vue.js</span></code> 插入列表的标题和地址的标题部分。</p>
+<p>resources/views/app.blade.php:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;heading&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>{{ title }}<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>{{ address }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>当 <code class="docutils literal"><span class="pre">Blade</span></code> 处理它时，它会认为双括号是它自己的语法，并且会产生一个 <code class="docutils literal"><span class="pre">PHP</span></code> 错误，因为标题和地址都不是被定义的函数。</p>
+<p>有一个简单的解决方案：转义这些双花括号让 <code class="docutils literal"><span class="pre">Blade</span></code> 知道忽略它们。 这可以通过将 <a href="#id12"><span class="problematic" id="id13">``</span></a>&#64;``符号作为前缀来完成。</p>
+<p>resources/views/app.blade.php:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;heading&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>@{{ title }}<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>@{{ address }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>一旦你完成了文件中每个双括号的设置，在浏览器中加载 <code class="docutils literal"><span class="pre">home</span></code> 路由以测试新的视图。 没有 <code class="docutils literal"><span class="pre">JavaScript</span></code> 或 <code class="docutils literal"><span class="pre">CSS</span></code> ，它看起来不太好，但至少我们可以确认它的工作的。</p>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>6.7.3. JavaScript<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>现在让我们将原型的主脚本文件 <code class="docutils literal"><span class="pre">app.js</span></code> 移动到 <code class="docutils literal"><span class="pre">Laravel</span></code> 项目中：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cp ../vuebnb-prototype/app.js ./resources/assets/js/
+</pre></div>
+</div>
+<p>鉴于当前的 <code class="docutils literal"><span class="pre">Mix</span></code> 设置，这将成为 <code class="docutils literal"><span class="pre">JavaScript</span></code> 打包的入口文件。 这意味着视图底部的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 依赖关系可以用包来替代，也就是说。</p>
+<p>resources/views/app.blade.php:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;node_modules/vue/dist/vue.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;sample/data.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;app.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>可以被替换为：</p>
+<p>resources/views/app.blade.php:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;{{ asset(&#39;js/app.js&#39;) }}&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="id15">
+<h4>6.7.3.1. 模拟数据依赖<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h4>
+<p>让我们将模拟数据依赖项复制到项目中：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cp ../vuebnb-prototype/sample/data.js ./resources/assets/js/
+</pre></div>
+</div>
+<p>目前，这个文件声明了一个全局变量 <code class="docutils literal"><span class="pre">sample</span></code> ，然后在入口文件中找到它。 让我们通过用 <code class="docutils literal"><span class="pre">ES2015</span></code> <code class="docutils literal"><span class="pre">export</span> <span class="pre">default</span></code> 替换变量声明来使该文件成为模块。</p>
+<p>resources/assets/js/data.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">{</span>
+ <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们现在可以将该模块导入到我们的入口文件的顶部。 请注意， <code class="docutils literal"><span class="pre">Webpack</span></code> 可以在导入语句中猜测文件扩展名，以便从 <code class="docutils literal"><span class="pre">data.js</span></code> 中省略 <code class="docutils literal"><span class="pre">.js</span></code> 。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">import</span> <span class="nx">sample</span> <span class="nx">from</span> <span class="s1">&#39;./data&#39;</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">虽然 <code class="docutils literal"><span class="pre">Laravel</span></code> 可选择使用 <code class="docutils literal"><span class="pre">CommonJS</span></code> 语法来包含模块，即 <code class="docutils literal"><span class="pre">require</span></code> ，但是我们将使用本地 <code class="docutils literal"><span class="pre">ES</span></code> 模块语法，即 <code class="docutils literal"><span class="pre">import</span></code> 。 这是因为 <code class="docutils literal"><span class="pre">ES</span></code> 模块正在进入 <code class="docutils literal"><span class="pre">JavaScript</span></code> 标准，并且与 <code class="docutils literal"><span class="pre">Vue</span></code> 使用的语法更加一致。</p>
+</div>
+</div>
+<div class="section" id="id16">
+<h4>6.7.3.2. 使用Webpack显示模块<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
+<p>让我们运行一个 <code class="docutils literal"><span class="pre">Webpack</span></code> 构建以确保 <code class="docutils literal"><span class="pre">JavaScript</span></code> 迁移到目前为止正在工作：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm run dev
+</pre></div>
+</div>
+<p>如果一切正常，您将看到正在输出的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 打包文件。</p>
+<p>知道添加了模拟数据依赖性，而无需手动检查该包以查找代码看起来很好。 我们可以通过告诉 <code class="docutils literal"><span class="pre">Webpack</span></code> 打印它在终端输出中处理的模块来做到这一点。</p>
+<p>在我们的 <code class="docutils literal"><span class="pre">package.json</span></code> 的 <code class="docutils literal"><span class="pre">development</span></code> 脚本中，已经设置了 <code class="docutils literal"><span class="pre">--hide-modules</span></code> 标志，因为一些开发者更喜欢简洁的输出消息。 现在让我们删除它，并添加 <code class="docutils literal"><span class="pre">--display-modules</span></code> 标志，以便脚本如下所示：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="s2">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="s2">&quot;development&quot;</span><span class="o">:</span> <span class="s2">&quot;cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --display-modules --config=node_modules/laravel-mix/setup/webpack.config.js&quot;</span><span class="p">,</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在再次运行构建，我们得到这个更详细的终端输出。</p>
+</div>
+<div class="section" id="vue-js">
+<h4>6.7.3.3. Vue.js依赖<a class="headerlink" href="#vue-js" title="永久链接至标题">¶</a></h4>
+<p>现在让我们导入 <code class="docutils literal"><span class="pre">Vue.js</span></code> 作为我们入口文件的依赖关系。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">import</span> <span class="nx">Vue</span> <span class="nx">from</span> <span class="s1">&#39;vue&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">sample</span> <span class="nx">from</span> <span class="s1">&#39;./data&#39;</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>再次运行构建，现在我们将在 <code class="docutils literal"><span class="pre">Terminal</span></code> 输出中的模块列表中看到 <code class="docutils literal"><span class="pre">Vue.js</span></code> ，以及它引入的一些依赖关系。</p>
+<p>您可能想知道 <code class="docutils literal"><span class="pre">import</span> <span class="pre">Vue</span> <span class="pre">from</span> <span class="pre">'vue'</span></code> 如何解析的，因为它似乎不是一个适当的文件应用。 缺省情况下， <code class="docutils literal"><span class="pre">Webpack</span></code> 将检查项目中的 <code class="docutils literal"><span class="pre">node_modules</span></code> 文件夹是否存在任何依赖关系，从而让你不必从 <code class="docutils literal"><span class="pre">'node_modules/vue';</span></code> 中引入 <code class="docutils literal"><span class="pre">Vue</span></code> 。</p>
+<p>但是，怎么知道这个包的入口文件？ 查看前面屏幕截图中的 <code class="docutils literal"><span class="pre">Webpack</span></code> 终端输出，可以看到它包含了 <code class="docutils literal"><span class="pre">node_modules/vue/dist/vue.common.js</span></code> 。 它知道使用这个文件是因为当 <code class="docutils literal"><span class="pre">Webpack</span></code> 添加节点模块作为依赖关系时，它会检查它们的 <code class="docutils literal"><span class="pre">package.json</span></code> 文件并查找在 <code class="docutils literal"><span class="pre">Vue</span></code> 模块中的 <code class="docutils literal"><span class="pre">main</span></code> 属性。</p>
+<p>node_modules/vue/package.json:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="p">...</span>
+  <span class="s2">&quot;main&quot;</span><span class="o">:</span> <span class="s2">&quot;dist/vue.runtime.common.js&quot;</span><span class="p">,</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然而， <code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">Mix</span></code> 覆盖了这个强制不同的 <code class="docutils literal"><span class="pre">Vue</span></code> 版本。</p>
+<p>node_modules/laravel-mix/setup/webpack.config.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">alias</span><span class="o">:</span> <span class="p">{</span>
+  <span class="s1">&#39;vue$&#39;</span><span class="o">:</span> <span class="s1">&#39;vue/dist/vue.common.js&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>简而言之， <code class="docutils literal"><span class="pre">import</span> <span class="pre">Vue</span> <span class="pre">from</span> <span class="pre">'vue'</span></code> 与从 <code class="docutils literal"><span class="pre">import</span> <span class="pre">Vue</span> <span class="pre">from</span> <span class="pre">'node_modules/vue/dist/vue.common.js'</span></code> 导入 <code class="docutils literal"><span class="pre">Vue</span></code> 实际上是一样的。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">我们将在第6章中解释不同的 <code class="docutils literal"><span class="pre">Vue</span></code> 构建，使用 <code class="docutils literal"><span class="pre">Vue.js</span></code> 组件构建构件。</p>
+</div>
+<p>完成后，我们的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 已成功迁移。 再次加载主页路由，我们可以更好地使用现在包含的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 来制作 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的列表页面。</p>
+</div>
+</div>
+<div class="section" id="id17">
+<h3>6.7.4. CSS<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h3>
+<p>为了迁移 <code class="docutils literal"><span class="pre">CSS</span></code> ，我们将把 <code class="docutils literal"><span class="pre">style.css</span></code> 从原型复制到 <code class="docutils literal"><span class="pre">Laravel</span></code> 项目中。 默认的 <code class="docutils literal"><span class="pre">Laravel</span></code> 前端应用程序使用 <code class="docutils literal"><span class="pre">Sass</span></code> 而不是 <code class="docutils literal"><span class="pre">CSS</span></code> ，所以我们需要首先为 <code class="docutils literal"><span class="pre">CSS</span></code> 资源创建一个目录：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ mkdir ./resources/assets/css
+$ cp ../vuebnb-prototype/style.css ./resources/assets/css/
+</pre></div>
+</div>
+<p>然后，让我们在我们的 <code class="docutils literal"><span class="pre">Mix</span></code> 配置文件中创建一个新声明，以使用 <code class="docutils literal"><span class="pre">styles</span></code> 方法获取 <code class="docutils literal"><span class="pre">CSS</span></code> 包。</p>
+<p>webpack.mix.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">mix</span><span class="p">.</span><span class="nx">js</span><span class="p">(</span><span class="s1">&#39;resources/assets/js/app.js&#39;</span><span class="p">,</span> <span class="s1">&#39;public/js&#39;</span><span class="p">)</span>
+   <span class="p">.</span><span class="nx">styles</span><span class="p">(</span><span class="s1">&#39;resources/assets/css/style.css&#39;</span><span class="p">,</span> <span class="s1">&#39;public/css/style.css&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>我们现在通过更新链接的 <code class="docutils literal"><span class="pre">href</span></code> 链接到我们视图中的 <code class="docutils literal"><span class="pre">CSS</span></code> 打包文件。</p>
+<p>resources/views/app.blade.php:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{{ asset(&#39;css/style.css&#39;) }}&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="id18">
+<h4>6.7.4.1. 字体样式<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
+<p>我们还有 <code class="docutils literal"><span class="pre">Open</span> <span class="pre">Sans</span></code> 和 <code class="docutils literal"><span class="pre">Font</span> <span class="pre">Awesome</span></code> 样式表需要包含。 首先，使用 <code class="docutils literal"><span class="pre">NPM</span></code> 安装字体包：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm i --save-dev font-awesome open-sans-all
+</pre></div>
+</div>
+<p>我们将修改我们的 <code class="docutils literal"><span class="pre">Mix</span></code> 配置，将我们的应用 <code class="docutils literal"><span class="pre">CSS</span></code> ， <code class="docutils literal"><span class="pre">Open</span> <span class="pre">Sans</span></code> 和 <code class="docutils literal"><span class="pre">Font</span> <span class="pre">Awesome</span> <span class="pre">CSS</span></code> 捆绑在一起。 我们可以通过将数组传递给样式方法的第一个参数来完成此操作。</p>
+<p>webpack.mix.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">mix</span>
+  <span class="p">.</span><span class="nx">js</span><span class="p">(</span><span class="s1">&#39;resources/assets/js/app.js&#39;</span><span class="p">,</span> <span class="s1">&#39;public/js&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">styles</span><span class="p">([</span>
+    <span class="s1">&#39;node_modules/open-sans-all/css/open-sans.css&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;node_modules/font-awesome/css/font-awesome.css&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;resources/assets/css/style.css&#39;</span>
+  <span class="p">],</span> <span class="s1">&#39;public/css/style.css&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Mix</span></code> 会将关于 <code class="docutils literal"><span class="pre">CSS</span></code> 包的统计信息附加到终端输出中。</p>
+<p>请记住删除视图中字体样式表的链接，因为这些链接现在位于 <code class="docutils literal"><span class="pre">CSS</span></code> 包中。</p>
+</div>
+</div>
+<div class="section" id="id19">
+<h3>6.7.5. Fonts<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Open</span> <span class="pre">Sans</span></code> 和 <code class="docutils literal"><span class="pre">Font</span> <span class="pre">Awesome</span></code> 都需要一个 <code class="docutils literal"><span class="pre">CSS</span></code> 样式表和相关的字体文件。 像 <code class="docutils literal"><span class="pre">CSS</span></code> 一样， <code class="docutils literal"><span class="pre">Webpack</span></code> 可以将字体作为模块捆绑在一起，但我们目前不需要利用这一点。 相反，我们将使用复制方法，该方法告诉 <code class="docutils literal"><span class="pre">Mix</span></code> 将字体从其主目录复制到 <code class="docutils literal"><span class="pre">public</span></code> 文件夹，这样前端应用程序可以访问它们。</p>
+<p>webpack.mix.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">mix</span>
+  <span class="p">.</span><span class="nx">js</span><span class="p">(</span><span class="s1">&#39;resources/assets/js/app.js&#39;</span><span class="p">,</span> <span class="s1">&#39;public/js&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">styles</span><span class="p">([</span>
+    <span class="s1">&#39;node_modules/open-sans-all/css/open-sans.css&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;node_modules/font-awesome/css/font-awesome.css&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;resources/assets/css/style.css&#39;</span>
+  <span class="p">],</span> <span class="s1">&#39;public/css/style.css&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">copy</span><span class="p">(</span><span class="s1">&#39;node_modules/open-sans-all/fonts&#39;</span><span class="p">,</span>  <span class="s1">&#39;public/fonts&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">copy</span><span class="p">(</span><span class="s1">&#39;node_modules/font-awesome/fonts&#39;</span><span class="p">,</span>  <span class="s1">&#39;public/fonts&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>再次构建后，您将在项目结构中看到一个 <code class="docutils literal"><span class="pre">public/fonts</span></code> 文件夹。</p>
+</div>
+<div class="section" id="images">
+<h3>6.7.6. Images<a class="headerlink" href="#images" title="永久链接至标题">¶</a></h3>
+<p>我们现在将迁移图像，包括工具栏的徽标和模拟数据标题图像：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cp ../vuebnb-prototype/logo.png ./resources/assets/images/
+$ cp ../vuebnb-prototype/sample/header.jpg ./resources/assets/images/
+</pre></div>
+</div>
+<p>让我们链接另一种复制方法，将其包含在 <code class="docutils literal"><span class="pre">public/images</span></code> 目录中。</p>
+<p>webpack.mix.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">mix</span>
+  <span class="p">.</span><span class="nx">js</span><span class="p">(</span><span class="s1">&#39;resources/assets/js/app.js&#39;</span><span class="p">,</span> <span class="s1">&#39;public/js&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">styles</span><span class="p">([</span>
+    <span class="s1">&#39;node_modules/open-sans-all/css/open-sans.css&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;node_modules/font-awesome/css/font-awesome.css&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;resources/assets/css/style.css&#39;</span>
+  <span class="p">],</span> <span class="s1">&#39;public/css/style.css&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">copy</span><span class="p">(</span><span class="s1">&#39;node_modules/open-sans-all/fonts&#39;</span><span class="p">,</span>  <span class="s1">&#39;public/fonts&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">copy</span><span class="p">(</span><span class="s1">&#39;node_modules/font-awesome/fonts&#39;</span><span class="p">,</span>  <span class="s1">&#39;public/fonts&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">copy</span><span class="p">(</span><span class="s1">&#39;resources/assets/images&#39;</span><span class="p">,</span> <span class="s1">&#39;public/images&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>我们还需要确保视图指向图像的正确文件位置。</p>
+<p>resources/views/app.blade.php:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;toolbar&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">img</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;icon&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;{{ asset(&#39;images/logo.png&#39;) }}&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>vuebnb<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;modal-content&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;{{ asset(&#39;images/header.jpg&#39;) }}&quot;</span><span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>不要忘记，入口文件中的 <code class="docutils literal"><span class="pre">headerImageStyle</span></code> 数据属性也需要更新。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">headerImageStyle</span><span class="o">:</span> <span class="p">{</span>
+  <span class="s1">&#39;background-image&#39;</span><span class="o">:</span> <span class="s1">&#39;url(/images/header.jpg)&#39;</span>
+<span class="p">},</span>
+</pre></div>
+</div>
+<p>虽然不完全是图片，但我们也会迁移 <code class="docutils literal"><span class="pre">favicon</span></code> 。 这可以直接放入 <code class="docutils literal"><span class="pre">public</span></code> 文件夹中：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ cp ../vuebnb-prototype/favicon.ico ./public
+</pre></div>
+</div>
+<p>再次构建之后，我们现在将完全迁移完成 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 客户端应用程序原型。</p>
+</div>
+</div>
+<div class="section" id="id20">
+<h2>6.8. 开发工具<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h2>
+<p>我们可以利用一些方便的开发工具来改进我们的前端工作流程，包括：</p>
+<ul class="simple">
+<li>观察模式；</li>
+<li>BrowserSync；</li>
+</ul>
+<div class="section" id="watch">
+<h3>6.8.1. Watch模式<a class="headerlink" href="#watch" title="永久链接至标题">¶</a></h3>
+<p>到目前为止，我们每次进行更改时都会使用 <code class="docutils literal"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">dev</span></code> 手动运行我们的应用程序的构建。 <code class="docutils literal"><span class="pre">Webpack</span></code> 还有一个监视模式，在依赖关系发生变化时它会自动运行构建。 由于 <code class="docutils literal"><span class="pre">Webpack</span></code> 的设计，它能够通过重建已更改的模块来高效地完成这些自动构建。</p>
+<p>要使用监视模式，请运行 <code class="docutils literal"><span class="pre">package.json</span></code> 中包含的 <code class="docutils literal"><span class="pre">watch</span></code> 脚本：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm run watch
+</pre></div>
+</div>
+<p>要测试它已经工作，请在 <code class="docutils literal"><span class="pre">resources/assets/js/app.js</span></code> 的底部添加它：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Testing watch&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果 <code class="docutils literal"><span class="pre">watch</span></code> 模式正常运行，保存此文件将触发构建，并且您将在终端中看到更新的构建统计信息。 如果您刷新页面，您将在控制台中看到测试观察消息。</p>
+<p>要关闭监视模式，请在终端中按 <code class="docutils literal"><span class="pre">Ctrl+C</span></code> 。 它可以随时重新启动。 一旦你满意的观察模式正在工作，不要忘记删除 <code class="docutils literal"><span class="pre">console.log</span></code> 。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">我会假设在本书的其余部分你正在使用 <code class="docutils literal"><span class="pre">watch</span></code> ，所以我不会提醒你在发生变化后再构建你的项目！</p>
+</div>
+</div>
+<div class="section" id="browsersync">
+<h3>6.8.2. BrowserSync<a class="headerlink" href="#browsersync" title="永久链接至标题">¶</a></h3>
+<p>另一个有用的开发工具是 <code class="docutils literal"><span class="pre">BrowserSync</span></code> 。与观察模式类似， <code class="docutils literal"><span class="pre">BrowserSync</span></code> 监视您更改的文件，并在发生更改时将更改插入浏览器。这样可以避免您在每次构建后都必须手动执行浏览器刷新。</p>
+<p>要使用 <code class="docutils literal"><span class="pre">BrowserSync</span></code> ，您需要安装 <code class="docutils literal"><span class="pre">Yarn</span></code> 软件包管理器。如果您正在 <code class="docutils literal"><span class="pre">Vagrant</span> <span class="pre">Box</span></code> 内运行终端命令，那么您已经设置好了，因为 <code class="docutils literal"><span class="pre">Yarn</span></code> 预装在 <code class="docutils literal"><span class="pre">Homestead</span></code> 中。否则，请按照 <code class="docutils literal"><span class="pre">Yarn</span></code> 的安装说明进行操作： <a class="reference external" href="https://yarnpkg.com/en/docs/install">https://yarnpkg.com/en/docs/install</a> 。</p>
+<p><code class="docutils literal"><span class="pre">BrowserSync</span></code> 已经集成在 <code class="docutils literal"><span class="pre">Mix</span></code> 中，并可通过在 <code class="docutils literal"><span class="pre">Mix</span></code> 配置中链式对 <code class="docutils literal"><span class="pre">browserSync</span></code> 方法进行调用。将选项对象与应用程序的 <code class="docutils literal"><span class="pre">URL</span></code> 作为代理属性传递，例如 <code class="docutils literal"><span class="pre">browserSync({proxy:</span> <span class="pre">http://vuebnb.test})</span></code> 。</p>
+<p>我们将应用程序的 <code class="docutils literal"><span class="pre">URL</span></code> 作为环境变量存储在 <code class="docutils literal"><span class="pre">.env</span></code> 文件中，因此我们从那里获取它，而不是硬编码到我们的 <code class="docutils literal"><span class="pre">Mix</span></code> 文件中。首先，安装 <code class="docutils literal"><span class="pre">NPM</span> <span class="pre">dotenv</span></code> 模块，该模块将 <code class="docutils literal"><span class="pre">.env</span></code> 文件读取到 <code class="docutils literal"><span class="pre">Node</span></code> 项目中：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm i dotenv --save-devpm
+</pre></div>
+</div>
+<p>在 <code class="docutils literal"><span class="pre">Mix</span></code> 配置文件顶部 <code class="docutils literal"><span class="pre">require</span></code> 的 <code class="docutils literal"><span class="pre">dotenv</span></code> 模块，并使用 <code class="docutils literal"><span class="pre">config</span></code> 方法加载 <code class="docutils literal"><span class="pre">.env</span></code> 。 任何环境变量都将作为 <code class="docutils literal"><span class="pre">process.env</span></code> 对象的属性可用。</p>
+<p>我们现在可以将选项对象传递给 <code class="docutils literal"><span class="pre">browserSync</span></code> 方法，并将 <code class="docutils literal"><span class="pre">process.env.APP_URL</span></code> 分配给 <code class="docutils literal"><span class="pre">proxy</span></code> 。 我也喜欢使用 <code class="docutils literal"><span class="pre">open:false</span></code> 选项，以防止 <code class="docutils literal"><span class="pre">BrowserSync</span></code> 自动打开选项卡。</p>
+<p>webpack.mix.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;dotenv&#39;</span><span class="p">).</span><span class="nx">config</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">mix</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;laravel-mix&#39;</span><span class="p">);</span>
+<span class="nx">mix</span>
+  <span class="p">...</span>
+  <span class="p">.</span><span class="nx">browserSync</span><span class="p">({</span>
+    <span class="nx">proxy</span><span class="o">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">APP_URL</span><span class="p">,</span>
+    <span class="nx">open</span><span class="o">:</span> <span class="kc">false</span>
+  <span class="p">});</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">BrowserSync</span></code> 默认运行在其自己的端口上， <code class="docutils literal"><span class="pre">3000</span></code> 。 当您再次运行 <code class="docutils literal"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">watch</span></code> 时，在 <code class="docutils literal"><span class="pre">localhost:3000</span></code> 上打开一个新选项卡。 在对代码进行更改后，您会发现它们会自动反映在此 <code class="docutils literal"><span class="pre">BrowserSync</span></code> 选项卡中！</p>
+<p>请注意，如果您在 <code class="docutils literal"><span class="pre">Homestead</span></code> 框中运行 <code class="docutils literal"><span class="pre">BrowserSync</span></code> ，则可以在 <code class="docutils literal"><span class="pre">vuebnb.test:3000</span></code> 上访问它。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">即使 <code class="docutils literal"><span class="pre">BrowserSync</span></code> 服务器运行在与 <code class="docutils literal"><span class="pre">Web</span></code> 服务器不同的端口上，我仍将继续引用应用程序中的 <code class="docutils literal"><span class="pre">URL</span></code> ，而不指定端口来避免混淆，例如 <code class="docutils literal"><span class="pre">vuebnb.test</span></code> 而不是 <code class="docutils literal"><span class="pre">localhost:3000</span></code> 或 <code class="docutils literal"><span class="pre">vuebnb.test:3000</span></code> 。</p>
+</div>
+</div>
+</div>
+<div class="section" id="es2015">
+<h2>6.9. ES2015<a class="headerlink" href="#es2015" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">js</span> <span class="pre">Mix</span></code> 方法将 <code class="docutils literal"><span class="pre">Babel</span></code> 插件应用于 <code class="docutils literal"><span class="pre">Webpack</span></code> ，确保在添加到 <code class="docutils literal"><span class="pre">bundle</span></code> 文件之前，将任何 <code class="docutils literal"><span class="pre">ES2015</span></code> 代码转换为适合浏览器的 <code class="docutils literal"><span class="pre">ES5</span></code> 。</p>
+<p>我们仅使用 <code class="docutils literal"><span class="pre">ES5</span></code> 语法编写了 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 前端应用程序原型，因为我们直接在浏览器中运行它，而无需任何构建步骤。 但是现在我们可以利用 <code class="docutils literal"><span class="pre">ES2015</span></code> 语法，其中包含许多便利的功能。</p>
+<p>例如，我们可以使用简写来为对象属性分配函数。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">escapeKeyListener</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>改变为：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">escapeKeyListener</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在 <code class="docutils literal"><span class="pre">app.js</span></code> 中有几个我们可以改变的实例。 在我们的代码中没有任何其他机会使用 <code class="docutils literal"><span class="pre">ES2015</span></code> 语法，但在接下来的章节中我们会看到更多。</p>
+<div class="section" id="polyfills">
+<h3>6.9.1. Polyfills<a class="headerlink" href="#polyfills" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">ES2015</span></code> 提案包括新的语法，但也包括新的 <code class="docutils literal"><span class="pre">APIs</span></code> ，如 <code class="docutils literal"><span class="pre">Promise</span></code> ，以及对现有 <code class="docutils literal"><span class="pre">APIs</span></code> 的补充，如 <code class="docutils literal"><span class="pre">Array</span></code> 和 <code class="docutils literal"><span class="pre">Object</span></code> 。</p>
+<p><code class="docutils literal"><span class="pre">Webpack</span> <span class="pre">Babel</span></code> 插件可以转变 <code class="docutils literal"><span class="pre">ES2015</span></code> 语法，但是新的 <code class="docutils literal"><span class="pre">API</span></code> 方法需要填充。 <code class="docutils literal"><span class="pre">polyfill</span></code> 是一个在浏览器中运行的脚本，用于涵盖可能会丢失的 <code class="docutils literal"><span class="pre">API</span></code> 或 <code class="docutils literal"><span class="pre">API</span></code> 方法。</p>
+<p>例如， <code class="docutils literal"><span class="pre">Object.assign</span></code> 是 <code class="docutils literal"><span class="pre">Internet</span> <span class="pre">Explorer</span> <span class="pre">11</span></code> 不支持的新 <code class="docutils literal"><span class="pre">API</span></code> 方法。如果我们想在前端应用程序中使用它，我们必须在脚本的顶部检查是否存在 <code class="docutils literal"><span class="pre">API</span></code> 方法，如果不存在 ，我们用 <code class="docutils literal"><span class="pre">polyfill</span></code> 手动定义它：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span> <span class="o">!=</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Polyfill to define Object.assign</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>说到这一点， <code class="docutils literal"><span class="pre">Object.assign</span></code> 是一种合并对象的方便方式，在我们的前端应用程序中会很有用。 让我们在我们的代码中使用它，然后添加一个 <code class="docutils literal"><span class="pre">polyfill</span></code> 以确保代码将在较旧的浏览器中运行。</p>
+<p>查看我们的入口文件 <code class="docutils literal"><span class="pre">resources/assets/js/app.js</span></code> 中的 <code class="docutils literal"><span class="pre">data</span></code> 对象。 我们手动将 <code class="docutils literal"><span class="pre">sample</span></code> 对象的每个属性分配给 <code class="docutils literal"><span class="pre">data</span></code> 对象，并赋予它相同的属性名称。 为了不必自己重复，我们可以使用 <code class="docutils literal"><span class="pre">Object.assign</span></code> 并简单地合并这两个对象。 在实践中，这没有什么不同，它只是更简洁的代码。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">data</span><span class="o">:</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">sample</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">headerImageStyle</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s1">&#39;background-image&#39;</span><span class="o">:</span> <span class="s1">&#39;url(/images/header.jpg)&#39;</span>
+  <span class="p">},</span>
+  <span class="nx">contracted</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">modalOpen</span><span class="o">:</span> <span class="kc">false</span>
+<span class="p">}),</span>
+</pre></div>
+</div>
+<p>为了填充 <code class="docutils literal"><span class="pre">Object.assign</span></code> ，我们必须安装一个新的 <code class="docutils literal"><span class="pre">core-js</span></code> 依赖项，它是大多数新的 <code class="docutils literal"><span class="pre">JavaScript</span> <span class="pre">API</span></code> 的一个 <code class="docutils literal"><span class="pre">polyfills</span></code> 库。 我们稍后会在项目中使用一些其他 <code class="docutils literal"><span class="pre">core-js</span></code> 的 <code class="docutils literal"><span class="pre">polyfills</span></code> ：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm i --save-dev core-js
+</pre></div>
+</div>
+<p>在 <code class="docutils literal"><span class="pre">app.js</span></code> 的顶部，添加这一行以包含 <code class="docutils literal"><span class="pre">Object.assign</span></code> 补充：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">import</span> <span class="s2">&quot;core-js/fn/object/assign&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>在此版本之后，刷新页面以查看它是否有效。 除非您可以在旧版浏览器（如 <code class="docutils literal"><span class="pre">Internet</span> <span class="pre">Explorer</span></code> ）上测试此功能，否则很可能您不会注意到任何区别，但现在您可以确保此代码几乎可以在任何地方运行。</p>
+</div>
+</div>
+<div class="section" id="id21">
+<h2>6.10. 模拟数据<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h2>
+<p>我们现在已经完全将 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 原型迁移到我们的 <code class="docutils literal"><span class="pre">Laravel``项目中，此外我们还添加了构建步骤。</span> <span class="pre">前端应用程序中的所有内容都与第2章原型</span> <span class="pre">``Vuebnb</span></code> ，您的第一个 <code class="docutils literal"><span class="pre">Vue.js</span></code> 项目一样。</p>
+<p>但是，我们仍然将模拟数据硬编码到前端应用程序中。 在本章的最后部分，我们将删除硬编码数据，并用后端数据替换它。</p>
+<div class="section" id="id22">
+<h3>6.10.1. 路由<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h3>
+<p>目前，主页路由，即 <code class="docutils literal"><span class="pre">/</span></code> ，加载我们的前端应用程序。 但是到目前为止，我们为前端应用程序构建的内容并不意味着成为主页！ 我们将在未来的章节中进行构建。</p>
+<p>我们已经构建的是列表页面，该页面应该位于 <code class="docutils literal"><span class="pre">/listing/5</span></code> 这样的路径中，其中 <code class="docutils literal"><span class="pre">5</span></code> 是正在使用的模拟数据列表的 <code class="docutils literal"><span class="pre">ID</span></code> 。</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">页面</th>
+<th class="head">路由</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>主页</td>
+<td>/</td>
+</tr>
+<tr class="row-odd"><td>列表页面</td>
+<td>/listing/{listing}</td>
+</tr>
+</tbody>
+</table>
+<p>修改路由来反应该设置：</p>
+<p>routes/web.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">App\Listing</span><span class="p">;</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/listing/{listing}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$id</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>就像在我们的 <code class="docutils literal"><span class="pre">api/listing/{listing}</span></code> 路由中一样，动态部分是为了匹配我们的某个模拟数据列表的 <code class="docutils literal"><span class="pre">ID</span></code> 。 如果您回想上一章，我们创建了30个模拟数据列表， <code class="docutils literal"><span class="pre">ID</span></code> 范围为1到30。</p>
+<p>如果我们现在在闭包函数的配置文件中键入提示 <code class="docutils literal"><span class="pre">Listing</span></code> 模型，则 <code class="docutils literal"><span class="pre">Laravel</span></code> 的服务容器将传入一个模型，该模型的 <code class="docutils literal"><span class="pre">ID</span></code> 与动态路径段相匹配。</p>
+<p>routes/web.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/listing/{listing}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Listing</span> <span class="nv">$listing</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// echo $listing-&gt;id // will equal 5 for route /listing/5</span>
+  <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>一个很酷的内置功能是，如果动态段与模型不匹配，例如 <code class="docutils literal"><span class="pre">/listing/50</span></code> 或 <code class="docutils literal"><span class="pre">/listing/somestring</span></code> ，则 <code class="docutils literal"><span class="pre">Laravel</span></code> 将中止路由并返回 <code class="docutils literal"><span class="pre">404</span></code> 。</p>
+</div>
+<div class="section" id="id23">
+<h3>6.10.2. 架构<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h3>
+<p>考虑到我们可以在路由处理程序中检索正确的列表模型，并且因为 <code class="docutils literal"><span class="pre">Blade</span></code> 模板系统，我们可以动态地将内容插入到应用程序视图中，出现了一个明显的体系结构：我们可以将模型注入页面的头部。 这样，当 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序加载时，它可以立即访问模型：</p>
+<div class="figure" id="id36">
+<img alt="_images/5-14.png" src="_images/5-14.png" />
+<p class="caption"><span class="caption-text">图5.14 内联列表模型到页面的头部</span></p>
+</div>
+</div>
+<div class="section" id="id24">
+<h3>6.10.3. 注入数据<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h3>
+<p>将模拟列表数据导入客户端应用程序需要几个步骤。 我们将开始将模型转换为数组。 然后可以使用视图助手在运行时在模板中使模型可用。</p>
+<p>routes/web.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/listing/{listing}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Listing</span> <span class="nv">$listing</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$model</span> <span class="o">=</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">toArray</span><span class="p">();</span>
+  <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="p">[</span> <span class="s1">&#39;model&#39;</span> <span class="o">=&gt;</span> <span class="nv">$model</span> <span class="p">]);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>现在，在 <code class="docutils literal"><span class="pre">Blade</span></code> 模板中，我们将在文档的头部创建一个脚本。 通过使用双括号，我们可以将模型直接插入到脚本中。</p>
+<p>resources/views/app.blade.php:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  ...
+  <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">({{</span> <span class="nx">$model</span><span class="p">[</span> <span class="s1">&#39;id&#39;</span> <span class="p">]</span> <span class="p">}});</span>
+  <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>如果我们现在转到 <code class="docutils literal"><span class="pre">/listing/5</span></code> 路由，我们将在我们的页面源中看到以下内容：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>&lt;script type=&quot;text/javascript&quot;&gt;
+  console.log(5);
+&lt;/script&gt;
+</pre></div>
+</div>
+<p>您将在我们的控制台中看到以下内容：</p>
+<div class="figure" id="id37">
+<img alt="_images/5-15.png" src="_images/5-15.png" />
+<p class="caption"><span class="caption-text">图5.15 注入模型ID后控制台输出</span></p>
+</div>
+</div>
+<div class="section" id="json">
+<h3>6.10.4. JSON<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h3>
+<p>现在我们将在视图中将整个模型编码为 <code class="docutils literal"><span class="pre">JSON</span></code> 。 <code class="docutils literal"><span class="pre">JSON</span></code> 格式很好，因为它可以作为字符串存储，并且可以通过 <code class="docutils literal"><span class="pre">PHP</span></code> 和 <code class="docutils literal"><span class="pre">JavaScript</span></code> 进行解析。</p>
+<p>在我们的内联脚本中，让我们将模型格式化为 <code class="docutils literal"><span class="pre">JSON</span></code> 字符串并分配给 <code class="docutils literal"><span class="pre">model</span></code> 变量。</p>
+<p>resources/views/app.blade.php:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>&lt;script type=&quot;text/javascript&quot;&gt;
+  var model = &quot;{!! addslashes(json_encode($model)) !!}&quot;;
+  console.log(model);
+&lt;/script&gt;
+</pre></div>
+</div>
+<p>注意我们还必须将 <code class="docutils literal"><span class="pre">json_encode</span></code> 包装在另一个全局函数 <code class="docutils literal"><span class="pre">addslashes</span></code> 中。 这个函数会在任何需要转义的字符之前添加反斜杠。 有必要这样做，因为 <code class="docutils literal"><span class="pre">JavaScript</span> <span class="pre">JSON</span></code> 解析器不知道字符串中的哪些引号是 <code class="docutils literal"><span class="pre">JavaScript</span></code> 语法的一部分，哪些是 <code class="docutils literal"><span class="pre">JSON</span></code> 对象的一部分。</p>
+<p>我们还必须使用不同类型的 <code class="docutils literal"><span class="pre">Blade</span></code> 语法进行插值。 <code class="docutils literal"><span class="pre">Blade</span></code> 的一项功能是通过 <code class="docutils literal"><span class="pre">PHP</span></code> 的 <code class="docutils literal"><span class="pre">htmlspecialchars</span></code> 函数处理双括号 <code class="docutils literal"><span class="pre">{{}}</span></code> 中的语句，以防止 <code class="docutils literal"><span class="pre">XSS</span></code> 攻击。 不幸的是，这会使我们的 <code class="docutils literal"><span class="pre">JSON</span></code> 对象无效。 解决方案是使用替代 <code class="docutils literal"><span class="pre">{!!</span> <span class="pre">!!}</span></code> 语法，它不验证内容。 在这种情况下这是安全的，因为我们确信我们没有使用任何用户提供的内容。</p>
+<p>现在，如果我们刷新页面，我们会在控制台中看到 <code class="docutils literal"><span class="pre">JSON</span></code> 对象的字符串形式。</p>
+<p>如果我们将 <code class="docutils literal"><span class="pre">log</span></code> 命令更改为 <code class="docutils literal"><span class="pre">console.log(JSON.parse(model))</span></code> ，我们将模型看作不是字符串，而是 <code class="docutils literal"><span class="pre">JavaScript</span></code> 对象。</p>
+<p>我们现在已经成功地将我们的模型从后端引入前端应用程序！</p>
+</div>
+<div class="section" id="id25">
+<h3>6.10.5. 脚本之间共享数据<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h3>
+<p>我们现在有另一个需要克服的问题。 文档头部的内联脚本（这是我们的模型对象所在的位置）与我们的客户端应用程序脚本不同。</p>
+<p>正如我们在前一节中讨论的那样，多个脚本和全局变量通常不是首选，因为它们会使应用程序变得脆弱。 但在这种情况下，他们是必要的。 在两个脚本之间共享对象或函数的最安全方法是使其成为全局 <code class="docutils literal"><span class="pre">window</span></code> 对象的属性。 这样，从代码中可以明显看出，您有意使用全局变量：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// scriptA.js</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">myvar</span> <span class="o">=</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">;</span>
+
+<span class="c1">// scriptB.js</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">myvar</span><span class="p">);</span> <span class="c1">// Hello World</span>
+</pre></div>
+</div>
+<p>如果您为项目添加其他脚本，特别是第三方脚本，它们也可能添加到 <code class="docutils literal"><span class="pre">window</span></code> 对象中，并有可能导致命名冲突。 为了尽可能避免这种情况，我们将确保我们使用非常具体的属性名称。</p>
+<p>resources/views/app.blade.php:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+  <span class="nb">window</span><span class="p">.</span><span class="nx">vuebnb_listing_model</span> <span class="o">=</span> <span class="s2">&quot;{!! addslashes(json_encode($model)) !!}&quot;</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>现在，在前端应用程序的入口文件中，我们可以在脚本中使用此 <code class="docutils literal"><span class="pre">window</span></code> 属性。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">model</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">vuebnb_listing_model</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id26">
+<h3>6.10.6. 替换硬编码模式<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h3>
+<p>我们现在可以在入口文件中访问我们的列表模型，所以让我们在数据属性赋值中使用我们的硬编码模型进行切换。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">model</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">vuebnb_listing_model</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="p">{</span>
+    <span class="p">...</span>
+  <span class="p">})</span>
+  <span class="p">...</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>完成后，我们现在可以从 <code class="docutils literal"><span class="pre">app.js</span></code> 顶部的声明中移除 <code class="docutils literal"><span class="pre">import</span> <span class="pre">sample</span> <span class="pre">from</span> <span class="pre">'./data';</span></code> 。 我们也可以删除示例数据文件，因为它们不会在项目中进一步使用：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ rm resources/assets/js/data.js resources/assets/images/header.jpg
+</pre></div>
+</div>
+</div>
+<div class="section" id="id27">
+<h3>6.10.7. 设施和价格<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h3>
+<p>如果你现在刷新页面，它会加载，但脚本会有一些错误。 问题在于，应用程序中的设施和价格在前端和后端数据结构不同。 这是因为该模型最初来自我们的数据库，该数据库存储标量值。 在 <code class="docutils literal"><span class="pre">JavaScript</span></code> 中，我们可以使用更丰富的对象，这些对象允许我们嵌套数据，使其更容易处理和操作。</p>
+<p>以下是模型对象当前的外观。 请注意，设施和价格是标量值：</p>
+<div class="figure" id="id38">
+<img alt="_images/5-18.png" src="_images/5-18.png" />
+<p class="caption"><span class="caption-text">图5.18 列表模式当前结构</span></p>
+</div>
+<p>下面就是我们需要的样子，以设施和价格作为数组：</p>
+<div class="figure" id="id39">
+<img alt="_images/5-19.png" src="_images/5-19.png" />
+<p class="caption"><span class="caption-text">图5.19 列表模式当前结构</span></p>
+</div>
+<p>为了解决这个问题，我们需要在将模型传递给 <code class="docutils literal"><span class="pre">Vue</span></code> 之前对模型进行转换。 为了节省您对此的太多思考，我已经将转换函数放到了一个文件 <code class="docutils literal"><span class="pre">resources/assets/js/helpers.js</span></code> 中。 这个文件是一个 <code class="docutils literal"><span class="pre">JavaScript</span></code> 模块，我们可以将它导入到我们的入口文件中，并通过将模型对象传递给函数来使用。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span>import Vue from &#39;vue&#39;;
+import { populateAmenitiesAndPrices } from &#39;./helpers&#39;;
+
+let model = JSON.parse(window.vuebnb_listing_model);
+model = populateAmenitiesAndPrices(model)&lt;/span&gt;;
+</pre></div>
+</div>
+<p>一旦我们添加并刷新页面，我们应该在页面的文本部分看到新的模型数据（尽管仍然使用硬编码的图像）。</p>
+</div>
+<div class="section" id="urls">
+<h3>6.10.8. 图形URLs<a class="headerlink" href="#urls" title="永久链接至标题">¶</a></h3>
+<p>最后要做的是在前端应用程序中替换硬编码图像的 <code class="docutils literal"><span class="pre">URL</span></code> 。 这些 <code class="docutils literal"><span class="pre">URL</span></code> 目前不是模型的一部分，因此需要在将模型注入模板之前手动添加到模型中。</p>
+<p>在第4章“使用 <code class="docutils literal"><span class="pre">Laravel</span></code> 构建 <code class="docutils literal"><span class="pre">Web</span></code> 服务”中，我们已经完成了一项非常类似的工作，以获取 <code class="docutils literal"><span class="pre">API</span></code> 列表路由。</p>
+<p>app/Http/Controllers/ListingController.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">get_listing_api</span><span class="p">(</span><span class="nx">Listing</span> <span class="nv">$listing</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="nv">$model</span> <span class="o">=</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">toArray</span><span class="p">();</span>
+  <span class="k">for</span><span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;=</span><span class="mi">4</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$model</span><span class="p">[</span><span class="s1">&#39;image_&#39;</span> <span class="o">.</span> <span class="nv">$i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">asset</span><span class="p">(</span>
+      <span class="s1">&#39;images/&#39;</span> <span class="o">.</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">id</span> <span class="o">.</span> <span class="s1">&#39;/Image_&#39;</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s1">&#39;.jpg&#39;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">(</span><span class="nv">$model</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>事实上，我们的 <code class="docutils literal"><span class="pre">web</span></code> 路由最终会使用与此 <code class="docutils literal"><span class="pre">API</span></code> 路由相同的代码，而不是返回 <code class="docutils literal"><span class="pre">JSON</span></code> ，它将返回一个视图。</p>
+<p>让我们分享共同的逻辑。 首先将列表控制器中的路由闭包函数移至新的 <code class="docutils literal"><span class="pre">get_listing_web</span></code> 方法中。</p>
+<p>app/Http/Controllers/ListingController.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Listing</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ListingController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">get_listing_api</span><span class="p">(</span><span class="nx">Listing</span> <span class="nv">$listing</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="o">...</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">get_listing_web</span><span class="p">(</span><span class="nx">Listing</span> <span class="nv">$listing</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="nv">$model</span> <span class="o">=</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">toArray</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;model&#39;</span> <span class="o">=&gt;</span> <span class="nv">$model</span><span class="p">]);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后调整路由以调用这个新的控制器方法。</p>
+<p>routes/web.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/listing/{listing}&#39;</span><span class="p">,</span> <span class="s1">&#39;ListingController@get_listing_web&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>现在让我们更新控制器，以便 <code class="docutils literal"><span class="pre">Web</span></code> 和 <code class="docutils literal"><span class="pre">API</span></code> 路由都可以将图像的 <code class="docutils literal"><span class="pre">URL</span></code> 添加到其模型中。 我们将首先创建一个新的 <code class="docutils literal"><span class="pre">add_image_urls</span></code> 方法，它抽取 <code class="docutils literal"><span class="pre">get_listing_api</span></code> 中使用的逻辑。 现在这两种路由处理方法都会调用这个新的方法。</p>
+<p>app/Http/Controllers/ListingController.php:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Listing</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ListingController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+  <span class="k">private</span> <span class="k">function</span> <span class="nf">add_image_urls</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="nv">$id</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;=</span><span class="mi">4</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$model</span><span class="p">[</span><span class="s1">&#39;image_&#39;</span> <span class="o">.</span> <span class="nv">$i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">asset</span><span class="p">(</span>
+        <span class="s1">&#39;images/&#39;</span> <span class="o">.</span> <span class="nv">$id</span> <span class="o">.</span> <span class="s1">&#39;/Image_&#39;</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s1">&#39;.jpg&#39;</span>
+      <span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nv">$model</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">get_listing_api</span><span class="p">(</span><span class="nx">Listing</span> <span class="nv">$listing</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="nv">$model</span> <span class="o">=</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">toArray</span><span class="p">();</span>
+    <span class="nv">$model</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">add_image_urls</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">(</span><span class="nv">$model</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">get_listing_web</span><span class="p">(</span><span class="nx">Listing</span> <span class="nv">$listing</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="nv">$model</span> <span class="o">=</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">toArray</span><span class="p">();</span>
+    <span class="nv">$model</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">add_image_urls</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="nv">$listing</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;model&#39;</span> <span class="o">=&gt;</span> <span class="nv">$model</span><span class="p">]);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>完成后，如果我们刷新应用并打开 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">Devtools</span></code> ，我们应该看到我们将图像 <code class="docutils literal"><span class="pre">URL</span></code> 作为图像数据属性：</p>
+<div class="section" id="id28">
+<h4>6.10.8.1. 替换硬编码图形URLs<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h4>
+<p>最后一步是从后端使用这些图片 <code class="docutils literal"><span class="pre">URL</span></code> ，而不是硬编码的 <code class="docutils literal"><span class="pre">URL</span></code> 。 记住 <code class="docutils literal"><span class="pre">images</span></code> 是 <code class="docutils literal"><span class="pre">URL</span></code> 数组 ，我们将使用第一个图像作为默认值，即 <code class="docutils literal"><span class="pre">images[0]</span></code> 。</p>
+<p>首先，我们将更新入口文件。</p>
+<p>resources/assets/js/app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">headerImageStyle</span><span class="o">:</span> <span class="p">{</span>
+  <span class="s1">&#39;background-image&#39;</span><span class="o">:</span> <span class="sb">`url(</span><span class="si">${</span><span class="nx">model</span><span class="p">.</span><span class="nx">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="sb">)`</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后是模态图像视图。</p>
+<p>resources/views/app.blade.php:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;modal-content&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">img</span> <span class="na">v-bind:src</span><span class="o">=</span><span class="s">&quot;images[0]&quot;</span><span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>完成之后，在重建和页面刷新之后，您将在页面中看到模拟数据列表 <code class="docutils literal"><span class="pre">＃5</span></code> 的内容：</p>
+<div class="figure" id="id40">
+<img alt="_images/5-22.png" src="_images/5-22.png" />
+<p class="caption"><span class="caption-text">图5.22 使用模拟数据的列表页面</span></p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id29">
+<h2>6.11. 总结<a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h2>
+<p>在本章中，我们熟悉了 <code class="docutils literal"><span class="pre">Laravel</span></code> 的默认前端应用程序的文件和配置。然后，我们将 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 客户端应用程序原型迁移到我们的 <code class="docutils literal"><span class="pre">Laravel</span></code> 项目中，实现了 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的第一次全栈迭代。</p>
+<p>我们还了解了 <code class="docutils literal"><span class="pre">Webpack</span></code> ，看看它如何通过将模块绑定到适合浏览器的构建文件来解决 <code class="docutils literal"><span class="pre">JavaScript</span></code> 依赖性管理问题。我们通过 <code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">Mix</span></code> 在我们的项目中设置了 <code class="docutils literal"><span class="pre">Webpack</span></code> ，它为常见构建场景提供了一个简单的 <code class="docutils literal"><span class="pre">API</span></code> 。</p>
+<p>然后，我们调查了使前端开发过程更简单的工具，包括 <code class="docutils literal"><span class="pre">Webpack</span></code> 监视模式和 <code class="docutils literal"><span class="pre">BrowserSync</span></code> 。</p>
+<p>最后，我们看到了如何通过将数据注入到文档头中来从后端获取数据到前端应用程序。</p>
+<p>在第6章中，使用 <code class="docutils literal"><span class="pre">Vue.js</span></code> 组件编写小部件组件，我们将介绍使用 <code class="docutils literal"><span class="pre">Vue.js</span></code> ：组件构建用户界面的最重要和最强大的工具之一。我们将为 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 构建一个图像传送带，并使用组件知识将 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 客户端应用程序重构为灵活的基于组件的架构。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="使用Vue组件来编写小部件.html" class="btn btn-neutral float-right" title="7. 使用Vue组件来组合小部件" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="使用Laravel构建Web服务.html" class="btn btn-neutral" title="5. 使用Laravel构建Web服务" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

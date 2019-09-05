@@ -1,0 +1,1216 @@
+****
+请求
+****
+
+请求信息
+========
+如果要获取当前的请求信息，可以使用 ``\think\Request`` 类，除了下文中的
+
+.. code-block:: php
+
+    $request = Request::instance();
+
+也可以使用助手函数
+
+.. code-block:: php
+
+    $request = request();
+
+.. note:: 当然，最方便的还是使用注入请求对象的方式来获取变量。
+
+获取请求URL信息
+---------------
+.. code-block:: php
+
+    <?php
+    $request = Request::instance();
+    // 获取当前域名
+    echo 'domain: ' . $request->domain() . '<br/>';
+    // 获取当前入口文件
+    echo 'file: ' . $request->baseFile() . '<br/>';
+    // 获取当前URL地址 不含域名
+    echo 'url: ' . $request->url() . '<br/>';
+    // 获取包含域名的完整URL地址
+    echo 'url with domain: ' . $request->url(true) . '<br/>';
+    // 获取当前URL地址 不含QUERY_STRING
+    echo 'url without query: ' . $request->baseUrl() . '<br/>';
+    // 获取URL访问的ROOT地址
+    echo 'root:' . $request->root() . '<br/>';
+    // 获取URL访问的ROOT地址，包含域名
+    echo 'root with domain: ' . $request->root(true) . '<br/>';
+    // 获取URL地址中的PATH_INFO信息
+    echo 'pathinfo: ' . $request->pathinfo() . '<br/>';
+    // 获取URL地址中的PATH_INFO信息 不含后缀
+    echo 'pathinfo: ' . $request->path() . '<br/>';
+    // 获取URL地址中的后缀信息
+    echo 'ext: ' . $request->ext() . '<br/>';
+
+输出结果为：
+
+.. code-block:: shell
+
+    domain: http://tp5.com
+    file: /index.php
+    url: /index/index/hello.html?name=thinkphp
+    url with domain: http://tp5.com/index/index/hello.html?name=thinkphp
+    url without query: /index/index/hello.html
+    root:
+    root with domain: http://tp5.com
+    pathinfo: index/index/hello.html
+    pathinfo: index/index/hello
+    ext: html
+
+设置/获取 模块/控制器/操作名称
+------------------------------
+.. code-block:: php
+
+    $request = Request::instance();
+    echo "当前模块名称是" . $request->module();
+    echo "当前控制器名称是" . $request->controller();
+    echo "当前操作名称是" . $request->action();
+
+如果当前访问的地址是 http://serverName/index.php/index/hello_world/index
+
+输出结果为：
+
+.. code-block:: shell
+
+    当前模块名称是index
+    当前控制器名称是HelloWorld
+    当前操作名称是index
+
+设置模块名称值需要向 ``module`` 方法中传入名称即可，同样使用于设置控制器名称和操作名称。
+
+.. code-block:: php
+
+    Request::instance()->module('module_name');
+    Request::instance()->controller('controller_name');
+    Request::instance()->action('action_name');
+
+获取请求参数
+------------
+.. code-block:: php
+
+    <?php
+    $request = Request::instance();
+    echo '请求方法：' . $request->method() . '<br/>';
+    echo '资源类型：' . $request->type() . '<br/>';
+    echo '访问ip地址：' . $request->ip() . '<br/>';
+    echo '是否AJax请求：' . var_export($request->isAjax(), true) . '<br/>';
+    echo '请求参数：';
+    dump($request->param());
+    echo '请求参数：仅包含name';
+    dump($request->only(['name']));
+    echo '请求参数：排除name';
+    dump($request->except(['name']));
+
+输出结果为：
+
+.. code-block:: shell
+
+    请求方法：GET
+    资源类型：html
+    访问ip地址：127.0.0.1
+    是否Ajax请求：false
+    请求参数：
+    array (size=2)
+      'test' => string 'ddd' (length=3)
+      'name' => string 'thinkphp' (length=8)
+
+    请求参数：仅包含name
+    array (size=1)
+      'name' => string 'thinkphp' (length=8)
+
+    请求参数：排除name
+    array (size=1)
+      'test' => string 'ddd' (length=3)
+
+获取路由和调度信息
+------------------
+hello方法修改如下：
+
+.. code-block:: php
+
+    <?php
+    $request = Request::instance();
+    echo '路由信息：';
+    dump($request->route());
+    echo '调度信息：';
+    dump($request->dispatch());
+
+路由定义为：
+
+.. code-block:: php
+
+    return [
+        'hello/:name' =>['index/hello',[],['name'=>'\w+']],
+    ];
+
+访问下面的URL地址：
+
+.. code-block:: shell
+
+    http://serverName/hello/thinkphp
+
+输出信息为：
+
+.. code-block:: shell
+
+    路由信息：
+    array (size=4)
+      'rule' => string 'hello/:name' (length=11)
+      'route' => string 'index/hello' (length=11)
+      'pattern' =>
+        array (size=1)
+          'name' => string '\w+' (length=3)
+      'option' =>
+        array (size=0)
+          empty
+
+    调度信息：
+    array (size=2)
+      'type' => string 'module' (length=6)
+      'module' =>
+        array (size=3)
+          0 => null
+          1 => string 'index' (length=5)
+          2 => string 'hello' (length=5)
+
+设置请求信息
+------------
+如果某些环境下面获取的请求信息有误，可以手动设置这些信息参数，使用下面的方式：
+
+.. code-block:: php
+
+    <?php
+    $request = Request::instance();
+    $request->root('index.php');
+    $request->pathinfo('index/index/hello');
+
+输入变量
+========
+概述
+----
+可以通过 ``Request`` 对象完成全局输入变量的检测、获取和安全过滤，支持包括 ``$_GET`` 、 ``$_POST`` 、 ``$_REQUEST`` 、 ``$_SERVER`` 、 ``$_SESSION`` 、 ``$_COOKIE`` 、 ``$_ENV`` 等系统变量，以及文件上传信息。
+
+检测变量是否设置
+----------------
+可以使用 ``has`` 方法来检测一个变量参数是否设置，如下：
+
+.. code-block:: php
+
+    Request::instance()->has('id','get');
+    Request::instance()->has('name','post');
+
+或者使用助手函数
+
+.. code-block:: php
+
+    input('?get.id');
+    input('?post.name');
+
+变量检测可以支持所有支持的系统变量。
+
+变量获取
+--------
+变量获取使用 ``\think\Request`` 类的如下方法及参数：
+
+.. note:: 变量类型方法('变量名/变量修饰符','默认值','过滤方法')
+
+变量类型方法包括：
+
++---------+-------------------------------+
+| 方法    | 描述                          |
++=========+===============================+
+| param   | 获取当前请求的变量            |
++---------+-------------------------------+
+| get     | 获取 $_GET 变量               |
++---------+-------------------------------+
+| post    | 获取 $_POST 变量              |
++---------+-------------------------------+
+| put     | 获取 PUT 变量                 |
++---------+-------------------------------+
+| delete  | 获取 DELETE 变量              |
++---------+-------------------------------+
+| session | 获取 $_SESSION 变量           |
++---------+-------------------------------+
+| cookie  | 获取 $_COOKIE 变量            |
++---------+-------------------------------+
+| request | 获取 $_REQUEST 变量           |
++---------+-------------------------------+
+| server  | 获取 $_SERVER 变量            |
++---------+-------------------------------+
+| env     | 获取 $_ENV 变量               |
++---------+-------------------------------+
+| route   | 获取 路由（包括PATHINFO）变量 |
++---------+-------------------------------+
+| file    | 获取 $_FILES 变量             |
++---------+-------------------------------+
+
+获取PARAM变量
+^^^^^^^^^^^^^
+``PARAM`` 变量是框架提供的用于自动识别 ``GET`` 、 ``POST`` 或者 ``PUT`` 请求的一种变量获取方式，是系统推荐的获取请求参数的方法，用法如下：
+
+.. code-block:: php
+
+    // 获取当前请求的name变量
+    Request::instance()->param('name');
+    // 获取当前请求的所有变量（经过过滤）
+    Request::instance()->param();
+    // 获取当前请求的所有变量（原始数据）
+    Request::instance()->param(false);
+    // 获取当前请求的所有变量（包含上传文件）
+    Request::instance()->param(true);
+
+.. note:: param方法会把当前请求类型的参数和 ``PATH_INFO`` 变量以及 ``GET`` 请求合并。
+
+使用助手函数实现：
+
+.. code-block:: php
+
+    input('param.name');
+    input('param.');
+    或者
+    input('name'); //因为input函数默认就采用PARAM变量读取方式。
+    input('');
+
+获取GET变量
+^^^^^^^^^^^
+.. code-block:: php
+
+    Request::instance()->get('id'); // 获取某个get变量
+    Request::instance()->get('name'); // 获取get变量
+    Request::instance()->get(); // 获取所有的get变量（经过过滤的数组）
+    Request::instance()->get(false); // 获取所有的get变量（原始数组）
+
+或者使用内置的助手函数 ``input`` 方法实现相同的功能：
+
+.. code-block:: php
+
+    input('get.id');
+    input('get.name');
+    input('get.');
+
+.. note:: ``pathinfo`` 地址参数不能通过 ``get`` 方法获取，查看“获取 PARAM 变量”
+
+获取POST变量
+^^^^^^^^^^^^
+.. code-block:: php
+
+    Request::instance()->post('name'); // 获取某个post变量
+    Request::instance()->post(); // 获取经过过滤的全部post变量
+    Request::instance()->post(false); // 获取全部的post原始变量
+
+使用助手函数实现：
+
+.. code-block:: php
+
+    input('post.name');
+    input('post.');
+
+获取PUT变量
+^^^^^^^^^^^^
+
+.. code-block:: php
+
+    Request::instance()->put('name'); // 获取某个put变量
+    Request::instance()->put(); // 获取全部的put变量（经过过滤）
+    Request::instance()->put(false); // 获取全部的put原始变量
+
+使用助手函数实现：
+
+.. code-block:: php
+
+    input('put.name');
+    input('put.');
+
+获取REQUEST变量
+^^^^^^^^^^^^^^^
+.. code-block:: php
+
+    Request::instance()->request('id'); // 获取某个request变量
+    Request::instance()->request(); // 获取全部的request变量（经过过滤）
+    Request::instance()->request(false); // 获取全部的request原始变量数据
+
+使用助手函数实现：
+
+.. code-block:: php
+
+    input('request.id');
+    input('request.');
+
+获取SERVER变量
+^^^^^^^^^^^^^^
+.. code-block:: php
+
+    Request::instance()->server('PHP_SELF'); // 获取某个server变量
+    Request::instance()->server(); // 获取全部的server变量
+
+使用助手函数实现：
+
+.. code-block:: php
+
+    input('server.PHP_SELF');
+    input('server.');
+
+获取SESSION变量
+^^^^^^^^^^^^^^^
+.. code-block:: php
+
+    Request::instance()->session('user_id'); // 获取某个session变量
+    Request::instance()->session(); // 获取全部的session变量
+
+使用助手函数实现：
+
+.. code-block:: php
+
+    input('session.user_id');
+    input('session.');
+
+获取Cookie变量
+^^^^^^^^^^^^^^
+.. code-block:: php
+
+    Request::instance()->cookie('user_id'); // 获取某个cookie变量
+    Request::instance()->cookie(); // 获取全部的cookie变量
+
+使用助手函数实现：
+
+.. code-block:: php
+
+    input('cookie.user_id');
+    input('cookie.');
+
+变量过滤
+--------
+.. warning:: 框架默认没有设置任何过滤规则，你可以是配置文件中设置全局的过滤规则：
+
+.. code-block:: php
+
+    // 默认全局过滤方法 用逗号分隔多个
+    'default_filter'         => 'htmlspecialchars',
+
+也支持使用 ``Request`` 对象进行全局变量的获取过滤，过滤方式包括函数、方法过滤，以及 PHP 内置的 `Types of filters <http://www.w3school.com.cn/php/php_filter.asp>`_ ，我们可以设置全局变量过滤方法，例如：
+
+.. code-block:: php
+
+    Request::instance()->filter('htmlspecialchars');
+
+支持设置多个过滤方法，例如：
+
+.. code-block:: php
+
+    Request::instance()->filter(['strip_tags','htmlspecialchars']),
+
+也可以在获取变量的时候添加过滤方法，例如：
+
+.. code-block:: php
+
+    Request::instance()->get('name','','htmlspecialchars'); // 获取get变量 并用htmlspecialchars函数过滤
+    Request::instance()->param('username','','strip_tags'); // 获取param变量 并用strip_tags函数过滤
+    Request::instance()->post('name','','org\Filter::safeHtml'); // 获取post变量 并用org\Filter类的safeHtml方法过滤
+
+可以支持传入多个过滤规则，例如：
+
+.. code-block:: php
+
+    Request::instance()->param('username','','strip_tags,strtolower'); // 获取param变量 并依次调用strip_tags、strtolower函数过滤
+
+Request对象还支持PHP内置提供的Filter ID过滤，例如：
+
+.. code-block:: php
+
+    Request::instance()->post('email','',FILTER_VALIDATE_EMAIL);
+
+框架对 FilterID 做了转换支持，因此也可以使用字符串的方式，请使用 `filter_list() <http://www.w3school.com.cn/php/func_filter_list.asp>`_ 函数来获取过滤器名称 ，例如：
+
+.. code-block:: php
+
+    Request::instance()->post('email','','email');
+
+采用字符串方式定义 FilterID 的时候，系统会自动进行一次 filter_id 调用转换成 Filter 常量。
+
+具体的字符串根据 filter_list 函数的返回值来定义。
+
+.. note:: 需要注意的是，采用 Filter ID 进行过滤的话，如果不符合过滤要求的话 会返回 ``false`` ，因此你需要配合默认值来确保最终的值符合你的规范。
+
+例如：
+
+.. code-block:: php
+
+    Request::instance()->post('email','',FILTER_VALIDATE_EMAIL);
+
+就表示，如果不是规范的 ``email`` 地址的话 返回空字符串。
+
+如果当前不需要进行任何过滤的话，可以使用（V5.0.3+版本）
+
+.. code-block:: php
+
+    // 获取get变量 并且不进行任何过滤 即使设置了全局过滤
+    Request::instance()->get('name','',null);
+
+获取部分变量
+-------------
+如果你只需要获取当前请求的部分参数，可以使用：
+
+.. code-block:: php
+
+    // 只获取当前请求的id和name变量
+    Request::instance()->only('id,name');
+
+或者使用数组方式
+
+.. code-block:: php
+
+    // 只获取当前请求的id和name变量
+    Request::instance()->only(['id','name']);
+
+默认获取的是当前请求参数，如果需要获取其它类型的参数，可以使用第二个参数，例如：
+
+.. code-block:: php
+
+    // 只获取GET请求的id和name变量
+    Request::instance()->only(['id','name'],'get');
+    // 只获取POST请求的id和name变量
+    Request::instance()->only(['id','name'],'post');
+
+排除部分变量
+------------
+也支持排除某些变量获取，例如
+
+.. code-block:: php
+
+    // 排除id和name变量
+    Request::instance()->except('id,name');
+
+或者使用数组方式
+
+.. code-block:: php
+
+    // 排除id和name变量
+    Request::instance()->except(['id','name']);
+
+同样支持指定变量类型获取：
+
+.. code-block:: php
+
+    // 排除GET请求的id和name变量
+    Request::instance()->except(['id','name'],'get');
+    // 排除POST请求的id和name变量
+    Request::instance()->except(['id','name'],'post');
+
+变量修饰符
+----------
+``input`` 函数支持对变量使用修饰符功能，可以更好的过滤变量。
+
+用法如下： ``input('变量类型.变量名/修饰符');``
+
+或者
+
+``Request::instance()->变量类型('变量名/修饰符');``
+
+例如：
+
+.. code-block:: php
+
+    input('get.id/d');
+    input('post.name/s');
+    input('post.ids/a');
+    Request::instance()->get('id/d');
+
+ThinkPHP5.0 版本默认的变量修饰符是 ``/s`` ，如果需要获取字符串之外的变量可以使用下面的修饰符，包括：
+
++--------+----------------------+
+| 修饰符 | 作用                 |
++========+======================+
+| s      | 强制转换为字符串类型 |
++--------+----------------------+
+| d      | 强制转换为整型类型   |
++--------+----------------------+
+| b      | 强制转换为布尔类型   |
++--------+----------------------+
+| a      | 强制转换为数组类型   |
++--------+----------------------+
+| f      | 强制转换为浮点类型   |
++--------+----------------------+
+
+.. warning:: 如果你要获取的数据为数组，请一定注意要加上 ``/a`` 修饰符才能正确获取到。
+
+更改变量
+========
+如果需要更改请求变量的值，可以通过下面的方式：
+
+.. code-block:: php
+
+    // 更改GET变量
+    Request::instance()->get(['id'=>10]);
+    // 更改POST变量
+    Request::instance()->post(['name'=>'thinkphp']);
+
+尽量避免直接修改 ``$_GET`` 或者 ``$_POST`` 数据，同时也不能直接修改 ``param`` 变量，例如下面的操作是无效的：
+
+.. code-block:: php
+
+    // 更改请求变量
+    Request::instance()->param(['id'=>10]);
+
+请求类型
+========
+在很多情况下面，我们需要判断当前操作的请求类型是 ``GET`` 、 ``POST`` 、 ``PUT`` 、 ``DELETE`` 或者 ``HEAD`` ，一方面可以针对请求类型作出不同的逻辑处理，另外一方面有些情况下面需要验证安全性，过滤不安全的请求。
+
+ThinkPHP5.0 取消了用于判断请求类型的系统常量(如 ``IS_GET`` ， ``IS_POST`` 等)，统一采用 ``think\Request`` 类处理请求类型。
+
+用法如下:
+
+.. code-block:: php
+
+    // 是否为 GET 请求
+    if (Request::instance()->isGet()) echo "当前为 GET 请求";
+    // 是否为 POST 请求
+    if (Request::instance()->isPost()) echo "当前为 POST 请求";
+    // 是否为 PUT 请求
+    if (Request::instance()->isPut()) echo "当前为 PUT 请求";
+    // 是否为 DELETE 请求
+    if (Request::instance()->isDelete()) echo "当前为 DELETE 请求";
+    // 是否为 Ajax 请求
+    if (Request::instance()->isAjax()) echo "当前为 Ajax 请求";
+    // 是否为 Pjax 请求
+    if (Request::instance()->isPjax()) echo "当前为 Pjax 请求";
+    // 是否为手机访问
+    if (Request::instance()->isMobile()) echo "当前为手机访问";
+    // 是否为 HEAD 请求
+    if (Request::instance()->isHead()) echo "当前为 HEAD 请求";
+    // 是否为 Patch 请求
+    if (Request::instance()->isPatch()) echo "当前为 PATCH 请求";
+    // 是否为 OPTIONS 请求
+    if (Request::instance()->isOptions()) echo "当前为 OPTIONS 请求";
+    // 是否为 cli
+    if (Request::instance()->isCli()) echo "当前为 cli";
+    // 是否为 cgi
+    if (Request::instance()->isCgi()) echo "当前为 cgi";
+
+助手函数
+
+.. code-block:: php
+
+    // 是否为 GET 请求
+    if (request()->isGet()) echo "当前为 GET 请求";
+
+.. note:: 通过注入请求对象的功能，可以更简单的实现。请参考后面的注入请求对象一节的内容。
+
+请求方法伪装
+============
+支持请求类型伪装，可以在 ``POST`` 表单里面提交 ``_method`` 变量，传入需要伪装的请求类型，例如：
+
+.. code-block:: php
+
+    <form method="post" action="">
+        <input type="text" name="name" value="Hello">
+        <input type="hidden" name="_method" value="PUT" >
+        <input type="submit" value="提交">
+    </form>
+
+提交后的请求类型会被系统识别为 ``PUT`` 请求。
+
+你可以设置为任何合法的请求类型，包括 ``GET`` 、 ``POST`` 、 ``PUT`` 和 ``DELETE`` 等。
+
+如果你需要改变伪装请求的变量名，可以修改应用配置文件：
+
+.. code-block:: php
+
+    // 表单请求类型伪装变量
+    'var_method'             => '_m',
+
+AJAX/PJAX伪装
+-------------
+可以对请求进行 AJAX 请求伪装，如下：
+
+.. code-block:: shell
+
+    http://localhost/index?_ajax=1
+
+或者 PJAX 请求伪装
+
+.. code-block:: shell
+
+    http://localhost/index?_pjax=1
+
+如果你需要改变伪装请求的变量名，可以修改应用配置文件：
+
+.. code-block:: php
+
+    // 表单ajax伪装变量
+    'var_ajax'               => '_a',
+    // 表单pjax伪装变量
+    'var_pjax'               => '_p',
+
+.. note:: ``_ajax`` 和 ``_pjax`` 可以通过 ``GET/POST/PUT`` 等请求变量伪装。
+
+HTTP头信息
+==========
+可以使用 ``Request`` 对象的 ``header`` 方法获取当前请求的 ``HTTP`` 请求头信息，例如：
+
+.. code-block:: php
+
+    $info = Request::instance()->header();
+    echo $info['accept'];
+    echo $info['accept-encoding'];
+    echo $info['user-agent'];
+
+也可以直接获取某个请求头信息，例如：
+
+.. code-block:: php
+
+    $agent = Request::instance()->header('user-agent');
+
+HTTP 请求头信息的名称不区分大小写，并且 ``_`` 会自动转换为 ``-`` ，所以下面的写法都是等效的：
+
+.. code-block:: php
+
+    $agent = Request::instance()->header('user-agent');
+    $agent = Request::instance()->header('User-Agent');
+    $agent = Request::instance()->header('USER_AGENT');
+
+伪静态
+======
+``URL`` 伪静态通常是为了满足更好的 ``SEO`` 效果，ThinkPHP 支持伪静态 ``URL`` 设置，可以通过设置 ``url_html_suffix`` 参数随意在 ``URL`` 的最后增加你想要的静态后缀，而不会影响当前操作的正常执行。例如，我们设置
+
+.. code-block:: php
+
+    'url_html_suffix' => 'shtml'
+
+的话，我们可以把下面的 URL ``http://serverName/Home/Blog/read/id/1`` 变成 ``http://serverName/Home/Blog/read/id/1.shtml`` 后者更具有静态页面的 ``URL`` 特征，但是具有和前面的 ``URL`` 相同的执行效果，并且不会影响原来参数的使用。
+
+默认情况下，伪静态的设置为 ``html`` ，如果我们设置伪静态后缀为空字符串，
+
+.. code-block:: php
+
+    'url_html_suffix'=>''
+
+则支持所有的静态后缀访问，如果要获取当前的伪静态后缀，可以使用 ``Request`` 对象的 ``ext`` 方法。
+
+例如：
+
+.. code-block:: shell
+
+    http://serverName/index/blog/3.html
+    http://serverName/index/blog/3.shtml
+    http://serverName/index/blog/3.xml
+    http://serverName/index/blog/3.pdf
+
+都可以正常访问。
+
+我们可以在控制器的操作方法中获取当前访问的伪静态后缀，例如：
+
+.. code-block:: php
+
+    $ext = Request::instance()->ext();
+
+如果希望支持多个伪静态后缀，可以直接设置如下：
+
+.. code-block:: php
+
+    // 多个伪静态后缀设置 用|分割
+    'url_html_suffix' => 'html|shtml|xml'
+
+那么，当访问 http://serverName/Home/blog/3.pdf 的时候会报系统错误。
+
+如果要关闭伪静态访问，可以设置
+
+.. code-block:: php
+
+    // 关闭伪静态后缀访问
+    'url_html_suffix' => false,
+
+关闭伪静态访问后，不再支持伪静态方式的 URL 访问，并且伪静态后缀将会被解析为最后一个参数的值，例如：
+
+.. code-block:: shell
+
+    http://serverName/index/blog/read/id/3.html
+
+最终的 ``id`` 参数的值将会变成 ``3.html`` 。
+
+方法注入
+========
+如果你需要在 ``Request`` 请求对象中添加自己的方法，可以使用 ``Request`` 对象的方法注入功能，例如：
+
+.. code-block:: php
+
+    // 通过hook方法注入动态方法
+    Request::hook('user','getUserInfo');
+
+``getUserInfo`` 函数定义如下
+
+.. code-block:: php
+
+    function getUserInfo(Request $request, $userId)
+    {
+        // 根据$userId获取用户信息
+        return $info;
+    }
+
+接下来，我们可以直接在控制器中使用：
+
+.. code-block:: php
+
+    public function index()
+    {
+        $info = Request::instance()->user($userId);
+    }
+
+属性注入
+========
+可以动态注入当前 ``Request`` 对象的属性，方法：
+
+.. code-block:: php
+
+    <?php
+    // 动态绑定属性
+    Request::instance()->bind('user',new User);
+    // 或者使用
+    Request::instance()->user = new User;
+
+获取绑定的属性使用下面的方式：
+
+.. code-block:: php
+
+    Request::instance()->user;
+
+如果控制器注入请求对象的话，也可以直接使用
+
+.. code-block:: php
+
+    $this->request->user;
+
+或者使用助手函数：
+
+.. code-block:: php
+
+    request()->user;
+
+参数绑定
+========
+方法参数绑定是把 URL 地址（或者路由地址）中的变量作为操作方法的参数直接传入。
+
+操作方法参数绑定
+----------------
+按名称绑定
+^^^^^^^^^^
+参数绑定方式默认是按照变量名进行绑定，例如，我们给 ``Blog`` 控制器定义了两个操作方法 ``read`` 和 ``archive`` 方法，由于 ``read`` 操作需要指定一个 ``id`` 参数， ``archive`` 方法需要指定年份( ``year`` )和月份( ``month`` )两个参数，那么我们可以如下定义：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\Controller;
+
+    class Blog
+    {
+        public function read($id)
+        {
+            return 'id='.$id;
+        }
+
+        public function archive($year='2016',$month='01')
+        {
+            return 'year='.$year.'&month='.$month;
+        }
+    }
+
+URL的访问地址分别是：
+
+.. code-block:: shell
+
+    http://serverName/index.php/index/blog/read/id/5
+    http://serverName/index.php/index/blog/archive/year/2016/month/06
+
+两个 ``URL`` 地址中的 ``id`` 参数和 ``year`` 和 ``month`` 参数会自动和 ``read`` 操作方法以及 ``archive`` 操作方法的同名参数绑定。
+
+.. note:: 变量名绑定不一定由访问 ``URL`` 决定，路由地址也能起到相同的作用
+
+输出的结果依次是：
+
+.. code-block:: shell
+
+    id=5
+    year=2016&month=06
+
+按照变量名进行参数绑定的参数必须和 ``URL`` 中传入的变量名称一致，但是参数顺序不需要一致。也就是说
+
+.. code-block:: shell
+
+    http://serverName/index.php/index/blog/archive/month/06/year/2016
+
+和上面的访问结果是一致的， ``URL`` 中的参数顺序和操作方法中的参数顺序都可以随意调整，关键是确保参数名称一致即可。
+
+如果用户访问的 ``URL`` 地址是（至于为什么会这么访问暂且不提）：
+
+.. code-block:: shell
+
+    http://serverName/index.php/index/blog/read/
+
+那么会抛出下面的异常提示： ``参数错误:id``
+
+报错的原因很简单，因为在执行 ``read`` 操作方法的时候， ``id`` 参数是必须传入参数的，但是方法无法从 ``URL`` 地址中获取正确的 ``id`` 参数信息。由于我们不能相信用户的任何输入，因此建议你给 ``read`` 方法的 ``id`` 参数添加默认值，例如：
+
+.. code-block:: php
+
+    <?php
+    public function read($id=0){
+        return 'id='.$id;
+    }
+
+这样，当我们访问 http://serverName/index.php/index/blog/read/ 的时候 就会输出
+
+.. code-block:: shell
+
+    id=0
+
+.. note:: 始终给操作方法的参数定义默认值是一个避免报错的好办法。
+
+按顺序绑定
+^^^^^^^^^^
+还可以支持按照 ``URL`` 的参数顺序进行绑定的方式，合理规划 ``URL`` 参数的顺序绑定对简化 ``URL`` 地址可以起到一定的帮助。
+
+还是上面的例子，控制器不变，还是使用：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\Controller;
+
+    class Blog
+    {
+        public function read($id)
+        {
+            return 'id='.$id;
+        }
+
+        public function archive($year='2016',$month='01')
+        {
+            return 'year='.$year.'&month='.$month;
+        }
+    }
+
+我们在配置文件中添加配置参数如下：
+
+.. code-block:: php
+
+    // URL参数方式改成顺序解析
+    'url_param_type'         => 1,
+
+接下来，访问下面的 ``URL`` 地址：
+
+.. code-block:: shell
+
+    http://serverName/index.php/index/blog/read/5
+    http://serverName/index.php/index/blog/archive/2016/06
+
+输出的结果依次是：
+
+.. code-block:: shell
+
+    id=5
+    year=2016&month=06
+
+按参数顺序绑定的话，参数的顺序不能随意调整，如果访问：
+
+.. code-block:: shell
+
+    http://serverName/index.php/index/blog/archive/06/2016
+
+最后的输出结果则变成：
+
+.. code-block:: shell
+
+    id=5
+    year=06&month=2016
+
+.. warning:: 按顺序绑定参数的话，操作方法的参数只能使用 ``URL pathinfo`` 变量，而不能使用 ``get`` 或者 ``post`` 变量。
+
+参数绑定有一个特例，如果你的操作方法中定义有 ``Request`` 对象作为参数的话，无论参数位置在哪里，都会自动注入，而不需要进行参数绑定。
+
+架构方法参数绑定（V5.0.1）
+-------------------------
+可以对架构函数进行参数绑定，当前请求的路由变量可以自动绑定到架构函数的参数，例如：
+
+.. code-block:: php
+
+    namespace app\index\Controller;
+
+    class Blog
+    {
+        protected $name;
+        public function __construct($name = null)
+        {
+            $this->name = $name;
+        }
+    }
+
+如果访问
+
+.. code-block:: shell
+
+    http://localhost/index/index/index/name/thinkphp
+
+当前请求的路由变量 ``name`` 的值 ``thinkphp`` 会自动传入构造方法的 ``name`` 变量。
+
+依赖注入
+========
+ThinkPHP 的依赖注入（也称之为控制反转）是一种较为轻量的实现，无需任何的配置，并且主要针对访问控制器进行依赖注入。可以在控制器的构造函数或者操作方法（指访问请求的方法）中类型声明任何（对象类型）依赖，这些依赖会被自动解析并注入到控制器实例或方法中。
+
+自动注入请求对象
+----------------
+构造方法注入
+^^^^^^^^^^^^
+在控制器的构造方法中会自动注入当前请求对象( ``Request`` )，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    use think\Request;
+
+    class Index
+    {
+        protected $request;
+
+        public function __construct(Request $request)
+        {
+            $this->request = $request;
+        }
+
+        public function hello()
+        {
+            return 'Hello,' . $this->request->param('name') . '！';
+        }
+
+    }
+
+操作方法注入
+^^^^^^^^^^^^
+控制器的操作方法中如果需要调用请求对象 ``Request`` 的话，可以在方法中定义 ``Request`` 类型的参数，并且参数顺序无关，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    use think\Request;
+
+    class Index
+    {
+
+        public function hello(Request $request)
+        {
+            return 'Hello,' . $request->param('name') . '！';
+        }
+
+    }
+
+访问 ``URL`` 地址的时候 无需传入 ``request`` 参数，系统会自动注入当前的 ``Request`` 对象实例到该参数。
+
+如果继承了系统的 ``Controller`` 类的话，也可以直接调用 ``request`` 属性，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    use think\Controller;
+
+    class Index extends Controller
+    {
+
+        public function hello()
+        {
+            return 'Hello,'.$this->request->param('name');
+        }
+
+    }
+
+其它对象自动注入（V5.0.1）
+-------------------------
+从5.0.1版本开始，控制器的构造方法和操作方法支持任意对象的自动注入。
+
+构造方法注入
+^^^^^^^^^^^^
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    use app\index\model\User;
+    use think\Request;
+
+    class Index
+    {
+        protected $request;
+        protected $user;
+
+        public function __construct(Request $request, User $user)
+        {
+            $this->request = $request;
+            $this->user = $user;
+        }
+
+    }
+
+.. note:: 对于已经进行了绑定（属性注入）的对象，即可自动完成依赖注入，如果没有进行对象绑定的话，会自动实例化一个新的对象示例传入（如果类定义有 ``instance`` 方法，则会自动调用 ``instance`` 方法进行实例化）。
+
+构造方法的依赖注入不影响其它类型的参数绑定。
+
+操作方法注入
+^^^^^^^^^^^^
+我们把 ``User`` 模型绑定到当前请求对象：
+
+.. code-block:: php
+
+    Request::instance()->bind('user', \app\index\model\User::get(1));
+
+然后就可以在操作方法中进行对象参数的自动注入，代码：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\controller;
+
+    use app\index\model\User;
+    use think\Controller;
+
+    class Index extends Controller
+    {
+
+        public function hello(User $user)
+        {
+            return 'Hello,'.$user->name;
+        }
+
+    }
+
+如果没有事先在 ``Request`` 对象中进行对象绑定的话，调用 ``hello`` 方法的时候 ``user`` 参数会自动实例化，相当于完成了下面的绑定操作：
+
+.. code-block:: php
+
+    Request::instance()->bind('user', new \app\index\model\User);
+
+.. note:: 对象自动注入不影响原来的参数绑定。
+
+invoke方法自动调用（v5.0.2）
+----------------------------
+5.0.2版本开始，如果依赖注入的类有定义一个可调用的静态 ``invoke`` 方法，则会自动调用 ``invoke`` 方法完成依赖注入的自动实例化。
+
+``invoke`` 方法的参数是当前请求对象实例，例如：
+
+.. code-block:: php
+
+    <?php
+    namespace app\index\model;
+
+    use think\Model;
+    class User extends Model
+    {
+        public static function invoke(Request $request)
+        {
+            $id = $request->param('id');
+            return User::get($id);
+        }
+    }
+
+请求缓存
+========
+请求缓存（V5.0.1）
+-----------------
+5.0.1 以上版本支持请求缓存功能，支持对请求地址设置缓存访问，并设置有效期。
+
+请求缓存仅对 ``GET`` 请求有效，有两种方式可以设置请求缓存：
+
+路由参数
+^^^^^^^^^
+可以在路由规则里面定义 ``cache`` 参数开启当前路由规则的请求缓存，例如：
+
+.. code-block:: php
+
+    // 定义GET请求路由规则 并设置3600秒的缓存
+    Route::get('new/:id','News/read',['cache'=>3600]);
+
+第二次访问相同的路由地址的时候，会自动获取请求缓存的数据响应输出，并发送 ``304`` 状态码。
+
+默认请求缓存的标识为当前访问的 ``pathinfo`` 地址，可以定义请求缓存的标识，如下：
+
+.. code-block:: php
+
+    // 定义GET请求路由规则 并设置3600秒的缓存
+    Route::get('new/:id','News/read',[
+        'cache' =>  [ 'new/:id/:page',3600]
+    ]);
+
+.. note::  ``:id`` 、 ``:page`` 表示使用当前请求的 ``param`` 参数进行动态标识替换，也就是根据 ``id`` 和 ``page`` 变量进行 3600 秒的请求缓存。
+
+如果 ``cache`` 参数传入 ``false`` ，则表示关闭当前路由的请求缓存（即使开启全局请求缓存）。
+
+V5.0.11+版本开始，请求缓存设置支持缓存标签参数
+
+.. code-block:: php
+
+    // 定义GET请求路由规则 并设置3600秒的缓存
+    Route::get('new/:id','News/read',[
+        'cache' =>  [ 'new/:id/:page',3600,'news']
+    ]);
+
+动态设置
+^^^^^^^^^
+可以在 ``app_begin`` 行为里面动态设置请求缓存，例如：
+
+.. code-block:: php
+
+    Request::instance()->cache('blog/:id',3600);
+
+表示对 ``blog/:id`` 定义的动态访问地址进行 3600 秒的请求缓存。
+
+.. note:: 变量支持当前的请求变量（也就是 ``param`` 方法的所有变量）。
+
+可以使用当前的 ``URL`` 地址作为缓存标识，如下：
+
+.. code-block:: php
+
+    Request::instance()->cache('__URL__',600);
+
+支持对某个 ``URL`` 后缀的请求进行缓存，例如：
+
+.. code-block:: php
+
+    Request::instance()->cache('[html]',600);
+
+表示对所有的 ``html`` 后缀访问( ``GET`` )请求进行 ``10`` 分钟的缓存。
+
+V5.0.11+ 版本开始支持缓存标签设置
+
+.. code-block:: php
+
+    Request::instance()->cache('blog/:id',600,'blog');
+
+V5.0.3+ 版本增加了请求缓存自动判断，只需要在配置文件中开启：
+
+.. code-block:: php
+
+    'request_cache' =>  true,
+    'request_cache_expire'  =>  3600,
+
+就会自动根据当前请求 ``URL`` 地址（只针对 ``GET`` 请求类型）进行请求缓存，全局缓存有效期为 3600 秒。
+
+V5.0.4+ 版本开始可以在模块配置中单独设置开启请求缓存。路由中设置的请求缓存依然有效并且优先。
+
+V5.0.6+ 版本开始，全局请求缓存支持设置排除规则，使用方法如下：
+
+.. code-block:: php
+
+    'request_cache' =>  true,
+    'request_cache_expire'  =>  3600,
+    'request_cache_except' =>   [
+        '/blog/index',
+        '/user/member'
+    ],
+
+``request_cache_except`` 设置的规则为不使用请求缓存的地址（不支持变量）开头部分。

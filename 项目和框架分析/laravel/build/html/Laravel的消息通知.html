@@ -1,0 +1,1262 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>49. 通知 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="50. 消息队列任务与分发源码剖析" href="Laravel Queue——消息队列任务与分发源码剖析.html"/>
+        <link rel="prev" title="&lt;no title&gt;" href="Laravel的邮件发送功能原理分析.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">49. 通知</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">49.1. 简介</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">49.1.1. 创建通知</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">49.1.2. 发送通知</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">49.2. 邮件通知</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">49.2.1. 格式化邮件信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">49.2.2. 自定义接收者</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">49.2.3. 自定义主题</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">49.2.4. 自定义模板</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#markdown">49.3. Markdown 邮件通知</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id15">49.3.1. 生成消息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">49.3.2. 编写消息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">49.3.3. 自定义组件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#css">49.3.4. 自定义 CSS</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">49.4. 数据库通知</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id22">49.4.1. 先决条件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23">49.4.2. 格式化数据库通知</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24">49.4.3. 存取通知</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">49.4.4. 通知标记已读</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id26">49.5. 广播通知</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id27">49.5.1. 先决条件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28">49.5.2. 格式化广播通知</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id29">49.5.3. 广播队列配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id30">49.5.4. 监听通知</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id31">49.5.5. 自定义通知频道</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id32">49.6. 短信通知</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id33">49.6.1. 实现前提</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id34">49.6.2. 格式化短信通知</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id35">49.6.3. 自定义发送者号码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id36">49.6.4. 路由短信通知</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#slack">49.7. Slack 通知</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id37">49.7.1. 先决条件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id38">49.7.2. 格式化 Slack 通知</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id40">49.7.3. Slack 附件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id42">49.7.4. 路由 Slack 通知</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id43">49.8. 通知事件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id44">49.8.1. 自定义其它通道</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>49. 通知</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>49. 通知<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>49.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>除了 发送邮件 Laravel 还支持通过多种频道发送通知，包括邮件、短信 (通过 <code class="docutils literal"><span class="pre">Nexmo</span></code> ), 以及 <code class="docutils literal"><span class="pre">Slack</span></code> 。通知还能存到数据库，这样就能在网页界面上显示了。</p>
+<p>通常情况下，通知应该是简短、有信息量的消息来通知用户你的应用发生了什么。举例来说，如果你在编写一个在线交易应用，你应该会通过邮件和短信频道来给用户发送一条 「账单已付」 的通知。</p>
+<div class="section" id="id3">
+<h3>49.1.1. 创建通知<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>Laravel 中一条通知就是一个类（通常存在 <code class="docutils literal"><span class="pre">app/Notifications</span></code> 文件夹里）。看不到的话不要担心，运行一下 <code class="docutils literal"><span class="pre">make:notification</span></code> 命令就能创建了：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:notification InvoicePaid
+</pre></div>
+</div>
+<p>这个命令会在 <code class="docutils literal"><span class="pre">app/Notifications</span></code> 目录下生成一个新的通知类。这个类包含 <code class="docutils literal"><span class="pre">via</span></code> 方法和几个消息构建方法（比如 <code class="docutils literal"><span class="pre">toMail</span></code> 或 <code class="docutils literal"><span class="pre">toDatabase</span></code> ），它们会针对指定的渠道把通知转换过为对应的消息。</p>
+</div>
+<div class="section" id="id4">
+<h3>49.1.2. 发送通知<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<div class="section" id="notifiable-trait">
+<h4>49.1.2.1. 使用 Notifiable Trait<a class="headerlink" href="#notifiable-trait" title="永久链接至标题">¶</a></h4>
+<p>通知可以通过两种方法发送： <code class="docutils literal"><span class="pre">Notifiable</span> <span class="pre">trait</span></code> 的 <code class="docutils literal"><span class="pre">notify</span></code> 方法或 <code class="docutils literal"><span class="pre">Notification</span> <span class="pre">facade</span></code> 。首先，让我们探索使用 <code class="docutils literal"><span class="pre">trait</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Notifiable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\User</span> <span class="k">as</span> <span class="nx">Authenticatable</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Authenticatable</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Notifiable</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>默认的 <code class="docutils literal"><span class="pre">App\User</span></code> 模型中使用了这个 <code class="docutils literal"><span class="pre">trait</span></code> ，它包含着一个可以用来发通知的方法： <code class="docutils literal"><span class="pre">notify</span></code> 。 <code class="docutils literal"><span class="pre">notify</span></code> 方法需要一个通知实例做参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">App\Notifications\InvoicePaid</span><span class="p">;</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">notify</span><span class="p">(</span><span class="k">new</span> <span class="nx">InvoicePaid</span><span class="p">(</span><span class="nv">$invoice</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">记住，你可以在任意模型中使用 <code class="docutils literal"><span class="pre">Illuminate\Notifications\Notifiable</span> <span class="pre">trait</span></code> ，而不仅仅是在 <code class="docutils literal"><span class="pre">User</span></code> 模型中。</p>
+</div>
+</div>
+<div class="section" id="notification-facade">
+<h4>49.1.2.2. 使用 Notification Facade<a class="headerlink" href="#notification-facade" title="永久链接至标题">¶</a></h4>
+<p>另外，你可以通过 <code class="docutils literal"><span class="pre">Notification</span> <span class="pre">facade</span></code> 来发送通知。它主要用在当你给多个可接收通知的实体发送通知的时候，比如给用户集合发通知。要用 <code class="docutils literal"><span class="pre">facade</span></code> 发送通知的话，要把可接收通知的实体和通知的实例传递给 <code class="docutils literal"><span class="pre">send</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Notification</span><span class="o">::</span><span class="na">send</span><span class="p">(</span><span class="nv">$users</span><span class="p">,</span> <span class="k">new</span> <span class="nx">InvoicePaid</span><span class="p">(</span><span class="nv">$invoice</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h4>49.1.2.3. 指定发送频道<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<p>每个通知类都有个 <code class="docutils literal"><span class="pre">via</span></code> 方法，它决定了通知在哪个频道上发送。开箱即用的通知频道有 <code class="docutils literal"><span class="pre">mail</span></code> ，  <code class="docutils literal"><span class="pre">database</span></code> ，  <code class="docutils literal"><span class="pre">broadcast</span></code> ，  <code class="docutils literal"><span class="pre">nexmo</span></code> 和 <code class="docutils literal"><span class="pre">slack</span></code> 。</p>
+<p><code class="docutils literal"><span class="pre">via</span></code> 方法接收一个 <code class="docutils literal"><span class="pre">$notifiable</span></code> 实例，这个实例将是通知实际发送到的类的实例。你可以用 <code class="docutils literal"><span class="pre">$notifiable</span></code> 来决定通知用哪些频道来发送：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取通知发送频道。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return array</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">via</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$notifiable</span><span class="o">-&gt;</span><span class="na">prefers_sms</span> <span class="o">?</span> <span class="p">[</span><span class="s1">&#39;nexmo&#39;</span><span class="p">]</span> <span class="o">:</span> <span class="p">[</span><span class="s1">&#39;mail&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">];</span><span class="c1">// 可以指定多个发送频道</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h4>49.1.2.4. 队列化通知<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">在队列化通知之前你应该配置你的队列并且 启动队列处理器.</p>
+</div>
+<p>发送通知可能很耗时，尤其是是当频道需要一个额外的 <code class="docutils literal"><span class="pre">API</span></code> 来发送通知。要加速你的应用响应时间，让你的通知继承 <code class="docutils literal"><span class="pre">ShouldQueue</span></code> 接口 并且在你的类中添加 <code class="docutils literal"><span class="pre">Queueable</span> <span class="pre">trait</span></code> 。这些接口和 <code class="docutils literal"><span class="pre">trait</span></code> 已经被使用 <code class="docutils literal"><span class="pre">make:notification</span></code> 生成的所有通知引入了，所以你可以直接将他们添加到你的通知类：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Notifications</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Bus\Queueable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Notification</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">InvoicePaid</span> <span class="k">extends</span> <span class="nx">Notification</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Queueable</span><span class="p">;</span>
+
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦 <code class="docutils literal"><span class="pre">ShouldQueue</span></code> 接口被添加到通知，你就可以和平常一样发送通知了。 Laravel 将会找到类中的 <code class="docutils literal"><span class="pre">ShouldQueue</span></code> 接口并且自动发送通知：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">notify</span><span class="p">(</span><span class="k">new</span> <span class="nx">InvoicePaid</span><span class="p">(</span><span class="nv">$invoice</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>如果你想延迟发送通知，你可以链式调用 <code class="docutils literal"><span class="pre">delay</span></code> 方法到你的通知实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$when</span> <span class="o">=</span> <span class="nx">now</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addMinutes</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">notify</span><span class="p">((</span><span class="k">new</span> <span class="nx">InvoicePaid</span><span class="p">(</span><span class="nv">$invoice</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">delay</span><span class="p">(</span><span class="nv">$when</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h4>49.1.2.5. 按需通知<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<p>有时你可能需要发送通知给一个非应用中的用户。使用 <code class="docutils literal"><span class="pre">Notification::route</span></code> 方法，你在发送通知之前可以指定点对点的通知信息：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Notification</span><span class="o">::</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;mail&#39;</span><span class="p">,</span> <span class="s1">&#39;taylor@laravel.com&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;nexmo&#39;</span><span class="p">,</span> <span class="s1">&#39;5555555555&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">notify</span><span class="p">(</span><span class="k">new</span> <span class="nx">InvoicePaid</span><span class="p">(</span><span class="nv">$invoice</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>49.2. 邮件通知<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id9">
+<h3>49.2.1. 格式化邮件信息<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>如果一个通知支持邮件发送，你应该定义一个 <code class="docutils literal"><span class="pre">toMail</span></code> 方法到你的类中。这个方法接收 <code class="docutils literal"><span class="pre">$notifiable</span></code> 实体并且返回一个 <code class="docutils literal"><span class="pre">Illuminate\Notifications\Messages\MailMessage</span></code> 实例。邮件信息可能包含多行文本或「链接」。让我们看一下示例 <code class="docutils literal"><span class="pre">toMail</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取通知中的邮件展示方式。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return \Illuminate\Notifications\Messages\MailMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toMail</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$url</span> <span class="o">=</span> <span class="nx">url</span><span class="p">(</span><span class="s1">&#39;/invoice/&#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">invoice</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">MailMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">greeting</span><span class="p">(</span><span class="s1">&#39;Hello!&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">line</span><span class="p">(</span><span class="s1">&#39;One of your invoices has been paid!&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">action</span><span class="p">(</span><span class="s1">&#39;View Invoice&#39;</span><span class="p">,</span> <span class="nv">$url</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">line</span><span class="p">(</span><span class="s1">&#39;Thank you for using our application!&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">注意我们在 <code class="docutils literal"><span class="pre">toMail</span></code> 方法中使用了 <code class="docutils literal"><span class="pre">$this-&gt;invoice-&gt;id</span></code> 。你可以在通知生成它的消息时传递给通知的构造函数任意数据。</p>
+</div>
+<p>在这个例子里，我们注册了一个问候，一行文本，一个链接和另一行文本。这些方法由 <code class="docutils literal"><span class="pre">MailMessage</span></code> 对象提供，这使格式化简单的事务性的邮件变得简单。然后，邮件频道将把文本转换成一个带有文字的漂亮的响应式 <code class="docutils literal"><span class="pre">HTML</span></code> 邮件模板。这是一个由「邮件」频道生成的 <code class="docutils literal"><span class="pre">email</span></code> 的样例：</p>
+<img alt="_images/notification-example.png" src="_images/notification-example.png" />
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">在发送邮件通知时，请确定在你的 <code class="docutils literal"><span class="pre">config/app.php</span></code> 配置文件中设置了 <code class="docutils literal"><span class="pre">name</span></code> 的值。这个值会在你邮件通知消息的头部和尾部使用。</p>
+</div>
+<div class="section" id="id10">
+<h4>49.2.1.1. 其它通知格式选项<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<p>你可以使用 <code class="docutils literal"><span class="pre">view</span></code> 方法来指定一个应用于渲染通知电子邮件的自定义模板，而不是在通知类中定义文本的「模板」：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> *  获取通知的邮件展示方式。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return \Illuminate\Notifications\Messages\MailMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toMail</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">MailMessage</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span>
+        <span class="s1">&#39;emails.name&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;invoice&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">invoice</span><span class="p">]</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>另外，你可以从 <code class="docutils literal"><span class="pre">toMail</span></code> 方法中返回一个 <code class="docutils literal"><span class="pre">mailable</span></code> 对象。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">App\Mail\InvoicePaid</span> <span class="k">as</span> <span class="nx">Mailable</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 获取通知的邮件展示方式。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return Mailable</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toMail</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">Mailable</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">invoice</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h4>49.2.1.2. 错误消息<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+<p>有些通知是给用户提示错误，比如账单支付失败的提示。你可以通过调用 <code class="docutils literal"><span class="pre">error</span></code> 方法来指定这条邮件消息被当做一个错误提示。当邮件消息使用了 <code class="docutils literal"><span class="pre">error</span></code> 方法后，引导链接按钮会变成红色而非蓝色：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取通知的邮件展示方式。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return \Illuminate\Notifications\Message</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toMail</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">MailMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">error</span><span class="p">()</span>
+                <span class="o">-&gt;</span><span class="na">subject</span><span class="p">(</span><span class="s1">&#39;Notification Subject&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">line</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>49.2.2. 自定义接收者<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>当通过 <code class="docutils literal"><span class="pre">mail</span></code> 频道来发送通知的时候，通知系统将会自动寻找你的 <code class="docutils literal"><span class="pre">notifiable</span></code> 实体中的 <code class="docutils literal"><span class="pre">email</span></code> 属性。你可以通过在实体中(非通知实例类)定义 <code class="docutils literal"><span class="pre">routeNotificationForMail</span></code> 方法来自定义邮件地址。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Notifiable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\User</span> <span class="k">as</span> <span class="nx">Authenticatable</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Authenticatable</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Notifiable</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 邮件频道的路由。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  \Illuminate\Notifications\Notification  $notification</span>
+<span class="sd">     * @return string</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">routeNotificationForMail</span><span class="p">(</span><span class="nv">$notification</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email_address</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h3>49.2.3. 自定义主题<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p>默认情况下，邮件主题是格式化成了标题格式的通知类的类名。所以如果你对通知类名为 <code class="docutils literal"><span class="pre">InvoicePaid</span></code> ，邮件主题将会是 <code class="docutils literal"><span class="pre">Invoice</span> <span class="pre">Paid</span></code> 。如果你想显式指定消息的主题，你可以在构建消息时调用 <code class="docutils literal"><span class="pre">subject</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> *获取通知的邮件展示方式。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return \Illuminate\Notifications\Messages\MailMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toMail</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">MailMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">subject</span><span class="p">(</span><span class="s1">&#39;Notification Subject&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">line</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>49.2.4. 自定义模板<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>你可以通过发布通知包的资源来修改 <code class="docutils literal"><span class="pre">HTML</span></code> 模板和纯文本模板。运行这个命令后，邮件通知模板就被放在了 <code class="docutils literal"><span class="pre">resources/views/vendor/notifications</span></code> 文件夹下：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan vendor:publish --tag<span class="o">=</span>laravel-notifications
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="markdown">
+<h2>49.3. Markdown 邮件通知<a class="headerlink" href="#markdown" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Markdown</span></code> 邮件通知可让您利用邮件通知的预先构建的模板，同时给予您更多自由地撰写更长的自定义邮件。 由于消息是用 <code class="docutils literal"><span class="pre">Markdown</span></code> 编写的， Laravel 能够为消息呈现漂亮，响应的 <code class="docutils literal"><span class="pre">HTML</span></code> 模板，同时还自动生成纯文本对应。</p>
+<div class="section" id="id15">
+<h3>49.3.1. 生成消息<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p>要使用相应的 <code class="docutils literal"><span class="pre">Markdown</span></code> 模板生成通知，您可以使用 <code class="docutils literal"><span class="pre">make:notification</span> <span class="pre">Artisan</span></code> 命令的 <code class="docutils literal"><span class="pre">--markdown</span></code> 选项：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan make:notification InvoicePaid --markdown<span class="o">=</span>mail.invoice.paid
+</pre></div>
+</div>
+<p>与所有其他邮件通知一样，使用 <code class="docutils literal"><span class="pre">Markdown</span></code> 模板的通知应在其通知类上定义一个 <code class="docutils literal"><span class="pre">toMail</span></code> 方法。 但是，不使用 <code class="docutils literal"><span class="pre">line</span></code> 和 <code class="docutils literal"><span class="pre">action</span></code> 方法来构造通知，而是使用 <code class="docutils literal"><span class="pre">markdown</span></code> 方法来指定应该使用的 <code class="docutils literal"><span class="pre">Markdown</span></code> 模板的名称：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取通知的邮件展示方式。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return \Illuminate\Notifications\Messages\MailMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toMail</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$url</span> <span class="o">=</span> <span class="nx">url</span><span class="p">(</span><span class="s1">&#39;/invoice/&#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">invoice</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">MailMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">subject</span><span class="p">(</span><span class="s1">&#39;Invoice Paid&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">markdown</span><span class="p">(</span><span class="s1">&#39;mail.invoice.paid&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;url&#39;</span> <span class="o">=&gt;</span> <span class="nv">$url</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id16">
+<h3>49.3.2. 编写消息<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Markdown</span></code> 邮件通知使用 <code class="docutils literal"><span class="pre">Blade</span></code> 组件和 <code class="docutils literal"><span class="pre">Markdown</span></code> 语法的组合，允许你轻松构建通知，同时利用 Laravel 的预制通知组件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">@component(&#39;mail::message&#39;)</span>
+<span class="x"># Invoice Paid</span>
+
+<span class="x">Your invoice has been paid!</span>
+
+<span class="x">@component(&#39;mail::button&#39;, [&#39;url&#39; =&gt; $url])</span>
+<span class="x">View Invoice</span>
+<span class="x">@endcomponent</span>
+
+<span class="x">Thanks,&lt;br&gt;</span>
+<span class="x">{{ config(&#39;app.name&#39;) }}</span>
+<span class="x">@endcomponent</span>
+</pre></div>
+</div>
+<div class="section" id="id17">
+<h4>49.3.2.1. 按钮组件<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h4>
+<p>按钮组件渲染了一个居中的按钮链接。这条组件接受两个参数，一个 <code class="docutils literal"><span class="pre">url</span></code> 和一个可选的 <code class="docutils literal"><span class="pre">color</span></code> 。支持的颜色有 <code class="docutils literal"><span class="pre">blue</span></code> ， <code class="docutils literal"><span class="pre">green</span></code> ，以及 <code class="docutils literal"><span class="pre">red</span></code> 。你可以根据需要想通知中添加任意数量的按钮：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">@component(&#39;mail::button&#39;, [&#39;url&#39; =&gt; $url, &#39;color&#39; =&gt; &#39;green&#39;])</span>
+<span class="x">View Invoice</span>
+<span class="x">@endcomponent</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id18">
+<h4>49.3.2.2. 面板组件<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
+<p>面板组件在面板中渲染指定的文本块，该面板具有与通知其它部分稍微不同的背景色，使你的文本块更容易吸引注意力：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">@component(&#39;mail::panel&#39;)</span>
+<span class="x">This is the panel content.</span>
+<span class="x">@endcomponent</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h4>49.3.2.3. 表格组件<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h4>
+<p>表格组件帮助你将一个 <code class="docutils literal"><span class="pre">Markdown</span></code> 表格转换为 <code class="docutils literal"><span class="pre">HTML</span></code> 表格。该组件接受 <code class="docutils literal"><span class="pre">Markdown</span></code> 表格作为内容。表格的列对齐遵循默认的 <code class="docutils literal"><span class="pre">Markdown</span></code> 对齐语法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">@component(&#39;mail::table&#39;)</span>
+<span class="x">| Laravel       | Table         | Example  |</span>
+<span class="x">| ------------- |:-------------:| --------:|</span>
+<span class="x">| Col 2 is      | Centered      | $10      |</span>
+<span class="x">| Col 3 is      | Right-Aligned | $20      |</span>
+<span class="x">@endcomponent</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id20">
+<h3>49.3.3. 自定义组件<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<p>你可以将所有的 <code class="docutils literal"><span class="pre">Markdown</span></code> 通知组件导出到你的应用中，以进行自定义。要导出组件，请使用 <code class="docutils literal"><span class="pre">vendor:publish</span> <span class="pre">Artisan</span></code> 命令来发布 <code class="docutils literal"><span class="pre">laravel-mail</span></code> 标签：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan vendor:publish --tag<span class="o">=</span>laravel-mail
+</pre></div>
+</div>
+<p>这个命令会发布 <code class="docutils literal"><span class="pre">Markdown</span></code> 邮件组件到 <code class="docutils literal"><span class="pre">resources/views/vendor/mail</span></code> 目录中。 <code class="docutils literal"><span class="pre">mail</span></code> 目录将会包含一个 <code class="docutils literal"><span class="pre">html</span></code> 和一个 <code class="docutils literal"><span class="pre">markdown</span></code> 目录，每个目录都包含它们各自可用组件的展示。你可以随意的自定义这些组件。</p>
+</div>
+<div class="section" id="css">
+<h3>49.3.4. 自定义 CSS<a class="headerlink" href="#css" title="永久链接至标题">¶</a></h3>
+<p>导出组件之后， <code class="docutils literal"><span class="pre">resources/views/vendor/mail/html/themes</span></code> 将会包含一个 <code class="docutils literal"><span class="pre">default.css</span></code> 文件。你可以修改文件中的 <code class="docutils literal"><span class="pre">CSS</span></code> ，你的样式将自动的内嵌在你的 <code class="docutils literal"><span class="pre">Markdown</span></code> 通知的 <code class="docutils literal"><span class="pre">HTML</span></code> 展示之中。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">如果你喜欢为 <code class="docutils literal"><span class="pre">Markdown</span></code> 组件创建一整个新主题，只需要在 <code class="docutils literal"><span class="pre">html/themes</span></code> 目录中编写一个新的 <code class="docutils literal"><span class="pre">CSS</span></code> 文件，并修改 <code class="docutils literal"><span class="pre">mail</span></code> 配置文件中的 <code class="docutils literal"><span class="pre">theme</span></code> 选项。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id21">
+<h2>49.4. 数据库通知<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id22">
+<h3>49.4.1. 先决条件<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">database</span></code> 通知渠道在一张数据库表里存储通知信息。该表以自定义的 <code class="docutils literal"><span class="pre">JSON</span></code> 格式，存储如通知类型等描述通知的信息。</p>
+<p>你可以为你的应用提供查询这些表，以显示通知的用户接口。不过，在此之前，你需要先创建一个数据库表来存放这些通知。你可以使用命令 <code class="docutils literal"><span class="pre">notifications:table</span></code> 生成包含特定表结构的迁移文件：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan notifications:table
+
+php artisan migrate
+</pre></div>
+</div>
+<p>notifications:table 调用底层的 <code class="docutils literal"><span class="pre">\Illuminate\Notifications\Console\NotificationTableCommand</span></code> 命令，该命令生成数据库通知迁移文件。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Schema</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;notifications&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">uuid</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">primary</span><span class="p">();</span> <span class="c1">// 主键</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">);</span> <span class="c1">// 通知类类型</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">morphs</span><span class="p">(</span><span class="s1">&#39;notifiable&#39;</span><span class="p">);</span> <span class="c1">// 被通知的用户</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">text</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">);</span> <span class="c1">// 通知的内容数据</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">timestamp</span><span class="p">(</span><span class="s1">&#39;read_at&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">();</span> <span class="c1">// 读取通知时间</span>
+    <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">timestamps</span><span class="p">();</span> <span class="c1">// 发送通知时间</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id23">
+<h3>49.4.2. 格式化数据库通知<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h3>
+<p>要让一个通知支持被存储到数据库表中，你需要为通知类定义方法 <code class="docutils literal"><span class="pre">toDatabase</span></code> 或者 <code class="docutils literal"><span class="pre">toArray</span></code> 。这个方法应当接受一个 <code class="docutils literal"><span class="pre">$notifiable</span></code> 的实体作为参数，并且可以返回一个普通的 <code class="docutils literal"><span class="pre">PHP</span></code> 数组。被返回的数组将被编码为 <code class="docutils literal"><span class="pre">JSON</span></code> 并存储在你的 <code class="docutils literal"><span class="pre">notifications</span></code> 表的 <code class="docutils literal"><span class="pre">data</span></code> 数据列。让我们看一个 <code class="docutils literal"><span class="pre">toArray</span></code> 方法的例子：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Get the array representation of the notification.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return array</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toArray</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s1">&#39;invoice_id&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">invoice</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">,</span>
+        <span class="s1">&#39;amount&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">invoice</span><span class="o">-&gt;</span><span class="na">amount</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="todatabase-toarray">
+<h4>49.4.2.1. 比较 toDatabase 和 toArray<a class="headerlink" href="#todatabase-toarray" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">toArray</span></code> 方法也会被 <code class="docutils literal"><span class="pre">broadcast</span></code> 渠道用来判断哪些数据会被广播给你的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 客户端。如果你希望 <code class="docutils literal"><span class="pre">database</span></code> 和 <code class="docutils literal"><span class="pre">broacast</span></code> 两个渠道有不同的数组展现方式，你需要定义 <code class="docutils literal"><span class="pre">toDatabase</span></code> 以取代定义 <code class="docutils literal"><span class="pre">toArray</span></code> 方法。</p>
+</div>
+</div>
+<div class="section" id="id24">
+<h3>49.4.3. 存取通知<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h3>
+<p>一旦通知被存储到数据库之中，你需要一种方便的方式从通知实体中获取它们。Laravel 的默认模型 <code class="docutils literal"><span class="pre">App\User</span></code> 已经引入了 Trait <code class="docutils literal"><span class="pre">Illuminate\Notifications\Notifiable</span></code> ，它包含了一个 <code class="docutils literal"><span class="pre">Eloquet</span></code> 关系 <code class="docutils literal"><span class="pre">notifications</span></code> ，可以为实体返回通知。你可以像访问所有其他 <code class="docutils literal"><span class="pre">Eloquent</span></code> 关系一样访问这个方法，以获取通知。默认情况下，通知会被以 <code class="docutils literal"><span class="pre">created_at</span></code> 时间戳进行排序：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">notifications</span> <span class="k">as</span> <span class="nv">$notification</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$notification</span><span class="o">-&gt;</span><span class="na">type</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果你仅仅想检索所有「未读」通知，你需要使用 <code class="docutils literal"><span class="pre">unreadNotifications</span></code> 关系。这些通知也是以 <code class="docutils literal"><span class="pre">created_at</span></code> 时间戳进行排序的：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">unreadNotifications</span> <span class="k">as</span> <span class="nv">$notification</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$notification</span><span class="o">-&gt;</span><span class="na">type</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">为了可以在你的 JavaScript 客户端访问到通知，你需要为你的应用定义一个通知控制器，它可以为诸如当前用户等可以被通知的实体，返回通知。然后你就可以在 JavaScript 客户端中，像控制器的 <code class="docutils literal"><span class="pre">URI</span></code> 构造一个 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求。</p>
+</div>
+</div>
+<div class="section" id="id25">
+<h3>49.4.4. 通知标记已读<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h3>
+<p>通常，你希望一个通知在用户浏览之后就标记为「已读」。Trait <code class="docutils literal"><span class="pre">Illuminate\Notifications\Notifiable</span></code> 提供一个 <code class="docutils literal"><span class="pre">markAsRead</span></code> 方法，它可以在通知对应的数据库记录中更新 <code class="docutils literal"><span class="pre">read_at</span></code> 列：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">unreadNotifications</span> <span class="k">as</span> <span class="nv">$notification</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$notification</span><span class="o">-&gt;</span><span class="na">markAsRead</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>你可以直接使用 <code class="docutils literal"><span class="pre">markAsRead</span></code> 方法操作一个通知集合，而不是遍历处理每个通知：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">unreadNotifications</span><span class="o">-&gt;</span><span class="na">markAsRead</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>你还可以使用批量更新的查询来标记所有通知为已读，而不用先从数据库中检索到它们：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">App\User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">unreadNotifications</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">([</span><span class="s1">&#39;read_at&#39;</span> <span class="o">=&gt;</span> <span class="nx">now</span><span class="p">()]);</span>
+</pre></div>
+</div>
+<p>当然，你可以使用 <code class="docutils literal"><span class="pre">delete</span></code> 从数据表中完全删除掉通知：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">notifications</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">delete</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id26">
+<h2>49.5. 广播通知<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id27">
+<h3>49.5.1. 先决条件<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h3>
+<p>在广播通知之前，你需要配置并熟悉 Laravel 的 事件广播 服务。事件广播提供一种途径，让 <code class="docutils literal"><span class="pre">JavaScript</span></code> 客户端可以响应服务端触发的 Laravel 事件端。</p>
+</div>
+<div class="section" id="id28">
+<h3>49.5.2. 格式化广播通知<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">broadcast</span></code> 渠道使用 Laravel 的 事件广播 广播通知，允许你的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 客户端实时抓取通知。你需要为通知类定义 <code class="docutils literal"><span class="pre">toBroadcast</span></code> 方法，以使该通知支持广播。这个方法获取一个 <code class="docutils literal"><span class="pre">$notifiable</span></code> 的实体，并需要返回一个 <code class="docutils literal"><span class="pre">BroadcastMessage</span></code> 实例。返回的数据会被编码为 <code class="docutils literal"><span class="pre">JSON</span></code> ，并且广播给你的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 客户端。让我们看一个 <code class="docutils literal"><span class="pre">toBroadcast</span></code> 方法的示例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Messages\BroadcastMessage</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Get the broadcastable representation of the notification.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return BroadcastMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toBroadcast</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">BroadcastMessage</span><span class="p">([</span>
+        <span class="s1">&#39;invoice_id&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">invoice</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">,</span>
+        <span class="s1">&#39;amount&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">invoice</span><span class="o">-&gt;</span><span class="na">amount</span><span class="p">,</span>
+    <span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id29">
+<h3>49.5.3. 广播队列配置<a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h3>
+<p>所有的广播通知都排队等待广播。如果需要配置用于广播队列操作的队列链接或队列名称，你可以使用 <code class="docutils literal"><span class="pre">BroadcastMessage</span></code> 的 <code class="docutils literal"><span class="pre">onConnection</span></code> 和 <code class="docutils literal"><span class="pre">onQueue</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">BroadcastMessage</span><span class="p">(</span><span class="nv">$data</span><span class="p">))</span>
+                <span class="o">-&gt;</span><span class="na">onConnection</span><span class="p">(</span><span class="s1">&#39;sqs&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">onQueue</span><span class="p">(</span><span class="s1">&#39;broadcasts&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">除了你指定的数据外，广播通知还包含一个 <code class="docutils literal"><span class="pre">type</span></code> 字段，这个字段包含了通知类的类名。</p>
+</div>
+</div>
+<div class="section" id="id30">
+<h3>49.5.4. 监听通知<a class="headerlink" href="#id30" title="永久链接至标题">¶</a></h3>
+<p>通知将会在一个私有频道里进行广播，频道格式为 <code class="docutils literal"><span class="pre">{notifiable}.{id}</span></code> 。所以，如果你给 <code class="docutils literal"><span class="pre">ID</span></code> 为 <code class="docutils literal"><span class="pre">1</span></code> 的 <code class="docutils literal"><span class="pre">App\User</span></code> 示例发送通知，这个通知就在 <code class="docutils literal"><span class="pre">App.User.1</span></code> 私有通道里被发送。当你使用 <code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">Echo</span></code> 的时候，你可以很简单的使用 <code class="docutils literal"><span class="pre">notification</span></code> 辅助函数来监听一个频道的通知：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Echo</span><span class="p">.</span><span class="kr">private</span><span class="p">(</span><span class="s1">&#39;App.User.&#39;</span> <span class="o">+</span> <span class="nx">userId</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">notification</span><span class="p">((</span><span class="nx">notification</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">notification</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+    <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id31">
+<h3>49.5.5. 自定义通知频道<a class="headerlink" href="#id31" title="永久链接至标题">¶</a></h3>
+<p>如果你想自定义通知实体接受其广播台通知的频道，你可以在通知实体上定义一个 <code class="docutils literal"><span class="pre">receivesBroadcastNotificationsOn</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Notifiable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Broadcasting\PrivateChannel</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\User</span> <span class="k">as</span> <span class="nx">Authenticatable</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Authenticatable</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Notifiable</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 接收用户的频道广播通知.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return string</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">receivesBroadcastNotificationsOn</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;users.&#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">;</span> <span class="c1">// 修改这里后routes\channels.php文件中通知验证频道也需要修改</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id32">
+<h2>49.6. 短信通知<a class="headerlink" href="#id32" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id33">
+<h3>49.6.1. 实现前提<a class="headerlink" href="#id33" title="永久链接至标题">¶</a></h3>
+<p>Laravel 的短信通知基于 <code class="docutils literal"><span class="pre">Nexmo</span></code> 。使用 <code class="docutils literal"><span class="pre">Nexmo</span></code> 发送通知前，需要安装 <code class="docutils literal"><span class="pre">nexmo/client</span></code> 的 <code class="docutils literal"><span class="pre">Composer</span></code> 包并且配置好 <code class="docutils literal"><span class="pre">config/services.php</span></code> 文件。可以直接复制以下配置示例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;nexmo&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;NEXMO_KEY&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;secret&#39;</span> <span class="o">=&gt;</span> <span class="nx">env</span><span class="p">(</span><span class="s1">&#39;NEXMO_SECRET&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;sms_from&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;15556666666&#39;</span><span class="p">,</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">sms_from</span></code> 选项代表短信发送者的号码，可以在 <code class="docutils literal"><span class="pre">Nexmo</span></code> 控制面板里生成。</p>
+</div>
+<div class="section" id="id34">
+<h3>49.6.2. 格式化短信通知<a class="headerlink" href="#id34" title="永久链接至标题">¶</a></h3>
+<p>要实现短信通知，需要在通知类里定义 <code class="docutils literal"><span class="pre">toNexmo</span></code> 方法。这个方法接受一个 <code class="docutils literal"><span class="pre">$notifiable</span></code> 实例，必须返回 <code class="docutils literal"><span class="pre">Illuminate\Notifications\Messages\NexmoMessage</span></code> 实例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取 Nexmo / 短信通知</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return NexmoMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toNexmo</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">NexmoMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">content</span><span class="p">(</span><span class="s1">&#39;Your SMS message content&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="unicode">
+<h4>49.6.2.1. Unicode 内容<a class="headerlink" href="#unicode" title="永久链接至标题">¶</a></h4>
+<p>如果短信包含 <code class="docutils literal"><span class="pre">unicode</span></code> 字符，就应在 <code class="docutils literal"><span class="pre">NexmoMessage</span></code> 实例上调用 <code class="docutils literal"><span class="pre">unicode</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取 Nexmo / 短信通知</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return NexmoMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toNexmo</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">NexmoMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">content</span><span class="p">(</span><span class="s1">&#39;Your unicode message&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">unicode</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id35">
+<h3>49.6.3. 自定义发送者号码<a class="headerlink" href="#id35" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">config/services.php</span></code> 中的发送者号码与欲使用的发送者号码不一致时，就可以使用 <code class="docutils literal"><span class="pre">NexmoMessage</span></code> 实例上的 <code class="docutils literal"><span class="pre">from</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 获取 Nexmo / 短信通知</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return NexmoMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toNexmo</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">NexmoMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">content</span><span class="p">(</span><span class="s1">&#39;Your SMS message content&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;15554443333&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id36">
+<h3>49.6.4. 路由短信通知<a class="headerlink" href="#id36" title="永久链接至标题">¶</a></h3>
+<p>当通过 <code class="docutils literal"><span class="pre">mexmo</span></code> 渠道发送通知是，通知系统会自动在通知实体中寻找 <code class="docutils literal"><span class="pre">phone_number</span></code> 属性。如果你希望自定义通知送达的手机号码，在实体中定义一个 <code class="docutils literal"><span class="pre">routeNotificationForNexmo</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Notifiable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\User</span> <span class="k">as</span> <span class="nx">Authenticatable</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Authenticatable</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Notifiable</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Route notifications for the Nexmo channel.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  \Illuminate\Notifications\Notification  $notification</span>
+<span class="sd">     * @return string</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">routeNotificationForNexmo</span><span class="p">(</span><span class="nv">$notification</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">phone</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="slack">
+<h2>49.7. Slack 通知<a class="headerlink" href="#slack" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id37">
+<h3>49.7.1. 先决条件<a class="headerlink" href="#id37" title="永久链接至标题">¶</a></h3>
+<p>在你通过 <code class="docutils literal"><span class="pre">Slack</span></code> 发送通知之前，你必须通过 <code class="docutils literal"><span class="pre">Composer</span></code> 安装 <code class="docutils literal"><span class="pre">Guzzle</span> <span class="pre">HTTP</span></code> 库：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>composer require guzzlehttp/guzzle
+</pre></div>
+</div>
+<p>你需要为你的 <code class="docutils literal"><span class="pre">Slack</span></code> 组配置 <code class="docutils literal"><span class="pre">&quot;Incoming</span> <span class="pre">Webhook&quot;</span></code> 集成，它将为你提供 路由 <code class="docutils literal"><span class="pre">Slack</span></code> 通知 时所需要的 <code class="docutils literal"><span class="pre">URL</span></code> 。</p>
+</div>
+<div class="section" id="id38">
+<h3>49.7.2. 格式化 Slack 通知<a class="headerlink" href="#id38" title="永久链接至标题">¶</a></h3>
+<p>要使一个通知支持被发送为一个 <code class="docutils literal"><span class="pre">Slack</span></code> 消息，你需要为通知类定义一个 <code class="docutils literal"><span class="pre">toSlack</span></code> 方法。该方法应接受一个 <code class="docutils literal"><span class="pre">$notifiable</span></code> 实体为参数，并可以返回一个 <code class="docutils literal"><span class="pre">Illuminate\Notifications\Messages\SlackMessage</span></code> 实例。 <code class="docutils literal"><span class="pre">Slack</span></code> 消息需要包含文本内容，以及一个「attachement」 用来附加额外的文本或者数组字段。让我来看一个基本的 <code class="docutils literal"><span class="pre">toSlack</span></code> 示例：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Get the Slack representation of the notification.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return SlackMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toSlack</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">SlackMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">content</span><span class="p">(</span><span class="s1">&#39;One of your invoices has been paid!&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在这个示例中，我们仅仅发送了一行文本给 <code class="docutils literal"><span class="pre">Slack</span></code> ，它将创建类似如下的一个消息：</p>
+<img alt="_images/basic-slack-notification.png" src="_images/basic-slack-notification.png" />
+<div class="section" id="id39">
+<h4>49.7.2.1. 自定义发送人和收件人<a class="headerlink" href="#id39" title="永久链接至标题">¶</a></h4>
+<p>你可以使用 <code class="docutils literal"><span class="pre">from</span></code> 和 <code class="docutils literal"><span class="pre">to</span></code> 方法来自定义发送人和收件人。 <code class="docutils literal"><span class="pre">form</span></code> 方法接受一个用户名和 <code class="docutils literal"><span class="pre">emoji</span></code> 标识符，而 <code class="docutils literal"><span class="pre">to</span></code> 方法接受一个渠道或者用户名：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Get the Slack representation of the notification.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return SlackMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toSlack</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">SlackMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;Ghost&#39;</span><span class="p">,</span> <span class="s1">&#39;:ghost:&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;#other&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">content</span><span class="p">(</span><span class="s1">&#39;This will be sent to #other&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>你也可以使用图片来代替 emoji：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Get the Slack representation of the notification.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return SlackMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toSlack</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">SlackMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;Laravel&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">image</span><span class="p">(</span><span class="s1">&#39;https://laravel.com/favicon.png&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">content</span><span class="p">(</span><span class="s1">&#39;This will display the Laravel logo next to the message&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id40">
+<h3>49.7.3. Slack 附件<a class="headerlink" href="#id40" title="永久链接至标题">¶</a></h3>
+<p>你也可以为 <code class="docutils literal"><span class="pre">Slack</span></code> 消息添加「附件」。附件提供比简单的文本消息更丰富的格式化选项。在如下例子中，你会发送一个有关应用异常的报错通知，它包含一个查看异常详情的链接：</p>
+<p>该示例将会产生一个类似如下显示的 <code class="docutils literal"><span class="pre">Slack</span></code> 消息：</p>
+<img alt="_images/basic-slack-attachment.png" src="_images/basic-slack-attachment.png" />
+<p>附件也允许你指定一个展现给用户的数组数据，给定的数据会被格式化为表格样式，以方便阅读：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Get the Slack representation of the notification.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return SlackMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toSlack</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$url</span> <span class="o">=</span> <span class="nx">url</span><span class="p">(</span><span class="s1">&#39;/invoices/&#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">invoice</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">SlackMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">success</span><span class="p">()</span>
+                <span class="o">-&gt;</span><span class="na">content</span><span class="p">(</span><span class="s1">&#39;One of your invoices has been paid!&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">attachment</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$attachment</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$url</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nv">$attachment</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">(</span><span class="s1">&#39;Invoice 1322&#39;</span><span class="p">,</span> <span class="nv">$url</span><span class="p">)</span>
+                               <span class="o">-&gt;</span><span class="na">fields</span><span class="p">([</span>
+                                    <span class="s1">&#39;Title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Server Expenses&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;Amount&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;$1,234&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;Via&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;American Express&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;Was Overdue&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;:-1:&#39;</span><span class="p">,</span>
+                                <span class="p">]);</span>
+                <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>该示例会创建一个类似如下显示的 <code class="docutils literal"><span class="pre">Slack</span></code> 消息：</p>
+<img alt="_images/slack-fields-attachment.png" src="_images/slack-fields-attachment.png" />
+<div class="section" id="id41">
+<h4>49.7.3.1. Markdown 附件内容<a class="headerlink" href="#id41" title="永久链接至标题">¶</a></h4>
+<p>如果一些附件字段包含 <code class="docutils literal"><span class="pre">Markdown</span></code> ，你可以使用 <code class="docutils literal"><span class="pre">markdown</span></code> 方法通知 <code class="docutils literal"><span class="pre">Slack</span></code> 解析并显示给定的附件字段为 <code class="docutils literal"><span class="pre">Markdown</span></code> 格式化文本。该方法可以接受的值为： <code class="docutils literal"><span class="pre">pretext</span></code> ， <code class="docutils literal"><span class="pre">text</span></code> ，以及或者 <code class="docutils literal"><span class="pre">fields</span></code> 。如需获取 <code class="docutils literal"><span class="pre">Slack</span></code> 附件格式化的更多信息，请点击 <a class="reference external" href="https://api.slack.com/docs/message-formatting#message_formatting">Slack API</a> 文档：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Get the Slack representation of the notification.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  mixed  $notifiable</span>
+<span class="sd"> * @return SlackMessage</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">toSlack</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$url</span> <span class="o">=</span> <span class="nx">url</span><span class="p">(</span><span class="s1">&#39;/exceptions/&#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">exception</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">SlackMessage</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">error</span><span class="p">()</span>
+                <span class="o">-&gt;</span><span class="na">content</span><span class="p">(</span><span class="s1">&#39;Whoops! Something went wrong.&#39;</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">attachment</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$attachment</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$url</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nv">$attachment</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">(</span><span class="s1">&#39;Exception: File Not Found&#39;</span><span class="p">,</span> <span class="nv">$url</span><span class="p">)</span>
+                               <span class="o">-&gt;</span><span class="na">content</span><span class="p">(</span><span class="s1">&#39;File [background.jpg] was *not found*.&#39;</span><span class="p">)</span>
+                               <span class="o">-&gt;</span><span class="na">markdown</span><span class="p">([</span><span class="s1">&#39;text&#39;</span><span class="p">]);</span>
+                <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id42">
+<h3>49.7.4. 路由 Slack 通知<a class="headerlink" href="#id42" title="永久链接至标题">¶</a></h3>
+<p>要把 <code class="docutils literal"><span class="pre">Slack</span></code> 通知路由到正确的位置，需要为你的可通知实体定义一个 <code class="docutils literal"><span class="pre">routeNotificationForSlack</span></code> 方法。它返回通知将被发送到的 <code class="docutils literal"><span class="pre">URL</span></code> 回调地址。回调地址可以在 <code class="docutils literal"><span class="pre">Slack</span></code> 组中通过附加「Incoming Webhook」服务来生成：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Notifiable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\User</span> <span class="k">as</span> <span class="nx">Authenticatable</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Authenticatable</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Notifiable</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Route notifications for the Slack channel.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  \Illuminate\Notifications\Notification  $notification</span>
+<span class="sd">     * @return string</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">routeNotificationForSlack</span><span class="p">(</span><span class="nv">$notification</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">slack_webhook_url</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id43">
+<h2>49.8. 通知事件<a class="headerlink" href="#id43" title="永久链接至标题">¶</a></h2>
+<p>发送通知之前，通知系统会触发 <code class="docutils literal"><span class="pre">\Illuminate\Notifications\Events\NotificationSending</span></code> 事件。它包含「notifiable」实体，和通知实例本身以及通道。你可以在 <code class="docutils literal"><span class="pre">EventServiceProvider</span></code> 中为该事件注册监听器。该监听器可以根据被通知对象来判断是否应该发送通知。</p>
+<p>发送通知之后，通知系统就会触发 <code class="docutils literal"><span class="pre">Illuminate\Notifications\Events\NotificationSent</span></code> 事件。它包含「notifiable」实体，和通知实例本身以及通道和通道响应。你可以在 <code class="docutils literal"><span class="pre">EventServiceProvider</span></code> 中为该事件注册监听器：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * The event listener mappings for the application.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var array</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="nv">$listen</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Illuminate\Notifications\Events\NotificationSent&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;App\Listeners\LogNotification&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">别忘记在 <code class="docutils literal"><span class="pre">EventServiceProvider</span></code> 中注册监听器之后，使用 <code class="docutils literal"><span class="pre">event:generate</span> <span class="pre">Artisan</span></code> 命令快速生成监听器类。</p>
+</div>
+<p>在一个事件监听器中，你可以访问事件的 <code class="docutils literal"><span class="pre">notifiable</span></code> ， <code class="docutils literal"><span class="pre">notification</span></code> ，和 <code class="docutils literal"><span class="pre">channel</span></code> 属性，来了解通知接受者和通知本身：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Handle the event.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param  NotificationSent  $event</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">NotificationSent</span> <span class="nv">$event</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// $event-&gt;channel</span>
+    <span class="c1">// $event-&gt;notifiable</span>
+    <span class="c1">// $event-&gt;notification</span>
+    <span class="c1">// $event-&gt;response</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id44">
+<h3>49.8.1. 自定义其它通道<a class="headerlink" href="#id44" title="永久链接至标题">¶</a></h3>
+<p>Laravel 附带少数的通知途径，但你可能需要编写自己的驱动以便通过其它通道发送通知。 Laravel 使得这一步很简单。要开始，需要定义一个包含 <code class="docutils literal"><span class="pre">send</span></code> 方法的类。这个方法接收两个参数： <code class="docutils literal"><span class="pre">$notifiable</span></code> 和 <code class="docutils literal"><span class="pre">$notification</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Channels</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Notification</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">VoiceChannel</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 发送给定的通知</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  mixed  $notifiable</span>
+<span class="sd">     * @param  \Illuminate\Notifications\Notification  $notification</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">send</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">,</span> <span class="nx">Notification</span> <span class="nv">$notification</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$message</span> <span class="o">=</span> <span class="nv">$notification</span><span class="o">-&gt;</span><span class="na">toVoice</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">);</span>
+
+        <span class="c1">// 将通知发送到 $notifiable 实例...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦定义了通知通道类，你可以从任何通知类的 <code class="docutils literal"><span class="pre">via</span></code> 方法得到类名：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Notifications</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Bus\Queueable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Channels\VoiceChannel</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Channels\Messages\VoiceMessage</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Notification</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">InvoicePaid</span> <span class="k">extends</span> <span class="nx">Notification</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Queueable</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 获取通知通道</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  mixed  $notifiable</span>
+<span class="sd">     * @return array|string</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">via</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nx">VoiceChannel</span><span class="o">::</span><span class="na">class</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 获取通知的语音</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  mixed  $notifiable</span>
+<span class="sd">     * @return VoiceMessage</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">toVoice</span><span class="p">(</span><span class="nv">$notifiable</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// ...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel Queue——消息队列任务与分发源码剖析.html" class="btn btn-neutral float-right" title="50. 消息队列任务与分发源码剖析" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的邮件发送功能原理分析.html" class="btn btn-neutral" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

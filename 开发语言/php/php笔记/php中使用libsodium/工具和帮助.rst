@@ -1,0 +1,131 @@
+*****
+工具和帮助
+*****
+无论您的应用程序需要哪种加密工具，这些功能都很有用。要查看旧的API文档， `请点击此处 <https://github.com/paragonie/pecl-libsodium-doc/blob/v1/chapters/03-utilities-helpers.md>`_ 。
+
+十六进制编码
+============
+
+.. code-block:: php
+
+    <?php
+    string sodium_bin2hex(string $binary)
+
+``Libsodium`` 提供了 ``PHP`` 的 ``bin2hex()`` 功能的一个变种，旨在抵抗旁道攻击。你可以像 ``PHP`` 的 ``bin2hex()`` 函数一样使用它：
+
+.. code-block:: php
+
+    <?php
+    $hex_string = sodium_bin2hex($binary_string);
+
+十六进制解码
+============
+
+.. code-block:: php
+
+    <?php
+    string sodium_hex2bin(string $hex, string $ignore = '')
+
+与上述类似， ``libsodium`` 也为逆操作提供了一个补充函数。
+
+.. code-block:: php
+
+    <?php
+    $binary_string = sodium_hex2bin($hex_string);
+
+``Libsodium`` 的 ``hex2bin()`` 还接受第二个可选忽略字符串参数。例如，如果您希望将 ``IPv6`` 地址转换为原始二进制字符串，而不让 ``:`` 分隔符会破坏您的算法，这非常有用。
+
+.. code-block:: php
+
+    <?php
+    $binary = sodium_hex2bin($ipv6_addr, ':');
+
+就像 ``sodium_bin2hex()`` 一样， ``sodium_hex2bin()`` 可以抵抗旁道攻击，而 ``PHP`` 的内置函数则不会。
+
+从内存擦除敏感数据
+==================
+
+.. code-block:: php
+
+    void sodium_memzero(&string $secret);
+
+处理完敏感信息后，使用 ``sodium_memzero()`` 擦除变量的内容。
+
+.. warning:: 如果您正在运行 ``PHP 7`` ，请确保在使用此功能之前使用 ``PHP`` 扩展的版本 ``1.0.1`` 。
+
+.. code-block:: php
+
+    <?php
+    $ciphertext = sodium_crypto_secretbox($message, $nonce, $key);
+    sodium_memzero($message);
+    sodium_memzero($key);
+
+顺序随机增量
+============
+
+.. code-block:: php
+
+    <?php
+    void sodium_increment(&string $binary_string)
+
+如果你需要增加一个值(例如给定一个随机生成的 ``nonce`` ，获取下一个 ``nonce`` )，使用 ``sodium_increment()`` 。
+
+.. code-block:: php
+
+    <?php
+    $x = random_bytes(sodium_CRYPTO_SECRETBOX_NONCEBYTES);
+
+    // After an encryption
+    sodium_increment($x);
+
+恒定时间内存比较
+================
+
+.. code-block:: php
+
+    <?php
+    int sodium_memcmp(string $a, string $b)
+
+在恒定时间比较两个字符串。(类似于 ``hash_equals()`` ) ：
+
+- 如果成功则返回 ``0``
+- 否则返回 ``-1``
+
+例子：
+
+.. code-block:: php
+
+    if (sodium_memcmp($mac, $given_mac) !== 0) {
+        // Failure
+    }
+
+恒定时间字符串比较
+==================
+
+.. code-block:: php
+
+    <?php
+    int sodium_compare(string $str1, string $str2)
+
+``PHP`` 本地 ``strcmp()`` 方法时间安全的变体。
+
+如果 ``$str1`` 比 ``$str2`` 小，则返回 ``-1`` ；如果 ``$str1`` 比 ``$str2`` 大，则返回 ``1`` ；如果它们相等，则为 ``0`` 。对于预防重放攻击的随机数比较很有用。
+
+例子：
+
+.. code-block:: php
+
+    <?php
+
+    if (sodium_compare($message['nonce'], $expected_nonce) === 0) {
+        // Proceed with crypto_box decryption
+    }
+
+额外信息
+========
+
+- `Libsodium 文档：Helper <https://download.libsodium.org/doc/helpers/index.html>`_
+- `如何清零缓冲区 <http://www.daemonology.net/blog/2014-09-04-how-to-zero-a-buffer.html>`_
+- `清零缓冲区不足 <http://www.daemonology.net/blog/2014-09-06-zeroing-buffers-is-insufficient.html>`_
+- `用于安全密码系统开发的编码规则 <https://cryptocoding.net/index.php/Coding_rules>`_
+

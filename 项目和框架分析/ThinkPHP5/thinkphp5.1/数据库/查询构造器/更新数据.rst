@@ -1,0 +1,134 @@
+****
+更新数据
+****
+
+
+更新数据
+========
+
+.. code-block:: php
+
+	Db::name('user')
+	    ->where('id', 1)
+	    ->update(['name' => 'thinkphp']);
+
+实际生成的 ``SQL`` 语句可能是：
+
+.. code-block:: shell
+
+    UPDATE `think_user`  SET `name`='thinkphp'  WHERE  `id` = 1
+
+.. note:: ``update`` 方法返回影响数据的条数，没修改任何数据返回 ``0``
+
+支持使用 ``data`` 方法传入要更新的数据
+
+.. code-block:: php
+
+	Db::name('user')
+	    ->where('id', 1)
+	    ->data(['name' => 'thinkphp'])
+	    ->update();
+
+.. note:: 如果 ``update`` 方法和 ``data`` 方法同时传入更新数据，则会进行合并。
+ 
+如果数据中包含主键，可以直接使用：
+
+.. code-block:: php
+
+	Db::name('user')
+	    ->update(['name' => 'thinkphp','id'=>1]);
+
+实际生成的 ``SQL`` 语句和前面用法是一样的：
+
+.. code-block:: shell
+
+    UPDATE `think_user`  SET `name`='thinkphp'  WHERE  `id` = 1
+
+如果要更新的数据需要使用 ``SQL`` 函数或者其它字段，可以使用下面的方式：
+
+.. code-block:: php
+
+	Db::name('user')
+	    ->where('id',1)
+	    ->inc('read_time')
+	    ->dec('score',3)
+	    ->exp('name','UPPER(name)')
+	    ->update();
+
+实际生成的 ``SQL`` 语句：
+
+.. code-block:: shell
+
+    UPDATE `think_user`  SET `read_time` = `read_time` + 1 , `score` = `score` - 3 , `name` = UPPER(name)  WHERE  `id` = 1
+
+``V5.1.7+`` 版本以后，支持使用 ``raw`` 方法进行数据更新，适合在数组更新的情况。
+
+.. code-block:: php
+
+	Db::name('user')
+	    ->where('id', 1)
+	    ->update([
+	        'name'		=>	Db::raw('UPPER(name)'),
+	        'score'		=>	Db::raw('score-3'),
+	        'read_time'	=>	Db::raw('read_time+1')
+	    ]);
+
+
+
+更新字段值
+==========
+
+.. code-block:: php
+
+	Db::name('user')
+	    ->where('id',1)
+	    ->setField('name', 'thinkphp');
+
+最终生成的 ``SQL`` 语句可能如下：
+
+.. code-block:: shell
+
+    UPDATE `think_user`  SET `name` = 'thinkphp'  WHERE  `id` = 1
+
+.. note:: ``setField`` 方法返回影响数据的条数，没修改任何数据字段返回 ``0``
+
+
+可以使用 ``setInc/setDec`` 方法自增或自减一个字段的值（ 如不加第二个参数，默认步长为 ``1`` ）。
+
+.. code-block:: php
+
+	// score 字段加 1
+	Db::table('think_user')
+	    ->where('id', 1)
+	    ->setInc('score');
+	// score 字段加 5
+	Db::table('think_user')
+	    ->where('id', 1)
+	    ->setInc('score', 5);
+	// score 字段减 1
+	Db::table('think_user')
+	    ->where('id', 1)
+	    ->setDec('score');
+	// score 字段减 5
+	Db::table('think_user')
+	    ->where('id', 1)
+	    ->setDec('score', 5);
+
+最终生成的 ``SQL`` 语句可能是：
+
+.. code-block:: shell
+
+	UPDATE `think_user`  SET `score` = `score` + 1  WHERE  `id` = 1 
+	UPDATE `think_user`  SET `score` = `score` + 5  WHERE  `id` = 1
+	UPDATE `think_user`  SET `score` = `score` - 1  WHERE  `id` = 1
+	UPDATE `think_user`  SET `score` = `score` - 5  WHERE  `id` = 1 
+
+``setInc/setDec`` 支持延时更新，如果需要延时更新则传入第三个参数，下例中延时 ``10`` 秒更新。
+
+.. code-block:: shell
+
+    Db::name('user')->where('id', 1)->setInc('score', 1, 10);
+
+.. note:: ``setInc/setDec`` 方法返回影响数据的条数，如果使用了延迟更新的话，可能会返回 ``true``
+
+

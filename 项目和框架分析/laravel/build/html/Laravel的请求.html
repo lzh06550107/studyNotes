@@ -1,0 +1,799 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>14. 请求 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="15. 控制器" href="Laravel的控制器.html"/>
+        <link rel="prev" title="13. 中间件CSRF" href="Laravel的中间件-CSRF.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">14. 请求</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">14.1. 获取请求</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">14.1.1. 依赖注入</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">14.2. 请求路径和方法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">14.2.1. 获取请求路径</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#url">14.2.2. 获取请求的 URL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">14.2.3. 获取请求方法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#psr-7">14.3. PSR-7 请求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">14.4. 输入预处理 &amp; 规范化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">14.5. 获取输入</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id12">14.5.1. 获取所有输入数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">14.5.2. 获取指定输入值</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">14.5.3. 从查询字符串获取输入</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">14.5.4. 通过动态属性获取输入</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json">14.5.5. 获取 JSON 输入信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">14.5.6. 获取部分输入数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">14.5.7. 确定是否存在输入值</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">14.6. 旧输入</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#session">14.6.1. 将输入闪存至 Session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">14.6.2. 闪存输入后重定向</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">14.6.3. 获取旧输入</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#cookies">14.7. Cookies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cookie">14.7.1. 从请求中获取 <code class="docutils literal"><span class="pre">Cookie</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">14.7.2. 将 Cookies 附加到响应</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22">14.7.3. 生成 Cookie 实例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id23">14.8. 文件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id24">14.8.1. 获取上传文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">14.8.2. 验证成功上传</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">14.8.3. 文件路径 &amp; 扩展名</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27">14.8.4. 其它文件方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28">14.8.5. 存储上传文件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id29">14.9. 配置可信代理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id31">14.9.1. 信任所有代理</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>14. 请求</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>14. 请求<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>14.1. 获取请求<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>要通过依赖注入的方式来获取当前 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求的实例，你应该在控制器方法中引入 <code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 类。传入的请求实例将通过 服务容器 自动注入:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 存储一个新的用户。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  Request  $request</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">store</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$name</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h3>14.1.1. 依赖注入<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id4">
+<h4>14.1.1.1. 控制器依赖注入<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
+<p>如下所示使用提示类 <code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> ，就可以在控制器方法中获得请求对象。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 更新某个用户</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param  Request  $request</span>
+<span class="sd">     * @param  string  $id</span>
+<span class="sd">     * @return Response</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">update</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$id</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h4>14.1.1.2. 闭包依赖注入<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<p>你也同样可以在路由闭包中使用 <code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 类。程序在执行的时候，服务容器会自动的将请求注入到路由闭包中：</p>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>14.2. 请求路径和方法<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 实例为你的应用程序提供了一系列方法检查路由，并且继承了 <code class="docutils literal"><span class="pre">Symfony\Component\HttpFoundation\Request</span></code> 类。 以下是该类的一些重要用法：</p>
+<div class="section" id="id7">
+<h3>14.2.1. 获取请求路径<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">path</span></code> 方法返回请求的路径信息。也就是说，如果传入的请求的目标地址是 <code class="docutils literal"><span class="pre">http://domain.com/foo/bar</span></code> ，那么 <code class="docutils literal"><span class="pre">path</span></code> 将会返回 <code class="docutils literal"><span class="pre">foo/bar</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$uri</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">();</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">is</span></code> 方法可以验证传入的请求路径和指定规则是否匹配。使用这个方法的时，你也可以传递一个 <code class="docutils literal"><span class="pre">*</span></code> 字符作为通配符：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">is</span><span class="p">(</span><span class="s1">&#39;admin/*&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="url">
+<h3>14.2.2. 获取请求的 URL<a class="headerlink" href="#url" title="永久链接至标题">¶</a></h3>
+<p>你可以使用 <code class="docutils literal"><span class="pre">url</span></code> 或 <code class="docutils literal"><span class="pre">fullUrl</span></code> 方法去获取传入请求的完整 <code class="docutils literal"><span class="pre">URL</span></code> 。 <code class="docutils literal"><span class="pre">url</span></code> 方法返回不带有查询字符串的 <code class="docutils literal"><span class="pre">URL</span></code> ，而 <code class="docutils literal"><span class="pre">fullUrl</span></code> 方法的返回值包含查询字符串：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// 没有查询字符串...</span>
+<span class="nv">$url</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">url</span><span class="p">();</span>
+
+<span class="c1">// 使用查询字符串...</span>
+<span class="nv">$url</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">fullUrl</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>14.2.3. 获取请求方法<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>对于传入的请求 <code class="docutils literal"><span class="pre">method</span></code> 方法将返回 <code class="docutils literal"><span class="pre">HTTP</span></code> 的请求方式。你也可以使用 <code class="docutils literal"><span class="pre">isMethod</span></code> 方法去验证 <code class="docutils literal"><span class="pre">HTTP</span></code> 的请求方式与指定规则是否相配：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$method</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">();</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">isMethod</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="psr-7">
+<h2>14.3. PSR-7 请求<a class="headerlink" href="#psr-7" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="http://www.php-fig.org/psr/psr-7/">PSR-7 标准</a> 标准 规定的 <code class="docutils literal"><span class="pre">HTTP</span></code> 消息接口包含了请求和响应。如果你想使用一个 <code class="docutils literal"><span class="pre">PSR-7</span></code> 请求来代替一个 Laravel 请求实例，那么你首先要安装几个函数库。 Laravel 使用 <code class="docutils literal"><span class="pre">Symfony</span></code> 的 <code class="docutils literal"><span class="pre">HTTP</span></code> 消息桥接组件将典型的 Laravel 请求和响应转换为 <code class="docutils literal"><span class="pre">PSR-7</span></code> 兼容实现：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>composer require symfony/psr-http-message-bridge
+composer require zendframework/zend-diactoros
+</pre></div>
+</div>
+<p>安装完这些库后， 就可以在路由闭包或控制器中类型提示请求的接口来获取 <code class="docutils literal"><span class="pre">PSR-7</span></code> 请求：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Psr\Http\Message\ServerRequestInterface</span><span class="p">;</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">ServerRequestInterface</span> <span class="nv">$request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">如果从路由或者控制器返回 <code class="docutils literal"><span class="pre">PSR-7</span></code> 响应实例，它会自动转换回 Laravel 响应实例，并由框架显示。</p>
+</div>
+</div>
+<div class="section" id="id10">
+<h2>14.4. 输入预处理 &amp; 规范化<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
+<p>默认情况下，Laravel 在应用程序的全局中间件堆栈中包含了 <code class="docutils literal"><span class="pre">TrimStrings</span></code> 和 <code class="docutils literal"><span class="pre">ConvertEmptyStringsToNull</span></code> 两个中间件。这些中间件由 <code class="docutils literal"><span class="pre">App\Http\Kernel</span></code> 类列在堆栈中。它们会自动处理请求上所有传入的字符串字段，并将空的字符串字段转变成 <code class="docutils literal"><span class="pre">null</span></code> 值。这样你就不用再担心路由和控制器中数据规范化的问题。</p>
+<p>如果你想停用这些功能，可以从应用程序的中间件堆栈中删除这两个中间件，只需在 <code class="docutils literal"><span class="pre">App\Http\Kernel</span></code> 类的 <code class="docutils literal"><span class="pre">$middleware</span></code> 属性中移除它们。</p>
+</div>
+<div class="section" id="id11">
+<h2>14.5. 获取输入<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id12">
+<h3>14.5.1. 获取所有输入数据<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>你可以使用 <code class="docutils literal"><span class="pre">all</span></code> 方法以 <code class="docutils literal"><span class="pre">array</span></code> 形式获取到所有输入数据:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$input</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h3>14.5.2. 获取指定输入值<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
+<p>使用几种简单的方法（不需要特别指定哪个 <code class="docutils literal"><span class="pre">HTTP</span></code> 动作），就可以访问 <code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 实例中所有的用户输入。也就是说无论是什么样的 <code class="docutils literal"><span class="pre">HTTP</span></code> 动作， <code class="docutils literal"><span class="pre">input</span></code> 方法都可以被用来获取用户输入数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你可以给 <code class="docutils literal"><span class="pre">input</span></code> 方法的第二个参数传入一个默认值。如果请求的输入值不存在请求上，就返回默认值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;Sally&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果传输表单数据中包含「数组」形式的数据，那么可以使用「点」式语法来获取数组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">(</span><span class="s1">&#39;products.0.name&#39;</span><span class="p">);</span>
+
+<span class="nv">$names</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">(</span><span class="s1">&#39;products.*.name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>14.5.3. 从查询字符串获取输入<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>使用 <code class="docutils literal"><span class="pre">input</span></code> 方法可以从整个请求中获取输入数据（包括查询字符串），而 <code class="docutils literal"><span class="pre">query</span></code> 方法可以只从查询字符串中获取输入数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果请求的查询字符串数据不存在，则将返回这个方法的第二个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;Helen&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>你可以不提供参数调用 <code class="docutils literal"><span class="pre">query</span></code> 方法来以关联数组的形式检索所有查询字符串值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$query</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id15">
+<h3>14.5.4. 通过动态属性获取输入<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p>你也可以通过 <code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 实例的动态属性来获取用户输入。例如，如果你应用的表单中包含 <code class="docutils literal"><span class="pre">name</span></code> 字段，那么可以像这样访问该字段的值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Laravel 在处理动态属性的优先级是，先在请求的数据中查找，如果没有，再到路由参数中查找。</p>
+</div>
+<div class="section" id="json">
+<h3>14.5.5. 获取 JSON 输入信息<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h3>
+<p>如果发送到应用程序的请求数据是 <code class="docutils literal"><span class="pre">JSON</span></code> ，只要请求的 <code class="docutils literal"><span class="pre">Content-Type</span></code> 标头正确设置为 <code class="docutils literal"><span class="pre">application/json</span></code> ，就可以通过 <code class="docutils literal"><span class="pre">input</span></code> 方法访问 <code class="docutils literal"><span class="pre">JSON</span></code> 数据。你甚至可以使用 「点」式语法来读取 <code class="docutils literal"><span class="pre">JSON</span></code> 数组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">(</span><span class="s1">&#39;user.name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id16">
+<h3>14.5.6. 获取部分输入数据<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<p>如果你需要获取输入数据的子集，则可以用 <code class="docutils literal"><span class="pre">only</span></code> 和 <code class="docutils literal"><span class="pre">except</span></code> 方法。这两个方法都接收 <code class="docutils literal"><span class="pre">array</span></code> 或动态列表作为参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$input</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">only</span><span class="p">([</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">]);</span>
+
+<span class="nv">$input</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">only</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">);</span>
+
+<span class="nv">$input</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">except</span><span class="p">([</span><span class="s1">&#39;credit_card&#39;</span><span class="p">]);</span>
+
+<span class="nv">$input</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">except</span><span class="p">(</span><span class="s1">&#39;credit_card&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last"><code class="docutils literal"><span class="pre">only</span></code> 方法会返回所有你指定的键值对，但不会返回请求中不存在的键值对。</p>
+</div>
+</div>
+<div class="section" id="id17">
+<h3>14.5.7. 确定是否存在输入值<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h3>
+<p>要判断请求是否存在某个值，可以使用 <code class="docutils literal"><span class="pre">has</span></code> 方法。如果请求中存在该值， <code class="docutils literal"><span class="pre">has</span></code> 方法就会返回 <code class="docutils literal"><span class="pre">true</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">has</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>当提供一个数组作为参数时， <code class="docutils literal"><span class="pre">has</span></code> 方法将确定是否存在数组中所有给定的值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">has</span><span class="p">([</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果你想确定请求中是否存在值并且不为空，可以使用 <code class="docutils literal"><span class="pre">filled</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">filled</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id18">
+<h2>14.6. 旧输入<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h2>
+<p>Laravel 允许你将本次请求的数据保留到下一次请求发送前。如果第一次请求的表单不能通过验证，就可以使用这个功能重新填充表单。但是，如果你使用了 Laravel 的 验证功能，你就不需要在手动实现这些方法，因为 Laravel 内置的验证工具会自动调用他们。</p>
+<div class="section" id="session">
+<h3>14.6.1. 将输入闪存至 Session<a class="headerlink" href="#session" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 的 <code class="docutils literal"><span class="pre">flash</span></code> 方法会将当前输入的数据存进 <code class="docutils literal"><span class="pre">session</span></code> 中，以便在用户下次发送请求到应用程序之前可以使用它们：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">flash</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>你也可以使用 <code class="docutils literal"><span class="pre">flashOnly</span></code> 和 <code class="docutils literal"><span class="pre">flashExcept</span></code> 方法将请求数据的一部分闪存到 <code class="docutils literal"><span class="pre">session</span></code> 。这些方法对敏感信息（例如密码）的保护非常有用：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">flashOnly</span><span class="p">([</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">]);</span>
+
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">flashExcept</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h3>14.6.2. 闪存输入后重定向<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p>你可能需要把输入闪存到 <code class="docutils literal"><span class="pre">session</span></code> 然后重定向到上一页，这时只需要在重定向方法后加上 <code class="docutils literal"><span class="pre">withInput</span></code> 即可：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">withInput</span><span class="p">();</span>
+
+<span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">withInput</span><span class="p">(</span>
+    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">except</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id20">
+<h3>14.6.3. 获取旧输入<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<p>若要获取上一次请求中闪存的输入，则可以使用 <code class="docutils literal"><span class="pre">Request</span></code> 实例中的 <code class="docutils literal"><span class="pre">old</span></code> 方法。 <code class="docutils literal"><span class="pre">old</span></code> 方法会从 <code class="docutils literal"><span class="pre">Session</span></code> 取出之前被闪存的输入数据：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$username</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">old</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Laravel 也提供了全局辅助函数 <code class="docutils literal"><span class="pre">old</span></code> 。如果你要在 <code class="docutils literal"><span class="pre">Blade</span></code> 模板 中显示旧的输入，使用 <code class="docutils literal"><span class="pre">old</span></code> 会更加方便。如果给定字段没有旧的输入，则返回 <code class="docutils literal"><span class="pre">null</span></code> ：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;username&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;{{ old(&#39;username&#39;) }}&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="cookies">
+<h2>14.7. Cookies<a class="headerlink" href="#cookies" title="永久链接至标题">¶</a></h2>
+<div class="section" id="cookie">
+<h3>14.7.1. 从请求中获取 <code class="docutils literal"><span class="pre">Cookie</span></code><a class="headerlink" href="#cookie" title="永久链接至标题">¶</a></h3>
+<p>Laravel 框架创建的每个 <code class="docutils literal"><span class="pre">cookie</span></code> 都会被加密并使用验证码进行签名，这意味着如果客户端更改了它们，便视为无效。若要从请求中获取 <code class="docutils literal"><span class="pre">cookie</span></code> 值，你可以在 <code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 实例上使用 <code class="docutils literal"><span class="pre">cookie</span></code> 方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>或者，您可以使用 <code class="docutils literal"><span class="pre">Cookie</span> <span class="pre">Facade</span></code> 来访问 <code class="docutils literal"><span class="pre">cookie</span></code> 的值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">Cookie</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id21">
+<h3>14.7.2. 将 Cookies 附加到响应<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h3>
+<p>你可以使用 <code class="docutils literal"><span class="pre">cookie</span></code> 方法将 <code class="docutils literal"><span class="pre">cookie</span></code> 附加到传出的 <code class="docutils literal"><span class="pre">Illuminate\Http\Response</span></code> 实例。你需要传递 <code class="docutils literal"><span class="pre">Cookie</span></code> 名称、值、以及有效期（分钟）到这个方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="p">(</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">cookie</span></code> 方法还接受一些不太频繁使用的参数。通常，这些参数与 <code class="docutils literal"><span class="pre">PHP</span></code> 原生 <code class="docutils literal"><span class="pre">setcookie</span></code> 方法的参数具有相同的目的和意义：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="nx">response</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="p">(</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">,</span> <span class="nv">$path</span><span class="p">,</span> <span class="nv">$domain</span><span class="p">,</span> <span class="nv">$secure</span><span class="p">,</span> <span class="nv">$httpOnly</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>或者，您也可以使用 <code class="docutils literal"><span class="pre">Cookie</span> <span class="pre">Facade</span></code> 来 <code class="docutils literal"><span class="pre">queue</span> <span class="pre">Cookie</span></code> ，以将其与应用程序的传出响应连接起来。 <code class="docutils literal"><span class="pre">queue</span></code> 方法接受 <code class="docutils literal"><span class="pre">Cookie</span></code> 实例或创建 <code class="docutils literal"><span class="pre">Cookie</span></code> 实例所需的参数。在发送到浏览器之前，这些 <code class="docutils literal"><span class="pre">cookie</span></code> 将被附加到输出响应：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Cookie</span><span class="o">::</span><span class="na">queue</span><span class="p">(</span><span class="nx">Cookie</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">));</span>
+
+<span class="nx">Cookie</span><span class="o">::</span><span class="na">queue</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id22">
+<h3>14.7.3. 生成 Cookie 实例<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h3>
+<p>如果你想要在一段时间以后生成一个可以给定 <code class="docutils literal"><span class="pre">Symfony\Component\HttpFoundation\Cookie</span></code> 的响应实例，你可以使用全局辅助函数 <code class="docutils literal"><span class="pre">cookie</span></code> 。除非此 <code class="docutils literal"><span class="pre">cookie</span></code> 被附加到响应实例，否则不会发送回客户端：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$cookie</span> <span class="o">=</span> <span class="nx">cookie</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$minutes</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="nx">response</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="p">(</span><span class="nv">$cookie</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id23">
+<h2>14.8. 文件<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id24">
+<h3>14.8.1. 获取上传文件<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h3>
+<p>你可以使用 <code class="docutils literal"><span class="pre">file</span></code> 方法或使用动态属性从 <code class="docutils literal"><span class="pre">Illuminate\Http\Request</span></code> 实例中访问上传的文件。该 <code class="docutils literal"><span class="pre">file</span></code> 方法返回一个 <code class="docutils literal"><span class="pre">Illuminate\Http\UploadedFile</span></code> 类的实例，该类继承了 <code class="docutils literal"><span class="pre">PHP</span></code> 的 <code class="docutils literal"><span class="pre">SplFileInfo</span></code> 类的同时也提供了各种与文件交互的方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$file</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">file</span><span class="p">(</span><span class="s1">&#39;photo&#39;</span><span class="p">);</span>
+
+<span class="nv">$file</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">photo</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>你可以使用 <code class="docutils literal"><span class="pre">hasFile</span></code> 方法确认请求中是否存在文件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">hasFile</span><span class="p">(</span><span class="s1">&#39;photo&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id25">
+<h3>14.8.2. 验证成功上传<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h3>
+<p>除了检查上传的文件是否存在外，你也可以通过 <code class="docutils literal"><span class="pre">isValid</span></code> 方法验证上传的文件是否有效：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">file</span><span class="p">(</span><span class="s1">&#39;photo&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">isValid</span><span class="p">())</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id26">
+<h3>14.8.3. 文件路径 &amp; 扩展名<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">UploadedFile</span></code> 类还包含访问文件的完整路径及其扩展名方法。 <code class="docutils literal"><span class="pre">extension</span></code> 方法会根据文件内容判断文件的扩展名。该扩展名可能会和客户端提供的扩展名不同：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$path</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">photo</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">();</span>
+
+<span class="nv">$extension</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">photo</span><span class="o">-&gt;</span><span class="na">extension</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id27">
+<h3>14.8.4. 其它文件方法<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">UploadedFile</span></code> 实例上还有许多可用的方法，可以查看该类的 <a class="reference external" href="http://api.symfony.com/3.0/Symfony/Component/HttpFoundation/File/UploadedFile.html">API 文档</a> 了解这些方法的详细信息。</p>
+</div>
+<div class="section" id="id28">
+<h3>14.8.5. 存储上传文件<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h3>
+<p>要存储上传的文件，先配置好 文件系统。你可以使用 <code class="docutils literal"><span class="pre">UploadedFile</span></code> 的 <code class="docutils literal"><span class="pre">store</span></code> 方法把上传文件移动到你的某个磁盘上，该文件可能是本地文件系统中的一个位置，甚至像 <code class="docutils literal"><span class="pre">Amazon</span> <span class="pre">S3</span></code> 这样的云存储位置。</p>
+<p><code class="docutils literal"><span class="pre">store</span></code> 方法接受相对于文件系统配置的存储文件根目录的路径。这个路径不能包含文件名，因为系统会自动生成唯一的 <code class="docutils literal"><span class="pre">ID</span></code> 作为文件名。</p>
+<p><code class="docutils literal"><span class="pre">store</span></code> 方法还接受可选的第二个参数，用于存储文件的磁盘名称。这个方法会返回相对于磁盘根目录的文件路径：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$path</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">photo</span><span class="o">-&gt;</span><span class="na">store</span><span class="p">(</span><span class="s1">&#39;images&#39;</span><span class="p">);</span>
+
+<span class="nv">$path</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">photo</span><span class="o">-&gt;</span><span class="na">store</span><span class="p">(</span><span class="s1">&#39;images&#39;</span><span class="p">,</span> <span class="s1">&#39;s3&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果你不想自动生成文件名，那么可以使用 <code class="docutils literal"><span class="pre">storeAs</span></code> 方法，它接受路径、文件名和磁盘名作为其参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$path</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">photo</span><span class="o">-&gt;</span><span class="na">storeAs</span><span class="p">(</span><span class="s1">&#39;images&#39;</span><span class="p">,</span> <span class="s1">&#39;filename.jpg&#39;</span><span class="p">);</span>
+
+<span class="nv">$path</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">photo</span><span class="o">-&gt;</span><span class="na">storeAs</span><span class="p">(</span><span class="s1">&#39;images&#39;</span><span class="p">,</span> <span class="s1">&#39;filename.jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;s3&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id29">
+<h2>14.9. 配置可信代理<a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h2>
+<p>如果你的应用程序运行在失效的 <code class="docutils literal"><span class="pre">TLS/SSL</span></code> 证书的负载均衡器后，你可能会注意到你的应用程序有时不能生成 <code class="docutils literal"><span class="pre">HTTPS</span></code> 链接。通常这是因为你的应用程序正在从端口 <code class="docutils literal"><span class="pre">80</span></code> 上的负载平衡器转发流量，却不知道是否应该生成安全链接。</p>
+<p>部署应用程序时，您可能会部署在负载均衡器（例如 <code class="docutils literal"><span class="pre">AWS</span> <span class="pre">Elastic</span> <span class="pre">Load</span> <span class="pre">Balancing</span></code> ）或反向代理（例如用于缓存的 <code class="docutils literal"><span class="pre">Varnish</span></code> ）之后。在大多数情况下，这不会出现任何问题。但是，当请求通过代理时，使用标准 <code class="docutils literal"><span class="pre">Forwarded</span></code> 标头或 <code class="docutils literal"><span class="pre">X-Forwarded-*``标头发送某些请求信息。例如，用户的真实</span> <span class="pre">``IP</span></code> 将存储在标准的 <code class="docutils literal"><span class="pre">Forwarded:</span> <span class="pre">for=&quot;...&quot;</span></code> 标题或 <code class="docutils literal"><span class="pre">X-Forwarded-For</span></code> 中，而不是读取 <code class="docutils literal"><span class="pre">REMOTE_ADDR</span></code> 标题头（现在将是反向代理的IP地址）。如果您不配置应用以查找这些标头，无论客户端是通过 <code class="docutils literal"><span class="pre">HTTPS</span></code> 连接，还是其它，您将获得有关客户端 <code class="docutils literal"><span class="pre">IP</span></code> 地址，客户端端口以及请求的主机名的错误信息。</p>
+<p>要解决此问题，您需要告诉 Laravel 要信任的反向代理 <code class="docutils literal"><span class="pre">IP</span></code> 地址以及反向代理用于发送信息的标题头。</p>
+<p>解决这个问题需要在 Laravel 应用程序中包含 <code class="docutils literal"><span class="pre">App\Http\Middleware\TrustProxies</span></code> 中间件，这使得你可以快速自定义应用程序信任的负载均衡器或代理。你的可信代理应该作为这个中间件的 <code class="docutils literal"><span class="pre">$proxies</span></code> 属性的数组列出。除了配置受信任的代理之外，还可以配置应该信任的代理 <code class="docutils literal"><span class="pre">$header</span></code> :</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Middleware</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Fideloper\Proxy\TrustProxies</span> <span class="k">as</span> <span class="nx">Middleware</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">TrustProxies</span> <span class="k">extends</span> <span class="nx">Middleware</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 这个应用程序的可信代理列表</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$proxies</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;192.168.1.1&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;192.168.1.2&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * 应该用来检测代理的头信息。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var string</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="nx">Request</span><span class="o">::</span><span class="na">HEADER_X_FORWARDED_ALL</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">如果您使用 <code class="docutils literal"><span class="pre">AWS</span></code> 弹性负载平衡，您的 <code class="docutils literal"><span class="pre">$header</span></code> 值应该是 <code class="docutils literal"><span class="pre">Request::HEADER_X_FORWARDED_AWS_ELB</span></code> 。常量的更多信息,可用于 <code class="docutils literal"><span class="pre">$headers</span></code> 属性，看看 <code class="docutils literal"><span class="pre">Symfony</span></code> 的 文档 <a class="reference external" href="http://symfony.com/doc/current/deployment/proxies.html">信任代理</a> 。</p>
+</div>
+<div class="section" id="id31">
+<h3>14.9.1. 信任所有代理<a class="headerlink" href="#id31" title="永久链接至标题">¶</a></h3>
+<p>如果你使用 <code class="docutils literal"><span class="pre">Amazon</span> <span class="pre">AWS</span></code> 或其他的「云」负载均衡器提供程序，你可能不知道负载均衡器的实际 <code class="docutils literal"><span class="pre">IP</span></code> 地址。在这种情况下，你可以使用 <code class="docutils literal"><span class="pre">*</span></code> 来信任所有代理：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 这个应用程序的可信代理列表</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var array</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="nv">$proxies</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的控制器.html" class="btn btn-neutral float-right" title="15. 控制器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的中间件-CSRF.html" class="btn btn-neutral" title="13. 中间件CSRF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

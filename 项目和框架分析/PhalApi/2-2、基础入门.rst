@@ -1,0 +1,507 @@
+****
+基础入门
+****
+
+2.2 接口响应
+============
+对于接口响应， ``PhalApi`` 默认使用了 ``HTTP＋JSON`` 。通过 ``HTTP/HTTPS`` 协议进行通讯，返回的结果则使用 ``JSON`` 格式进行传递。正常情况下，当接口服务正常响应时，如前面的 Hello World 接口，可能看到以下这样的响应头部信息和返回内容。
+
+.. code-block:: shell
+
+	HTTP/1.1 200 OK
+	Content-Type: application/json;charset=utf-8
+	... ...
+
+	{"ret":200,"data":"Hello World","msg":""}
+
+而当接口项目抛出了未捕捉的异常，或者因 PHP 语法问题而出现 ``Error`` 时，则没有内容返回，并且得到一个 500 的响应状态码。类似如下：
+
+.. code-block:: shell
+
+    HTTP/1.1 500 Internal Server Error
+
+若运行环境中 PHP 的 ``display_errors`` 配置为 ``On`` 时，还是会返回 200 的，并直接显示错误信息。在生产环境上，则切记需要把 ``display_errors`` 设置为 ``Off`` 。
+
+下面，我们将重点学习正常响应情况下的响应结构和返回格式，在线调试以及异常情况下如何进行问题排查与定位。
+
+2.2.1 响应结构
+--------------
+继续来回顾一下默认接口服务返回的内容。类似如下：
+
+.. code-block:: json
+
+	{
+	    "ret": 200,
+	    "data": {
+	        "title": "Hello World!",
+	        "content": "PHPer您好，欢迎使用PhalApi！",
+	        "version": "1.4.0",
+	        "time": 1492776704
+	    },
+	    "msg": ""
+	}
+
+``ret`` 字段是返回状态码， 200 表示成功； ``data`` 字段是项目提供的业务数据，由接口开发人员定义； ``msg`` 是异常情况下的错误提示信息。下面分别说之。
+
+业务数据 data
+^^^^^^^^^^^^^
+业务数据 ``data`` 为接口和客户端主要沟通对接的数据部分，可以为任何类型，由接口开发人员定义。但为了更好地扩展、向后兼容，建议都使用可扩展的集合形式，而非原生类型。也就是说，应该返回一个数组，而不应返回整型、布尔值、字符串这些基本类型。所以， Hello Wolrd 接口服务返回的数据类型是不推荐的，因为返回的是整型。
+
+业务数据主要是在 ``Api`` 层中返回，即对应接口类的方法的返回结果。如下面的默认接口服务 ``?service=Default.Index`` 的实现代码。
+
+.. code-block:: php
+
+	// $ vim ./Shop/Api/Default.php
+	<?php
+	class Api_Default extends PhalApi_Api {
+	    ... ...
+	    public function index() {
+	        return array(
+	            'title' => 'Hello World!',
+	            'content' => T('Hi {name}, welcome to use PhalApi!', array('name' => $this->username)),
+	            'version' => PHALAPI_VERSION,
+	            'time' => $_SERVER['REQUEST_TIME'],
+	        );
+	    }
+
+实际上，具体的业务数据需要一段复杂的处理，以满足特定业务场景下的需要。后面我们会对如何开发接口服务和使用数据库、高效缓存再进行讨论讲解。这里暂且知道接口结果是在 ``Api`` 层返回，对应接口类成员方法返回的结果即可。
+
+返回状态码 ret
+^^^^^^^^^^^^^
+返回状态码 ``ret`` ，用于表示接口响应的情况。参照自 ``HTTP`` 的状态码， ``ret`` 主要分为三类：正常响应、非法请求、服务器错误。
+
+表2-9 返回状态码的分类
+
++------------+----------+------+----------------------+
+| 分类       | ret范围  | 基数 | 说明                 |
++============+==========+======+======================+
+| 正常响应   | 200～299 | 200  | 表示接口服务正常响应 |
++------------+----------+------+----------------------+
+| 非法请求   | 400～499 | 400  | 表示客户端请求非法   |
++------------+----------+------+----------------------+
+| 服务器错误 | 500～599 | 500  | 表示服务器内容错误   |
++------------+----------+------+----------------------+
+
+正常响应时，通常返回 ``ret = 200`` ，并且同时返回 ``data`` 部分的业务数据，以便客户端能实现所需要的业务功能。
+
+常见的2XX系列的状态码有：
+
+- ``200`` ：正常响应，并实时返回结果；
+- ``202`` ：计划任务响应，所请求的服务已经被接受，并会有后台计划任务进行；
+
+非法请求是由客户端不正确调用引起的，如请求的接口服务不存在，或者接口参数提供错误，或者验证失败等等。当这种情况发生时，客户端开发人员需要按相应的错误提示进行调整，再重新尝试请求。
+
+当需要返回 4XX 系列错误码时，可以在项目中抛出非法请求异常 ``PhalApi_Exception_BadRequest`` 。例如前面过滤器中进行签名验证失败后，会抛出以下异常：
+
+.. code-block:: shell
+
+    throw new PhalApi_Exception_BadRequest('wrong sign', 1);
+
+``PhalApi_Exception_BadRequest`` 构造函数的第一个参数，是返回给客户端的错误提示信息，对应下面将讲到的 ``msg`` 字段。第二个参数是返回状态码的叠加值，也就是说最终的 ``ret`` 状态码都会在 ``400`` 的基数上加上这个叠加值，即： ``401 = 400 + 1`` 。
+
+常见的 ``4XX`` 系列的状态码有：
+
+- ``400`` ：参数非法
+- ``401`` ：验签失败，缺少登录态
+- ``403`` ：权限不足
+- ``404`` ：接口服务不存在或者非法
+
+服务器内部错误是应该避免的，但当客户端发现有这种情况时，应该知会后台接口开发人员进行修正。这类错误是可控的，通常是由于开发人员开发不当而引起的，如当配置的参数规则不符合要求时，或者获取了不存在的参数等即会触发此类异常错误。通常由 ``PhalApi`` 框架抛出，项目一般不应抛出这类异常。
+
+常见的 ``5XX`` 系统状态码有：
+
+- ``500`` ：服务器内部错误
+
+从上面，可以归结出状态码产生的时机。
+
+.. image:: ./images/ch-2-ret-happen.jpg
+
+图2-1 各状态码产生的时机
+
+很多时候，很多业务场景，客户端在完成一个接口请求并获取到所需要的数据后，需要进行不同的处理的。就登录来说，当登录失败时，可能需要知道：
+
+- 是否用户名不存在？
+- 是否密码错误？
+- 是否已被系统屏蔽？
+- 是否密码错误次数超过了最大的重试次数？
+- ...
+
+显然，这里也应该返回一个操作状态码。更准切来说，是业务操作状态码。此类的状态依接口不同而不同，很难做到统一。我们建议的，在进行接口服务开发时，在业务数据 ``data`` 里面再统一添加一个状态码，例如使用 ``code`` 字段，完整路径即： ``data.code`` 。然后约定 ``code = 0`` 时表示操作成功， ``非0`` 时为不同的失败场景。如上面的登录：
+
+- code = 0 登录成功
+- code = 1 用户名不存在
+- code = 2 密码错误
+- code = 3 系统已屏蔽此账号
+- code = 4 密码错误次数超过了最大的重试次数
+- ...
+
+这样，客户端在获取到接口返回的数据后，先统一判断 ``ret`` 是否正常响应并正常返回结果，即 ``ret = 200`` ；若是，则再各自判断操作状态码 ``code`` 是否为 ``0`` ，若不为 ``0`` ，则提示相应的文案并进行相应的引导，若为 ``0`` ，则走正常流程！
+
+总而言之，最外层的 ``ret`` 状态码是针对技术开人员的，是用于开发阶段的。而 ``data`` 中的操作状态码，如 ``code`` ，是面向最终用户的，是用于产品阶段的。
+
+错误提示信息 msg
+^^^^^^^^^^^^^^^
+当接口不是正常响应，即 ``ret`` 不在 ``2XX`` 系列内时， ``msg`` 字段会返回相应的错误提示信息。即当有异常（如上面所说的客户端非法请求和服务端运行错误两大类）触发时，会自动将异常的错误信息作为错误信息 ``msg`` 返回。
+
+但对于服务端的异常，出于对接口隐私的保护，框架在错误信息时没有过于具体地描述；相反，对于客户端的异常，则会进行必要的说明，以提醒客户端该如何进行调用调整。
+
+此外，我们根据需要可以考虑是否需要进行国际化的翻译。如果项目在可预见的范围内需要部署到国外时，提前做好翻译的准备是很有帮助的。例如前面的签名失败时，可以将异常错误信息进行翻译后再返回。
+
+.. code-block:: shell
+
+    throw new PhalApi_Exception_BadRequest(T('wrong sign'), 1);
+
+设置头部信息 header
+^^^^^^^^^^^^^^^^^^
+当使用的是 ``HTTP/HTTPS`` 协议时，并且需要设置头部 ``header`` 时，可以使用 ``PhalApi_Response::addHeaders()`` 进行设置。对于 ``JSON`` 格式的返回默认设置的头部有： ``Content-Type:"application/json;charset=utf-8"`` 。
+
+更多设置 ``HTTP`` 头部信息的示例如下：
+
+.. code-block:: php
+
+	// 设置允许指定的域名跨域访问
+	DI()->response->addHeaders('Access-Control-Allow-Origin', 'www.phalapi.net');
+
+	// 设置CDN缓存
+	DI()->response->addHeaders('Cache-Control, 'max-age=600, must-revalidate');
+
+后面相同的头部信息会覆盖前面的。
+
+2.2.2 返回格式
+--------------
+很明显地，默认情况下，我们选择了 ``JSON`` 作为统一的返回格式。这里简单说明一下选取 ``JSON`` 统一返回的原因：
+
+- ``JSON`` 当前很流行，且普通接口都采用此格式返回
+- ``JSON`` 在绝大部分开发语言中都支持，跨语言
+- ``JSON`` 在浏览器浏览时，有可视化插件支持
+
+鉴于大家普通对JSON已经熟悉，这里不再赘述。
+
+
+2.2.3 领域特定设计与Fiat标准
+---------------------------
+在《RESTful Web APIs》一书中提及到，标准可以划归到4个分类，分别是： fiat标准 、 个人标准 、 公司标准以及开放标准 。
+
+显然，我们这里推荐的 ``JSON + ret-data-msg`` 返回格式既不是个人标准，也不是公司标准（就笔者观察的范筹而言，未发现某个公司定义了此格式）。而且，这也不属于开放标准，因为也还没达到此程度。更多的，它是 ``fiat`` 标准。我们很容易发现，身边的应用、系统以及周围项目都在使用诸如此类的返回结构格式。
+
+当然，我们可希望可以消除语义上的鸿沟，以便在接口服务开发上有一个很好地共识。
+
+同时， ``JSON + ret-data-msg`` 返回格式也是一种领域特定的格式，它更多是为 ``app`` 多端获取业务数据而制作的规范。虽然它不是很完美，不具备自描述消息，也没有资源链接的能力，但我们认为它是一种恰到好处的格式。在基于 ``JSON`` 通用格式的基础上，加以 ``ret-data-msg`` 的约束，它很好地具备了统一性，从而降低门槛，容易理解。
+
+2.2.4 在线调试
+-------------
+
+开启调试调试
+^^^^^^^^^^^
+开启调试模式很简单，主要有两种方式：
+
+- 单次请求开启调试：默认添加请求参数 ``&__debug__=1``
+- 全部请求开启调试：把配置文件 ``./Config/sys.php`` 文件中的配置改成 ``'debug' => true``
+
+请特别注意，在实际项目中，调试参数不应使用默认的调试参数，而应各自定义，使用更复杂的参数，从而减少暴露敏感或者调试信息的风险。例如：
+
+- 不推荐的做法： ``&__debug__=1``
+- 一般的做法： ``&__phalapi_debug__=1``
+- 更好的做法： ``&__phalapi_debug__=202cb962ac59075b964b07152d234b70``
+
+调试信息有哪些？
+^^^^^^^^^^^^^^
+正常响应的情况下，当开启调试模式后，会返回多一个 ``debug`` 字段，里面有相关的调试信息。如下所示：
+
+.. code-block:: json
+
+	{
+	    "ret": 200,
+	    "data": {
+	    },
+	    "msg": "",
+	    "debug": {
+	        "stack": [  // 自定义埋点信息
+	        ],
+	        "sqls": [  // 全部执行的SQL语句
+	        ]
+	    }
+	}
+
+.. note:: 调试信息仅当在开启调试模式后，才会返回并显示。
+
+在发生未能捕捉的异常时，并且开启调试模式后，会将发生的异常转换为对应的结果按结果格式返回，即其结构会变成以下这样：
+
+.. code-block:: json
+
+	{
+	    "ret": 0,  // 异常时的错误码
+	    "data": [],
+	    "msg": "", // 异常时的错误信息
+	    "debug": {
+	        "exception": [  // 异常时的详细堆栈信息
+	        ],
+	        "stack": [  // 自定义埋点信息
+	        ],
+	        "sqls": [  // 全部执行的SQL语句
+	        ]
+	    }
+	}
+
+查看全部执行的SQL语句
+"""""""""""""""""""
+``debug.sqls`` 中会显示所执行的全部SQL语句，由框架自动搜集并统计。最后显示的信息格式是：
+
+.. code-block:: shell
+
+    [序号 - 当前SQL的执行时间ms]所执行的SQL语句及参数列表
+
+示例：
+
+.. code-block:: shell
+
+    [1 - 0.32ms]SELECT * FROM tbl_user WHERE (id = ?); -- 1
+
+表示是第一条执行的 ``SQL`` 语句，消耗了 0.32 毫秒， ``SQL`` 语句是 ``SELECT * FROM tbl_user WHERE (id = ?);`` ，其中参数是 1 。
+
+查看自定义埋点信息
+"""""""""""""""""
+``debug.stack`` 中埋点信息的格式如下：
+
+.. code-block:: shell
+
+    [#序号 - 距离最初节点的执行时间ms - 节点标识]代码文件路径(文件行号)
+
+示例：
+
+.. code-block:: shell
+
+    [#0 - 0ms]/path/to/PhalApi/Public/index.php(6)
+
+表示，这是第一个埋点（由框架自行添加），执行时间为 0 毫秒，所在位置是文件 ``/path/to/PhalApi/Public/index.php`` 的第 6 行。即第一条的埋点发生在框架初始化时：
+
+.. code-block:: php
+
+	// $ vim ./Public/init.php
+	if (DI()->debug) {
+	    // 启动追踪器
+	    DI()->tracer->mark();
+	    ... ...
+	}
+
+与 ``SQL`` 语句的调试信息不同的是，自定义埋点则需要开发人员根据需要自行记录，可以使用全球追踪器 ``DI()->tracer`` 进行纪录，其使用如下：
+
+.. code-block:: php
+
+	// 添加纪录埋点
+	DI()->tracer->mark();
+
+	// 添加纪录埋点，并指定节点标识
+	DI()->tracer->mark('DO_SOMETHING');
+
+通过上面方法，可以对执行经过的路径作标记。你可以指定节点标识，也可以不指定。对一些复杂的接口，可以在业务代码中添加这样的埋点，追踪接口的响应时间，以便进一步优化性能。当然，更专业的性能分析工具推荐使用 `XHprof <http://git.oschina.net/dogstar/PhalApi-Library/tree/master/Xhprof>`_ 。
+
+例如在 Hello World 接口服务中，添加一个操作埋点。
+
+.. code-block:: php
+
+	// $ vim ./Shop/Api/Welcome.php
+    public function say() {
+        DI()->tracer->mark('欢迎光临');
+
+        return 'Hello World';
+    }
+
+再次请求，并使用 ``&__debug__=1`` 开启调试模式后会看到类似这样的返回结果。
+
+.. code-block:: json
+
+	{
+	    "ret": 200,
+	    "data": "Hello World",
+	    "msg": "",
+	    "debug": {
+	        "stack": [
+	            "[#0 - 0ms]/path/to/PhalApi/Public/shop/index.php(6)",
+	            "[#1 - 5.4ms - 欢迎光临]/path/to/PhalApi/Shop/Api/Welcome.php(13)"
+	        ],
+	        "sqls": []
+	    }
+	}
+
+可以看出，在“开始读取数据库”前消耗了5.4毫秒，以及相关的代码位置。
+
+查看异常堆栈信息
+"""""""""""""""
+当有未能捕捉的接口异常时，开启调试模式后，框架会把对应的异常转换成对应的返回结果，并在 ``debug.exception`` 中体现。而不是像正常情况直接 500 ，页面空白。这些都是由框架自动处理的。
+
+继续上面的示例，让我们故意制造一些麻烦，手动抛出一个异常。
+
+.. code-block:: php
+
+	// $ vim ./Shop/Api/Welcome.php
+    public function say() {
+        DI()->tracer->mark('欢迎光临');
+
+        throw new Exception('这是一个演示异常调试的示例', 501);
+
+        return 'Hello World';
+    }
+
+再次请求后，除了 ``SQL`` 语句和自定义埋点信息外，还会看到这样的异常堆栈信息。
+
+.. code-block:: json
+
+	{
+	    "ret": 501,
+	    "data": [],
+	    "msg": "这是一个演示异常调试的示例",
+	    "debug": {
+	        "exception": [
+	            {
+	                "function": "say",
+	                "class": "Api_Welcome",
+	                "type": "-&gt;",
+	                "args": []
+	            },
+	            ... ...
+	        ],
+	        "stack": ... ...,
+	        "sqls": ... ...
+	    }
+	}
+
+然后便可根据返回的异常信息进行排查定位问题。
+
+添加自定义调试信息
+"""""""""""""""""
+当需要添加其他调试信息时，可以使用 ``DI()->response->setDebug()`` 进行添加。
+
+如：
+
+.. code-block:: php
+
+	$x = 'this is x';
+	$y = array('this is y');
+	DI()->response->setDebug('x', $x);
+	DI()->response->setDebug('y', $y);
+
+请求后，可以看到：
+
+.. code-block:: json
+
+	"debug": {
+        "x": "this is x",
+        "y": [
+            "this is y"
+        ]
+    }
+
+
+2.2.5 扩展你的项目
+-----------------
+
+调整响应结构
+^^^^^^^^^^^
+默认返回的是 ``ret`` 字段、 ``data`` 字段和 ``msg`` 字段。如果需要使用其他字段名称，可以重写 ``PhalApi_Response::getResult()`` ，然后重新注册即可。请在父类返回的基础上再作调整，以保持对调试模式和后续新增基础功能的支持。
+
+例如，类似微信开放平台的接口一样，成功时只返回 ``data`` 字段，失败时则只返回 ``ret`` 字段和 ``msg`` 字段，并分别改名为 ``status`` 字段和 ``errormsg`` 字段。
+
+.. code-block:: php
+
+	// $ vim ./Shop/Common/Response/Result.php
+	<?php
+	class Common_Response_Result extends PhalAPi_Response_JSON {
+
+	    public function getResult() {
+	        $newRs = array();
+
+	        $oldRs = parent::getResult();
+	        if ($oldRs['ret'] >= 200 && $oldRs['ret'] <= 299) {
+	            $newRs = $oldRs['data'];
+	        } else {
+	            $newRs['status'] = $oldRs['ret'];
+	            $newRs['errormsg'] = $oldRs['msg'];
+	        }
+
+	        if (isset($oldRs['debug']) && is_array($newRs)) {
+	            $newRs['debug'] = $oldRs['debug'];
+	        }
+
+	        return $newRs;
+	    }
+	}
+
+重写并实现后，需要重新注册 ``DI()->response`` 服务，这里是在 ``Shop`` 项目的入口文件进行重新注册。
+
+.. code-block:: php
+
+	// $ vim ./Public/shop/index.php
+	// 调整返回结构
+	DI()->response = 'Common_Response_Result';
+
+随后，再访问接口服务，便可看到返回的结构已发生变化。例如访问默认接口服务 ``?service=Default.Index`` ，会返回：
+
+.. code-block:: json
+
+	{
+	    "title": "Hello World!",
+	    "content": "PHPer您好，欢迎使用PhalApi！",
+	    "version": "1.4.0",
+	    "time": 1495007735
+	}
+
+使用其他返回格式
+^^^^^^^^^^^^^^^
+除了使用 ``JSON`` 格式返回外，还可以使用其他格式返回结果。
+
+例如在部分 ``H5`` 混合应用页面进行异步请求的情况下，客户端需要服务端返回 ``JSONP`` 格式的结果，则可以这样在初始化文件 ``./Public/init.php`` 中去掉以下注释。
+
+.. code-block:: php
+
+	if (!empty($_GET['callback'])) {
+	    DI()->response = new PhalApi_Response_JsonP($_GET['callback']);
+	}
+
+当需要返回一种当前 ``PhalApi`` 没提供的格式，需要返回其他格式时，可以：
+
+1. 实现抽象方法 ``PhalApi_Response::formatResult($result)`` 并返回格式化后结果；
+2. 重新注册 ``DI()->response`` 服务；
+
+这里以扩展 ``XML`` 返回格式为例，简单说明。首先，添加并实现一个子类，把结果转换为 ``XML`` ：
+
+.. code-block:: php
+
+	// $ vim ./Shop/Common/Response/XML.php
+	<?php
+	class Common_Response_XML extends PhalApi_Response {
+
+	    protected function formatResult($result) {
+	        // TODO：把数组$result格式化成XML ...
+	    }
+	}
+
+.. note:: 关于数组转XML，可参考 `将PHP数组转成XML <http://www.oschina.net/code/snippet_54100_1548>`_ ，或 `Convert array to XML in PHP <http://www.codexworld.com/convert-array-to-xml-in-php/>`_
+
+随后，在 ``Shop`` 项目的入口文件中重新注册。
+
+.. code-block:: php
+
+	// $ vim ./Public/shop/index.php
+	DI()->response = 'Common_Response_XML';
+
+再次请求 Hello World 接口服务时，可以看到结果已经改用 ``XML`` 返回。
+
+.. code-block:: xml
+
+	<?xml version="1.0" encoding="utf-8"?>
+	<data><ret>200</ret><data>Hello World</data><msg></msg></data>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

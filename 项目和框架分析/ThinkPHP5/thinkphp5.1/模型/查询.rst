@@ -1,0 +1,283 @@
+**
+查询
+**
+
+模型查询和数据库查询方法的区别主要在于，模型中的查询的数据在获取的时候会经过获取器的处理，以及更加对象化的获取方式。
+
+.. note:: 模型查询除了使用自身的查询方法外，一样可以使用数据库的查询构造器，返回的都是模型对象实例。但如果直接调用查询对象的方法，IDE可能无法完成自动提示。
+
+模型查询和数据库查询的区别是查询对象是否传入了模型对象，如果传入，则是模型查询，否则是数据库查询。
+
+获取单个数据
+============
+
+获取单个数据的方法包括：
+
+.. code-block:: php
+
+	// 取出主键为1的数据
+	$user = User::get(1);
+	echo $user->name;
+
+	// 使用查询构造器查询满足条件的数据
+	$user = User::where('name', 'thinkphp')->find();
+	echo $user->name;
+
+模型无论使用 ``get`` 还是 ``find`` 方法查询，返回的是都当前模型的对象实例，如果查询数据不存在，则返回 ``Null`` ，除了获取模型数据外，还可以使用模型的方法。
+
+.. note:: ``V5.1.5+`` 版本，模型增加了 ``getOrFail`` 方法用于查询，当查询的数据不存在的时候会抛出 ``ModelNotFound`` 异常。
+
+``V5.1.23+`` 版本开始，可以使用 ``findOrEmpty`` 方法，当查询数据不存在的话，返回空模型而不是 ``Null`` 。
+
+.. code-block:: php
+
+	// 使用查询构造器查询满足条件的数据
+	$user = User::where('name', 'thinkphp')->findOrEmpty();
+
+.. note:: 如果你是在模型内部获取模型数据，请不要使用 ``$this->name`` 的方式来获取数据，请使用 ``$this->getAttr('name')`` 替代。?? 难道__get()方法在类内部不会生效。
+
+
+获取多个数据
+============
+取出多个数据：
+
+.. code-block:: php
+
+	// 根据主键获取多个数据
+	$list = User::all('1,2,3');
+	// 或者使用数组
+	$list = User::all([1,2,3]);
+	// 对数据集进行遍历操作
+	foreach($list as $key=>$user){
+	    echo $user->name;
+	}
+
+要更多的查询支持，一样可以使用查询构造器：
+
+.. code-block:: php
+
+	// 使用查询构造器查询
+	$list = User::where('status', 1)->limit(3)->order('id', 'asc')->select();
+	foreach($list as $key=>$user){
+	    echo $user->name;
+	}
+
+.. note:: 查询构造器方式的查询可以支持更多的连贯操作，包括排序、数量限制等。
+
+``V5.1.21+`` 版本开始，可以在 ``all`` 方法之前使用Db类的查询链式操作，
+
+.. code-block:: php
+
+	// 使用查询构造器查询
+	$list = User::where('status', 1)->limit(3)->order('id', 'asc')->all();
+	foreach($list as $key=>$user){
+	    echo $user->name;
+	}
+
+自定义数据集对象
+---------------
+模型的 ``all`` 方法或者 ``select`` 方法返回的是一个包含多个模型实例的数据集对象（默认为 ``\think\model\Collection`` ），支持在模型中单独设置查询数据集的返回对象的名称，例如：
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\model;
+
+	use think\Model;
+
+	class User extends Model
+	{
+		// 设置返回数据集的对象名
+		protected $resultSetType = '\app\common\Collection';
+	}
+
+``resultSetType`` 属性用于设置自定义的数据集使用的类名，该类应当继承系统的 ``think\model\Collection`` 类。
+
+
+使用查询构造器
+==============
+在模型中仍然可以调用数据库的链式操作和查询方法，可以充分利用数据库的查询构造器的优势。
+
+例如：
+
+.. code-block:: php
+
+	User::where('id',10)->find();
+	User::where('status',1)->order('id desc')->select();
+	User::where('status',1)->limit(10)->select();
+
+使用查询构造器直接使用静态方法调用即可，无需先实例化模型。
+
+获取某个字段或者某个列的值
+------------------------
+.. code-block:: php
+
+	// 获取某个用户的积分
+	User::where('id',10)->value('score');
+	// 获取某个列的所有值
+	User::where('status',1)->column('name');
+	// 以id为索引
+	User::where('status',1)->column('name','id');
+
+.. note:: ``value`` 和 ``column`` 方法返回的不再是一个模型对象实例，而是纯粹的值或者某个列的数组。
+
+动态查询
+--------
+支持数据库的动态查询方法，例如：
+
+.. code-block:: php
+
+	// 根据name字段查询用户
+	$user = User::getByName('thinkphp');
+
+	// 根据email字段查询用户
+	$user = User::getByEmail('thinkphp@qq.com');
+
+聚合查询
+--------
+同样在模型中也可以调用数据库的聚合方法查询，例如：
+
+.. code-block:: php
+
+	User::count();
+	User::where('status','>',0)->count();
+	User::where('status',1)->avg('score');
+	User::max('score');
+
+数据分批处理
+-----------
+模型也可以支持对返回的数据分批处理，这在处理大量数据的时候非常有用，例如：
+
+.. code-block:: php
+
+	User::chunk(100,function($users) {
+	    foreach($users as $user){
+	        // 处理user模型对象
+	    }
+	});
+
+
+使用游标查询
+===========
+模型也可以使用数据库的 ``cursor`` 方法进行游标查询，返回生成器对象
+
+.. code-block:: php
+
+	foreach(User::where('status', 1)->cursor() as $user){
+		echo $user->name;
+	}
+
+``user`` 变量是一个模型对象实例。
+
+
+查询缓存
+========
+``get`` 、 ``getOrFail`` 方法和 ``all`` 方法的支持使用查询缓存，可以直接在第三个参数传入 ``true`` 表示开启查询缓存。
+
+.. code-block:: php
+
+	$user = User::get(1,'',true);
+	$list  = User::all('1,2,3','',true);
+
+如果要设置缓存标识，则必须在第三个参数传入缓存标识。 ?? 这里好像存在问题
+
+.. code-block:: php
+
+	$user = User::get(1,'','user');
+	$list  = User::all('1,2,3','','user_list');
+
+主库读取
+========
+
+如果你采用分布式数据库，如果写入数据后立刻进行该数据的读取，将会导致数据读取失败，原因是数据库同步尚未完成。
+
+规范的解决方案是在写入数据后，不要马上从从库读取，而应该调用 ``master`` 方法读取主库。
+
+.. code-block:: php
+
+	$user           = new User;
+	$user->name     = 'thinkphp';
+	$user->email    = 'thinkphp@qq.com';
+	$user->save();
+	// 从主库读取数据
+	$user->master() // 仅对当前查询生效
+		->get($user->id);
+
+或者对关键的逻辑启用事务，在事务中的数据库操作都是基于主库的。
+
+``V5.1.12+`` 版本开始，你可以在数据库配置文件中设置
+
+.. code-block:: php
+
+	// 主库写入后从主从库读取
+	'read_master'	=> true
+
+设置开启后，一旦你的模型有写入操作，那么该请求后续的同一个模型的读操作都会自动从主库读取。
+
+如果你需要对所有模型类生效( ``\think\db\Query::parseOptions`` )，可以在你完成主库写入操作后，执行下模型类的 ``readMaster`` 方法。
+
+.. code-block:: php
+
+	$user           = new User;
+	$user->name     = 'thinkphp';
+	$user->email    = 'thinkphp@qq.com';
+	$user->save();
+	// 从主库读取数据
+	$user->readMaster(true) // true 对所有模型类生效，false 仅对当前模型类生效
+		->get($user->id);
+
+.. note:: 注意上述设置和方法仅对模型查询有效，直接调用 ``Db`` 类查询无效。
+
+
+最佳实践
+========
+模型查询的最佳实践原则是：在模型外部使用静态方法进行查询，内部使用动态方法查询，包括使用数据库的查询构造器。模型的查询始终返回对象实例，但可以和数组一样使用。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

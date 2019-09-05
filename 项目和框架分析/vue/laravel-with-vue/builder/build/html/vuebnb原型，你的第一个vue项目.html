@@ -1,0 +1,1533 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. Vuebnb原型，你的第一个vue项目 &mdash; laravel整合vue 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel整合vue 1.0 文档" href="index.html"/>
+        <link rel="next" title="4. 配置Laravel开发环境" href="配置Laravel开发环境.html"/>
+        <link rel="prev" title="2. Hello Vue – An Introduction to Vue.js" href="Hello Vue – An Introduction to Vue.js.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel整合vue
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="本书概览.html">1. 本书概览</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hello Vue – An Introduction to Vue.js.html">2. Hello Vue – An Introduction to Vue.js</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Vuebnb原型，你的第一个vue项目</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vuebnb">3.1. Vuebnb 原型</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">3.1.1. 项目代码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#npm">3.1.2. NPM安装</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main">3.1.3. Main文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">3.1.4. 在浏览器打开</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vue-js">3.2. 安装Vue.js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">3.3. 页面内容</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vue">3.3.1. Vue实例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">3.3.2. 数据绑定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">3.3.3. 模拟列表样本</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">3.4. 页眉图像</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">3.4.1. 样式绑定一</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">3.4.2. 指令</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">3.4.3. 样式绑定二</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">3.5. 列表部分</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id16">3.5.1. 渲染列表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#icons">3.5.2. Icons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key">3.5.3. Key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prices">3.5.4. Prices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">3.6. 显示更多功能</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id18">3.6.1. 类绑定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">3.6.2. 事件监听</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">3.6.3. 反应</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#more">3.6.4. 隐藏More按钮</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id22">3.7. 图像模态窗口</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#opening">3.7.1. Opening</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#window">3.7.2. Window</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23">3.7.3. 关闭主窗口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#closing">3.7.4. Closing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id34">3.8. 总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="配置Laravel开发环境.html">4. 配置Laravel开发环境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Laravel构建Web服务.html">5. 使用Laravel构建Web服务</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Webpack整合Laravel和Vue.html">6. 使用Webpack整合Laravel和Vue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Vue组件来编写小部件.html">7. 使用Vue组件来组合小部件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用Vue路由器构建一个多页面的应用程序.html">8. 用Vue路由器构建一个多页面的应用程序</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel整合vue</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>3. Vuebnb原型，你的第一个vue项目</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/vuebnb原型，你的第一个vue项目.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vuebnb-vue">
+<h1>3. Vuebnb原型，你的第一个vue项目<a class="headerlink" href="#vuebnb-vue" title="永久链接至标题">¶</a></h1>
+<p>在本章中，我们将学习 <code class="docutils literal"><span class="pre">Vue.js</span></code> 的基本功能。 然后，我们将通过构建案例研究项目 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的原型来将这些知识付诸实践。</p>
+<p>本章涵盖以下主题：</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">Vue.js</span></code> 的安装和基本配置；</li>
+<li><code class="docutils literal"><span class="pre">Vue.js</span></code> 基本概念，如数据绑定，指令，观察者和生命周期钩子；</li>
+<li><code class="docutils literal"><span class="pre">Vue</span></code> 的反应系统如何工作；</li>
+<li>案例研究项目的项目需求；</li>
+<li>使用 <code class="docutils literal"><span class="pre">Vue.js</span></code> 添加页面内容，包括动态文本，列表和标题图像</li>
+<li>使用 <code class="docutils literal"><span class="pre">Vue</span></code> 构建图像模态 <code class="docutils literal"><span class="pre">UI</span></code> 功能；</li>
+</ul>
+<div class="section" id="vuebnb">
+<h2>3.1. Vuebnb 原型<a class="headerlink" href="#vuebnb" title="永久链接至标题">¶</a></h2>
+<p>在本章中，我们将构建一个 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 的原型，它是本书的案例研究项目。 原型只是列表页面，在本章结尾处将如下所示：</p>
+<div class="figure" id="id35">
+<img alt="_images/2-1.png" src="_images/2-1.png" />
+<p class="caption"><span class="caption-text">图2.1 Vuebnb原型</span></p>
+</div>
+<p>一旦我们在第3章“设置 <code class="docutils literal"><span class="pre">Laravel</span></code> 开发环境”中创建后端，并且第4章“使用 <code class="docutils literal"><span class="pre">Laravel</span></code> 构建 <code class="docutils literal"><span class="pre">Web</span></code> 服务”，我们将把这个原型移植到主项目中。</p>
+<div class="section" id="id1">
+<h3>3.1.1. 项目代码<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h3>
+<p>在开始之前，您需要通过从 <code class="docutils literal"><span class="pre">GitHub</span></code> 中克隆代码将代码库下载到您的计算机中。 指令在第1章中的代码库章节中给出， <code class="docutils literal"><span class="pre">Hello</span> <span class="pre">Vue</span> <span class="pre">-</span> <span class="pre">Vue.js</span></code> 简介。</p>
+<p>文件夹 <code class="docutils literal"><span class="pre">vuebnb-prototype</span></code> 具有我们现在要构建的原型的项目代码。 进入该文件夹并列出内容：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> vuebnb-prototype
+$ ls -la
+</pre></div>
+</div>
+<p>文件夹内容应如下所示：</p>
+<div class="figure" id="id36">
+<img alt="_images/2-2.png" src="_images/2-2.png" />
+<p class="caption"><span class="caption-text">图2.2 vuebnb-prototype项目文件</span></p>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">除非另有说明，否则本章中的所有其他终端命令将假定您位于 <code class="docutils literal"><span class="pre">vuebnb-prototype</span></code> 文件夹中。</p>
+</div>
+</div>
+<div class="section" id="npm">
+<h3>3.1.2. NPM安装<a class="headerlink" href="#npm" title="永久链接至标题">¶</a></h3>
+<p>您现在需要安装此项目中使用的第三方脚本，包括 <code class="docutils literal"><span class="pre">Vue.js</span></code> 本身。 <code class="docutils literal"><span class="pre">NPM</span></code> <code class="docutils literal"><span class="pre">install</span></code> 方法将读取包含的 <code class="docutils literal"><span class="pre">package.json</span></code> 文件并下载所需的模块：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ npm install
+</pre></div>
+</div>
+<p>您现在会看到一个新的 <code class="docutils literal"><span class="pre">node_modules</span></code> 目录出现在您的项目文件夹中。</p>
+</div>
+<div class="section" id="main">
+<h3>3.1.3. Main文件<a class="headerlink" href="#main" title="永久链接至标题">¶</a></h3>
+<p>在IDE中打开 <code class="docutils literal"><span class="pre">vuebnb-prototype</span></code> 目录。请注意，包含以下 <code class="docutils literal"><span class="pre">index.html</span></code> 文件。 它主要由样板代码组成，但也有一些结构标记包含在 <code class="docutils literal"><span class="pre">body</span></code> 标签中。</p>
+<p>另请注意，此文件链接到将添加 <code class="docutils literal"><span class="pre">CSS</span></code> 规则的 <code class="docutils literal"><span class="pre">style.css</span></code> ，以及将添加 <code class="docutils literal"><span class="pre">JavaScript</span></code> 的 <code class="docutils literal"><span class="pre">app.js</span></code> 。</p>
+<p>index.html</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&quot;X-UA-Compatible&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;IE=edge,chrome=1&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;width=device-width,initial-scale=1&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Vuebnb<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;node_modules/open-sans-all/css/open-sans.css&quot;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;style.css&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;toolbar&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">img</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;icon&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;logo.png&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>vuebnb<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;app.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>当前 <code class="docutils literal"><span class="pre">app.js</span></code> 是一个空文件，但是我在 <code class="docutils literal"><span class="pre">style.css</span></code> 中包含了一些 <code class="docutils literal"><span class="pre">CSS</span></code> 规则来启动。</p>
+<p>style.css</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="nt">body</span> <span class="p">{</span>
+  <span class="k">font-family</span><span class="p">:</span> <span class="s1">&#39;Open Sans&#39;</span><span class="p">,</span> <span class="kc">sans-serif</span><span class="p">;</span>
+  <span class="k">color</span><span class="p">:</span> <span class="mh">#484848</span><span class="p">;</span>
+  <span class="k">font-size</span><span class="p">:</span> <span class="mi">17</span><span class="kt">px</span><span class="p">;</span>
+  <span class="k">margin</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">container</span> <span class="p">{</span>
+  <span class="k">margin</span><span class="p">:</span> <span class="mi">0</span> <span class="kc">auto</span><span class="p">;</span>
+  <span class="k">padding</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">12</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">@</span><span class="k">media</span> <span class="o">(</span><span class="nt">min-width</span><span class="o">:</span> <span class="nt">744px</span><span class="o">)</span> <span class="p">{</span>
+  <span class="p">.</span><span class="nc">container</span> <span class="p">{</span>
+      <span class="k">width</span><span class="p">:</span> <span class="mi">696</span><span class="kt">px</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">toolbar</span> <span class="p">{</span>
+  <span class="k">display</span><span class="p">:</span> <span class="kc">flex</span><span class="p">;</span>
+  <span class="k">align-items</span><span class="p">:</span> <span class="kc">center</span><span class="p">;</span>
+  <span class="k">border-bottom</span><span class="p">:</span> <span class="mi">1</span><span class="kt">px</span> <span class="kc">solid</span> <span class="mh">#e4e4e4</span><span class="p">;</span>
+  <span class="k">box-shadow</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">1</span><span class="kt">px</span> <span class="mi">5</span><span class="kt">px</span> <span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">toolbar</span> <span class="p">.</span><span class="nc">icon</span> <span class="p">{</span>
+  <span class="k">height</span><span class="p">:</span> <span class="mi">34</span><span class="kt">px</span><span class="p">;</span>
+  <span class="k">padding</span><span class="p">:</span> <span class="mi">16</span><span class="kt">px</span> <span class="mi">12</span><span class="kt">px</span> <span class="mi">16</span><span class="kt">px</span> <span class="mi">24</span><span class="kt">px</span><span class="p">;</span>
+  <span class="k">display</span><span class="p">:</span> <span class="kc">inline-block</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">toolbar</span> <span class="nt">h1</span> <span class="p">{</span>
+  <span class="k">color</span><span class="p">:</span> <span class="mh">#4fc08d</span><span class="p">;</span>
+  <span class="k">display</span><span class="p">:</span> <span class="kc">inline-block</span><span class="p">;</span>
+  <span class="k">font-size</span><span class="p">:</span> <span class="mi">28</span><span class="kt">px</span><span class="p">;</span>
+  <span class="k">margin</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>3.1.4. 在浏览器打开<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p>要查看项目，请在 <code class="docutils literal"><span class="pre">Web</span></code> 浏览器中找到 <code class="docutils literal"><span class="pre">index.html</span></code> 文件。 在 <code class="docutils literal"><span class="pre">Chrome</span></code> 中，它就像 <code class="docutils literal"><span class="pre">File|Open</span> <span class="pre">File</span></code> 一样简单 。 加载时，除顶部的工具栏外，您会看到大部分为空的页面。</p>
+</div>
+</div>
+<div class="section" id="vue-js">
+<h2>3.2. 安装Vue.js<a class="headerlink" href="#vue-js" title="永久链接至标题">¶</a></h2>
+<p>现在是时候将 <code class="docutils literal"><span class="pre">Vue.js</span></code> 库添加到我们的项目中。 <code class="docutils literal"><span class="pre">Vue</span></code> 作为我们的 <code class="docutils literal"><span class="pre">NPM</span></code> 安装的一部分下载，所以现在我们可以简单地链接到带有 <code class="docutils literal"><span class="pre">script</span></code> 标签的 <code class="docutils literal"><span class="pre">Vue.js</span></code> 的浏览器版本。</p>
+<p>index.html</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;toolbar&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;node_modules/vue/dist/vue.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;app.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">在脚本顺序运行时，我们在自定义的 <code class="docutils literal"><span class="pre">app.js</span></code> 脚本之前包含 <code class="docutils literal"><span class="pre">Vue</span></code> 库是非常重要的。</p>
+</div>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 现在将被注册为全局对象。 我们可以通过浏览器在 <code class="docutils literal"><span class="pre">JavaScript</span></code> 控制台中输入以下内容来测试它：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>console.log<span class="o">(</span>Vue<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>结果如下：</p>
+<div class="figure" id="id37">
+<img alt="_images/2-3.png" src="_images/2-3.png" />
+<p class="caption"><span class="caption-text">图2.3 检查Vue被注册为全局对象</span></p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>3.3. 页面内容<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>随着我们的环境设置和启动代码的安装，我们现在准备好开始构建 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 原型的第一步。</p>
+<p>让我们在页面中添加一些内容，包括标题图片，标题和关于部分。 我们将在我们的 <code class="docutils literal"><span class="pre">HTML</span></code> 文件中添加结构，并使用 <code class="docutils literal"><span class="pre">Vue.js</span></code> 在我们需要的地方插入正确的内容。</p>
+<div class="section" id="vue">
+<h3>3.3.1. Vue实例<a class="headerlink" href="#vue" title="永久链接至标题">¶</a></h3>
+<p>查看我们的 <code class="docutils literal"><span class="pre">app.js</span></code> 文件，现在让我们通过使用带 <code class="docutils literal"><span class="pre">Vue</span></code> 对象的 <code class="docutils literal"><span class="pre">new</span></code> 运算符来创建 <code class="docutils literal"><span class="pre">Vue.js</span></code> 的根实例。</p>
+<p>app.js</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>当你创建一个 <code class="docutils literal"><span class="pre">Vue</span></code> 实例时，你通常需要传入一个配置对象作为参数。 这个对象是你的项目的自定义数据和函数被定义的地方。</p>
+<p>app.js</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>随着我们的项目的进行，我们将为这个配置对象增加更多，但现在我们刚刚添加了 <code class="docutils literal"><span class="pre">el</span></code> 属性，它告诉 <code class="docutils literal"><span class="pre">Vue</span></code> 将它自己挂载到页面中的位置。</p>
+<p>您可以为其分配一个字符串（一个 <code class="docutils literal"><span class="pre">CSS</span></code> 选择器）或一个 <code class="docutils literal"><span class="pre">HTML</span></code> 节点对象。 在我们的例子中，我们使用了 <code class="docutils literal"><span class="pre">#app</span></code> 字符串，它是一个 <code class="docutils literal"><span class="pre">CSS</span></code> 选择器，指向 <code class="docutils literal"><span class="pre">ID</span></code> 为 <code class="docutils literal"><span class="pre">app</span></code> 的元素。</p>
+<p>index.html</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+  <span class="c">&lt;!--Mount element--&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 支配它所加载的元素和任何子节点。 对于我们迄今为止的项目， <code class="docutils literal"><span class="pre">Vue</span></code> 可以使用 <code class="docutils literal"><span class="pre">header</span></code> 类来操作 <code class="docutils literal"><span class="pre">div</span></code> ，但它不能用 <code class="docutils literal"><span class="pre">ID</span></code> 为 <code class="docutils literal"><span class="pre">toolbar</span></code> 来操作 <code class="docutils literal"><span class="pre">div</span></code> 。 任何放在该 <code class="docutils literal"><span class="pre">div</span></code> 里的东西对于 <code class="docutils literal"><span class="pre">Vue</span></code> 不可见。</p>
+<p>index.html</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;toolbar&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+  <span class="c">&lt;!--Vue only has dominion here--&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+  ...
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;node_modules/vue/dist/vue.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;app.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">从现在起，我们将把我们的 <code class="docutils literal"><span class="pre">Mount</span></code> 节点及其子节点作为我们的模板。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>3.3.2. 数据绑定<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 的一个简单任务是将一些 <code class="docutils literal"><span class="pre">JavaScript</span></code> 数据绑定到模板。 让我们在配置对象中创建一个 <code class="docutils literal"><span class="pre">data</span></code> 属性，并为其分配一个对象，该对象包含 <code class="docutils literal"><span class="pre">title:'My</span> <span class="pre">apartment'</span></code> 属性。</p>
+<p>app.js</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;My apartment&#39;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>此 <code class="docutils literal"><span class="pre">data</span></code> 对象的任何属性都将在我们的模板中可用。 为了告诉 <code class="docutils literal"><span class="pre">Vue</span></code> 在哪里绑定这些数据，我们可以使用 <code class="docutils literal"><span class="pre">mustache</span></code> 语法，也就是双括号，例如 <code class="docutils literal"><span class="pre">{{myProperty}}</span></code> 。 当 <code class="docutils literal"><span class="pre">Vue</span></code> 实例化时，它会编译模板，用适当的文本替换 <code class="docutils literal"><span class="pre">mustache</span></code> 语法，并更新 <code class="docutils literal"><span class="pre">DOM</span></code> 以反映这一点。 这个过程被称为 <strong>文本插值</strong> ，并在下面的代码块中进行演示。</p>
+<p>index.html</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;heading&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>{{ title }}<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>将会被渲染为：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;heading&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>My apartment<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>让我们现在添加更多的数据属性，并增强我们的模板以包含更多的页面结构。</p>
+<p>app.js</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;My apartment&#39;</span><span class="p">,</span>
+    <span class="nx">address</span><span class="o">:</span> <span class="s1">&#39;12 My Street, My City, My Country&#39;</span><span class="p">,</span>
+    <span class="nx">about</span><span class="o">:</span> <span class="s1">&#39;This is a description of my apartment.&#39;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>index.html</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;heading&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>{{ title }}<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>{{ address }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">hr</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;about&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>About this listing<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>{{ about }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>我们还要添加一些新的 <code class="docutils literal"><span class="pre">CSS</span></code> 规则。</p>
+<p>style.css</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">heading</span> <span class="p">{</span>
+  <span class="k">margin-bottom</span><span class="p">:</span> <span class="mi">2</span><span class="kt">em</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">heading</span> <span class="nt">h1</span> <span class="p">{</span>
+  <span class="k">font-size</span><span class="p">:</span> <span class="mi">32</span><span class="kt">px</span><span class="p">;</span>
+  <span class="k">font-weight</span><span class="p">:</span> <span class="mi">700</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">heading</span> <span class="nt">p</span> <span class="p">{</span>
+  <span class="k">font-size</span><span class="p">:</span> <span class="mi">15</span><span class="kt">px</span><span class="p">;</span>
+  <span class="k">color</span><span class="p">:</span> <span class="mh">#767676</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">hr</span> <span class="p">{</span>
+  <span class="k">border</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">border-top</span><span class="p">:</span> <span class="mi">1</span><span class="kt">px</span> <span class="kc">solid</span> <span class="mh">#dce0e0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">about</span> <span class="p">{</span>
+  <span class="k">margin-top</span><span class="p">:</span> <span class="mi">2</span><span class="kt">em</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">about</span> <span class="nt">h3</span> <span class="p">{</span>
+  <span class="k">font-size</span><span class="p">:</span> <span class="mi">22</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">about</span> <span class="nt">p</span> <span class="p">{</span>
+  <span class="k">white-space</span><span class="p">:</span> <span class="kc">pre-wrap</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果您现在保存并刷新页面，它应该如下所示：</p>
+<div class="figure" id="id38">
+<img alt="_images/2-4.png" src="_images/2-4.png" />
+<p class="caption"><span class="caption-text">图2.4 包含基本数据绑定的列表页面</span></p>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>3.3.3. 模拟列表样本<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>在开发过程中，使用一些模拟数据很好，这样我们就可以看到完成的页面的外观。 出于这个原因，我在项目中包含了 <code class="docutils literal"><span class="pre">sample/data.js</span></code> 。 让我们在我们的文档中加载它，确保它在我们的 <a href="#id6"><span class="problematic" id="id7">``</span></a>app.js``文件前面被加载。</p>
+<p>index.html</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;toolbar&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;node_modules/vue/dist/vue.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;sample/data.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;app.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>看看这个文件，你会发现它声明了一个 <code class="docutils literal"><span class="pre">sample</span></code> 对象。 我们现在将在我们的数据配置中使用它。</p>
+<p>app.js</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+  <span class="nx">title</span><span class="o">:</span> <span class="nx">sample</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span>
+  <span class="nx">address</span><span class="o">:</span> <span class="nx">sample</span><span class="p">.</span><span class="nx">address</span><span class="p">,</span>
+  <span class="nx">about</span><span class="o">:</span> <span class="nx">sample</span><span class="p">.</span><span class="nx">about</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一旦保存并刷新，您将在页面上看到更真实的数据：</p>
+<div class="figure" id="id39">
+<img alt="_images/2-5.png" src="_images/2-5.png" />
+<p class="caption"><span class="caption-text">图2.5 包括模拟列表示例的页面</span></p>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">以这种方式使用全局变量分割不同的脚本文件不是理想的做法。 尽管如此，我们只会在原型中执行此操作，稍后我们将从服务器中获取此模拟列表样本。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>3.4. 页眉图像<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<p>如果没有大的光泽图像来显示它，房间清单将是不完整的。 我们现在将包含模拟列表中的标题图像。 将此标记添加到页面。</p>
+<p>index.html</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header-img&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>style.css文件如下：</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">header</span> <span class="p">{</span>
+  <span class="k">height</span><span class="p">:</span> <span class="mi">320</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">header</span> <span class="p">.</span><span class="nc">header-img</span> <span class="p">{</span>
+  <span class="k">background-repeat</span><span class="p">:</span> <span class="kc">no-repeat</span><span class="p">;</span>
+  <span class="k">background-size</span><span class="p">:</span> <span class="kc">cover</span><span class="p">;</span>
+  <span class="k">background-position</span><span class="p">:</span> <span class="mi">50</span><span class="kt">%</span> <span class="mi">50</span><span class="kt">%</span><span class="p">;</span>
+  <span class="k">background-color</span><span class="p">:</span> <span class="mh">#f5f5f5</span><span class="p">;</span>
+  <span class="k">height</span><span class="p">:</span> <span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>您可能想知道为什么我们使用 <code class="docutils literal"><span class="pre">div</span></code> 而不是 <code class="docutils literal"><span class="pre">img</span></code> 标签。 为了帮助定位，我们将使用 <code class="docutils literal"><span class="pre">header-img</span></code> 类将我们的图像设置为 <code class="docutils literal"><span class="pre">div</span></code> 的背景。</p>
+<div class="section" id="id9">
+<h3>3.4.1. 样式绑定一<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>要设置背景图片，我们必须将 <code class="docutils literal"><span class="pre">URL</span></code> 作为 <code class="docutils literal"><span class="pre">CSS</span></code> 规则中的属性提供，如下所示：</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">header</span> <span class="p">.</span><span class="nc">header-img</span> <span class="p">{</span>
+  <span class="k">background-image</span><span class="p">:</span> <span class="nb">url</span><span class="p">(</span><span class="sx">...</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>显然，我们的标题图像应该针对每个单独的列表，因此我们不想对此 <code class="docutils literal"><span class="pre">CSS</span></code> 规则进行硬编码。 相反，我们可以让 <code class="docutils literal"><span class="pre">Vue</span></code> 将来自数据的 <code class="docutils literal"><span class="pre">URL</span></code> 绑定到我们的模板。</p>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 无法访问我们的 <code class="docutils literal"><span class="pre">CSS</span></code> 样式表，但它可以绑定到内联样式属性：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header-img&quot;</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;background-image: url(...);&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>您可能会认为使用文本插值是这里的解决方案，例如：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header-img&quot;</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;background-image: {{ headerUrl }}&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>但是这不是有效的 <code class="docutils literal"><span class="pre">Vue.js</span></code> 语法。 相反，这是另一个 <code class="docutils literal"><span class="pre">Vue.js</span></code> 中称为指令的功能。 让我们首先探索指令，然后再回来解决这个问题。</p>
+</div>
+<div class="section" id="id10">
+<h3>3.4.2. 指令<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 的指令是带 <code class="docutils literal"><span class="pre">v-</span></code> 前缀的特殊 <code class="docutils literal"><span class="pre">HTML</span></code> 属性，例如 <code class="docutils literal"><span class="pre">v-if</span></code> ，它提供了一种简单的方法来为我们的模板添加功能。 可以添加到元素的指令的一些示例如下：</p>
+<ul class="simple">
+<li>v-if：有条件地呈现元素；</li>
+<li>v-for：根据数组或对象多次渲染元素；</li>
+<li>v-bind：将元素的属性动态绑定到 <code class="docutils literal"><span class="pre">JavaScript</span></code> 表达式；</li>
+<li>v-on：将一个事件监听器关联到该元素；</li>
+</ul>
+<p>我们将在整本书中探讨更多内容。</p>
+<div class="section" id="id11">
+<h4>3.4.2.1. 使用<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+<p>就像普通的 <code class="docutils literal"><span class="pre">HTML</span></code> 属性一样，指令通常是名称/值对，形式为 <code class="docutils literal"><span class="pre">name</span> <span class="pre">=&quot;value&quot;</span></code> 。 要使用指令，只需将其添加到 <code class="docutils literal"><span class="pre">HTML</span></code> 标记中，就像属性一样，例如：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-directive</span><span class="o">=</span><span class="s">&quot;value&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h4>3.4.2.2. 表达式<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
+<p>如果一个指令需要一个值，它可以是一个表达式。</p>
+<p>在 <code class="docutils literal"><span class="pre">JavaScript</span></code> 语言中，表达式是小型的，可计算的语句，可以生成单个值。 表达式可用于任何需要值的地方，例如在 <code class="docutils literal"><span class="pre">if</span></code> 语句的括号中：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="nx">expression</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>表达可以是以下任何一种：</p>
+<ul class="simple">
+<li>一个数学表达式，例如 <code class="docutils literal"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">7</span></code> ；</li>
+<li>比较，例如 <code class="docutils literal"><span class="pre">v</span> <span class="pre">&lt;=</span> <span class="pre">7</span></code> ；</li>
+<li><code class="docutils literal"><span class="pre">Vue</span> <span class="pre">data``属性，例如</span> <span class="pre">``this.myval</span></code> ；</li>
+</ul>
+<p>指令和文本插值都接受表达式值：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-dir</span><span class="o">=</span><span class="s">&quot;someExpression&quot;</span><span class="p">&gt;</span>{{ firstName + &quot; &quot; + lastName }}<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="v-if">
+<h4>3.4.2.3. 例子：v-if<a class="headerlink" href="#v-if" title="永久链接至标题">¶</a></h4>
+<p>如果它的值是真值表达式， <code class="docutils literal"><span class="pre">v-if</span></code> 将有条件地渲染一个元素。 在以下情况下， <code class="docutils literal"><span class="pre">v-if</span></code> 将根据 <code class="docutils literal"><span class="pre">myval</span></code> 值移除/插入 <code class="docutils literal"><span class="pre">p</span></code> 元素：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;myval&quot;</span><span class="p">&gt;</span>Hello Vue<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+  <span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">myval</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>将会被渲染为：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hello Vue<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>如果我们在一个连续的元素中添加 <code class="docutils literal"><span class="pre">v-else</span></code> 指令（一个无值的特殊指令），它会随着 <code class="docutils literal"><span class="pre">myval</span></code> 的改变而被对称地删除/插入：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;myval&quot;</span><span class="p">&gt;</span>Hello Vue<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-else</span><span class="p">&gt;</span>Goodbye Vue<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h4>3.4.2.4. 参数<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
+<p>某些指令接收参数，在指令名称后面用冒号表示。 例如，侦听 <code class="docutils literal"><span class="pre">DOM</span></code> 事件的 <code class="docutils literal"><span class="pre">v-on</span></code> 指令需要一个参数来指定应该侦听哪个事件：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">a</span> <span class="na">v-on:click</span><span class="o">=</span><span class="s">&quot;doSomething&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>除了 <code class="docutils literal"><span class="pre">click</span></code> ，参数可以是 <code class="docutils literal"><span class="pre">mouseenter</span></code> ， <code class="docutils literal"><span class="pre">keypress</span></code> ， <code class="docutils literal"><span class="pre">scroll</span></code> （包括自定义事件）。</p>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>3.4.3. 样式绑定二<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>回到我们的页眉图像，我们可以使用带有 <code class="docutils literal"><span class="pre">style</span></code> 参数的 <code class="docutils literal"><span class="pre">v-bind</span></code> 指令将一个值绑定到 <code class="docutils literal"><span class="pre">style</span></code> 属性。</p>
+<p>index.html</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header-img&quot;</span> <span class="na">v-bind:style</span><span class="o">=</span><span class="s">&quot;headerImageStyle&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">headerImageStyle</span></code> 是一个表达式，用于计算将 <code class="docutils literal"><span class="pre">CSS</span></code> 背景图像设置为正确 <code class="docutils literal"><span class="pre">URL</span></code> 的 <code class="docutils literal"><span class="pre">CSS</span></code> 规则。 这听起来很混乱，但当你看到它的工作时，将会很清楚。</p>
+<p>现在让我们创建 <code class="docutils literal"><span class="pre">headerImageStyle</span></code> 作为数据属性。 绑定到样式属性时，可以使用属性和值等效于 <code class="docutils literal"><span class="pre">CSS</span></code> 属性和值的对象。</p>
+<p>app.js</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="nx">headerImageStyle</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s1">&#39;background-image&#39;</span><span class="o">:</span> <span class="s1">&#39;url(sample/header.jpg)&#39;</span>
+  <span class="p">}</span>
+<span class="p">},</span>
+</pre></div>
+</div>
+<p>保存代码，刷新页面，将会显示标题图片：</p>
+<div class="figure" id="id40">
+<img alt="_images/2-6.png" src="_images/2-6.png" />
+<p class="caption"><span class="caption-text">图2.6 包含页眉图像的页面</span></p>
+</div>
+<p>用您的浏览器开发工具检查页面，注意 <code class="docutils literal"><span class="pre">v-bind</span></code> 指令如何计算的：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header-img&quot;</span> <span class="na">style</span><span class="o">=</span><span class="s">&quot;background-image: url(&#39;sample/header.jpg&#39;);&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id15">
+<h2>3.5. 列表部分<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h2>
+<p>我们将添加到页面的下一部分内容是设施和价格列表：</p>
+<div class="figure" id="id41">
+<img alt="_images/2-7.png" src="_images/2-7.png" />
+<p class="caption"><span class="caption-text">图2.7 列表部分</span></p>
+</div>
+<p>如果您查看模拟列表示例，您会看到对象上的设施和价格属性都是数组。</p>
+<p>sample/data.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">sample</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span>
+  <span class="nx">address</span><span class="o">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span>
+  <span class="nx">about</span><span class="o">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span>
+  <span class="nx">amenities</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Wireless Internet&#39;</span><span class="p">,</span>
+      <span class="nx">icon</span><span class="o">:</span> <span class="s1">&#39;fa-wifi&#39;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Pets Allowed&#39;</span><span class="p">,</span>
+      <span class="nx">icon</span><span class="o">:</span> <span class="s1">&#39;fa-paw&#39;</span>
+    <span class="p">},</span>
+    <span class="p">...</span>
+  <span class="p">],</span>
+  <span class="nx">prices</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Per night&#39;</span><span class="p">,</span>
+      <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;$89&#39;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Extra people&#39;</span><span class="p">,</span>
+      <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;No charge&#39;</span>
+    <span class="p">},</span>
+    <span class="p">...</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果我们能够遍历这些数组并将每个项目打印到页面，这不是一件容易的事吗？ 我们可以！ 这是 <code class="docutils literal"><span class="pre">v-for</span></code> 指令的作用。</p>
+<p>首先，我们将这些作为数据属性添加到我们的根实例。</p>
+<p>app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="nx">amenities</span><span class="o">:</span> <span class="nx">sample</span><span class="p">.</span><span class="nx">amenities</span><span class="p">,</span>
+  <span class="nx">prices</span><span class="o">:</span> <span class="nx">sample</span><span class="p">.</span><span class="nx">prices</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id16">
+<h3>3.5.1. 渲染列表<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">v-for</span></code> 指令需要 <code class="docutils literal"><span class="pre">item</span> <span class="pre">in</span> <span class="pre">items</span></code> 形式的特殊表达式，其中 <code class="docutils literal"><span class="pre">items</span></code> 是源数组， <code class="docutils literal"><span class="pre">item</span></code> 是当前数组元素被循环使用的别名。</p>
+<p>让我们首先处理 <code class="docutils literal"><span class="pre">amenities</span></code> 数组。 此数组的每个成员都是具有 <code class="docutils literal"><span class="pre">title</span></code> 和 <code class="docutils literal"><span class="pre">icon</span></code> 属性的对象，即：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;something&#39;</span><span class="p">,</span> <span class="nx">icon</span><span class="o">:</span> <span class="s1">&#39;something&#39;</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>我们将 <code class="docutils literal"><span class="pre">v-for</span></code> 指令添加到模板中，我们分配给它的表达式为 <code class="docutils literal"><span class="pre">amenity</span> <span class="pre">in</span> <span class="pre">amenities</span></code> 。表达式的别名部分即 <code class="docutils literal"><span class="pre">amenity</span></code> 将在整个循环序列中引用数组中的每个对象，从第一个开始。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;heading&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">hr</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;about&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;lists&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;amenity in amenities&quot;</span><span class="p">&gt;</span>{{ amenity.title }}<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>它将被渲染为：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;heading&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">hr</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;about&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;lists&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>Wireless Internet<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>Pets Allowed<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>TV<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>Kitchen<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>Breakfast<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>Laptop friendly workspace<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="icons">
+<h3>3.5.2. Icons<a class="headerlink" href="#icons" title="永久链接至标题">¶</a></h3>
+<p>我们 <code class="docutils literal"><span class="pre">amenity</span></code> 对象的第二个属性是图标。 这实际上是一个与 <code class="docutils literal"><span class="pre">Font</span> <span class="pre">Awesome</span></code> 图标字体中的图标相关的类。 我们已经将 <code class="docutils literal"><span class="pre">Font</span> <span class="pre">Awesome</span></code> 安装为 <code class="docutils literal"><span class="pre">NPM</span></code> 模块，因此将其添加到页面的头部以便现在使用它。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  ...
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;node_modules/open-sans-all/css/open-sans.css&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;node_modules/font-awesome/css/font-awesome.css&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;style.css&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>现在我们可以在模板中完成我们的 <code class="docutils literal"><span class="pre">amenities</span></code> 部分的结构。</p>
+<p>index.html</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;lists&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">hr</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;amenities list&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;title&quot;</span><span class="p">&gt;&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Amenities<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;content&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;list-item&quot;</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;amenity in amenities&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;fa fa-lg&quot;</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;amenity.icon&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>{{ amenity.title }}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>style.css:</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">list</span> <span class="p">{</span>
+  <span class="k">display</span><span class="p">:</span> <span class="kc">flex</span><span class="p">;</span>
+  <span class="k">flex-wrap</span><span class="p">:</span> <span class="kc">nowrap</span><span class="p">;</span>
+  <span class="k">margin</span><span class="p">:</span> <span class="mi">2</span><span class="kt">em</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">list</span> <span class="p">.</span><span class="nc">title</span> <span class="p">{</span>
+  <span class="k">flex</span><span class="p">:</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">25</span><span class="kt">%</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">list</span> <span class="p">.</span><span class="nc">content</span> <span class="p">{</span>
+  <span class="k">flex</span><span class="p">:</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">75</span><span class="kt">%</span><span class="p">;</span>
+  <span class="k">display</span><span class="p">:</span> <span class="kc">flex</span><span class="p">;</span>
+  <span class="k">flex-wrap</span><span class="p">:</span> <span class="kc">wrap</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">list</span> <span class="p">.</span><span class="nc">list-item</span> <span class="p">{</span>
+  <span class="k">flex</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">50</span><span class="kt">%</span><span class="p">;</span>
+  <span class="k">margin-bottom</span><span class="p">:</span> <span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">list</span> <span class="p">.</span><span class="nc">list-item</span> <span class="o">&gt;</span> <span class="nt">i</span> <span class="p">{</span>
+  <span class="k">width</span><span class="p">:</span> <span class="mi">35</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">@</span><span class="k">media</span> <span class="o">(</span><span class="nt">max-width</span><span class="o">:</span> <span class="nt">743px</span><span class="o">)</span> <span class="p">{</span>
+  <span class="p">.</span><span class="nc">list</span> <span class="p">.</span><span class="nc">title</span> <span class="p">{</span>
+    <span class="k">flex</span><span class="p">:</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">33</span><span class="kt">%</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="p">.</span><span class="nc">list</span> <span class="p">.</span><span class="nc">content</span> <span class="p">{</span>
+    <span class="k">flex</span><span class="p">:</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">67</span><span class="kt">%</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="p">.</span><span class="nc">list</span> <span class="p">.</span><span class="nc">list-item</span> <span class="p">{</span>
+    <span class="k">flex</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="key">
+<h3>3.5.3. Key<a class="headerlink" href="#key" title="永久链接至标题">¶</a></h3>
+<p>正如您所预料的那样，由 <code class="docutils literal"><span class="pre">v-for=&quot;amenity</span> <span class="pre">in</span> <span class="pre">amenities&quot;</span></code> 生成的 <code class="docutils literal"><span class="pre">DOM</span></code> 节点被反应性绑定到 <code class="docutils literal"><span class="pre">amenities</span></code> 数组。如果 <code class="docutils literal"><span class="pre">amenities&quot;</span></code> 内容改变， <code class="docutils literal"><span class="pre">Vue</span></code> 会自动重新渲染节点以反映变化。</p>
+<p>当使用 <code class="docutils literal"><span class="pre">v-for</span></code> 时，建议您为列表中的每个项目提供一个唯一的 <code class="docutils literal"><span class="pre">key</span></code> 属性。 这使 <code class="docutils literal"><span class="pre">Vue</span></code> 可以针对需要更改的确切 <code class="docutils literal"><span class="pre">DOM</span></code> 节点，从而使 <code class="docutils literal"><span class="pre">DOM</span></code> 更新更加高效。</p>
+<p>通常， <code class="docutils literal"><span class="pre">key</span></code> 将是数字 <code class="docutils literal"><span class="pre">ID</span></code> ，例如：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;item in items&quot;</span> <span class="na">v-bind:key</span><span class="o">=</span><span class="s">&quot;item.id&quot;</span><span class="p">&gt;</span>
+  {{ item.title }}
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>对于 <code class="docutils literal"><span class="pre">amenities</span></code> 和价格清单，内容在应用程序的整个生命周期内不会改变，因此我们不需要提供 <code class="docutils literal"><span class="pre">key</span></code> 。 有些波浪线可能会警告您，但在这种情况下，警告可以安全地忽略。</p>
+</div>
+<div class="section" id="prices">
+<h3>3.5.4. Prices<a class="headerlink" href="#prices" title="永久链接至标题">¶</a></h3>
+<p>现在让我们将价目表添加到我们的模板中。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;lists&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">hr</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;amenities list&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">hr</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;prices list&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;title&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Prices<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;content&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;list-item&quot;</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;price in prices&quot;</span><span class="p">&gt;</span>
+        {{ price.title }}: <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>{{ price.value }}<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>我相信你会同意循环模板比写出每个项目要容易得多。 但是，您可能会注意到这两个列表之间仍然存在一些共同的标记。 在本书后面，我们将利用组件使模板的这部分更加模块化。</p>
+</div>
+</div>
+<div class="section" id="id17">
+<h2>3.6. 显示更多功能<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
+<p>在列表部分位于关于部分之后，我们已经遇到了问题。“关于”部分具有任意长度，在我们添加的一些模拟列表中，您会看到此部分很长。</p>
+<p>我们不希望它主宰页面并强制用户做很多不受欢迎的滚动查看列表部分，所以我们需要一种方法来隐藏一些文本，如果它太长，但如果他们选择，允许用户查看全文。</p>
+<p>让我们添加一个显示 <strong>更多</strong> <code class="docutils literal"><span class="pre">UI</span></code> 功能，该功能将在特定长度后剪裁关于文本，并为用户提供一个按钮来显示隐藏文本：</p>
+<div class="figure" id="id42">
+<img alt="_images/2-8.png" src="_images/2-8.png" />
+<p class="caption"><span class="caption-text">图2.8 显示更多功能</span></p>
+</div>
+<p>我们将首先向包含 <code class="docutils literal"><span class="pre">about</span></code> 文本插值的 <code class="docutils literal"><span class="pre">p</span></code> 标签添加一个 <code class="docutils literal"><span class="pre">contracted</span></code> 类。 该类的 <code class="docutils literal"><span class="pre">CSS</span></code> 规则将其高度限制为 <code class="docutils literal"><span class="pre">250</span></code> 像素，并隐藏任何溢出元素的文本。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;about&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>About this listing<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;contracted&quot;</span><span class="p">&gt;</span>{{ about }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>style.css:</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">about</span> <span class="nt">p</span><span class="p">.</span><span class="nc">contracted</span> <span class="p">{</span>
+  <span class="k">height</span><span class="p">:</span> <span class="mi">250</span><span class="kt">px</span><span class="p">;</span>
+  <span class="k">overflow</span><span class="p">:</span> <span class="kc">hidden</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们还会在 <code class="docutils literal"><span class="pre">p</span></code> 标签后面放一个按钮，用户可以点击将该部分展开为全高。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;about&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>About this listing<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;contracted&quot;</span><span class="p">&gt;</span>{{ about }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">button</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;more&quot;</span><span class="p">&gt;</span>+ More<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>这是需要的 <code class="docutils literal"><span class="pre">CSS</span></code> ，包括一个通用按钮规则，它将为我们在整个项目中添加的所有按钮提供基础样式。</p>
+<p>style.css:</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="nt">button</span> <span class="p">{</span>
+  <span class="k">text-align</span><span class="p">:</span> <span class="kc">center</span><span class="p">;</span>
+  <span class="k">vertical-align</span><span class="p">:</span> <span class="kc">middle</span><span class="p">;</span>
+  <span class="k">user-select</span><span class="p">:</span> <span class="kc">none</span><span class="p">;</span>
+  <span class="k">white-space</span><span class="p">:</span> <span class="kc">nowrap</span><span class="p">;</span>
+  <span class="k">cursor</span><span class="p">:</span> <span class="kc">pointer</span><span class="p">;</span>
+  <span class="k">display</span><span class="p">:</span> <span class="kc">inline-block</span><span class="p">;</span>
+  <span class="k">margin-bottom</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">about</span> <span class="nt">button</span><span class="p">.</span><span class="nc">more</span> <span class="p">{</span>
+  <span class="k">background</span><span class="p">:</span> <span class="kc">transparent</span><span class="p">;</span>
+  <span class="k">border</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">color</span><span class="p">:</span> <span class="mh">#008489</span><span class="p">;</span>
+  <span class="k">padding</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">font-size</span><span class="p">:</span> <span class="mi">17</span><span class="kt">px</span><span class="p">;</span>
+  <span class="k">font-weight</span><span class="p">:</span> <span class="kc">bold</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">about</span> <span class="nt">button</span><span class="p">.</span><span class="nc">more</span><span class="p">:</span><span class="nd">hover</span><span class="o">,</span>
+<span class="p">.</span><span class="nc">about</span> <span class="nt">button</span><span class="p">.</span><span class="nc">more</span><span class="p">:</span><span class="nd">focus</span><span class="o">,</span>
+<span class="p">.</span><span class="nc">about</span> <span class="nt">button</span><span class="p">.</span><span class="nc">more</span><span class="p">:</span><span class="nd">active</span> <span class="p">{</span>
+  <span class="k">text-decoration</span><span class="p">:</span> <span class="kc">underline</span><span class="p">;</span>
+  <span class="k">outline</span><span class="p">:</span> <span class="kc">none</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>要做到这一点，我们需要一种方法来在用户单击“更多”按钮时删除 <code class="docutils literal"><span class="pre">contracted</span></code> 类。 似乎很好的指示！</p>
+<div class="section" id="id18">
+<h3>3.6.1. 类绑定<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
+<p>我们如何处理这个问题就是动态绑定 <code class="docutils literal"><span class="pre">contracted</span></code> 类。 让我们创建一个 <code class="docutils literal"><span class="pre">contracted</span></code> 的数据属性并将其初始值设置为 <code class="docutils literal"><span class="pre">true</span></code> 。</p>
+<p>app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="nx">contracted</span><span class="o">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>就像我们的样式绑定一样，我们可以将这个类绑定到一个对象。 在表达式中， <code class="docutils literal"><span class="pre">contracted</span></code> 属性是要绑定的类的名称， <code class="docutils literal"><span class="pre">contracted</span></code> 值是对同名的数据属性的引用，该属性是布尔值。 因此，如果 <code class="docutils literal"><span class="pre">contracted</span></code> 数据属性的计算结果为 <code class="docutils literal"><span class="pre">true</span></code> ，那么该类将被绑定到元素，如果计算结果为 <code class="docutils literal"><span class="pre">false</span></code> ，则不会。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;{ contracted: contracted }&quot;</span><span class="p">&gt;</span>{{ about }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>接下来，当页面加载 <code class="docutils literal"><span class="pre">contracted</span></code> 类时被绑定：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;contracted&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h3>3.6.2. 事件监听<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
+<p>现在我们想要在用户单击“更多”按钮时自动删除 <code class="docutils literal"><span class="pre">contracted</span></code> 类。 为了完成这项工作，我们将使用 <code class="docutils literal"><span class="pre">v-on</span></code> 指令，该指令用 <code class="docutils literal"><span class="pre">click</span></code> 参数监听 <code class="docutils literal"><span class="pre">DOM</span></code> 事件。</p>
+<p><code class="docutils literal"><span class="pre">v-on</span></code> 指令的值可以是一个表达式，它将 <code class="docutils literal"><span class="pre">contracted</span></code> 设置为 <code class="docutils literal"><span class="pre">false</span></code> 。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;about&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>About this listing<span class="p">&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;{ contracted: contracted }&quot;</span><span class="p">&gt;</span>{{ about }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">button</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;more&quot;</span> <span class="na">v-on:click</span><span class="o">=</span><span class="s">&quot;contracted = false&quot;</span><span class="p">&gt;</span>+ More<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id20">
+<h3>3.6.3. 反应<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<p>当我们点击更多按钮时， <code class="docutils literal"><span class="pre">contracted</span></code> 值会改变， <code class="docutils literal"><span class="pre">Vue</span></code> 会立即更新页面以反映这一变化。</p>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 如何知道这样做？ 为了回答这个问题，我们必须首先理解 <code class="docutils literal"><span class="pre">getter</span></code> 和 <code class="docutils literal"><span class="pre">setter</span></code> 的概念。</p>
+<div class="section" id="getterssetters">
+<h4>3.6.3.1. Getters和setters<a class="headerlink" href="#getterssetters" title="永久链接至标题">¶</a></h4>
+<p>为 <code class="docutils literal"><span class="pre">JavaScript</span></code> 对象的属性赋值非常简单：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myObj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">prop</span><span class="o">:</span> <span class="s1">&#39;Hello&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>检索它很简单：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">myObj</span><span class="p">.</span><span class="nx">prop</span>
+</pre></div>
+</div>
+<p>这里没有任何窍门。 我想要说明的一点是，我们可以通过使用 <code class="docutils literal"><span class="pre">getter</span></code> 和 <code class="docutils literal"><span class="pre">setter</span></code> 来替换这个对象的正常赋值/检索机制。 这些是特殊的功能，允许自定义逻辑获取或设置属性的值。</p>
+<p>当一个属性的值由另一个属性确定时， <code class="docutils literal"><span class="pre">Getter</span></code> 和 <code class="docutils literal"><span class="pre">Setter</span></code> 特别有用。 这是是一个例子：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">person</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">firstName</span><span class="o">:</span> <span class="s1">&#39;Abraham&#39;</span><span class="p">,</span>
+  <span class="nx">lastName</span><span class="o">:</span> <span class="s1">&#39;Lincoln&#39;</span><span class="p">,</span>
+  <span class="nx">get</span> <span class="nx">fullName</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">firstName</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">lastName</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="nx">set</span> <span class="nx">fullName</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">words</span> <span class="o">=</span> <span class="nx">name</span><span class="p">.</span><span class="nx">toString</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">firstName</span> <span class="o">=</span> <span class="nx">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">lastName</span> <span class="o">=</span> <span class="nx">words</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>每当我们尝试正常赋值/检索其值时，就会调用 <code class="docutils literal"><span class="pre">fullName</span></code> 属性的 <code class="docutils literal"><span class="pre">get</span></code> 和 <code class="docutils literal"><span class="pre">set</span></code> 函数：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">fullName</span><span class="p">);</span> <span class="c1">// Abraham Lincoln</span>
+<span class="nx">person</span><span class="p">.</span><span class="nx">fullName</span> <span class="o">=</span> <span class="s1">&#39;George Washington&#39;</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">firstName</span><span class="p">);</span> <span class="c1">// George</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">lastName</span><span class="p">)</span> <span class="c1">// Washington</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id21">
+<h4>3.6.3.2. 反应性数据属性<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 的另一个初始化步骤是遍历所有的数据属性并为它们分配 <code class="docutils literal"><span class="pre">getter</span></code> 和 <code class="docutils literal"><span class="pre">setter</span></code> 。 如果你看看下面的截图，你可以看到我们当前应用程序中的每个属性如何添加一个get和set函数：</p>
+<div class="figure" id="id43">
+<img alt="_images/2-9.png" src="_images/2-9.png" />
+<p class="caption"><span class="caption-text">图2.9 Getters 和 setters</span></p>
+</div>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 添加了这些 <code class="docutils literal"><span class="pre">Getters</span></code> 和 <code class="docutils literal"><span class="pre">setters</span></code> ，使其能够在访问或修改属性时执行依赖关系跟踪和更改通知。 所以，当点击事件改变 <code class="docutils literal"><span class="pre">contracted</span></code> 值时，它的设置方法被触发。  <code class="docutils literal"><span class="pre">set</span></code> 方法会设置新的值，但也会执行一个辅助任务，告诉 <code class="docutils literal"><span class="pre">Vue</span></code> 一个值已经改变，依赖它的页面的任何部分都可能需要重新渲染。</p>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">如果您想了解更多关于 <code class="docutils literal"><span class="pre">Vue</span></code> 的反应系统的信息，请查看文章中的 <code class="docutils literal"><span class="pre">Reactivity</span> <span class="pre">In</span> <span class="pre">Vue.js</span></code> （及其陷阱）: <a class="reference external" href="https://vuejsdevelopers.com/2017/03/05/vue-js-reactivity/">https://vuejsdevelopers.com/2017/03/05/vue-js-reactivity/</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="more">
+<h3>3.6.4. 隐藏More按钮<a class="headerlink" href="#more" title="永久链接至标题">¶</a></h3>
+<p>一旦 <code class="docutils literal"><span class="pre">About</span></code> 部分被展开，我们想隐藏 <code class="docutils literal"><span class="pre">More</span></code> 按钮，因为它不再需要。 我们可以使用 <code class="docutils literal"><span class="pre">v-if</span></code> 指令与 <code class="docutils literal"><span class="pre">contracted</span></code> 属性一起实现此目的。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">button</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;contracted&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;more&quot;</span> <span class="na">v-on:click</span><span class="o">=</span><span class="s">&quot;contracted = false&quot;</span><span class="p">&gt;</span>
+  + More
+<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id22">
+<h2>3.7. 图像模态窗口<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h2>
+<p>为了防止我们的页眉图像占据页面，我们裁剪了它并限制了它的高度。 但是如果用户想要看到全部的图像呢？ 一个伟大的允许用户关注单个内容项目的 <code class="docutils literal"><span class="pre">UI</span></code> 设计模式是一个模式窗口。</p>
+<p>以下是我们的模式在打开时的样子：</p>
+<div class="figure" id="id44">
+<img alt="_images/2-10.png" src="_images/2-10.png" />
+<p class="caption"><span class="caption-text">图2.10 页眉图片模式</span></p>
+</div>
+<p>我们的模式将给出标题图像的正确缩放视图，以便用户可以专注于住宿的外观，而不会让页面的其他部分分心。</p>
+<p>在本书的后面，我们会将图像传送带插入到模式，以便用户浏览整个房间图像集合！</p>
+<p>不过，现在，这里是我们的模态所需的功能：</p>
+<ul class="simple">
+<li>点击标题图像打开模式；</li>
+<li>冻结主窗口；</li>
+<li>显示图像；</li>
+<li>用关闭按钮或退出键关闭模式窗口；</li>
+</ul>
+<div class="section" id="opening">
+<h3>3.7.1. Opening<a class="headerlink" href="#opening" title="永久链接至标题">¶</a></h3>
+<p>首先，我们添加一个布尔数据属性，它将表示我们模态的打开或关闭状态。 我们将它初始化为 <code class="docutils literal"><span class="pre">false</span></code> 。</p>
+<p>app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="nx">modalOpen</span><span class="o">:</span> <span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们将这样做，以便点击我们的标题图像将设置模式打开。 我们还会在标题图片的左下角覆盖一个标记为“查看照片”的按钮，以向用户发出一个更强的信号，即他们应该点击以显示图像。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span>
+  <span class="na">class</span><span class="o">=</span><span class="s">&quot;header-img&quot;</span>
+  <span class="na">v-bind:style</span><span class="o">=</span><span class="s">&quot;headerImageStyle&quot;</span>
+  <span class="na">v-on:click</span><span class="o">=</span><span class="s">&quot;modalOpen = true&quot;</span>
+<span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">button</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;view-photos&quot;</span><span class="p">&gt;</span>View Photos<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>请注意，通过点击放在包装 <code class="docutils literal"><span class="pre">div</span></code> 上侦听器，无论用户是否因点击按钮或 <code class="docutils literal"><span class="pre">div</span></code> ，都会捕获点击事件。</p>
+<p>我们将在头部图像中添加更多的 <code class="docutils literal"><span class="pre">CSS</span></code> ，使光标成为一个指针，让用户知道头部可以被点击，并给头部一个相对位置，这样按钮就可以定位在它的内部。 我们还会添加规则来设置按钮的样式。</p>
+<p>style.css:</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span>.header .header-img {
+  ...
+  cursor: pointer;
+  position: relative;
+}
+
+button {
+  border-radius: 4px;
+  border: 1px solid #c4c4c4;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+  line-height: 1.43;
+  user-select: none;
+  white-space: nowrap;
+  cursor: pointer;
+  background: white;
+  color: #484848;
+  padding: 7px 18px;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.header .header-img .view-photos {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+</pre></div>
+</div>
+<p>现在让我们为我们的模态添加标记。 我已经将它放在页面中的其他元素之后，尽管它并不重要，因为模式将不在文档的常规流程中。 通过在下面的 <code class="docutils literal"><span class="pre">CSS</span></code> 中给它一个 <code class="docutils literal"><span class="pre">fixed</span></code> 的位置，我们将它从流中移除。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;modal&quot;</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;{ show : modalOpen }&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>主模态 <code class="docutils literal"><span class="pre">div</span></code> 将作为其余模态内容的容器，但也可作为将覆盖主窗口内容的背景面板。 为了达到这个目的，我们使用 <code class="docutils literal"><span class="pre">CSS</span></code> 规则来扩展它，使其顶部，右侧，底部和左侧值为 <code class="docutils literal"><span class="pre">0</span></code> ，以完全覆盖视口。我们将 <code class="docutils literal"><span class="pre">z-index</span></code> 设置为较高的数字，以确保模式被堆叠 页面中任何其他元素的前面。</p>
+<p>还要注意 <code class="docutils literal"><span class="pre">display</span></code> 最初设置为 <code class="docutils literal"><span class="pre">none</span></code> ，但是我们将一个类名为 <code class="docutils literal"><span class="pre">show</span></code> 动态绑定到模式，使其显示块。 当然，这个类的增加/删除将被绑定到 <code class="docutils literal"><span class="pre">modalOpen</span></code> 的值。</p>
+<p>style.css:</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="p">#</span><span class="nn">modal</span> <span class="p">{</span>
+  <span class="k">display</span><span class="p">:</span> <span class="kc">none</span><span class="p">;</span>
+  <span class="k">position</span><span class="p">:</span> <span class="kc">fixed</span><span class="p">;</span>
+  <span class="k">top</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">right</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">bottom</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">left</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">z-index</span><span class="p">:</span> <span class="mi">2000</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">modal</span><span class="p">.</span><span class="nc">show</span> <span class="p">{</span>
+  <span class="k">display</span><span class="p">:</span> <span class="kc">block</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="window">
+<h3>3.7.2. Window<a class="headerlink" href="#window" title="永久链接至标题">¶</a></h3>
+<p>现在让我们为将覆盖在我们的背景面板上的窗口添加标记。 该窗口将具有宽度约束，并将在视口中居中。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;modal&quot;</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;{ show : modalOpen }&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;modal-content&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;sample/header.jpg&quot;</span><span class="p">/&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>style.css:</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">modal-content</span> <span class="p">{</span>
+  <span class="k">height</span><span class="p">:</span> <span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+  <span class="k">max-width</span><span class="p">:</span> <span class="mi">105</span><span class="kt">vh</span><span class="p">;</span>
+  <span class="k">padding-top</span><span class="p">:</span> <span class="mi">12</span><span class="kt">vh</span><span class="p">;</span>
+  <span class="k">margin</span><span class="p">:</span> <span class="mi">0</span> <span class="kc">auto</span><span class="p">;</span>
+  <span class="k">position</span><span class="p">:</span> <span class="kc">relative</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">modal-content</span> <span class="nt">img</span> <span class="p">{</span>
+  <span class="k">max-width</span><span class="p">:</span> <span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id23">
+<h3>3.7.3. 关闭主窗口<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h3>
+<p>当模式打开时，我们希望阻止与主窗口的任何交互，并且明确区分主窗口和子窗口。 我们可以t通过如下做到这一点：</p>
+<ul class="simple">
+<li>调暗主窗口；</li>
+<li>防止滚动主体；</li>
+</ul>
+<div class="section" id="id24">
+<h4>3.7.3.1. 调暗主窗口<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h4>
+<p>当模式打开时，我们可以简单地隐藏主窗口，但如果用户仍然可以知道它们在应用程序的流程中，那么会更好。 为了达到这个目的，我们将把主窗口变暗成半透明面板。</p>
+<p>我们可以通过给我们的模式面板一个不透明的黑色背景做到这一点。</p>
+<p>style.css:</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span>#modal {
+  ...
+  background-color: rgba(0,0,0,0.85);
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="id25">
+<h4>3.7.3.2. 防止滚动主体<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h4>
+<p>不过，我们有一个问题。 尽管是全屏显示，我们的模式面板仍然是身体标签的小孩。 这意味着我们仍然可以滚动主窗口！ 我们不希望用户在模式打开时以任何方式与主窗口进行交互，因此我们必须禁用主体上的滚动。</p>
+<p>诀窍是将 <code class="docutils literal"><span class="pre">CSS</span></code> <code class="docutils literal"><span class="pre">overflow</span></code> 属性添加到 <code class="docutils literal"><span class="pre">body</span></code> 标签并将其设置为 <code class="docutils literal"><span class="pre">hidden</span></code> 。 这具有剪切任何溢出（即，当前不在视图中的页面的一部分）的效果，并且其余内容将变得不可见。</p>
+<p>我们需要动态地添加和删除这个 <code class="docutils literal"><span class="pre">CSS</span></code> 规则，因为我们显然希望能够在模式关闭时滚动页面。 所以，让我们创建一个名为 <code class="docutils literal"><span class="pre">modal-open</span></code> 的类，当模式打开时，我们可以将其应用于 <code class="docutils literal"><span class="pre">body</span></code> 标签。</p>
+<p>style.css:</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="nt">body</span><span class="p">.</span><span class="nc">modal-open</span> <span class="p">{</span>
+  <span class="k">overflow</span><span class="p">:</span> <span class="kc">hidden</span><span class="p">;</span>
+  <span class="k">position</span><span class="p">:</span> <span class="kc">fixed</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们可以使用 <code class="docutils literal"><span class="pre">v-bind:class</span></code> 来添加/删除这个类，对吧？ 很不幸的是，不行。 请记住， <code class="docutils literal"><span class="pre">Vue</span></code> 只支配它挂载的元素：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="c">&lt;!--This is where Vue has dominion and can modify the page freely--&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="c">&lt;!--Vue is unable to change this part of the page or any ancestors--&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>如果我们为 <code class="docutils literal"><span class="pre">body</span></code> 标签添加一个指令，它将不会被 <code class="docutils literal"><span class="pre">Vue</span></code> 看到。</p>
+<div class="section" id="id26">
+<h5>3.7.3.2.1. Vue的挂载元素<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h5>
+<p>如果我们只是将 <code class="docutils literal"><span class="pre">Vue</span></code> 安装在 <code class="docutils literal"><span class="pre">body</span></code> 标签上，会不会解决我们的问题？ 例如：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;body&#39;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>这是 <code class="docutils literal"><span class="pre">Vue</span></code> 不允许的，如果你尝试它，你会得到这个错误：不要将 <code class="docutils literal"><span class="pre">Vue</span></code> 挂载到 <code class="docutils literal"><span class="pre">&lt;html&gt;</span></code> 或 <code class="docutils literal"><span class="pre">&lt;body&gt;</span></code> - 而是挂载到普通元素。</p>
+<p>请记住， <code class="docutils literal"><span class="pre">Vue</span></code> 必须编译模板并替换装载节点。 如果 <code class="docutils literal"><span class="pre">script</span></code> 标记是挂载节点的子节点，就像你经常使用 <code class="docutils literal"><span class="pre">body</span></code> 一样，或者如果你的用户有浏览器插件修改文档的（很多都是），那么当它替换那个节点时，各种各样的问题可能会在页面上出现。</p>
+<p>如果您使用 <code class="docutils literal"><span class="pre">ID</span></code> 定义唯一的根元素，则不应出现此类冲突。</p>
+</div>
+</div>
+<div class="section" id="id27">
+<h4>3.7.3.3. 监视器<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h4>
+<p>那么，如果超出了 <code class="docutils literal"><span class="pre">Vue</span></code> 的统治范围，我们怎么能从 <code class="docutils literal"><span class="pre">body</span></code> 中添加/移除类？ 我们必须用浏览器的 <code class="docutils literal"><span class="pre">Web</span> <span class="pre">API</span></code> 以旧式的方式来完成它。 当模式打开或关闭时，我们需要运行以下语句：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="c1">// Modal opens</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;modal-open&#39;</span><span class="p">);</span>
+
+<span class="c1">// Modal closes</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;modal-closed&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>正如所讨论的， <code class="docutils literal"><span class="pre">Vue</span></code> 为每个数据属性添加了反应式 <code class="docutils literal"><span class="pre">getter</span></code> 和 <code class="docutils literal"><span class="pre">setter</span></code> ，这样当数据发生变化时，它就会知道要适当地更新 <code class="docutils literal"><span class="pre">DOM</span></code> 。 <code class="docutils literal"><span class="pre">Vue</span></code> 还允许您编写自定义逻辑，通过名为监视器的功能将其挂钩到反应式数据更改中。</p>
+<p>要添加观察者，首先将 <code class="docutils literal"><span class="pre">watch</span></code> 属性添加到您的 <code class="docutils literal"><span class="pre">Vue</span></code> 实例。 为每个属性指定一个对象，其中每个属性都具有声明的数据属性的名称，并且每个值都是一个函数。 该函数有两个参数： <strong>旧值和新值</strong> 。</p>
+<p>只要数据属性发生变化， <code class="docutils literal"><span class="pre">Vue</span></code> 就会触发任何已声明的观察者方法：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;Hello world&#39;</span>
+  <span class="p">},</span>
+  <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">message</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newVal</span><span class="p">,</span> <span class="nx">oldVal</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">oldVal</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="s1">&#39;Goodbye world&#39;</span><span class="p">;</span>
+  <span class="c1">// Output: &quot;Hello world, Goodbye world&quot;;</span>
+<span class="p">},</span> <span class="mi">2000</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 无法为我们更新 <code class="docutils literal"><span class="pre">body</span></code> 标签，但它可以触发自定义逻辑。 当我们的模式被打开和关闭时，让我们使用观察者来更新 <code class="docutils literal"><span class="pre">body</span></code> 标签。</p>
+<p>app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+  <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">modalOpen</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;modal-open&#39;</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">modalOpen</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">className</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">className</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>现在，当您尝试滚动页面时，您会看到它不会改变！</p>
+</div>
+</div>
+<div class="section" id="closing">
+<h3>3.7.4. Closing<a class="headerlink" href="#closing" title="永久链接至标题">¶</a></h3>
+<p>用户需要一种方法来关闭他们的模式并返回到主窗口。 我们将在右上角覆盖一个按钮，点击后，表达式将 <code class="docutils literal"><span class="pre">modalOpen</span></code> 设置为 <code class="docutils literal"><span class="pre">false</span></code> 。 我们的包装 <code class="docutils literal"><span class="pre">div</span></code> 上的 <code class="docutils literal"><span class="pre">show</span></code> 类将相应地被删除，这意味着 <code class="docutils literal"><span class="pre">display</span> <span class="pre">CSS</span></code> 属性将返回到 <code class="docutils literal"><span class="pre">none</span></code> ，从而从页面中删除模态。</p>
+<p>index.html:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;modal&quot;</span> <span class="na">v-bind:class</span><span class="o">=</span><span class="s">&quot;{ show : modalOpen }&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">button</span> <span class="na">v-on:click</span><span class="o">=</span><span class="s">&quot;modalOpen = false&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;modal-close&quot;</span><span class="p">&gt;</span>
+    <span class="ni">&amp;times;</span>
+  <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;modal-content&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;sample/header.jpg&quot;</span><span class="p">/&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>style.css:</p>
+<div class="highlight-css"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">modal-close</span> <span class="p">{</span>
+  <span class="k">position</span><span class="p">:</span> <span class="kc">absolute</span><span class="p">;</span>
+  <span class="k">right</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">top</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">padding</span><span class="p">:</span> <span class="mi">0</span><span class="kt">px</span> <span class="mi">28</span><span class="kt">px</span> <span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+  <span class="k">font-size</span><span class="p">:</span> <span class="mi">4</span><span class="kt">em</span><span class="p">;</span>
+  <span class="k">width</span><span class="p">:</span> <span class="kc">auto</span><span class="p">;</span>
+  <span class="k">height</span><span class="p">:</span> <span class="kc">auto</span><span class="p">;</span>
+  <span class="k">background</span><span class="p">:</span> <span class="kc">transparent</span><span class="p">;</span>
+  <span class="k">border</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">outline</span><span class="p">:</span> <span class="kc">none</span><span class="p">;</span>
+  <span class="k">color</span><span class="p">:</span> <span class="mh">#ffffff</span><span class="p">;</span>
+  <span class="k">z-index</span><span class="p">:</span> <span class="mi">1000</span><span class="p">;</span>
+  <span class="k">font-weight</span><span class="p">:</span> <span class="mi">100</span><span class="p">;</span>
+  <span class="k">line-height</span><span class="p">:</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id28">
+<h4>3.7.4.1. 转义键<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h4>
+<p>为我们的模式设置一个关闭按钮非常方便，但大多数人关闭窗口的本能动作都是 <code class="docutils literal"><span class="pre">Escape</span></code> 键。</p>
+<p><code class="docutils literal"><span class="pre">v-on</span></code> 是 <code class="docutils literal"><span class="pre">Vue</span></code> 倾听事件的机制，似乎是这份工作的一个很好的候选人。 在此输入获取焦点时按下任意键后，添加 <code class="docutils literal"><span class="pre">keyup</span></code> 参数将触发处理程序回调：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">input</span> <span class="na">v-on:keyup</span><span class="o">=</span><span class="s">&quot;handler&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id29">
+<h4>3.7.4.2. 事件修饰符<a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h4>
+<p>通过为 <code class="docutils literal"><span class="pre">v-on</span></code> 指令提供修饰符， <code class="docutils literal"><span class="pre">Vue</span></code> 可以轻松地侦听特定的键。 修饰符是用点（.）表示的后缀，例如：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>&lt;input v-on:keyup.enter=&quot;handler&quot;&gt;
+</pre></div>
+</div>
+<p>正如您可能猜到的那样， <code class="docutils literal"><span class="pre">.enter</span></code> 修饰符告诉 <code class="docutils literal"><span class="pre">Vue</span></code> 只有在被 <code class="docutils literal"><span class="pre">Enter</span></code> 键事件触发时才调用处理程序。 修饰符使您不必记住特定的 <code class="docutils literal"><span class="pre">key</span></code> 代码，也使您的模板逻辑更加明显。 <code class="docutils literal"><span class="pre">Vue</span></code> 提供了其他各种 <code class="docutils literal"><span class="pre">key</span></code> 修饰符，包括：</p>
+<ul class="simple">
+<li>tab；</li>
+<li>delete；</li>
+<li>space；</li>
+<li>esc；</li>
+</ul>
+<p>考虑到这一点，似乎我们可以用这个指令关闭我们的模态：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>v-on:keyup.esc=&quot;modalOpen = false&quot;
+</pre></div>
+</div>
+<p>但是，我们关联这个指令的标签是什么？ 不幸的是，除非获取输入焦点，否则 <code class="docutils literal"><span class="pre">key</span></code> 事件将从 <code class="docutils literal"><span class="pre">body</span></code> 元素中发出，正如我们所知，它不在 <code class="docutils literal"><span class="pre">Vue</span></code> 的管辖范围之内！</p>
+<p>为了处理这个事件，我们再次诉诸于 <code class="docutils literal"><span class="pre">Web</span> <span class="pre">API</span></code> 。</p>
+<p>app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">});</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;keyup&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="mi">27</span> <span class="o">&amp;&amp;</span> <span class="nx">app</span><span class="p">.</span><span class="nx">modalOpen</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nx">modalOpen</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>这有效，但有一个警告（在下一节讨论）。 但 <code class="docutils literal"><span class="pre">Vue</span></code> 可以帮助我们更完善。</p>
+</div>
+<div class="section" id="id30">
+<h4>3.7.4.3. 生命周期挂钩<a class="headerlink" href="#id30" title="永久链接至标题">¶</a></h4>
+<p>当你的主脚本运行并且你的 <code class="docutils literal"><span class="pre">Vue</span></code> 实例被设置时，它会经过一系列的初始化步骤。 正如我们前面所说的， <code class="docutils literal"><span class="pre">Vue</span></code> 将遍历数据对象并使其成为反应式对象，并编译模板并挂载到 <code class="docutils literal"><span class="pre">DOM</span></code> 。 在生命周期的后期， <code class="docutils literal"><span class="pre">Vue</span></code> 还将进行更新步骤，以后还会进行拆解步骤。</p>
+<p>以下是从 <a class="reference external" href="http://vuejs.org">http://vuejs.org</a> 获取的生命周期实例的图表。 这些步骤中的许多步骤都涉及我们尚未涉及的概念，但您应该明白：</p>
+<div class="figure" id="id45">
+<img alt="_images/2-11.png" src="_images/2-11.png" />
+<p class="caption"><span class="caption-text">图2.11 Vue.js生命周期图</span></p>
+</div>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 允许您通过生命周期钩子在这些不同的步骤执行自定义逻辑，生命周期钩子是配置对象中定义的回调。</p>
+<p>例如，我们在这里使用 <code class="docutils literal"><span class="pre">beforeCreate</span></code> 和 <code class="docutils literal"><span class="pre">created</span></code> 的钩子：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;Hello&#39;</span>
+  <span class="p">},</span>
+  <span class="nx">beforeCreate</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;beforeCreate message: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="c1">// &quot;beforeCreate message: undefined&quot;</span>
+  <span class="p">},</span>
+  <span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;created: &#39;</span><span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="c1">// &quot;created message: Hello&quot;</span>
+  <span class="p">},</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>在调用 <code class="docutils literal"><span class="pre">beforeCreate</span></code> 钩子之后，但在调用创建的钩子之前， <code class="docutils literal"><span class="pre">Vue</span></code> 的 <code class="docutils literal"><span class="pre">data</span></code> 属性还未定义到上下文对象，因此在前者中未定义 <code class="docutils literal"><span class="pre">this.message</span></code> 。</p>
+<p>我之前提到的有关 <code class="docutils literal"><span class="pre">Escape</span></code> 键监听器的警告是：虽然不太可能，但如果按 <code class="docutils literal"><span class="pre">Escape</span></code> 键并且在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例对象 <code class="docutils literal"><span class="pre">app</span></code> 变量被赋值之前调用了回调，则 <code class="docutils literal"><span class="pre">app.modalOpen</span></code> 将是未定义的，而不是 <code class="docutils literal"><span class="pre">true</span></code> ，因此我们的 <code class="docutils literal"><span class="pre">if</span></code> 语句会 不像我们预期的那样控制流程。</p>
+<p>为了克服这个问题，我们可以在创建的生命周期钩子中设置监听器，它将在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例对象 <code class="docutils literal"><span class="pre">app</span></code> 变量被赋值之后调用。 这给了我们一个保证， <code class="docutils literal"><span class="pre">modalOpen</span></code> 将在回调运行时定义。</p>
+<p>app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">escapeKeyListener</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="mi">27</span> <span class="o">&amp;&amp;</span> <span class="nx">app</span><span class="p">.</span><span class="nx">modalOpen</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nx">modalOpen</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+  <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+  <span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;keyup&#39;</span><span class="p">,</span> <span class="nx">escapeKeyListener</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id31">
+<h4>3.7.4.4. 方法<a class="headerlink" href="#id31" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 配置对象也有一个方法部分。 方法不是反应性的，所以你可以在 <code class="docutils literal"><span class="pre">Vue</span></code> 配置之外定义它们而没有任何功能上的差异，但是 <code class="docutils literal"><span class="pre">Vue</span></code> 方法的优点是它们在上下文中传递了 <code class="docutils literal"><span class="pre">Vue</span></code> 实例，因此可以方便地访问其他属性和方法。</p>
+<p>让我们将我们的 <code class="docutils literal"><span class="pre">escapeKeyListener</span></code> 重构为 <code class="docutils literal"><span class="pre">Vue</span></code> 实例方法。</p>
+<p>app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+  <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">escapeKeyListener</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="mi">27</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">modalOpen</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">modalOpen</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+  <span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;keyup&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">escapeKeyListener</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="id32">
+<h5>3.7.4.4.1. 代理属性<a class="headerlink" href="#id32" title="永久链接至标题">¶</a></h5>
+<p>您可能已经注意到我们的 <code class="docutils literal"><span class="pre">escapeKeyListener</span></code> 方法可以引用 <code class="docutils literal"><span class="pre">this.modalOpen</span></code> 。 它不应该是 <code class="docutils literal"><span class="pre">this.data.modalOpen</span></code> ？</p>
+<p>当 <code class="docutils literal"><span class="pre">Vue</span></code> 实例被构造时，它将任何数据属性，方法和计算属性代理到实例对象。 这意味着从任何方法中，您都可以引用 <code class="docutils literal"><span class="pre">this.myDataProperty</span></code> ， <code class="docutils literal"><span class="pre">this.myMethod</span></code> 等，而不是 <code class="docutils literal"><span class="pre">this.data.myDataProperty</span></code> 或 <code class="docutils literal"><span class="pre">this.methods.myMethod</span></code> ，如您所想的那样：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">myDataProperty</span><span class="o">:</span> <span class="s1">&#39;Hello&#39;</span>
+  <span class="p">},</span>
+  <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">myMethod</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">myDataProperty</span> <span class="o">+</span> <span class="s1">&#39; World&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">app</span><span class="p">.</span><span class="nx">myMethod</span><span class="p">());</span>
+<span class="c1">// Output: &#39;Hello World&#39;</span>
+</pre></div>
+</div>
+<p>您可以通过在浏览器控制台中打印 <code class="docutils literal"><span class="pre">Vue</span></code> 对象来查看这些代理属性：</p>
+<div class="figure" id="id46">
+<img alt="_images/2-12.png" src="_images/2-12.png" />
+<p class="caption"><span class="caption-text">图2.12 app的Vue实例</span></p>
+</div>
+<p>现在文本插值的简单性可能更有意义，它们具有 <code class="docutils literal"><span class="pre">Vue</span></code> 实例的上下文，并且由于代理属性，可以像 <code class="docutils literal"><span class="pre">{{myDataProperty}}</span></code> 一样引用。</p>
+<p>但是，尽管代理到根可以使语法变得简洁，但结果是您无法命名数据属性，方法或具有相同名称的计算属性！</p>
+</div>
+<div class="section" id="id33">
+<h5>3.7.4.4.2. 删除监听器<a class="headerlink" href="#id33" title="永久链接至标题">¶</a></h5>
+<p>为了避免任何内存泄漏，我们还应该使用 <code class="docutils literal"><span class="pre">removeEventListener</span></code> 在 <code class="docutils literal"><span class="pre">Vue</span></code> 实例被拆除时摆脱监听器。 我们可以使用 <code class="docutils literal"><span class="pre">destroy</span></code> 钩子并为此调用我们的 <code class="docutils literal"><span class="pre">escapeKeyListener</span></code> 方法。</p>
+<p>app.js:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+  <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+  <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+  <span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+  <span class="nx">destroyed</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="s1">&#39;keyup&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">escapeKeyListener</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id34">
+<h2>3.8. 总结<a class="headerlink" href="#id34" title="永久链接至标题">¶</a></h2>
+<p>在本章中，我们熟悉了 <code class="docutils literal"><span class="pre">Vue</span></code> 的基本特征，包括安装和基本配置，数据绑定，文本插值，指令，方法，观察者和生命周期钩子。 我们还了解了 <code class="docutils literal"><span class="pre">Vue</span></code> 的内部运作，包括反应系统。</p>
+<p>然后，我们利用这些知识设置了一个基本的 <code class="docutils literal"><span class="pre">Vue</span></code> 项目，并为 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 原型创建了包含文本，信息列表，标题图像和 <code class="docutils literal"><span class="pre">UI</span></code> 小部件（如 <code class="docutils literal"><span class="pre">show</span> <span class="pre">more</span></code> 按钮和模式窗口）的页面内容。</p>
+<p>在下一章中，我们将使用 <code class="docutils literal"><span class="pre">Laravel</span></code> 为 <code class="docutils literal"><span class="pre">Vuebnb</span></code> 设置一个后端，然后让 <code class="docutils literal"><span class="pre">Vue</span></code> 开始短暂休息。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="配置Laravel开发环境.html" class="btn btn-neutral float-right" title="4. 配置Laravel开发环境" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Hello Vue – An Introduction to Vue.js.html" class="btn btn-neutral" title="2. Hello Vue – An Introduction to Vue.js" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

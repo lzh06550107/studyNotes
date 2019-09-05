@@ -1,0 +1,250 @@
+*****
+服务器名称
+*****
+
+服务器名称使用 ``server_name`` 指令定义， 并确定哪个服务器块用于给定的请求。另请参见“ nginx如何处理请求 ”。可以使用精确名称，通配符名称或正则表达式来定义它们：
+
+.. code-block:: shell
+
+	server {
+	    listen       80;
+	    server_name  example.org  www.example.org;
+	    ...
+	}
+	server {
+	    listen       80;
+	    server_name  *.example.org;
+	    ...
+	}
+	server {
+	    listen       80;
+	    server_name  mail.*;
+	    ...
+	}
+	server {
+	    listen       80;
+	    server_name  ~^(?<user>.+)\.example\.net$;
+	    ...
+	}
+
+当通过名称搜索虚拟服务器时，如果名称匹配多个指定的变体，例如通配符名称和正则表达式匹配，则将按照以下优先级顺序选择第一个匹配变体：
+
+1. 精确名称
+2. 以星号开头的最长通配符名称，例如 ``*.example.org``
+3. 以星号结尾的最长通配符名称，例如 ``mail.*``
+4. 首先匹配正则表达式（按照出现在配置文件中的顺序）
+
+通配符名称
+==========
+通配符名称可能只在名称的开头或结尾都有一个星号，只能在点边框上。名称 ``www.*.example.org`` 和 ``w*.example.org`` 无效。但是，可以使用正则表达式指定这些名称，例如 ``~^www\..+\.example\.org$`` 和 ``~^w.*\.example\.org$`` 。星号可以匹配多个名称部分。命名为 ``*.example.org`` 不仅可以匹配 ``www.example.org`` ，也能匹配 ``www.sub.example.org`` 。
+
+使用 ``.example.org`` 形式的特殊通配符名称来可以匹配精确名称 ``example.org`` 和通配符名称 ``*.example.org`` 。
+
+
+正则表达式名称
+=============
+``nginx`` 使用的正则表达式与 ``Perl`` 编程语言（PCRE）使用的正则表达式兼容。要使用正则表达式，服务器名称必须以波浪符号开头：
+
+.. code-block:: shell
+
+    server_name 〜^www\d+\.example\.net$;
+
+否则将被视为精确名称，或者如果表达式包含星号，那么会被作为通配符名称（最可能是无效的）。不要忘记设置 ``^`` 和 ``$`` 锚点。它们在语法上不是必需的，但在逻辑上必需的。还要注意，域名点应该用反斜杠转义。包含字符 ``{`` 和 ``}`` 的正则表达式应该被引号包裹如下：
+
+.. code-block:: shell
+
+    server_name "〜^(？<name>\w\d{1,3}+)\.example\.net$";
+
+否则 ``nginx`` 将无法启动并显示错误消息：
+
+.. code-block:: shell
+
+    directive "server_name" is not terminated by ";" in ...
+
+命名的正则表达式捕获可以稍后用作变量：
+
+.. code-block:: shell
+
+	server {
+	    server_name   ~^(www\.)?(?<domain>.+)$;
+
+	    location / {
+	        root   /sites/$domain;
+	    }
+	}
+
+``PCRE`` 库支持使用以下语法命名捕获：
+
+.. code-block:: shell
+
+	?<name>   Perl 5.10兼容语法，支持PCRE-7.0
+	?'name'   Perl 5.10兼容语法，支持PCRE-7.0
+	?P<name>  Python兼容语法，由PCRE-4.0支持
+
+如果 ``nginx`` 无法启动并显示错误消息：
+
+.. code-block:: shell
+
+    pcre_compile() failed: unrecognized character after (?< in ...
+
+这意味着 ``PCRE`` 库是旧的，应该尝试使用语法 ``?P<name>`` 。捕获也可以以数字形式使用：
+
+.. code-block:: shell
+
+	server {
+	    server_name   ~^(www\.)?(.+)$;
+	    location / {
+	        root   /sites/$2;
+	    }
+	}
+
+然而，这种使用应该限于简单的情况（如上所述），因为数字参考可以容易地被覆盖。
+
+杂项名称
+========
+有一些特殊处理的服务器名称。
+
+如果需要处理请求而没有默认的服务器块中的“主机”头字段，则应指定一个空名称：
+
+.. code-block:: shell
+
+	server {
+	    listen       80;
+	    server_name  example.org  www.example.org  "";
+	    ...
+	}
+
+如果在服务器块中没有定义 ``server_name`` ，那么 ``nginx`` 将使用空名作为服务器名称。
+
+.. note:: 在这种情况下，最高0.8.48的nginx版本使用机器的主机名作为服务器名称。
+
+如果服务器名称被定义为 ``$hostname`` （0.9.4），则使用机器的主机名。
+
+如果有人使用 ``IP`` 地址而不是服务器名称发出请求，则“主机”请求头域将包含 ``IP`` 地址，请求可以使用 ``IP`` 地址作为服务器名称来处理：
+
+.. code-block:: shell
+
+	server {
+	    listen       80;
+	    server_name  example.org
+	                 www.example.org
+	                 ""
+	                 192.168.1.1
+	                 ;
+	    ...
+	}
+
+在全部服务器示例中，可以看到奇怪的名称 ``_`` ：
+
+.. code-block:: shell
+
+	server {
+	    listen       80  default_server;
+	    server_name  _;
+	    return       444;
+	}
+
+这个名字没有什么特别之处，它只是无数个无效域名的其中一个，永远不会与任何真实姓名相交。其他无效名称，如 ``–`` 和 ``!@#`` 也可以同样使用。
+
+高于0.6.25版本的 ``nginx`` 支持特殊名称 ``*`` ，这被错误地解释为一个全部的名字。它从不作为全部或通配符服务器名称。相反，它提供了现在由 ``server_name_in_redirect`` 指令提供的功能 。现在不推荐使用特殊名称 ``*`` ，并且应该使用 ``server_name_in_redirect`` 指令。请注意，无法使用 ``server_name`` 指令指定全部名称或默认服务器 。这是 ``listen`` 指令的属性， 而不是 ``server_name`` 伪指令。另请参见“ nginx如何处理请求”。可以定义监听端口 ``*:80`` 和 ``*:8080`` 的服务器，并指示一个端口为 ``8080`` 的默认服务器，另一个服务器的默认端口为 ``*:80`` :
+
+.. code-block:: shell
+
+	server {
+	    listen       80;
+	    listen       8080  default_server;
+	    server_name  example.net;
+	    ...
+	}
+
+	server {
+	    listen       80  default_server;
+	    listen       8080;
+	    server_name  example.org;
+	    ...
+	}
+
+国际化名称
+==========
+应使用 ``server_name`` 指令中的 ASCII（Punycode）表示法指定国际化域名（IDNs）：
+
+.. code-block:: shell
+
+	server {
+	    listen       80;
+	    server_name  xn--e1afmkfd.xn--80akhbyknj4f;  # пример.испытание
+	    ...
+	}
+
+优化
+====
+以星号开头的完整名称，通配符名称和以星号结尾的通配符名称存储在绑定到监听端口的三个哈希表中。哈希表的大小在配置阶段进行了优化，因此可以找到具有最少CPU高速缓存未命中的名称。设置散列表的细节在单独的 文档 中提供 。
+
+首先搜索确切的名称哈希表。如果未找到名称，则搜索通配符名称以星号开头的哈希表。如果没有找到名称，会继续搜索通配符名称以星号结尾的哈希表。
+
+搜索通配符哈希表比搜索精确名称哈希表慢，因为名称被域名搜索。请注意，特殊通配符格式 ``.example.org`` 存储在通配符哈希表中，而不是精确名称哈希表中。
+
+正则表达式按照顺序进行测试，因此是最慢的方法，并且是不可扩展的。
+
+由于这些原因，最好在可能的情况下使用精确名称。例如，如果一台服务器的最频繁请求名称为： ``example.org`` 和 ``www.example.org`` ，可以采取如下更有效的方式来明确定义它们：
+
+.. code-block:: shell
+
+	server {
+	    listen       80;
+	    server_name  example.org  www.example.org  *.example.org;
+	    ...
+	}
+
+相比使用简化形式：
+
+.. code-block:: shell
+
+	server {
+	    listen       80;
+	    server_name  .example.org;
+	    ...
+	}
+
+如果定义了大量服务器名称，或者定义了非常长的服务器名称，则可能需要调整 ``http`` 级别的 ``server_names_hash_max_size`` 和 ``server_names_hash_bucket_size`` 指令。 ``server_names_hash_bucket_size`` 指令的默认值可能等于 ``32`` 或 ``64`` 或另一个值，具体取决于 ``CPU`` 缓存行大小。如果默认值为 ``32`` ，服务器名称会被定义为 ``too.long.server.name.example.org`` ，那么 ``nginx`` 将无法启动并显示错误消息：
+
+.. code-block:: shell
+
+	could not build the server_names_hash,
+	you should increase server_names_hash_bucket_size: 32
+
+在这种情况下，指令值应该增加到下一个2的幂：
+
+.. code-block:: shell
+
+	http {
+	    server_names_hash_bucket_size 64;
+	    ...
+
+如果定义了大量的服务器名称，将会出现另一个错误消息：
+
+.. code-block:: shell
+
+	could not build the server_names_hash,
+	you should increase either server_names_hash_max_size: 512
+	or server_names_hash_bucket_size: 32
+
+在这种情况下，首先尝试将 ``server_names_hash_max_size`` 设置为接近服务器名称数量的数字。只有当这样没有帮助，或者如果 ``nginx`` 的开始时间长得不能接受，那么尝试增加 ``server_names_hash_bucket_size`` 。
+
+如果服务器是监听端口的唯一服务器，则 ``nginx`` 将不会测试服务器名称（并且不会为监听端口构建哈希表）。但是有一个例外。如果服务器名称是带有捕获的正则表达式，则 ``nginx`` 必须执行表达式才能获取捕获。
+
+兼容性
+======
+
+- 自0.9.4起，支持特殊服务器名称 ``$hostname`` 。
+- 自0.8.48起，默认的服务器名称值为空名称 ``""`` 。
+- 自0.8.25以来，已经支持命名正则表达式服务器名称捕获。
+- 自0.7.40以来一直支持正式表达式服务器名称捕获。
+- 自0.7.12以来一直支持空的服务器名称 ``""`` 。
+- 自0.6.25以来，支持使用通配符服务器名称或正则表达式作为第一个服务器名称。
+- 自0.6.7起，支持正则表达式服务器名称。
+- 自0.6.0以来一直支持通配符格式 ``example.*`` 。
+- 自0.3.18以来，特别表格 ``.example.org`` 一直得到支持。
+- 自0.1.13以来，通配符格式 ``*.example.org`` 一直得到支持。
+
+

@@ -1,0 +1,468 @@
+****
+路由参数
+****
+
+路由参数
+========
+路由分组及规则定义支持指定路由参数，这些参数主要完成路由匹配检测以及行为执行。5.1版本极大改进了路由参数的用法。
+
+.. note:: 路由参数可以在定义路由规则的时候直接传入（批量），不过5.1采用了更加面向对象的方式进行路由参数配置，因此使用方法配置更加清晰。
+
++------------------+-----------------------------------+----------------+
+| 参数             | 说明                              | 方法名         |
++==================+===================================+================+
+| method           | 请求类型检测，支持多个请求类型    | method         |
++------------------+-----------------------------------+----------------+
+| ext              | URL后缀检测，支持匹配多个后缀     | ext            |
++------------------+-----------------------------------+----------------+
+| deny_ext         | URL禁止后缀检测，支持匹配多个后缀 | denyExt        |
++------------------+-----------------------------------+----------------+
+| https            | 检测是否https请求                 | https          |
++------------------+-----------------------------------+----------------+
+| domain           | 域名检测                          | domain         |
++------------------+-----------------------------------+----------------+
+| before           | 前置行为（检测）                  | before         |
++------------------+-----------------------------------+----------------+
+| after            | 后置行为（执行）                  | after          |
++------------------+-----------------------------------+----------------+
+| merge_extra_vars | 合并额外参数                      | mergeExtraVars |
++------------------+-----------------------------------+----------------+
+| complete_match   | 是否完整匹配路由                  | completeMatch  |
++------------------+-----------------------------------+----------------+
+| model            | 绑定模型                          | model          |
++------------------+-----------------------------------+----------------+
+| cache            | 请求缓存                          | cache          |
++------------------+-----------------------------------+----------------+
+| param_depr       | 路由参数分隔符                    | depr           |
++------------------+-----------------------------------+----------------+
+| ajax             | Ajax检测                          | ajax           |
++------------------+-----------------------------------+----------------+
+| pjax             | Pjax检测                          | pjax           |
++------------------+-----------------------------------+----------------+
+| response         | 绑定response_send行为             | response       |
++------------------+-----------------------------------+----------------+
+| validate         | 绑定验证器类进行数据验证          | validate       |
++------------------+-----------------------------------+----------------+
+| header           | 设置Response的header信息          | header         |
++------------------+-----------------------------------+----------------+
+| append           | 追加额外的参数（5.1.5+）          | append         |
++------------------+-----------------------------------+----------------+
+| middleware       | 注册路由中间件（5.1.6+）          | middleware     |
++------------------+-----------------------------------+----------------+
+| merge_rule_regex | 合并路由规则（V5.1.6+）           | mergeRuleRegex |
++------------------+-----------------------------------+----------------+
+| filter           | 请求变量过滤（V5.1.16+）          | filter         |
++------------------+-----------------------------------+----------------+
+
+.. note:: ``ext`` 和 ``deny_ext`` 参数允许设置为空，分别表示不允许任何后缀以及必须使用后缀访问。
+
+用法举例：
+
+.. code-block:: php
+
+    Route::get('new/:id','News/read',['ext'=>'html','https'=>true]);
+
+和使用方法设置（新版推荐的设置方式）等效
+
+.. code-block:: php
+
+	Route::get('new/:id', 'News/read')
+    ->ext('html')
+    ->https();
+
+显然第二种方式更加直观，而且便于IDE的自动提示。
+
+**这些路由参数可以混合使用，只要有任何一条参数检查不通过，当前路由就不会生效，继续检测后面的路由规则。**
+
+URL后缀
+-------
+
+.. note:: URL后缀如果是全局统一的话，可以在应用配置文件 ``app.php`` 中设置 ``url_html_suffix`` 参数，如果当前访问的URL地址中的URL后缀是允许的伪静态后缀，那么后缀本身是不会被作为参数值传入的。
+
+不同参数设置的区别如下：
+
++----------+------------------------+
+| 配置值   | 描述                   |
++==========+========================+
+| false    | 禁止伪静态访问         |
++----------+------------------------+
+| 空字符串 | 允许任意伪静态后缀     |
++----------+------------------------+
+| html     | 只允许设置的伪静态后缀 |
++----------+------------------------+
+
+.. code-block:: php
+
+	// 定义GET请求路由规则 并设置URL后缀为html的时候有效
+	Route::get('new/:id', 'News/read')
+	    ->ext('html');
+
+支持匹配多个后缀，例如：
+
+.. code-block:: php
+
+	Route::get('new/:id', 'News/read')
+	    ->ext('shtml|html');
+
+.. note:: 如果 ``ext`` 方法不传入任何值，表示不允许使用任何后缀访问。
+
+可以设置禁止访问的URL后缀，例如：
+
+.. code-block:: php
+
+	// 定义GET请求路由规则 并设置禁止URL后缀为png、jpg和gif的访问
+	Route::get('new/:id', 'News/read')
+	    ->denyExt('jpg|png|gif');
+
+.. note:: 如果 ``denyExt`` 方法不传入任何值，表示必须使用后缀访问。
+
+域名检测
+--------
+支持使用完整域名或者子域名进行检测，例如：
+
+.. code-block:: php
+
+	// 完整域名检测 只在news.thinkphp.cn访问时路由有效
+	Route::get('new/:id', 'News/read')
+	    ->domain('news.thinkphp.cn');
+	// 子域名检测
+	Route::get('new/:id', 'News/read')
+	    ->domain('news');
+
+.. note:: 如果需要给子域名定义批量的路由规则，建议使用 ``domain`` 方法进行路由定义。
+
+HTTPS检测
+---------
+支持检测当前是否 ``HTTPS`` 访问
+
+.. code-block:: php
+
+	// 必须使用HTTPS访问
+	Route::get('new/:id', 'News/read')
+	    ->https();
+	    
+	// 必须使用HTTP访问    
+	Route::get('new/:id', 'News/read')
+	    ->https(false);    
+
+请求变量检测（V5.1.16+）
+----------------------
+可以在匹配 ``URL`` 地址之外，额外检查请求变量是否匹配，只有指定的请求变量也一致的情况下才能匹配该路由。
+
+.. code-block:: php
+
+	// 检查type变量
+	Route::post('new/:id', 'News/save')
+	    ->filter('type', 1);   
+	    
+	// 检查多个请求变量
+	Route::post('new/:id', 'News/save')
+	    ->filter([ 'type' => 1,'status'=> 1 ]);     
+
+前置行为检测
+------------
+
+.. note:: ``V5.1.6+`` 版本开始，路由的 ``before`` 行为参数建议改为使用路由中间件替代。
+
+支持使用行为对路由进行检测是否匹配，如果行为方法返回 ``false`` 表示当前路由规则无效。
+
+.. code-block:: php
+
+	Route::get('user/:id', 'index/User/read')
+    ->before(['\app\index\behavior\UserCheck']);
+
+行为类定义如下：
+
+.. code-block:: php
+
+	<?php
+	namespace app\index\behavior;
+
+	class UserCheck
+	{
+	    public function run()
+	    {
+	        if ('user/0' == request()->url()) {
+	            return false;
+	        }
+	    }
+	}
+
+可以同时使用多个行为进行检测，并且支持使用闭包。
+
+.. note:: 因为前置行为的特殊性，在路由参数的有效性检查后，无论是否最终匹配该路由，都会进行前置行为检查（路由分组的话 会在匹配该分组后再检查）。
+
+该功能实现位于 ``\think\route\RuleItem::checkRule`` 函数中。
+
+后置行为执行
+-----------
+
+.. note:: ``V5.1.6+`` 版本开始建议使用中间件替代路由后置行为。
+
+**路由后置行为是在中间件最内层，且控制器方法调用之前执行的，所以，只能使用前置中间件代替。**
+
+可以为某个路由或者某个分组路由定义后置行为执行，表示当路由匹配成功后，执行的行为，例如：
+
+.. code-block:: php
+
+	Route::get('user/:id', 'User/read')
+    ->after(['\app\index\behavior\ReadInfo']);
+
+其中 ``ReadInfo`` 行为类定义如下：
+
+.. code-block:: php
+
+	<?php
+
+	namespace app\index\behavior;
+
+	use app\index\model\User;
+
+	class ReadInfo
+	{
+	    public function run()
+	    {
+	        $id   = request()->route('id');
+	        app()->user = User::get($id);
+	    }
+	}
+
+如果成功匹配到 ``new/:id`` 路由后，就会执行行为类的 ``run`` 方法，参数是路由地址，可以动态改变。同样，后置行为也支持传入闭包。
+
+后置行为执行函数可以存在或不存在返回值，如果存在返回值，则只能是 ``Response`` 类型实例。
+
+该功能实现位于 ``\think\route\Dispatch::checkAfter`` 函数中。
+
+合并额外参数
+------------
+通常用于完整匹配的情况，如果有额外的参数则合并作为变量值，例如：
+
+.. code-block:: php
+
+	Route::get('new/:name$', 'News/read')
+    ->mergeExtraVars();
+
+.. code-block:: shell
+
+    http://serverName/new/thinkphp/hello
+
+会被匹配到，并且 ``name`` 变量的值为 ``thinkphp/hello`` 。
+
+路由绑定模型
+-----------
+
+路由规则和分组支持绑定模型数据，例如：
+
+.. code-block:: php
+
+	Route::get('hello/:id', 'index/index/hello')
+    ->model('id', '\app\index\model\User');
+
+会自动给当前路由绑定 ``id`` 为 当前路由变量值的 ``User`` 模型数据。
+
+如果你的模型绑定使用的是 ``id`` 作为查询条件的话，还可以简化成下面的方式
+
+.. code-block:: php
+
+	Route::get('hello/:id', 'index/index/hello')
+    ->model('\app\index\model\User');
+
+默认情况下，如果没有查询到模型数据，则会抛出异常，如果不希望抛出异常，可以使用
+
+.. code-block:: php
+
+	Route::rule('hello/:id', 'index/index/hello')
+    ->model('id', '\app\index\model\User', false);
+
+可以定义模型数据的查询条件，例如：
+
+.. code-block:: php
+
+	Route::rule('hello/:name/:id', 'index/index/hello')
+    ->model('id&name', '\app\index\model\User');
+
+表示查询 ``id`` 和 ``name`` 的值等于当前路由变量的模型数据，多个查询条件字段使用 ``&`` 符号分隔。
+
+也可以使用闭包来自定义返回需要的模型对象
+
+.. code-block:: php
+
+	Route::rule('hello/:id', 'index/index/hello')
+	    ->model(function ($id) {
+	        $model = new \app\index\model\User;
+	        return $model->where('id', $id)->find();
+	    });
+
+闭包函数的参数就是当前请求的 ``URL`` 变量信息。
+
+.. note:: 绑定的模型可以直接在控制器的构造方法或者操作方法中自动注入，具体可以参考请求章节的依赖注入。
+
+该功能实现位于 ``\think\route\Dispatch::createBindModel`` 函数中。
+
+缓存路由请求
+------------
+可以对当前的路由请求进行缓存处理，例如：
+
+.. code-block:: php
+
+	Route::get('new/:name$', 'News/read')
+    ->cache(3600);
+
+表示对当前路由请求缓存3600秒，更多内容可以参考请求缓存一节。
+
+
+该功能实现位于 ``\think\route\Dispatch::parseRequestCache`` 函数中。
+
+路由验证器
+----------
+参考验证器章节。
+
+验证错误，则抛出 ``ValidateException`` 异常。
+
+该功能实现位于 ``\think\route\Dispatch::autoValidate`` 函数中。
+
+全局路由参数
+===========
+可以直接进行全局的路由参数设置，例如在路由定义文件中使用
+
+.. code-block:: php
+
+    Route::option('ext','html')->option('cache', 600);
+
+表示全局路由都使用 ``html`` 后缀以及 ``600`` 秒的请求缓存。
+
+动态参数
+========
+如果你需要额外自定义一些路由参数，可以使用下面的方式：
+
+.. code-block:: php
+
+	Route::get('new/:name$', 'News/read')
+    ->option('rule','admin');
+
+或者使用动态方法
+
+.. code-block:: php
+
+	Route::get('new/:name$', 'News/read')
+    ->rule('admin');
+
+在后续的路由行为后可以调用该路由的 ``rule`` 参数来进行权限检查。
+
+路由中间件（V5.1.6+）
+===================
+从 ``5.1.6+`` 版本开始，可以使用路由中间件，注册方式如下：
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+	->middleware('Auth');
+
+或者对路由分组注册中间件
+
+.. code-block:: php
+
+	Route::group('hello', function(){
+		Route::rule('hello/:name','hello');
+	})->middleware('Auth');
+
+如果需要传入额外参数给中间件，可以使用
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+	->middleware('Auth:admin');
+
+如果使用的是常量方式定义，可以在第二个参数传入中间件参数。
+
+.. code-block:: php
+
+    Route::rule('hello/:name','hello')
+	->middleware(Auth::class, 'admin');
+
+如果需要定义多个中间件，使用数组方式
+
+.. code-block:: php
+
+    Route::rule('hello/:name','hello')
+	->middleware([Auth::class, 'Check']);
+
+可以统一传入同一个额外参数
+
+.. code-block:: php
+
+    Route::rule('hello/:name','hello')
+	->middleware([Auth::class, 'Check'], 'admin');
+
+或者单独指定中间件参数。
+
+.. code-block:: php
+
+	Route::rule('hello/:name','hello')
+	->middleware(['Auth:admin', 'Check:editor']);
+
+设置Header信息
+==============
+
+.. code-block:: php
+
+	Route::get('new/:name$', 'News/read')
+    ->header('Access-Control-Allow-Origin','*');
+
+.. note:: ``header`` 方法支持多次调用。
+
+或者使用数组方式批量设置
+
+.. code-block:: php
+
+	Route::get('new/:name$', 'News/read')
+    ->header([
+    	'Access-Control-Allow-Origin'=>'*',
+        'Access-Control-Allow-Methods' => 'GET, POST, PATCH, PUT, DELETE',
+    ]);
+
+当路由匹配后，会自动设置本次请求的 ``Response`` 响应对象的 ``Header`` 信息。
+
+响应输出设置
+============
+
+可以调用 ``response`` 方法给路由或者分组绑定响应输出参数，例如：
+
+.. code-block:: php
+
+	Route::get('hello/:id', 'index/index/hello')->response([
+	    '\app\index\behavior\Json',
+	]);
+
+行为类定义如下：
+
+.. code-block:: php
+
+	namespace app\index\behavior;
+
+	class Json 
+	{
+	    public function run($response)
+	    {
+	    	// 调用Response类的方法进行设置
+	    	$response->contentType('application/json');
+	    }
+	}
+
+如果不希望使用行为类，可以直接使用闭包
+
+.. code-block:: php
+
+	Route::get('hello/:id', 'index/index/hello')->response(function($response){
+	    	$response->contentType('application/json');
+	});
+
+如果要给某个路由返回单独的响应对象，也可以使用
+
+.. code-block:: php
+
+	Route::get('hello/:id', function () {
+	    return json('hello,world!');
+	});
+
+

@@ -1,0 +1,436 @@
+*************
+微擎公众号模块
+*************
+
+功能文件
+========
+
+module.php
+----------
+
+功能介绍
+^^^^^^^^
+- 此文件功能主要嵌入系统的 ``自动回复`` -> ``关键字回复`` 中，微擎系统中。当设置模块时勾选 ``是否要嵌入规则`` 时，才可以嵌入规则；
+- 实现应用的全局配置功能；
+
+关于关键字回复，系统只支持最基本的 文字、图文、语音、视频等基本元素，而且这些回复需要操作员详细的设置每一项，标题、内容、链接。
+
+但是对于模块来说，需要对于这些基本的回复进行“二次封装”，生成出来标题、内容、链接这些元素。所以模块对系统自动回复扩展或是封装就需要通过 ``module.php`` 这个文件来嵌入。
+
+``module.php`` 应用于添加 ``回复规则列表`` 功能，完成了对规则的增，删，改，查功能和模块参数设置的功能，设计模块时需要勾选 ``是否嵌入规则`` 。
+
+在微擎老版本当中，模块开启 **存在全局参数配置** 时，会在此文件中的 ``settingsDisplay`` 方法来实现，由于新版微擎引入了 **云参数配置** 的功能，此函数已经不需要开发者来手动实现了，系统会自动调用云 ``API`` 来完善功能。
+
+规范及约定
+^^^^^^^^^^
+- ``Rcdonkey_signuptest`` 为模块标识，类名的定义遵循 ``模块标识+Module`` 规则；
+- 此类必须继承 ``WeModule`` 类；
+
+实现演示
+^^^^^^^^
+
+.. code-block:: php
+
+	/**
+	 * 接龙报名模块定义
+	 *
+	 * @author lzh
+	 * @url
+	 */
+	defined('IN_IA') or exit('Access Denied');
+	class Rcdonkey_signuptestModule extends WeModule {
+	    public function welcomeDisplay($menus = array()) {
+	        //这里来展示DIY管理界面，用于进入模块后自定义显示页面
+	        include $this->template('welcome');
+	    }
+	    public function fieldsFormDisplay($rid = 0) {
+	        //要嵌入规则编辑页的自定义内容，这里 $rid 为对应的规则编号，新增时为 0
+	        //显示新增或是编辑规则页面
+	        include $this->template('rule');
+	    }
+	    public function fieldsFormValidate($rid = 0) {
+	        //规则编辑保存时，要进行的数据验证，返回空串表示验证无误，返回其他字符串将呈现为错误提示。这里 $rid 为对应的规则编号，新增时为 0
+	        return '';
+	    }
+	    public function fieldsFormSubmit($rid) {
+	        //规则验证无误保存入库时执行，这里应该进行自定义字段的保存。这里 $rid 为对应的规则编号
+	    }
+	    public function ruleDeleted($rid) {
+	        //删除规则时调用，这里 $rid 为对应的规则编号
+	    }
+	    // 新版本调用云函数设置全局配置
+	    public function settingsDisplay($settings) {
+	        global $_W, $_GPC;
+	        load()->classs('cloudapi');
+	        $api = new CloudApi(true);
+	        $iframe = $api->url('debug', 'settingsDisplay', array(
+	            'referer' => urlencode($_W['siteurl']),
+	            'version' => $this->module['version'],
+	            'v' => random(3),
+	        ), 'html');
+	        if (is_error($iframe)) {
+	            message($iframe['message'], '', 'error');
+	        }
+	        if($_W['ispost']) {
+	            $setting = $_GPC['setting'];
+	            $setting = $api->post('debug', 'saveSettings', array('setting' => $setting, 'version' => $this->module['version'], 'v' => random(3),), 'json');
+	            if (is_error($setting)) {
+	            }
+	            $this->saveSettings($setting);
+	        }
+	        include $this->template('setting');
+	    }
+	    // 旧版本设置全局配置
+		public function settingsDisplay($settings) {
+			global $_W, $_GPC;
+			//点击模块设置时将调用此方法呈现模块设置页面，$settings 为模块设置参数, 结构为数组。这个参数系统针对不同公众账号独立保存。
+			//在此呈现页面中自行处理post请求并保存设置参数（通过使用$this->saveSettings()来实现）
+			if(checksubmit('submit')) {
+				//字段验证, 并获得正确的数据$dat
+				$dat['option1'] = $_GPC['option1'];
+				$this->saveSettings($dat);
+				message('配置参数更新成功！', referer(), 'success');
+			}
+			//这里来展示设置项表单
+			include $this->template('settings');
+		}
+	}
+
+另一个参考例子 https://www.kancloud.cn/donknap/we7/135269 。
+
+site.php
+---------
+它是定义各类模块后台功能的文件。
+
+功能介绍
+^^^^^^^
+
+定义模块后端功能
+"""""""""""""""
+以 ``doWeb+入口标识`` 为方法名，设计模块时，需要先在 **管理中心菜单** 中注册。当然，如果一些 ``ajax`` 地址或是你不想显示在左侧菜单上，也可以不在设计模块时注册这些菜单，只要按照访问路由方法，一样是可以调用到。可以查看 `URL路由的相关说明及函数 <http://>`_ 。
+
+**注意：各个类型模块(如，webapp，wxapp，phoneapp)后端都是使用该文件的这样格式的方法来定义的。**
+
+后端分为移动端和PC端后台。移动端后台函数定义在 ``mobile.php`` 文件中；而PC端后台函数定义在 ``site.php`` 文件中。
+
+定义模块前端页面
+"""""""""""""""
+以 ``doMobile+入口标识`` 为方法名，供手机端接口或是页面使用。此方法不一定要在设计模块时注册，只要按照访问路由方法，一样是可以调用到。只是如果此页面是不验证登录的，需要在设计模块时，设置此标识 **无需要登录访问** 。
+
+具体功能实现
+^^^^^^^^^^^
+此例中，将实现一个查看所有活动列表的功能。代码如下：
+开发应用使用了命名空间，具体可以查看 `命名空间 <http://>`_
+
+文件中有三个方法，别表是活动列表，删除活动，编辑活动，其中只有 **活动列表** ，在设计模块的时候注册了，因为这个菜单要显示到模块左侧，其它菜单是由自己在HTML页面中加入的，所以可以不事先注册。
+
+调用 ``site.php`` 中的其它方法，可以在前端页面中调用，可使用下面的方法，具体可以查看 `生成模块内链接地址 <http://>`_
+
+.. code-block:: html
+
+	<td>
+	    <div class="link-group">
+	        <a href="{php echo $this->createWebUrl('editActivity', array('id' => $activity['id']))}">编辑</a>
+	        <a href="{php echo $this->createWebUrl('deleteActivity', array('id' => $activity['id']))}" onclick="return confirm('是否确认删除？');" class="del">删除</a>
+	    </div>
+	</td>
+
+完整的代码示例如下：
+
+.. code-block:: php
+
+	namespace rcdonkey;
+	/**
+	 * 接龙报名模块微站定义
+	 *
+	 * @author lzh
+	 * @url
+	 */
+	defined('IN_IA') or exit('Access Denied');
+	class Rcdonkey_signupModuleSite extends \WeModuleSite {
+	    public function doWebActivity() {
+	        global $_W, $_GPC;
+	        $pageindex = max(1, intval($_GPC['page']));
+	        $pagesize = 15;
+	        $status = array(
+	            '1' => '进行中',
+	            '2' => '进行中',
+	            '3' => '已结束',
+	        );
+	        $activity_list = pdo_getslice('rcdonkey_activity', array(), array($pageindex, $pagesize), $total, array(), 'id', 'id desc');
+	        if (!empty($activity_list)) {
+	            foreach ($activity_list as &$activity) {
+	                $activity['createtime'] = date('Y-m-d H:i', $activity['createtime']);
+	                $activity['join_deadline'] = date('Y-m-d', $activity['join_deadline']);
+	                $activity['code'] = tomedia($activity['code']);
+	            }
+	            unset($activity);
+	        }
+	        $pager = pagination($total, $pageindex, $pagesize);
+	        include $this->template('activity-list');
+	    }
+	    public function doWebDeleteActivity() {
+	        global $_GPC;
+	        $id = intval($_GPC['id']);
+	        $activity = pdo_get('rcdonkey_activity', array('id' => $id));
+	        if (empty($activity)) {
+	            message('删除的活动不存在或是已经被删除');
+	        }
+	        if (pdo_delete('rcdonkey_activity', array('id' => $id))) {
+	            message('活动删除成功', referer(), 'success');
+	        } else {
+	            message('活动删除失败，请重试');
+	        }
+	    }
+	    public function doWebEditActivity() {
+	        global $_GPC;
+	        $id = intval($_GPC['id']);
+	        $activity = pdo_get('rcdonkey_activity', array('id' => $id));
+	        if (empty($activity)) {
+	            message('删除的活动不存在或是已经被删除');
+	        }
+	        if (checksubmit('submit')) {
+	            if (empty($_GPC['title']) || empty($_GPC['join_deadline'])) {
+	                message('请输入活动的标题和截止日期');
+	            }
+	            $data = array(
+	                'title' => $_GPC['title'],
+	                'description' => $_GPC['description'],
+	                'join_total' => intval($_GPC['join_total']),
+	                'join_deadline' => strtotime($_GPC['join_deadline']),
+	                'status' => intval($_GPC['status']),
+	            );
+	            pdo_update('rcdonkey_activity', $data, array('id' => $id));
+	            message('更新成功', referer(), 'success');
+	        }
+	        include $this->template('activity-detail');
+	    }
+	}
+
+可以将 ``site.php`` 中大量定义的入口方法分离单独的文件中 (文件名称为小写单词, 如: ``sendmessage.inc.php`` )
+
+- ``doWebXxx`` 分离到 ``wxwall/inc/web/xxx.inc.php`` ；
+- ``doMobileXxx`` 分离到 ``wxwall/inc/mobile/xxx.inc.php`` ；
+
+用户身份验证
+^^^^^^^^^^^
+在需要粉丝用户或操作员身份验证时，调用以下方法。
+
+- ``Web`` 端 ``checklogin()`` ：在 ``Web`` 端，操作用户登录方可执行的页面功能，在入口须调用 ``checklogin()`` ，验证失败，操作用户须登录，方可向下执行。
+- ``App`` 端 ``checkauth()`` ：在 ``App`` 端，粉丝用户登录方可操作的页面功能。
+
+receiver.php
+------------
+
+功能介绍
+^^^^^^^
+
+
+具体功能实现
+^^^^^^^^^^^
+以下示例为用户模拟图片消息，  ``PicTran`` 默认订阅图片消息。
+
+.. code-block:: php
+
+	defined('IN_IA') or exit('Access Denied');
+
+	class PicTranModuleReceiver extends WeModuleReceiver {
+		public function receive() {
+			$type = $this->message['type'];
+			//这里定义此模块进行消息订阅时的, 消息到达以后的具体处理过程, 请查看微擎文档来编写你的代码
+
+			$c = '';
+			foreach ($this->message as $key => $value) {
+				$c .= "$key : $value \r\n";
+			}
+
+			file_put_contents('e:\\receive.txt', $c);
+		}
+	}
+
+当收到一个图片消息时将会执行消息订阅, 文件输出结果为:
+
+.. code-block:: shell
+
+	from : fromUser
+	to : toUser
+	time : 1413941559
+	type : image
+	event :
+	tousername : toUser
+	fromusername : fromUser
+	createtime : 1413941559
+	msgtype : image
+	picurl : http://www.baidu.com/img/bdlogo.gif
+	msgid : 1234567890123456
+	url : http://www.baidu.com/img/bdlogo.gif
+
+processor.php
+------------
+
+功能介绍
+^^^^^^^
+应用于当此模块设置过 ``回复规则列表`` ，用户发送关键字后，触发到模块中向用户回复信息的函数。
+
+``processor.php`` 具体定义如下：
+
+- ``we7_demo`` 为模块标识，类名的定义遵循 ``模块标识ModuleProcessor`` 规则；
+- 此类必须继承 ``WeModuleProcessor`` 类；
+
+具体功能实现
+^^^^^^^^^^^
+
+.. code-block:: php
+
+	/**
+	 * 官方示例模块处理程序
+	 *
+	 * @author 微擎团队
+	 * @url http://bbs.we7.cc/
+	 */
+	defined('IN_IA') or exit('Access Denied');
+
+	class We7_demoModuleProcessor extends WeModuleProcessor {
+		public function respond() {
+			//$this->message变量包含了用户信息和关键字信息
+			$content = $this->message['content'];
+			//这里定义此模块进行消息处理时的具体过程, 请查看微擎文档来编写你的代码
+			//回复用户一句话
+			return $this->respText('您触发了we7_demo模块');
+		}
+	}
+
+该类一些属性的介绍
+^^^^^^^^^^^^^^^^^
+
+$this->message
+""""""""""""""
+粉丝发送的消息结构
+
+.. code-block:: php
+
+	$this->message = array(
+		'from' => 'fromUser',  //来源openid
+		'to' => 'toUser', //公众号标识
+		'time' => '1448694116',
+		'type' => 'text', //消息类型
+		'event' => '',
+		'tousername' => 'toUser', //同from
+		'fromusername' => 'fromUser', //同to
+		'createtime' => '1448694116',
+		'msgtype' => 'text',
+		'content' => '官方示例', //关键字
+		'msgid' => '1234567890123456',
+		'redirection' => '',  //是否有消息重定向，例如扫描二维码后触发某一个关键字，这样的消息就属于重定向消息
+		'source' => '', //重定向消息原消息类型
+	);
+
+$this->module['config']
+"""""""""""""""""""""""
+设计模块时勾选“模块全局配置项”后，用户配置的选项通过此变量获取。
+
+生成访问site.php方法的链接
+"""""""""""""""""""""""""
+``processor.php`` 文件中，回复用户图文信息时，可以设置跳转链接到 ``site.php`` 文件中的 ``doMobileIndex()`` 函数，可以使用 ``$this->createMobileUrl('index');`` 生成访问 ``URL``
+访问 ``doWebIndex()`` 函数时，可以使用 ``$this->createWebUrl('index');`` 来生成。
+
+构造回复消息的相关函数
+"""""""""""""""""""""
+
+- $this->respText(); 回复一段文本文字
+
+.. code-block:: php
+
+	$this->respText('您触发了we7_demo模块');
+
+- $this->respNews(array $news); 回复一个图文消息
+
+.. code-block:: php
+
+	$this->respNews(array(
+		'Title' => '单图文的标题',
+		'Description' => '单图文的描述',
+		'PicUrl' => tomedia('封面图片地址'),
+		'Url' => $this->createMobileUrl('introduce', array('id' => $rid)), //创建一个带openid信息的访问模块introduce方法的地址，这里也可以直接写http://we7.cc
+	));
+
+- $this->respMusic(array $music); 回复一个音乐消息
+
+.. code-block:: php
+
+	$this->respMusic(array(
+		'Title'	=> '音乐回复标题',
+		'Description' => '音乐回复描述',
+		'MusicUrl' => tomedia('音乐链接'),
+		'HQMusicUrl' => '高清音乐链接，可不填',
+	));
+
+- $this->respVideo(array $video); 回复一个视频消息，视频需要上传到微信的素材中。
+
+.. code-block:: php
+
+	$this->respVideo(array(
+		'MediaId' => '素材的Id',
+		'Title' => '视频标题',
+		'Description' => '视频的描述'
+	));
+
+- $this->respVoice($mid); 回复一个语音消息，语音需要上传到微信的素材中。见：上传素材
+
+.. code-block:: php
+
+	$this->respVoice('素材id');
+
+- $this->respImage($mid); 回复一个图片消息，图片需要上传到微信的素材中。见：上传素材
+
+.. code-block:: php
+
+	$this->respImage('素材id');
+
+hook.php
+---------
+模块嵌入点
+^^^^^^^^^^
+模块嵌入点是为了解决模块之间或是插件与主模块之间的功能调用、功能占位等问题。
+
+举个例子，主模块功能是商城功能，包含一个插件功能是支付功能。主模块在遇到支付功能按钮时，可以以钩子的形式来处理，先占位，系统会判断用户是否已经安装支付插件，如果有则显示出来支付功能按钮，如果没有则什么也不显示。
+
+定义模块嵌入点
+^^^^^^^^^^^^^
+
+- 模块嵌入点需要在模块目录下定义 ``hook.php`` ；
+- ``We7_testhookModuleHook`` 为模块标识，类名的定义遵循 ``模块标识+ModuleHook`` 规则；
+- 此类必须继承 ``WeModuleHook`` 类；
+- ``web`` 端的嵌入点以 ``hookWeb + Hook名称`` 来定义；
+- ``app`` 端的嵌入点以 ``hookMobile + Hook名称`` 来定义；
+
+.. code-block:: php
+
+	class We7_testhookModuleHook extends WeModuleHook {
+	    // web端的嵌入点
+	    public function hookMobileTest() {
+	        // 将调用 teamplate/mobile/testhook.html
+	        include $this->template('testhook');
+	    }
+	    // app端的嵌入点
+	    public function hookWebTest() {
+	        // 将调用 teamplate/testhook.html
+	        include $this->template('testhook');
+	    }
+	}
+
+调用Hook
+^^^^^^^^
+在当前模块通过下面的模板组件可以调用其它模块的功能，用来进行模块间交互。 在使用该模板组件之前，你必须在其它模块中创建 ``hook.php`` 文件，并在启动定义 ``hookXXX`` 方法。
+
+- 调用 ``Hook`` 时， ``web`` 端与 ``app`` 端会分别调用各自的 ``Hook`` ；
+- 系统会自动检测是否存在该 ``Hook`` 后进行调用数据；
+- 此标签会自动被替换定义嵌入点的内容；
+
+.. code-block:: html
+
+    {hook func="test" module="we7_testhook" pagesize="15"}{/hook}
+
+此标签除了 ``func`` 和 ``module`` 是必填的参数外，其余参数可由开发者自定义，会原样传入到嵌入点的函数中。它通过 ``params['参数名称']`` 来访问。
+
+

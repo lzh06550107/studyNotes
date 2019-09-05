@@ -1,0 +1,213 @@
+***********
+网页自动加载进度条插件
+***********
+
+pace.js
+=======
+在页面中引入 ``Pace.js`` ，页面就会自动监测你的请求（包括 ``Ajax`` 请求），在事件循环滞后，会在页面记录加载的状态以及进度情况。此插件的兼容性很好，可以兼容 ``IE8`` 以上的所有主流插件，而且其强大之处在于，你还可以引入加载进度条的主题样式，你可以选择任意颜色和多种动画效果（例如简约、闪光灯，MAC OSX，左侧填充，顶部填充，计数器和弹跳等等动画效果），如果你擅长修改 ``Css`` 动画，那你就可以做出无限种可能性的动画，为你的网站增添个性化特色！
+
+`官网主题 <http://github.hubspot.com/pace/docs/welcome/>`_  `下载地址 <https://github.com/HubSpot/PACE/archive/v0.5.6.zip>`_
+
+使用方法
+--------
+引入 ``Pace.js`` 以及主题文件即可：
+
+.. code-block:: html
+
+	<head>
+	  <script src="/pace/pace.js"></script>
+	  <link href="/pace/themes/pace-theme-barber-shop.css" rel="external nofollow"  rel="external nofollow"  rel="stylesheet" />
+	</head>
+
+自定义配置
+----------
+``Pace.js`` 会自动加载到页面中，不需要挂接到任何代码，会自动检测进度。如果你想做一些调整，你可以设置 ``window.paceOptions`` 来自定义配置：
+
+.. code-block:: js
+
+	paceOptions = {
+	  // Disable the 'elements' source
+	  elements: false,
+
+	  // Only show the progress on regular and ajax-y page navigation,
+	  // not every request
+	  restartOnRequestAfter: false
+	}
+
+你也可以将自定义设置放到 ``script`` 标签内，例如：
+
+.. code-block:: html
+
+    <script data-pace-options='{ "ajax": false }' src='pace.js'></script>
+
+如果你使用 ``AMD`` 或者 ``Browserify`` 来加载模块的话，你可以通过这样子来设置（例如： ``start`` ）：
+
+.. code-block:: js
+
+	define(['pace'], function(pace){
+	  pace.start({
+	    document: false
+	  });
+	});
+
+使用API
+-------
+``Pace.js`` 公开的 ``API`` 列表：
+
+- ``Pace.start`` ：开始显示进度条，如果你不是使用 ``AMD`` 或者 ``Browserify`` 来加载模块的话，这个会默认执行。
+- ``Pace.restart`` ：进度条重新加载以及显示。
+- ``Pace.stop`` ：隐藏进度条以及停止加载。
+- ``Pace.track`` ：监测一个或者多个请求任务。
+- ``Pace.ignore`` ：忽略一个或者多个请求任务。
+
+演示代码
+--------
+
+.. code-block:: html
+
+	<!DOCTYPE html>
+	<html lang="en">
+
+	<head>
+	    <title>演示jquery插件</title>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	    <script src="https://github.hubspot.com/pace/pace.js"></script>
+	    <style>
+	        .pace {
+	            -webkit-pointer-events: none;
+	            pointer-events: none;
+	            -webkit-user-select: none;
+	            -moz-user-select: none;
+	            user-select: none;
+	        }
+
+	        .pace-inactive {
+	            display: none;
+	        }
+
+	        .pace .pace-progress {
+	            background: #29d;
+	            position: fixed;
+	            z-index: 2000;
+	            top: 0;
+	            right: 100%;
+	            width: 100%;
+	            height: 2px;
+	        }
+
+	        .pace .pace-progress-inner {
+	            display: block;
+	            position: absolute;
+	            right: 0px;
+	            width: 100px;
+	            height: 100%;
+	            box-shadow: 0 0 10px #29d, 0 0 5px #29d;
+	            opacity: 1.0;
+	            -webkit-transform: rotate(3deg) translate(0px, -4px);
+	            -moz-transform: rotate(3deg) translate(0px, -4px);
+	            -ms-transform: rotate(3deg) translate(0px, -4px);
+	            -o-transform: rotate(3deg) translate(0px, -4px);
+	            transform: rotate(3deg) translate(0px, -4px);
+	        }
+
+	        .pace .pace-activity {
+	            display: block;
+	            position: fixed;
+	            z-index: 2000;
+	            top: 15px;
+	            right: 15px;
+	            width: 14px;
+	            height: 14px;
+	            border: solid 2px transparent;
+	            border-top-color: #29d;
+	            border-left-color: #29d;
+	            border-radius: 10px;
+	            -webkit-animation: pace-spinner 400ms linear infinite;
+	            -moz-animation: pace-spinner 400ms linear infinite;
+	            -ms-animation: pace-spinner 400ms linear infinite;
+	            -o-animation: pace-spinner 400ms linear infinite;
+	            animation: pace-spinner 400ms linear infinite;
+	        }
+
+	        @-webkit-keyframes pace-spinner {
+	            0% {
+	                -webkit-transform: rotate(0deg);
+	                transform: rotate(0deg);
+	            }
+
+	            100% {
+	                -webkit-transform: rotate(360deg);
+	                transform: rotate(360deg);
+	            }
+	        }
+
+	        @-moz-keyframes pace-spinner {
+	            0% {
+	                -moz-transform: rotate(0deg);
+	                transform: rotate(0deg);
+	            }
+
+	            100% {
+	                -moz-transform: rotate(360deg);
+	                transform: rotate(360deg);
+	            }
+	        }
+
+	        @-o-keyframes pace-spinner {
+	            0% {
+	                -o-transform: rotate(0deg);
+	                transform: rotate(0deg);
+	            }
+
+	            100% {
+	                -o-transform: rotate(360deg);
+	                transform: rotate(360deg);
+	            }
+	        }
+
+	        @-ms-keyframes pace-spinner {
+	            0% {
+	                -ms-transform: rotate(0deg);
+	                transform: rotate(0deg);
+	            }
+
+	            100% {
+	                -ms-transform: rotate(360deg);
+	                transform: rotate(360deg);
+	            }
+	        }
+
+	        @keyframes pace-spinner {
+	            0% {
+	                transform: rotate(0deg);
+	                transform: rotate(0deg);
+	            }
+
+	            100% {
+	                transform: rotate(360deg);
+	                transform: rotate(360deg);
+	            }
+	        }
+	    </style>
+	</head>
+
+	<body>
+	    测试内容
+	    <script>
+	        function sleep(numberMillis) {
+	            var now = new Date();
+	            var exitTime = now.getTime() + numberMillis;
+	            while (true) {
+	                now = new Date();
+	                if (now.getTime() > exitTime)
+	                    return;
+	            }
+	        }
+
+	        sleep(10); // 睡眠10s
+	    </script>
+	</body>
+
+	</html>

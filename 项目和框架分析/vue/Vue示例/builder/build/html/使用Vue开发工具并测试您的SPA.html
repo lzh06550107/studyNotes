@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>13. 使用Vue开发工具并测试您的SPA &mdash; Vue示例 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="Vue示例 1.0 文档" href="index.html"/>
+        <link rel="prev" title="12. 建立电子商务商店-添加结帐" href="建立电子商务商店-添加结帐.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Vue示例
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="前言.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Vue入门.html">2. Vue入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="显示、循环、查询和过滤数据.html">3. 显示、循环、查询和过滤数据</a></li>
+<li class="toctree-l1"><a class="reference internal" href="优化你的App和使用组件显示数据.html">4. 优化你的App和使用组件显示数据</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Dropbox_API获取文件列表.html">5. 使用Dropbox API获取文件列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="浏览文件树和通过URL加载文件夹.html">6. 浏览文件树和通过URL加载文件夹</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Vuex缓存当前文件夹结构.html">7. 使用Vuex缓存当前文件夹结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="预缓存其它文件夹和文件来加速导航.html">8. 预缓存其它文件夹和文件来加速导航</a></li>
+<li class="toctree-l1"><a class="reference internal" href="介绍Vue-Router并加载基于URL的组件.html">9. 介绍Vue-Router并加载基于URL的组件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="使用Vue-Router动态路由加载数据.html">10. 使用Vue-Router动态路由加载数据</a></li>
+<li class="toctree-l1"><a class="reference internal" href="建立电子商务商店-浏览产品.html">11. 建立电子商务商店-浏览产品</a></li>
+<li class="toctree-l1"><a class="reference internal" href="建立电子商务商店-添加结帐.html">12. 建立电子商务商店-添加结帐</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">13. 使用Vue开发工具并测试您的SPA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-js">13.1. 使用Vue.js开发人员工具</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vue">13.2. 检查Vue组件数据和计算值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vuex">13.3. 查看Vuex突变和时间旅行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">13.4. 预览事件数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spa">13.5. 测试你的SPA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">13.6. 命令行单元测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">13.7. 浏览器自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">13.8. 总结</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Vue示例</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>13. 使用Vue开发工具并测试您的SPA</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/使用Vue开发工具并测试您的SPA.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vuespa">
+<h1>13. 使用Vue开发工具并测试您的SPA<a class="headerlink" href="#vuespa" title="永久链接至标题">¶</a></h1>
+<p>在前面的11章中，我们一直在使用 <code class="docutils literal"><span class="pre">Vue.js</span></code> 开发多个单页面应用程序（ <code class="docutils literal"><span class="pre">SPA</span></code> ）。尽管开发是创建 <code class="docutils literal"><span class="pre">SPA</span></code> 的一大块，但测试也是创建任何 JavaScript Web 应用程序的重要组成部分。</p>
+<p><code class="docutils literal"><span class="pre">Chrome</span></code> 和 <code class="docutils literal"><span class="pre">Firefox</span></code> 中提供的 <code class="docutils literal"><span class="pre">Vue</span></code> 开发人员工具可以深入了解在特定视图中使用的组件或 <code class="docutils literal"><span class="pre">Vuex</span></code> 存储的当前状态 - 以及从 JavaScript 发出的任何事件。这些工具允许您在开发过程中检查并验证应用程序中的数据，以确保所有内容都按照原样进行。</p>
+<p><code class="docutils literal"><span class="pre">SPA</span></code> 测试的另一面是自动化测试。您编写的条件，规则和路由可以在您的应用程序中自动执行任务，然后您可以指定输出结果，测试运行条件以验证结果是否匹配。</p>
+<p>在本章中，我们将：</p>
+<ul class="simple">
+<li>使用我们开发的应用程序中覆盖 <code class="docutils literal"><span class="pre">Vue</span></code> 开发人员工具的用法；</li>
+<li>概述测试工具和应用程序；</li>
+</ul>
+<div class="section" id="vue-js">
+<h2>13.1. 使用Vue.js开发人员工具<a class="headerlink" href="#vue-js" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 开发人员工具适用于 <code class="docutils literal"><span class="pre">Chrome</span></code> 和 <code class="docutils literal"><span class="pre">Firefox</span></code> ，可以从 <code class="docutils literal"><span class="pre">GitHub</span></code> (<a class="reference external" href="https://github.com/vuejs/vue-devtools">https://github.com/vuejs/vue-devtools</a> )下载。安装后，它们将成为浏览器开发人员工具的扩展。 例如，在 Chrome 中，它们显示在审核面板后面。</p>
+<p>只有在开发模式下使用 <code class="docutils literal"><span class="pre">Vue</span></code> 时， <code class="docutils literal"><span class="pre">Vue</span></code> 开发人员工具才能工作。默认情况下， <code class="docutils literal"><span class="pre">Vue</span></code> 的未压缩版本已启用开发模式。但是，如果您使用的是代码的生产版本，则可以通过在代码中将 <code class="docutils literal"><span class="pre">devtools</span></code> 变量设置为 <code class="docutils literal"><span class="pre">true</span></code> 来启用开发工具：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Vue</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">devtools</span> <span class="o">=</span> <span class="kc">true</span>
+</pre></div>
+</div>
+<p>在整本书中，我们一直在使用 <code class="docutils literal"><span class="pre">Vue</span></code> 的开发版本，所以开发工具应该与我们开发的所有三种 <code class="docutils literal"><span class="pre">SPA</span></code> 一起工作。 打开 <code class="docutils literal"><span class="pre">Dropbox</span></code> 示例并打开 <code class="docutils literal"><span class="pre">Vue</span></code> 开发人员工具。</p>
+</div>
+<div class="section" id="vue">
+<h2>13.2. 检查Vue组件数据和计算值<a class="headerlink" href="#vue" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 开发人员工具可以很好地概述页面上正在使用的组件。您还可以深入查看组件并预览该特定实例中正在使用的数据。这非常适合在任何给定时间检查页面上每个组件的属性。</p>
+<p>例如，如果我们检查 Dropbox 应用程序，先导航到“组件”选项卡，我们可以看到 <code class="docutils literal"><span class="pre">&lt;Root&gt;</span> <span class="pre">Vue</span></code> 实例，我们可以看到 <code class="docutils literal"><span class="pre">&lt;DropboxViewer&gt;</span></code> 组件。点击它将显示组件的所有数据属性 - 以及任何计算的属性。这让我们验证结构是否正确构造，以及计算 <code class="docutils literal"><span class="pre">path</span></code> 属性。</p>
+<p>深入到每个组件中，我们可以访问单个数据对象和计算属性。</p>
+<p>使用 <code class="docutils literal"><span class="pre">Vue</span></code> 开发人员工具检查应用程序是在创建应用程序时验证数据的更有效方式，因为它不必放置多个 <code class="docutils literal"><span class="pre">console.log()</span></code> 语句。</p>
+</div>
+<div class="section" id="vuex">
+<h2>13.3. 查看Vuex突变和时间旅行<a class="headerlink" href="#vuex" title="永久链接至标题">¶</a></h2>
+<p>导航到下一个标签， <code class="docutils literal"><span class="pre">Vuex</span></code> ，可以让我们实时观看 <code class="docutils literal"><span class="pre">store</span></code> 变化。每次触发突变时，都会在左侧面板中创建一个新行。这个元素允许我们查看发送了什么数据，以及 <code class="docutils literal"><span class="pre">Vuex</span></code> 存储在提交数据之前和之后的样子。</p>
+<p>它还为您提供了几个选项来恢复，提交和时间旅行到任何点。加载 Dropbox 应用程序，几个结构突变立即填充在左侧面板中，列出突变名称和它们发生的时间。这是预先缓存文件夹的代码。点击每一个将显示 Vuex 存储状态 - 以及包含已发送有效负载的突变。状态显示在有效载荷被发送并且突变提交之后。要预览突变前的状态，请选择前面选项：</p>
+<p>在每个条目上，在突变名称旁边，您会注意到三个符号，允许您执行多个操作并在浏览器中直接变更 <code class="docutils literal"><span class="pre">store</span></code> ：</p>
+<ul class="simple">
+<li>提交这个突变：这可以让你提交所有的数据。这将从开发工具中移除所有突变，并将 <code class="docutils literal"><span class="pre">Base</span></code> 状态更新为这一点。如果您希望跟踪某些突变，这很方便。</li>
+<li>还原此突变：这将在此之后撤销突变和所有突变。这使您可以一次又一次地执行相同的操作，而无需按刷新或丢失当前位置。例如，在我们的商店应用中将产品添加到购物车时，会发生突变。使用此功能可以让您从篮子中删除产品，并撤消任何后续变化，而无需离开产品页面。</li>
+<li>时间旅行到这个状态：这允许您预览特定的突变应用程序和状态，而不会恢复所选点之后发生的任何突变。</li>
+</ul>
+<p>突变选项卡还允许您在左侧面板的顶部提交或恢复所有突变。在右侧面板中，您还可以导入和导出 <code class="docutils literal"><span class="pre">store</span></code> 状态的 <code class="docutils literal"><span class="pre">JSON</span></code> 编码版本。当您想重新测试几种情况和实例而无需重现几个步骤时，这一点特别方便。</p>
+</div>
+<div class="section" id="id1">
+<h2>13.4. 预览事件数据<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 开发人员工具的事件选项卡与 <code class="docutils literal"><span class="pre">Vuex</span></code> 选项卡类似，可让您检查整个应用程序发出的任何事件。我们的 Dropbox 应用程序不使用事件，因此请打开本书第2章“显示，循环，搜索和过滤数据”中创建的人员筛选应用程序，以及本书的第3章“优化应用程序和使用组件显示数据”。</p>
+<p>每次更新过滤器类型时，更改此应用程序中的过滤器都会发出一个事件以及过滤器查询：</p>
+<p>左侧面板再次列出事件的名称和发生的时间。右侧面板包含有关该事件的信息，包括其组件来源和有效负载。这些数据可以让您确保事件数据与您预期的一致，如果没有，可以帮助您找到触发事件的位置。</p>
+<p><code class="docutils literal"><span class="pre">Vue</span></code> 开发工具是非常宝贵的，尤其是当您的 JavaScript 应用程序变得更大和更复杂时。打开我们开发的商店 <code class="docutils literal"><span class="pre">SPA</span></code> 并检查各种组件和 <code class="docutils literal"><span class="pre">Vuex</span></code> 数据，以了解该工具如何帮助您创建仅实施需要的突变并发出必要事件的应用程序。</p>
+</div>
+<div class="section" id="spa">
+<h2>13.5. 测试你的SPA<a class="headerlink" href="#spa" title="永久链接至标题">¶</a></h2>
+<p>大多数 <code class="docutils literal"><span class="pre">Vue</span></code> 测试套件都围绕着命令行知识并使用 <code class="docutils literal"><span class="pre">CLI</span></code> （命令行界面）创建 <code class="docutils literal"><span class="pre">Vue</span></code> 应用程序。除了在前端兼容的 JavaScript 中创建应用程序外， <code class="docutils literal"><span class="pre">Vue</span></code> 还有一个 <code class="docutils literal"><span class="pre">CLI</span></code> ，允许您使用基于组件的文件创建应用程序。这些文件的扩展名为 <code class="docutils literal"><span class="pre">.vue</span></code> ，并且包含模板 <code class="docutils literal"><span class="pre">HTML</span></code> 以及组件所需的 JavaScript 。它们还允许您创建仅适用于该组件的范围化 <code class="docutils literal"><span class="pre">CSS</span></code> 样式。如果您选择使用 <code class="docutils literal"><span class="pre">CLI</span></code> 创建您的应用程序，那么您可以很轻松地将所有理论和本书中学到的大量实践知识移植过去。</p>
+</div>
+<div class="section" id="id2">
+<h2>13.6. 命令行单元测试<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>与组件文件一起， <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">CLI</span></code> 允许您更轻松地与命令行单元测试集成，例如 <code class="docutils literal"><span class="pre">Jest</span></code> ， <code class="docutils literal"><span class="pre">Mocha</span></code> ， <code class="docutils literal"><span class="pre">Chai</span></code> 和 <code class="docutils literal"><span class="pre">TestCafe</span></code> (<a class="reference external" href="https://testcafe.devexpress.com/">https://testcafe.devexpress.com/</a>)。例如， <code class="docutils literal"><span class="pre">TestCafe</span></code> 允许你指定几个不同的测试，包括检查内容是否存在，点击按钮来测试功能。 <code class="docutils literal"><span class="pre">TestCafe</span></code> 测试的一个示例检查我们的第一个应用中的过滤组件是否包含工作字段：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;The filtering contains the word &quot;filter&quot;&#39;</span><span class="p">,</span> <span class="nx">async</span> <span class="nx">testController</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">filterSelector</span> <span class="o">=</span> <span class="nx">await</span> <span class="k">new</span> <span class="nx">Selector</span><span class="p">(</span><span class="s1">&#39;body &gt; #app &gt; form &gt; label:nth-child(1)&#39;</span><span class="p">);</span>
+    <span class="nx">await</span> <span class="nx">testController</span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="nx">paragraphSelector</span><span class="p">.</span><span class="nx">innerText</span><span class="p">).</span><span class="nx">eql</span><span class="p">(</span><span class="s1">&#39;Filter&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>然后这个测试等同于 <code class="docutils literal"><span class="pre">true</span></code> 或 <code class="docutils literal"><span class="pre">false</span></code> 。单元测试通常与组件本身一起编写，允许组件单独重用和测试。 这使您可以检查外部因素对测试输出没有影响。</p>
+<p>大多数命令行 JavaScript 测试库将与 <code class="docutils literal"><span class="pre">Vue.js</span></code> 集成； <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">GitHub</span></code> 仓库中有一个很棒的列表(<a class="reference external" href="https://github.com/vuejs/awesomevue#test">https://github.com/vuejs/awesomevue#test</a>)。</p>
+</div>
+<div class="section" id="id3">
+<h2>13.7. 浏览器自动化<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>使用命令行单元测试的替代方法是使用测试套件自动化浏览器。这种测试仍然是通过命令行来触发的，不是直接与 Vue 应用程序集成，而是在浏览器中打开页面，并像用户那样与其交互。一个受欢迎的工具是 Nightwatch.js (<a class="reference external" href="http://nightwatchjs.org/">http://nightwatchjs.org/</a>)。</p>
+<p>您可以使用此套件打开您的商店，并与筛选组件或产品列表订购进行交互并对结果进行比较。这些测试是用非常通俗的英语书写的，并不限于与待测站点位于相同的域名或文件网络上。该图书馆也是语言不可知的 - 为任何网站工作，无论它是用什么打造的。</p>
+<p><code class="docutils literal"><span class="pre">Nightwatch.js</span></code> 在他们的网站上给出的例子是用于打开 <code class="docutils literal"><span class="pre">Google</span></code> 并确保 <code class="docutils literal"><span class="pre">Google</span></code> 搜索 <code class="docutils literal"><span class="pre">rembrandt</span> <span class="pre">van</span> <span class="pre">rijn</span></code> 的第一个结果是维基百科条目：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Demo test Google&#39;</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">client</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">client</span>
+            <span class="p">.</span><span class="nx">url</span><span class="p">(</span><span class="s1">&#39;http://www.google.com&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">waitForElementVisible</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">assert</span><span class="p">.</span><span class="nx">title</span><span class="p">(</span><span class="s1">&#39;Google&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">assert</span><span class="p">.</span><span class="nx">visible</span><span class="p">(</span><span class="s1">&#39;input[type=text]&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">setValue</span><span class="p">(</span><span class="s1">&#39;input[type=text]&#39;</span><span class="p">,</span> <span class="s1">&#39;rembrandt van rijn&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">waitForElementVisible</span><span class="p">(</span><span class="s1">&#39;button[name=btnG]&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">click</span><span class="p">(</span><span class="s1">&#39;button[name=btnG]&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">pause</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">assert</span><span class="p">.</span><span class="nx">containsText</span><span class="p">(</span><span class="s1">&#39;ol#rso li:first-child&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Rembrandt - Wikipedia&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Nightwatch</span></code> 的替代品是 <code class="docutils literal"><span class="pre">Selenium</span></code> (<a class="reference external" href="http://www.seleniumhq.org/">http://www.seleniumhq.org/</a>)。 <code class="docutils literal"><span class="pre">Selenium</span></code> 具有 <code class="docutils literal"><span class="pre">Firefox</span></code> 扩展的优势，它允许您直观地创建测试和命令。</p>
+<p>特别是对于大型应用程序的测试非常重要 - 特别是将应用程序部署到开发环境时，无论您选择单元测试还是浏览器自动化，都有大量关于这个主题的文章和书籍。</p>
+</div>
+<div class="section" id="id4">
+<h2>13.8. 总结<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>在本书中，我们介绍了几种技术，并学习了如何使用 <code class="docutils literal"><span class="pre">Vue</span></code> 和官方的 <code class="docutils literal"><span class="pre">Vue</span></code> 插件。我们介绍了如何构建三个单页面应用程序，涵盖不同的方法和方法。</p>
+<p>在本书的第一部分中，我们介绍了如何初始化 <code class="docutils literal"><span class="pre">Vue</span></code> 实例。我们探索了循环数据以及如何创建用户界面来过滤显示的数据。我们还研究了如何有条件地渲染每行的 <code class="docutils literal"><span class="pre">CSS</span></code> 类。</p>
+<p>然后，我们继续将 <code class="docutils literal"><span class="pre">Vuex</span></code> 集成到我们的应用程序中，并与 <code class="docutils literal"><span class="pre">API</span></code> 进行通信，以 <code class="docutils literal"><span class="pre">Dropbox</span></code> 为例。我们着眼于访问数据并将其存储在本地。这有助于提高应用程序的性能并加快速度，从而改善用户体验。</p>
+<p>最后，我们创建了一个模拟商店。使用 <code class="docutils literal"><span class="pre">Shopify</span> <span class="pre">CSV</span></code> 文件中的实际数据，我们创建了一个应用程序，允许查看单个产品。我们还创建了一个可以过滤和排序的类别列表页面，允许用户专门查找他们想要的产品。为了完成体验，我们构建了一个可编辑的购物车，结账和订单确认页面。</p>
+<p>在本章中，我们介绍了 <code class="docutils literal"><span class="pre">Vue</span></code> 开发工具的使用，接下来介绍了如何构建测试。这完成了使用 <code class="docutils literal"><span class="pre">Vue.js</span></code> 构建单页面应用程序的过程。</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="建立电子商务商店-添加结帐.html" class="btn btn-neutral" title="12. 建立电子商务商店-添加结帐" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

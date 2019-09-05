@@ -1,0 +1,100 @@
+****
+散列
+****
+加密散列函数接受任意长度的输入并确定性地产生固定大小的输出。
+
+在决定是否使用某个功能之前，请检查 `快速参考 <https://paragonie.com/blog/2017/06/libsodium-quick-reference-quick-comparison-similar-functions-and-which-one-use>`_ 页面，该页面说明每个功能的作用以及每个功能的使用位置。
+
+要查看旧的 ``API`` 文档， `请点击此处 <https://github.com/paragonie/pecl-libsodium-doc/blob/v1/chapters/06-hashing.md>`_ 。
+
+通用哈希
+========
+
+.. code-block:: php
+
+    <?php
+    string sodium_crypto_generichash(string $msg, string $key = null, string $length = 32)
+
+此函数计算任意长消息的固定长度指纹。这可能对以下方面有用：
+
+- 文件完整性检查；
+- 创建唯一标识符以索引任意长数据；
+
+例子：
+
+.. code-block:: php
+
+    <?php
+    // Fast, unkeyed hash function.
+    // Can be used as a secure replacement for MD5
+    $h = sodium_crypto_generichash('msg');
+
+    // Fast, keyed hash function.
+    // The key can be of any length between SODIUM_CRYPTO_GENERICHASH_KEYBYTES_MIN
+    // and SODIUM_CRYPTO_GENERICHASH_KEYBYTES_MAX, in bytes.
+    // SODIUM_CRYPTO_GENERICHASH_KEYBYTES is the recommended length.
+    $h = sodium_crypto_generichash('msg', $key);
+
+    // Fast, keyed hash function, with user-chosen output length, in bytes.
+    // Output length can be between SODIUM_CRYPTO_GENERICHASH_BYTES_MIN and
+    // SODIUM_CRYPTO_GENERICHASH_BYTES_MAX.
+    // SODIUM_CRYPTO_GENERICHASH_BYTES is the default length.
+    $h = sodium_crypto_generichash('msg', $key, 64);
+
+多部分通用散列
+--------------
+
+.. code-block:: php
+
+    <?php
+    // Deterministic hash function, multi-part message
+    $state = sodium_crypto_generichash_init();
+    sodium_crypto_generichash_update($state, 'message part 1');
+    sodium_crypto_generichash_update($state, 'message part 2');
+    $h = sodium_crypto_generichash_final();
+
+    // Keyed hash function, multi-part message
+    $state = sodium_crypto_generichash_init($key);
+    sodium_crypto_generichash_update($state, 'message part 1');
+    sodium_crypto_generichash_update($state, 'message part 2');
+    $h = sodium_crypto_generichash_final();
+
+    // Keyed hash function, multi-part message with user-chosen output length
+    $state = sodium_crypto_generichash_init($key, 64);
+    sodium_crypto_generichash_update($state, 'message part 1');
+    sodium_crypto_generichash_update($state, 'message part 2');
+    $h = sodium_crypto_generichash_final(64);
+
+短散列
+======
+
+.. code-block:: php
+
+    <?php
+    string sodium_crypto_shorthash(string $message, string $key)
+
+最近发现许多应用程序和编程语言实现容易受到拒绝服务攻击，这是因为使用具有弱安全保证的散列函数（如 ``Murmurhash 3`` ）构造散列表造成的。为了解决这个问题， ``Sodium`` 提供了 ``crypto_shorthash()`` 函数，该函数输出适合在给定密钥的哈希表中选择列的短而不可预测（不知道密钥）值。
+
+.. code-block:: php
+
+    <?php
+    // $key must be SODIUM_CRYPTO_SHORTHASH_KEYBYTES (16 bytes, 128 bits) long
+    $h = sodium_crypto_shorthash('message', $key);
+
+此函数已针对短消息进行了优化。其短的输出长度不会使其具有抗碰撞能力。
+
+``sodium_crypto_shorthash()`` 的典型用法是：
+
+- 构建哈希表和布隆过滤器等数据结构。
+- 为网络流量添加认证标签。
+
+如有疑问，请改用 ``sodium_crypto_generichash()`` 。除非你想要散列密码。（如果需要处理用户提供的密码，请参阅第8章。）
+
+额外信息
+========
+
+- `介绍散列函数 <https://paragonie.com/blog/2015/08/you-wouldnt-base64-a-password-cryptography-decoded#hash-functions>`_
+- `Libsodium文档：通用散列 <https://download.libsodium.org/doc/hashing/generic_hashing.html>`_
+- `BLAKE2-快速安全散列 <https://blake2.net/>`_
+- `Libsodium文档：短输入散列 <https://download.libsodium.org/doc/hashing/short-input_hashing.html>`_
+- `SipHash:一个快速短输入PRF <https://131002.net/siphash>`_

@@ -1,0 +1,199 @@
+****
+时间查询
+****
+
+时间比较
+========
+
+使用where方法
+-------------
+``where`` 方法支持时间比较，例如：
+
+.. code-block:: php
+
+	// 大于某个时间
+	where('create_time', '> time', '2016-1-1');
+	// 小于某个时间
+	where('create_time', '<= time', '2016-1-1');
+	// 时间区间查询
+	where('create_time', 'between time', ['2015-1-1', '2016-1-1']);
+
+第三个参数可以传入任何有效的时间表达式，会自动识别你的时间字段类型，支持的时间类型包括 ``timestamps`` 、 ``datetime`` 、 ``date`` 和 ``int`` 。
+
+使用whereTime方法
+-----------------
+``whereTime`` 方法提供了日期和时间字段的快捷查询，示例如下：
+
+.. code-block:: php
+
+	// 大于某个时间
+	Db::name('user')
+	    ->whereTime('birthday', '>=', '1970-10-1')
+	    ->select();
+	// 小于某个时间
+	Db::name('user')
+	    ->whereTime('birthday', '<', '2000-10-1')
+	    ->select();
+	// 时间区间查询
+	Db::name('user')
+	    ->whereTime('birthday', 'between', ['1970-10-1', '2000-10-1'])
+	    ->select();
+	// 不在某个时间区间
+	Db::name('user')
+	    ->whereTime('birthday', 'not between', ['1970-10-1', '2000-10-1'])
+	    ->select();
+
+对于其中的两个用法，其实可以简化成
+
+.. code-block:: php
+
+	// 大于某个时间
+	Db::name('user')
+	    ->whereTime('birthday', '1970-10-1')
+	    ->select();
+
+	// 时间区间查询
+	Db::name('user')
+	    ->whereTime('birthday', ['1970-10-1', '2000-10-1'])
+	    ->select();
+
+针对时间的区间查询，系统还提供了一个 ``whereBetweenTime`` 快速方法。
+
+.. code-block:: php
+
+	// 查询2017年上半年注册的用户
+	Db::name('user')
+	    ->whereBetweenTime('create_time', '2017-01-01', '2017-06-30')
+	    ->select();
+	// 查询2017年6月1日注册的用户
+	Db::name('user')
+	    ->whereBetweenTime('create_time', '2017-06-01')
+	    ->select();    
+
+没有指定结束时间的话，表示查询当天。
+
+查询某天
+========
+
+有两种方式查询某一天的数据
+
+.. code-block:: php
+
+	// 查询2017年6月1日注册的用户
+	Db::name('user')
+	    ->whereBetweenTime('create_time', '2017-06-01')
+	    ->select();    
+	    
+	// 或者使用whereTime方法
+	Db::name('user')
+		->whereTime('create_time',['2017-06-01', '2017-06-02'])
+	    ->select();
+
+时间表达式
+==========
+
+还提供了更方便的时间表达式查询，例如：
+
+.. code-block:: php
+
+	 // 获取今天的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'today')
+	    ->select();
+	    
+	// 获取昨天的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'yesterday')
+	    ->select();
+	    
+	// 获取本周的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'week')
+	    ->select();   
+	    
+	// 获取上周的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'last week')
+	    ->select();    
+	    
+	// 获取本月的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'month')
+	    ->select();   
+	    
+	// 获取上月的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'last month')
+	    ->select();      
+	    
+	// 获取今年的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'year')
+	    ->select();    
+	    
+	// 获取去年的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'last year')
+	    ->select();     
+
+如果查询当天、本周、本月和今年的时间，还可以简化为：
+
+.. code-block:: php
+
+	// 获取今天的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'd')
+	    ->select();
+	    
+	// 获取本周的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'w')
+	    ->select();   
+	    
+	// 获取本月的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'm')
+	    ->select();   
+	    
+	// 获取今年的博客
+	Db::name('blog')
+	    ->whereTime('create_time', 'y')
+	    ->select();    
+
+还可以使用下面的时间表达式进行时间查询
+
+.. code-block:: php
+
+	// 查询两个小时内的博客
+	Db::name('blog')
+		->whereTime('create_time','-2 hours')
+	    ->select();
+
+
+多个时间字段区间比较（V5.1.17+）
+=============================
+
+``V5.1.17+`` 版本开始，可以支持对两个时间字段的区间比较
+
+.. code-block:: php
+
+	// 查询有效期内的活动
+	Db::name('event')
+		->whereBetweenTimeField('start_time','end_time')
+	    ->select();
+
+上面的查询相当于
+
+.. code-block:: php
+
+	// 查询有效期内的活动
+	Db::name('event')
+		->whereTime('start_time', '<=', time())
+	    ->whereTime('end_time', '>=', time())
+	    ->select();
+
+
+
+
+
+

@@ -1,0 +1,106 @@
+********
+密码散列
+********
+在决定是否使用某个功能之前，请检查 `快速参考 <https://paragonie.com/blog/2017/06/libsodium-quick-reference-quick-comparison-similar-functions-and-which-one-use>`_ 页面，该页面说明每个功能的作用以及每个功能的使用位置。
+
+用于加密或签署机密数据的密钥必须从非常大的密钥空间中选择。但是，密码通常是短的，人为生成的字符串，这使得字典攻击成为现实。
+
+``pwhash`` 操作从一个密码和一个盐派生任意大小的秘密密钥。
+
+- 生成的密钥的大小由应用程序定义，无论密码长度是多少。
+- 使用相同参数散列相同的密码将始终生成相同的密钥。
+- 使用不同的盐进行相同的密码散列会产生不同的密钥。
+- 从密码和盐中派生密钥的函数是CPU密集型的，故而需要相当数量的内存。因此，它需要大量努力来验证每个密码，从而缓解暴力攻击。
+
+常见用例：
+
+- 使用密码保护磁盘上的密钥；
+- 密码存储，或者：存储验证密码所需的内容(即，密码散列后的值)，而不必存储实际密码；
+
+要查看旧的 ``API`` 文档， `请点击此处 <https://github.com/paragonie/pecl-libsodium-doc/blob/v1/chapters/07-password-hashing.md>`_ 。
+
+Argon2i密码散列和验证
+=====================
+
+生成密码散列
+------------
+
+.. code-block:: php
+
+    <?php
+    string sodium_crypto_pwhash_str(string $password, int $opslimit, int $memlimit)
+
+这使用 ``Argon2i`` 密钥派生函数来生成可存储的密码哈希。强烈建议您为 ``$opslimit`` 和 ``$memlimit`` 使用 `提供的常量 <https://paragonie.com/book/pecl-libsodium/read/01-quick-start.md#const-crypto-pwhash>`_ 。
+
+.. code-block:: php
+
+    <?php
+    // hash the password and return an ASCII string suitable for storage
+    $hash_str = sodium_crypto_pwhash_str(
+        $password,
+        SODIUM_CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE,
+        SODIUM_CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE
+    );
+
+验证密码散列
+------------
+
+.. code-block:: php
+
+    <?php
+    bool sodium_crypto_pwhash_str_verify(string $hash_str, string $password)
+
+如果密码与给定散列相匹配，则返回 ``TRUE`` 。
+
+.. code-block:: php
+
+    <?php
+    if (sodium_crypto_pwhash_str_verify($hash_str, $password)) {
+        // recommended: wipe the plaintext password from memory
+        sodium_memzero($password);
+
+        // Password was valid
+    } else {
+        // recommended: wipe the plaintext password from memory
+        sodium_memzero($password);
+
+        // Password was invalid.
+    }
+
+Argon2i秘钥派生
+===============
+
+.. code-block:: php
+
+    <?php
+    string sodium_crypto_pwhash(int $output_length, string $password, string $salt, int $opslimit, int $memlimit)
+
+如果您需要从用户提供的密码中派生加密密钥(例如 为 ``crypto_sign_seed_keypair()`` 准备的密钥)，则可以直接调用此函数。
+
+对于每个密钥，您必须使用独特且不可预测的盐（应将其存储用于重复使用）。
+
+.. code-block:: php
+
+    <?php
+    // create a random salt
+    $salt = random_bytes(SODIUM_CRYPTO_PWHASH_SALTBYTES);
+
+然后你可以从你的密码中得到你的加密密钥，如下所示：
+
+.. code-block:: php
+
+    <?php
+    $out_len = SODIUM_CRYPTO_SIGN_SEEDBYTES;
+    $seed = sodium_crypto_pwhash(
+        $out_len,
+        $password,
+        $salt,
+        SODIUM_CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE,
+        SODIUM_CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE
+    );
+
+额外信息
+========
+
+- `Libsodium文档：密码散列 <https://download.libsodium.org/doc/password_hashing/index.html>`_
+- `密码散列比较 <https://password-hashing.net/>`_

@@ -1,0 +1,100 @@
+****
+日志记录
+****
+
+.. contents:: 目录
+   :depth: 4
+
+系统日志记录
+===========
+微擎系统提供日志功能，帮助开发者在处理功能时调试、记录及监控数据。
+
+日志记录存放在 ``/data/logs/run_{YYYYmmdd}.log`` 文件中。
+
+系统预设的日志级别
+=================
+
+在微擎系统中可以使用 ``logging_run($log, $type = 'trace', $filename = 'run')`` 函数来记录日志。
+
+- ``$log`` ：日志内容；
+- ``$type`` ：日志级别，如上面所述，预定义有 ``LOGGING_ERROR`` 、 ``LOGGING_TRACE`` 、 ``LOGGING_WARNING`` 、 ``LOGGING_INFO`` ；
+- ``$filename`` ：保存日志的文件前缀；
+
+为了方便对日志级别的管理，系统预设了四个日志级别常量，如下：
+
+.. code-block:: php
+
+	define('LOGGING_ERROR', 'error');
+	define('LOGGING_TRACE', 'trace'); // 默认
+	define('LOGGING_WARNING', 'warning');
+	define('LOGGING_INFO', 'info');
+
+使用时，尽量使用系统预设常量，除非必要，填放自定参数。
+
+**注意：在使用日志函数前，先通过 load()->func('logging'); 引入定义该函数的文件。**
+
+记录日志
+========
+
+记录普通日志
+-----------
+
+.. code-block:: php
+
+	//载入日志函数
+	load()->func('logging');
+	//记录文本日志
+	logging_run('记录字符串日志数据');
+	//记录数组数据
+	logging_run(array('username' => '米粥', 'age' => '18'));
+
+输出日志内容：
+
+.. code-block:: php
+
+	//文件位于 /data/logs/run_20160111.log
+	[2016-01-11 11:43:43] trace  /web/test.php? 记录字符串日志数据
+	[2016-01-11 11:43:43] trace  /web/test.php? username=米粥; age=18;
+
+函数会自动捕获POST，GET数据并记录
+-------------------------------
+
+.. code-block:: php
+
+	if(checksubmit()) {
+	    //载入日志函数
+	    load()->func('logging');
+	    //用户登录时记录提交的参数
+	    logging_run('用户登录');
+	    _login($_GPC['referer']);
+	}
+
+输出日志内容：
+
+.. code-block:: php
+
+	//文件位于 /data/logs/run_20160111.log
+	[2016-01-11 11:50:19] trace  /web/index.php?c=user&a=login& username=admin; password=123456; submit=登录; token=3e9bc946; 用户登录
+
+自定义日志文件前缀
+=================
+
+.. code-block:: php
+
+	//载入日志函数
+	load()->func('logging');
+	//记录文本日志
+	logging_run('模块日志专属文件', 'trace', 'we7demo');
+
+输出日志内容：
+
+.. code-block:: php
+
+	//文件位于 /data/logs/we7demo_20160111.log
+	[2016-01-11 11:54:23] trace admin /web/test.php? 模块日志专属文件
+
+
+统一帐号下日志记录
+=================
+
+``WeUtility::logging($level = 'info', $message = '')`` 使用该函数需要在 ``站点->站点设置->是否开启日志`` 开启日志。这个函数主要在统一帐号下使用。

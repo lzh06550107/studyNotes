@@ -1,0 +1,479 @@
+*****
+安全
+*****
+
+简介
+====
+在本章中，将介绍 MySQL 的安全方面，包括限制网络，强密码，使用 SSL ，数据库中的访问控制，安全安装和安全插件。
+
+安全安装
+========
+安装完成后，建议您使用 ``mysql_secure_installation`` 工具保护安装。
+
+.. code-block:: shell
+
+    shell> mysql_secure_installation
+    保护MySQL服务器部署。
+
+    输入root用户的密码：
+    'validate_password'插件安装在服务器上。
+    后续步骤将使用插件的现有配置运行。
+    使用root的现有密码。
+
+    密码的估计强度：100
+    更改root的密码？ （（按y | Y表示是，任何其他键表示否）：
+
+    ......跳过
+    默认情况下，MySQL安装有一个匿名用户，允许任何人登录MySQL而无需为他们创建用户帐户。这仅用于测试，并使安装更顺畅。您应该在进入生产环境之前将其删除。
+
+    删除匿名用户？ （按y | Y表示是，任何其他键表示否）：y
+    成功。
+
+    通常，只允许root用户从'localhost'连接。这可以确保有人无法猜测来自网络的root密码。
+
+    禁止远程登录？ （按y | Y表示是，任何其他键表示否）：y
+    成功。
+
+    默认情况下，MySQL附带一个名为“test”的数据库，任何人都可以访问。这也仅用于测试，应在进入生产环境之前删除。
+
+    删除测试数据库并访问它？ （按y | Y表示是，任何其他键表示否）：y
+    - 删除测试数据库......
+    成功。
+
+    - 删除测试数据库的权限...
+    成功。
+
+    重新加载权限表将确保到目前为止所做的所有更改都将立即生效。
+
+    现在重新加载权限表？ （按y | Y表示是，任何其他键表示否）：y
+    成功。
+
+    全做完了！
+
+默认情况下， ``mysqld`` 进程在 ``mysql`` 用户下运行。你也可以通过更改 ``mysqld`` 使用的所有目录的所有者来运行 ``mysqld`` （例如 ``datadir`` ，如果有的话， ``binlog`` 目录，其他磁盘中的表空间等），并在 ``my.cnf`` 中添加 ``user=<user>`` 。参考 https://dev.mysql.com/doc/refman/8.0/en/changing-mysql-user.html 来了解更多关于 ``MySQL`` 用户改变。
+
+强烈建议不要以 ``Unix root`` 用户运行 ``mysqld`` 。一个原因是任何具有 ``FILE`` 权限的用户都能够使服务器以 ``root`` 身份创建文件。
+
+文件权限
+---------
+在向任何用户授予 ``FILE`` 权限时要小心，因为用户可以使用 ``mysqld`` 守护程序（包括服务器的数据目录）的权限在文件系统中的任何位置编写文件。但是，它们无法覆盖现有文件。此外，用户可以将 MySQL （或运行 mysqld 的用户）可访问的任何文件读入数据库表。 ``FILE`` 是一个全局特权，这意味着您不能将其限制为特定数据库：
+
+.. code-block:: shell
+
+    mysql> SHOW GRANTS;
+    mysql> USE company;
+    mysql> CREATE TABLE hack (ibdfile longblob);
+    mysql> LOAD DATA INFILE '/var/lib/mysql/employees/salaries.ibd' INTO TABLE hack CHARACTER SET latin1 FIELDS TERMINATED BY '@@@@@';
+    mysql> SELECT * FROM hack;
+
+请注意，具有 ``FILE`` 权限的公司用户能够从 ``employees`` 表中读取数据。
+
+您不必担心前面的 ``hack`` ，因为默认情况下，使用 ``secure_file_priv`` 变量，文件可以读取和写入的位置仅限于 ``/var/lib/mysql-files`` 。 当您将 ``secure_file_priv`` 变量设置为 ``NULL`` ，空字符串， ``MySQL`` 数据目录或 ``MySQL`` 可以访问的任何敏感目录（例如， MySQL 数据目录( data directory )外的表空间）时，会出现问题。如果将 ``secure_file_priv`` 设置为不存在的目录，则会导致错误。
+
+建议将 ``secure_file_priv`` 保留为默认值：
+
+.. code-block:: shell
+
+    mysql> SHOW VARIABLES LIKE 'secure_file_priv';
+    +------------------+-----------------------+
+    | Variable_name    | Value                 |
+    +------------------+-----------------------+
+    | secure_file_priv | /var/lib/mysql-files/ |
+    +------------------+-----------------------+
+    1 row in set (0.00 sec)
+
+永远不要让任何人访问 ``mysql.user`` 表。要了解有关安全准则的更多信息，请参考 https://dev.mysql.com/doc/refman/8.0/en/security-guidelines.html 和 https://dev.mysql.com/doc/refman/8.0/en/security-against-attack.html
+
+限制网络和用户
+==============
+不要将数据库打开为整个网络可以访问，这意味着不应从其他网络访问运行 ``MySQL`` 的端口( ``3306`` )。 它应该只对应用程序服务器开放。您可以使用 ``iptables`` 或 ``host.access`` 文件设置防火墙以限制对端口 ``3306`` 的访问。如果您在云上使用 ``MySQL`` ，则服务提供商也会提供防火墙。
+
+为了测试，你可使用 ``telnet`` ：
+
+.. code-block:: shell
+
+    shell> telnet <mysql ip> 3306
+
+如果 ``telnet`` 挂起或连接被拒绝，则表示端口已关闭。请注意，如果您看到这样的输出，则表示该端口未被阻止：
+
+.. code-block:: shell
+
+    shell> telnet 35.186.158.188 3306
+    Trying 35.186.158.188...
+    Connected to 188.158.186.35.bc.googleusercontent.com.
+    Escape character is '^]'.
+    FHost '183.82.17.137' is not allowed to connect to this MySQL serverConnection closed by foreign host.
+
+这意味着端口是开放的，但 ``MySQL`` 限制了访问。
+
+当创建用户时，请避免从任何地方进行访问( ``％`` 选项)。限制对 IP 范围或子域的访问。还限制用户仅访问所需的数据库。例如，employees 数据库的 ``read_only`` 用户不应该能够访问其他数据库：
+
+.. code-block:: shell
+
+    mysql> CREATE user 'employee_read_only'@'10.10.%.%' IDENTIFIED BY '<Str0ng_P@$$word>';
+    mysql> GRANT SELECT ON employee.* TO 'employee_read_only'@'10.10.%.%';
+
+``employee_read_only`` 用户只能访问 ``10.10.％.％`` 子网，并且只能访问员工( ``employee`` )数据库。
+
+使用 mysql_config_editor 进行无密码身份验证
+===========================================
+每当您使用命令行客户端输入密码时，您可能已经注意到以下警告：
+
+.. code-block:: shell
+
+    shell> mysql -u dbadmin -p'$troNgP@$$w0rd'
+    mysql: [Warning] Using a password on the command line interface can be insecure.
+    Welcome to the MySQL monitor. Commands end with ; or\g.
+    Your MySQL connection id is 1345
+    Server version: 8.0.3-rc-log MySQL Community Server
+    (GPL)
+    ~
+    mysql>
+
+如果您未在命令行中传递密码而是在提示时输入，则不会收到该警告：
+
+.. code-block:: shell
+
+    shell> mysql -u dbadmin -p
+    Enter password:
+    Welcome to the MySQL monitor. Commands end with ; or\g.
+    Your MySQL connection id is 1334
+    Server version: 8.0.3-rc-log MySQL Community Server (GPL)
+    ~
+    mysql>
+
+但是，当您通过客户端工具开发某些脚本时，很难使用密码提示。避免这种情况的一种方法是将密码存储在主目录(home)中的 ``.my.cnf`` 文件中。默认情况下， ``mysql`` 命令行工具读取 ``.my.cnf`` 文件并且不要求你输入密码：
+
+.. code-block:: shell
+
+    shell> cat $HOME/.my.cnf
+    [client]
+    user=dbadmin
+    password=$troNgP@$$w0rd
+    shell> mysql
+    Welcome to the MySQL monitor. Commands end with ; or
+    \g.
+    Your MySQL connection id is 1396
+    Server version: 8.0.3-rc-log MySQL Community Server
+    (GPL)
+    ~
+    mysql>
+
+请注意，您可以在不提供任何密码的情况下进行连接，但这会导致安全问题；密码是明文。为了解决这个问题， ``MySQL`` 引入了 ``mysql_config_editor`` ，它以加密格式存储密码。该文件可以由客户端程序解密（仅在内存中使用）以连接到服务器。
+
+使用 ``mysql_config_editor`` 创建 ``.mylogin.cnf`` 文件：
+
+.. code-block:: shell
+
+    shell> mysql_config_editor set --login-path=dbadmin_local --host=localhost --user=dbadmin --password
+    Enter password:
+
+您可以通过更改登录路径来添加多个主机名和密码。如果密码已更改，则可以再次运行此工具，以更新文件中的密码：
+
+.. code-block:: shell
+
+    shell> mysql_config_editor set --loginpath=dbadmin_remote --host=35.186.157.16 --user=dbadmin --password
+    Enter password:
+
+如果要使用 ``dbadmin`` 用户登录 ``35.186.157.16`` ，只需执行 ``mysql --loginpath=dbadmin_remote`` 即可：
+
+.. code-block:: shell
+
+    shell> mysql --login-path=dbadmin_remote
+    Welcome to the MySQL monitor. Commands end with ; or \g.
+    Your MySQL connection id is 215074
+    mysql> SELECT @@server_id;
+    +-------------+
+    | @@server_id |
+    +-------------+
+    | 200         |
+    +-------------+
+    1 row in set (0.00 sec)
+
+要连接到 ``localhost`` ，您只需执行 ``mysql`` 或 ``mysql --login-path=dbadmin_local`` ：
+
+.. code-block:: shell
+
+    shell> mysql
+    Welcome to the MySQL monitor. Commands end with ; or \g.
+    Your MySQL connection id is 1523
+    ~
+    mysql> SELECT @@server_id;
+    +-------------+
+    | @@server_id |
+    +-------------+
+    | 1           |
+    +-------------+
+    1 row in set (0.00 sec)
+    shell> mysql --login-path=dbadmin_local
+    Welcome to the MySQL monitor. Commands end with ; or \g.
+    Your MySQL connection id is 1524
+    ~
+    mysql> SELECT @@server_id;
+    +-------------+
+    | @@server_id |
+    +-------------+
+    | 1           |
+    +-------------+
+    1 row in set (0.00 sec)
+
+如果所有服务器上的 ``dbadmin`` 密码相同，则可以通过指定主机名连接到其中任何一个。您无需指定密码：
+
+.. code-block:: shell
+
+    shell> mysql -h 35.198.210.229
+    Welcome to the MySQL monitor. Commands end with ; or \g.
+    ~
+    mysql> SELECT @@server_id;
+    +-------------+
+    | @@server_id |
+    +-------------+
+    | 364         |
+    +-------------+
+    1 row in set (0.00 sec)
+
+如果要打印所有登录路径，请执行以下操作：
+
+.. code-block:: shell
+
+    shell> mysql_config_editor print --all
+    [dbadmin_local]
+    user = dbadmin
+    password = *****
+    host = localhost
+    [dbadmin_remote]
+    user = dbadmin
+    password = *****
+    host = 35.186.157.16
+
+您可以注意到该工具会屏蔽密码。如果您尝试读取该文件，您将只看到乱码字符。
+
+此工具仅帮助您避免存储明文密码并简化连接到 MySQL 的过程。有许多方法可以解密存储在 ``.mylogin.cnf`` 文件中的密码。 因此，如果使用 ``mysql_config_editor`` ，请不要认为密码是安全的。您不必每次都创建 ``.mylogin.cnf`` 文件，也可以将此文件复制到其他服务器（仅当用户名和密码相同时才有效）。
+
+重置root密码
+============
+如果忘记 ``root`` 密码，可以通过两种方法重置密码，如下所述。
+
+使用init-file
+-------------
+在类 Unix 系统上，您可以通过指定 ``init-file`` 来停止服务器并启动它。您可以在该文件中保存 ``ALTER USER 'root'@'localhost' IDENTIFIED BY 'New$trongPass1'`` SQL代码。 MySQL 在启动时执行文件的内容，更改 ``root`` 用户的密码：
+
+1. 停止服务器：
+
+.. code-block:: shell
+
+    shell> sudo systemctl stop mysqld
+    shell> pgrep mysqld
+
+2. 将 SQL 代码保存在 /var/lib/mysql/mysql-init-password 中使其仅对 MySQL 可读：
+
+.. code-block:: shell
+
+    shell> vi /var/lib/mysql/mysql-init-password ALTER USER 'root'@'localhost' IDENTIFIED BY 'New$trongPass1';
+    shell> sudo chmod 400 /var/lib/mysql/mysql-initpassword
+    shell> sudo chown mysql:mysql /var/lib/mysql/mysql-init-password
+
+3. 使用 ``--init-file`` 选项启动 ``MySQL`` 服务器，并根据需要启用其他选项：
+
+.. code-block:: shell
+
+    shell> sudo -u mysql /usr/sbin/mysqld --daemonize --pid-file=/var/run/mysqld/mysqld.pid --user=mysql --init-file=/var/lib/mysql/mysql-init-password
+    mysqld will log errors to /var/log/mysqld.log
+    mysqld is running as pid 28244
+
+4. 验证错误日志：
+
+.. code-block:: shell
+
+    shell> sudo tail /var/log/mysqld.log
+    ~
+    2017-11-27T07:32:25.219483Z 0 [Note] Execution of init_file '/var/lib/mysql/mysql-initpassword' started.
+    2017-11-27T07:32:25.219639Z 4 [Note] Event Scheduler: scheduler thread started with id 4
+    2017-11-27T07:32:25.223528Z 0 [Note] Execution of init_file '/var/lib/mysql/mysql-initpassword' ended.
+
+5. 验证您是否可以使用新密码登录：
+
+.. code-block:: shell
+
+    shell> mysql -u root -p'New$trongPass1'
+
+6. 删除 /var/lib/mysql/mysql-init-password ：
+
+.. code-block:: shell
+
+    shell> sudo rm -rf /var/lib/mysql/mysql-initpassword
+
+7. (可选)您可以在不使用 ``--init-file`` 选项的情况下停止服务器并正常启动它。
+
+使用 --skip-grant-tables
+------------------------
+在此方法中，您通过指定 ``--skip-grant-tables`` 停止服务器并启动它，这将不会加载授权表。您可以在没有密码的情况下以 root 身份连接到服务器并设置密码。由于服务器在没有授权的情况下运行，因此来自其他网络的用户可以连接到服务器。从 MySQL 8.0.3 开始， ``--skip-grant-tables`` 自动启用 ``--skip-networking`` ，它不允许远程连接：
+
+1. 停止服务器：
+
+.. code-block:: shell
+
+    shell> sudo systemctl stop mysqld
+    shell> ps aux | grep mysqld | grep -v grep
+
+2. 使用 --skip-grant-tables 选项启动服务器：
+
+.. code-block:: shell
+
+    shell> sudo -u mysql /usr/sbin/mysqld --daemonize --pid-file=/var/run/mysqld/mysqld.pid --user=mysql --skip-grant-tables #这里使用mysql的身份来启动服务端
+
+3. 无需密码即可连接到 MySQL ，执行 ``FLUSH PRIVILEGES`` 重新加载授权，并更改用户以更改密码：
+
+.. code-block:: shell
+
+    shell> mysql -u root
+    Welcome to the MySQL monitor. Commands end with; or \g.
+    Your MySQL connection id is 6
+    Server version: 8.0.3-rc-log MySQL Community
+    Server (GPL)
+    ~
+    mysql> FLUSH PRIVILEGES;
+
+    mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'New$trongPass1';
+
+4. 使用新密码测试连接：
+
+.. code-block:: shell
+
+    shell> mysql -u root -p'New$trongPass1'
+
+5. 重新启动MySQL服务器：
+
+.. code-block:: shell
+
+    shell> ps aux | grep mysqld | grep -v grep
+    mysql 28757 0.0 13.3 1151796 231724 ? Sl 08:16 0:00 /usr/sbin/mysqld --daemonize --pid-file=/var/run/mysqld/mysqld.pid --user=mysql --skip-grant-tables
+    shell> sudo kill -9 28757
+    shell> ps aux | grep mysqld | grep -v grep
+    shell> sudo systemctl start mysqld
+    shell> ps aux | grep mysqld | grep -v grep
+    mysql 29033 5.3 16.8 1240224 292744 ? Sl 08:27 0:00 /usr/sbin/mysqld --daemonize --pid-file=/var/run/mysqld/mysqld.pid
+
+使用X509设置加密连接
+====================
+如果客户端和 MySQL 服务器之间的连接未加密，则任何有权访问网络的人都可以检查数据。如果客户端和服务器位于不同的数据中心，建议使用加密连接。默认情况下， MySQL 8 使用加密连接，但如果加密连接失败，则会回退到未加密的连接。您可以通过检查 Ssl_cipher 变量的状态来测试它。如果连接是由 localhost 建立的，则不会使用加密：
+
+.. code-block:: shell
+
+    mysql> SHOW STATUS LIKE 'Ssl_cipher';
+    +---------------+--------------------+
+    | Variable_name | Value              |
+    +---------------+--------------------+
+    | Ssl_cipher    | DHE-RSA-AES256-SHA |
+    +---------------+--------------------+
+    1 row in set (0.00 sec)
+
+如果您不使用 SSL ，则 ``Ssl_cipher`` 将为空。
+
+您可以强制某些用户仅通过加密连接(通过指定 ``REQUIRE SSL`` 子句)进行连接，并将其保留为其他用户的可选项。
+
+MySQL 支持使用 TLS （传输层安全性）协议在客户端和服务器之间建立加密连接。 TLS 有时被称为 SSL （安全套接字层），但 MySQL 实际上并不使用 SSL 协议进行加密连接，因为它的加密很弱。 TLS 使用加密算法来确保可以信任通过公共网络接收的数据。它具有检测数据更改，丢失或重放的机制。 TLS 还包含使用 X509 标准提供身份验证的算法。
+
+在本节中，您将学习如何使用 X509 设置 SSL 连接。 X.509 是一种证书格式。
+
+所有 SSL（X509）相关文件( ca.pem ， server-cert.pem ， server-key.pem ， client-cert.pem 和 client-key.pem )都是由 MySQL 在安装期间创建的，并保存在数据目录下。服务器需要 ca.pem，server-cert.pem 和 server-key.pem 文件，客户端使用 client-cert.pem 和 client-key.pem 文件连接到服务器。
+
+验证数据目录中的文件，更新 ``my.cnf`` ，重新启动服务器，并检查 ``SSL`` 相关变量。在 MySQL 8 中，默认情况下，设置以下值：
+
+.. code-block:: shell
+
+    shell> sudo ls -lhtr /var/lib/mysql | grep pem
+    -rw-------. 1 mysql mysql 1.7K Nov 19 13:53 cakey.pem
+    -rw-r--r--. 1 mysql mysql 1.1K Nov 19 13:53 ca.pem
+    -rw-------. 1 mysql mysql 1.7K Nov 19 13:53 server-key.pem
+    -rw-r--r--. 1 mysql mysql 1.1K Nov 19 13:53 server-cert.pem
+    -rw-------. 1 mysql mysql 1.7K Nov 19 13:53 client-key.pem
+    -rw-r--r--. 1 mysql mysql 1.1K Nov 19 13:53 client-cert.pem
+    -rw-------. 1 mysql mysql 1.7K Nov 19 13:53 private_key.pem
+    -rw-r--r--. 1 mysql mysql 451 Nov 19 13:53 public_key.pem
+
+.. code-block:: shell
+
+    shell> sudo vi /etc/my.cnf
+    [mysqld]
+    ssl-ca=/var/lib/mysql/ca.pem
+    ssl-cert=/var/lib/mysql/server-cert.pem
+    ssl-key=/var/lib/mysql/server-key.pem
+
+    shell> sudo systemctl restart mysqld
+
+    mysql> SHOW VARIABLES LIKE '%ssl%'; #查看配置状态
+
+2. 从服务器的数据目录中复制 client-cert.pem 和 clientkey.pem 到客户端：
+
+.. code-block:: shell
+
+    shell> sudo scp -i $HOME/.ssh/id_rsa /var/lib/mysql/client-key.pem /var/lib/mysql/client-cert.pem <user>@<client_ip>:#scp在跨机器复制的时候为了提高数据的安全性，使用了ssh连接和加密方式，如果机器之间配置了ssh免密码登录，那在使用scp的时候密码都不用输入。
+
+3. 通过传递 ``--ssl-cert`` 和 ``--ssl-key`` 选项连接到服务器：
+
+.. code-block:: shell
+
+    shell> mysql --ssl-cert=client-cert.pem --sslkey=client-key.pem -h 35.186.158.188
+
+4. 要求用户仅通过 X509 进行连接：
+
+.. code-block:: shell
+
+    mysql> ALTER USER `dbadmin`@`%` REQUIRE X509;
+
+5. 测试连接：
+
+.. code-block:: shell
+
+    shell> mysql --login-path=dbadmin_remote -h 35.186.158.188 --ssl-cert=client-cert.pem --sslkey=client-key.pem
+
+6. 如果未指定 --ssl-cert 或 --ssl-key ，则无法登录：
+
+默认情况下，所有与 ``SSL`` 相关的文件都保存在数据目录中。如果要将它们保存在其他位置，可以在 ``my.cnf`` 文件中设置 ``ssl_ca`` ， ``ssl_cert`` 和 ``ssl_key`` 并重新启动服务器。您可以通过 MySQL 或 ``OpenSSL`` 生成一组新的 ``SSL`` 文件。为了了解更多的详细步骤，参考 https://dev.mysql.com/doc/refman/8.0/en/creating-ssl-rsa-files.html 。存在很多其它认证插件，你可以参考 https://dev.mysql.com/doc/refman/8.0/en/authentication-plugins.html 。
+
+设置SSL复制
+===========
+如果启用 ``SSL`` 复制，则主服务器和从服务器之间的二进制日志传输将通过加密连接发送。这类似于上一节中介绍的服务器/客户端连接。
+
+1. 在主服务器中，如上一节所述，您需要启用 ``SSL`` 。
+2. 在主服务器中，复制 client* 证书到从服务器：
+
+.. code-block:: shell
+
+    mysql> sudo scp -i $HOME/.ssh/id_rsa /var/lib/mysql/client-key.pem /var/lib/mysql/client-cert.pem
+    <user>@<client_ip>:
+
+3. 在从服务器中，创建 mysql-ssl 目录持有 ``SSL`` 相关的文件然后正确的设置权限：
+
+.. code-block:: shell
+
+    shell> sudo mkdir /etc/mysql-ssl
+    shell> sudo cp client-key.pem client-cert.pem /etc/mysql-ssl/
+    shell> sudo chown -R mysql:mysql /etc/mysql-ssl
+    shell> sudo chmod 600 /etc/mysql-ssl/clientkey.pem
+    shell> sudo chmod 644 /etc/mysql-ssl/clientcert.pem
+
+4. 在从服务器中，执行 ``CHANGE_MASTER`` 命令，需要带上 ``SSL`` 相关的文件：
+
+.. code-block:: shell
+
+    mysql> STOP SLAVE;
+    mysql> CHANGE MASTER TO MASTER_SSL=1,MASTER_SSL_CERT='/etc/mysql-ssl/clientcert.pem', MASTER_SSL_KEY='/etc/mysqlssl/client-key.pem';
+    mysql> START SLAVE;
+
+5. 验证从服务器的状态：
+
+.. code-block:: shell
+
+    mysql> SHOW SLAVE STATUS\G
+
+6. 在主服务器上对所有从服务器进行与SSL相关的更改后，强制复制用户使用 ``X509`` ：
+
+.. code-block:: shell
+
+    mysql> ALTER USER `repl`@`%` REQUIRE X509;
+
+请注意，这可能会影响其他复制用户。可选择地，您可以使用 ``SSL`` 创建一个复制用户和一个普通复制用户。
+
+7. 验证所有从服务器状态。

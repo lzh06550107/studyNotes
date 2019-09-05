@@ -1,0 +1,1059 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>33. Laravel 的 API 认证系统 Passport &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="34. Laravel用户授权系统" href="Laravel的用户授权系统.html"/>
+        <link rel="prev" title="32. 用户认证JWT" href="用户认证JWT.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">33. Laravel 的 API 认证系统 Passport</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">33.1. 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">33.2. 安装</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">33.2.1. 前端快速上手</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#passport">33.2.2. 部署 Passport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">33.3. 配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">33.3.1. 令牌的使用期限</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">33.4. 发放访问令牌</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">33.4.1. 管理客户端</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">33.4.2. 请求令牌</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">33.4.3. 刷新令牌</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">33.5. 密码授权令牌</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">33.5.1. 创建密码授权客户端</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">33.5.2. 请求密码授权令牌</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">33.5.3. 请求所有作用域</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">33.6. 简化授权令牌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">33.7. 客户端凭据授权令牌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id19">33.8. 个人访问令牌</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id20">33.8.1. 创建个人访问令牌的客户端</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">33.8.2. 管理个人访问令牌</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id23">33.9. 路由保护</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id24">33.9.1. 通过中间件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">33.9.2. 传递访问令牌</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id26">33.10. 令牌作用域</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id27">33.10.1. 定义作用域</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28">33.10.2. 给令牌分配作用域</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id31">33.10.3. 检查作用域</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#javascript-api">33.11. 使用 JavaScript 接入 API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id35">33.12. 事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id36">33.13. 测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-数组和对象操作.html">44. 辅助函数-数组和对象函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>33. Laravel 的 API 认证系统 Passport</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="laravel-api-passport">
+<h1>33. Laravel 的 API 认证系统 Passport<a class="headerlink" href="#laravel-api-passport" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>33.1. 介绍<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>在 <code class="docutils literal"><span class="pre">Laravel</span></code> 中，实现基于传统表单的登陆和授权已经非常简单，但是如何满足 <code class="docutils literal"><span class="pre">API</span></code> 场景下的授权需求呢？在 <code class="docutils literal"><span class="pre">API</span></code> 场景里通常通过令牌来实现用户授权，而非维护请求之间的 <code class="docutils literal"><span class="pre">Session</span></code> 状态。在 <code class="docutils literal"><span class="pre">Laravel</span></code> 项目中使用 <code class="docutils literal"><span class="pre">Passport</span></code> 可以轻而易举地实现 <code class="docutils literal"><span class="pre">API</span></code> 授权认证， <code class="docutils literal"><span class="pre">Passport</span></code> 可以在几分钟之内为你的应用程序提供完整的 <code class="docutils literal"><span class="pre">OAuth2</span></code> 服务端实现。 <code class="docutils literal"><span class="pre">Passport</span></code> 是基于由 <code class="docutils literal"><span class="pre">Alex</span> <span class="pre">Bilbie</span></code> 维护的 <code class="docutils literal"><span class="pre">League</span> <span class="pre">OAuth2</span> <span class="pre">server</span></code> 建立的。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">本文档假定你已熟悉 <code class="docutils literal"><span class="pre">OAuth2</span></code> 。如果你并不了解 <code class="docutils literal"><span class="pre">OAuth2</span></code>  ，阅读之前请先熟悉下 <code class="docutils literal"><span class="pre">OAuth2</span></code> 的常用术语和功能。</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>33.2. 安装<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>使用 <code class="docutils literal"><span class="pre">Composer</span></code> 安装 <code class="docutils literal"><span class="pre">Passport</span></code> ：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>composer require laravel/passport
+</pre></div>
+</div>
+<p>接下来，将 <code class="docutils literal"><span class="pre">Passport</span></code> 的服务提供者注册到配置文件 <code class="docutils literal"><span class="pre">config/app.php</span></code> 的 <code class="docutils literal"><span class="pre">providers</span></code> 数组中，如果你使用的是 <code class="docutils literal"><span class="pre">Laravel</span> <span class="pre">5.5</span></code> 及以上版本，则可省略该步骤 ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">Laravel\Passport\PassportServiceProvider::class,</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Passport</span></code> 服务提供器使用框架注册自己的数据库迁移目录，因此在注册提供器后，就应该运行 <code class="docutils literal"><span class="pre">Passport</span></code> 的迁移命令来自动创建存储客户端和令牌的数据表：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan migrate
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果你不打算使用 <code class="docutils literal"><span class="pre">Passport</span></code> 的默认迁移，你应该在 <code class="docutils literal"><span class="pre">AppServiceProvider</span></code> 的 <code class="docutils literal"><span class="pre">register</span></code> 方法中调用 <code class="docutils literal"><span class="pre">Passport::ignoreMigrations</span></code> 方法。 你可以用这个命令 <code class="docutils literal"><span class="pre">php</span> <span class="pre">artisan</span> <span class="pre">vendor:publish</span> <span class="pre">--tag=passport-migrations</span></code> 导出默认迁移。</p>
+</div>
+<p>接下来，运行 <code class="docutils literal"><span class="pre">passport:install</span></code> 命令来创建生成安全访问令牌时所需的加密密钥，同时，这条命令也会创建用于生成访问令牌的「个人访问」客户端和「密码授权」客户端：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan passport:install
+</pre></div>
+</div>
+<p>上面命令执行后，请将 <code class="docutils literal"><span class="pre">Laravel\Passport\HasApiTokens</span> <span class="pre">Trait</span></code> 添加到 <code class="docutils literal"><span class="pre">App\User</span></code> 模型中，这个 <code class="docutils literal"><span class="pre">Trait</span></code> 会给你的模型提供一些辅助函数，用于检查已认证用户的令牌和使用范围：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Laravel\Passport\HasApiTokens</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Notifiable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\User</span> <span class="k">as</span> <span class="nx">Authenticatable</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Authenticatable</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">HasApiTokens</span><span class="p">,</span> <span class="nx">Notifiable</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>接下来，在 <code class="docutils literal"><span class="pre">AuthServiceProvider</span></code> 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法中调用 <code class="docutils literal"><span class="pre">Passport::routes</span></code> 函数。这个函数会注册发出访问令牌并撤销访问令牌、客户端和个人访问令牌所必需的路由：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Laravel\Passport\Passport</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Gate</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Support\Providers\AuthServiceProvider</span> <span class="k">as</span> <span class="nx">ServiceProvider</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">AuthServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * 应用程序的策略映射。</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$policies</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;App\Model&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;App\Policies\ModelPolicy&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Register any authentication / authorization services.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerPolicies</span><span class="p">();</span>
+
+        <span class="nx">Passport</span><span class="o">::</span><span class="na">routes</span><span class="p">();</span> <span class="c1">// 生成路由</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>最后，将配置文件 <code class="docutils literal"><span class="pre">config/auth.php</span></code> 中授权看守器 <code class="docutils literal"><span class="pre">guards</span></code> 的 <code class="docutils literal"><span class="pre">api</span></code> 的 <code class="docutils literal"><span class="pre">driver</span></code> 选项改为 <code class="docutils literal"><span class="pre">passport</span></code> 。此调整会让你的应用程序在在验证传入的 <code class="docutils literal"><span class="pre">API</span></code> 的请求时使用 <code class="docutils literal"><span class="pre">Passport</span></code> 的 <code class="docutils literal"><span class="pre">TokenGuard</span></code> 来处理：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;guards&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;web&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;driver&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;session&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;provider&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+
+    <span class="s1">&#39;api&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;driver&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;passport&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;provider&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h3>33.2.1. 前端快速上手<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果想要使用 <code class="docutils literal"><span class="pre">Passport</span></code> 的 <code class="docutils literal"><span class="pre">Vue</span></code> 组件，那么你必须使用 <code class="docutils literal"><span class="pre">Vue</span> <span class="pre">Javascript</span></code> 框架，另外这些组件还用到了 <code class="docutils literal"><span class="pre">Bootstrap</span> <span class="pre">CSS</span></code> 框架。当然你也可以不使用上面的任何工具，但在实现你自己的前端部分时， <code class="docutils literal"><span class="pre">Passport</span></code> 的 <code class="docutils literal"><span class="pre">Vue</span></code> 组件仍旧有很高的参考价值。</p>
+</div>
+<p><code class="docutils literal"><span class="pre">Passport</span></code> 配备了一些可以让你的用户自行创建客户端和个人访问令牌的 <code class="docutils literal"><span class="pre">JSON</span> <span class="pre">API</span></code> 。然而，编写一些前端代码来与这些 <code class="docutils literal"><span class="pre">API</span></code> 进行交互很是耗时。因此 <code class="docutils literal"><span class="pre">Passport</span></code> 也引入了预先构建的 <code class="docutils literal"><span class="pre">Vue</span></code> 组件，你可以直接使用，也可以基于这些代码实现自己的前端部分。</p>
+<p>使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">vendor:publish</span></code> 来发布 <code class="docutils literal"><span class="pre">Passport</span></code> 的 <code class="docutils literal"><span class="pre">Vue</span></code> 组件：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan vendor:publish --tag<span class="o">=</span>passport-components
+</pre></div>
+</div>
+<p>已发布的组件将被放置在 <code class="docutils literal"><span class="pre">resources/assets/js/components</span></code> 目录中，可以在 <code class="docutils literal"><span class="pre">resources/assets/js/app.js</span></code> 文件中注册它们：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span>
+    <span class="s1">&#39;passport-clients&#39;</span><span class="p">,</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./components/passport/Clients.vue&#39;</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span>
+    <span class="s1">&#39;passport-authorized-clients&#39;</span><span class="p">,</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./components/passport/AuthorizedClients.vue&#39;</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span>
+    <span class="s1">&#39;passport-personal-access-tokens&#39;</span><span class="p">,</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./components/passport/PersonalAccessTokens.vue&#39;</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>这些组件注册后，运行 <code class="docutils literal"><span class="pre">npm</span> <span class="pre">install</span></code> 安装 <code class="docutils literal"><span class="pre">vue</span></code> 所依赖的文件，运行 <code class="docutils literal"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">dev</span></code> 命令以确保重新编译你的资源。重新编译资源后，你可以将这些组件放入应用程序的模板中，然后开始创建客户端和个人访问令牌：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">passport-clients</span><span class="p">&gt;&lt;/</span><span class="nt">passport-clients</span><span class="p">&gt;</span>// oauth2.0客户端操作
+<span class="p">&lt;</span><span class="nt">passport-authorized-clients</span><span class="p">&gt;&lt;/</span><span class="nt">passport-authorized-clients</span><span class="p">&gt;</span> // oauth2.0令牌操作
+<span class="p">&lt;</span><span class="nt">passport-personal-access-tokens</span><span class="p">&gt;&lt;/</span><span class="nt">passport-personal-access-tokens</span><span class="p">&gt;</span> // 个人访问令牌操作
+</pre></div>
+</div>
+</div>
+<div class="section" id="passport">
+<h3>33.2.2. 部署 Passport<a class="headerlink" href="#passport" title="永久链接至标题">¶</a></h3>
+<p>第一次将 <code class="docutils literal"><span class="pre">Passport</span></code> 部署到生产服务器时，需要运行 <code class="docutils literal"><span class="pre">passport:keys</span></code> 命令。该命令生成 <code class="docutils literal"><span class="pre">Passport</span></code> 所需要的用来产生访问令牌的加密密钥。生成的这些密钥不会保存在源码控制中：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan passport:keys
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>33.3. 配置<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id5">
+<h3>33.3.1. 令牌的使用期限<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>默认情况下， <code class="docutils literal"><span class="pre">Passport</span></code> 发放的访问令牌是永久有效的，不需要刷新。但是如果你想自定义访问令牌的有效期，可以使用 <code class="docutils literal"><span class="pre">tokensExpireIn</span></code> 和 <code class="docutils literal"><span class="pre">refreshTokensExpireIn</span></code>  方法。上述两个方法同样需要在 <code class="docutils literal"><span class="pre">AuthServiceProvider</span></code> 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法中调用：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Carbon\Carbon</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Register any authentication / authorization services.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerPolicies</span><span class="p">();</span>
+
+    <span class="nx">Passport</span><span class="o">::</span><span class="na">routes</span><span class="p">();</span>
+
+    <span class="nx">Passport</span><span class="o">::</span><span class="na">tokensExpireIn</span><span class="p">(</span><span class="nx">Carbon</span><span class="o">::</span><span class="na">now</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addDays</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+
+    <span class="nx">Passport</span><span class="o">::</span><span class="na">refreshTokensExpireIn</span><span class="p">(</span><span class="nx">Carbon</span><span class="o">::</span><span class="na">now</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addDays</span><span class="p">(</span><span class="mi">30</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>33.4. 发放访问令牌<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>熟悉 <code class="docutils literal"><span class="pre">OAuth2</span></code> 的开发者一定知道， <code class="docutils literal"><span class="pre">OAuth2</span></code> 中必不可少的部分就是授权码。当使用授权码时，客户端应用程序会将用户重定向到你的服务器，他们将批准或拒绝向客户端发出访问令牌的请求。</p>
+<div class="section" id="id7">
+<h3>33.4.1. 管理客户端<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<p>首先，构建需要与应用程序 <code class="docutils literal"><span class="pre">API</span></code> 交互的应用程序，开发人员将需要通过创建一个「客户端」来注册自己的应用程序。一般来说，这包括在用户批准其授权请求后，提供其应用程序的名称和应用程序可以重定向到的 <code class="docutils literal"><span class="pre">URL</span></code> 。</p>
+<p>管理客户端有两种方式：1、通过控制台命令管理；2、通过 <code class="docutils literal"><span class="pre">JSON</span> <span class="pre">API</span></code> 管理；</p>
+<div class="section" id="passport-client">
+<h4>33.4.1.1. passport:client 命令<a class="headerlink" href="#passport-client" title="永久链接至标题">¶</a></h4>
+<p>创建客户端最简单的方式是使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">passport:client</span></code> ，你可以使用此命令创建自己的客户端，用于测试你的 <code class="docutils literal"><span class="pre">OAuth2</span></code> 的功能。在你执行 <code class="docutils literal"><span class="pre">client</span></code> 命令时，<code class="docutils literal"><span class="pre">Passport</span></code> 会提示你输入有关客户端的信息，最终会给你提供客户端的 <code class="docutils literal"><span class="pre">ID</span></code> 和 密钥：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan passport:client
+</pre></div>
+</div>
+</div>
+<div class="section" id="json-api">
+<h4>33.4.1.2. JSON API<a class="headerlink" href="#json-api" title="永久链接至标题">¶</a></h4>
+<p>考虑到你的用户无法使用 <code class="docutils literal"><span class="pre">client</span></code> 命令， <code class="docutils literal"><span class="pre">Passport</span></code> 为此提供了可用于创建客户端的 <code class="docutils literal"><span class="pre">JSON</span> <span class="pre">API</span></code> 。这样你就不用再花时间编写控制器来创建、更新和删除客户端。</p>
+<p>然而，你仍旧需要基于 <code class="docutils literal"><span class="pre">Passport</span></code> 的 <code class="docutils literal"><span class="pre">JSON</span> <span class="pre">API</span></code> 开发一套前端界面，为你的用户提供管理客户端的仪表板。下面我们会列出所有用于管理客户端的 <code class="docutils literal"><span class="pre">API</span></code> ，为了方便起见，我们使用 <code class="docutils literal"><span class="pre">Axios</span></code> 来演示对端口发出 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果你不想自己实现整个客户端管理的前端界面，可以使用 <a class="reference internal" href="#id3">前端快速上手</a> 在几分钟内组建一套功能齐全的前端界面。</p>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">GET</span> <span class="pre">/oauth/clients</span></code> ：此路由会返回认证用户的所有客户端。主要用途是列出所有用户的客户端，以便他们可以编辑或删除它们：</li>
+</ul>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/oauth/clients&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">POST</span> <span class="pre">/oauth/clients</span></code> ：此路由用于创建新客户端。它需要两部分数据：客户端的 <code class="docutils literal"><span class="pre">name</span></code> 和 <code class="docutils literal"><span class="pre">redirect</span></code> 的链接。在批准或拒绝授权请求后，用户会被重定向 <code class="docutils literal"><span class="pre">redirect</span></code> 到这个链接。</li>
+</ul>
+<p>创建客户端时，会发出此客户端的 <code class="docutils literal"><span class="pre">ID</span></code> 和密钥。客户端可以使用这两个值从你的应用程序请求访问令牌。该路由会返回新的客户端实例：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Client Name&#39;</span><span class="p">,</span>
+    <span class="nx">redirect</span><span class="o">:</span> <span class="s1">&#39;http://example.com/callback&#39;</span>
+<span class="p">};</span>
+
+<span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/oauth/clients&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="k">catch</span> <span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// List errors on response...</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">PUT</span> <span class="pre">/oauth/clients/{client-id}</span></code> ：此路由用于更新客户端信息。它需要两部分数据：客户端的 <code class="docutils literal"><span class="pre">name</span></code> 和 <code class="docutils literal"><span class="pre">redirect</span></code> 的链接。在批准或拒绝授权请求后，用户会被重定向 <code class="docutils literal"><span class="pre">redirect</span></code> 到这个链接。此路由会返回更新的客户端实例：</li>
+</ul>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;New Client Name&#39;</span><span class="p">,</span>
+    <span class="nx">redirect</span><span class="o">:</span> <span class="s1">&#39;http://example.com/callback&#39;</span>
+<span class="p">};</span>
+
+<span class="nx">axios</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s1">&#39;/oauth/clients/&#39;</span> <span class="o">+</span> <span class="nx">clientId</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="k">catch</span> <span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// List errors on response...</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">DELETE</span> <span class="pre">/oauth/clients/{client-id}</span></code> ：此路由用于删除客户端：</li>
+</ul>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">axios</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s1">&#39;/oauth/clients/&#39;</span> <span class="o">+</span> <span class="nx">clientId</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">//</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>33.4.2. 请求令牌<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id9">
+<h4>33.4.2.1. 授权时的重定向<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<p>客户端创建之后，开发者会使用此客户端的 <code class="docutils literal"><span class="pre">ID</span></code> 和密钥来请求授权代码，并从应用程序访问令牌。首先，接入应用的用户向你应用程序的 <code class="docutils literal"><span class="pre">/oauth/authorize</span></code> 路由发出重定向请求，示例如下：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/redirect&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$query</span> <span class="o">=</span> <span class="nb">http_build_query</span><span class="p">([</span>
+        <span class="s1">&#39;client_id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;redirect_uri&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/callback&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;response_type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;code&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;scope&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="p">]);</span>
+
+    <span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;http://your-app.com/oauth/authorize?&#39;</span><span class="o">.</span><span class="nv">$query</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">注意，路由 <code class="docutils literal"><span class="pre">/oauth/authorize</span></code> 已经在 <code class="docutils literal"><span class="pre">Passport::routes</span></code> 方法中定义。你不需要手动定义此路由</p>
+</div>
+</div>
+<div class="section" id="id10">
+<h4>33.4.2.2. 批准请求<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<p>接收到授权请求时， <code class="docutils literal"><span class="pre">Passport</span></code> 会自动向用户显示一个模版页面，允许用户批准或拒绝授权请求。如果用户批准请求，他们会被重定向回接入的应用程序指定的 <code class="docutils literal"><span class="pre">redirect_uri</span></code> 。 <code class="docutils literal"><span class="pre">redirect_uri</span></code> 必须和客户端创建时指定的 <code class="docutils literal"><span class="pre">redirect</span></code> 链接完全一致。</p>
+<p>如果你想自定义授权确认页面，可以使用 <code class="docutils literal"><span class="pre">Artisan</span></code> 命令 <code class="docutils literal"><span class="pre">vendor:publish</span></code> 发布 <code class="docutils literal"><span class="pre">Passport</span></code> 的视图。发布后的视图文件存放在 <code class="docutils literal"><span class="pre">resources/views/vendor/passport</span></code> ：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan vendor:publish --tag<span class="o">=</span>passport-views
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h4>33.4.2.3. 将授权码转换为访问令牌<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+<p>用户批准授权请求后，会被重定向回接入的应用程序。然后接入应用应该将通过 <code class="docutils literal"><span class="pre">POST</span></code> 请求向你的应用程序申请访问令牌。请求应该包括当用户批准授权请求时由应用程序发出的授权码。在下面的例子中，我们使用 <code class="docutils literal"><span class="pre">Guzzle</span> <span class="pre">HTTP</span></code> 库来实现这次 <code class="docutils literal"><span class="pre">POST</span></code> 请求：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/callback&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$http</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GuzzleHttp\Client</span><span class="p">;</span>
+
+    <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$http</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;http://your-app.com/oauth/token&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;form_params&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;grant_type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;authorization_code&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;client_id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-id&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;client_secret&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-secret&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;redirect_uri&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/callback&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;code&#39;</span> <span class="o">=&gt;</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">code</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">]);</span>
+
+    <span class="k">return</span> <span class="nb">json_decode</span><span class="p">((</span><span class="nx">string</span><span class="p">)</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">getBody</span><span class="p">(),</span> <span class="k">true</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>路由 <code class="docutils literal"><span class="pre">/oauth/token</span></code> 返回的 <code class="docutils literal"><span class="pre">JSON</span></code> 响应中会包含 <code class="docutils literal"><span class="pre">access_token</span></code>  、 <code class="docutils literal"><span class="pre">refresh_token</span></code> 和 <code class="docutils literal"><span class="pre">expires_in</span></code> 属性。 <code class="docutils literal"><span class="pre">expires_in</span></code> 属性包含访问令牌的有效期（单位：秒）。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">像 <code class="docutils literal"><span class="pre">/oauth/authorize</span></code> 路由一样， <code class="docutils literal"><span class="pre">/oauth/token</span></code> 路由在 <code class="docutils literal"><span class="pre">Passport::routes</span></code> 方法中已经定义了。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>33.4.3. 刷新令牌<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>如果你的应用程序发放了短期的访问令牌，用户将需要通过在发出访问令牌时提供给他们的刷新令牌来刷新其访问令牌。在下面的例子中，我们使用 <code class="docutils literal"><span class="pre">Guzzle</span> <span class="pre">HTTP</span></code> 库来刷新令牌：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">$http = new GuzzleHttp\Client;</span>
+
+<span class="x">$response = $http-&gt;post(&#39;http://your-app.com/oauth/token&#39;, [</span>
+<span class="x">    &#39;form_params&#39; =&gt; [</span>
+<span class="x">        &#39;grant_type&#39; =&gt; &#39;refresh_token&#39;,</span>
+<span class="x">        &#39;refresh_token&#39; =&gt; &#39;the-refresh-token&#39;,</span>
+<span class="x">        &#39;client_id&#39; =&gt; &#39;client-id&#39;,</span>
+<span class="x">        &#39;client_secret&#39; =&gt; &#39;client-secret&#39;,</span>
+<span class="x">        &#39;scope&#39; =&gt; &#39;&#39;,</span>
+<span class="x">    ],</span>
+<span class="x">]);</span>
+
+<span class="x">return json_decode((string) $response-&gt;getBody(), true);</span>
+</pre></div>
+</div>
+<p>路由 <code class="docutils literal"><span class="pre">/oauth/token</span></code> 会返回一个 <code class="docutils literal"><span class="pre">JSON</span></code> 响应，其中包含 <code class="docutils literal"><span class="pre">access_token</span> <span class="pre">、refresh_token</span></code> 和 <code class="docutils literal"><span class="pre">expires_in</span></code> 属性。 <code class="docutils literal"><span class="pre">expires_in</span></code> 属性包含访问令牌的有效时间（单位：秒）。</p>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>33.5. 密码授权令牌<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">OAuth2</span></code> 密码授权机制可以让你自己的客户端（如移动应用程序）邮箱地址或者用户名和密码获取访问令牌。如此一来你就可以安全地向自己的客户端发出访问令牌，而不需要走完整个 <code class="docutils literal"><span class="pre">OAuth2</span></code> 授权代码重定向流程。</p>
+<div class="section" id="id14">
+<h3>33.5.1. 创建密码授权客户端<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
+<p>在应用程序通过密码授权机制来发布令牌之前，在 <code class="docutils literal"><span class="pre">passport:client</span></code> 命令后加上 <code class="docutils literal"><span class="pre">--password</span></code> 参数来创建密码授权的客户端。如果你已经运行了 <code class="docutils literal"><span class="pre">passport:install</span></code> 命令，则不需要再运行此命令：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan passport:client --password
+</pre></div>
+</div>
+</div>
+<div class="section" id="id15">
+<h3>33.5.2. 请求密码授权令牌<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
+<p>创建密码授权的客户端后，就可以通过使用用户的电子邮件地址和密码向 <code class="docutils literal"><span class="pre">/oauth/token</span></code> 路由发出 <code class="docutils literal"><span class="pre">POST</span></code> 请求来获取访问令牌。而该路由已经由 <code class="docutils literal"><span class="pre">Passport::routes</span></code> 方法注册，因此不需要手动定义它。如果请求成功，会在服务端返回的 <code class="docutils literal"><span class="pre">JSON</span></code> 响应中收到一个 <code class="docutils literal"><span class="pre">access_token</span></code> 和 <code class="docutils literal"><span class="pre">refresh_token</span></code> ：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$http</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GuzzleHttp\Client</span><span class="p">;</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$http</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;http://your-app.com/oauth/token&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s1">&#39;form_params&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;grant_type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;password&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;client_id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;client_secret&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-secret&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;taylor@laravel.com&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;my-password&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;scope&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">]);</span>
+
+<span class="k">return</span> <span class="nb">json_decode</span><span class="p">((</span><span class="nx">string</span><span class="p">)</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">getBody</span><span class="p">(),</span> <span class="k">true</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">默认情况下，访问令牌是永久有效的。你可以根据需要 <a class="reference internal" href="#id5">令牌的使用期限</a> 。</p>
+</div>
+</div>
+<div class="section" id="id16">
+<h3>33.5.3. 请求所有作用域<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<p>使用密码授权机制时，可以通过请求 <code class="docutils literal"><span class="pre">scope</span></code> 参数 <code class="docutils literal"><span class="pre">*</span></code> 来授权应用程序支持的所有范围的令牌。如果你的请求中包含 <code class="docutils literal"><span class="pre">scope</span></code> 为 <code class="docutils literal"><span class="pre">*</span></code> 的参数，令牌实例上的 <code class="docutils literal"><span class="pre">can</span></code> 方法会始终返回 <code class="docutils literal"><span class="pre">true</span></code> 。这种作用域的授权只能分配给使用 <code class="docutils literal"><span class="pre">password</span></code> 授权时发出的令牌：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$http</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;http://your-app.com/oauth/token&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s1">&#39;form_params&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;grant_type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;password&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;client_id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;client_secret&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-secret&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;taylor@laravel.com&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;my-password&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;scope&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id17">
+<h2>33.6. 简化授权令牌<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h2>
+<p>隐式授权类似于授权码授权，但是它只令牌将返回给客户端而不交换授权码。这种授权最常用于无法安全存储客户端凭据的 <code class="docutils literal"><span class="pre">JavaScript</span></code> 或移动应用程序。通过调用 <code class="docutils literal"><span class="pre">AuthServiceProvider</span></code> 中的 <code class="docutils literal"><span class="pre">enableImplicitGrant</span></code> 方法来启用这种授权：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * 注册任何身份验证/授权服务。</span>
+<span class="sd"> *</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerPolicies</span><span class="p">();</span>
+
+    <span class="nx">Passport</span><span class="o">::</span><span class="na">routes</span><span class="p">();</span>
+
+    <span class="nx">Passport</span><span class="o">::</span><span class="na">enableImplicitGrant</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>调用上面方法开启授权后，开发者可以使用他们的客户端 <code class="docutils literal"><span class="pre">ID</span></code> 从应用程序请求访问令牌。接入的应用程序应该向你的应用程序的 <code class="docutils literal"><span class="pre">/oauth/authorize</span></code> 路由发出重定向请求，如下所示：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/redirect&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$query</span> <span class="o">=</span> <span class="nb">http_build_query</span><span class="p">([</span>
+        <span class="s1">&#39;client_id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;redirect_uri&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/callback&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;response_type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;token&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;scope&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="p">]);</span>
+
+    <span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;http://your-app.com/oauth/authorize?&#39;</span><span class="o">.</span><span class="nv">$query</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">/oauth/authorize</span></code> 路由在 <code class="docutils literal"><span class="pre">Passport::routes</span></code> 定义中，所以无需再次手动定义此路由。</p>
+</div>
+</div>
+<div class="section" id="id18">
+<h2>33.7. 客户端凭据授权令牌<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h2>
+<p>客户端凭据授权适用于机器到机器的认证。例如，你可以在通过 <code class="docutils literal"><span class="pre">API</span></code> 执行维护任务中使用此授权。要使用这种授权，你首先需要在 <code class="docutils literal"><span class="pre">app/Http/Kernel.php</span></code> 的 <code class="docutils literal"><span class="pre">$routeMiddleware</span></code> 变量中添加新的中间件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Laravel\Passport\Http\Middleware\CheckClientCredentials</span><span class="o">::</span><span class="na">class</span><span class="p">;</span>
+
+<span class="k">protected</span> <span class="nv">$routeMiddleware</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;client&#39;</span> <span class="o">=&gt;</span> <span class="nx">CheckClientCredentials</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p>然后在路由上追加这个中间件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/user&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 对user路径访问需要凭证</span>
+    <span class="o">...</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;client&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>接下来通过向 <code class="docutils literal"><span class="pre">oauth/token</span></code> 接口发出请求来获取令牌:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$guzzle</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GuzzleHttp\Client</span><span class="p">;</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$guzzle</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;http://your-app.com/oauth/token&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s1">&#39;form_params&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;grant_type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client_credentials&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;client_id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;client_secret&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-secret&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;scope&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;your-scope&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">]);</span>
+
+<span class="k">echo</span> <span class="nb">json_decode</span><span class="p">((</span><span class="nx">string</span><span class="p">)</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">getBody</span><span class="p">(),</span> <span class="k">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h2>33.8. 个人访问令牌<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h2>
+<p>如果用户要在不经过典型的授权码重定向流的情况下向自己发出访问令牌，可以允许用户通过应用程序的用户界面对自己发出令牌，用户可以因此顺便测试你的 <code class="docutils literal"><span class="pre">API</span></code> ，或者也可以将其作为一种更简单的发布访问令牌的方式。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">个人访问令牌是永久有效的，就算使用了 <code class="docutils literal"><span class="pre">tokensExpireIn</span></code> 和 <code class="docutils literal"><span class="pre">refreshTokensExpireIn</span></code> 方法也不会修改它的生命周期。</p>
+</div>
+<div class="section" id="id20">
+<h3>33.8.1. 创建个人访问令牌的客户端<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
+<p>在你的应用程序发布个人访问令牌之前，你需要在 <code class="docutils literal"><span class="pre">passport:client</span></code> 命令后带上 <code class="docutils literal"><span class="pre">--personal</span></code> 参数来创建对应的客户端。如果你已经运行了 <code class="docutils literal"><span class="pre">passport:install</span></code> 命令，则无需再运行此命令：</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>php artisan passport:client --personal
+</pre></div>
+</div>
+<p>该命令分别在插入数据到客户端表和个人访问令牌表中。</p>
+</div>
+<div class="section" id="id21">
+<h3>33.8.2. 管理个人访问令牌<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h3>
+<p>创建个人访问客户端后，你可以使用 <code class="docutils literal"><span class="pre">User</span></code> 模型实例上的 <code class="docutils literal"><span class="pre">createToken</span></code> 方法来为给定用户发布令牌。 <code class="docutils literal"><span class="pre">createToken</span></code> 方法接受令牌的名称作为其第一个参数和可选的 作用域 数组作为其第二个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">$user = App\User::find(1);</span>
+
+<span class="x">// Creating a token without scopes...</span>
+<span class="x">$token = $user-&gt;createToken(&#39;Token Name&#39;)-&gt;accessToken;</span>
+
+<span class="x">// Creating a token with scopes...</span>
+<span class="x">$token = $user-&gt;createToken(&#39;My Token&#39;, [&#39;place-orders&#39;])-&gt;accessToken;</span>
+</pre></div>
+</div>
+<div class="section" id="id22">
+<h4>33.8.2.1. JSON API<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">Passport</span></code> 中也有用来管理个人访问令牌的 <code class="docutils literal"><span class="pre">JSON</span> <span class="pre">API</span></code> ，你可以将其与自己的前端配对，为用户提供管理个人访问令牌的仪表板。下面我们会介绍用于管理个人访问令牌的所有 <code class="docutils literal"><span class="pre">API</span></code> 接口。方便起见，我们使用 <code class="docutils literal"><span class="pre">Axios</span></code> 来演示对 <code class="docutils literal"><span class="pre">API</span></code> 的接口发出 <code class="docutils literal"><span class="pre">HTTP</span></code> 请求。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果你不想实现自己的个人访问令牌管理的前端界面，可以根据 <a class="reference internal" href="#id3">前端快速上手</a> 在几分钟内组建功能齐全的前端界面。</p>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">GET</span> <span class="pre">/oauth/scopes</span></code> ：此路由会返回应用程序中定义的所有 作用域。你可以使用此路由列出用户可能分配给个人访问令牌的所有范围：</li>
+</ul>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/oauth/scopes&#39;</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">GET</span> <span class="pre">/oauth/personal-access-tokens</span></code> ：此路由返回认证用户创建的所有个人访问令牌。这主要用于列出该用户的所有令牌，以便他们可以编辑或删除它们：</li>
+</ul>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/oauth/personal-access-tokens&#39;</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">POST</span> <span class="pre">/oauth/personal-access-tokens</span></code> ：此路由创建新的个人访问令牌。它需要两个数据：令牌的名称和应该分配给令牌的作用范围：</li>
+</ul>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Token Name&#39;</span><span class="p">,</span>
+    <span class="nx">scopes</span><span class="o">:</span> <span class="p">[]</span>
+<span class="p">};</span>
+
+<span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/oauth/personal-access-tokens&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">accessToken</span><span class="p">);</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="k">catch</span> <span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// List errors on response...</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">DELETE</span> <span class="pre">/oauth/personal-access-tokens/{token-id}</span></code> ：此路由可用于删除个人访问令牌：</li>
+</ul>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">axios</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s1">&#39;/oauth/personal-access-tokens/&#39;</span> <span class="o">+</span> <span class="nx">tokenId</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id23">
+<h2>33.9. 路由保护<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id24">
+<h3>33.9.1. 通过中间件<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Passport</span></code> 包含一个 验证保护机制 可以验证请求中传入的访问令牌。配置 <code class="docutils literal"><span class="pre">api</span></code> 的看守器使用 <code class="docutils literal"><span class="pre">passport</span></code> 驱动程序后，只需要在需要有效访问令牌的任何路由上指定 <code class="docutils literal"><span class="pre">auth:api</span></code> 中间件：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">Route::get(&#39;/user&#39;, function () {</span>
+<span class="x">    //</span>
+<span class="x">})-&gt;middleware(&#39;auth:api&#39;);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id25">
+<h3>33.9.2. 传递访问令牌<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h3>
+<p>当调用 <code class="docutils literal"><span class="pre">Passport</span></code> 保护下的路由时，接入的 <code class="docutils literal"><span class="pre">API</span></code> 应用需要将访问令牌作为 <code class="docutils literal"><span class="pre">Bearer</span></code> 令牌放在请求头 <code class="docutils literal"><span class="pre">Authorization</span></code> 中。例如，使用 <code class="docutils literal"><span class="pre">Guzzle</span> <span class="pre">HTTP</span></code> 库时：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">$response = $client-&gt;request(&#39;GET&#39;, &#39;/api/user&#39;, [</span>
+<span class="x">    &#39;headers&#39; =&gt; [</span>
+<span class="x">        &#39;Accept&#39; =&gt; &#39;application/json&#39;,</span>
+<span class="x">        &#39;Authorization&#39; =&gt; &#39;Bearer &#39;.$accessToken,</span>
+<span class="x">    ],</span>
+<span class="x">]);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id26">
+<h2>33.10. 令牌作用域<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id27">
+<h3>33.10.1. 定义作用域<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h3>
+<p>作用域可以让 <code class="docutils literal"><span class="pre">API</span></code> 客户端在请求账户授权时请求特定的权限。例如，如果你正在构建电子商务应用程序，并不是所有接入的 <code class="docutils literal"><span class="pre">API</span></code> 应用都需要下订单的功能。你可以让接入的 <code class="docutils literal"><span class="pre">API</span></code> 应用只被允许授权访问订单发货状态。换句话说，作用域允许应用程序的用户限制第三方应用程序执行的操作。</p>
+<p>你可以在 <code class="docutils literal"><span class="pre">AuthServiceProvider</span></code> 的 <code class="docutils literal"><span class="pre">boot</span></code> 方法中使用 <code class="docutils literal"><span class="pre">Passport::tokensCan</span></code> 方法来定义 <code class="docutils literal"><span class="pre">API</span></code> 的作用域。 <code class="docutils literal"><span class="pre">tokensCan</span></code> 方法接受一个作用域名称、描述的数组作为参数。作用域描述将会在授权确认页中直接展示给用户，你可以将其定义为任何你需要的内容：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Laravel\Passport\Passport</span><span class="p">;</span>
+
+<span class="nx">Passport</span><span class="o">::</span><span class="na">tokensCan</span><span class="p">([</span>
+    <span class="s1">&#39;place-orders&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Place orders&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;check-status&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Check order status&#39;</span><span class="p">,</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id28">
+<h3>33.10.2. 给令牌分配作用域<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id29">
+<h4>33.10.2.1. 请求授权码时<a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h4>
+<p>使用授权码授权请求访问令牌时，接入的应用应该将其所需的作用域指定为 <code class="docutils literal"><span class="pre">scope</span></code> 查询字符串参数。 <code class="docutils literal"><span class="pre">scope</span></code> 包含多个作用域名称时，名称之间使用空格分隔：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/redirect&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$query</span> <span class="o">=</span> <span class="nb">http_build_query</span><span class="p">([</span>
+        <span class="s1">&#39;client_id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;client-id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;redirect_uri&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/callback&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;response_type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;code&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;scope&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;place-orders check-status&#39;</span><span class="p">,</span> <span class="c1">// 指定需要的作用域</span>
+    <span class="p">]);</span>
+
+    <span class="k">return</span> <span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;http://your-app.com/oauth/authorize?&#39;</span><span class="o">.</span><span class="nv">$query</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id30">
+<h4>33.10.2.2. 个人访问令牌<a class="headerlink" href="#id30" title="永久链接至标题">¶</a></h4>
+<p>使用 <code class="docutils literal"><span class="pre">User</span></code> 模型的 <code class="docutils literal"><span class="pre">createToken</span></code> 方法发放个人访问令牌时，可以将所需作用域的数组作为第二个参数传给此方法：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$token</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">createToken</span><span class="p">(</span><span class="s1">&#39;My Token&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;place-orders&#39;</span><span class="p">])</span><span class="o">-&gt;</span><span class="na">accessToken</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id31">
+<h3>33.10.3. 检查作用域<a class="headerlink" href="#id31" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">Passport</span></code> 包含两个中间件，可用于验证传入的请求是否已被授予给定作用域的令牌进行身份验证。使用之前，需要将下面的中间件添加到 <code class="docutils literal"><span class="pre">app/Http/Kernel.php</span></code> 文件的 <code class="docutils literal"><span class="pre">$routeMiddleware</span></code> 属性中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;scopes&#39;</span> <span class="o">=&gt;</span> <span class="nx">\Laravel\Passport\Http\Middleware\CheckScopes</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+<span class="s1">&#39;scope&#39;</span> <span class="o">=&gt;</span> <span class="nx">\Laravel\Passport\Http\Middleware\CheckForAnyScope</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">检查作用域中间件应该位于 <code class="docutils literal"><span class="pre">auth:api</span></code> 中间件之后，只有用户获取了 <code class="docutils literal"><span class="pre">token</span></code> 对象才能进一步检查作用域。</p>
+</div>
+<div class="section" id="id32">
+<h4>33.10.3.1. 检查所有作用域<a class="headerlink" href="#id32" title="永久链接至标题">¶</a></h4>
+<p>路由可以使用 <code class="docutils literal"><span class="pre">scopes</span></code> 中间件来检查当前请求是否拥有指定的 所有 作用域：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/orders&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 访问令牌具有 &quot;check-status&quot; and &quot;place-orders&quot; 的作用域...</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;scopes:check-status,place-orders&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id33">
+<h4>33.10.3.2. 检查任意作用域<a class="headerlink" href="#id33" title="永久链接至标题">¶</a></h4>
+<p>路由可以使用 scope 中间件来检查当前请求是否拥有指定的 任意 作用域：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/orders&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Access token has either &quot;check-status&quot; or &quot;place-orders&quot; scope...</span>
+<span class="p">})</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;scope:check-status,place-orders&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id34">
+<h4>33.10.3.3. 检查令牌实例上的作用域<a class="headerlink" href="#id34" title="永久链接至标题">¶</a></h4>
+<p>就算访问令牌验证的请求已经通过应用程序的验证，你仍然可以使用当前授权 <code class="docutils literal"><span class="pre">User</span></code> 实例上的 <code class="docutils literal"><span class="pre">tokenCan</span></code> 方法来验证令牌是否拥有指定的作用域：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/orders&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">tokenCan</span><span class="p">(</span><span class="s1">&#39;place-orders&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="javascript-api">
+<h2>33.11. 使用 JavaScript 接入 API<a class="headerlink" href="#javascript-api" title="永久链接至标题">¶</a></h2>
+<p>在构建 <code class="docutils literal"><span class="pre">API</span></code> 时，如果能在 <code class="docutils literal"><span class="pre">JavaScript</span></code> 应用中接入自己的 <code class="docutils literal"><span class="pre">API</span></code> 将会给开发过程带来极大的便利。这种 <code class="docutils literal"><span class="pre">API</span></code> 开发方法允许你使用自己的应用程序和别人共享相同的 <code class="docutils literal"><span class="pre">API</span></code> 。你的 <code class="docutils literal"><span class="pre">Web</span></code> 应用程序、移动应用程序、第三方应用程序以及可能在各种软件包管理器上发布的任何 <code class="docutils literal"><span class="pre">SDK</span></code> 都可能会使用相同的 <code class="docutils literal"><span class="pre">API</span></code> 。</p>
+<p>通常，如果要从 <code class="docutils literal"><span class="pre">JavaScript</span></code> 应用程序中使用 <code class="docutils literal"><span class="pre">API</span></code> ，则需要手动向应用程序发送访问令牌，并将其传递回应用程序。但是， <code class="docutils literal"><span class="pre">Passport</span></code> 有一个可以处理这个问题的中间件。将 <code class="docutils literal"><span class="pre">CreateFreshApiToken</span></code> 中间件添加到 <code class="docutils literal"><span class="pre">web</span></code> 中间件组就可以了：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;web&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="c1">// Other middleware...</span>
+    <span class="nx">\Laravel\Passport\Http\Middleware\CreateFreshApiToken</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Passport</span></code> 的这个中间件将会在你所有的对外响应中添加一个 <code class="docutils literal"><span class="pre">laravel_token</span></code> <code class="docutils literal"><span class="pre">cookie</span></code> 。该 <code class="docutils literal"><span class="pre">cookie</span></code> 将包含一个加密后的 <code class="docutils literal"><span class="pre">JWT</span></code> ， <code class="docutils literal"><span class="pre">Passport</span></code> 将用来验证来自 <code class="docutils literal"><span class="pre">JavaScript</span></code> 应用程序的 <code class="docutils literal"><span class="pre">API</span></code> 请求。至此，你可以在不明确传递访问令牌的情况下向应用程序的 <code class="docutils literal"><span class="pre">API</span></code> 发出请求：</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/api/user&#39;</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>当使用上面的授权方法时， <code class="docutils literal"><span class="pre">Axios</span></code> 会自动带上 <code class="docutils literal"><span class="pre">X-CSRF-TOKEN</span></code> 和 <code class="docutils literal"><span class="pre">X-Requested-With</span></code> 请求头传递。但是，你应该确保在 <code class="docutils literal"><span class="pre">HTML</span> <span class="pre">meta``标签中包含你的</span> <span class="pre">``CSRF</span> <span class="pre">token</span> <span class="pre">``另外，默认的</span> <span class="pre">``Laravel</span> <span class="pre">JavaScript</span></code> 脚手架会让 <code class="docutils literal"><span class="pre">Axios</span></code> 发送 <code class="docutils literal"><span class="pre">X-Requested-With</span></code> 请求头:</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nb">window</span><span class="p">.</span><span class="nx">axios</span><span class="p">.</span><span class="nx">defaults</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">common</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;X-Requested-With&#39;</span><span class="o">:</span> <span class="s1">&#39;XMLHttpRequest&#39;</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id35">
+<h2>33.12. 事件<a class="headerlink" href="#id35" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Passport</span></code> 在发出访问令牌和刷新令牌时触发事件。 在应用程序的 <code class="docutils literal"><span class="pre">EventServiceProvider</span></code> 中为这些事件追加监听器，可以通过触发这些事件来修改或删除数据库中的其他访问令牌：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * The event listener mappings for the application.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var array</span>
+<span class="sd"> */</span>
+<span class="k">protected</span> <span class="nv">$listen</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Laravel\Passport\Events\AccessTokenCreated&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;App\Listeners\RevokeOldTokens&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+
+    <span class="s1">&#39;Laravel\Passport\Events\RefreshTokenCreated&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;App\Listeners\PruneOldTokens&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id36">
+<h2>33.13. 测试<a class="headerlink" href="#id36" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Passport</span></code> 的 <code class="docutils literal"><span class="pre">actingAs</span></code> 方法可以用于指定当前已认证的用户及其作用域。 <code class="docutils literal"><span class="pre">actingAs</span></code> 方法第一个参数是用户实例，第二个参数是应该授予用户令牌的作用范围的数组:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">testServerCreation</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nx">Passport</span><span class="o">::</span><span class="na">actingAs</span><span class="p">(</span>
+        <span class="nx">factory</span><span class="p">(</span><span class="nx">User</span><span class="o">::</span><span class="na">class</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(),</span>
+        <span class="p">[</span><span class="s1">&#39;create-servers&#39;</span><span class="p">]</span>
+    <span class="p">);</span>
+
+    <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;/api/create-server&#39;</span><span class="p">);</span>
+
+    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">assertStatus</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://blog.pusher.com/make-an-oauth2-server-using-laravel-passport/">授权码认证演示</a></p>
+<p><a class="reference external" href="https://zapier.com/engineering/apikey-oauth-jwt/">API Keys vs OAuth Tokens vs JSON Web Tokens</a></p>
+<p><a class="reference external" href="https://oauth2.thephpleague.com/authorization-server/which-grant/">使用哪种授权方式</a></p>
+<p><a class="reference external" href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html">理解OAuth 2.0</a></p>
+<p><a class="reference external" href="https://oauth2.thephpleague.com/">https://oauth2.thephpleague.com/</a></p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的用户授权系统.html" class="btn btn-neutral float-right" title="34. Laravel用户授权系统" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="用户认证JWT.html" class="btn btn-neutral" title="32. 用户认证JWT" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

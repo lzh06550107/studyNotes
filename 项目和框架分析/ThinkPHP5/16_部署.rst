@@ -1,0 +1,144 @@
+****
+部署
+****
+
+虚拟主机环境
+============
+ThinkPHP 支持各种各样的线上生产环境，如果你的生产环境与开发环境不符，需要稍作调整 ThinkPHP 的配置，以适应线上生产环境
+
+修改入口文件
+------------
+5.0默认的应用入口文件位于 ``public/index.php`` ，内容如下：
+
+.. code-block:: php
+
+    // 定义应用目录
+    define('APP_PATH', __DIR__ . '/../application/');
+    // 加载框架引导文件
+    require __DIR__ . '/../thinkphp/start.php';
+
+.. note:: 入口文件位置的设计是为了让应用部署更安全， ``public`` 目录为 ``web`` 可访问目录，其他的文件都可以放到非 ``WEB`` 访问目录下面。
+
+我们也可以改变入口文件的位置及内容，例如把入口文件改到根目录下面改成：
+
+.. code-block:: php
+
+    // 应用目录
+    define('APP_PATH', __DIR__.'/apps/');
+    // 加载框架引导文件
+    require './thinkphp/start.php';
+
+.. note:: 注意： ``APP_PATH`` 的定义支持相对路径和绝对路径，但必须以“/”结束
+
+如果你调整了框架核心目录的位置或者目录名，只需要这样修改：
+
+.. code-block:: php
+
+    // 改变应用目录的名称
+    define('APP_PATH', __DIR__.'/apps/');
+    // 加载框架引导文件
+    require './think/start.php';
+
+这样最终的应用目录结构如下：
+
+.. code-block:: shell
+
+    www  WEB部署目录（或者子目录）
+    ├─index.php       应用入口文件
+    ├─apps            应用目录
+    └─think           框架目录
+
+Linux 主机环境
+==============
+
+
+URL重写
+=======
+可以通过 ``URL`` 重写隐藏应用的入口文件 ``index.php`` ,下面是相关服务器的配置参考：
+
+[ Apache ]
+----------
+
+1. ``httpd.conf`` 配置文件中加载了 ``mod_rewrite.so`` 模块
+2. ``AllowOverride None`` 将 ``None`` 改为 ``All``
+3. 把下面的内容保存为 ``.htaccess`` 文件放到应用入口文件的同级目录下
+
+.. code-block:: php
+
+    <IfModule mod_rewrite.c>
+    Options +FollowSymlinks -Multiviews
+    RewriteEngine on
+
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php?/$1 [QSA,PT,L]
+    </IfModule>
+
+[ IIS ]
+-------
+如果你的服务器环境支持 ``ISAPI_Rewrite`` 的话，可以配置 ``httpd.ini`` 文件，添加下面的内容：
+
+.. code-block:: ini
+
+    RewriteRule (.*)$ /index\.php\?s=$1 [I]
+
+在 ``IIS`` 的高版本下面可以配置 ``web.Config`` ，在中间添加 ``rewrite`` 节点：
+
+.. code-block:: ini
+
+    <rewrite>
+     <rules>
+     <rule name="OrgPage" stopProcessing="true">
+     <match url="^(.*)$" />
+     <conditions logicalGrouping="MatchAll">
+     <add input="{HTTP_HOST}" pattern="^(.*)$" />
+     <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+     <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+     </conditions>
+     <action type="Rewrite" url="index.php/{R:1}" />
+     </rule>
+     </rules>
+    </rewrite>
+
+[ Nginx ]
+---------
+在 ``Nginx`` 低版本中，是不支持 ``PATHINFO`` 的，但是可以通过在 ``Nginx.conf`` 中配置转发规则实现：
+
+.. code-block:: conf
+
+    location / { // …..省略部分代码
+       if (!-e $request_filename) {
+       rewrite  ^(.*)$  /index.php?s=/$1  last;
+       break;
+        }
+     }
+
+.. note:: 其实内部是转发到了ThinkPHP提供的兼容URL，利用这种方式，可以解决其他不支持PATHINFO的WEB服务器环境。
+
+如果你的应用安装在二级目录， ``Nginx`` 的伪静态方法设置如下，其中 ``youdomain`` 是所在的目录名称。
+
+.. code-block:: conf
+
+    location /youdomain/ {
+        if (!-e $request_filename){
+            rewrite  ^/youdomain/(.*)$  /youdomain/index.php?s=/$1  last;
+        }
+    }
+
+原来的访问URL：
+
+.. code-block:: shell
+
+    http://serverName/index.php/模块/控制器/操作/[参数名/参数值...]
+
+设置后，我们可以采用下面的方式访问：
+
+.. code-block:: shell
+
+    http://serverName/模块/控制器/操作/[参数名/参数值...]
+
+如果你没有修改服务器的权限，可以在 ``index.php`` 入口文件做修改，这不是正确的做法，并且不一定成功，视服务器而定，只是在框架执行前补全 ``$_SERVER['PATH_INFO']`` 参数
+
+.. code-block:: shell
+
+    $_SERVER['PATH_INFO'] = $_SERVER['REQUEST_URI' ];

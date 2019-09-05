@@ -1,0 +1,786 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>44. 辅助函数-数组和对象函数 &mdash; laravel 1.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="索引"
+              href="genindex.html"/>
+        <link rel="search" title="搜索" href="search.html"/>
+    <link rel="top" title="laravel 1.0 文档" href="index.html"/>
+        <link rel="next" title="45. 辅助函数-路径函数" href="Laravel的辅助函数-路径操作.html"/>
+        <link rel="prev" title="43. 辅助函数-字符串函数" href="Laravel的辅助函数-字符串操作.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> laravel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-web.html">1. 请求到web响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="请求到响应的生命周期-console.html">2. 请求到console响应的生命周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的容器.html">3. 容器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades.html">4. Facades</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Facades原理分析.html">5. Facade的原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的服务提供器.html">6. 服务提供器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由.html">7. 路由</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的正则编译.html">8. 路由的正则编译</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由的匹配与参数绑定.html">9. 路由的匹配与参数绑定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的路由—路由中间件.html">10. 路由的中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件.html">11. 中间件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-SubstituteBindings.html">12. 中间件SubstituteBindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的中间件-CSRF.html">13. 中间件CSRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的请求.html">14. 请求</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器.html">15. 控制器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的控制器—控制器方法的参数构建与运行.html">16. 控制器方法的参数构建与运行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的响应.html">17. 响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的视图.html">18. 视图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的生成URL.html">19. URL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session.html">20. Session</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Session原理分析.html">21. Session原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的表单验证机制详解.html">22. 表单验证机制详解</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的日志.html">23. 日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理.html">24. 异常和错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的异常和错误处理原理分析.html">25. 异常和错误处理原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Blade.html">26. Blade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的blade原理分析.html">27. Blade原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的前端.html">28. 前端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Mix.html">29. Mix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="laravel-mix.html">30. mix使用手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户认证系统.html">31. Laravel 的用户认证系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="用户认证JWT.html">32. 用户认证JWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的API认证系统Passport.html">33. Laravel 的 API 认证系统 Passport</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的用户授权系统.html">34. Laravel用户授权系统</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的命令行.html">35. 命令行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统.html">36. 广播</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的广播系统原理分析.html">37. 广播系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的缓存系统.html">38. 缓存</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的集合Collection.html">39. 集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统.html">40. 事件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的事件系统原理分析.html">41. 事件系统原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的文件存储.html">42. 文件存储</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-字符串操作.html">43. 辅助函数-字符串函数</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">44. 辅助函数-数组和对象函数</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">44.1. 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">44.2. 可用方法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">44.2.1. 数组或对象操作</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-路径操作.html">45. 辅助函数-路径函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-tap分析.html">46. 辅助函数-Tap函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的辅助函数-其它.html">47. 辅助函数-其它杂项</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的邮件发送功能.html">48. 邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的消息通知.html">49. 通知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel Queue——消息队列任务与分发源码剖析.html">50. 消息队列任务与分发源码剖析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的任务调度.html">51. 任务调度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—原始方式.html">52. 数据库-原始操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—查询构造器.html">53. 数据库-查询构建器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页.html">54. 数据分页</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据分页原理分析.html">55. 数据分页原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库迁移.html">56. 数据库迁移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库填充.html">57. 数据库填充</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis.html">58. Redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的Redis原理分析.html">59. Redis原理分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent.html">60. Eloquent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent关联.html">61. Eloquent关联</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的数据库—Eloquent修改器.html">62. Eloquent修改器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Laravel的验证规则.html">63. 验证规则</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">laravel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>44. 辅助函数-数组和对象函数</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+        
+        <a href="http://blog.liaozhonghao.cn" rel="nofollow"> 返回主页</a>
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>44. 辅助函数-数组和对象函数<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>44.1. 简介<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Laravel 包含各种各样的全局「辅助」PHP 函数，框架本身也大量地使用了这些功能；如果你觉得方便，你可以在你的应用中自由的使用它们。</p>
+</div>
+<div class="section" id="id3">
+<h2>44.2. 可用方法<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id4">
+<h3>44.2.1. 数组或对象操作<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id5">
+<h4>44.2.1.1. 重构数组<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<div class="section" id="array-wrap">
+<h5>44.2.1.1.1. array_wrap：函数将给定的值包装成一个数组<a class="headerlink" href="#array-wrap" title="永久链接至标题">¶</a></h5>
+<p>如果给定的值已经是一个数组，则不会被改变：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$string</span> <span class="o">=</span> <span class="s1">&#39;Laravel&#39;</span><span class="p">;</span>
+
+<span class="nv">$array</span> <span class="o">=</span> <span class="nx">array_wrap</span><span class="p">(</span><span class="nv">$string</span><span class="p">);</span>
+
+<span class="c1">// [&#39;Laravel&#39;]</span>
+</pre></div>
+</div>
+<p>如果给定的值是空，则返回一个空数组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$nothing</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+
+<span class="nv">$array</span> <span class="o">=</span> <span class="nx">array_wrap</span><span class="p">(</span><span class="nv">$nothing</span><span class="p">);</span>
+
+<span class="c1">// []</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-collapse">
+<h5>44.2.1.1.2. array_collapse：函数将多个单数组合并成一个数组<a class="headerlink" href="#array-collapse" title="永久链接至标题">¶</a></h5>
+<p>collapse(崩塌)。</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="nx">array_collapse</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]);</span>
+
+<span class="c1">// [1, 2, 3, 4, 5, 6, 7, 8, 9]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-divide">
+<h5>44.2.1.1.3. array_divide：函数返回两个数组，一个包含原始数组的健，另一个包含原始数组的值<a class="headerlink" href="#array-divide" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">[</span><span class="nv">$keys</span><span class="p">,</span> <span class="nv">$values</span><span class="p">]</span> <span class="o">=</span> <span class="nx">array_divide</span><span class="p">([</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk&#39;</span><span class="p">]);</span>
+
+<span class="c1">// $keys: [&#39;name&#39;]</span>
+<span class="c1">// $values: [&#39;Desk&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-dot">
+<h5>44.2.1.1.4. array_dot：函数将多维数组平铺到一维数组中，该数组使用「点」符号表示深度<a class="headerlink" href="#array-dot" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;desk&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">]]];</span>
+
+<span class="nv">$flattened</span> <span class="o">=</span> <span class="nx">array_dot</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+
+<span class="c1">// [&#39;products.desk.price&#39; =&gt; 100]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-flatten">
+<h5>44.2.1.1.5. array_flatten：函数将多维数组平铺为一维数组<a class="headerlink" href="#array-flatten" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Joe&#39;</span><span class="p">,</span> <span class="s1">&#39;languages&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;PHP&#39;</span><span class="p">,</span> <span class="s1">&#39;Ruby&#39;</span><span class="p">]];</span>
+
+<span class="nv">$flattened</span> <span class="o">=</span> <span class="nx">array_flatten</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+
+<span class="c1">// [&#39;Joe&#39;, &#39;PHP&#39;, &#39;Ruby&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-only">
+<h5>44.2.1.1.6. array_only：函数仅返回给定数组中指定的键/值对<a class="headerlink" href="#array-only" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;orders&#39;</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">];</span>
+
+<span class="nv">$slice</span> <span class="o">=</span> <span class="nx">array_only</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span><span class="p">]);</span>
+
+<span class="c1">// [&#39;name&#39; =&gt; &#39;Desk&#39;, &#39;price&#39; =&gt; 100]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-pluck">
+<h5>44.2.1.1.7. array_pluck：函数从数组中检索给定键的所有值<a class="headerlink" href="#array-pluck" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s1">&#39;developer&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Taylor&#39;</span><span class="p">]],</span>
+    <span class="p">[</span><span class="s1">&#39;developer&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Abigail&#39;</span><span class="p">]],</span>
+<span class="p">];</span>
+
+<span class="nv">$names</span> <span class="o">=</span> <span class="nx">array_pluck</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="s1">&#39;developer.name&#39;</span><span class="p">);</span>
+
+<span class="c1">// [&#39;Taylor&#39;, &#39;Abigail&#39;]</span>
+</pre></div>
+</div>
+<p>你也可以指定生成的列表的键：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$names</span> <span class="o">=</span> <span class="nx">array_pluck</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="s1">&#39;developer.name&#39;</span><span class="p">,</span> <span class="s1">&#39;developer.id&#39;</span><span class="p">);</span>
+
+<span class="c1">// [1 =&gt; &#39;Taylor&#39;, 2 =&gt; &#39;Abigail&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-where">
+<h5>44.2.1.1.8. array_where：函数使用给定的闭包来过滤数组<a class="headerlink" href="#array-where" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="s1">&#39;400&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">];</span>
+
+<span class="nv">$filtered</span> <span class="o">=</span> <span class="nx">array_where</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nv">$key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">is_string</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// [1 =&gt; 200, 3 =&gt; 400]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h4>44.2.1.2. 判断数组中是否存在值<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<div class="section" id="array-has">
+<h5>44.2.1.2.1. array_has：函数使用「点」符号检查数组中是否存在给定的项目或项目组<a class="headerlink" href="#array-has" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;product&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">]];</span>
+
+<span class="nv">$contains</span> <span class="o">=</span> <span class="nx">array_has</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="s1">&#39;product.name&#39;</span><span class="p">);</span>
+
+<span class="c1">// true</span>
+
+<span class="nv">$contains</span> <span class="o">=</span> <span class="nx">array_has</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;product.price&#39;</span><span class="p">,</span> <span class="s1">&#39;product.discount&#39;</span><span class="p">]);</span>
+
+<span class="c1">// false</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h4>44.2.1.3. 给对象和数组添加值<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<div class="section" id="array-add">
+<h5>44.2.1.3.1. array_add：传入键和值来添加到指定的数组中<a class="headerlink" href="#array-add" title="永久链接至标题">¶</a></h5>
+<p>如果给定的键不在数组中，那么 <code class="docutils literal"><span class="pre">array_add</span></code> 函数将会把给定的键/值对添加到数组中：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="nx">array_add</span><span class="p">([</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk&#39;</span><span class="p">],</span> <span class="s1">&#39;price&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+
+<span class="c1">// [&#39;name&#39; =&gt; &#39;Desk&#39;, &#39;price&#39; =&gt; 100]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-prepend">
+<h5>44.2.1.3.2. array_prepend：函数将一个项目推到数组的开头<a class="headerlink" href="#array-prepend" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">,</span> <span class="s1">&#39;three&#39;</span><span class="p">,</span> <span class="s1">&#39;four&#39;</span><span class="p">];</span>
+
+<span class="nv">$array</span> <span class="o">=</span> <span class="nx">array_prepend</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="s1">&#39;zero&#39;</span><span class="p">);</span>
+
+<span class="c1">// [&#39;zero&#39;, &#39;one&#39;, &#39;two&#39;, &#39;three&#39;, &#39;four&#39;]</span>
+</pre></div>
+</div>
+<p>你可以指定用于该值的键：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">];</span>
+
+<span class="nv">$array</span> <span class="o">=</span> <span class="nx">array_prepend</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="s1">&#39;Desk&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">);</span>
+
+<span class="c1">// [&#39;name&#39; =&gt; &#39;Desk&#39;, &#39;price&#39; =&gt; 100]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-set">
+<h5>44.2.1.3.3. array_set：函数使用「点」符号在深度嵌套的数组中设置一个值<a class="headerlink" href="#array-set" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;desk&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">]]];</span>
+
+<span class="nx">array_set</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="s1">&#39;products.desk.price&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span>
+
+<span class="c1">// [&#39;products&#39; =&gt; [&#39;desk&#39; =&gt; [&#39;price&#39; =&gt; 200]]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-fill">
+<h5>44.2.1.3.4. data_fill：函数使用「点」符号在嵌套数组或对象内设置缺少的值<a class="headerlink" href="#data-fill" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$data</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;desk&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">]]];</span>
+
+<span class="nx">data_fill</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="s1">&#39;products.desk.price&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span>
+
+<span class="c1">// [&#39;products&#39; =&gt; [&#39;desk&#39; =&gt; [&#39;price&#39; =&gt; 100]]]</span>
+
+<span class="nx">data_fill</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="s1">&#39;products.desk.discount&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+
+<span class="c1">// [&#39;products&#39; =&gt; [&#39;desk&#39; =&gt; [&#39;price&#39; =&gt; 100, &#39;discount&#39; =&gt; 10]]]</span>
+</pre></div>
+</div>
+<p>该函数也接受星号「 <code class="docutils literal"><span class="pre">*</span></code> 」作为通配符，并相应地填写目标：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk 1&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk 2&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">];</span>
+
+<span class="nx">data_fill</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="s1">&#39;products.*.price&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">    [</span>
+<span class="cm">        &#39;products&#39; =&gt; [</span>
+<span class="cm">            [&#39;name&#39; =&gt; &#39;Desk 1&#39;, &#39;price&#39; =&gt; 100],</span>
+<span class="cm">            [&#39;name&#39; =&gt; &#39;Desk 2&#39;, &#39;price&#39; =&gt; 200],</span>
+<span class="cm">        ],</span>
+<span class="cm">    ]</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-set">
+<h5>44.2.1.3.5. data_set：函数使用「点」符号在嵌套数组或对象内设置一个值<a class="headerlink" href="#data-set" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$data</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;desk&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">]]];</span>
+
+<span class="nx">data_set</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="s1">&#39;products.desk.price&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span>
+
+<span class="c1">// [&#39;products&#39; =&gt; [&#39;desk&#39; =&gt; [&#39;price&#39; =&gt; 200]]]</span>
+</pre></div>
+</div>
+<p>这个函数也接受通配符「 <code class="docutils literal"><span class="pre">*</span></code> 」，并相应地在目标上设置值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk 1&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk 2&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">150</span><span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">];</span>
+
+<span class="nx">data_set</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="s1">&#39;products.*.price&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">    [</span>
+<span class="cm">        &#39;products&#39; =&gt; [</span>
+<span class="cm">            [&#39;name&#39; =&gt; &#39;Desk 1&#39;, &#39;price&#39; =&gt; 200],</span>
+<span class="cm">            [&#39;name&#39; =&gt; &#39;Desk 2&#39;, &#39;price&#39; =&gt; 200],</span>
+<span class="cm">        ],</span>
+<span class="cm">    ]</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>默认情况下，所有现有的值都会被覆盖。如果你只想设置一个不存在值，你可以传递 <code class="docutils literal"><span class="pre">false</span></code> 作为第三个参数：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$data</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;desk&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">]]];</span>
+
+<span class="nx">data_set</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="s1">&#39;products.desk.price&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="k">false</span><span class="p">);</span>
+
+<span class="c1">// [&#39;products&#39; =&gt; [&#39;desk&#39; =&gt; [&#39;price&#39; =&gt; 100]]]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id8">
+<h4>44.2.1.4. 从对象和数组删除值<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<div class="section" id="array-except">
+<h5>44.2.1.4.1. array_except：函数从数组中删除给定的键/值对<a class="headerlink" href="#array-except" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">];</span>
+
+<span class="nv">$filtered</span> <span class="o">=</span> <span class="nx">array_except</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">]);</span>
+
+<span class="c1">// [&#39;name&#39; =&gt; &#39;Desk&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-forget">
+<h5>44.2.1.4.2. array_forget：函数使用「点」符号从深度嵌套数组中移除给定的键/值对<a class="headerlink" href="#array-forget" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;desk&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">]]];</span>
+
+<span class="nx">array_forget</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="s1">&#39;products.desk&#39;</span><span class="p">);</span>
+
+<span class="c1">// [&#39;products&#39; =&gt; []]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h4>44.2.1.5. 从对象和数组获取值<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<div class="section" id="array-get">
+<h5>44.2.1.5.1. array_get：函数使用「点」符号从深度嵌套的数组中检索值<a class="headerlink" href="#array-get" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;desk&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">]]];</span>
+
+<span class="nv">$price</span> <span class="o">=</span> <span class="nx">array_get</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="s1">&#39;products.desk.price&#39;</span><span class="p">);</span>
+
+<span class="c1">// 100</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">array_get</span></code> 函数也接受一个默认值，如果没有找到指定的健，则返回该值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$discount</span> <span class="o">=</span> <span class="nx">array_get</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="s1">&#39;products.desk.discount&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="c1">// 0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-get">
+<h5>44.2.1.5.2. data_get：函数使用「点」符号从嵌套数组或对象中检索值<a class="headerlink" href="#data-get" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$data</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;desk&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">]]];</span>
+
+<span class="nv">$price</span> <span class="o">=</span> <span class="nx">data_get</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="s1">&#39;products.desk.price&#39;</span><span class="p">);</span>
+
+<span class="c1">// 100</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">data_get</span></code> 函数还接受默认值作为第三个参数，如果找不到指定的键，将返回该值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$discount</span> <span class="o">=</span> <span class="nx">data_get</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="s1">&#39;products.desk.discount&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="c1">// 0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-pull">
+<h5>44.2.1.5.3. array_pull：函数返回并从数组中删除键/值对<a class="headerlink" href="#array-pull" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk&#39;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">];</span>
+
+<span class="nv">$name</span> <span class="o">=</span> <span class="nx">array_pull</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">);</span>
+
+<span class="c1">// $name: Desk</span>
+
+<span class="c1">// $array: [&#39;price&#39; =&gt; 100]</span>
+</pre></div>
+</div>
+<p>将默认值作为第三个参数传递给该方法。如果键不存在，则返回该值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$value</span> <span class="o">=</span> <span class="nx">array_pull</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="nv">$default</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="head">
+<h5>44.2.1.5.4. head：函数返回给定数组中的第一个元素<a class="headerlink" href="#head" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">];</span>
+
+<span class="nv">$first</span> <span class="o">=</span> <span class="nx">head</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+
+<span class="c1">// 100</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="last">
+<h5>44.2.1.5.5. last：函数返回给定数组中的最后一个元素<a class="headerlink" href="#last" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">];</span>
+
+<span class="nv">$last</span> <span class="o">=</span> <span class="nx">last</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+
+<span class="c1">// 300</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-first">
+<h5>44.2.1.5.6. array_first：函数返回数组中第一个通过指定测试的元素<a class="headerlink" href="#array-first" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">];</span>
+
+<span class="nv">$first</span> <span class="o">=</span> <span class="nx">array_first</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nv">$key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$value</span> <span class="o">&gt;=</span> <span class="mi">150</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="c1">// 200</span>
+</pre></div>
+</div>
+<p>将默认值作为第三个参数传递给该方法。如果没有值通过测试，则返回该值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$first</span> <span class="o">=</span> <span class="nx">array_first</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">,</span> <span class="nv">$default</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-last">
+<h5>44.2.1.5.7. array_last：函数返回数组中最后一个通过指定测试的元素<a class="headerlink" href="#array-last" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">110</span><span class="p">];</span>
+
+<span class="nv">$last</span> <span class="o">=</span> <span class="nx">array_last</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nv">$key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$value</span> <span class="o">&gt;=</span> <span class="mi">150</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="c1">// 300</span>
+</pre></div>
+</div>
+<p>将默认值作为第三个参数传递给该方法。如果没有值通过测试，则返回该值：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$last</span> <span class="o">=</span> <span class="nx">array_last</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">,</span> <span class="nv">$default</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-random">
+<h5>44.2.1.5.8. array_random：函数从数组中返回一个随机值<a class="headerlink" href="#array-random" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">];</span>
+
+<span class="nv">$random</span> <span class="o">=</span> <span class="nx">array_random</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+
+<span class="c1">// 4 - (retrieved randomly)</span>
+</pre></div>
+</div>
+<p>你也可以指定要返回的随机数的数量作为第二个可选参数。一旦你指定了第二个参数，即使数量为 1，这个函数也会返回一个数组：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$items</span> <span class="o">=</span> <span class="nx">array_random</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+<span class="c1">// [2, 5] - (retrieved randomly)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id10">
+<h4>44.2.1.6. 给数组排序<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<div class="section" id="array-sort">
+<h5>44.2.1.6.1. array_sort：函数按照其值排序数组<a class="headerlink" href="#array-sort" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Desk&#39;</span><span class="p">,</span> <span class="s1">&#39;Table&#39;</span><span class="p">,</span> <span class="s1">&#39;Chair&#39;</span><span class="p">];</span>
+
+<span class="nv">$sorted</span> <span class="o">=</span> <span class="nx">array_sort</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+
+<span class="c1">// [&#39;Chair&#39;, &#39;Desk&#39;, &#39;Table&#39;]</span>
+</pre></div>
+</div>
+<p>你也可以按给定的闭包返回的结果对数组进行排序：</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Desk&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Table&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Chair&#39;</span><span class="p">],</span>
+<span class="p">];</span>
+
+<span class="nv">$sorted</span> <span class="o">=</span> <span class="nb">array_values</span><span class="p">(</span><span class="nx">array_sort</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$value</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">];</span>
+<span class="p">}));</span>
+
+<span class="cm">/*</span>
+<span class="cm">    [</span>
+<span class="cm">        [&#39;name&#39; =&gt; &#39;Chair&#39;],</span>
+<span class="cm">        [&#39;name&#39; =&gt; &#39;Desk&#39;],</span>
+<span class="cm">        [&#39;name&#39; =&gt; &#39;Table&#39;],</span>
+<span class="cm">    ]</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-sort-recursive-sort">
+<h5>44.2.1.6.2. array_sort_recursive：函数使用 sort 函数递归排序数组<a class="headerlink" href="#array-sort-recursive-sort" title="永久链接至标题">¶</a></h5>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s1">&#39;Roman&#39;</span><span class="p">,</span> <span class="s1">&#39;Taylor&#39;</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;PHP&#39;</span><span class="p">,</span> <span class="s1">&#39;Ruby&#39;</span><span class="p">,</span> <span class="s1">&#39;JavaScript&#39;</span><span class="p">],</span>
+<span class="p">];</span>
+
+<span class="nv">$sorted</span> <span class="o">=</span> <span class="nx">array_sort_recursive</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">    [</span>
+<span class="cm">        [&#39;Li&#39;, &#39;Roman&#39;, &#39;Taylor&#39;],</span>
+<span class="cm">        [&#39;JavaScript&#39;, &#39;PHP&#39;, &#39;Ruby&#39;],</span>
+<span class="cm">    ]</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Laravel的辅助函数-路径操作.html" class="btn btn-neutral float-right" title="45. 辅助函数-路径函数" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Laravel的辅助函数-字符串操作.html" class="btn btn-neutral" title="43. 辅助函数-字符串函数" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, lzh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+
+<script type="text/javascript">
+  
+      $(document).ready(function(){
+        var offset = sessionStorage.getItem("offsetTop");
+        $('.wy-side-scroll').scrollTop(offset);
+        sessionStorage.setItem("offsetTop", 0);
+
+
+        $('.wy-menu > ul').click(function(){
+            sessionStorage.setItem("offsetTop", $('.wy-side-scroll').scrollTop());
+        });
+      })
+
+  </script> 
+
+</body>
+</html>

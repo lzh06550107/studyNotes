@@ -1,0 +1,1702 @@
+****
+杂项
+****
+
+缓存
+====
+
+概述
+----
+ThinkPHP 采用 ``think\Cache`` 类提供缓存功能支持。
+
++--------+------------------------------------------------+
+| 版本   | 新增功能                                       |
++========+================================================+
+| 5.0.11 | 缓存设置方法有效期支持指定过期时间（DateTime） |
++--------+------------------------------------------------+
+| 5.0.2  | 增加remember方法                               |
++--------+------------------------------------------------+
+
+设置
+----
+缓存支持采用驱动方式，所以缓存在使用之前，需要进行连接操作，也就是缓存初始化操作。
+
+.. code-block:: php
+
+    $options = [
+        // 缓存类型为File
+        'type'  =>  'File',
+        // 缓存有效期为永久有效
+        'expire'=>  0,
+        //缓存前缀
+        'prefix'=>  'think',
+         // 指定缓存目录
+        'path'  =>  APP_PATH.'runtime/cache/',
+    ];
+    Cache::connect($options);
+
+或者通过定义配置参数的方式，在应用配置文件中添加：
+
+.. code-block:: php
+
+    'cache'  => [
+        'type'   => 'File',
+        'path'   => CACHE_PATH,
+        'prefix' => '',
+        'expire' => 0,
+    ],
+
+支持的缓存类型包括 ``file`` 、 ``memcache`` 、 ``wincache`` 、 ``sqlite`` 、 ``redis`` 和 ``xcache`` 。
+
+缓存参数根据不同的缓存方式会有所区别，通用的缓存参数如下：
+
++--------+-------------------------------------+
+| 参数   | 描述                                |
++========+=====================================+
+| type   | 缓存类型                            |
++--------+-------------------------------------+
+| expire | 缓存有效期 （默认为0 表示永久缓存） |
++--------+-------------------------------------+
+| prefix | 缓存前缀（默认为空）                |
++--------+-------------------------------------+
+
+使用
+----
+缓存初始化之后，就可以进行相关缓存操作了。
+
+.. note:: 如果通过配置文件方式定义缓存参数的话，可以无需手动进行缓存初始化操作，可以直接进行缓存读取和设置等操作。
+
+设置缓存
+^^^^^^^^
+设置缓存（有效期一个小时）
+
+.. code-block:: php
+
+    Cache::set('name',$value,3600);
+
+如果设置成功返回 ``true`` ，否则返回 ``false`` 。
+
+V5.0.11 版本开始，缓存有效期支持指定过期时间，用法：
+
+.. code-block:: php
+
+    Cache::set('name',$value,new DateTime('2017-10-1 12:00'));
+
+表示缓存数据到2017年10月1日中午12点过期。
+
+缓存自增
+^^^^^^^^
+针对数值类型的缓存数据，可以使用自增操作，例如：
+
+.. code-block:: php
+
+    // name自增（步进值为1）
+    Cache::inc('name');
+    // name自增（步进值为3）
+    Cache::inc('name',3);
+
+缓存自减
+^^^^^^^^
+针对数值类型的缓存数据，可以使用自减操作，例如：
+
+.. code-block:: php
+
+    // name自减（步进值为1）
+    Cache::dec('name');
+    // name自减（步进值为3）
+    Cache::dec('name',3);
+
+获取缓存
+^^^^^^^^
+获取缓存数据可以使用：
+
+.. code-block:: php
+
+    dump(Cache::get('name'));
+
+如果 ``name`` 值不存在，则默认返回 ``false`` 。
+
+支持指定默认值，例如：
+
+.. code-block:: php
+
+    dump(Cache::get('name',''));
+
+表示如果 ``name`` 值不存在，则返回空字符串。
+
+删除缓存
+^^^^^^^^
+
+.. code-block:: php
+
+    Cache::rm('name');
+
+获取并删除缓存
+^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    Cache::pull('name');
+
+如果 ``name`` 值不存在，则返回 ``null`` 。
+
+清空缓存
+^^^^^^^^
+
+.. code-block:: php
+
+    Cache::clear();
+
+不存在则写入缓存数据后返回（v5.0.2+）
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    Cache::remember('name',function(){
+        return time();
+    });
+
+获取缓存对象
+^^^^^^^^^^^^
+可以获取缓存对象，并且调用驱动类的高级方法，例如：
+
+.. code-block:: php
+
+    $cache = Cache::init();
+    // 获取缓存对象句柄
+    $handler = $cache->handler();
+
+助手函数
+^^^^^^^^
+系统对缓存操作提供了助手函数 ``cache`` ，用法如下：
+
+.. code-block:: php
+
+    $options = [
+         // 缓存类型为File
+        'type'   => 'File',
+         // 缓存有效期为永久有效
+        'expire' => 0,
+         // 指定缓存目录
+        'path'   => APP_PATH . 'runtime/cache/',
+    ];
+
+    // 缓存初始化
+    // 不进行缓存初始化的话，默认使用配置文件中的缓存配置
+    cache($options);
+
+    // 设置缓存数据
+    cache('name', $value, 3600);
+    // 获取缓存数据
+    var_dump(cache('name'));
+    // 删除缓存数据
+    cache('name', NULL);
+
+    // 设置缓存的同时并且进行参数设置
+    cache('test', $value, $options);
+
+缓存标签
+--------
+支持给缓存数据打标签，例如：
+
+.. code-block:: php
+
+    Cache::tag('tag')->set('name1','value1');
+    Cache::tag('tag')->set('name2','value2');
+    // 或者批量设置缓存标签
+    Cache::set('name1','value1');
+    Cache::set('name2','value2');
+    Cache::tag('tag',['name1','name2']);
+    // 清除tag标签的缓存数据
+    Cache::clear('tag');
+
+同时使用多个缓存类型
+--------------------
+如果要同时使用多个缓存类型进行操作的话，可以做如下配置：
+
+.. code-block:: php
+
+    'cache' =>  [
+        // 使用复合缓存类型
+        'type'  =>  'complex',
+        // 默认使用的缓存
+        'default'   =>  [
+            // 驱动方式
+            'type'   => 'File',
+            // 缓存保存目录
+            'path'   => CACHE_PATH,
+        ],
+        // 文件缓存
+        'file'   =>  [
+            // 驱动方式
+            'type'   => 'file',
+            // 设置不同的缓存保存目录
+            'path'   => RUNTIME_PATH . 'file/',
+        ],
+        // redis缓存
+        'redis'   =>  [
+            // 驱动方式
+            'type'   => 'redis',
+            // 服务器地址
+            'host'       => '127.0.0.1',
+        ],
+    ],
+
+``cache.type`` 配置为 ``complex`` 之后，就可以缓存多个缓存类型和缓存配置，每个缓存配置的方法和之前一样，并且你可以给相同类型的缓存类型（使用不同的缓存标识）配置不同的缓存配置参数。
+
+当使用
+
+.. code-block:: php
+
+    Cache::set('name', 'value');
+    Cache::get('name');
+
+的时候，其实使用的是 ``default`` 缓存标识的缓存配置，如果需要切换到其它的缓存标识操作，可以使用：
+
+.. code-block:: php
+
+    // 切换到file操作
+    Cache::store('file')->set('name','value');
+    Cache::get('name');
+    // 切换到redis操作
+    Cache::store('redis')->set('name','value');
+    Cache::get('name');
+
+Session
+=======
+概述
+-----
+ThinkPHP 采用 ``think\Session`` 类提供 ``Session`` 功能支持。
+
++-------+----------------------------------+
+| 版本  | 新增功能                         |
++=======+==================================+
+| 5.0.5 | 增加安全选项参数secure和httponly |
++-------+----------------------------------+
+| 5.0.2 | 增加flash方法和flush方法         |
++-------+----------------------------------+
+
+Session初始化
+-------------
+在 ThinkPHP5.0 中使用 ``\think\Session`` 类进行 ``Session`` 相关操作， ``Session`` 会在第一次调用 ``Session`` 类的时候按照配置的参数自动初始化，例如，我们在应用配置中添加如下配置：
+
+.. code-block:: php
+
+    'session'                => [
+        'prefix'         => 'think',
+        'type'           => '',
+        'auto_start'     => true,
+    ],
+
+如果我们使用上述的 ``session`` 配置参数的话，无需任何操作就可以直接调用 ``Session`` 类的相关方法，例如：
+
+.. code-block:: php
+
+    Session::set('name','thinkphp');
+    Session::get('name');
+
+如果你应用下面的不同模块需要不同的 ``session`` 参数，那么可以在模块配置文件中重新设置：
+
+.. code-block:: php
+
+    'session'                => [
+        'prefix'         => 'module',
+        'type'           => '',
+        'auto_start'     => true,
+    ],
+
+或者调用 ``init`` 方法进行初始化：
+
+.. code-block:: php
+
+    Session::init([
+        'prefix'         => 'module',
+        'type'           => '',
+        'auto_start'     => true,
+    ]);
+
+.. note:: 如果你没有使用 ``Session`` 类进行 ``Session`` 操作的话，例如直接操作 ``$_SESSION`` ,必须使用上面的方式手动初始化或者直接调用 ``session_start()`` 方法进行 ``session`` 初始化。
+
+设置参数
+---------
+默认支持的 ``session`` 设置参数包括：
+
++----------------+-----------------------+
+| 参数           | 描述                  |
++================+=======================+
+| type           | session类型           |
++----------------+-----------------------+
+| expire         | session过期时间       |
++----------------+-----------------------+
+| prefix         | session前缀           |
++----------------+-----------------------+
+| auto_start     | 是否自动开启          |
++----------------+-----------------------+
+| use_trans_sid  | 是否使用use_trans_sid |
++----------------+-----------------------+
+| var_session_id | 请求session_id变量名  |
++----------------+-----------------------+
+| id             | session_id            |
++----------------+-----------------------+
+| name           | session_name          |
++----------------+-----------------------+
+| path           | session保存路径       |
++----------------+-----------------------+
+| domain         | session cookie_domain |
++----------------+-----------------------+
+| use_cookies    | 是否使用cookie        |
++----------------+-----------------------+
+| cache_limiter  | session_cache_limiter |
++----------------+-----------------------+
+| cache_expire   | session_cache_expire  |
++----------------+-----------------------+
+
+``Session`` 的工作机制是：为每个访问者创建一个唯一的 id (SID)，并基于这个 ``SID`` 来存储变量。 ``SID`` 存储在 ``cookie`` 中，亦或通过 ``URL`` 进行传导。
+
+- ``name`` 表示存储 ``SID`` 值的变量名称，如 ``PHPSESSID``，在 ``php.ini`` 中配置为： ``session.name = PHPSESSID`` ，可以通过 ``session_name()`` 获取
+- ``var_session_id`` 请求路径中的传递的 ``SID`` 值的变量名称，优先级高于 ``id``
+- ``id`` session id 为 ``sess_`` 后面的部分，如 ``sess_gbtjmr57iat86c8ve86ar5nh30``
+
+.. note:: 如果做了 ``session`` 驱动扩展，可能有些参数不一定有效。
+
+基础用法
+--------
+赋值
+^^^^
+
+.. code-block:: php
+
+    // 赋值（当前作用域）
+    Session::set('name','thinkphp');
+    // 赋值think作用域
+    Session::set('name','thinkphp','think');
+
+判断是否存在
+^^^^^^^^^^^^
+
+.. code-block:: php
+
+    // 判断（当前作用域）是否赋值
+    Session::has('name');
+    // 判断think作用域下面是否赋值
+    Session::has('name','think');
+
+取值
+^^^^
+
+.. code-block:: php
+
+    // 取值（当前作用域）
+    Session::get('name');
+    // 取值think作用域
+    Session::get('name','think');
+
+如果 ``name`` 的值不存在，返回 ``null`` 。
+
+删除
+^^^^^
+
+.. code-block:: php
+
+    // 删除（当前作用域）
+    Session::delete('name');
+    // 删除think作用域下面的值
+    Session::delete('name','think');
+
+指定作用域
+^^^^^^^^^^^
+
+.. code-block:: php
+
+    // 指定当前作用域
+    Session::prefix('think');
+
+取值并删除
+^^^^^^^^^^
+
+.. code-block:: php
+
+    // 取值并删除
+    Session::pull('name');
+
+如果 ``name`` 的值不存在，返回 ``Null`` 。
+
+清空
+^^^^^
+
+.. code-block:: php
+
+    // 清除session（当前作用域）
+    Session::clear();
+    // 清除think作用域
+    Session::clear('think');
+
+闪存数据，下次请求之前有效（v5.0.2+）
+
+.. code-block:: php
+
+    // 设置session 并且在下一次请求之前有效
+    Session::flash('name','value');
+
+提前清除当前请求有效的数据（v5.0.2+）
+
+.. code-block:: php
+
+    // 清除当前请求有效的session
+    Session::flush();
+
+二级数组
+--------
+支持 ``session`` 的二维数组操作，例如：
+
+.. code-block:: php
+
+    // 赋值（当前作用域）
+    Session::set('name.item','thinkphp');
+    // 判断（当前作用域）是否赋值
+    Session::has('name.item');
+    // 取值（当前作用域）
+    Session::get('name.item');
+    // 删除（当前作用域）
+    Session::delete('name.item');
+
+助手函数
+---------
+系统也提供了助手函数 ``session`` 完成相同的功能，例如：
+
+.. code-block:: php
+
+    // 初始化session
+    session([
+        'prefix'     => 'module',
+        'type'       => '',
+        'auto_start' => true,
+    ]);
+
+    // 赋值（当前作用域）
+    session('name', 'thinkphp');
+
+    // 赋值think作用域
+    session('name', 'thinkphp', 'think');
+
+    // 判断（当前作用域）是否赋值
+    session('?name');
+
+    // 取值（当前作用域）
+    session('name');
+
+    // 取值think作用域
+    session('name', '', 'think');
+
+    // 删除（当前作用域）
+    session('name', null);
+
+    // 清除session（当前作用域）
+    session(null);
+
+    // 清除think作用域
+    session(null, 'think');
+
+Session驱动
+------------
+支持指定 ``Session`` 驱动，配置文件如下：
+
+.. code-block:: php
+
+    'session' => [
+        'prefix'     => 'module',
+        'type'       => 'redis',
+        'auto_start' => true,
+         // redis主机
+        'host'       => '127.0.0.1',
+         // redis端口
+        'port'       => 6379,
+         // 密码
+        'password'   => '',
+    ]
+
+表示使用 ``redis`` 作为 ``session`` 类型。
+
+Cookie
+======
+概述
+-----
+ThinkPHP 采用 ``think\Cookie`` 类提供 ``Cookie`` 支持。
+
++-------+-----------------------------+
+| 版本  | 新增功能                    |
++=======+=============================+
+| 5.0.4 | 增加forever方法用于永久保存 |
++-------+-----------------------------+
+
+基本操作
+--------
+初始化
+^^^^^^^
+
+.. code-block:: php
+
+    // cookie初始化
+    Cookie::init(['prefix'=>'think_','expire'=>3600,'path'=>'/']);
+    // 指定当前前缀
+    Cookie::prefix('think_');
+
+支持的参数及默认值如下：
+
+.. code-block:: php
+
+    // cookie 名称前缀
+    'prefix'    => '',
+    // cookie 保存时间
+    'expire'    => 0,
+    // cookie 保存路径
+    'path'      => '/',
+    // cookie 有效域名
+    'domain'    => '',
+    //  cookie 启用安全传输
+    'secure'    => false,
+    // httponly设置
+    'httponly'  => '',
+    // 是否使用 setcookie
+    'setcookie' => true,
+
+设置
+^^^^
+
+.. code-block:: php
+
+    // 设置Cookie 有效期为 3600秒
+    Cookie::set('name','value',3600);
+    // 设置cookie 前缀为think_
+    Cookie::set('name','value',['prefix'=>'think_','expire'=>3600]);
+    // 支持数组
+    Cookie::set('name',[1,2,3]);
+
+判断
+^^^^
+
+.. code-block:: php
+
+    Cookie::has('name');
+    // 判断指定前缀的cookie值是否存在
+    Cookie::has('name','think_');
+
+获取
+^^^^
+
+.. code-block:: php
+
+    Cookie::get('name');
+    // 获取指定前缀的cookie值
+    Cookie::get('name','think_');
+
+删除
+^^^^
+删除cookie
+
+.. code-block:: php
+
+    Cookie::delete('name');
+    // 删除指定前缀的cookie
+    Cookie::delete('name','think_');
+
+清空
+^^^^
+
+.. code-block:: php
+
+    // 清空指定前缀的cookie
+    Cookie::clear('think_');
+
+助手函数
+--------
+系统提供了 ``cookie`` 助手函数用于基本的 ``cookie`` 操作，例如：
+
+.. code-block:: php
+
+    // 初始化
+    cookie(['prefix' => 'think_', 'expire' => 3600]);
+
+    // 设置
+    cookie('name', 'value', 3600);
+
+    // 获取
+    echo cookie('name');
+
+    // 删除
+    cookie('name', null);
+
+    // 清除
+    cookie(null, 'think_');
+
+多语言
+======
+ThinkPHP 内置通过 ``\think\Lang`` 类提供多语言支持，如果你的应用涉及到国际化的支持，那么可以定义相关的语言包文件。任何字符串形式的输出，都可以定义语言常量。
+
+开启和加载语言包
+----------------
+默认情况下，系统载入的是配置的默认语言包，并且不会自动侦测当前系统的语言。
+默认语言由 ``default_lang`` 配置参数设置，系统默认设置为：
+
+.. code-block:: php
+
+    // 默认语言
+    'default_lang'           => 'zh-cn',
+
+要启用语言自动侦测和多语言自动切换，需要开启多语言切换，在应用的公共配置文件添加：
+
+.. code-block:: php
+
+    // 开启语言切换
+    'lang_switch_on' => true,
+
+开启后，系统会自动检测当前语言（主要是指浏览器访问的情况下）会对两种情况进行检测：
+
+- 是否有 ``$_GET['lang']``
+- 识别 ``$_SERVER['HTTP_ACCEPT_LANGUAGE']`` 中的第一个语言
+- 检测到任何一种情况下采用 ``Cookie`` 缓存
+- 如果检测到的语言在允许的语言列表内认为有效，否则使用默认设置的语言
+
+如果不希望浏览器自动侦测语言，请关闭 ``lang_switch_on`` 后设置默认语言。
+
+如果在自动侦测语言的时候，希望设置允许的语言列表，不在列表范围的语言则仍然使用默认语言，可以使用：
+
+.. code-block:: php
+
+    // 设置允许的语言
+    Lang::setAllowLangList(['zh-cn','en-us']);
+
+语言变量定义
+------------
+语言变量的定义，只需要在需要使用多语言的地方，写成：
+
+.. code-block:: php
+
+    Lang::get('add user error');
+    // 使用系统封装的助手函数
+    lang('add user error');
+
+也就是说，字符串信息要改成 ``Lang::get`` 方法来表示。
+
+语言定义一般采用英语来描述。
+
+语言文件定义
+------------
+系统会默认加载下面三个语言包：
+
+.. code-block:: shell
+
+    框架语言包: thinkphp\lang\当前语言.php
+    应用语言包: application\lang\当前语言.php
+    模块语言包: application\模块\lang\当前语言.php
+
+如果你还需要加载其他的语言包，可以在设置或者自动检测语言之后，用 ``load`` 方法进行加载：
+
+.. code-block:: php
+
+    Lang::load(APP_PATH . 'common\lang\zh-cn.php');
+
+ThinkPHP 语言文件定义采用返回数组方式：
+
+.. code-block:: php
+
+    return [
+         'hello thinkphp'  => '欢迎使用ThinkPHP',
+         'data type error' => '数据类型错误',
+    ];
+
+也可以在程序里面动态设置语言定义的值，使用下面的方式：
+
+.. code-block:: php
+
+    Lang::set('define2','语言定义');
+    $value = Lang::get('define2');
+
+通常多语言的使用是在控制器里面，但是模型类的自动验证功能里面会用到提示信息，这个部分也可以使用多语言的特性。例如原来的方式是把提示信息直接写在模型里面定义：
+
+.. code-block:: php
+
+    ['title','require','标题必须！',1],
+
+如果使用了多语言功能的话（假设，我们在当前语言包里面定义了' lang_var'=>'标题必须！'），就可以这样定义模型的自动验证
+
+.. code-block:: php
+
+    ['title','require','{%lang_var}',1],
+
+如果要在模板中输出语言变量不需要在控制器中赋值，可以直接使用模板引擎特殊标签来直接输出语言定义的值：
+
+.. code-block:: shell
+
+    {$Think.lang.lang_var}
+
+可以输出当前语言包里面定义的 ``lang_var`` 语言定义。
+
+变量传入支持
+-------------
+语言包定义的时候支持传入变量，有两种方式
+
+使用命名绑定方式，例如：
+
+.. code-block:: php
+
+    'file_format'    =>    '文件格式: {:format},文件大小：{:size}',
+
+在模板中输出语言字符串的时候传入变量值即可：
+
+.. code-block:: php
+
+    {:lang('file_format',['format' => 'jpeg,png,gif,jpg','size' => '2MB'])}
+
+第二种方式是使用格式字串，如果你需要使用第三方的翻译工具，建议使用该方式定义变量。
+
+.. code-block:: php
+
+    'file_format'    =>    '文件格式: %s,文件大小：%d',
+
+在模板中输出多语言的方式更改为：
+
+.. code-block:: php
+
+    {:lang('file_format',['jpeg,png,gif,jpg','2MB'])}
+
+分页
+====
+
+分页实现
+--------
+
++-------+---------------------------------------------------+
+| 版本  | 新增功能                                          |
++=======+===================================================+
+| 5.0.5 | 分页方法返回 ``think\Paginator`` 对象（用法不变） |
++-------+---------------------------------------------------+
+| 5.0.1 | 支持第二个参数直接传入总记录数                    |
++-------+---------------------------------------------------+
+
+ThinkPHP5.0 内置了分页实现，要给数据添加分页输出功能在 5.0 变得非常简单，可以直接在 ``Db`` 类查询的时候调用 ``paginate`` 方法：
+
+.. code-block:: php
+
+    // 查询状态为1的用户数据 并且每页显示10条数据
+    $list = Db::name('user')->where('status',1)->paginate(10);
+    // 把分页数据赋值给模板变量list
+    $this->assign('list', $list);
+    // 渲染模板输出
+    return $this->fetch();
+
+也可以改成模型的分页查询代码：
+
+.. code-block:: php
+
+    // 查询状态为1的用户数据 并且每页显示10条数据
+    $list = User::where('status',1)->paginate(10);
+    // 把分页数据赋值给模板变量list
+    $this->assign('list', $list);
+    // 渲染模板输出
+    return $this->fetch();
+
+模板文件中分页输出代码如下：
+
+.. code-block:: php
+
+    <div>
+        <ul>
+            {volist name='list' id='user'}
+                <li> {$user.nickname}</li>
+            {/volist}
+        </ul>
+    </div>
+    {$list->render()}
+
+也可以单独赋值分页输出的模板变量
+
+.. code-block:: php
+
+    // 查询状态为1的用户数据 并且每页显示10条数据
+    $list = User::where('status',1)->paginate(10);
+    // 获取分页显示
+    $page = $list->render();
+    // 模板变量赋值
+    $this->assign('list', $list);
+    $this->assign('page', $page);
+    // 渲染模板输出
+    return $this->fetch();
+
+模板文件中分页输出代码如下：
+
+.. code-block:: php
+
+    <div>
+        <ul>
+            {volist name='list' id='user'}
+                <li> {$user.nickname}</li>
+            {/volist}
+        </ul>
+    </div>
+    {$page}
+
+默认情况下，生成的分页输出是完整分页功能，带总分页数据和上下页码，分页样式只需要通过样式修改即可，完整分页默认生成的分页输出代码为：
+
+.. code-block:: html
+
+    <ul class="pagination">
+        <li><a href="?page=1">&laquo;</a></li>
+        <li><a href="?page=1">1</a></li>
+        <li class="active"><span>2</span></li>
+        <li class="disabled"><span>&raquo;</span></li>
+    </ul>
+
+传入总记录数（ V5.0.1）
+^^^^^^^^^^^^^^^^^^^^^^
+V5.0.1版本开始，支持传入总记录数而不会自动进行总数计算，例如：
+
+.. code-block:: php
+
+    // 查询状态为1的用户数据 并且每页显示10条数据 总记录数为1000
+    $list = User::where('status',1)->paginate(10,1000);
+    // 获取分页显示
+    $page = $list->render();
+    // 模板变量赋值
+    $this->assign('list', $list);
+    $this->assign('page', $page);
+    // 渲染模板输出
+    return $this->fetch();
+
+分页后数据处理 （V5.0.9）
+^^^^^^^^^^^^^^^^^^^^^^^^
+V5.0.9版本开始 支持分页类后数据直接 ``each`` 遍历处理，方便修改分页后的数据，而不是只能通过模型的获取器来补充字段。
+
+.. code-block:: php
+
+    $list = User::where('status',1)->paginate()->each(function($item, $key){
+        $item->nickname = 'think';
+    });
+
+如果是 ``Db`` 类操作分页数据的话， ``each`` 方法的闭包函数中需要使用返回值，例如：
+
+.. code-block:: php
+
+    $list = Db::name('user')->where('status',1)->paginate()->each(function($item, $key){
+        $item['nickname'] = 'think';
+        return $item;
+    });
+
+简洁分页
+--------
+如果你仅仅需要输出一个 仅仅只有上下页的分页输出，可以使用下面的简洁分页代码：
+
+.. code-block:: php
+
+    // 查询状态为1的用户数据 并且每页显示10条数据
+    $list = User::where('status',1)->paginate(10,true);
+    // 把分页数据赋值给模板变量list
+    $this->assign('list', $list);
+    // 渲染模板输出
+    return $this->fetch();
+
+简洁分页模式的输出代码为：
+
+.. code-block:: php
+
+    <ul class="pager">
+        <li><a href="?page=1">&laquo;</a></li>
+        <li class="disabled"><span>&raquo;</span></li>
+    </ul>
+
+.. note:: 由于简洁分页模式不需要查询总数据数，因此可以提高查询性能。
+
+分页参数
+--------
+主要的分页参数如下：
+
++-----------+---------------+
+| 参数      | 描述          |
++===========+===============+
+| list_rows | 每页数量      |
++-----------+---------------+
+| page      | 当前页        |
++-----------+---------------+
+| path      | url路径       |
++-----------+---------------+
+| query     | url额外参数   |
++-----------+---------------+
+| fragment  | url锚点       |
++-----------+---------------+
+| var_page  | 分页变量      |
++-----------+---------------+
+| type      | 分页class类名 |
++-----------+---------------+
+
+分页参数的设置方式有两种，第一种是在配置文件中定义，例如：
+
+.. code-block:: php
+
+    //分页配置
+    'paginate'               => [
+        'type'     => 'bootstrap',
+        'var_page' => 'page',
+    ],
+
+``type`` 属性支持命名空间，例如：
+
+.. code-block:: php
+
+    //分页配置
+    'paginate'               => [
+        'type'     => '\org\page\bootstrap',
+        'var_page' => 'page',
+    ],
+
+也可以在调用分页方法的时候传入，例如：
+
+.. code-block:: php
+
+    $list = Db::name('user')->where('status',1)->paginate(10,true,[
+        'type'     => 'bootstrap',
+        'var_page' => 'page',
+    ]);
+
+上传
+====
+
+上传文件
+---------
+ThinkPHP5.0 对文件上传的支持更加简单。
+
+.. note:: 内置的上传只是上传到本地服务器，上传到远程或者第三方平台的话需要自己扩展。
+
+假设表单代码如下：
+
+.. code-block:: html
+
+    <form action="/index/index/upload" enctype="multipart/form-data" method="post">
+        <input type="file" name="image" /> <br>
+        <input type="submit" value="上传" />
+    </form>
+
+然后在控制器中添加如下的代码：
+
+.. code-block:: php
+
+    public function upload(){
+        // 获取表单上传文件 例如上传了001.jpg
+        $file = request()->file('image');
+
+        // 移动到框架应用根目录/public/uploads/ 目录下
+        if($file){
+            $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
+            if($info){
+                // 成功上传后 获取上传信息
+                // 输出 jpg
+                echo $info->getExtension();
+                // 输出 20160820/42a79759f284b767dfcb2a0197904287.jpg
+                echo $info->getSaveName();
+                // 输出 42a79759f284b767dfcb2a0197904287.jpg
+                echo $info->getFilename();
+            }else{
+                // 上传失败获取错误信息
+                echo $file->getError();
+            }
+        }
+    }
+
+``move`` 方法成功的话返回的是一个 ``\think\File`` 对象，它继承 ``SplFileObject`` 对象，你可以对上传后的文件进行后续操作。
+
+多文件上传
+-----------
+如果你使用的是多文件上传表单，例如：
+
+.. code-block:: html
+
+    <form action="/index/index/upload" enctype="multipart/form-data" method="post">
+        <input type="file" name="image[]" /> <br>
+        <input type="file" name="image[]" /> <br>
+        <input type="file" name="image[]" /> <br>
+        <input type="submit" value="上传" />
+    </form>
+
+控制器代码可以改成：
+
+.. code-block:: php
+
+    public function upload(){
+        // 获取表单上传文件
+        $files = request()->file('image');
+        foreach($files as $file){
+            // 移动到框架应用根目录/public/uploads/ 目录下
+            $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
+            if($info){
+                // 成功上传后 获取上传信息
+                // 输出 jpg
+                echo $info->getExtension();
+                // 输出 42a79759f284b767dfcb2a0197904287.jpg
+                echo $info->getFilename();
+            }else{
+                // 上传失败获取错误信息
+                echo $file->getError();
+            }
+        }
+    }
+
+上传验证
+--------
+支持对上传文件的验证，包括文件大小、文件类型和后缀：
+
+.. code-block:: php
+
+    public function upload(){
+        // 获取表单上传文件 例如上传了001.jpg
+        $file = request()->file('image');
+        // 移动到框架应用根目录/public/uploads/ 目录下
+        $info = $file->validate(['size'=>15678,'ext'=>'jpg,png,gif'])->move(ROOT_PATH . 'public' . DS . 'uploads');
+        if($info){
+            // 成功上传后 获取上传信息
+            // 输出 jpg
+            echo $info->getExtension();
+            // 输出 20160820/42a79759f284b767dfcb2a0197904287.jpg
+            echo $info->getSaveName();
+            // 输出 42a79759f284b767dfcb2a0197904287.jpg
+            echo $info->getFilename();
+        }else{
+            // 上传失败获取错误信息
+            echo $file->getError();
+        }
+    }
+
+.. warning:: ``getSaveName`` 方法返回的是图片的服务器文件地址，并不能直接用于图片的 ``URL`` 地址，尤其在 ``windows`` 平台上必须做转换才能正常显示图片。
+
+如果上传文件验证不通过，则 ``move`` 方法返回 ``false`` 。
+
++----------+--------------------------------------+
+| 验证参数 | 说明                                 |
++==========+======================================+
+| size     | 上传文件的最大字节                   |
++----------+--------------------------------------+
+| ext      | 文件后缀，多个用逗号分割或者数组     |
++----------+--------------------------------------+
+| type     | 文件MIME类型，多个用逗号分割或者数组 |
++----------+--------------------------------------+
+
+.. note:: 还有一个额外的自动验证规则是，如果上传的文件后缀是图像文件后缀，则会检查该文件是否是一个合法的图像文件。
+
+上传规则
+--------
+默认情况下，会在上传目录下面生成以当前日期为子目录，以当前微秒时间的 ``md5`` 编码为文件名的文件，例如上面生成的文件名可能是：
+
+.. code-block:: shell
+
+    /home/www/upload/20160510/42a79759f284b767dfcb2a0197904287.jpg
+
+我们可以指定上传文件的命名规则，使用 ``rule`` 方法即可，例如：
+
+.. code-block:: php
+
+    // 获取表单上传文件 例如上传了001.jpg
+    $file = request()->file('image');
+    // 移动到服务器的上传目录 并且使用md5规则
+    $file->rule('md5')->move('/home/www/upload/');
+
+最终生成的文件名类似于：
+
+.. code-block:: shell
+
+    /home/www/upload/72/ef580909368d824e899f77c7c98388.jpg
+
+系统默认提供了几种上传命名规则，包括：
+
++------+-----------------------------+
+| 规则 | 描述                        |
++======+=============================+
+| date | 根据日期和微秒数生成        |
++------+-----------------------------+
+| md5  | 对文件使用md5_file散列生成  |
++------+-----------------------------+
+| sha1 | 对文件使用sha1_file散列生成 |
++------+-----------------------------+
+
+.. note:: 其中 ``md5`` 和 ``sha1`` 规则会自动以散列值的前两个字符作为子目录，后面的散列值作为文件名。
+
+如果需要使用自定义命名规则如 ``uniqid()`` ，可以在 ``rule`` 方法中传入函数或者方法，例如：
+
+.. code-block:: php
+
+    // 获取表单上传文件 例如上传了001.jpg
+    $file = request()->file('image');
+    // 移动到服务器的上传目录 并且使用uniqid规则
+    $file->rule('uniqid')->move('/home/www/upload/');
+
+生成的文件名类似于：
+
+.. code-block:: shell
+
+    /home/www/upload/573d3b6d7abe2.jpg
+
+如果你希望保留原文件名称，可以使用：
+
+.. code-block:: php
+
+    // 获取表单上传文件 例如上传了001.jpg
+    $file = request()->file('image');
+    // 移动到服务器的上传目录 并且使用原文件名
+    $file->move('/home/www/upload/','');
+
+默认情况下，会覆盖服务器上传目录下的同名文件，如果不希望覆盖，可以使用：
+
+.. code-block:: php
+
+    // 获取表单上传文件 例如上传了001.jpg
+    $file = request()->file('image');
+    // 移动到服务器的上传目录 并且设置不覆盖
+    $file->move('/home/www/upload/',true,false);
+
+获取文件hash散列值
+------------------
+可以获取上传文件的哈希散列值，例如：
+
+.. code-block:: php
+
+    // 获取表单上传文件
+    $file = request()->file('image');
+    // 移动到服务器的上传目录 并且使用原文件名
+    $upload = $file->move('/home/www/upload/');
+    // 获取上传文件的hash散列值
+    echo $upload->md5();
+    echo $upload->sha1();
+
+v5.0.1 以上版本可以统一使用 ``hash`` 方法获取文件散列值
+
+.. code-block:: php
+
+    // 获取表单上传文件
+    $file = request()->file('image');
+    // 移动到服务器的上传目录 并且使用原文件名
+    $upload = $file->move('/home/www/upload/');
+    // 获取上传文件的hash散列值
+    echo $upload->hash('sha1');
+    echo $upload->hash('md5');
+
+返回对象
+--------
+上传成功后返回的仍然是一个 ``File`` 对象，除了 ``File`` 对象自身的方法外，并且可以使用 ``SplFileObject`` 的属性和方法，便于进行后续的文件处理。
+
+验证码
+======
+首先使用 ``Composer`` 安装 ``think-captcha`` 扩展包：
+
+.. code-block:: shell
+
+    composer require topthink/think-captcha
+
+.. warning:: 官方的 5.0 版本的扩展库版本号都是 1.* ， 2.0 版本均为 ThinkPHP5.1 版本专用。
+
+验证码的简单用法
+----------------
+扩展包内定义了一些常见用法方便使用，以下示例说明
+
+.. warning:: 注意：需要开启 ``URL`` 路由。
+
+模版内验证码的显示
+
+.. code-block:: html
+
+    <div>{:captcha_img()}</div>
+
+或者
+
+.. code-block:: html
+
+    <div><img src="{:captcha_src()}" alt="captcha" /></div>
+
+.. note:: 上面两种的最终效果是一样的，根据需要调用即可。
+
+使用 ``TP5`` 的内置验证功能，添加 ``captcha`` 验证规则即可
+
+.. code-block:: php
+
+    $this->validate($data,[
+        'captcha|验证码'=>'require|captcha'
+    ]);
+
+或者手动验证
+
+.. code-block:: php
+
+    if(!captcha_check($captcha)){
+     //验证失败
+    };
+
+验证码的自定义用法
+------------------
+如果项目未开启路由，或者有实际需求可自行调用 ``Captcha`` 类操作
+
+验证码的生成：
+
+.. code-block:: php
+
+    $captcha = new Captcha();
+    return $captcha->entry();
+
+如果你需要在一个页面中生成多个验证码的话， ``entry`` 方法需要传入可标识的信息，例如：
+
+.. code-block:: php
+
+    $captcha = new Captcha();
+    return $captcha->entry(1);
+
+验证码的验证：
+
+可以用 ``Captcha`` 类的 ``check`` 方法检测验证码的输入是否正确，例如，下面是封装的一个验证码检测的函数：
+
+.. code-block:: php
+
+    // 检测输入的验证码是否正确，$code为用户输入的验证码字符串，$id多个验证码标识
+    function check_verify($code, $id = ''){
+        $captcha = new Captcha();
+        return $captcha->check($code, $id);
+    }
+
+验证码的配置参数
+----------------
+``Captcha`` 类带有默认的配置参数，支持自定义配置。这些参数包括：
+
+.. note:: 如果使用了扩展内置的方法，务必在应用配置文件中配置， 5.0.1 及以上支持者在应用配置目录下面 ``extra`` 子目录内配置 ``captcha.php`` 文件
+
++----------+-----------------------------------+-----------------+
+| 参数     | 描述                              | 默认            |
++==========+===================================+=================+
+| codeSet  | 验证码字符集合                    | 略              |
++----------+-----------------------------------+-----------------+
+| expire   | 验证码过期时间（s）               | 1800            |
++----------+-----------------------------------+-----------------+
+| useZh    | 使用中文验证码 false              |                 |
++----------+-----------------------------------+-----------------+
+| zhSet    | 中文验证码字符串                  | 略              |
++----------+-----------------------------------+-----------------+
+| useImgBg | 使用背景图片                      | false           |
++----------+-----------------------------------+-----------------+
+| fontSize | 验证码字体大小(px)                | 25              |
++----------+-----------------------------------+-----------------+
+| useCurve | 是否画混淆曲线                    | true            |
++----------+-----------------------------------+-----------------+
+| useNoise | 是否添加杂点                      | true            |
++----------+-----------------------------------+-----------------+
+| imageH   | 验证码图片高度，设置为0为自动计算 | 0               |
++----------+-----------------------------------+-----------------+
+| imageW   | 验证码图片宽度，设置为0为自动计算 | 0               |
++----------+-----------------------------------+-----------------+
+| length   | 验证码位数                        | 5               |
++----------+-----------------------------------+-----------------+
+| fontttf  | 验证码字体，不设置是随机获取      | 空              |
++----------+-----------------------------------+-----------------+
+| bg       | 背景颜色                          | [243, 251, 254] |
++----------+-----------------------------------+-----------------+
+| reset    | 验证成功后是否重置                | true            |
++----------+-----------------------------------+-----------------+
+
+参数设置使用两种方式。
+实例化传入参数：
+
+.. code-block:: php
+
+    $config =    [
+        // 验证码字体大小
+        'fontSize'    =>    30,
+        // 验证码位数
+        'length'      =>    3,
+        // 关闭验证码杂点
+        'useNoise'    =>    false,
+    ];
+    $captcha = new Captcha($config);
+    return $captcha->entry();
+
+或者采用动态设置的方式，如：
+
+.. code-block:: php
+
+    $captcha = new Captcha();
+    $captcha->fontSize = 30;
+    $captcha->length   = 3;
+    $captcha->useNoise = false;
+    return $captcha->entry();
+
+验证码字体
+^^^^^^^^^^
+默认情况下，验证码的字体是随机使用扩展包内 ``think-captcha/assets/ttfs`` 目录下面的字体文件，我们可以指定验证码的字体，例如：
+
+.. code-block:: php
+
+    $captcha = new Captcha();
+    $captcha->fontttf = '5.ttf';
+    return $captcha->entry();
+
+背景图片
+^^^^^^^^
+支持验证码背景图片功能，可以如下设置：
+
+.. code-block:: php
+
+    $captcha = new Captcha();
+    // 开启验证码背景图片功能 随机使用扩展包内`think-captcha/assets/bgs`目录下面的图片
+    $captcha->useImgBg = true;
+    return $captcha->entry();
+
+中文验证码
+^^^^^^^^^^
+如果要使用中文验证码，可以设置：
+
+.. code-block:: php
+
+    $captcha = new Captcha();
+    //中午 验证码字体使用扩展包内`think-captcha/assets/zhttfs`字体文件
+    $captcha->useZh = true;
+    return $captcha->entry();
+
+指定验证码字符
+^^^^^^^^^^^^^^
+指定验证码的字符，可以设置：
+
+.. code-block:: php
+
+    $captcha = new Captcha();
+    // 设置验证码字符为纯数字
+    $captcha->codeSet = '0123456789';
+    return $captcha->entry();
+
+如果是中文验证码，可以使用 ``zhSet`` 参数设置，例如：
+
+.. code-block:: php
+
+    $captcha = new Captcha();
+    $captcha->useZh = true;
+    // 设置验证码字符
+    $captcha->zhSet = '们以我到他会作时要动国产的一是工就年阶义发成部民可出能方进在了不和有大这';
+    return $captcha->entry();
+
+.. note:: 默认的验证码字符已经剔除了易混淆的 ``1l0o`` 等字符
+
+图像处理
+========
+安装扩展
+---------
+使用 ``Composer`` 安装 ``ThinkPHP5`` 的图像处理类库：
+
+.. code-block:: shell
+
+    composer require topthink/think-image
+
+图像操作
+--------
+下面来看下图像操作类的基础方法。
+
+打开图像文件
+^^^^^^^^^^^^
+假设当前入口文件目录下面有一个 ``image.png`` 文件，如图所示：
+
+.. image:: ./images/image-1.png
+
+使用 ``open`` 方法打开图像文件进行相关操作：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+
+也可以从直接获取当前请求中的文件上传对象，例如：
+
+.. code-block:: php
+
+    $image = \think\Image::open(request()->file('image'));
+
+获取图像信息
+^^^^^^^^^^^^
+可以获取打开图片的信息，包括图像大小、类型等，例如：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    // 返回图片的宽度
+    $width = $image->width();
+    // 返回图片的高度
+    $height = $image->height();
+    // 返回图片的类型
+    $type = $image->type();
+    // 返回图片的mime类型
+    $mime = $image->mime();
+    // 返回图片的尺寸数组 0 图片宽度 1 图片高度
+    $size = $image->size();
+
+裁剪图片
+^^^^^^^^
+使用 ``crop`` 和 ``save`` 方法完成裁剪图片功能。
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    //将图片裁剪为300x300并保存为crop.png
+    $image->crop(300, 300)->save('./crop.png');
+
+生成的图片如图：
+
+.. image:: ./images/image-2.jpg
+
+支持从某个坐标开始裁剪，例如下面从（100，30）开始裁剪，例如：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    //将图片裁剪为300x300并保存为crop.png
+    $image->crop(300, 300,100,30)->save('./crop.png');
+
+生成的图片如图：
+
+.. image:: ./images/image-3.jpg
+
+生成缩略图
+^^^^^^^^^^
+使用 ``thumb`` 方法生成缩略图，例如：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    // 按照原图的比例生成一个最大为150*150的缩略图并保存为thumb.png
+    $image->thumb(150, 150)->save('./thumb.png');
+
+生成的缩略图如图所示：
+
+我们看到实际生成的缩略图并不是 ``150*150`` ，因为默认采用原图等比例缩放的方式生成缩略图，最大宽度是150。
+可以支持其他类型的缩略图生成，设置包括 ``\think\Image`` 的下列常量或者对应的数字：
+
+.. code-block:: php
+
+    //常量，标识缩略图等比例缩放类型
+    const THUMB_SCALING   = 1;
+    //常量，标识缩略图缩放后填充类型
+    const THUMB_FILLED    = 2;
+    //常量，标识缩略图居中裁剪类型
+    const THUMB_CENTER    = 3;
+    //常量，标识缩略图左上角裁剪类型
+    const THUMB_NORTHWEST = 4;
+    //常量，标识缩略图右下角裁剪类型
+    const THUMB_SOUTHEAST = 5;
+    //常量，标识缩略图固定尺寸缩放类型
+    const THUMB_FIXED     = 6;
+
+比如我们居中裁剪：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    // 按照原图的比例生成一个最大为150*150的缩略图并保存为thumb.png
+    $image->thumb(150,150,\think\Image::THUMB_CENTER)->save('./thumb.png');
+
+后生成的缩略图效果如图：
+
+.. image:: ./images/image-4.png
+
+再比如我们右下角剪裁
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    // 按照原图的比例生成一个最大为150*150的缩略图并保存为thumb.png
+    $image->thumb(150,150,\think\Image::THUMB_SOUTHEAST)->save('./thumb.png');
+
+生成的缩略图效果如图：
+
+.. image:: ./images/image-5.png
+
+这里就不再对其他用法一一举例了。
+
+图像翻转
+^^^^^^^^^
+使用 ``flip`` 可以对图像进行翻转操作，默认是以 ``x`` 轴进行翻转，例如：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    // 对图像进行以x轴进行翻转操作
+    $image->flip()->save('./filp_image.png');
+
+生成的效果如图：
+
+.. image:: ./images/image-6.png
+
+我们也可以改变参数，以 ``y`` 轴进行翻转，例如：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    // 对图像进行以y轴进行翻转操作
+    $image->flip(\think\image::FLIP_Y)->save('./filp_image.png');
+
+生成的效果如图：
+
+.. image:: ./images/image-7.png
+
+.. note:: 图像的翻转可以理解为图像的镜面效果与图像旋转有所不同。
+
+图像旋转
+^^^^^^^^
+使用 ``rotate`` 可以对图像进行旋转操作（默认是顺时针旋转90度），我们用默认90度进行旋转举例：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    // 对图像使用默认的顺时针旋转90度操作
+    $image->rotate()->save('./rotate_image.png');
+
+生成的效果如图：
+
+.. image:: ./images/image-8.png
+
+图像保存参数
+^^^^^^^^^^^^
+``save`` 方法可以配置的参数
+
++-----------+----------------+--------------------------------+
+| 参数      | 默认           | 描述                           |
++===========+================+================================+
+| pathname  | 必填项         | 图像保存路径名称               |
++-----------+----------------+--------------------------------+
+| type      | 默认与原图相同 | 图像类型                       |
++-----------+----------------+--------------------------------+
+| quality   | 80             | 图像质量                       |
++-----------+----------------+--------------------------------+
+| interlace | true           | 是否对JPEG类型图像设置隔行扫描 |
++-----------+----------------+--------------------------------+
+
+.. note:: 设置隔行扫描的情况下在网页进行浏览时。是从上到下一行一行的显示，否则图片整个显示出来 然后由模糊到清晰显示。
+
+添加水印
+^^^^^^^^^
+系统支持添加图片及文字水印，下面依次举例说明。添加图片水印，我们下载官网 ``logo`` 文件到根目录进行举例：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    // 给原图左上角添加水印并保存water_image.png
+    $image->water('./logo.png')->save('water_image.png');
+
+``water`` 方法的第二个参数表示水印的位置，默认值是 ``WATER_SOUTH`` ，可以传入下列 ``\think\Image`` 类的常量或者对应的数字：
+
+.. code-block:: php
+
+    //常量，标识左上角水印
+    const WATER_NORTHWEST = 1;
+    //常量，标识上居中水印
+    const WATER_NORTH     = 2;
+    //常量，标识右上角水印
+    const WATER_NORTHEAST = 3;
+    //常量，标识左居中水印
+    const WATER_WEST      = 4;
+    //常量，标识居中水印
+    const WATER_CENTER    = 5;
+    //常量，标识右居中水印
+    const WATER_EAST      = 6;
+    //常量，标识左下角水印
+    const WATER_SOUTHWEST = 7;
+    //常量，标识下居中水印
+    const WATER_SOUTH     = 8;
+    //常量，标识右下角水印
+    const WATER_SOUTHEAST = 9;
+
+我们用左上角来进行测试：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    // 给原图左上角添加水印并保存water_image.png
+    $image->water('./logo.png',\think\Image::WATER_NORTHWEST)->save('water_image.png');
+
+生成的图片效果如下：
+
+.. image:: ./images/image-9.png
+
+还可以支持水印图片的透明度（0~100，默认值是100），例如：
+
+.. code-block:: php
+
+    $image = \think\Image::open('./image.png');
+    // 给原图左上角添加透明度为50的水印并保存alpha_image.png
+    $image->water('./logo.png',\think\Image::WATER_NORTHWEST,50)->save('alpha_image.png');
+
+生成的图片效果如下：
+
+.. image:: ./images/image-10.png
+
+也可以支持给图片添加文字水印（我们复制一个字体文件 ``HYQingKongTiJ.ttf`` 到入口目录），我们现在生成一个像素 ``20px`` ，颜色为 ``#ffffff`` 的水印效果：
+
+生成的图片效果：
+
+.. image:: ./images/image-11.png
+
+文字水印参数
+^^^^^^^^^^^^
+文字水印比较多，在此只做说明不做演示了
+
++--------+-----------------+--------------------------+
+| 参数   | 默认            | 描述                     |
++========+=================+==========================+
+| text   | 不能为空        | 添加的文字               |
++--------+-----------------+--------------------------+
+| font   | 不能为空        | 字体文件路径             |
++--------+-----------------+--------------------------+
+| size   | 不能为空        | 字号，单位是像素         |
++--------+-----------------+--------------------------+
+| color  | #00000000       | 文字颜色                 |
++--------+-----------------+--------------------------+
+| locate | WATER_SOUTHEAST | 文字写入位置             |
++--------+-----------------+--------------------------+
+| offset | 0               | 文字相对当前位置的偏移量 |
++--------+-----------------+--------------------------+
+| angle  | 0               | 文字倾斜角度             |
++--------+-----------------+--------------------------+
+
+文件处理
+========
+ThinkPHP5.0 内置了一个文件处理类 ``\think\File`` ，内置的文件上传操作也是调用了该类进行处理的。
+
+``File`` 类继承了 PHP 的 ``SplFileObject`` 类，因此可以调用 ``SplFileObject`` 类所有的属性和方法。
+
+单元测试
+========
+单元测试
+--------
+首先安装 ThinkPHP5 的单元测试扩展，进入命令行，切换到 ``tp5`` 的应用根目录下面，执行：
+
+.. code-block:: shell
+
+    composer require topthink/think-testing
+
+.. warning:: 官方的5.0版本的扩展库版本号都是1.*，2.0版本均为ThinkPHP5.1版本专用。
+
+.. note:: 由于单元测试扩展的依赖较多，因此安装过程会比较久，请耐心等待。
+
+安装完成后，会在应用根目录下面增加 ``tests`` 目录和 ``phpunit.xml`` 文件。默认带了一个 ``tests/ExampleTest.php`` 单元测试文件，我们可以直接在命令行下面运行单元测试：
+
+.. code-block:: shell
+
+    php think unit
+
+.. warning:: 请始终使用以上命令进行单元测试，而不是直接用phpunit来运行单元测试。
+
+添加单元测试文件
+----------------
+我们来添加一个新的单元测试文件，单元测试文件为 ``tests/IndexTest.php`` ，内容如下：
+
+.. code-block:: php
+
+    <?php
+    use tests\TestCase;
+
+    class IndexTest extends TestCase
+    {
+
+        public function testSomethingIsTrue()
+        {
+            $this->assertTrue(true);
+        }
+
+    }
+
+.. warning:: 注意，单元测试文件中定义的测试类如果不存在冲突，可以不需要使用命名空间。
